@@ -1,0 +1,12 @@
+{
+    "autoload": {
+        "psr-4": {
+            "FluentSupport\\App\\": "app/",
+            "FluentSupport\\Framework\\": "vendor/framework"
+        },
+        "classmap": ["database"],
+        "files": [
+            "boot/globals.php"
+        ]
+    }
+}
