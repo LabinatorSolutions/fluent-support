@@ -1,0 +1,32 @@
+<?php
+
+namespace FluentSupport\App\Database\Migrations;
+
+class PersonsMigrator
+{
+    static $tableName = 'fs_persons';
+
+    public static function migrate()
+    {
+        global $wpdb;
+
+        $charsetCollate = $wpdb->get_charset_collate();
+
+        $table = $wpdb->prefix . static::$tableName;
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            $sql = "CREATE TABLE $table (
+                `id` BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                `first_name` VARCHAR(192) NULL,
+                `last_name` VARCHAR(192) NULL,
+                `email` VARCHAR(192) NULL,
+                `person_type` VARCHAR(192) DEFAULT 'customer',
+                `user_id` BIGINT(20) UNSIGNED NULL,
+                `last_response_at` TIMESTAMP NULL,
+                `created_at` TIMESTAMP NULL,
+                `updated_at` TIMESTAMP NULL
+            ) $charsetCollate;";
+            dbDelta($sql);
+        }
+    }
+}

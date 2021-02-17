@@ -1,0 +1,80 @@
+// customize element ui css here
+.el {
+    &-select {
+        width: 100%;
+
+        input {
+            background: transparent;
+        }
+
+        &-multiple {
+            input {
+                height: 40px !important;
+            }
+        }
+    }
+
+    &-dialog {
+        margin-top: 12vh !important;
+
+        &__body {
+            padding: 15px 20px 15px 20px;
+        }
+    }
+
+    &-form-item {
+        &__label {
+            padding: initial !important;
+        }
+    }
+
+    &-tag + &-tag {
+        margin-left: 10px;
+    }
+
+    &-tag {
+        &--white {
+            background: white;
+            color: black;
+            border-color: white;
+
+            .el-tag__close {
+                color: #909399;
+
+                &:hover {
+                    background-color: #909399;
+                    color: #fff;
+                }
+            }
+        }
+    }
+
+    &-popover {
+        padding: 10px;
+        text-align: left;
+
+        .action-buttons {
+            margin: 0;
+            text-align: center;
+        }
+    }
+
+    &-button {
+        &--mini {
+            padding: 4px;
+        }
+    }
+
+    &-fluid {
+        width: 100% !important;
+    }
+}
+
+.ninja-erp-app {
+    table {
+        margin: auto;
+    }
+    .el-table.el-table--fit {
+        border: 1px solid #ebeef5;
+    }
+}
