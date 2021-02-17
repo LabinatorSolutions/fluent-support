@@ -8,6 +8,11 @@
 //$router->get('/dashboard', 'DashboardController@index');
 //$router->get('/chart/data', 'DashboardController@getChartData');
 //
+
+$router->prefix('tickets')->group(function ($router) {
+    $router->get('/', 'TicketController@index');
+});
+
 //$router->prefix('accounts')->name('accounts.')->group(function($router) {
 //
 //    $router->get('/', 'AccountController@index')->name('index');

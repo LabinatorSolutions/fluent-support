@@ -24,8 +24,31 @@ class Menu
     public function renderApp()
     {
         $app = App::getInstance();
+
+        $assets = $app['url.assets'];
+
+        $baseUrl = apply_filters('fluent_support_base_url', admin_url('admin.php?page=fluent-support#/'));
+
+        $menuItems = [
+            [
+                'key'       => 'dashboard',
+                'label'     => __('Dashboard', 'fluent-support'),
+                'permalink' => $baseUrl
+            ],
+            [
+                'key' => 'tickets',
+                'label' => __('Tickets', 'fluent-support'),
+                'permalink' => $baseUrl . 'tickets',
+            ]
+        ];
+
+        $app = App::getInstance();
         $this->enqueueAssets();
-        $app->view->render('admin.menu');
+        $app->view->render('admin.menu', [
+            'base_url' => $baseUrl,
+            'logo' => $assets.'images/logo.svg',
+            'menuItems' => $menuItems
+        ]);
     }
 
     public function enqueueAssets()

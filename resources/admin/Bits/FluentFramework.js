@@ -1,35 +1,33 @@
 import app from '@/admin/Bits/elements';
-// import Rest from '@/admin/Bits/Rest';
+import Rest from '@/admin/Bits/Rest';
 
-// import {
-//     applyFilters,
-//     addFilter,
-//     addAction,
-//     doAction,
-//     removeAllActions
-// } from '@wordpress/hooks';
+import {
+    applyFilters,
+    addFilter,
+    addAction,
+    doAction,
+    removeAllActions
+} from '@wordpress/hooks';
 
-// const moment = require('moment');
-// require('moment/locale/en-gb');
-// moment.locale('en-gb');
+const moment = require('moment');
+require('moment/locale/en-gb');
+moment.locale('en-gb');
 
 export default class FluentFramework {
     constructor() {
-        // this.doAction = doAction;
-        // this.addFilter = addFilter;
-        // this.addAction = addAction;
-        // this.applyFilters = applyFilters;
-        // this.removeAllActions = removeAllActions;
+        this.doAction = doAction;
+        this.addFilter = addFilter;
+        this.addAction = addAction;
+        this.applyFilters = applyFilters;
+        this.removeAllActions = removeAllActions;
         //
-        // this.$rest = Rest;
-        // this.appVars = window.fluentSupportAdmin;
-        // this.app = this.extendVueConstructor();
-        this.app = app
+        this.$rest = Rest;
+        this.appVars = window.fluentSupportAdmin;
+        this.app = this.extendVueConstructor();
     }
 
     extendVueConstructor() {
 
-        return app;
         const self = this;
 
         app.mixin({
@@ -48,41 +46,17 @@ export default class FluentFramework {
                 longLocalDateTime: self.longLocalDateTime,
                 dateTimeFormat: self.dateTimeFormat,
                 localDate: self.localDate,
-                formatMoney: self.formatMoney,
                 ucFirst: self.ucFirst,
                 ucWords: self.ucWords,
                 slugify: self.slugify,
-                moment: moment
-            },
-            computed: {
-                totalExpense() {
-                    return window.fluentSupportAdmin.total;
-                },
-                firstEntry: {
-                    get() {
-                        return window.fluentSupportAdmin.firstEntry;
-                    },
-                    set(value) {
-                        window.fluentSupportAdmin.firstEntry = value;
-                    }
-                },
-                lastEntry: {
-                    get() {
-                        return window.fluentSupportAdmin.lastEntry;
-                    },
-                    set(value) {
-                        window.fluentSupportAdmin.lastEntry = value;
-                    }
-                }
+                moment: moment,
+                $get: self.$get,
+                $post: self.$post,
+                $del: self.$del,
+                $put: self.$put,
+                $patch: self.$patch
             }
         });
-
-        // app.filter('dateTimeFormat', self.dateTimeFormat);
-        // app.filter('ucFirst', self.ucFirst);
-        // app.filter('ucWords', self.ucWords);
-        // app.filter('money', (val) => {
-        //     return val;
-        // });
 
         return app;
     }

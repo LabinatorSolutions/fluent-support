@@ -7,6 +7,23 @@
 
 <script type="text/babel">
     export default {
-        name: 'Dashboard'
+        name: 'Dashboard',
+        data() {
+            return {
+                tickets: []
+            }
+        },
+        methods: {
+            getTickets() {
+                this.$get('tickets', {})
+                    .then(response => {
+                        console.log(response);
+                    })
+            }
+        },
+        mounted() {
+            console.log('OK');
+            this.getTickets();
+        }
     };
 </script>
