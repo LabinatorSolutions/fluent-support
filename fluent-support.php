@@ -12,6 +12,8 @@ Text Domain: alpha
 Domain Path: /language
 */
 
+define('FLUENT_SUPPORT_VERSION', '0.1');
+
 require __DIR__.'/vendor/autoload.php';
 
 call_user_func(function($bootstrap) {
