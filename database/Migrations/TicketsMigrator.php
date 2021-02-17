@@ -24,6 +24,8 @@ class TicketsMigrator
                 `privacy` VARCHAR(100) DEFAULT 'private',
                 `priority` VARCHAR(100) DEFAULT 'normal',
                 `status` VARCHAR(100) DEFAULT 'new',
+                `title` VARCHAR(192) NULL,
+                `slug` VARCHAR(192) NULL,
                 `content` LONGTEXT NULL,
                 `last_agent_response` TIMESTAMP NULL,
                 `last_customer_response` TIMESTAMP NULL,
