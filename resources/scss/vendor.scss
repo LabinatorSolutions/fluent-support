@@ -1,3 +1,10 @@
+@import "~element-plus/lib/theme-chalk/el-table.css";
+@import "~element-plus/lib/theme-chalk/el-table-column.css";
+@import "~element-plus/lib/theme-chalk/el-loading.css";
+@import "~element-plus/lib/theme-chalk/el-pagination.css";
+@import "~element-plus/lib/theme-chalk/el-icon.css";
+@import "~element-plus/lib/theme-chalk/el-button.css";
+
 // customize element ui css here
 .el {
     &-select {
@@ -6,7 +13,6 @@
         input {
             background: transparent;
         }
-
         &-multiple {
             input {
                 height: 40px !important;

@@ -83,4 +83,17 @@ class Response extends Model
         );
     }
 
+    /**
+     * One2Many: Customer has to many Click Tickets
+     * @return Model Collection
+     */
+    public function person()
+    {
+        $class = __NAMESPACE__ . '\Person';
+
+        return $this->belongsTo(
+            $class, 'person_id', 'id'
+        );
+    }
+
 }
