@@ -8,6 +8,8 @@ class Person extends Model
 
     protected static $type = '';
 
+    protected $appends = ['full_name', 'photo'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -29,9 +31,9 @@ class Person extends Model
             $model->person_type = static::$type;
         });
 
-        static::addGlobalScope('person_type', function ($builder) {
-            $builder->where('person_type', '=', static::$type);
-        });
+//        static::addGlobalScope('person_type', function ($builder) {
+//            $builder->where('person_type', '=', static::$type);
+//        });
     }
 
     /**

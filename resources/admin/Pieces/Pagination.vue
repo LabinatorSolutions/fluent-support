@@ -1,10 +1,10 @@
 <template>
-    <el-pagination class="alpha-pagination"
+    <el-pagination
                    :background="false"
                    layout="total, sizes, prev, pager, next"
                    @current-change="changePage"
                    @size-change="changeSize"
-                   :hide-on-single-page="false"
+                   :hide-on-single-page="true"
                    :current-page.sync="pagination.current_page"
                    :page-sizes="page_sizes"
                    :page-size="pagination.per_page"
@@ -37,12 +37,10 @@
         methods: {
             changePage(page) {
                 this.pagination.current_page = page;
-
                 this.$emit('fetch');
             },
             changeSize(size) {
                 this.pagination.per_page = size;
-
                 this.$emit('fetch');
             }
         }

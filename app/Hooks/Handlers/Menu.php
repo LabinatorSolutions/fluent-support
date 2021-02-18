@@ -79,6 +79,12 @@ class Menu
 
         do_action('fluent_support_loading_app');
 
+        // Editor default styles.
+        add_filter('user_can_richedit', '__return_true');
+        wp_tinymce_inline_scripts();
+        wp_enqueue_editor();
+        wp_enqueue_media();
+
         wp_enqueue_script(
             'fluent_support_admin_app_start',
             $assets . 'admin/js/start.js',

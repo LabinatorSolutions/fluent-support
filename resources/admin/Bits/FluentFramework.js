@@ -54,7 +54,8 @@ export default class FluentFramework {
                 $post: self.$post,
                 $del: self.$del,
                 $put: self.$put,
-                $patch: self.$patch
+                $patch: self.$patch,
+                $handleError: self.handleError
             }
         });
 
@@ -148,5 +149,25 @@ export default class FluentFramework {
             .replace(/\\-\\-+/g, '-') // Replace multiple - with single -
             .replace(/^-+/, '') // Trim - from start of text
             .replace(/-+$/, ''); // Trim - from end of text
+    }
+
+    handleError(response) {
+        let errorMessage = '';
+        if (typeof response === 'string') {
+            errorMessage = response;
+        } else if (response && response.message) {
+            errorMessage = response.message;
+        } else {
+            errorMessage = window.FLUENTCRM.convertToText(response);
+        }
+        if (!errorMessage) {
+            errorMessage = 'Something is wrong!';
+        }
+        this.$notify({
+            type: 'error',
+            title: 'Error',
+            message: errorMessage,
+            dangerouslyUseHTMLString: true
+        });
     }
 }

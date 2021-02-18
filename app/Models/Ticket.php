@@ -4,7 +4,7 @@ namespace FluentSupport\App\Models;
 
 class Ticket extends Model
 {
-    protected $table = 'fs_persons';
+    protected $table = 'fs_tickets';
 
     /**
      * The attributes that are mass assignable.
@@ -154,6 +154,32 @@ class Ticket extends Model
 
         return $this->hasMany(
             $class, 'ticket_id', 'id'
+        );
+    }
+
+    /**
+     * One2one: Customer has to many Click Tickets
+     * @return Model Collection
+     */
+    public function customer()
+    {
+        $class = __NAMESPACE__ . '\Customer';
+
+        return $this->belongsTo(
+            $class, 'customer_id', 'id'
+        );
+    }
+
+    /**
+     * One2one: Customer has to many Click Tickets
+     * @return Model Collection
+     */
+    public function agent()
+    {
+        $class = __NAMESPACE__ . '\Agent';
+
+        return $this->belongsTo(
+            $class, 'agent_id', 'id'
         );
     }
 

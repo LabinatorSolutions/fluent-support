@@ -1,61 +1,23 @@
 @import "./vendor";
 @import "./variables";
+@import "elements/nav";
+@import "elements/tickets";
 
-.alpha-app {
-    max-width: 100%;
-    display: block;
-    width: 100%;
-
-    & .alpha-main-menu-items {
-        margin-bottom: 20px;
-        background: white;
-        margin-left: -20px;
-
-        & .alpha-navigation {
-            margin-left: -20px;
-        }
+.#{slug} {
+    &app * {
+        box-sizing: border-box;
     }
+}
 
-    & .alpha-body {
-        margin-right: 20px;
-        background: white;
+.fframe_pagination_wrapper {
+    margin-top: 15px;
+    text-align: right;
+}
 
-        & .header {
-            display: block;
-            width: auto;
-            border-bottom: 1px solid #e3e8ee;
-            clear: both;
-            overflow: hidden;
-            margin: 0;
-            padding: 10px 15px;
-            background-color: #f7fafc;
-            font-weight: 700;
-            color: #697386;
-        }
+#wpcontent, .fframe_app {
+    background-color: $bodyBg;
+}
 
-        & .content {
-            padding: 20px;
-            background-color: #fff;
-        }
-    }
-
-    & .alpha-navigation.el-menu--horizontal.el-menu .el-menu-item.is-active {
-        background: #ecf5ff;
-    }
-
-    & .logo {
-        margin-left:20px;
-    }
-    
-    & .pager-wrap {
-        margin-top:20px;
-        text-align:right;
-    }
-
-    & .el-button.el-button--text {
-        font-weight: 400;
-    }
-    & .el-textarea .el-textarea__inner {
-        word-break: break-word;
-    }
+.fframe_body {
+    margin-right: 20px;
 }
