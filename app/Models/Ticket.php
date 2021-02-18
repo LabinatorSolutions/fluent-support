@@ -183,5 +183,15 @@ class Ticket extends Model
         );
     }
 
+    /**
+     * Accessor to get dynamic full_name attribute
+     * @return string
+     */
+    public function getExcerpt()
+    {
+        $content = $this->content;
+        $content = substr(preg_replace( "/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($content))) ), 0, 180);
+        return $content.'...';
+    }
 
 }

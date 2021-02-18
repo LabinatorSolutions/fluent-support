@@ -14,9 +14,13 @@ class TicketController extends Controller
 {
     public function index(Request $request)
     {
+        $tickets = Ticket::with(['customer', 'agent'])->paginate();
+        foreach ($tickets as $ticket) {
+            $ticket->excerpt = $ticket->getExcerpt();
+        }
+
         return [
-            'tickets'   => Ticket::with(['customer', 'agent'])->paginate(),
-            'customers' => Customer::all()
+            'tickets'   => $tickets
         ];
     }
 
@@ -63,8 +67,11 @@ class TicketController extends Controller
 
         if ($ticket->status == 'new') {
             $ticket->status = 'active';
-            $ticket->save();
+            $ticket->first_response_time = current_time('timestamp') - strtotime($ticket->created_at);
         }
+
+        $ticket->response_count += 1;
+        $ticket->save();
 
         $createdResponse->load(['person']);
 

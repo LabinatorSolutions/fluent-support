@@ -1,27 +1,38 @@
 <template>
     <div v-loading="loading" class="fs_all_tickets">
+        <div class="fs_tk_filters">
+            
+        </div>
         <el-table
             :data="tickets"
             stripe
             style="width: 100%">
-            <el-table-column label="Title">
-                <template #default="scope">
-                    <router-link :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">{{scope.row.title}}</router-link>
-                </template>
-            </el-table-column>
             <el-table-column width="160" label="Customer">
                 <template #default="scope">
                     <span v-if="scope.row.customer">{{scope.row.customer.full_name}}</span>
                     <span v-else>n/a</span>
                 </template>
             </el-table-column>
-            <el-table-column width="160" label="Agent">
+            <el-table-column label="Title">
                 <template #default="scope">
-                    <span v-if="scope.row.agent">{{scope.row.agent.full_name}}</span>
+                    <router-link class="fs_tk_preview" :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
+                        <strong>{{scope.row.title}}</strong>
+                        <p class="fs_tk_preview_text">{{scope.row.excerpt}}</p>
+                    </router-link>
+                </template>
+            </el-table-column>
+            <el-table-column width="40" >
+                <template #default="scope">
+                    <span class="fs_thread_count">{{scope.row.response_count}}</span>
+                </template>
+            </el-table-column>
+            <el-table-column width="100" label="Manager">
+                <template #default="scope">
+                    <span :title="scope.row.agent.full_name" v-if="scope.row.agent">{{scope.row.agent.first_name}}</span>
                     <span v-else>not assigned</span>
                 </template>
             </el-table-column>
-            <el-table-column width="120" label="Status">
+            <el-table-column width="80" label="Status">
                 <template #default="scope">
                     <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{scope.row.status}}</span>
                 </template>
