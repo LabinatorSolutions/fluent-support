@@ -254,3 +254,27 @@
         }
     }
 }
+
+.fs_tk_preview {
+    text-decoration: none;
+    color: #314351;
+    font-size: 13px;
+    p {
+        padding: 0;
+        margin: 0;
+        text-overflow: ellipsis;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+}
+
+span.fs_thread_count {
+    background: #f1f3f5;
+    border: 1px solid #d5dce1;
+    color: #a5b2bd;
+    font-size: 11px;
+    font-weight: 400;
+    padding: .1em .4em;
+    border-radius: 4px;
+}
