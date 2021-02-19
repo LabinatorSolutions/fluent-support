@@ -24,9 +24,10 @@ class TicketController extends Controller
 
     public function index(Request $request)
     {
-
         $ticketsQuery = Ticket::with([
-            'customer', 'agent' => function ($query) {
+            'customer' => function($query) {
+                $query->select(['first_name', 'last_name', 'id']);
+            }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             }
         ]);
@@ -34,7 +35,6 @@ class TicketController extends Controller
         if ($customerData = $request->get('customer')) {
 
             $customer = Customer::getCustomerFromData($customerData);
-            return $customer;
 
             if (!$customer) {
                 return $this->sendError([

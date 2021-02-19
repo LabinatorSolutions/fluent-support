@@ -41,7 +41,7 @@ export default {
             })
             .always(() => {
                 this.creating = false;
-            })
+            });
         }
     }
 }

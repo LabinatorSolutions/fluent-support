@@ -1,44 +1,27 @@
 <template>
-    <div v-loading="loading" class="fs_view_ticket">
-        <div class="fs_ticket_body">
-            <div class="fs_ticket_actions">
-                <ul class="fs_tk_actions">
-                    <li @click="show_response_box = !show_response_box">
-                        <i class="el-icon-chat-line-square" />
-                    </li>
-                    <li>
-                        <i class="el-icon-notebook-1" />
-                    </li>
-                    <li>
-                        <i class="el-icon-user" />
-                    </li>
-                    <li>
-                        <i class="el-icon-s-flag" />
-                    </li>
-                    <li>
-                        <i class="el-icon-price-tag" />
-                    </li>
-                    <li>
-                        <i class="el-icon-position" />
-                    </li>
-                </ul>
-            </div>
-            <div class="fs_th_header">
+    <div v-loading="fetching" class="fs_ticket">
+
+        <div class="fs_tk_header">
+            <div v-if="ticket" class="fs_th_header">
                 <hgroup>
                     <div class="fs_tk_subject">
-                        <h2 title="fs_tk_edit_subject">{{ ticket.title }}</h2>
+                        <h2 title="fs_tk_edit_subject">
+                            <span class="fs_ticket_id">#{{ ticket.id }}</span>
+                            {{ ticket.title }}
+                        </h2>
                         <div class="fs_tk_tags">
-                            <span class="fs_badge">samples</span>
-                            <span class="fs_badge">vip</span>
+                            <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
                         </div>
                     </div>
-                    <div class="fs_tk_badges">
-                        <span class="fs_ticket_id">#{{ ticket.id }}</span>
-                        <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
+                    <div class="fs_tk_actions">
+                        <el-button @click="$router.push({ name: 'dashboard' })" size="small">All</el-button>
+                        <el-button size="small" type="danger">Close Ticket</el-button>
                     </div>
                 </hgroup>
             </div>
-            <create-response @created="recordNewResponse" v-if="show_response_box" :ticket="ticket" type="response" />
+        </div>
+        <div class="fs_tk_body">
+            <inline-reply @created="recordNewResponse" v-if="ticket" :ticket="ticket" />
             <div v-if="ticket && ticket.id" class="fs_threads_container">
                 <article v-for="conversation in conversations"
                          :key="conversation.id"
@@ -52,7 +35,7 @@
                             <section class="fs_thread_message">
                                 <div class="fs_thread_head">
                                     <div class="fs_thread_title">
-                                        <strong v-if="conversation.person">{{ conversation.person.full_name }}</strong> replied
+                                        <strong v-if="conversation.person">{{ getHumanName(conversation.person) }}</strong> replied
                                     </div>
                                     <div class="fs_thread_actions">
                                         {{ conversation.created_at }}
@@ -72,7 +55,7 @@
                             <section class="fs_thread_message">
                                 <div class="fs_thread_head">
                                     <div class="fs_thread_title">
-                                        <strong>{{ ticket.customer.full_name }}</strong> started the conversation
+                                        <strong>{{ getHumanName(ticket.customer) }}</strong> started the conversation
                                     </div>
                                     <div class="fs_thread_actions">
                                         {{ ticket.created_at }}
@@ -85,44 +68,40 @@
                 </article>
             </div>
         </div>
-        <div class="fs_ticket_sidebar">
-            <ticket-sidebar :ticket_id="ticket_id" :ticket="ticket" />
-        </div>
+
     </div>
 </template>
 
 <script type="text/babel">
-import CreateResponse from './_CreateResponse';
-import TicketSidebar from './_TicketSidebar';
-
+import InlineReply from "./InlineReply";
 export default {
-    name: 'ViewTicket',
+    name: 'ticket',
     props: ['ticket_id'],
     components: {
-        CreateResponse,
-        TicketSidebar
+        InlineReply
     },
     data() {
         return {
-            loading: false,
             ticket: false,
             conversations: [],
-            show_response_box: false
+            fetching: false,
+            signon_id: ''
         }
     },
     methods: {
         fetchTicket() {
-            this.loading = true;
+            this.fetching = true;
             this.$get(`tickets/${this.ticket_id}`)
                 .then(response => {
                     this.ticket = response.ticket;
                     this.conversations = response.responses;
+                    this.signon_id = response.sign_on_id;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    console.log(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    this.fetching = false;
                 });
         },
         getTicketClasses(conversation) {
@@ -134,14 +113,24 @@ export default {
                 classes.push('fs_person_' + conversation.person.person_type);
             }
 
+            if(conversation.person.id == this.signon_id) {
+                classes.push('fs_person_own');
+            }
+
             classes.push('fs_conv_type_' + conversation.conversation_type);
 
             return classes;
         },
+        getHumanName(person) {
+            if (this.signon_id == person.id) {
+                return 'You';
+            }
+
+            return person.full_name;
+        },
         recordNewResponse(response, ticket) {
             this.conversations.unshift(response);
             this.ticket.status = ticket.status;
-            this.show_response_box = false;
         }
     },
     mounted() {

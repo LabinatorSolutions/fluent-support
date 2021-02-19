@@ -1,0 +1,259 @@
+@import "~element-plus/lib/theme-chalk/el-table.css";
+@import "~element-plus/lib/theme-chalk/el-table-column.css";
+@import "~element-plus/lib/theme-chalk/el-loading.css";
+@import "~element-plus/lib/theme-chalk/el-pagination.css";
+@import "~element-plus/lib/theme-chalk/el-icon.css";
+@import "~element-plus/lib/theme-chalk/el-button.css";
+@import "~element-plus/lib/theme-chalk/el-checkbox.css";
+@import "~element-plus/lib/theme-chalk/el-radio-button.css";
+@import "~element-plus/lib/theme-chalk/el-radio-group.css";
+@import "~element-plus/lib/theme-chalk/el-form.css";
+@import "~element-plus/lib/theme-chalk/el-form-item.css";
+@import "~element-plus/lib/theme-chalk/el-select.css";
+@import "~element-plus/lib/theme-chalk/el-option.css";
+@import "~element-plus/lib/theme-chalk/el-input.css";
+
+.fst_client_portal {
+    .fs_tk_preview {
+        text-decoration: none;
+        color: #314351;
+        font-size: 13px;
+        p {
+            padding: 0;
+            margin: 0;
+            text-overflow: ellipsis;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    }
+
+    span.fs_thread_count {
+        background: #f1f3f5;
+        border: 1px solid #d5dce1;
+        color: #a5b2bd;
+        font-size: 11px;
+        font-weight: 400;
+        padding: .1em .4em;
+        border-radius: 4px;
+    }
+
+    .fs_badge {
+        background: #a5b2bd;
+        border-radius: 2px;
+        color: #fff;
+        display: inline-block;
+        font-size: 12.5px;
+        font-weight: 400;
+        padding: 1px 10px;
+        cursor: pointer;
+        line-height: 14px;
+        margin: 0 4px 0 0;
+        top: 6px;
+        &.fs_badge_new {
+            background: #f56c6c;
+        }
+        &.fs_badge_active {
+            background: #56c288;
+        }
+    }
+    ul {
+        margin: 0;
+        padding: 0;
+    }
+    .fst_pagi_wrapper {
+        margin-top: 20px;
+        text-align: right;
+    }
+
+    .fs_threads_container {
+        background: white;
+    }
+
+    .fs_th_header {
+        border-left: 0;
+        border-right: 0;
+        position: relative;
+        >hgroup {
+            color: #111;
+            position: relative;
+        }
+        span.fs_ticket_id {
+            margin-right: 10px;
+            font-size: 20px;
+            color: #93a1b0;
+        }
+        .fs_tk_subject {
+            zoom: 1;
+            word-break: break-word;
+            padding-right: 150px;
+            h2 {
+                color: #314351;
+                font-weight: 400;
+                line-height: 30px;
+                word-wrap: break-word;
+                font-size: 22.5px;
+                display: inline-block;
+                margin:0;
+            }
+            .fs_tk_tags {
+                padding-left: 20px;
+                display: inline-block;
+                span {
+                }
+            }
+        }
+        .fs_tk_actions {
+            margin: 0;
+            position: absolute;
+            right: 0;
+            top: -5px;
+            width: auto;
+        }
+    }
+
+    .fs_thread {
+        display: block;
+        overflow: hidden;
+        clear: both;
+        width: 100%;
+        border-top: 1px solid #e5e9ec;
+        .fs_avatar {
+            background: #f1f3f5;
+            border-radius: 50%;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            height: 46px;
+            width: 46px;
+            float: left;
+            margin: 25px 20px 25px 25px;
+            img {
+                border-radius: 50%;
+                max-width: 46px;
+                max-height: 46px;
+            }
+        }
+    }
+
+    .fs_thread_wrap {
+        margin: 0 25px 0 72px;
+        padding: 25px;
+        .fs_thread_message {
+            width: 100%;
+            overflow: auto;
+            line-height: 150%;
+        }
+        .fs_thread_head {
+            zoom: 1;
+            min-height: 40px;
+        }
+        .fs_thread_title {
+            color: #8494a5;
+            font-weight: 400;
+            font-size: 18px;
+            line-height: 1.2em;
+            margin-bottom: 12px;
+            display: inline-block;
+            strong {
+                font-weight: 500;
+                color: #253642;
+            }
+        }
+        .fs_thread_actions {
+            float: right;
+            color: #a5b2bd;
+            text-align: right;
+            font-size: 12px;
+        }
+        .fs_thread_body {
+            color: #253642;
+            font-size: 14px;
+            line-height: 1.45em;
+            overflow-y: hidden;
+            h1, h2, h3, h4, h5, h6 {
+                margin: 10px 0px;
+            }
+            img, iframe, * {
+                max-width: 100%;
+            }
+            ul {
+                list-style: disc;
+                padding: 0;
+                margin: 15px 0 0;
+                li {
+                    font-size: 14px;
+                    margin-left: 30px;
+                    padding-left: 7px;
+                }
+            }
+        }
+    }
+
+    textarea.fs_reply_text {
+        width: 100% !important;
+        height: 60px !important;
+        border: 1px solid #e5e9ec;
+        background: #e5e9ec;
+        padding: 15px 20px;
+    }
+    .fst_reply_box_focused {
+        padding: 20px;
+        background: #f1f2f5;
+        border: 1px solid #e5e9ec;
+    }
+    .fs_response_actions {
+        padding-top: 10px;
+        display: block;
+        text-align: right;
+    }
+
+    .fs_close_checkbox {
+        padding-right: 20px;
+    }
+
+    .fs_tk_actions {
+        overflow: hidden;
+        display: block;
+        width: 100%;
+        .fs_tk_left, .fs_tk_right {
+            width: 50%;
+            float: left;
+        }
+        .fs_tk_right {
+            text-align: right;
+        }
+    }
+
+    .fs_tk_header {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        background: #ebeef4;
+        padding: 10px 20px;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
+        h3 {
+            color: #314351;
+            font-weight: 400;
+            line-height: 30px;
+            word-wrap: break-word;
+            font-size: 22.5px;
+            margin: 0;
+        }
+    }
+    .fs_tk_body {
+        border: 1px solid #ebeef3;
+        background: #ebeef3;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+    .fs_ticket {
+        .fs_tk_header {
+            padding: 20px 20px;
+        }
+    }
+    .fst_reply_box {
+        background: white;
+        padding: 15px 20px;
+    }
+}
