@@ -1,7 +1,9 @@
 <template>
     <div v-loading="loading" class="fs_all_tickets">
         <div class="fs_tk_filters">
-            
+            <div class="fs_tk_filter">
+
+            </div>
         </div>
         <el-table
             :data="tickets"
