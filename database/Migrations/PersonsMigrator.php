@@ -24,6 +24,7 @@ class PersonsMigrator
                 `person_type` VARCHAR(192) DEFAULT 'customer',
                 `status` VARCHAR(192) DEFAULT 'active',
                 `user_id` BIGINT(20) UNSIGNED NULL,
+                `remote_uid` BIGINT(20) UNSIGNED NULL,
                 `last_response_at` TIMESTAMP NULL,
                 `created_at` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL

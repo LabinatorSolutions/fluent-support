@@ -11,12 +11,19 @@
 
 $router->prefix('tickets')->group(function ($router) {
     $router->get('/', 'TicketController@index');
+    $router->post('/', 'TicketController@create');
     $router->get('/{ticket_id}', 'TicketController@getTicket')->int('ticket_id');
 
     $router->get('/{ticket_id}/widgets', 'TicketController@getTicketWidgets')->int('ticket_id');
     $router->post('/{ticket_id}/responses', 'TicketController@createResponse')->int('ticket_id');
 
+    $router->post('/{ticket_id}/customer-responses', 'ConversationController@createCustomerReply')
+        ->int('ticket_id');
+
 });
+
+
+$router->get('me', 'TicketController@me');
 
 //$router->prefix('accounts')->name('accounts.')->group(function($router) {
 //
