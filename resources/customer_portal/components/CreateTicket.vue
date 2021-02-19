@@ -1,0 +1,85 @@
+<template>
+    <div class="fs_all_tickets">
+        <div class="fs_tk_actions fs_tk_header">
+            <div class="fs_tk_left">
+                <h3>Submit a Support Ticket</h3>
+            </div>
+            <div class="fs_tk_right">
+                <el-button @click="$router.push({ name: 'dashboard' })" size="small" type="info">View All</el-button>
+            </div>
+        </div>
+        <div style="background: white; padding: 20px;" class="fs_tk_body">
+            <el-form :data="ticket" label-position="top">
+                <el-form-item label="Subject">
+                    <el-input placeholder="What's about this support ticket" type="text" v-model="ticket.title"></el-input>
+                </el-form-item>
+                <el-form-item label="Ticket Details">
+                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" />
+                    <p>Please provide details about your problem</p>
+                </el-form-item>
+
+                <div class="fs_tk_actions">
+                    <div class="fs_tk_left">
+                        <el-form-item label="Related Product/Service">
+                            <el-select v-model="ticket.product_id" placeholder="Select related Product/Service">
+                                <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div>
+                    <div class="fs_tk_left">
+                        <el-form-item label="Priority">
+                            <el-select v-model="ticket.client_priority" placeholder="Select related Product/Service">
+                                <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div>
+                </div>
+
+                <el-form-item>
+                    <el-button type="primary">Create Ticket</el-button>
+                </el-form-item>
+
+            </el-form>
+        </div>
+    </div>
+</template>
+
+<script type="text/babel">
+import WpEditor from '../../admin/Pieces/_wp_editor';
+
+export default {
+    name: 'CreateTicket',
+    components: {
+        WpEditor
+    },
+    data() {
+        return {
+            ticket: {
+                title: '',
+                content: '',
+                product_id: '',
+                client_priority: 'normal'
+            },
+            products: [
+                {
+                    id: '1',
+                    title: 'Fluent Forms'
+                },
+                {
+                    id: '2',
+                    title: 'Ninja Tables'
+                },
+                {
+                    id: '3',
+                    title: 'Other'
+                },
+            ],
+            priorities: {
+                normal: 'Normal',
+                high: 'High',
+                urgent: 'Urgent'
+            }
+        }
+    }
+}
+</script>

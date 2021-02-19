@@ -17,3 +17,6 @@ $app->addCustomAction('handle_exception', 'ExceptionHandler@handle');
 
 $app->addAction('admin_menu', 'Menu@add');
 
+add_shortcode('fluent_support_portal', function () {
+    return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
+});

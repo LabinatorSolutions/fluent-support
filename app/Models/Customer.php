@@ -39,8 +39,13 @@ class Customer extends Person
         if($remoteUid) {
             $customer = self::where('remote_uid', $remoteUid)->first();
         }
+
         if(!$customer) {
-            $customer = self::where('email', $email)->first();
+            if(!empty($customerData['user_id'])) {
+                $customer = self::where('user_id', $customerData['user_id'])->first();
+            } else {
+                $customer = self::where('email', $email)->first();
+            }
         }
 
         return $customer;

@@ -23,6 +23,13 @@ $router->prefix('tickets')->group(function ($router) {
 });
 
 
+$router->prefix('customer-portal')->group(function ($router) {
+    $router->get('tickets', 'CustomerPortalController@getTickets');
+    $router->get('tickets/{ticket_id}', 'CustomerPortalController@getTicket')->int('ticket_id');
+    $router->post('tickets/{ticket_id}/responses', 'CustomerPortalController@createResponse')->int('ticket_id');
+});
+
+
 $router->get('me', 'TicketController@me');
 
 //$router->prefix('accounts')->name('accounts.')->group(function($router) {

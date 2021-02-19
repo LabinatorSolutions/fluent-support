@@ -37,6 +37,12 @@ export default {
             default() {
                 return 250;
             }
+        },
+        mediaButtons: {
+            type: Boolean,
+            default() {
+                return true;
+            }
         }
     },
     emits: ['update:modelValue'],
@@ -66,7 +72,7 @@ export default {
             this.editor.remove(this.editor_id);
             const that = this;
             this.editor.initialize(this.editor_id, {
-                mediaButtons: true,
+                mediaButtons: this.mediaButtons,
                 tinymce: {
                     height: that.height,
                     toolbar1: 'formatselect,customInsertButton,table,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,underline,strikethrough,forecolor,removeformat,codeformat,outdent,indent,undo,redo',
