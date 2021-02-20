@@ -66,6 +66,7 @@
             clear: both;
             width: 100%;
             border-top: 1px solid #e5e9ec;
+            position: relative;
             .fs_avatar {
                 background: #f1f3f5;
                 border-radius: 50%;
@@ -80,6 +81,32 @@
                     max-width: 46px;
                     max-height: 46px;
                 }
+            }
+            &.fs_person_agent:after {
+                content: "";
+                width: 4px;
+                height: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+                background: #606dbe;
+            }
+            &.fs_person_agent:before {
+                content: "Support Staff";
+                position: relative;
+                left: 0px;
+                top: 0px;
+                background: #5d6cc3;
+                color: #fff;
+                font-size: 10px;
+                padding: 5px 10px;
+            }
+            &.fs_conv_type_note {
+                background: #ffffc7;
+                &:after {
+                    background: #e6a23c;
+                }
+
             }
         }
 
@@ -139,10 +166,13 @@
 
         .fs_ticket_actions {
             padding: 5px 10px;
+            display: block;
+            overflow: hidden;
             ul.fs_tk_actions {
                 list-style: none;
                 margin: 0;
                 padding: 0;
+                float: left;
                 li {
                     cursor: pointer;
                     padding: 10px 20px;
@@ -152,11 +182,49 @@
                         font-size: 24px;
                         line-height: 30px;
                     }
+                    &.fs_action_active {
+                        background: #5d6cc3;
+                        color: white;
+                    }
                 }
             }
+            .fs_product {
+                float: right;
+                padding: 16px 15px 0 0;
+                font-size: 16px;
+                color: #99a5b4;
+                cursor: pointer;
+            }
+            span.fs_agent_photo_icon img {
+                max-width: 30px;
+                border-radius: 50%;
+                margin: -4px 0px;
+            }
+        }
+
+        pre {
+            background: #e1ebee;
+            font-family: "Courier 10 Pitch", Courier, monospace;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            max-width: 100%;
+            overflow: auto;
+            padding: 1.5em;
+            white-space: pre-wrap;
         }
     }
 }
+
+.el-table__row {
+    span.fs_product {
+        color: white;
+        border: 1px solid gray;
+        padding: 0px 5px;
+        border-radius: 10px;
+        background: gray;
+    }
+}
+
 
 .fs_badge {
     background: #a5b2bd;
@@ -186,6 +254,9 @@
         padding-top: 10px;
         display: block;
         text-align: right;
+    }
+    &.fs_reply_type_note {
+        background: #ffeaca;
     }
 }
 

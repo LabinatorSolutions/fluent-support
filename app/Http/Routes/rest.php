@@ -11,7 +11,6 @@
 
 $router->prefix('tickets')->group(function ($router) {
     $router->get('/', 'TicketController@index');
-    $router->post('/', 'TicketController@create');
     $router->get('/{ticket_id}', 'TicketController@getTicket')->int('ticket_id');
 
     $router->get('/{ticket_id}/widgets', 'TicketController@getTicketWidgets')->int('ticket_id');
@@ -20,15 +19,28 @@ $router->prefix('tickets')->group(function ($router) {
     $router->post('/{ticket_id}/customer-responses', 'ConversationController@createCustomerReply')
         ->int('ticket_id');
 
-});
+    $router->put('/{ticket_id}/property', 'TicketController@updateTicketProperty')->int('ticket_id');
 
+});
 
 $router->prefix('customer-portal')->group(function ($router) {
     $router->get('tickets', 'CustomerPortalController@getTickets');
+    $router->post('tickets', 'CustomerPortalController@createTicket');
     $router->get('tickets/{ticket_id}', 'CustomerPortalController@getTicket')->int('ticket_id');
     $router->post('tickets/{ticket_id}/responses', 'CustomerPortalController@createResponse')->int('ticket_id');
+
+    $router->post('/tickets/{ticket_id}/close', 'CustomerPortalController@closeTicket')->int('ticket_id');
+    $router->post('/tickets/{ticket_id}/re-open', 'CustomerPortalController@reOpenTicket')->int('ticket_id');
 });
 
+$router->prefix('products')->group(function ($router) {
+    $router->get('/', 'ProductController@index');
+    $router->post('/', 'ProductController@create');
+    $router->get('/{product_id}', 'ProductController@get');
+    $router->post('/{product_id}', 'ProductController@create');
+    $router->put('/{product_id}', 'ProductController@update');
+    $router->delete('/{product_id}', 'ProductController@delete');
+});
 
 $router->get('me', 'TicketController@me');
 

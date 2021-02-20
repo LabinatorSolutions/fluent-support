@@ -115,10 +115,18 @@ class Person extends Model
      */
     public function getPhotoAttribute()
     {
-        if (isset($this->attributes['avatar'])) {
+        if (!empty($this->attributes['avatar'])) {
             return $this->attributes['avatar'];
         }
-        return fluentcrmGravatar($this->attributes['email']);
+
+
+        $hash = md5(strtolower(trim($this->attributes['email'])));
+        return apply_filters(
+            'fluent_support/get_avatar',
+            "https://www.gravatar.com/avatar/${hash}?s=128",
+            $this->attributes['email']
+        );
+
     }
 
     /**
@@ -147,6 +155,16 @@ class Person extends Model
         }
 
         return $record;
+    }
+
+
+    public function getUserProfileEditUrl()
+    {
+        $userEditUrl = '';
+        if($this->user_id) {
+            $userEditUrl = get_edit_profile_url($this->user_id);
+        }
+        return apply_filters('fluent_support/person_user_edit_url', $userEditUrl, $this);
     }
 
 }

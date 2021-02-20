@@ -10,18 +10,32 @@
                             {{ ticket.title }}
                         </h2>
                         <div class="fs_tk_tags">
+                            <span v-if="ticket.product" class="fs_badge">{{ticket.product.title}}</span>
                             <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
                         </div>
                     </div>
                     <div class="fs_tk_actions">
                         <el-button @click="$router.push({ name: 'dashboard' })" size="small">All</el-button>
-                        <el-button size="small" type="danger">Close Ticket</el-button>
+                        <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating" @click="closeTicket()" size="small"
+                                   type="danger">Close Ticket
+                        </el-button>
                     </div>
                 </hgroup>
             </div>
         </div>
         <div class="fs_tk_body">
-            <inline-reply @created="recordNewResponse" v-if="ticket" :ticket="ticket" />
+            <template v-if="ticket">
+                <div style="text-align: center;" class="fst_reply_box" v-if="ticket.status == 'closed'">
+                    <p>This ticket has been closed at {{ticket.resolved_at }}
+                        <span v-if="ticket.closed_by_person">
+                            by <b>{{getHumanName(ticket.closed_by_person)}}</b>
+                        </span>
+                    <br />If you still have related issues. Please reopen this ticket and reply</p>
+                    <el-button :disabled="updating" v-loading="updating" @click="reOpen()" type="info" size="small">Reopen This ticket</el-button>
+                </div>
+                <inline-reply v-else @created="recordNewResponse" :ticket="ticket"/>
+            </template>
+
             <div v-if="ticket && ticket.id" class="fs_threads_container">
                 <article v-for="conversation in conversations"
                          :key="conversation.id"
@@ -29,13 +43,16 @@
                          :class="getTicketClasses(conversation)">
                     <div class="fs_thread_content">
                         <section class="fs_avatar">
-                            <img v-if="conversation.person" :src="conversation.person.photo" :alt="conversation.person.full_name"/>
+                            <img v-if="conversation.person" :src="conversation.person.photo"
+                                 :alt="conversation.person.full_name"/>
                         </section>
                         <section class="fs_thread_wrap">
                             <section class="fs_thread_message">
                                 <div class="fs_thread_head">
                                     <div class="fs_thread_title">
-                                        <strong v-if="conversation.person">{{ getHumanName(conversation.person) }}</strong> replied
+                                        <strong v-if="conversation.person">{{
+                                                getHumanName(conversation.person)
+                                            }}</strong> replied
                                     </div>
                                     <div class="fs_thread_actions">
                                         {{ conversation.created_at }}
@@ -74,6 +91,7 @@
 
 <script type="text/babel">
 import InlineReply from "./InlineReply";
+
 export default {
     name: 'ticket',
     props: ['ticket_id'],
@@ -85,7 +103,8 @@ export default {
             ticket: false,
             conversations: [],
             fetching: false,
-            signon_id: ''
+            signon_id: '',
+            updating: false
         }
     },
     methods: {
@@ -113,7 +132,7 @@ export default {
                 classes.push('fs_person_' + conversation.person.person_type);
             }
 
-            if(conversation.person.id == this.signon_id) {
+            if (conversation.person.id == this.signon_id) {
                 classes.push('fs_person_own');
             }
 
@@ -131,6 +150,32 @@ export default {
         recordNewResponse(response, ticket) {
             this.conversations.unshift(response);
             this.ticket.status = ticket.status;
+        },
+        closeTicket() {
+            this.updating = true;
+            this.$post(`tickets/${this.ticket_id}/close`)
+                .then(response => {
+                    this.ticket.status = response.ticket.status;
+                })
+                .catch((errors) => {
+                    console.log(errors);
+                })
+                .always(() => {
+                    this.updating = false;
+                });
+        },
+        reOpen() {
+            this.updating = true;
+            this.$post(`tickets/${this.ticket_id}/re-open`)
+                .then(response => {
+                    this.ticket.status = response.ticket.status;
+                })
+                .catch((errors) => {
+                    console.log(errors);
+                })
+                .always(() => {
+                    this.updating = false;
+                });
         }
     },
     mounted() {

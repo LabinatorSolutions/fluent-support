@@ -3,7 +3,10 @@
         <div v-if="ticket && ticket.customer" class="fs_tk_card fs_tk_profile_card">
             <div class="fs_tk_card_header">
                 <div class="fs_avatar">
-                    <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
+                    <a v-if="ticket.customer.profile_edit_url" :href="ticket.customer.profile_edit_url">
+                        <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
+                    </a>
+                    <img v-else :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
                 </div>
             </div>
             <div class="fs_tk_card_body">

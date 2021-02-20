@@ -23,6 +23,7 @@ class TicketsMigrator
                 `product_source` VARCHAR(192) NULL,
                 `privacy` VARCHAR(100) DEFAULT 'private',
                 `priority` VARCHAR(100) DEFAULT 'normal',
+                `client_priority` VARCHAR(100) DEFAULT 'normal',
                 `status` VARCHAR(100) DEFAULT 'new',
                 `title` VARCHAR(192) NULL,
                 `slug` VARCHAR(192) NULL,

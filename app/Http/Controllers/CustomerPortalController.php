@@ -54,15 +54,51 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    public function createTicket(Request $request)
+    {
+        $data = $request->all();
+
+        $this->validate($data, [
+            'title'          => 'required',
+            'content'        => 'required'
+        ]);
+
+        $customer = $this->resolveCustomer($request, true);
+
+        if (!$customer) {
+            return $this->sendError([
+                'message'       => 'No Customer Found',
+                'error_type' => 'no_customer'
+            ]);
+        }
+
+        $data['customer_id'] = $customer->id;
+        $data['product_source'] = 'local';
+
+        $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
+        do_action('fluent_support/before_ticket_create', $data, $customer);
+
+        $createdTicket = Ticket::create($data);
+        $ticket = Ticket::find($createdTicket->id);
+
+        do_action('fluent_support/ticket_created', $ticket, $customer);
+
+        return [
+            'message' => __('Ticket has been created successfully', 'fluent-support'),
+            'ticket'  => $ticket
+        ];
+    }
+
     public function getTicket(Request $request, $ticketId)
     {
         $ticket = Ticket::where('id', $ticketId)
             ->with([
                 'customer' => function ($query) {
-                    $query->select(['first_name', 'last_name', 'id']);
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
                 }, 'agent' => function ($query) {
-                    $query->select(['first_name', 'last_name', 'id']);
-                }
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
+                },
+                'product'
             ])
             ->first();
 
@@ -85,11 +121,33 @@ class CustomerPortalController extends Controller
         $responses = Response::where('ticket_id', $ticketId)
             ->with([
                 'person' => function ($query) {
-                    $query->select(['first_name', 'last_name', 'id']);
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
                 }
             ])
+            ->filterByType('response')
             ->orderBy('id', 'DESC')
             ->get();
+
+       foreach ($responses as $response) {
+           if($response->person) {
+               $response->person->setHidden(['email']);
+           }
+       }
+
+       if($ticket->customer) {
+           $ticket->customer->setHidden(['email']);
+       }
+
+        if($ticket->agent) {
+            $ticket->agent->setHidden(['email']);
+        }
+
+        if($ticket->status == 'closed') {
+            $ticket->load('closed_by_person');
+            if($ticket->closed_by_person) {
+                $ticket->closed_by_person->setVisible(['first_name', 'last_name', 'id', 'full_name', 'photo']);
+            }
+        }
 
         return [
             'ticket'    => $ticket,
@@ -136,6 +194,7 @@ class CustomerPortalController extends Controller
             $ticket->first_response_time = current_time('timestamp') - strtotime($ticket->created_at);
         }
 
+        $ticket->last_customer_response = current_time('mysql');
         $ticket->response_count += 1;
         $ticket->save();
 
@@ -147,6 +206,75 @@ class CustomerPortalController extends Controller
             'response' => $response,
             'ticket' => $ticket
         ];
+    }
+
+    public function closeTicket(Request $request, $ticketId)
+    {
+        $customer = $this->resolveCustomer($request);
+
+        if(!$customer) {
+            return $this->sendError([
+                'message' => __('Sorry! No customer found', 'fluent-support')
+            ]);
+        }
+
+        $ticket = Ticket::findOrFail($ticketId);
+
+        if($customer->id != $ticket->customer_id) {
+            return $this->sendError([
+                'message' => __('Sorry! You can not close this ticket', 'fluent-support')
+            ]);
+        }
+
+        if($ticket->status != 'closed') {
+            $ticket->status = 'closed';
+            $ticket->resolved_at = current_time('mysql');
+            $ticket->closed_by = $customer->id;
+            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
+            $ticket->save();
+            do_action('fluent_support/ticket_closed', $ticket, $customer);
+            do_action('fluent_support/ticket_closed_by_'.$customer->person_type, $ticket, $customer);
+        }
+
+        return [
+            'message' => __('Ticket has been closed', 'fluent_support'),
+            'ticket' => $ticket
+        ];
+
+
+    }
+
+    public function reOpenTicket(Request $request, $ticketId)
+    {
+        $customer = $this->resolveCustomer($request);
+
+        if(!$customer) {
+            return $this->sendError([
+                'message' => __('Sorry! No customer found', 'fluent-support')
+            ]);
+        }
+
+        $ticket = Ticket::findOrFail($ticketId);
+
+        if($customer->id != $ticket->customer_id) {
+            return $this->sendError([
+                'message' => __('Sorry! You can not close this ticket', 'fluent-support')
+            ]);
+        }
+
+        if($ticket->status == 'closed') {
+            $ticket->status = 'active';
+            $ticket->save();
+            do_action('fluent_support/ticket_reopen', $ticket, $customer);
+            do_action('fluent_support/ticket_reopen_by_'.$customer->person_type, $ticket, $customer);
+        }
+
+        return [
+            'message' => __('Ticket has been opened again', 'fluent_support'),
+            'ticket' => $ticket
+        ];
+
+
     }
 
     private function resolveCustomer($request, $forceCreate = false)
@@ -170,4 +298,6 @@ class CustomerPortalController extends Controller
 
         return Customer::getCustomerFromData($onBehalf);
     }
+
+
 }

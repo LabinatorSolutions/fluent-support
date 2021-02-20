@@ -86,3 +86,59 @@
         float: right;
     }
 }
+
+
+.fs_box_wrapper {
+    * {
+        box-sizing: border-box;
+    }
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    .fs_box_header {
+        display: block;
+        width: auto;
+        border-bottom: 1px solid #e3e8ee;
+        clear: both;
+        overflow: hidden;
+        margin: 0;
+        padding: 10px 15px;
+        background-color: #f7fafc;
+        font-weight: 700;
+        color: #697386;
+        .fs_box_head {
+            float: left;
+            h3 {
+                display: inline-block;
+                margin: 8px 20px 8px 0;
+                padding: 0;
+                font-size: 20px;
+            }
+        }
+        .fs_box_actions {
+            float: right;
+        }
+    }
+    .fs_box_body {
+        background: #fff;
+        display: block;
+        overflow: hidden;
+    }
+}
+
+.el-dialog {
+    border-radius: 5px;
+    .el-dialog__header {
+        background: #f1f2f5;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        border-bottom: 1px solid #c5c4c4;
+    }
+    .el-dialog__footer {
+        background: #f1f2f5;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        border-top: 1px solid #c5c4c4;
+    }
+}
+
