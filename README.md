@@ -1,1 +1,1 @@
-# WP-Expanse-Tracker (For Personal Use)
+# Fluent Support - Next Generation Support Plugin for WordPress
