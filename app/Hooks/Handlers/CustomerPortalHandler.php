@@ -3,6 +3,8 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Product;
 
 class CustomerPortalHandler
 {
@@ -40,7 +42,13 @@ class CustomerPortalHandler
 
         wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', [
             'rest' => $restInfo,
-            'nonce' => wp_create_nonce($slug)
+            'nonce' => wp_create_nonce($slug),
+            'support_products' => Product::select(['id', 'title'])->get(),
+            'customer_ticket_priorities' => [
+                'normal' => __('Normal', 'fluent-support'),
+                'medium' => __('Medium', 'fluent-support'),
+                'critical' => __('Critical', 'fluent-support')
+            ]
         ]);
     }
 }

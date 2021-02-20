@@ -11,17 +11,19 @@ use FluentSupport\App\Database\Migrations\AttachmentsMigrator;
 use FluentSupport\App\Database\Migrations\TaggablesMigrator;
 use FluentSupport\App\Database\Migrations\TagRelationsMigrator;
 use FluentSupport\App\Database\Migrations\DataMetrixMigrator;
+use FluentSupport\App\Database\Migrations\ProductsMigrator;
 
 class DBMigrator
 {
     protected static $migrators = [
+        ProductsMigrator::class,
         PersonsMigrator::class,
         TicketsMigrator::class,
         ConversationsMigrator::class,
         AttachmentsMigrator::class,
         TaggablesMigrator::class,
         TagRelationsMigrator::class,
-        DataMetrixMigrator::class
+        DataMetrixMigrator::class,
     ];
 
     public static function run($network_wide = false)
@@ -53,10 +55,6 @@ class DBMigrator
 
     public static function migrate()
     {
-        $config = require(__DIR__ . '/../config/database.php');
-
-        $namespace = $config['namespace'];
-
         foreach (static::$migrators as $class) {
             $class::migrate();
         }

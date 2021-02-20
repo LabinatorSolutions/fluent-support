@@ -3,6 +3,8 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Product;
 
 class Menu
 {
@@ -42,12 +44,21 @@ class Menu
             ]
         ];
 
+        $secondayItems = [
+            [
+                'key' => 'settings',
+                'label' => __('Settings', 'fluent-support'),
+                'permalink' => $baseUrl.'settings/products'
+            ]
+        ];
+
         $app = App::getInstance();
         $this->enqueueAssets();
         $app->view->render('admin.menu', [
             'base_url' => $baseUrl,
             'logo' => $assets.'images/logo.svg',
-            'menuItems' => $menuItems
+            'menuItems' => $menuItems,
+            'secondayItems' => $secondayItems
         ]);
     }
 
@@ -67,6 +78,11 @@ class Menu
             'fluent_support_admin_app', $assets . 'admin/css/alpha-admin.css'
         );
 
+        $agents = Agent::select(['id', 'first_name', 'last_name'])
+            ->where('person_type', 'agent')
+            ->get();
+
+
         wp_localize_script('fluent_support_admin_app_boot', 'fluentSupportAdmin', array(
             'slug'  => $slug = $app->config->get('app.slug'),
             'nonce' => wp_create_nonce($slug),
@@ -74,7 +90,9 @@ class Menu
             'brand_logo' => $this->getMenuIcon(),
             'firstEntry' => '',
             'lastEntry' => '',
-            'asset_url' => $assets
+            'asset_url' => $assets,
+            'support_agents' => $agents,
+            'support_products' => Product::select(['id', 'title'])->get()
         ));
 
         do_action('fluent_support_loading_app');

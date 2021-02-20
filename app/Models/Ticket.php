@@ -183,6 +183,24 @@ class Ticket extends Model
         );
     }
 
+    public function closed_by_person()
+    {
+        $class = __NAMESPACE__ . '\Person';
+
+        return $this->belongsTo(
+            $class, 'closed_by', 'id'
+        );
+    }
+
+    public function product()
+    {
+        $class = __NAMESPACE__ . '\Product';
+
+        return $this->belongsTo(
+            $class, 'product_id', 'id'
+        );
+    }
+
     /**
      * Accessor to get dynamic full_name attribute
      * @return string

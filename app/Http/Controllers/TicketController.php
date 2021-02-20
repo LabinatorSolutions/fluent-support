@@ -29,7 +29,8 @@ class TicketController extends Controller
                 $query->select(['first_name', 'last_name', 'id']);
             }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
-            }
+            },
+            'product'
         ]);
 
         if ($customerData = $request->get('customer')) {
@@ -58,43 +59,17 @@ class TicketController extends Controller
         ];
     }
 
-    public function create(Request $request)
-    {
-        $data = $request->all();
-
-        $this->validate($data, [
-            'title'          => 'required',
-            'content'        => 'required',
-            'customer.email' => 'required|email'
-        ]);
-
-        $customerData = Arr::get($data, 'customer');
-        $customer = Customer::maybeCreateCustomer($customerData);
-
-        $data['customer_id'] = $customer->id;
-
-        $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
-        do_action('fluent_support/before_ticket_create', $data, $customer);
-
-        $createdTicket = Ticket::create($data);
-        $ticket = Ticket::find($createdTicket->id);
-
-        do_action('fluent_support/ticket_created', $ticket, $customer);
-
-        return [
-            'message' => __('Ticket has been created successfully', 'fluent-support'),
-            'ticket'  => $ticket
-        ];
-    }
-
     public function getTicket(Request $request, $ticketId)
     {
-        $ticketWith = $request->get('with', ['customer', 'agent']);
+        $ticketWith = $request->get('with', ['customer', 'agent', 'product']);
         $responseWith = $request->get('response_with', ['person']);
 
-        $ticket = Ticket::where('id', $ticketId)
-            ->with($ticketWith)
-            ->first();
+        $ticket = Ticket::with($ticketWith)
+            ->findOrFail($ticketId);
+
+        if($ticket->customer) {
+            $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
+        }
 
         $responses = Response::where('ticket_id', $ticketId)
             ->with($responseWith)
@@ -144,12 +119,23 @@ class TicketController extends Controller
             $ticket->first_response_time = current_time('timestamp') - strtotime($ticket->created_at);
         }
 
+        $agentAdded = false;
+        if(!$ticket->agent_id) {
+            $ticket->agent_id = $agent->id;
+            $agentAdded = true;
+        }
+
+        $ticket->last_agent_response = current_time('mysql');
         $ticket->response_count += 1;
         $ticket->save();
 
         $createdResponse->load(['person']);
 
         do_action('fluent_support/' . $convoType . '_added_by_agent', $createdResponse, $ticket);
+
+        if($agentAdded) {
+            do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket);
+        }
 
         return [
             'message'  => __('Response has been added'),
@@ -171,6 +157,37 @@ class TicketController extends Controller
         return [
             'other_tickets' => $otherTickets,
             'extra_widgets' => ProfileInfoService::getProfileExtraWidgets($ticket->customer)
+        ];
+    }
+
+    public function updateTicketProperty(Request $request, $ticketId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $propName = $request->get('prop_name');
+        $propValue = $request->get('prop_value');
+
+        $prevValue = $ticket->{$propName};
+        if($propName && $propValue && $prevValue != $propValue) {
+            $ticket->{$propName} = $propValue;
+            $ticket->save();
+        }
+
+        $updateData = [];
+
+        if($propName == 'product_id') {
+            $ticket->load('product');
+            $updateData['product'] = $ticket->product;
+        } else if($propName == 'agent_id') {
+            $ticket->load('agent');
+            $updateData['agent'] = $ticket->agent;
+            if($prevValue != $ticket->{$propName}) {
+                do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket);
+            }
+        }
+
+        return [
+            'message' => $propName. ' has been updated',
+            'update_data' => $updateData
         ];
     }
 

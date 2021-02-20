@@ -34,6 +34,8 @@ import {
     ElTimeSelect,
     ElDialog,
 
+    ElPopover,
+
     ElLoading,
     ElMessage,
     ElMessageBox,
@@ -73,7 +75,8 @@ const components = [
     ElSwitch,
     ElTimePicker,
     ElTimeSelect,
-    ElDialog
+    ElDialog,
+    ElPopover
 ];
 
 components.forEach(component => {

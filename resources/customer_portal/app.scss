@@ -116,6 +116,7 @@
         display: block;
         overflow: hidden;
         clear: both;
+        position: relative;
         width: 100%;
         border-top: 1px solid #e5e9ec;
         .fs_avatar {
@@ -132,6 +133,25 @@
                 max-width: 46px;
                 max-height: 46px;
             }
+        }
+        &.fs_person_agent:after {
+            content: "";
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #606dbe;
+        }
+        &.fs_person_agent:before {
+            content: "Support Staff";
+            position: relative;
+            left: 0px;
+            top: 0px;
+            background: #5d6cc3;
+            color: #fff;
+            font-size: 10px;
+            padding: 5px 10px;
         }
     }
 
@@ -255,5 +275,21 @@
     .fst_reply_box {
         background: white;
         padding: 15px 20px;
+    }
+    code, kbd {
+        padding: 3px 5px 2px;
+        margin: 0 1px;
+        background: rgba(0, 0, 0, 0.07);
+        font-size: 13px;
+    }
+    pre {
+        background: #e1ebee;
+        font-family: "Courier 10 Pitch", Courier, monospace;
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        max-width: 100%;
+        overflow: auto;
+        padding: 1.5em;
+        white-space: pre-wrap;
     }
 }

@@ -1,52 +1,65 @@
 <template>
     <div v-loading="loading" class="fs_all_tickets">
-        <div class="fs_tk_filters">
-            <div class="fs_tk_filter">
+        <div class="fs_box_wrapper">
+            <div class="fs_box_header">
+                <div class="fs_box_head">
+                    <h3>Tickets</h3>
+                </div>
+                <div class="fs_box_actions">
 
+                </div>
             </div>
-        </div>
-        <el-table
-            :data="tickets"
-            stripe
-            style="width: 100%">
-            <el-table-column width="160" label="Customer">
-                <template #default="scope">
-                    <span v-if="scope.row.customer">{{scope.row.customer.full_name}}</span>
-                    <span v-else>n/a</span>
-                </template>
-            </el-table-column>
-            <el-table-column label="Title">
-                <template #default="scope">
-                    <router-link class="fs_tk_preview" :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
-                        <strong>{{scope.row.title}}</strong>
-                        <p class="fs_tk_preview_text">{{scope.row.excerpt}}</p>
-                    </router-link>
-                </template>
-            </el-table-column>
-            <el-table-column width="40" >
-                <template #default="scope">
-                    <span class="fs_thread_count">{{scope.row.response_count}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column width="100" label="Manager">
-                <template #default="scope">
-                    <span :title="scope.row.agent.full_name" v-if="scope.row.agent">{{scope.row.agent.first_name}}</span>
-                    <span v-else>not assigned</span>
-                </template>
-            </el-table-column>
-            <el-table-column width="80" label="Status">
-                <template #default="scope">
-                    <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{scope.row.status}}</span>
-                </template>
-            </el-table-column>
-            <el-table-column
-                prop="created_at"
-                label="Date"
-                width="180">
-            </el-table-column>
-        </el-table>
-        <div class="fframe_pagination_wrapper">
-            <pagination @fetch="fetchTickets()" :pagination="pagination" />
+            <div class="fs_box_body">
+                <div class="fs_tk_filters">
+                    <div class="fs_tk_filter">
+
+                    </div>
+                </div>
+                <el-table
+                    :data="tickets"
+                    stripe
+                    @row-click="gotToTicket"
+                    style="width: 100%">
+                    <el-table-column width="160" label="Customer">
+                        <template #default="scope">
+                            <span v-if="scope.row.customer">{{scope.row.customer.full_name}}</span>
+                            <span v-else>n/a</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="Title">
+                        <template #default="scope">
+                            <router-link class="fs_tk_preview" :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
+                                <strong>{{scope.row.title}}</strong> <span v-if="scope.row.product" class="fs_product">{{scope.row.product?.title}}</span> <span class="fs_tk_number">#{{scope.row.id}}</span>
+                                <p class="fs_tk_preview_text">{{scope.row.excerpt}}</p>
+                            </router-link>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="40" >
+                        <template #default="scope">
+                            <span class="fs_thread_count">{{scope.row.response_count}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="100" label="Manager">
+                        <template #default="scope">
+                            <span :title="scope.row.agent.full_name" v-if="scope.row.agent">{{scope.row.agent.first_name}}</span>
+                            <span v-else>not assigned</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="100" label="Status">
+                        <template #default="scope">
+                            <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{scope.row.status}}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        prop="created_at"
+                        label="Date"
+                        width="180">
+                    </el-table-column>
+                </el-table>
+                <div class="fframe_pagination_wrapper">
+                    <pagination @fetch="fetchTickets()" :pagination="pagination" />
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -90,6 +103,12 @@ export default {
                 .always(() => {
                     this.loading = false;
                 })
+        },
+        gotToTicket(row) {
+            this.$router.push({
+                name: 'view_ticket',
+                params: {ticket_id: row.id}
+            });
         }
     },
     mounted() {

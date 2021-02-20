@@ -36,7 +36,7 @@
                 </div>
 
                 <el-form-item>
-                    <el-button type="primary">Create Ticket</el-button>
+                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">Create Ticket</el-button>
                 </el-form-item>
 
             </el-form>
@@ -54,31 +54,32 @@ export default {
     },
     data() {
         return {
+            creating: false,
             ticket: {
                 title: '',
                 content: '',
                 product_id: '',
                 client_priority: 'normal'
             },
-            products: [
-                {
-                    id: '1',
-                    title: 'Fluent Forms'
-                },
-                {
-                    id: '2',
-                    title: 'Ninja Tables'
-                },
-                {
-                    id: '3',
-                    title: 'Other'
-                },
-            ],
-            priorities: {
-                normal: 'Normal',
-                high: 'High',
-                urgent: 'Urgent'
-            }
+            products: this.appVars.support_products,
+            priorities: this.appVars.customer_ticket_priorities
+        }
+    },
+    methods: {
+        create() {
+            this.creating = false;
+            this.$post('tickets', {
+                ...this.ticket
+            })
+            .then(response => {
+                this.$router.push({ name: 'view_ticket', params: { ticket_id: response.ticket.id } });
+            })
+            .catch((errors) => {
+                console.log(errors);
+            })
+            .always(() => {
+                this.creating = true;
+            });
         }
     }
 }

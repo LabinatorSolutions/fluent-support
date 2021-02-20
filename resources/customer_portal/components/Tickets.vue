@@ -3,9 +3,9 @@
         <div class="fs_tk_actions fs_tk_header">
             <div class="fs_tk_left">
                 <el-radio-group v-model="filter_type">
+                    <el-radio-button label="all">All</el-radio-button>
                     <el-radio-button label="open">Open</el-radio-button>
                     <el-radio-button label="closed">Closed</el-radio-button>
-                    <el-radio-button label="all">All</el-radio-button>
                 </el-radio-group>
             </div>
             <div class="fs_tk_right">
@@ -33,7 +33,7 @@
                         <span class="fs_thread_count">{{ scope.row.response_count }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column width="80" label="Status">
+                <el-table-column width="100" label="Status">
                     <template #default="scope">
                         <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
                     </template>
@@ -62,7 +62,7 @@ export default {
     data() {
         return {
             tickets: [],
-            filter_type: 'open',
+            filter_type: 'all',
             pagination: {
                 per_page: 10,
                 current_page: 0,
