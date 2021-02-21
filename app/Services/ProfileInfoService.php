@@ -18,6 +18,8 @@ class ProfileInfoService
             }
         }
 
+        $widgets = apply_filters('fluent_support/customer_extra_widgets', $widgets, $customer);
+
         return $widgets;
     }
 }

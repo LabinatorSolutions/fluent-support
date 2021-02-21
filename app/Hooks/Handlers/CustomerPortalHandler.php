@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Services\Helper;
 
 class CustomerPortalHandler
 {
@@ -44,11 +45,7 @@ class CustomerPortalHandler
             'rest' => $restInfo,
             'nonce' => wp_create_nonce($slug),
             'support_products' => Product::select(['id', 'title'])->get(),
-            'customer_ticket_priorities' => [
-                'normal' => __('Normal', 'fluent-support'),
-                'medium' => __('Medium', 'fluent-support'),
-                'critical' => __('Critical', 'fluent-support')
-            ]
+            'customer_ticket_priorities' => Helper::customerTicketPriorities()
         ]);
     }
 }
