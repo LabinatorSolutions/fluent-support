@@ -24,13 +24,18 @@ $router->prefix('tickets')->group(function ($router) {
 });
 
 $router->prefix('customer-portal')->group(function ($router) {
+
+    $router->get('public_options', 'CustomerPortalController@getPublicOptions');
+
     $router->get('tickets', 'CustomerPortalController@getTickets');
     $router->post('tickets', 'CustomerPortalController@createTicket');
+
     $router->get('tickets/{ticket_id}', 'CustomerPortalController@getTicket')->int('ticket_id');
     $router->post('tickets/{ticket_id}/responses', 'CustomerPortalController@createResponse')->int('ticket_id');
 
     $router->post('/tickets/{ticket_id}/close', 'CustomerPortalController@closeTicket')->int('ticket_id');
     $router->post('/tickets/{ticket_id}/re-open', 'CustomerPortalController@reOpenTicket')->int('ticket_id');
+
 });
 
 $router->prefix('products')->group(function ($router) {

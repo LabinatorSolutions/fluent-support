@@ -3,8 +3,10 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Customer;
+use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -240,8 +242,6 @@ class CustomerPortalController extends Controller
             'message' => __('Ticket has been closed', 'fluent_support'),
             'ticket' => $ticket
         ];
-
-
     }
 
     public function reOpenTicket(Request $request, $ticketId)
@@ -299,5 +299,15 @@ class CustomerPortalController extends Controller
         return Customer::getCustomerFromData($onBehalf);
     }
 
+
+    public function getPublicOptions()
+    {
+        $products = Product::select(['id', 'title'])->get();
+
+        return [
+            'support_products' => $products,
+            'customer_ticket_priorities' => Helper::customerTicketPriorities()
+        ];
+    }
 
 }
