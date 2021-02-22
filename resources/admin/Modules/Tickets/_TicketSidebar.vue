@@ -39,6 +39,10 @@
             </div>
         </div>
 
+        <div class="text-center fs_tk_card" style="height: 100px" v-if="loading">
+            <el-skeleton :rows="1" animated />
+        </div>
+
         <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key" :class="'fs_tk_widget' + widget_key" class="fs_tk_card fs_tk_extra_card">
             <div class="fs_tk_card_header">
                 <h3 v-html="widget.header"></h3>
@@ -47,7 +51,6 @@
                 <div v-html="widget.body_html"></div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -57,7 +60,7 @@ export default {
     props: ['ticket_id', 'ticket'],
     data() {
         return {
-            loading: false,
+            loading: true,
             extra_widgets: false,
             other_tickets: []
         }

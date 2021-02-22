@@ -38,7 +38,7 @@ export default {
             .then(response => {
                 this.$notify.success(response.message);
                 this.response_body = '';
-                this.$emit('created', response.response, response.ticket);
+                this.$emit('created', response.response, response);
             })
             .catch((errors) => {
                 this.$handleError(errors);
