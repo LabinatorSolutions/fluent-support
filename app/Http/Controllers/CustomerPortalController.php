@@ -124,7 +124,8 @@ class CustomerPortalController extends Controller
             ->with([
                 'person' => function ($query) {
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
-                }
+                },
+                'attachments'
             ])
             ->filterByType('response')
             ->orderBy('id', 'DESC')

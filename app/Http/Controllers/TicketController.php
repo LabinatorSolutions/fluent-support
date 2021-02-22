@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
@@ -60,7 +61,7 @@ class TicketController extends Controller
     public function getTicket(Request $request, $ticketId)
     {
         $ticketWith = $request->get('with', ['customer', 'agent', 'product']);
-        $responseWith = $request->get('response_with', ['person']);
+        $responseWith = $request->get('response_with', ['person', 'attachments']);
 
         $ticket = Ticket::with($ticketWith)
             ->findOrFail($ticketId);
@@ -115,6 +116,15 @@ class TicketController extends Controller
         $response = apply_filters('fluent_support/new_agent_' . $convoType, $response, $ticket, $agent);
 
         $createdResponse = Response::create($response);
+
+        if($attachments = $request->get('attachments')) {
+            Attachment::where('ticket_id', $ticketId)
+                ->whereIn('file_hash', $attachments)
+                ->update([
+                    'conversation_id' => $createdResponse->id
+                ]);
+            $createdResponse->load('attachments');
+        }
 
         if ($ticket->status == 'new') {
             $ticket->status = 'active';

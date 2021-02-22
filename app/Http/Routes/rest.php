@@ -52,6 +52,8 @@ $router->prefix('products')->group(function ($router) {
 
 $router->get('me', 'TicketController@me');
 
+$router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles');
+
 //$router->prefix('accounts')->name('accounts.')->group(function($router) {
 //
 //    $router->get('/', 'AccountController@index')->name('index');
