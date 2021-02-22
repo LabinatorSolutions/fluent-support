@@ -2,6 +2,8 @@
 
 namespace FluentSupport\App\Models;
 
+use FluentSupport\App\Services\Helper;
+
 class Ticket extends Model
 {
     protected $table = 'fs_tickets';
@@ -82,6 +84,36 @@ class Ticket extends Model
             $query->whereIn('status', $statuses);
         }
 
+        return $query;
+    }
+
+    public function scopeApplyFilters($query, $filters)
+    {
+        $supportedColumns = ['product_id', 'agent_id', 'client_priority', 'priority'];
+        foreach ($filters as $filterKey => $filterValue) {
+            if(!$filterValue) {
+                continue;
+            }
+            if($filterKey == 'status_type') {
+                $statusArray = Helper::getTkStatusesByGroupName($filterValue);
+                if($statusArray) {
+                    $query->whereIn('status', $statusArray);
+                }
+            } else if(in_array($filterKey, $supportedColumns)) {
+                $query->where($filterKey, $filterValue);
+            } else if($filterKey == 'waiting_for_reply') {
+                if($filterValue != 'yes') {
+                    continue;
+                }
+                global $wpdb;
+                $query->where(function ($q) use ($wpdb) {
+                    $q->whereRaw($wpdb->prefix.'fs_tickets.last_agent_response < '.$wpdb->prefix.'fs_tickets.last_customer_response')
+                        ->orWhereNull('last_agent_response')
+                        ->orWhere('status', 'new');
+                });
+            }
+        }
+        
         return $query;
     }
 

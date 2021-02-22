@@ -257,6 +257,8 @@ export default {
             this.$post(`tickets/${this.ticket.id}/close`)
                 .then(response => {
                     this.ticket.status = response.ticket.status;
+                    this.$notify.success(response.message);
+                    this.$router.go(-1);
                 })
                 .catch((errors) => {
                     console.log(errors);

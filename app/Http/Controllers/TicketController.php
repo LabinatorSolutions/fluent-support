@@ -3,7 +3,6 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Customer;
-use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
@@ -26,7 +25,7 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $ticketsQuery = Ticket::with([
-            'customer' => function($query) {
+            'customer' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
@@ -34,20 +33,16 @@ class TicketController extends Controller
             'product'
         ]);
 
-        if ($customerData = $request->get('customer')) {
-
-            $customer = Customer::getCustomerFromData($customerData);
-
-            if (!$customer) {
-                return $this->sendError([
-                    'message'    => __('No Customer found', 'fluent-support'),
-                    'error_type' => 'customer_does_not_exist'
-                ]);
-            }
-
-            $ticketsQuery = $ticketsQuery->where('customer_id', $customer->id);
-        } else if ($customerId = $request->get('customer_id')) {
+        if ($customerId = $request->get('customer_id')) {
             $ticketsQuery = $ticketsQuery->where('customer_id', $customerId);
+        }
+
+        if ($filters = $request->get('filters', [])) {
+            $ticketsQuery->applyFilters($filters);
+        }
+
+        if($search = $request->get('search')) {
+            $ticketsQuery->searchBy($search);
         }
 
         $tickets = $ticketsQuery->paginate();
@@ -68,11 +63,11 @@ class TicketController extends Controller
         $ticket = Ticket::with($ticketWith)
             ->findOrFail($ticketId);
 
-        if($ticket->customer) {
+        if ($ticket->customer) {
             $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
         }
 
-        if($ticket->status == 'closed') {
+        if ($ticket->status == 'closed') {
             $ticket->load('closed_by_person');
         }
 
@@ -126,13 +121,13 @@ class TicketController extends Controller
 
         $agentAdded = false;
         $updateData = [];
-        if(!$ticket->agent_id) {
+        if (!$ticket->agent_id) {
             $ticket->agent_id = $agent->id;
             $agentAdded = true;
             $ticket->load('agent');
             $updateData = [
                 'agent_id' => $agent->id,
-                'agent' => $ticket->agent
+                'agent'    => $ticket->agent
             ];
         }
 
@@ -144,14 +139,14 @@ class TicketController extends Controller
 
         do_action('fluent_support/' . $convoType . '_added_by_agent', $createdResponse, $ticket);
 
-        if($agentAdded) {
+        if ($agentAdded) {
             do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket);
         }
 
         return [
-            'message'  => __('Response has been added'),
-            'response' => $createdResponse,
-            'ticket'   => $ticket,
+            'message'     => __('Response has been added'),
+            'response'    => $createdResponse,
+            'ticket'      => $ticket,
             'update_data' => $updateData
         ];
     }
@@ -179,26 +174,26 @@ class TicketController extends Controller
         $propValue = $request->get('prop_value');
 
         $prevValue = $ticket->{$propName};
-        if($propName && $propValue && $prevValue != $propValue) {
+        if ($propName && $propValue && $prevValue != $propValue) {
             $ticket->{$propName} = $propValue;
             $ticket->save();
         }
 
         $updateData = [];
 
-        if($propName == 'product_id') {
+        if ($propName == 'product_id') {
             $ticket->load('product');
             $updateData['product'] = $ticket->product;
-        } else if($propName == 'agent_id') {
+        } else if ($propName == 'agent_id') {
             $ticket->load('agent');
             $updateData['agent'] = $ticket->agent;
-            if($prevValue != $ticket->{$propName}) {
+            if ($prevValue != $ticket->{$propName}) {
                 do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket);
             }
         }
 
         return [
-            'message' => $propName. ' has been updated',
+            'message'     => $propName . ' has been updated',
             'update_data' => $updateData
         ];
     }
@@ -211,19 +206,19 @@ class TicketController extends Controller
 
         $ticket = Ticket::findOrFail($ticketId);
 
-        if($ticket->status != 'closed') {
+        if ($ticket->status != 'closed') {
             $ticket->status = 'closed';
             $ticket->resolved_at = current_time('mysql');
             $ticket->closed_by = $agent->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $ticket->save();
             do_action('fluent_support/ticket_closed', $ticket, $agent);
-            do_action('fluent_support/ticket_closed_by_'.$agent->person_type, $ticket, $agent);
+            do_action('fluent_support/ticket_closed_by_' . $agent->person_type, $ticket, $agent);
         }
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket' => $ticket
+            'ticket'  => $ticket
         ];
     }
 
@@ -233,16 +228,16 @@ class TicketController extends Controller
 
         $ticket = Ticket::findOrFail($ticketId);
 
-        if($ticket->status == 'closed') {
+        if ($ticket->status == 'closed') {
             $ticket->status = 'active';
             $ticket->save();
             do_action('fluent_support/ticket_reopen', $ticket, $agent);
-            do_action('fluent_support/ticket_reopen_by_'.$agent->person_type, $ticket, $agent);
+            do_action('fluent_support/ticket_reopen_by_' . $agent->person_type, $ticket, $agent);
         }
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket' => $ticket
+            'ticket'  => $ticket
         ];
 
 
