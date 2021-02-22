@@ -22,7 +22,8 @@ import {
     ElSelect,
     ElOption,
     ElForm,
-    ElFormItem
+    ElFormItem,
+    ElUpload
 } from 'element-plus';
 
 const components = [
@@ -39,6 +40,7 @@ const components = [
     ElInput,
     ElSelect,
     ElOption,
+    ElUpload
 ];
 
 components.forEach(component => {

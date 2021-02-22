@@ -12,6 +12,7 @@
 @import "~element-plus/lib/theme-chalk/el-select.css";
 @import "~element-plus/lib/theme-chalk/el-option.css";
 @import "~element-plus/lib/theme-chalk/el-input.css";
+@import "~element-plus/lib/theme-chalk/el-upload.css";
 
 .fst_client_portal {
     .fs_tk_preview {
@@ -306,5 +307,18 @@
             }
         }
     }
+}
 
+
+.fs_row {
+    display: block;
+    overflow: hidden;
+    .fs_half {
+        width: 50%;
+        float: left;
+    }
+}
+
+.fs_attachments_form {
+    padding: 10px 0px;
 }

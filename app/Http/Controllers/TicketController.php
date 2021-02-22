@@ -145,6 +145,17 @@ class TicketController extends Controller
 
         $ticket->last_agent_response = current_time('mysql');
         $ticket->response_count += 1;
+
+
+        $closed = false;
+        if ($isClose = $request->get('close_ticket') == 'yes' && $ticket->status != 'closed') {
+            $ticket->status = 'closed';
+            $ticket->resolved_at = current_time('mysql');
+            $ticket->closed_by = $agent->id;
+            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
+            $closed = true;
+        }
+
         $ticket->save();
 
         $createdResponse->load(['person']);
@@ -153,6 +164,12 @@ class TicketController extends Controller
 
         if ($agentAdded) {
             do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket);
+        }
+
+
+        if($closed) {
+            do_action('fluent_support/ticket_closed', $ticket, $agent);
+            do_action('fluent_support/ticket_closed_by_' . $agent->person_type, $ticket, $agent);
         }
 
         return [
