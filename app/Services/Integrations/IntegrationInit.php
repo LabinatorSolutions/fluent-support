@@ -11,5 +11,10 @@ class IntegrationInit
         if (class_exists('\Easy_Digital_Downloads')) {
             (new Edd())->boot();
         }
+
+        if(defined('FLUENTCRM')) {
+            (new FluentCRM())->boot();
+        }
+
     }
 }

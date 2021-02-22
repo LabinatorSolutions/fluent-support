@@ -33,13 +33,14 @@ import {
     ElTimePicker,
     ElTimeSelect,
     ElDialog,
+    ElSkeleton,
 
     ElPopover,
 
     ElLoading,
     ElMessage,
     ElMessageBox,
-    ElNotification
+    ElNotification,
 
 } from 'element-plus';
 
@@ -76,7 +77,8 @@ const components = [
     ElTimePicker,
     ElTimeSelect,
     ElDialog,
-    ElPopover
+    ElPopover,
+    ElSkeleton
 ];
 
 components.forEach(component => {

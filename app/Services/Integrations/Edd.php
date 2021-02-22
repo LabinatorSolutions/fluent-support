@@ -11,7 +11,7 @@ class Edd
 
     public function getPurchaseWidgets($widgets, $customer)
     {
-        $by = 'user_email';
+        $by = 'email';
         $value = $customer->email;
         if ($customer->user_id) {
             $by = 'ID';

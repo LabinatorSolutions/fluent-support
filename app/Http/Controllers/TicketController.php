@@ -72,6 +72,10 @@ class TicketController extends Controller
             $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
         }
 
+        if($ticket->status == 'closed') {
+            $ticket->load('closed_by_person');
+        }
+
         $responses = Response::where('ticket_id', $ticketId)
             ->with($responseWith)
             ->orderBy('id', 'DESC')
@@ -121,9 +125,15 @@ class TicketController extends Controller
         }
 
         $agentAdded = false;
+        $updateData = [];
         if(!$ticket->agent_id) {
             $ticket->agent_id = $agent->id;
             $agentAdded = true;
+            $ticket->load('agent');
+            $updateData = [
+                'agent_id' => $agent->id,
+                'agent' => $ticket->agent
+            ];
         }
 
         $ticket->last_agent_response = current_time('mysql');
@@ -141,7 +151,8 @@ class TicketController extends Controller
         return [
             'message'  => __('Response has been added'),
             'response' => $createdResponse,
-            'ticket'   => $ticket
+            'ticket'   => $ticket,
+            'update_data' => $updateData
         ];
     }
 
@@ -190,6 +201,51 @@ class TicketController extends Controller
             'message' => $propName. ' has been updated',
             'update_data' => $updateData
         ];
+    }
+
+
+    public function closeTicket(Request $request, $ticketId)
+    {
+
+        $agent = Helper::getAgentByUserId(get_current_user_id());
+
+        $ticket = Ticket::findOrFail($ticketId);
+
+        if($ticket->status != 'closed') {
+            $ticket->status = 'closed';
+            $ticket->resolved_at = current_time('mysql');
+            $ticket->closed_by = $agent->id;
+            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
+            $ticket->save();
+            do_action('fluent_support/ticket_closed', $ticket, $agent);
+            do_action('fluent_support/ticket_closed_by_'.$agent->person_type, $ticket, $agent);
+        }
+
+        return [
+            'message' => __('Ticket has been closed', 'fluent_support'),
+            'ticket' => $ticket
+        ];
+    }
+
+    public function reOpenTicket(Request $request, $ticketId)
+    {
+        $agent = Helper::getAgentByUserId(get_current_user_id());
+
+        $ticket = Ticket::findOrFail($ticketId);
+
+        if($ticket->status == 'closed') {
+            $ticket->status = 'active';
+            $ticket->save();
+            do_action('fluent_support/ticket_reopen', $ticket, $agent);
+            do_action('fluent_support/ticket_reopen_by_'.$agent->person_type, $ticket, $agent);
+        }
+
+        return [
+            'message' => __('Ticket has been opened again', 'fluent_support'),
+            'ticket' => $ticket
+        ];
+
+
     }
 
 }
