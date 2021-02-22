@@ -336,6 +336,9 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    /*
+     * @todo: Need to handle file upload over rest
+     */
     public function uploadTicketFiles(Request $request)
     {
         $files = $this->validate($this->request->files(), [
