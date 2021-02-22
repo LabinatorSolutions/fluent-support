@@ -45,6 +45,8 @@ class TicketController extends Controller
             $ticketsQuery->searchBy($search);
         }
 
+        $ticketsQuery->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
+
         $tickets = $ticketsQuery->paginate();
         foreach ($tickets as $ticket) {
             $ticket->excerpt = $ticket->getExcerpt();

@@ -5,11 +5,13 @@
                 <div class="fs_ticket_actions">
                     <ul class="fs_tk_actions">
                         <template v-if="ticket.status != 'closed'">
-                            <li :class="(show_response_box == 'response') ? 'fs_action_active' : ''" @click="show_response_box = 'response'">
-                                <i class="el-icon-chat-line-square" />
+                            <li :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
+                                @click="show_response_box = 'response'">
+                                <i class="el-icon-chat-line-square"/>
                             </li>
-                            <li :class="(show_response_box == 'note') ? 'fs_action_active' : ''" @click="show_response_box = 'note'">
-                                <i class="el-icon-notebook-1" />
+                            <li :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
+                                @click="show_response_box = 'note'">
+                                <i class="el-icon-notebook-1"/>
                             </li>
                         </template>
                         <li :title="'Assigned Agent ' + ticket.agent?.full_name">
@@ -20,9 +22,9 @@
                             >
                                 <template #reference>
                                 <span class="fs_agent_photo_icon" v-if="ticket.agent">
-                                    <img :alt="ticket.agent?.full_name" :src="ticket.agent?.photo" />
+                                    <img :alt="ticket.agent?.full_name" :src="ticket.agent?.photo"/>
                                 </span>
-                                    <i v-else class="el-icon-user" />
+                                    <i v-else class="el-icon-user"/>
                                 </template>
 
                                 <el-select filterable @change="updateTicketAttr('agent_id')" v-model="ticket.agent_id">
@@ -37,24 +39,26 @@
 
                         </li>
                         <li>
-                            <i class="el-icon-s-flag" />
+                            <i class="el-icon-s-flag"/>
                         </li>
                         <li>
-                            <i class="el-icon-price-tag" />
+                            <i class="el-icon-price-tag"/>
                         </li>
                         <li>
-                            <i class="el-icon-position" />
+                            <i class="el-icon-position"/>
                         </li>
                     </ul>
                     <div class="fs_product">
-                        <el-button  v-loading="updating" :disabled="updating" @click="closeTicket()" v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">Close</el-button>
+                        <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
+                                   v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">Close
+                        </el-button>
                         <el-popover
                             placement="bottom"
                             :width="400"
                             trigger="click"
                         >
                             <template #reference>
-                                <span><i class="el-icon-goods"></i> {{ticket.product?.title}}</span>
+                                <span><i class="el-icon-goods"></i> {{ ticket.product?.title }}</span>
                             </template>
 
                             <el-select @change="updateTicketAttr('product_id')" v-model="ticket.product_id">
@@ -78,10 +82,11 @@
                                     trigger="click"
                                 >
                                     <template #reference>
-                                        <span><i class="el-icon-goods"></i> {{ticket?.title}}</span>
+                                        <span><i class="el-icon-goods"></i> {{ ticket?.title }}</span>
                                     </template>
 
-                                    <el-input @keyup.enter="updateTicketAttr('title')" v-model="ticket.title"></el-input>
+                                    <el-input @keyup.enter="updateTicketAttr('title')"
+                                              v-model="ticket.title"></el-input>
                                     <p>Press enter to save</p>
                                 </el-popover>
                             </h2>
@@ -103,11 +108,13 @@
                     :type="show_response_box"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
-                    <p>This ticket has been closed at {{ticket.resolved_at }}
+                    <p>This ticket has been closed at {{ ticket.resolved_at }}
                         <span v-if="ticket.closed_by_person">
-                            by <b>{{getHumanName(ticket.closed_by_person)}}</b>
+                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>
                         </span></p>
-                    <el-button v-loading="updating" :disabled="updating" @click="reOpen()" type="info" size="small">Reopen This ticket</el-button>
+                    <el-button v-loading="updating" :disabled="updating" @click="reOpen()" type="info" size="small">
+                        Reopen This ticket
+                    </el-button>
                 </div>
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
                     <article v-for="conversation in conversations"
@@ -116,13 +123,16 @@
                              :class="getTicketClasses(conversation)">
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
-                                <img v-if="conversation.person" :src="conversation.person.photo" :alt="conversation.person.full_name"/>
+                                <img v-if="conversation.person" :src="conversation.person.photo"
+                                     :alt="conversation.person.full_name"/>
                             </section>
                             <section class="fs_thread_wrap">
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong v-if="conversation.person">{{ conversation.person.full_name }}</strong>
+                                            <strong v-if="conversation.person">{{
+                                                    conversation.person.full_name
+                                                }}</strong>
                                             <span v-if="conversation.conversation_type == 'response'"> replied</span>
                                             <span v-else> added a note</span>
                                         </div>
@@ -158,11 +168,11 @@
                 </div>
             </div>
             <div class="fs_ticket_sidebar">
-                <ticket-sidebar :ticket_id="ticket_id" :ticket="ticket" />
+                <ticket-sidebar :ticket_id="ticket_id" :ticket="ticket"/>
             </div>
         </template>
         <div style="padding: 20px;" class="fs_ticket_body" v-else>
-            <el-skeleton :rows="10" animated />
+            <el-skeleton :rows="10" animated/>
         </div>
     </div>
 </template>
@@ -227,23 +237,27 @@ export default {
                 this.ticket[key] = data;
             });
 
+            if (this.appVars.pref.go_back_after_reply == 'yes') {
+                this.$router.go(-1);
+            }
+
         },
         updateTicketAttr(propName) {
             this.$put(`tickets/${this.ticket.id}/property`, {
                 prop_name: propName,
                 prop_value: this.ticket[propName]
             })
-            .then(response => {
-                this.$notify.success(response.message);
+                .then(response => {
+                    this.$notify.success(response.message);
 
-                each(response.update_data, (data, key) => {
-                    this.ticket[key] = data;
+                    each(response.update_data, (data, key) => {
+                        this.ticket[key] = data;
+                    });
+
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
                 });
-
-            })
-            .catch((errors) => {
-                this.$handleError(errors);
-            });
         },
         getHumanName(person) {
             if (this.appVars.auth_person?.id == person.id) {

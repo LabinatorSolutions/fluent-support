@@ -5,8 +5,19 @@
                 <div class="fs_box_head">
                     <h3>Tickets</h3>
                 </div>
-                <div class="fs_box_actions">
-
+                <div class="fs_box_actions fs_ticket_orders">
+                    <el-select @change="fetchTickets()" v-model="order_by" size="mini">
+                        <el-option
+                            v-for="(column, columnName) in filterColumns"
+                            :key="columnName"
+                            :value="columnName"
+                            :label="column"
+                        ></el-option>
+                    </el-select>
+                    <el-button @click="changeOrderType()" size="mini">
+                        <i v-if="order_type == 'DESC'" class="el-icon-caret-bottom"></i>
+                        <i v-else class="el-icon-caret-top"></i>
+                    </el-button>
                 </div>
             </div>
             <div class="fs_box_body">
@@ -94,7 +105,7 @@
                             </router-link>
                         </template>
                     </el-table-column>
-                    <el-table-column width="40">
+                    <el-table-column width="60">
                         <template #default="scope">
                             <span class="fs_thread_count">{{ scope.row.response_count }}</span>
                         </template>
@@ -152,10 +163,20 @@ export default {
                 waiting_for_reply: ''
             },
             search: '',
-            order_by: 'created_at',
-            order_type: 'DESC',
+            order_by: 'id',
+            order_type: 'ASC',
             products: this.appVars.support_products,
-            agents: this.appVars.support_agents
+            agents: this.appVars.support_agents,
+            filterColumns: {
+                id: 'Ticket ID',
+                product_id: 'Product ID',
+                priority: 'Priority',
+                client_priority: 'Client Priority',
+                title: 'Title',
+                last_agent_response: 'Last Agent Response',
+                last_customer_response: 'Last Customer Response',
+                response_count: 'Response Count'
+            }
         }
     },
     watch: {
@@ -193,14 +214,31 @@ export default {
                 params: {ticket_id: row.id}
             });
         },
-        setFromSaveFilters() {
+        setFromSaveFilters(callback) {
             let filters = this.$getData('tickets_filter', {});
             each(filters, (filter, filterKey) => {
                 this.filters[filterKey] = filter;
             });
+
+            let ticketPref = this.$getData('tickets_pref', false);
+            if(ticketPref) {
+                this.order_by = ticketPref.order_by;
+                this.order_type = ticketPref.order_type;
+                this.pagination.per_page = ticketPref.per_page;
+                this.pagination.current_page = ticketPref.current_page;
+                this.search = ticketPref.search;
+            }
+            
         },
         saveFilters() {
             this.$saveData('tickets_filter', this.filters);
+            this.$saveData('tickets_pref', {
+                order_by: this.order_by,
+                order_type: this.order_type,
+                per_page: this.pagination.per_page,
+                search: this.search,
+                current_page: this.pagination.current_page
+            });
         },
         resetFilters() {
             this.filters = {
@@ -211,6 +249,16 @@ export default {
                 client_priority: '',
                 waiting_for_reply: ''
             };
+            this.search = '';
+
+            this.fetchTickets();
+        },
+        changeOrderType() {
+            if(this.order_type == 'DESC') {
+                this.order_type = 'ASC';
+            } else {
+                this.order_type = 'DESC';
+            }
             this.fetchTickets();
         }
     },

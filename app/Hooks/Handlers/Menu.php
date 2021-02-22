@@ -96,7 +96,10 @@ class Menu
             'support_products' => Product::select(['id', 'title'])->get(),
             'client_priorities' => Helper::customerTicketPriorities(),
             'admin_priorities' => Helper::adminTicketPriorities(),
-            'me' => Helper::getAgentByUserId(get_current_user_id())
+            'me' => Helper::getAgentByUserId(get_current_user_id()),
+            'pref' => [
+                'go_back_after_reply' => 'yes'
+            ]
         ));
 
         do_action('fluent_support_loading_app');
