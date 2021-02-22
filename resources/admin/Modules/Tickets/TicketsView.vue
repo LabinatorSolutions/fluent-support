@@ -5,6 +5,9 @@
                 <li>
                     <router-link :to="{ name: 'tickets' }">All Tickets</router-link>
                 </li>
+                <li>
+                    <router-link :to="{ name: 'tickets', query: { agent_id: appVars.me.id } }">My Tickets</router-link>
+                </li>
             </ul>
         </div>
         <div class="inner_body">

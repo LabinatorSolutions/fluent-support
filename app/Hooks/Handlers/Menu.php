@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Services\Helper;
 
 class Menu
 {
@@ -92,7 +93,10 @@ class Menu
             'lastEntry' => '',
             'asset_url' => $assets,
             'support_agents' => $agents,
-            'support_products' => Product::select(['id', 'title'])->get()
+            'support_products' => Product::select(['id', 'title'])->get(),
+            'client_priorities' => Helper::customerTicketPriorities(),
+            'admin_priorities' => Helper::adminTicketPriorities(),
+            'me' => Helper::getAgentByUserId(get_current_user_id())
         ));
 
         do_action('fluent_support_loading_app');

@@ -6,6 +6,19 @@
     .inner_body {
         width: calc(100% - 150px);
     }
+    .fs_tk_filters {
+        padding: 20px;
+        background: #f1f2f5;
+        .fs_tk_filter {
+            display: inline-block;
+            padding-right: 10px;
+            padding-bottom: 20px;
+            > label {
+                display: block;
+                padding-bottom: 5px;
+            }
+        }
+    }
 }
 
 .fs_view_ticket {
@@ -218,6 +231,7 @@
     .fs_close_btn {
         margin-right: 10px;
     }
+
 }
 
 .el-table__row {
