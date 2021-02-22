@@ -59,6 +59,17 @@
                                     </div>
                                 </div>
                                 <div v-html="conversation.content" class="fs_thread_body"></div>
+
+                                <div class="fst_file_lists" v-if="conversation.attachments.length">
+                                    <ul>
+                                        <li
+                                            v-for="attachment in conversation.attachments"
+                                            :key="attachment.file_hash"
+                                        >
+                                            <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener" :href="attachment.secureUrl">{{attachment.title}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </section>
                         </section>
                     </div>

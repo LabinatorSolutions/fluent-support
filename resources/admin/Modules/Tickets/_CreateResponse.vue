@@ -1,6 +1,7 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
         <wp-editor v-model="response_body" />
+        <attachment-form :ticket="ticket" :attachments="attachments" />
         <div class="fs_response_actions">
             <el-button v-loading="creating" @click="create()" size="small" type="success">
                 <span v-if="type== 'note'">Add Internal Note</span>
@@ -13,18 +14,21 @@
 
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
+import AttachmentForm from './_AttachmentForm';
 
 export default {
     name: 'CreateResponse',
     props: ['ticket', 'type'],
     components: {
-        WpEditor
+        WpEditor,
+        AttachmentForm
     },
     data() {
         return {
             response_body: '',
             creating: false,
-            close_ticket: 'no'
+            close_ticket: 'no',
+            attachments: []
         }
     },
     methods: {
@@ -33,7 +37,8 @@ export default {
             this.$post(`tickets/${this.ticket.id}/responses`, {
                 content: this.response_body,
                 conversation_type: this.type,
-                close_ticket: this.close_ticket
+                close_ticket: this.close_ticket,
+                attachments: this.attachments
             })
             .then(response => {
                 this.$notify.success(response.message);

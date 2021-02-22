@@ -228,7 +228,6 @@ export default {
                 this.pagination.current_page = ticketPref.current_page;
                 this.search = ticketPref.search;
             }
-            
         },
         saveFilters() {
             this.$saveData('tickets_filter', this.filters);

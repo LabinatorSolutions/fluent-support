@@ -96,4 +96,10 @@ class Response extends Model
         );
     }
 
+    public function attachments()
+    {
+        $class = __NAMESPACE__ . '\Attachment';
+        return $this->hasMany($class, 'conversation_id', 'id');
+    }
+
 }

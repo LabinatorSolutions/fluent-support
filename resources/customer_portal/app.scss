@@ -292,4 +292,19 @@
         padding: 1.5em;
         white-space: pre-wrap;
     }
+
+    .fst_file_lists {
+        margin-top: 20px;
+        border-top: 1px solid #bbb;
+        padding-top: 10px;
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            li {
+                margin-bottom: 10px;
+            }
+        }
+    }
+
 }

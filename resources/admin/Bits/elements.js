@@ -34,6 +34,7 @@ import {
     ElTimeSelect,
     ElDialog,
     ElSkeleton,
+    ElUpload,
 
     ElPopover,
 
@@ -75,6 +76,7 @@ const components = [
     ElSlider,
     ElSwitch,
     ElTimePicker,
+    ElUpload,
     ElTimeSelect,
     ElDialog,
     ElPopover,
