@@ -142,3 +142,12 @@
     }
 }
 
+
+.fs_row {
+    display: block;
+    overflow: hidden;
+    .fs_half {
+        width: 50%;
+        float: left;
+    }
+}

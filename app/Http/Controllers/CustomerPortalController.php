@@ -2,11 +2,13 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -18,7 +20,7 @@ class CustomerPortalController extends Controller
 
         if (!$customer) {
             return $this->sendError([
-                'message'       => 'No Customer Found',
+                'message'    => 'No Customer Found',
                 'error_type' => 'no_customer'
             ]);
         }
@@ -61,15 +63,15 @@ class CustomerPortalController extends Controller
         $data = $request->all();
 
         $this->validate($data, [
-            'title'          => 'required',
-            'content'        => 'required'
+            'title'   => 'required',
+            'content' => 'required'
         ]);
 
         $customer = $this->resolveCustomer($request, true);
 
         if (!$customer) {
             return $this->sendError([
-                'message'       => 'No Customer Found',
+                'message'    => 'No Customer Found',
                 'error_type' => 'no_customer'
             ]);
         }
@@ -108,14 +110,14 @@ class CustomerPortalController extends Controller
 
         if (!$customer) {
             return $this->sendError([
-                'message'       => 'No Customer Found',
+                'message'    => 'No Customer Found',
                 'error_type' => 'no_customer'
             ]);
         }
 
-        if($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
+        if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
-                'message' => 'You do not have permission to view this ticket',
+                'message'    => 'You do not have permission to view this ticket',
                 'error_type' => 'permission_error'
             ]);
         }
@@ -131,30 +133,30 @@ class CustomerPortalController extends Controller
             ->orderBy('id', 'DESC')
             ->get();
 
-       foreach ($responses as $response) {
-           if($response->person) {
-               $response->person->setHidden(['email']);
-           }
-       }
+        foreach ($responses as $response) {
+            if ($response->person) {
+                $response->person->setHidden(['email']);
+            }
+        }
 
-       if($ticket->customer) {
-           $ticket->customer->setHidden(['email']);
-       }
+        if ($ticket->customer) {
+            $ticket->customer->setHidden(['email']);
+        }
 
-        if($ticket->agent) {
+        if ($ticket->agent) {
             $ticket->agent->setHidden(['email']);
         }
 
-        if($ticket->status == 'closed') {
+        if ($ticket->status == 'closed') {
             $ticket->load('closed_by_person');
-            if($ticket->closed_by_person) {
+            if ($ticket->closed_by_person) {
                 $ticket->closed_by_person->setVisible(['first_name', 'last_name', 'id', 'full_name', 'photo']);
             }
         }
 
         return [
-            'ticket'    => $ticket,
-            'responses' => $responses,
+            'ticket'     => $ticket,
+            'responses'  => $responses,
             'sign_on_id' => $customer->id
         ];
     }
@@ -168,7 +170,7 @@ class CustomerPortalController extends Controller
 
         $customer = $this->resolveCustomer($request);
 
-        if(!$customer) {
+        if (!$customer) {
             return $this->sendError([
                 'message' => __('Sorry! No customer found', 'fluent-support')
             ]);
@@ -176,7 +178,7 @@ class CustomerPortalController extends Controller
 
         $ticket = Ticket::findOrFail($ticketId);
 
-        if($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
+        if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
                 'message' => __('Sorry! You can not reply to this ticket', 'fluent-support')
             ]);
@@ -192,6 +194,15 @@ class CustomerPortalController extends Controller
 
         $createdResponse = Response::create($responseData);
 
+        if ($attachments = $request->get('attachments')) {
+            Attachment::where('ticket_id', $ticketId)
+                ->whereIn('file_hash', $attachments)
+                ->update([
+                    'conversation_id' => $createdResponse->id
+                ]);
+            $createdResponse->load('attachments');
+        }
+
         if ($ticket->status == 'new') {
             $ticket->status = 'active';
             $ticket->first_response_time = current_time('timestamp') - strtotime($ticket->created_at);
@@ -199,15 +210,29 @@ class CustomerPortalController extends Controller
 
         $ticket->last_customer_response = current_time('mysql');
         $ticket->response_count += 1;
+
+        $closed = false;
+        if ($isClose = $request->get('close_ticket') == 'yes' && $ticket->status != 'closed') {
+            $ticket->status = 'closed';
+            $ticket->resolved_at = current_time('mysql');
+            $ticket->closed_by = $customer->id;
+            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
+            $closed = true;
+        }
         $ticket->save();
 
-        $response = Response::with('person')->find($createdResponse->id);
+        $response = Response::with('person', 'attachments')->find($createdResponse->id);
         do_action('fluent_support/response_added_by_customer', $response, $ticket);
 
+        if ($closed) {
+            do_action('fluent_support/ticket_closed', $ticket, $customer);
+            do_action('fluent_support/ticket_closed_by_' . $customer->person_type, $ticket, $customer);
+        }
+
         return [
-            'message' => __('Reply has been added', 'fluent-support'),
+            'message'  => __('Reply has been added', 'fluent-support'),
             'response' => $response,
-            'ticket' => $ticket
+            'ticket'   => $ticket
         ];
     }
 
@@ -215,7 +240,7 @@ class CustomerPortalController extends Controller
     {
         $customer = $this->resolveCustomer($request);
 
-        if(!$customer) {
+        if (!$customer) {
             return $this->sendError([
                 'message' => __('Sorry! No customer found', 'fluent-support')
             ]);
@@ -223,25 +248,25 @@ class CustomerPortalController extends Controller
 
         $ticket = Ticket::findOrFail($ticketId);
 
-        if($customer->id != $ticket->customer_id) {
+        if ($customer->id != $ticket->customer_id) {
             return $this->sendError([
                 'message' => __('Sorry! You can not close this ticket', 'fluent-support')
             ]);
         }
 
-        if($ticket->status != 'closed') {
+        if ($ticket->status != 'closed') {
             $ticket->status = 'closed';
             $ticket->resolved_at = current_time('mysql');
             $ticket->closed_by = $customer->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $ticket->save();
             do_action('fluent_support/ticket_closed', $ticket, $customer);
-            do_action('fluent_support/ticket_closed_by_'.$customer->person_type, $ticket, $customer);
+            do_action('fluent_support/ticket_closed_by_' . $customer->person_type, $ticket, $customer);
         }
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket' => $ticket
+            'ticket'  => $ticket
         ];
     }
 
@@ -249,7 +274,7 @@ class CustomerPortalController extends Controller
     {
         $customer = $this->resolveCustomer($request);
 
-        if(!$customer) {
+        if (!$customer) {
             return $this->sendError([
                 'message' => __('Sorry! No customer found', 'fluent-support')
             ]);
@@ -257,22 +282,22 @@ class CustomerPortalController extends Controller
 
         $ticket = Ticket::findOrFail($ticketId);
 
-        if($customer->id != $ticket->customer_id) {
+        if ($customer->id != $ticket->customer_id) {
             return $this->sendError([
                 'message' => __('Sorry! You can not close this ticket', 'fluent-support')
             ]);
         }
 
-        if($ticket->status == 'closed') {
+        if ($ticket->status == 'closed') {
             $ticket->status = 'active';
             $ticket->save();
             do_action('fluent_support/ticket_reopen', $ticket, $customer);
-            do_action('fluent_support/ticket_reopen_by_'.$customer->person_type, $ticket, $customer);
+            do_action('fluent_support/ticket_reopen_by_' . $customer->person_type, $ticket, $customer);
         }
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket' => $ticket
+            'ticket'  => $ticket
         ];
 
 
@@ -306,8 +331,49 @@ class CustomerPortalController extends Controller
         $products = Product::select(['id', 'title'])->get();
 
         return [
-            'support_products' => $products,
+            'support_products'           => $products,
             'customer_ticket_priorities' => Helper::customerTicketPriorities()
+        ];
+    }
+
+    public function uploadTicketFiles(Request $request)
+    {
+        $files = $this->validate($this->request->files(), [
+            'file' => 'mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
+        ], ['file.mimetypes' => 'Only image and documents are allowed']);
+
+
+        $ticketId = $request->get('ticket_id');
+        $ticket = Ticket::findOrFail($ticketId);
+
+        $person = $this->resolveCustomer($request);
+
+        if (!$person) {
+            return $this->sendError([
+                'message' => __('Sorry! No customer found', 'fluent-support')
+            ]);
+        }
+
+        $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
+
+        $attachments = [];
+        foreach ($uploadedFiles as $file) {
+            $fileData = [
+                'ticket_id' => $ticketId,
+                'person_id' => $person->id,
+                'file_type' => $file['type'],
+                'file_path' => $file['file_path'],
+                'full_url'  => $file['url'],
+                'title'     => $file['name'],
+                'driver'    => 'local'
+            ];
+
+            $attachment = Attachment::create($fileData);
+            $attachments[] = $attachment->file_hash;
+        }
+
+        return [
+            'attachments' => $attachments
         ];
     }
 
