@@ -326,7 +326,6 @@ class CustomerPortalController extends Controller
         return Customer::getCustomerFromData($onBehalf);
     }
 
-
     public function getPublicOptions()
     {
         $products = Product::select(['id', 'title'])->get();
@@ -337,9 +336,6 @@ class CustomerPortalController extends Controller
         ];
     }
 
-    /*
-     * @todo: Need to handle file upload over rest
-     */
     public function uploadTicketFiles(Request $request)
     {
         $files = $this->validate($this->request->files(), [
@@ -380,5 +376,5 @@ class CustomerPortalController extends Controller
             'attachments' => $attachments
         ];
     }
-
+    
 }
