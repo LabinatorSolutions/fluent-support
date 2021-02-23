@@ -50,6 +50,7 @@ export default {
                 this.$notify.success(response.message);
                 this.response_body = '';
                 this.$emit('created', response.response, response);
+                this.attachments = [];
             })
             .catch((errors) => {
                 this.$handleError(errors);

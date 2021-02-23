@@ -376,5 +376,5 @@ class CustomerPortalController extends Controller
             'attachments' => $attachments
         ];
     }
-    
+
 }

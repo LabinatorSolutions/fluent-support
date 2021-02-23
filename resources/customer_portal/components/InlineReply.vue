@@ -56,6 +56,7 @@ export default {
                   //  this.$notify.success(response.message);
                     this.response_body = '';
                     this.is_focused = false;
+                    this.attachments = [];
                     this.$emit('created', response.response, response.ticket);
                 })
                 .catch((errors) => {
