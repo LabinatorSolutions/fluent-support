@@ -49,6 +49,8 @@
                         </li>
                     </ul>
                     <div class="fs_product">
+                        <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
+                                   size="small"></el-button>
                         <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
                                    v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">Close
                         </el-button>
@@ -116,6 +118,7 @@
                         Reopen This ticket
                     </el-button>
                 </div>
+
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
@@ -131,7 +134,7 @@
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
                                             <strong v-if="conversation.person">{{
-                                                    conversation.person.full_name
+                                                conversation.person.full_name
                                                 }}</strong>
                                             <span v-if="conversation.conversation_type == 'response'"> replied</span>
                                             <span v-else> added a note</span>
@@ -142,14 +145,15 @@
                                     </div>
                                     <div v-html="conversation.content" class="fs_thread_body"></div>
 
-                                    <div class="fst_file_lists" v-if="conversation.attachments.length">
-                                        <hr />
+                                    <div class="fst_file_lists" v-if="conversation.attachments?.length">
+                                        <hr/>
                                         <ul>
                                             <li
                                                 v-for="attachment in conversation.attachments"
                                                 :key="attachment.file_hash"
                                             >
-                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener" :href="attachment.secureUrl">{{attachment.title}}</a>
+                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                                                     :href="attachment.secureUrl">{{attachment.title}}</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -186,6 +190,18 @@
         <div style="padding: 20px;" class="fs_ticket_body" v-else>
             <el-skeleton :rows="10" animated/>
         </div>
+
+        <div class="fs_active_agents" v-if="active_agents.length > 1">
+            <ul>
+                <li class="fs_active_agent_title">Live Agents:</li>
+                <li :title="agent.full_name" v-for="agent in active_agents" :key="agent.id">
+                    <span class="fs_agent_photo_icon">
+                        <img :src="agent.photo"/>
+                    </span>
+                </li>
+            </ul>
+        </div>
+
     </div>
 </template>
 
@@ -193,6 +209,8 @@
 import CreateResponse from './_CreateResponse';
 import TicketSidebar from './_TicketSidebar';
 import each from 'lodash/each';
+
+import TicketActivityService from "../../Bits/TicketActivityService";
 
 export default {
     name: 'ViewTicket',
@@ -209,7 +227,8 @@ export default {
             show_response_box: '',
             products: this.appVars.support_products,
             agents: this.appVars.support_agents,
-            updating: false
+            updating: false,
+            active_agents: []
         }
     },
     methods: {
@@ -282,6 +301,7 @@ export default {
             this.updating = true;
             this.$post(`tickets/${this.ticket.id}/close`)
                 .then(response => {
+                    TicketActivityService.ticketChanged(this.ticket_id, 'status', 'close');
                     this.ticket.status = response.ticket.status;
                     this.$notify.success(response.message);
                     this.$router.go(-1);
@@ -298,6 +318,7 @@ export default {
             this.$post(`tickets/${this.ticket.id}/re-open`)
                 .then(response => {
                     this.ticket.status = response.ticket.status;
+                    TicketActivityService.ticketChanged(this.ticket_id, 'status', 'active');
                 })
                 .catch((errors) => {
                     console.log(errors);
@@ -305,10 +326,35 @@ export default {
                 .always(() => {
                     this.updating = false;
                 });
+        },
+        onActivityChange(items) {
+            const personIds = [];
+            items.forEach((item) => {
+                personIds.push(item.val());
+            });
+            this.active_agents = personIds;
+        },
+        onTicketDataChange(item) {
+            let data = item.val();
+            this.ticket[data.type] = data.data;
         }
     },
     mounted() {
         this.fetchTicket();
+
+        let person = this.appVars.me;
+        TicketActivityService.addAgent(this.ticket_id, person.id, {
+            id: person.id,
+            full_name: person.full_name,
+            photo: person.photo
+        });
+
+        TicketActivityService.getAgents(this.ticket_id).on('value', this.onActivityChange);
+    },
+    beforeUnmount() {
+        TicketActivityService.removeAgent(this.ticket_id, this.appVars.me.id);
+        TicketActivityService.getAgents(this.ticket_id).off('value', this.onActivityChange);
+        TicketActivityService.getTicketUpdates(this.ticket_id).off('value', this.onTicketDataChange);
     }
 }
 </script>

@@ -21,7 +21,12 @@ add_shortcode('fluent_support_portal', function () {
     return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
 });
 
-
-
 // init integrations
 (new \FluentSupport\App\Services\Integrations\IntegrationInit())->init();
+
+/*
+ * Email Notification Hooks
+ */
+
+$app->addAction('fluent_support/ticket_created', 'EmailNotificationHandler@ticketCreated', 10, 2);
+$app->addAction('fluent_support/response_added_by_agent', 'EmailNotificationHandler@agentReplied', 10, 3);

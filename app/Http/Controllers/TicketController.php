@@ -160,7 +160,7 @@ class TicketController extends Controller
 
         $createdResponse->load(['person']);
 
-        do_action('fluent_support/' . $convoType . '_added_by_agent', $createdResponse, $ticket);
+        do_action('fluent_support/' . $convoType . '_added_by_agent', $createdResponse, $ticket, $agent);
 
         if ($agentAdded) {
             do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket);

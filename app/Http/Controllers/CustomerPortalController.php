@@ -222,12 +222,13 @@ class CustomerPortalController extends Controller
         $ticket->save();
 
         $response = Response::with('person', 'attachments')->find($createdResponse->id);
-        do_action('fluent_support/response_added_by_customer', $response, $ticket);
+        do_action('fluent_support/response_added_by_customer', $response, $ticket, $customer);
 
         if ($closed) {
             do_action('fluent_support/ticket_closed', $ticket, $customer);
             do_action('fluent_support/ticket_closed_by_' . $customer->person_type, $ticket, $customer);
         }
+
 
         return [
             'message'  => __('Reply has been added', 'fluent-support'),

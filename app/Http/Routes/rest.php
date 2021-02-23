@@ -56,6 +56,13 @@ $router->get('me', 'TicketController@me');
 
 $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles');
 
+$router->prefix('settings')->group(function ($router) {
+    $router->get('/', 'SettingsController@getSettings');
+    $router->post('/', 'SettingsController@saveSettings');
+});
+
+
+
 //$router->prefix('accounts')->name('accounts.')->group(function($router) {
 //
 //    $router->get('/', 'AccountController@index')->name('index');
