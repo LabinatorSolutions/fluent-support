@@ -140,7 +140,7 @@
                                             <span v-else> added a note</span>
                                         </div>
                                         <div class="fs_thread_actions">
-                                            {{ conversation.created_at }}
+                                            {{ $timeDiff(conversation.created_at) }}
                                         </div>
                                     </div>
                                     <div v-html="conversation.content" class="fs_thread_body"></div>
@@ -173,7 +173,7 @@
                                             <strong>{{ ticket.customer.full_name }}</strong> started the conversation
                                         </div>
                                         <div class="fs_thread_actions">
-                                            {{ ticket.created_at }}
+                                            {{ $timeDiff(ticket.created_at) }}
                                         </div>
                                     </div>
                                     <div v-html="ticket.content" class="fs_thread_body"></div>

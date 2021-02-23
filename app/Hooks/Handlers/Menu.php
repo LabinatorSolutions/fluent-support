@@ -99,7 +99,8 @@ class Menu
             'me' => Helper::getAgentByUserId(get_current_user_id()),
             'pref' => [
                 'go_back_after_reply' => 'yes'
-            ]
+            ],
+            'server_time' => current_time('mysql')
         ));
 
         do_action('fluent_support_loading_app');

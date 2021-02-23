@@ -47,7 +47,8 @@ class Ticket extends Model
     protected $searchable = [
         'title',
         'slug',
-        'content'
+        'content',
+        'id'
     ];
 
     /**
@@ -59,6 +60,24 @@ class Ticket extends Model
     public function scopeSearchBy($query, $search)
     {
         if ($search) {
+
+            if(strpos($search, ':')) {
+                $array = explode(':', $search);
+                $column = $array[0];
+                $value = $array[1];
+                $columns  = $this->fillable;
+                $columns[] = 'id';
+
+                if(in_array($column, $columns) && $value) {
+                    if(is_numeric($value)) {
+                        $query->where($column, $value);
+                    } else {
+                        $query->where($column, 'LIKE', "%$value%");
+                    }
+                    return $query;
+                }
+            }
+
             $fields = $this->searchable;
             $query->where(function ($query) use ($fields, $search) {
                 $query->where(array_shift($fields), 'LIKE', "%$search%");
@@ -113,7 +132,7 @@ class Ticket extends Model
                 });
             }
         }
-        
+
         return $query;
     }
 

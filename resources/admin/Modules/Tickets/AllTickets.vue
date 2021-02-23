@@ -123,9 +123,11 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                        prop="created_at"
                         label="Date"
                         width="180">
+                        <template #default="scope">
+                            {{$timeDiff(scope.row.created_at)}}
+                        </template>
                     </el-table-column>
                 </el-table>
                 <div class="fframe_pagination_wrapper">

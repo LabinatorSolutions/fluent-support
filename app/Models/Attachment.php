@@ -41,6 +41,9 @@ class Attachment extends Model
      */
     public function getSecureUrlAttribute()
     {
-        return site_url('?fst_file='.$this->file_hash);
+        return add_query_arg([
+            'fst_file' => $this->file_hash,
+            'secure_sign' => md5($this->id.date('YmdH'))
+        ], site_url('/index.php'));
     }
 }

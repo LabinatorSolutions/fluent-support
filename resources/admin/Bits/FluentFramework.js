@@ -13,6 +13,8 @@ const moment = require('moment');
 require('moment/locale/en-gb');
 moment.locale('en-gb');
 
+const appStartTime = new Date();
+
 export default class FluentFramework {
     constructor() {
         this.doAction = doAction;
@@ -57,7 +59,8 @@ export default class FluentFramework {
                 $patch: self.$patch,
                 $handleError: self.handleError,
                 $saveData: self.saveData,
-                $getData: self.getData
+                $getData: self.getData,
+                $timeDiff: self.humanDiffTime
             }
         });
 
@@ -201,4 +204,16 @@ export default class FluentFramework {
             dangerouslyUseHTMLString: true
         });
     }
+
+    humanDiffTime(date) {
+        const dateString = (date === undefined) ? null : date;
+        if (!dateString) {
+            return '';
+        }
+        const endTime = new Date();
+        const timeDiff = endTime - appStartTime; // in ms
+        const dateObj = moment(dateString);
+        return dateObj.from(moment(window.fluentSupportAdmin.server_time).add(timeDiff, 'milliseconds'));
+    }
+
 }
