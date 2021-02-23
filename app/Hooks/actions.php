@@ -30,3 +30,10 @@ add_shortcode('fluent_support_portal', function () {
 
 $app->addAction('fluent_support/ticket_created', 'EmailNotificationHandler@ticketCreated', 10, 2);
 $app->addAction('fluent_support/response_added_by_agent', 'EmailNotificationHandler@agentReplied', 10, 3);
+
+
+if(isset($_GET['fst_file'])) {
+    add_action('init', function () {
+         (new \FluentSupport\App\Hooks\Handlers\ExternalPages())->view_attachment();
+    });
+}
