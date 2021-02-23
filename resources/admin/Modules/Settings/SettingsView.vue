@@ -3,7 +3,13 @@
         <div class="inner_sidebar">
             <ul>
                 <li>
+                    <router-link :to="{ name: 'business_settings' }">Business Settings</router-link>
+                </li>
+                <li>
                     <router-link :to="{ name: 'products' }">Products</router-link>
+                </li>
+                <li>
+                    <router-link :to="{ name: 'email_notifications' }">Email Notifications</router-link>
                 </li>
             </ul>
         </div>

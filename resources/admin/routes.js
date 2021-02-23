@@ -4,6 +4,8 @@ import AllTickets from './Modules/Tickets/AllTickets';
 import ViewTicket from './Modules/Tickets/ViewTicket';
 import SettingsView from './Modules/Settings/SettingsView';
 import Products from './Modules/Settings/Products';
+import EmailNotifications from './Modules/Settings/EmailNotifications';
+import BusinessSettings from './Modules/Settings/BusinessSettings';
 
 export default [
     {
@@ -36,9 +38,19 @@ export default [
         component: SettingsView,
         children: [
             {
+                name: 'business_settings',
+                path: '',
+                component: BusinessSettings
+            },
+            {
                 name: 'products',
                 path: 'products',
                 component: Products
+            },
+            {
+                name: 'email_notifications',
+                path: 'email_notifications',
+                component: EmailNotifications
             }
         ]
     }

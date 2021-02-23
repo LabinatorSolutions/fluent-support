@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Meta;
 use FluentSupport\Framework\Support\Arr;
 
 class Helper
@@ -80,4 +81,79 @@ class Helper
             'application/jsonml+json'
         ]);
     }
+
+    public static function getOption($key, $default = '')
+    {
+        $data = Meta::where('object_type', 'option')
+                    ->where('key', $key)
+                    ->first();
+
+        if($data) {
+            $value = maybe_unserialize($data->value);
+            if($value) {
+                return $value;
+            }
+        }
+
+        return $default;
+    }
+
+    public static function updateOption($key, $value)
+    {
+        $data = Meta::where('object_type', 'option')
+            ->where('key', $key)
+            ->first();
+
+        if($data) {
+            return Meta::where('id', $data->id)
+                ->update([
+                    'value' => maybe_serialize($value)
+                ]);
+        }
+
+        return Meta::insert([
+            'object_type' => 'option',
+            'key' => $key,
+            'value' => maybe_serialize($value)
+        ]);
+    }
+
+    public static function getTicketViewUrl($ticket)
+    {
+        $baseUrl = self::getPortalBaseUrl();
+        return $baseUrl.'/#/ticket/'.$ticket->id.'/view';
+    }
+
+    public static function getPortalBaseUrl()
+    {
+        $businessSettings = self::getBusinessSettings();
+        $baseUrl = get_permalink($businessSettings['portal_page_id']);
+        return apply_filters('fluent_support/portal_base_url', $baseUrl);
+    }
+
+    public static function getBusinessSettings()
+    {
+        static $settings;
+
+        if($settings) {
+            return $settings;
+        }
+
+        $settings = self::getOption('global_business_settings');
+        return $settings;
+    }
+
+
+    public static function getEmailSettings()
+    {
+        static $settings;
+
+        if($settings) {
+            return $settings;
+        }
+
+        $settings = self::getOption('global_email_settings');
+        return $settings;
+    }
+
 }

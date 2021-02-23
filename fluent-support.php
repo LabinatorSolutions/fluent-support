@@ -20,3 +20,11 @@ require __DIR__.'/vendor/autoload.php';
 call_user_func(function($bootstrap) {
     $bootstrap(__FILE__);
 }, require(__DIR__.'/boot/app.php'));
+
+
+add_action('init', function () {
+    if(isset($_GET['test'])) {
+        $ticket = \FluentSupport\App\Models\Ticket::with('customer')->find(1);
+        do_action('fluent_support/ticket_created', $ticket, $ticket->customer);
+    }
+});

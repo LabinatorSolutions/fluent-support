@@ -1,24 +1,30 @@
 .fs_tickets_view {
     display: flex;
+
     .inner_sidebar {
         width: 150px;
     }
+
     .inner_body {
         width: calc(100% - 150px);
     }
+
     .fs_tk_filters {
         padding: 20px;
         background: #f1f2f5;
+
         .fs_tk_filter {
             display: inline-block;
             padding-right: 10px;
             padding-bottom: 20px;
+
             > label {
                 display: block;
                 padding-bottom: 5px;
             }
         }
     }
+
     .fs_box_actions.fs_ticket_orders > div {
         width: 80%;
         float: left;
@@ -27,6 +33,7 @@
 
 .fs_view_ticket {
     display: flex;
+
     .fs_ticket_sidebar {
         width: 300px;
     }
@@ -41,14 +48,17 @@
             border-right: 0;
             padding: 16px 25px 24px;
             position: relative;
-            >hgroup {
+
+            > hgroup {
                 color: #111;
                 position: relative;
             }
+
             .fs_tk_subject {
                 zoom: 1;
                 word-break: break-word;
                 padding-right: 150px;
+
                 h2 {
                     color: #314351;
                     font-weight: 400;
@@ -56,20 +66,24 @@
                     word-wrap: break-word;
                     font-size: 22.5px;
                     display: inline-block;
-                    margin:0;
+                    margin: 0;
                 }
+
                 .fs_tk_tags {
                     padding-left: 20px;
                     display: inline-block;
+
                     span {
                     }
                 }
             }
+
             .fs_tk_badges {
                 margin: 0;
                 position: absolute;
                 right: 0;
                 top: 8px;
+
                 span.fs_ticket_id {
                     margin-right: 10px;
                     font-size: 20px;
@@ -85,6 +99,7 @@
             width: 100%;
             border-top: 1px solid #e5e9ec;
             position: relative;
+
             .fs_avatar {
                 background: #f1f3f5;
                 border-radius: 50%;
@@ -94,12 +109,14 @@
                 width: 46px;
                 float: left;
                 margin: 25px 20px 25px 25px;
+
                 img {
                     border-radius: 50%;
                     max-width: 46px;
                     max-height: 46px;
                 }
             }
+
             &.fs_person_agent:after {
                 content: "";
                 width: 4px;
@@ -109,6 +126,7 @@
                 top: 0;
                 background: #606dbe;
             }
+
             &.fs_person_agent:before {
                 content: "Support Staff";
                 position: relative;
@@ -119,8 +137,10 @@
                 font-size: 10px;
                 padding: 5px 10px;
             }
+
             &.fs_conv_type_note {
                 background: #ffffc7;
+
                 &:after {
                     background: #e6a23c;
                 }
@@ -131,15 +151,18 @@
         .fs_thread_wrap {
             margin: 0 25px 0 72px;
             padding: 25px;
+
             .fs_thread_message {
                 width: 100%;
                 overflow: auto;
                 line-height: 150%;
             }
+
             .fs_thread_head {
                 zoom: 1;
                 min-height: 40px;
             }
+
             .fs_thread_title {
                 color: #8494a5;
                 font-weight: 400;
@@ -147,32 +170,39 @@
                 line-height: 1.2em;
                 margin-bottom: 12px;
                 display: inline-block;
+
                 strong {
                     font-weight: 500;
                     color: #253642;
                 }
             }
+
             .fs_thread_actions {
                 float: right;
                 color: #a5b2bd;
                 text-align: right;
                 font-size: 12px;
             }
+
             .fs_thread_body {
                 color: #253642;
                 font-size: 14px;
                 line-height: 1.45em;
                 overflow-y: hidden;
+
                 h1, h2, h3, h4, h5, h6 {
                     margin: 10px 0px;
                 }
+
                 img, iframe, * {
                     max-width: 100%;
                 }
+
                 ul {
                     list-style: disc;
                     padding: 0;
                     margin: 15px 0 0;
+
                     li {
                         font-size: 14px;
                         margin-left: 30px;
@@ -186,37 +216,37 @@
             padding: 5px 10px;
             display: block;
             overflow: hidden;
+
             ul.fs_tk_actions {
                 list-style: none;
                 margin: 0;
                 padding: 0;
                 float: left;
+
                 li {
                     cursor: pointer;
                     padding: 10px 20px;
                     display: inline-block;
                     margin: 0;
+
                     i {
                         font-size: 24px;
                         line-height: 30px;
                     }
+
                     &.fs_action_active {
                         background: #5d6cc3;
                         color: white;
                     }
                 }
             }
+
             .fs_product {
                 float: right;
                 padding: 16px 15px 0 0;
                 font-size: 16px;
                 color: #99a5b4;
                 cursor: pointer;
-            }
-            span.fs_agent_photo_icon img {
-                max-width: 30px;
-                border-radius: 50%;
-                margin: -4px 0px;
             }
         }
 
@@ -260,9 +290,11 @@
     line-height: 14px;
     margin: 0 4px 0 0;
     top: 6px;
+
     &.fs_badge_new {
         background: #f56c6c;
     }
+
     &.fs_badge_active {
         background: #56c288;
     }
@@ -272,14 +304,17 @@
     padding: 20px;
     background: #f1f2f5;
     border: 1px solid #e5e9ec;
+
     .fs_response_actions {
         padding-top: 10px;
         display: block;
         text-align: right;
     }
+
     &.fs_reply_type_note {
         background: #ffeaca;
     }
+
     .fs_attachments_form {
         padding: 20px 10px;
     }
@@ -300,20 +335,24 @@
     margin-bottom: 25px;
     padding: 15px 20px 25px 20px;
     width: 100%;
+
     &.fs_tk_profile_card {
         padding-top: 45px;
         margin-top: 30px;
     }
+
     &.fs_tk_other_tickets_card {
         a {
             color: #556575;
             font-weight: 500;
             text-decoration: none;
+
             &:hover {
                 text-decoration: underline;
             }
         }
     }
+
     .fs_avatar {
         background: #fff;
         border: 2px solid #fff;
@@ -328,11 +367,13 @@
         position: absolute;
         top: -40px;
         left: 0px;
+
         img {
             border-radius: 50%;
             width: 100%;
         }
     }
+
     .fs_tk_profile_name {
         color: #314351;
         font-size: 16px;
@@ -356,6 +397,7 @@
     text-decoration: none;
     color: #314351;
     font-size: 13px;
+
     p {
         padding: 0;
         margin: 0;
@@ -374,4 +416,40 @@ span.fs_thread_count {
     font-weight: 400;
     padding: .1em .4em;
     border-radius: 4px;
+}
+
+span.fs_agent_photo_icon img {
+    max-width: 30px;
+    border-radius: 50%;
+    margin: -4px 0px;
+}
+
+.fs_active_agents {
+    display: block;
+    overflow: hidden;
+    padding: 10px;
+    position: fixed;
+    right: -1px;
+    bottom: -2px;
+    border: 1px solid #5f6dbd;
+    z-index: 99999999;
+    background: #f1f2f5;
+    color: #5d6cc3;
+    box-shadow: -1px -1px 12px 1px #cccccc;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        li {
+            display: inline-block;
+            vertical-align: middle;
+            padding-right: 10px;
+
+            &.fs_active_agent_title {
+                font-weight: bold;
+            }
+        }
+    }
 }

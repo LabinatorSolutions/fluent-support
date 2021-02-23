@@ -108,7 +108,11 @@ export default {
                 ...this.editing_product
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
                     this.getProducts();
                     this.ticket_modal = false;
                 })
@@ -140,7 +144,12 @@ export default {
 
             this.$del(`products/${product.id}`)
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+
                     this.getProducts();
                 });
         }

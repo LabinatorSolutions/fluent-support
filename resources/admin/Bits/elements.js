@@ -35,6 +35,10 @@ import {
     ElDialog,
     ElSkeleton,
     ElUpload,
+    ElTooltip,
+
+    ElTabs,
+    ElTabPane,
 
     ElPopover,
 
@@ -80,7 +84,10 @@ const components = [
     ElTimeSelect,
     ElDialog,
     ElPopover,
-    ElSkeleton
+    ElSkeleton,
+    ElTabs,
+    ElTabPane,
+    ElTooltip,
 ];
 
 components.forEach(component => {
