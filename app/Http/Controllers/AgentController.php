@@ -112,6 +112,10 @@ class AgentController extends Controller
             ]);
         }
 
+        $agent = Agent::findOrFail($agentId);
+
+        PermissionManager::attachPermissions($agent->user_id, []);
+
         $newAgent = Agent::findOrFail($fallBackAgentId);
 
         Attachment::where('person_id', $agentId)->update([
