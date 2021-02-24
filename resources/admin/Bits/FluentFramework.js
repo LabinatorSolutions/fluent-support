@@ -60,7 +60,8 @@ export default class FluentFramework {
                 $handleError: self.handleError,
                 $saveData: self.saveData,
                 $getData: self.getData,
-                $timeDiff: self.humanDiffTime
+                $timeDiff: self.humanDiffTime,
+                convertToText: self.convertToText
             }
         });
 
@@ -186,13 +187,16 @@ export default class FluentFramework {
     }
 
     handleError(response) {
+        if(response.responseJSON) {
+            response = response.responseJSON;
+        }
         let errorMessage = '';
         if (typeof response === 'string') {
             errorMessage = response;
         } else if (response && response.message) {
             errorMessage = response.message;
         } else {
-            errorMessage = window.FLUENTCRM.convertToText(response);
+            errorMessage = this.convertToText(response);
         }
         if (!errorMessage) {
             errorMessage = 'Something is wrong!';
@@ -201,8 +205,28 @@ export default class FluentFramework {
             type: 'error',
             title: 'Error',
             message: errorMessage,
+            offset: 32,
             dangerouslyUseHTMLString: true
         });
+    }
+
+    convertToText(obj) {
+        const string = [];
+        if (typeof (obj) === 'object' && (obj.join === undefined)) {
+            for (const prop in obj) {
+                string.push(this.convertToText(obj[prop]));
+            }
+        } else if (typeof (obj) === 'object' && !(obj.join === undefined)) {
+            for (const prop in obj) {
+                string.push(this.convertToText(obj[prop]));
+            }
+        } else if (typeof (obj) === 'function') {
+
+        } else if (typeof (obj) === 'string') {
+            string.push(obj)
+        }
+
+        return string.join('<br />')
     }
 
     humanDiffTime(date) {

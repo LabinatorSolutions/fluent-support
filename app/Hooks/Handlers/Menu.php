@@ -39,26 +39,26 @@ class Menu
                 'permalink' => $baseUrl
             ],
             [
-                'key' => 'tickets',
-                'label' => __('Tickets', 'fluent-support'),
+                'key'       => 'tickets',
+                'label'     => __('Tickets', 'fluent-support'),
                 'permalink' => $baseUrl . 'tickets',
             ]
         ];
 
         $secondayItems = [
             [
-                'key' => 'settings',
-                'label' => __('Settings', 'fluent-support'),
-                'permalink' => $baseUrl.'settings/products'
+                'key'       => 'settings',
+                'label'     => __('Settings', 'fluent-support'),
+                'permalink' => $baseUrl . 'settings/products'
             ]
         ];
 
         $app = App::getInstance();
         $this->enqueueAssets();
         $app->view->render('admin.menu', [
-            'base_url' => $baseUrl,
-            'logo' => $assets.'images/logo.svg',
-            'menuItems' => $menuItems,
+            'base_url'      => $baseUrl,
+            'logo'          => $assets . 'images/logo.svg',
+            'menuItems'     => $menuItems,
             'secondayItems' => $secondayItems
         ]);
     }
@@ -83,24 +83,27 @@ class Menu
             ->where('person_type', 'agent')
             ->get();
 
+        $me = Helper::getAgentByUserId(get_current_user_id());
+
+
 
         wp_localize_script('fluent_support_admin_app_boot', 'fluentSupportAdmin', array(
-            'slug'  => $slug = $app->config->get('app.slug'),
-            'nonce' => wp_create_nonce($slug),
-            'rest'  => $this->getRestInfo($app),
-            'brand_logo' => $this->getMenuIcon(),
-            'firstEntry' => '',
-            'lastEntry' => '',
-            'asset_url' => $assets,
-            'support_agents' => $agents,
-            'support_products' => Product::select(['id', 'title'])->get(),
+            'slug'              => $slug = $app->config->get('app.slug'),
+            'nonce'             => wp_create_nonce($slug),
+            'rest'              => $this->getRestInfo($app),
+            'brand_logo'        => $this->getMenuIcon(),
+            'firstEntry'        => '',
+            'lastEntry'         => '',
+            'asset_url'         => $assets,
+            'support_agents'    => $agents,
+            'support_products'  => Product::select(['id', 'title'])->get(),
             'client_priorities' => Helper::customerTicketPriorities(),
-            'admin_priorities' => Helper::adminTicketPriorities(),
-            'me' => Helper::getAgentByUserId(get_current_user_id()),
-            'pref' => [
+            'admin_priorities'  => Helper::adminTicketPriorities(),
+            'me'                => $me,
+            'pref'              => [
                 'go_back_after_reply' => 'yes'
             ],
-            'server_time' => current_time('mysql')
+            'server_time'       => current_time('mysql')
         ));
 
         do_action('fluent_support_loading_app');
@@ -141,7 +144,7 @@ class Menu
         $assets = $app['path.assets'];
 
         return 'data:image/svg+xml;base64,' . base64_encode(
-            file_get_contents($assets . '/images/logo.svg')
-        );
+                file_get_contents($assets . '/images/logo.svg')
+            );
     }
 }

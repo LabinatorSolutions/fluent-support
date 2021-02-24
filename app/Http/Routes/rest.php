@@ -61,6 +61,13 @@ $router->prefix('settings')->group(function ($router) {
     $router->post('/', 'SettingsController@saveSettings');
 });
 
+$router->prefix('agents')->group(function ($router) {
+    $router->get('/', 'AgentController@index');
+    $router->post('/', 'AgentController@addAgent');
+    $router->put('/{agent_id}', 'AgentController@updateAgent');
+    $router->delete('/{agent_id}', 'AgentController@deleteAgent');
+});
+
 
 
 //$router->prefix('accounts')->name('accounts.')->group(function($router) {
