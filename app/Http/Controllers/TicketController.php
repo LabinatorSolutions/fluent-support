@@ -3,9 +3,9 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\Framework\Request\Request;
@@ -15,10 +15,14 @@ class TicketController extends Controller
 {
     public function me(Request $request)
     {
-        $user = get_user_by('ID', get_current_user_id());
+        $user = wp_get_current_user();
 
         return [
-            'me'      => $user,
+            'me'      => [
+                'user_id' => $user->id,
+                'email' => $user->user_email,
+                'person' => Helper::getAgentByUserId($user->ID)
+            ],
             'request' => $request->all()
         ];
     }
@@ -33,6 +37,20 @@ class TicketController extends Controller
             },
             'product'
         ]);
+
+        // apply filters by access level
+        $permissionLevel = PermissionManager::currentUserTicketsPermissionLevel();
+        if($permissionLevel != 'all') {
+            $agent = Helper::getAgentByUserId();
+            if($permissionLevel == 'own') {
+                $ticketsQuery->where('agent_id', $agent->id);
+            } else {
+                $ticketsQuery->where(function ($q) use ($agent) {
+                    $q->where('agent_id', $agent->id);
+                    $q->orWhereNull('agent_id');
+                });
+            }
+        }
 
         if ($customerId = $request->get('customer_id')) {
             $ticketsQuery = $ticketsQuery->where('customer_id', $customerId);
@@ -70,6 +88,13 @@ class TicketController extends Controller
             $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
         }
 
+        if(!PermissionManager::hasTicketPermission($ticket)) {
+            return $this->sendError([
+                'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
+            ]);
+        }
+
+
         if ($ticket->status == 'closed') {
             $ticket->load('closed_by_person');
         }
@@ -102,6 +127,12 @@ class TicketController extends Controller
         }
 
         $ticket = Ticket::findOrFail($ticketId);
+
+        if(!PermissionManager::hasTicketPermission($ticket)) {
+            return $this->sendError([
+                'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
+            ]);
+        }
 
         $convoType = Arr::get($data, 'conversation_type', 'response');
 
@@ -184,6 +215,12 @@ class TicketController extends Controller
     {
         $ticket = Ticket::with('customer')->findOrFail($ticketId);
 
+        if(!PermissionManager::hasTicketPermission($ticket)) {
+            return $this->sendError([
+                'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
+            ]);
+        }
+
         $otherTickets = Ticket::where('id', '!=', $ticketId)
             ->select(['id', 'title', 'status', 'created_at'])
             ->where('customer_id', $ticket->customer_id)
@@ -201,6 +238,12 @@ class TicketController extends Controller
         $ticket = Ticket::findOrFail($ticketId);
         $propName = $request->get('prop_name');
         $propValue = $request->get('prop_value');
+
+        if(!PermissionManager::hasTicketPermission($ticket)) {
+            return $this->sendError([
+                'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
+            ]);
+        }
 
         $prevValue = $ticket->{$propName};
         if ($propName && $propValue && $prevValue != $propValue) {
@@ -230,10 +273,15 @@ class TicketController extends Controller
 
     public function closeTicket(Request $request, $ticketId)
     {
-
         $agent = Helper::getAgentByUserId(get_current_user_id());
 
         $ticket = Ticket::findOrFail($ticketId);
+
+        if(!PermissionManager::hasTicketPermission($ticket)) {
+            return $this->sendError([
+                'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
+            ]);
+        }
 
         if ($ticket->status != 'closed') {
             $ticket->status = 'closed';
@@ -257,6 +305,12 @@ class TicketController extends Controller
 
         $ticket = Ticket::findOrFail($ticketId);
 
+        if(!PermissionManager::hasTicketPermission($ticket)) {
+            return $this->sendError([
+                'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
+            ]);
+        }
+
         if ($ticket->status == 'closed') {
             $ticket->status = 'active';
             $ticket->save();
@@ -268,8 +322,6 @@ class TicketController extends Controller
             'message' => __('Ticket has been opened again', 'fluent_support'),
             'ticket'  => $ticket
         ];
-
-
     }
 
 }

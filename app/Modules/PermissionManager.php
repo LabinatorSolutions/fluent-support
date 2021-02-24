@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Modules;
 
+use FluentSupport\App\Services\Helper;
 
 class PermissionManager
 {
@@ -83,7 +84,36 @@ class PermissionManager
         if(current_user_can('manage_options')) {
             return true;
         }
-        
+
         return current_user_can($permission);
+    }
+
+    public static function currentUserTicketsPermissionLevel()
+    {
+        $permissions = self::currentUserPermissions();
+
+        if(in_array('fst_manage_other_tickets', $permissions)) {
+            return 'all';
+        }
+
+        if(in_array('fst_manage_unassigned_tickets', $permissions)) {
+            return 'own_plus';
+        }
+
+        return 'own';
+    }
+
+    public static function hasTicketPermission($ticket)
+    {
+        $permissionLevel = self::currentUserTicketsPermissionLevel();
+        if($permissionLevel == 'all') {
+            return true;
+        }
+        $agent = Helper::getAgentByUserId();
+        if($ticket->agent_id == $agent->id) {
+            return true;
+        }
+
+        return !$ticket->agent_id && $permissionLevel == 'own_plus';
     }
 }

@@ -14,8 +14,11 @@ class Helper
         return App::getInstance($module);
     }
 
-    public static function getAgentByUserId($userId)
+    public static function getAgentByUserId($userId = null)
     {
+        if($userId === null) {
+            $userId = get_current_user_id();
+        }
         if (!$userId) {
             return false;
         }
