@@ -15,6 +15,8 @@
                         </div>
                     </div>
                     <div class="fs_tk_actions">
+                        <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
+                                   size="small"></el-button>
                         <el-button @click="$router.push({ name: 'dashboard' })" size="small">All</el-button>
                         <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating" @click="closeTicket()" size="small"
                                    type="danger">Close Ticket
