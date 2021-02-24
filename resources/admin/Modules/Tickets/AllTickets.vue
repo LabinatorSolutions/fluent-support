@@ -114,7 +114,7 @@
                         <template #default="scope">
                             <span :title="scope.row.agent.full_name"
                                   v-if="scope.row.agent">{{ scope.row.agent.first_name }}</span>
-                            <span v-else>not assigned</span>
+                            <span v-else>n/a</span>
                         </template>
                     </el-table-column>
                     <el-table-column width="100" label="Status">
