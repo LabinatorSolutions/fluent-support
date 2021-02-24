@@ -68,6 +68,13 @@ $router->prefix('agents')->group(function ($router) {
     $router->delete('/{agent_id}', 'AgentController@deleteAgent');
 });
 
+$router->prefix('customers')->group(function ($router) {
+    $router->get('/', 'CustomerController@index');
+    $router->put('/{customer_id}', 'CustomerController@update');
+    $router->delete('/{customer_id}', 'CustomerController@delete');
+});
+
+
 
 
 //$router->prefix('accounts')->name('accounts.')->group(function($router) {

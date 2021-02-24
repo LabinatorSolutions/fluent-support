@@ -33,9 +33,12 @@ class Settings
 
     public function globalBusinessSettings()
     {
+        $loginUrl = wp_login_url();
+
         $defaults = [
             'business_name' => '',
-            'portal_page_id' => ''
+            'portal_page_id' => '',
+            'login_message' => '<p>Please <a href="'.$loginUrl.'">login to access</a> Custom Support Portal'
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
@@ -60,6 +63,11 @@ class Settings
                 'type' => 'input-text',
                 'data-type' => 'number',
                 'label' => 'Portal Page ID'
+            ],
+            'login_message' => [
+                'type' => 'wp-editor',
+                'label' => 'Message for non logged in users',
+                'inline_help' => 'Please provide message for not logged in users. You can place login shortcode too'
             ]
         ];
     }

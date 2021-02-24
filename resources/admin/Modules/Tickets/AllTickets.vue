@@ -223,7 +223,7 @@ export default {
             });
 
             let ticketPref = this.$getData('tickets_pref', false);
-            if(ticketPref) {
+            if (ticketPref) {
                 this.order_by = ticketPref.order_by;
                 this.order_type = ticketPref.order_type;
                 this.pagination.per_page = ticketPref.per_page;
@@ -255,7 +255,7 @@ export default {
             this.fetchTickets();
         },
         changeOrderType() {
-            if(this.order_type == 'DESC') {
+            if (this.order_type == 'DESC') {
                 this.order_type = 'ASC';
             } else {
                 this.order_type = 'DESC';
@@ -268,6 +268,11 @@ export default {
         if (this.$route.query.agent_id) {
             this.filters.agent_id = this.$route.query.agent_id;
         }
+
+        if (this.$route.query.search) {
+            this.search = this.$route.query.search;
+        }
+
         this.fetchTickets();
     }
 }
