@@ -43,7 +43,8 @@ class Customer extends Person
         if(!$customer) {
             if(!empty($customerData['user_id'])) {
                 $customer = self::where('user_id', $customerData['user_id'])->first();
-            } else {
+            }
+            if(!$customer) {
                 $customer = self::where('email', $email)->first();
             }
         }
