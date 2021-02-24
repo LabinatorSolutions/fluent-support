@@ -18,7 +18,7 @@ class PortalPolicy extends Policy
         if($request->get('on_behalf')) {
             return PermissionManager::currentUserCan('fst_sensitive_data') || PermissionManager::currentUserCan('fst_manage_other_tickets');
         }
-        
+
         return !!get_current_user_id();
     }
 
