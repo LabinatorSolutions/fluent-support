@@ -126,7 +126,7 @@
                              :class="getTicketClasses(conversation)">
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
-                                <img v-if="conversation.person" :src="conversation.person.photo"
+                                <img v-if="conversation.person" :src="conversation.person?.photo"
                                      :alt="conversation.person.full_name"/>
                             </section>
                             <section class="fs_thread_wrap">
@@ -164,13 +164,13 @@
                     <article class="fs_thread conversion_starter">
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
-                                <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
+                                <img :src="ticket.customer?.photo" :alt="ticket.customer?.full_name"/>
                             </section>
                             <section class="fs_thread_wrap">
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong>{{ ticket.customer.full_name }}</strong> started the conversation
+                                            <strong>{{ ticket.customer?.full_name }}</strong> started the conversation
                                         </div>
                                         <div class="fs_thread_actions">
                                             {{ $timeDiff(ticket.created_at) }}
