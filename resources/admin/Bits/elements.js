@@ -28,6 +28,9 @@ import {
     ElRadioGroup,
     ElRate,
     ElSelect,
+    ElCheckbox,
+    ElCheckboxGroup,
+
     ElSlider,
     ElSwitch,
     ElTimePicker,
@@ -45,8 +48,7 @@ import {
     ElLoading,
     ElMessage,
     ElMessageBox,
-    ElNotification,
-
+    ElNotification
 } from 'element-plus';
 
 
@@ -88,6 +90,8 @@ const components = [
     ElTabs,
     ElTabPane,
     ElTooltip,
+    ElCheckbox,
+    ElCheckboxGroup,
 ];
 
 components.forEach(component => {

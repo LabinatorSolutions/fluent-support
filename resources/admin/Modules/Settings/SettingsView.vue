@@ -11,6 +11,9 @@
                 <li>
                     <router-link :to="{ name: 'email_notifications' }">Email Notifications</router-link>
                 </li>
+                <li>
+                    <router-link :to="{ name: 'support-staffs' }">Support Staffs</router-link>
+                </li>
             </ul>
         </div>
         <div class="inner_body">

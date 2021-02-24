@@ -6,6 +6,7 @@ import SettingsView from './Modules/Settings/SettingsView';
 import Products from './Modules/Settings/Products';
 import EmailNotifications from './Modules/Settings/EmailNotifications';
 import BusinessSettings from './Modules/Settings/BusinessSettings';
+import Agents from './Modules/Settings/SupportStaffs';
 
 export default [
     {
@@ -51,6 +52,11 @@ export default [
                 name: 'email_notifications',
                 path: 'email_notifications',
                 component: EmailNotifications
+            },
+            {
+                path: 'support-staffs',
+                name: 'support-staffs',
+                component: Agents
             }
         ]
     }
