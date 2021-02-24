@@ -78,7 +78,7 @@
                         </el-input>
                     </div>
                     <div class="fs_tk_filter">
-                        <el-button @click="resetFilters()" size="small">Reset Filters</el-button>
+                        <el-button :type="(has_active_filter) ? 'danger' : ''" @click="resetFilters()" size="small">Reset Filters</el-button>
                     </div>
                 </div>
                 <el-table
@@ -185,6 +185,12 @@ export default {
         '$route.query.agent_id'() {
             this.filters.agent_id = this.$route.query.agent_id;
             this.fetchTickets();
+        }
+    },
+    computed: {
+        has_active_filter() {
+            const f = this.filters;
+            return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.search;
         }
     },
     methods: {

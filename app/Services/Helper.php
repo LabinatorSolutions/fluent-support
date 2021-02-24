@@ -131,6 +131,11 @@ class Helper
         return apply_filters('fluent_support/portal_base_url', $baseUrl);
     }
 
+    public static function getPortalAdminBaseUrl()
+    {
+        return apply_filters('fluent_support/portal_admin_base_url', admin_url('admin.php?page=fluent-support/#/'));
+    }
+
     public static function getBusinessSettings()
     {
         static $settings;
