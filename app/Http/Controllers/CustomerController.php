@@ -2,35 +2,28 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Agent;
-use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Person;
-use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\Response;
-use FluentSupport\App\Models\Ticket;
-use FluentSupport\Framework\Request\Request;
-use FluentSupport\App\Modules\PermissionManager;
-use FluentSupport\Framework\Support\Arr;
 
-class AgentController extends Controller
+use FluentSupport\App\Models\Customer;
+use FluentSupport\Framework\Request\Request;
+
+class CustomerController extends Controller
 {
     public function index(Request $request)
     {
-        $agents = Agent::orderBy('id', 'DESC')
-            ->where('person_type', 'agent')
-            ->whereNotNull('user_id')
+        $customers = Customer::orderBy('id', 'DESC')
+            ->where('person_type', 'customer')
             ->paginate();
 
-        foreach ($agents as $agent) {
-            $agent->permissions = PermissionManager::getUserPermissions($agent->user_id);
-            if($agent->user_id) {
-                $agent->user_profile = admin_url('user-edit.php?user_id='.$agent->user_id);
+        foreach ($customers as $customer) {
+            $customer->total_tickets = $customer->getTicketCounts();
+            $customer->total_responses = $customer->getResponseCounts();
+            if($customer->user_id) {
+                $customer->user_profile = admin_url('user-edit.php?user_id='.$customer->user_id);
             }
         }
 
         return [
-            'agents' => $agents,
-            'permissions' => PermissionManager::pluginPermissions()
+            'customers' => $customers,
         ];
     }
 

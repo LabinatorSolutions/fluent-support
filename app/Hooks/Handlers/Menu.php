@@ -5,18 +5,29 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 
 class Menu
 {
     public function add()
     {
-        $capability = 'manage_options';
+        $currentUserPermissions = PermissionManager::currentUserPermissions();
+
+        if(!$currentUserPermissions) {
+            return;
+        }
+
+        $permission = 'fst_view_dashboard';
+
+        if(current_user_can('manage_options')) {
+            $permission = 'manage_options';
+        }
 
         add_menu_page(
             __('Fluent Support', 'fluent-support'),
             __('Fluent Support'),
-            $capability,
+            $permission,
             'fluent-support',
             array($this, 'renderApp'),
             $this->getMenuIcon(),
@@ -45,13 +56,26 @@ class Menu
             ]
         ];
 
-        $secondayItems = [
-            [
+        $secondayItems = [];
+
+        if(PermissionManager::currentUserCan('fst_sensitive_data')) {
+            $menuItems[] = [
+                'key'       => 'customers',
+                'label'     => __('Customers', 'fluent-support'),
+                'permalink' => $baseUrl . 'customers'
+            ];
+        }
+
+        if(PermissionManager::currentUserCan('fst_manage_settings')) {
+            $secondayItems[] = [
                 'key'       => 'settings',
                 'label'     => __('Settings', 'fluent-support'),
                 'permalink' => $baseUrl . 'settings/products'
-            ]
-        ];
+            ];
+        }
+
+
+
 
         $app = App::getInstance();
         $this->enqueueAssets();
@@ -85,7 +109,18 @@ class Menu
 
         $me = Helper::getAgentByUserId(get_current_user_id());
 
+        if(!$me && current_user_can('manage_options')) {
+            // we should create the agent
+            $user = wp_get_current_user();
+            $me = Agent::create([
+                'email' => $user->user_email,
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'user_id' => $user->ID
+            ]);
+        }
 
+        $me->permissions = PermissionManager::currentUserPermissions();
 
         wp_localize_script('fluent_support_admin_app_boot', 'fluentSupportAdmin', array(
             'slug'              => $slug = $app->config->get('app.slug'),

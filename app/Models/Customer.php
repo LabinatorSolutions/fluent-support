@@ -50,4 +50,14 @@ class Customer extends Person
 
         return $customer;
     }
+
+    public function getTicketCounts()
+    {
+        return Ticket::where('customer_id', $this->id)->count();
+    }
+
+    public function getResponseCounts()
+    {
+        return Response::where('person_id', $this->id)->count();
+    }
 }

@@ -2,7 +2,6 @@
 
 namespace FluentSupport\App\Modules;
 
-use FluentSupport\Framework\Support\Arr;
 
 class PermissionManager
 {
@@ -13,41 +12,9 @@ class PermissionManager
             'fst_manage_own_tickets',
             'fst_manage_unassigned_tickets',
             'fst_manage_other_tickets',
-            'fst_manage_settings'
+            'fst_manage_settings',
+            'fst_sensitive_data'
         ];
-    }
-
-    public static function getRoles()
-    {
-        return [
-            'support_agent' => [
-                'title' => 'Support Agent',
-                'permissions' => [
-                    'fst_view_dashboard',
-                    'fst_manage_own_tickets',
-                    'fst_manage_unassigned_tickets'
-                ]
-            ],
-            'support_manager' => [
-                'title' => 'Support Manager',
-                'permissions' => [
-                    'fst_view_dashboard',
-                    'fst_manage_own_tickets',
-                    'fst_manage_unassigned_tickets',
-                    'fst_manage_other_tickets',
-                    'fst_manage_settings'
-                ]
-            ]
-        ];
-    }
-
-    public static function getRole($roleName)
-    {
-        $roles = self::getRoles();
-        if(isset($roles[$roleName])) {
-            return $roles[$roleName];
-        }
-        return false;
     }
 
     public static function attachPermissions($user, $permissions)
@@ -56,9 +23,12 @@ class PermissionManager
             $user = get_user_by('ID', $user);
         }
 
-
         if(!$user) {
             return false;
+        }
+
+        if(user_can($user, 'manage_options')) {
+            return $user;
         }
 
         $allPermissions = self::pluginPermissions();
@@ -93,5 +63,27 @@ class PermissionManager
         }
 
         return array_values(array_intersect(array_keys($user->allcaps), $pluginPermission));
+    }
+
+    public static function currentUserPermissions($cached = true)
+    {
+        static $permissions;
+
+        if($permissions && $cached) {
+            return $permissions;
+        }
+
+        $permissions = self::getUserPermissions(get_current_user_id());
+
+        return $permissions;
+    }
+
+    public static function currentUserCan($permission)
+    {
+        if(current_user_can('manage_options')) {
+            return true;
+        }
+        
+        return current_user_can($permission);
     }
 }

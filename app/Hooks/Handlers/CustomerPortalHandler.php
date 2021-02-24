@@ -5,15 +5,23 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Support\Arr;
 
 class CustomerPortalHandler
 {
     public function renderPortal()
     {
-        $this->enqueueScripts();
-
-        return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">Loading Customer Portal. Please wait...</h3></div>';
+        if(PermissionManager::currentUserPermissions()) {
+            return '<h3>Customer Portal is only accessible by Customers. Looks like you are a support agent</h3>';
+        } else if(get_current_user_id()) {
+            $this->enqueueScripts();
+            return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">Loading Customer Portal. Please wait...</h3></div>';
+        } else {
+            $businessSettings = Helper::getBusinessSettings();
+            return do_shortcode(Arr::get($businessSettings, 'login_message', ''));
+        }
     }
 
     public function enqueueScripts()

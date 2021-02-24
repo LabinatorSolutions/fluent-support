@@ -31,6 +31,11 @@
                     </template>
                 </el-table-column>
             </el-table>
+
+            <div class="fframe_pagination_wrapper">
+                <pagination @fetch="fetchAgents()" :pagination="pagination"/>
+            </div>
+
         </div>
 
         <el-dialog
@@ -73,8 +78,12 @@
 </template>
 
 <script type="text/babel">
+import Pagination from "../../Pieces/Pagination";
 export default {
     name: 'support-staffs',
+    components: {
+        Pagination
+    },
     data() {
         return {
             agents: [],
