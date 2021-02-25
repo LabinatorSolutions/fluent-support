@@ -304,6 +304,13 @@
     padding: 20px;
     background: #f1f2f5;
     border: 1px solid #e5e9ec;
+    position: relative;
+
+    .fc_template_box {
+        position: absolute;
+        right: 20px;
+        z-index: 999999;
+    }
 
     .fs_response_actions {
         padding-top: 10px;
@@ -453,3 +460,20 @@ span.fs_agent_photo_icon img {
         }
     }
 }
+
+
+.doc_blocks {
+    padding-top: 10px;
+
+    ul {
+        margin: 10px 0px;
+        padding-left: 25px;
+        list-style: disc;
+
+        li {
+            cursor: pointer;
+            margin-bottom: 7px;
+        }
+    }
+}
+

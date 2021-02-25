@@ -78,7 +78,7 @@
                         </el-input>
                     </div>
                     <div class="fs_tk_filter">
-                        <el-button :type="(has_active_filter) ? 'danger' : ''" @click="resetFilters()" size="small">Reset Filters</el-button>
+                        <el-button :type="(has_active_filter) ? 'danger' : 'default'" @click="resetFilters()" size="small">Reset Filters</el-button>
                     </div>
                 </div>
                 <el-table
@@ -126,7 +126,9 @@
                         label="Date"
                         width="180">
                         <template #default="scope">
-                            {{$timeDiff(scope.row.created_at)}}
+                            <span title="Ticket Created At">
+                                <i class="el-icon-time"></i> {{$timeDiff(scope.row.created_at)}}
+                            </span>
                         </template>
                     </el-table-column>
                 </el-table>

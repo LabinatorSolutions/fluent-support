@@ -6,6 +6,7 @@ require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 use FluentSupport\App\Database\Migrations\MetaMigrator;
 use FluentSupport\App\Database\Migrations\PersonsMigrator;
+use FluentSupport\App\Database\Migrations\SavedRepliesMigrator;
 use FluentSupport\App\Database\Migrations\TicketsMigrator;
 use FluentSupport\App\Database\Migrations\ConversationsMigrator;
 use FluentSupport\App\Database\Migrations\AttachmentsMigrator;
@@ -25,7 +26,8 @@ class DBMigrator
         TaggablesMigrator::class,
         TagRelationsMigrator::class,
         DataMetrixMigrator::class,
-        MetaMigrator::class
+        MetaMigrator::class,
+        SavedRepliesMigrator::class
     ];
 
     public static function run($network_wide = false)

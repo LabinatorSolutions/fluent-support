@@ -9,6 +9,8 @@ import BusinessSettings from './Modules/Settings/BusinessSettings';
 import Agents from './Modules/Settings/SupportStaffs';
 import Customers from './Modules/Customers/Customers';
 
+import SavedReplies from './Modules/SavedReplies/Replies';
+
 export default [
     {
         path: '/',
@@ -65,6 +67,11 @@ export default [
         path: '/customers',
         name: 'Customers',
         component: Customers
+    },
+    {
+        path: '/saved-replies',
+        name: 'saved_replies',
+        component: SavedReplies
     }
 ];
 

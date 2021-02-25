@@ -56,7 +56,13 @@ class Menu
             ]
         ];
 
-        $secondayItems = [];
+        $secondayItems = [
+            [
+                'key' => 'saved_replies',
+                'label' => __('Saved Replies', 'fluent-support'),
+                'permalink' => $baseUrl . 'saved-replies'
+            ]
+        ];
 
         if(PermissionManager::currentUserCan('fst_sensitive_data')) {
             $menuItems[] = [

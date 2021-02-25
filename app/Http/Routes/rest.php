@@ -22,6 +22,14 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
 });
 
+$router->prefix('saved-replies')->withPolicy('AgentTicketPolicy')->group(function ($router) {
+    $router->get('/', 'SavedRepliesController@index');
+    $router->post('/', 'SavedRepliesController@create');
+    $router->get('/{id}', 'SavedRepliesController@get');
+    $router->put('/{id}', 'SavedRepliesController@update');
+    $router->delete('/{id}', 'SavedRepliesController@delete');
+});
+
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'ProductController@index');
     $router->post('/', 'ProductController@create');
