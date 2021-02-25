@@ -17,7 +17,6 @@ class AgentController extends Controller
     public function index(Request $request)
     {
         $agents = Agent::orderBy('id', 'DESC')
-            ->where('person_type', 'agent')
             ->whereNotNull('user_id')
             ->paginate();
 

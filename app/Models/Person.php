@@ -2,11 +2,11 @@
 
 namespace FluentSupport\App\Models;
 
+use FluentSupport\Framework\Database\Orm\ScopeInterface;
+
 class Person extends Model
 {
     protected $table = 'fs_persons';
-
-    protected static $type = '';
 
     protected $appends = ['full_name', 'photo'];
 
@@ -25,16 +25,6 @@ class Person extends Model
         'status'
     ];
 
-    public static function boot()
-    {
-        static::creating(function ($model) {
-            $model->person_type = static::$type;
-        });
-
-//        static::addGlobalScope('person_type', function ($builder) {
-//            $builder->where('person_type', '=', static::$type);
-//        });
-    }
 
     /**
      * $searchable Columns in table to search
@@ -93,21 +83,6 @@ class Person extends Model
         return $query;
     }
 
-
-    /**
-     * One2Many: Customer has to many Click Tickets
-     * @return Model Collection
-     */
-    public function tickets()
-    {
-        $foreign_key = self::$type . '_id';
-
-        $class = __NAMESPACE__ . '\Ticket';
-
-        return $this->hasMany(
-            $class, $foreign_key, 'id'
-        );
-    }
 
     /**
      * Accessor to get dynamic photo attribute
