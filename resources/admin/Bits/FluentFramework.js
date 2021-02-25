@@ -61,6 +61,7 @@ export default class FluentFramework {
                 $saveData: self.saveData,
                 $getData: self.getData,
                 $timeDiff: self.humanDiffTime,
+                $waitingTime: self.waitingTime,
                 convertToText: self.convertToText
             }
         });
@@ -238,6 +239,15 @@ export default class FluentFramework {
         const timeDiff = endTime - appStartTime; // in ms
         const dateObj = moment(dateString);
         return dateObj.from(moment(window.fluentSupportAdmin.server_time).add(timeDiff, 'milliseconds'));
+    }
+
+    waitingTime(time1, time2) {
+        if(!time2 || !time1) {
+            return '';
+        }
+        time1 = moment(time1);
+        time2 = moment(time2);
+        return time2.from(time1);
     }
 
 }

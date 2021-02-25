@@ -1,6 +1,9 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
-        <wp-editor v-model="response_body" />
+        <div class="fc_template_box">
+            <template-inserter @insert="insertTemplate" />
+        </div>
+        <wp-editor v-if="editor_ready" v-model="response_body" />
         <div class="fs_row">
             <div class="fs_half">
                 <attachment-form :ticket="ticket" :attachments="attachments" />
@@ -21,20 +24,23 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
+import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateResponse',
     props: ['ticket', 'type'],
     components: {
         WpEditor,
-        AttachmentForm
+        AttachmentForm,
+        TemplateInserter
     },
     data() {
         return {
             response_body: '',
             creating: false,
             close_ticket: 'no',
-            attachments: []
+            attachments: [],
+            editor_ready: true
         }
     },
     methods: {
@@ -57,6 +63,14 @@ export default {
             })
             .always(() => {
                 this.creating = false;
+            });
+        },
+        insertTemplate(content) {
+            console.log(content);
+            this.editor_ready = false;
+            this.response_body = content;
+            this.$nextTick(() => {
+                this.editor_ready = true;
             });
         }
     }
