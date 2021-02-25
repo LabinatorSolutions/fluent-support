@@ -12,8 +12,6 @@ Text Domain: alpha
 Domain Path: /language
 */
 
-global $wpdb;
-
 define('FLUENT_SUPPORT_VERSION', '0.1');
 define('FLUENT_SUPPORT_UPLOAD_DIR', 'fluent-support');
 
