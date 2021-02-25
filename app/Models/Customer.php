@@ -2,11 +2,21 @@
 
 namespace FluentSupport\App\Models;
 
+use FluentSupport\App\Scopes\CustomerScope;
 use FluentSupport\Framework\Support\Arr;
 
 class Customer extends Person
 {
     protected static $type = 'customer';
+
+    public static function boot()
+    {
+        static::creating(function ($model) {
+            $model->person_type = static::$type;
+        });
+
+        static::addGlobalScope(new CustomerScope);
+    }
 
     public static function maybeCreateCustomer($customerData)
     {
@@ -28,6 +38,21 @@ class Customer extends Person
         }
 
         return $customer;
+    }
+
+    /**
+     * One2Many: Customer has to many Click Tickets
+     * @return Model Collection
+     */
+    public function tickets()
+    {
+        $foreign_key = self::$type . '_id';
+
+        $class = __NAMESPACE__ . '\Ticket';
+
+        return $this->hasMany(
+            $class, $foreign_key, 'id'
+        );
     }
 
     public static function getCustomerFromData($customerData)

@@ -5,6 +5,7 @@ namespace FluentSupport\App\Services;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
 
 class Helper
@@ -147,7 +148,8 @@ class Helper
             return $settings;
         }
 
-        $settings = self::getOption('global_business_settings');
+        $settings = (new Settings())->globalBusinessSettings();
+
         return $settings;
     }
 

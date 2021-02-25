@@ -70,4 +70,6 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
 
     $router->post('ticket_file_upload', 'CustomerPortalController@uploadTicketFiles');
 
+    $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
+
 });

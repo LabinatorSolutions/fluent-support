@@ -11,9 +11,8 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $customers = Customer::orderBy('id', 'DESC')
-            ->where('person_type', 'customer')
             ->paginate();
-
+        
         foreach ($customers as $customer) {
             $customer->total_tickets = $customer->getTicketCounts();
             $customer->total_responses = $customer->getResponseCounts();
