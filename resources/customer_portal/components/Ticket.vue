@@ -1,104 +1,115 @@
 <template>
     <div v-loading="fetching" class="fs_ticket">
-
-        <div class="fs_tk_header">
-            <div v-if="ticket" class="fs_th_header">
-                <hgroup>
-                    <div class="fs_tk_subject">
-                        <h2 title="fs_tk_edit_subject">
-                            <span class="fs_ticket_id">#{{ ticket.id }}</span>
-                            {{ ticket.title }}
-                        </h2>
-                        <div class="fs_tk_tags">
-                            <span v-if="ticket.product" class="fs_badge">{{ticket.product.title}}</span>
-                            <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
+        <template v-if="ticket">
+            <div class="fs_tk_header">
+                <div class="fs_th_header">
+                    <hgroup>
+                        <div class="fs_tk_subject">
+                            <h2 title="fs_tk_edit_subject">
+                                <span class="fs_ticket_id">#{{ ticket.id }}</span>
+                                {{ ticket.title }}
+                            </h2>
+                            <div class="fs_tk_tags">
+                                <span v-if="ticket.product" class="fs_badge">{{ ticket.product.title }}</span>
+                                <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fs_tk_actions">
-                        <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
-                                   size="small"></el-button>
-                        <el-button @click="$router.push({ name: 'dashboard' })" size="small">All</el-button>
-                        <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating" @click="closeTicket()" size="small"
-                                   type="danger">Close Ticket
-                        </el-button>
-                    </div>
-                </hgroup>
+                        <div class="fs_tk_actions">
+                            <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
+                                       size="small"></el-button>
+                            <el-button @click="$router.push({ name: 'dashboard' })" size="small">All</el-button>
+                            <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
+                                       @click="closeTicket()" size="small"
+                                       type="danger">Close Ticket
+                            </el-button>
+                        </div>
+                    </hgroup>
+                </div>
             </div>
-        </div>
-        <div class="fs_tk_body">
-            <template v-if="ticket">
+            <div class="fs_tk_body">
                 <div style="text-align: center;" class="fst_reply_box" v-if="ticket.status == 'closed'">
-                    <p>This ticket has been closed at {{ticket.resolved_at }}
+                    <p>This ticket has been closed at {{ ticket.resolved_at }}
                         <span v-if="ticket.closed_by_person">
-                            by <b>{{getHumanName(ticket.closed_by_person)}}</b>
+                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>
                         </span>
-                    <br />If you still have related issues. Please reopen this ticket and reply</p>
-                    <el-button :disabled="updating" v-loading="updating" @click="reOpen()" type="info" size="small">Reopen This ticket</el-button>
+                        <br/>If you still have related issues. Please reopen this ticket and reply</p>
+                    <el-button :disabled="updating" v-loading="updating" @click="reOpen()" type="info" size="small">
+                        Reopen This ticket
+                    </el-button>
                 </div>
                 <inline-reply v-else @created="recordNewResponse" :ticket="ticket"/>
-            </template>
 
-            <div v-if="ticket && ticket.id" class="fs_threads_container">
-                <article v-for="conversation in conversations"
-                         :key="conversation.id"
-                         class="fs_thread"
-                         :class="getTicketClasses(conversation)">
-                    <div class="fs_thread_content">
-                        <section class="fs_avatar">
-                            <img v-if="conversation.person" :src="conversation.person.photo"
-                                 :alt="conversation.person.full_name"/>
-                        </section>
-                        <section class="fs_thread_wrap">
-                            <section class="fs_thread_message">
-                                <div class="fs_thread_head">
-                                    <div class="fs_thread_title">
-                                        <strong v-if="conversation.person">{{
-                                                getHumanName(conversation.person)
-                                            }}</strong> replied
+                <div class="fs_threads_container">
+                    <article v-for="conversation in conversations"
+                             :key="conversation.id"
+                             class="fs_thread"
+                             :class="getTicketClasses(conversation)">
+                        <div class="fs_thread_content">
+                            <section class="fs_avatar">
+                                <img v-if="conversation.person" :src="conversation.person.photo"
+                                     :alt="conversation.person.full_name"/>
+                            </section>
+                            <section class="fs_thread_wrap">
+                                <section class="fs_thread_message">
+                                    <div class="fs_thread_head">
+                                        <div class="fs_thread_title">
+                                            <strong v-if="conversation.person">{{
+                                                    getHumanName(conversation.person)
+                                                }}</strong> replied
+                                        </div>
+                                        <div class="fs_thread_actions">
+                                            {{ conversation.created_at }}
+                                        </div>
                                     </div>
-                                    <div class="fs_thread_actions">
-                                        {{ conversation.created_at }}
-                                    </div>
-                                </div>
-                                <div v-html="conversation.content" class="fs_thread_body"></div>
+                                    <div v-html="conversation.content" class="fs_thread_body"></div>
 
-                                <div class="fst_file_lists" v-if="conversation.attachments.length">
-                                    <ul>
-                                        <li
-                                            v-for="attachment in conversation.attachments"
-                                            :key="attachment.file_hash"
-                                        >
-                                            <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener" :href="attachment.secureUrl">{{attachment.title}}</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </section>
-                        </section>
-                    </div>
-                </article>
-                <article class="fs_thread conversion_starter">
-                    <div class="fs_thread_content">
-                        <section class="fs_avatar">
-                            <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
-                        </section>
-                        <section class="fs_thread_wrap">
-                            <section class="fs_thread_message">
-                                <div class="fs_thread_head">
-                                    <div class="fs_thread_title">
-                                        <strong>{{ getHumanName(ticket.customer) }}</strong> started the conversation
+                                    <div class="fst_file_lists" v-if="conversation.attachments.length">
+                                        <ul>
+                                            <li
+                                                v-for="attachment in conversation.attachments"
+                                                :key="attachment.file_hash"
+                                            >
+                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div class="fs_thread_actions">
-                                        {{ ticket.created_at }}
-                                    </div>
-                                </div>
-                                <div v-html="ticket.content" class="fs_thread_body"></div>
+                                </section>
                             </section>
-                        </section>
-                    </div>
-                </article>
+                        </div>
+                    </article>
+                    <article class="fs_thread conversion_starter">
+                        <div class="fs_thread_content">
+                            <section class="fs_avatar">
+                                <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
+                            </section>
+                            <section class="fs_thread_wrap">
+                                <section class="fs_thread_message">
+                                    <div class="fs_thread_head">
+                                        <div class="fs_thread_title">
+                                            <strong>{{ getHumanName(ticket.customer) }}</strong> started the
+                                            conversation
+                                        </div>
+                                        <div class="fs_thread_actions">
+                                            {{ ticket.created_at }}
+                                        </div>
+                                    </div>
+                                    <div v-html="ticket.content" class="fs_thread_body"></div>
+                                </section>
+                            </section>
+                        </div>
+                    </article>
+                </div>
             </div>
-        </div>
+        </template>
 
+        <div style="padding: 20px; background: white; " class="fs_tk_body" v-else-if="!error_message">
+            <el-skeleton :rows="5" animated/>
+        </div>
+        <div style="padding: 20px; text-align: center;" class="fs_tk_body" v-else-if="error_message">
+            <p v-html="error_message"></p>
+            <el-button type="primary" @click="$router.push({ name: 'dashboard' })" size="small">View Your Tickets</el-button>
+        </div>
     </div>
 </template>
 
@@ -117,7 +128,8 @@ export default {
             conversations: [],
             fetching: false,
             signon_id: '',
-            updating: false
+            updating: false,
+            error_message: ''
         }
     },
     methods: {
@@ -130,7 +142,13 @@ export default {
                     this.signon_id = response.sign_on_id;
                 })
                 .catch((errors) => {
-                    console.log(errors);
+                    let message = 'Uknown error. Please reload this page';
+                    if(errors.responseJSON?.errors?.message) {
+                        message = errors.responseJSON?.errors?.message;
+                    } else if(errors.responseJSON?.message) {
+                        message = errors.responseJSON?.message;
+                    }
+                    this.error_message = message;
                 })
                 .always(() => {
                     this.fetching = false;

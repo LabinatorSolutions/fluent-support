@@ -11,7 +11,7 @@ class Mailer
     {
         $headers = self::getHeaders();
 
-        $body = self::getWithTemplate($body);
+        //$body = self::getWithTemplate($body);
 
         return wp_mail($to, $subject, $body, $headers);
     }

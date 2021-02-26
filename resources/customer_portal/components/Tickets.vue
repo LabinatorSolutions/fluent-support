@@ -12,7 +12,10 @@
                 <el-button size="small" @click="$router.push({ name: 'create_ticket' })" type="success">Create a New Ticket</el-button>
             </div>
         </div>
-        <div class="fs_tk_body">
+        <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">
+            <el-skeleton :rows="5" animated/>
+        </div>
+        <div v-else class="fs_tk_body">
             <el-table
                 :data="tickets"
                 stripe
@@ -48,6 +51,8 @@
                 <pagination @fetch="fetchTickets()" :pagination="pagination"/>
             </div>
         </div>
+
+
     </div>
 </template>
 
@@ -68,7 +73,8 @@ export default {
                 current_page: 0,
                 total: 0
             },
-            fetching: false
+            fetching: false,
+            first_loading: true
         }
     },
     watch: {
@@ -95,6 +101,7 @@ export default {
                 })
                 .always(() => {
                     this.fetching = false;
+                    this.first_loading = false;
                 });
         },
         gotToTicket(row) {

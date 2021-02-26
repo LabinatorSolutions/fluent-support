@@ -1,0 +1,28 @@
+.fs_dash_cards {
+    display: block;
+    width: 100%;
+    .fs_dash_card {
+        display: inline-block;
+        margin: 0px 20px 20px 0px;
+        background: white;
+        min-width: 250px;
+        box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+        .dash_card_title {
+            text-align: center;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ebeef5;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        .dash_card_count {
+            padding: 30px 60px;
+            text-align: center;
+            font-size: 25px;
+        }
+    }
+}
+
+
+
+

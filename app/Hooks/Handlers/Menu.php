@@ -81,8 +81,6 @@ class Menu
         }
 
 
-
-
         $app = App::getInstance();
         $this->enqueueAssets();
         $app->view->render('admin.menu', [

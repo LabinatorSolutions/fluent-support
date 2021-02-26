@@ -8,6 +8,8 @@ use FluentSupport\App\Models\Person;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Modules\StatModule;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\Framework\Support\Arr;
@@ -142,5 +144,28 @@ class AgentController extends Controller
             'message' => __('Selected support staff has been deleted', 'fluent-support')
         ];
 
+    }
+
+    public function myStats(Request $request)
+    {
+        $agent = Helper::getAgentByUserId();
+        return $this->getAgentStat($request, $agent->id);
+    }
+
+    public function getAgentStat(Request $request, $agentId)
+    {
+        $agent = Agent::findOrFail($agentId);
+        $stats = StatModule::getAgentStat($agentId);
+
+        if(PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
+            $stats['unassigned_tickets'] = [
+                'title' => 'Unassigned Tickets',
+                'count' => Ticket::whereNull('agent_id')->count()
+            ];
+        }
+
+        return [
+            'stats' => $stats
+        ];
     }
 }
