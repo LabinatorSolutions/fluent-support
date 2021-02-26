@@ -50,6 +50,7 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
+    $router->get('my_stats', 'AgentController@myStats');
     $router->get('/', 'AgentController@index');
     $router->post('/', 'AgentController@addAgent');
     $router->put('/{agent_id}', 'AgentController@updateAgent');

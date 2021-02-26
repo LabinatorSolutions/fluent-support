@@ -16,9 +16,9 @@ $commands = array(
     },
     'migrate-refresh' => function() use ($namespace) {
         global $wpdb;
-        
+
         echo "Please wait, refreshing all tables...\n";
-        
+
         $migrator = $namespace.'\DBMigrator';
 
         $wpdb->query('SET foreign_key_checks = 0');
@@ -37,19 +37,13 @@ $commands = array(
 
         die("Re-Migrated All Tables!\n");
     },
-    'seed' => function() use ($namespace) {
-        echo "Please wait, seeding...\n";
-        $seeder = $namespace.'\DBSeeder';
-        $seeder::run();
-        die("Seeded!\n");
-    },
     'build' => function() {
         echo "\nPlease wait, packaging the plugin for production...\n";
 
         $pluginDir = basename(__DIR__);
-        
+
         $targetDir = '../' . $pluginDir .'-'. date('Y-m-d-h-i-s');
-        
+
         mkdir($targetDir);
 
         foreach ([
@@ -58,11 +52,9 @@ $commands = array(
             $command = "cp -a {$src} {$targetDir}";
             shell_exec(escapeshellcmd($command));
         }
-        
+
         $deleteables = [
             '/database/Faker',
-            '/database/seeders',
-            '/database/DBSeeder.php',
             '/boot/globals_dev.php'
         ];
 

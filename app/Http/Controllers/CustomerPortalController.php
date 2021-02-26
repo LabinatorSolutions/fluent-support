@@ -110,14 +110,14 @@ class CustomerPortalController extends Controller
 
         if (!$customer) {
             return $this->sendError([
-                'message'    => 'No Customer Found',
+                'message'    => 'Sorry, You do not have permission to this support ticket',
                 'error_type' => 'no_customer'
             ]);
         }
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
-                'message'    => 'You do not have permission to view this ticket',
+                'message'    => 'You do not have permission to view this support ticket',
                 'error_type' => 'permission_error'
             ]);
         }

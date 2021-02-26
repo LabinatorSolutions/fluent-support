@@ -226,6 +226,7 @@ class TicketController extends Controller
             ->orderBy('id', 'DESC')
             ->limit(10)
             ->get();
+
         return [
             'other_tickets' => $otherTickets,
             'extra_widgets' => ProfileInfoService::getProfileExtraWidgets($ticket->customer)

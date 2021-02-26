@@ -18,11 +18,14 @@ class DataMetrixMigrator
             $sql = "CREATE TABLE $table (
                 `id` BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 `stat_date` DATE NOT NULL,
-                `new_tickets` BIGINT(20) UNSIGNED NOT NULL,  /* All the new tickets that added */
-                `unresolved_tickets` BIGINT(20) UNSIGNED NOT NULL,  /* New Tickets that is still on new status */
-                `resolved_tickets` BIGINT(20) UNSIGNED NOT NULL, /* Tickets that resolved today */
-                `agent_replies` BIGINT(20) UNSIGNED NOT NULL, /* Agent Replies today */
-                `customer_replies` BIGINT(20) UNSIGNED NOT NULL, /* Customer Replies today */
+                `data_type` VARCHAR(100) DEFAULT 'agent_stat',
+                `agent_id` BIGINT(20) UNSIGNED NULL,
+                `replies` INT(11) UNSIGNED NULL DEFAULT 0,  /* replies count in that date */
+                `active_tickets` INT(11) UNSIGNED NULL DEFAULT 0,  /* ticket counts without new and closed */
+                `resolved_tickets` INT(11) UNSIGNED NULL DEFAULT 0, /* tickets that got closed today */
+                `new_tickets` INT(11) UNSIGNED NULL DEFAULT 0, /* all new status ticket count */
+                `unassigned_tickets` INT(11) UNSIGNED NULL DEFAULT 0, /* For Global use case only */
+                `close_to_average` INT(11) UNSIGNED NULL DEFAULT 0, /* average close time of the tickets */
                 `created_at` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL
             ) $charsetCollate;";

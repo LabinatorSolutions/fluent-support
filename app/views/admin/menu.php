@@ -4,9 +4,6 @@
             <div class="menu_logo_holder">
                 <a href="<?php echo $base_url; ?>">
                     <img src="<?php echo $logo; ?>" />
-                    <?php if(defined('FLUENT_SUPPORT_VERSION')): ?>
-                        <span>Pro</span>
-                    <?php endif; ?>
                 </a>
             </div>
             <div class="fframe_handheld"><span class="dashicons dashicons-menu-alt3"></span></div>
