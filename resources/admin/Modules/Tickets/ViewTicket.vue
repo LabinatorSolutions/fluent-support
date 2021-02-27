@@ -1,6 +1,6 @@
 <template>
     <div class="fs_view_ticket">
-        <template v-if="ticket.id">
+        <template v-if="ticket && ticket.id">
             <div class="fs_ticket_body">
                 <div class="fs_ticket_actions">
                     <ul class="fs_tk_actions">
@@ -205,18 +205,6 @@
         <div style="padding: 20px;" class="fs_ticket_body" v-else>
             <el-skeleton :rows="10" animated/>
         </div>
-
-        <div class="fs_active_agents" v-if="active_agents.length > 1">
-            <ul>
-                <li class="fs_active_agent_title">Live Agents:</li>
-                <li :title="agent.full_name" v-for="agent in active_agents" :key="agent.id">
-                    <span class="fs_agent_photo_icon">
-                        <img :src="agent.photo"/>
-                    </span>
-                </li>
-            </ul>
-        </div>
-
     </div>
 </template>
 
@@ -224,8 +212,6 @@
 import CreateResponse from './_CreateResponse';
 import TicketSidebar from './_TicketSidebar';
 import each from 'lodash/each';
-
-import TicketActivityService from "../../Bits/TicketActivityService";
 
 export default {
     name: 'ViewTicket',
@@ -245,6 +231,14 @@ export default {
             admin_priorities: this.appVars.admin_priorities,
             updating: false,
             active_agents: []
+        }
+    },
+    watch: {
+        '$route.params.ticket_id'(ticketId) {
+            this.ticket = false;
+            this.$nextTick(() => {
+                this.fetchTicket();
+            });
         }
     },
     methods: {
@@ -357,20 +351,8 @@ export default {
     },
     mounted() {
         this.fetchTicket();
-
-        let person = this.appVars.me;
-        TicketActivityService.addAgent(this.ticket_id, person.id, {
-            id: person.id,
-            full_name: person.full_name,
-            photo: person.photo
-        });
-
-        TicketActivityService.getAgents(this.ticket_id).on('value', this.onActivityChange);
     },
     beforeUnmount() {
-        TicketActivityService.removeAgent(this.ticket_id, this.appVars.me.id);
-        TicketActivityService.getAgents(this.ticket_id).off('value', this.onActivityChange);
-        TicketActivityService.getTicketUpdates(this.ticket_id).off('value', this.onTicketDataChange);
     }
 }
 </script>
