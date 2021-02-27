@@ -38,9 +38,9 @@ class TelegramNotification extends NotificationIntegrationBase
         add_action('fluent_support/response_added_by_customer', function ($response, $ticket, $customer) {
             if ($this->isNotificationActivated('response_added_by_customer')) {
                 $this->sendNotification([
-                    'ticket' => $ticket,
+                    'ticket'   => $ticket,
                     'response' => $response,
-                    'person' => $customer
+                    'person'   => $customer
                 ], 'response_added_by_customer');
             }
         }, 10, 3);
@@ -48,13 +48,12 @@ class TelegramNotification extends NotificationIntegrationBase
         add_action('fluent_support/response_added_by_agent', function ($response, $ticket, $customer) {
             if ($this->isNotificationActivated('response_added_by_agent')) {
                 $this->sendNotification([
-                    'ticket' => $ticket,
+                    'ticket'   => $ticket,
                     'response' => $response,
-                    'person' => $customer
+                    'person'   => $customer
                 ], 'response_added_by_customer');
             }
         }, 10, 3);
-
 
     }
 
@@ -104,8 +103,8 @@ class TelegramNotification extends NotificationIntegrationBase
                     'type'    => 'checkbox-group',
                     'label'   => 'Notification Events',
                     'options' => [
-                        'ticket_created'      => 'Ticket Created',
-                        'ticket_closed'       => 'Ticket Closed',
+                        'ticket_created'             => 'Ticket Created',
+                        'ticket_closed'              => 'Ticket Closed',
                         'response_added_by_agent'    => 'Replied by Agent',
                         'response_added_by_customer' => 'Replied By Customer'
                     ]
@@ -186,9 +185,9 @@ class TelegramNotification extends NotificationIntegrationBase
 
         if ($type == 'ticket_created') {
             $message = $this->ticketCreatedMessage($data['ticket'], $data['person']);
-        } else if($type == 'response_added_by_customer') {
+        } else if ($type == 'response_added_by_customer') {
             $message = $this->replyMessage($data['ticket'], $data['response']);
-        } else if($type == 'ticket_closed') {
+        } else if ($type == 'ticket_closed') {
             $message = $this->ticketClosed($data['ticket'], $data['person']);
         }
 
@@ -222,17 +221,17 @@ class TelegramNotification extends NotificationIntegrationBase
 
     private function replyMessage($ticket, $response)
     {
-        $message = '<b>Reply: '. $ticket->title .' #'.$ticket->id.'</b>'."\n";
-        $message .= $this->clearText(\mb_substr($response->content, 0, 500))."\n";
+        $message = '<b>Reply: ' . $ticket->title . ' #' . $ticket->id . '</b>' . "\n";
+        $message .= $this->clearText(\mb_substr($response->content, 0, 500)) . "\n";
         $message .= '<u><a href="' . $this->getTicketEditLink($ticket) . '">View Reply</a></u>';
         return $message;
     }
 
     private function ticketClosed($ticket, $person)
     {
-        $message = '<b>Ticket  Closed by ' . $person->full_name . '</b>'."\n";;
-        $message .= '<pre>' . $ticket->title .'</pre> ';
-        $message .= ' <a href="' . $this->getTicketEditLink($ticket) . '">(#'.$ticket->id.')</a>';
+        $message = '<b>Ticket  Closed by ' . $person->full_name . '</b>' . "\n";;
+        $message .= '<pre>' . $ticket->title . '</pre> ';
+        $message .= ' <a href="' . $this->getTicketEditLink($ticket) . '">(#' . $ticket->id . ')</a>';
         return $message;
     }
 
@@ -240,7 +239,6 @@ class TelegramNotification extends NotificationIntegrationBase
     {
         return preg_replace("/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($html))));
     }
-
 
     private function getTicketEditLink($ticket)
     {
