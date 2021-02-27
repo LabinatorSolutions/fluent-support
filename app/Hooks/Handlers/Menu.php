@@ -56,6 +56,20 @@ class Menu
             ]
         ];
 
+        $hasSensitiveAccess = PermissionManager::currentUserCan('fst_sensitive_data');
+        if($hasSensitiveAccess) {
+            $menuItems[] = [
+                'key'       => 'customers',
+                'label'     => __('Customers', 'fluent-support'),
+                'permalink' => $baseUrl . 'customers'
+            ];
+            $menuItems[] = [
+                'key'       => 'reports',
+                'label'     => __('Reports', 'fluent-support'),
+                'permalink' => $baseUrl . 'reports',
+            ];
+        }
+
         $secondayItems = [
             [
                 'key' => 'saved_replies',
@@ -63,14 +77,6 @@ class Menu
                 'permalink' => $baseUrl . 'saved-replies'
             ]
         ];
-
-        if(PermissionManager::currentUserCan('fst_sensitive_data')) {
-            $menuItems[] = [
-                'key'       => 'customers',
-                'label'     => __('Customers', 'fluent-support'),
-                'permalink' => $baseUrl . 'customers'
-            ];
-        }
 
         if(PermissionManager::currentUserCan('fst_manage_settings')) {
             $secondayItems[] = [
