@@ -6,16 +6,16 @@
         <wp-editor v-if="editor_ready" v-model="response_body" />
         <div class="fs_row">
             <div class="fs_half">
-                <attachment-form :ticket="ticket" :attachments="attachments" />
-            </div>
-            <div class="fs_half">
-                <div class="fs_response_actions">
-                    <el-button v-loading="creating" @click="create()" size="small" type="success">
+                <div style="text-align: left" class="fs_response_actions">
+                    <el-button v-loading="creating" @click="create()" size="large" type="success">
                         <span v-if="type== 'note'">Add Internal Note</span>
-                        <span v-else>Reply</span>
+                        <span v-else>Add Reply</span>
                     </el-button>
                     <p v-if="type== 'note'">You are adding internal Note. Only support staffs can see this note</p>
                 </div>
+            </div>
+            <div class="fs_half">
+                <attachment-form :ticket="ticket" :attachments="attachments" />
             </div>
         </div>
     </div>

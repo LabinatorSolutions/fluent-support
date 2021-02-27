@@ -25,6 +25,9 @@ export default [
     {
         path: '/tickets',
         component: TicketsView,
+        meta: {
+            active: 'tickets'
+        },
         children: [
             {
                 name: 'tickets',
@@ -42,6 +45,9 @@ export default [
     {
         path: '/settings',
         component: SettingsView,
+        meta: {
+            active: 'settings'
+        },
         children: [
             {
                 name: 'business_settings',
@@ -73,12 +79,18 @@ export default [
     {
         path: '/customers',
         name: 'Customers',
-        component: Customers
+        component: Customers,
+        meta: {
+            active: 'customers'
+        }
     },
     {
         path: '/saved-replies',
         name: 'saved_replies',
-        component: SavedReplies
+        component: SavedReplies,
+        meta: {
+            active: 'saved_replies'
+        }
     }
 ];
 
