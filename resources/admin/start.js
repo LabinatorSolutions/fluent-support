@@ -17,7 +17,7 @@ window.FluentFramework.app.$success = function(msg) {
     return window.FluentFramework.app.$notify.success({
         title: 'Great!',
         message: msg,
-        offset: 19
+        position: 'bottom-right'
     });
 };
 
@@ -25,7 +25,7 @@ window.FluentFramework.app.$error = function(msg) {
     return window.FluentFramework.app.$notify.error({
         title: 'Oops!',
         message: msg,
-        offset: 19
+        position: 'bottom-right'
     });
 };
 
@@ -42,10 +42,15 @@ window.FluentFramework.request = function(method, route, data = {}) {
     });
 };
 
-//console.table([createApp({}), window.FluentFramework.app]);
-
-// import app from '@/admin/Bits/elements';
-   // const app = window.FluentFramework.app;
 const framerwork = new FluentFramework();
 framerwork.app.use(router).mount('#alpha_app');
+
+
+router.afterEach((to, from) => {
+    jQuery('.fframe_menu_item').removeClass('fs_active');
+    let active = to.meta.active;
+    if(active) {
+        jQuery('.fframe_main-menu-items').find('li[data-key='+active+']').addClass('fs_active');
+    }
+});
 

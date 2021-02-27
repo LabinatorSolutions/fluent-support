@@ -39,8 +39,8 @@ export default {
         }
     },
     methods: {
-        handleRemove() {
-
+        handleRemove(file, fileList) {
+            this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
         },
         handlePreview() {
 

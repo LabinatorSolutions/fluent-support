@@ -15,7 +15,7 @@
             margin-left: 10px;
             display: inline-block;
             vertical-align: middle;
-            padding: 10px 0;
+            padding-top: 10px;
             a {
                 display: block;
                 overflow: hidden;
@@ -52,8 +52,11 @@
                 padding: 0;
                 margin: 0;
 
-                &.#{$slug}active {
+                &.fs_active {
                     border-bottom: 2px solid #9d95d8;
+                    a {
+                        color: black;
+                    }
                 }
 
                 a:focus {
