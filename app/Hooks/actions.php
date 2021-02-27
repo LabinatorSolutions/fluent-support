@@ -13,6 +13,8 @@
  * @var $app FluentSupport\Framework\Foundation\Application
  */
 
+use FluentSupport\App\App;
+
 $app->addCustomAction('handle_exception', 'ExceptionHandler@handle');
 
 $app->addAction('admin_menu', 'Menu@add');
@@ -21,19 +23,35 @@ add_shortcode('fluent_support_portal', function () {
     return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
 });
 
+
+add_shortcode('fluent_support_login', function () {
+    $app = App::getInstance();
+    $assets = $app['url.assets'];
+    wp_enqueue_style('fluent_support_login_style', $assets.'admin/css/all_public.css');
+    $return = '<div class="fst_login_wrapper">';
+    $return .= wp_login_form([
+        'echo'           => false,
+        'redirect'       => get_permalink(get_the_ID()),
+        'remember'       => true,
+        'value_remember' => true
+    ]);
+    $return .= '</div>';
+    return $return;
+});
+
 add_shortcode('fluent_support_admin_portal', function () {
-    $currentUserPermissions = \FluentSupport\App\Modules\PermissionManager::currentUserPermissions();
-    if (!$currentUserPermissions) {
-        $return = '<div class="fst_login"><h3>Sorry, You don not have permission to view this</h3>';
-        $return .= wp_login_form([
-            'echo'           => false,
-            'redirect'       => get_permalink(get_the_ID()),
-            'remember'       => true,
-            'value_remember' => true
-        ]);
+    if (!get_current_user_id()) {
+        $return = '<div class="fst_login"><h3>Please Login</h3>';
+        $return .= do_shortcode('[fluent_support_login]');
         $return .= '</div>';
         return $return;
     }
+
+    $currentUserPermissions = \FluentSupport\App\Modules\PermissionManager::currentUserPermissions();
+    if (!$currentUserPermissions) {
+        return 'Sorry, You do not have permission to this page';
+    }
+
     add_filter('fluent_support_base_url', function ($url) {
         global $wp;
         return home_url(add_query_arg(array(), $wp->request)) . '/#/';

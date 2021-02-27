@@ -47,6 +47,10 @@ $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles')
 $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'SettingsController@getSettings');
     $router->post('/', 'SettingsController@saveSettings');
+
+    $router->get('/integration', 'IntegrationController@getSettings');
+    $router->post('/integration', 'IntegrationController@saveSettings');
+
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {

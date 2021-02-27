@@ -39,9 +39,6 @@
 
                         </li>
                         <li>
-                            <i class="el-icon-s-flag"/>
-                        </li>
-                        <li>
                             <i class="el-icon-price-tag"/>
                         </li>
                         <li>
@@ -91,13 +88,31 @@
                                               v-model="ticket.title"></el-input>
                                     <p>Press enter to save</p>
                                 </el-popover>
+
                             </h2>
                             <div class="fs_tk_tags">
-                                <span class="fs_badge">samples</span>
+                                <span class="fs_badge"></span>
                             </div>
                         </div>
                         <div class="fs_tk_badges">
                             <span class="fs_ticket_id">#{{ ticket.id }}</span>
+                            <el-popover
+                                placement="bottom"
+                                :width="400"
+                                trigger="click"
+                            >
+                                <template #reference>
+                                    <span :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
+                                </template>
+
+                                <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority" size="small">
+                                    <el-option
+
+                                        v-for="(priorityLabel, priority) in admin_priorities"
+                                        :key="priority" :value="priority"
+                                        :label="priorityLabel"></el-option>
+                                </el-select>
+                            </el-popover>
                             <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
                         </div>
                     </hgroup>
@@ -227,6 +242,7 @@ export default {
             show_response_box: '',
             products: this.appVars.support_products,
             agents: this.appVars.support_agents,
+            admin_priorities: this.appVars.admin_priorities,
             updating: false,
             active_agents: []
         }

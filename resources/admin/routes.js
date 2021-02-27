@@ -7,6 +7,8 @@ import Products from './Modules/Settings/Products';
 import EmailNotifications from './Modules/Settings/EmailNotifications';
 import BusinessSettings from './Modules/Settings/BusinessSettings';
 import Agents from './Modules/Settings/SupportStaffs';
+import IntegrationView from './Modules/Settings/IntegrationView';
+
 import Customers from './Modules/Customers/Customers';
 
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -60,6 +62,11 @@ export default [
                 path: 'support-staffs',
                 name: 'support-staffs',
                 component: Agents
+            },
+            {
+                path: 'integration',
+                name: 'integration',
+                component: IntegrationView
             }
         ]
     },

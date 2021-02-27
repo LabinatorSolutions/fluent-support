@@ -18,6 +18,7 @@ import OptionSelector from './_OptionSelector'
 import InlineCheckbox from './_InlineCheckbox'
 import VerifiedEmailInput from './_VerifiedEmailInput'
 import InputTagList from './_InputTagList'
+import CheckboxGroup from './_InputCheckboxes'
 
 export default {
     name: 'global_form_builder',
@@ -30,7 +31,8 @@ export default {
         OptionSelector,
         InlineCheckbox,
         VerifiedEmailInput,
-        InputTagList
+        InputTagList,
+        CheckboxGroup
     },
     props: {
         formData: {

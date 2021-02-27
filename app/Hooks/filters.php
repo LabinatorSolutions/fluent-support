@@ -10,6 +10,5 @@
  */
 
 /**
- * $app
- * @var FluentSupport\Framework\Foundation\Application
+ * @var $app \FluentCrm\Includes\Core\Application
  */

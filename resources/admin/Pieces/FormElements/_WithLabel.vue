@@ -3,7 +3,9 @@
         <div v-if="field.label" slot="label">
         {{ field.label }}
             <el-tooltip v-if="field.help" popper-class="sidebar-popper" effect="dark" placement="top">
-                <div slot="content" v-html="field.help"></div>
+                <template #content>
+                    <span v-html="field.help"></span>
+                </template>
                 <i class="tooltip-icon el-icon-info"></i>
             </el-tooltip>
         </div>

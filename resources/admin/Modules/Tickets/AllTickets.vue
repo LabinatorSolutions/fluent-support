@@ -117,9 +117,12 @@
                             <span v-else>n/a</span>
                         </template>
                     </el-table-column>
-                    <el-table-column width="100" label="Status">
+                    <el-table-column width="120" label="Status">
                         <template #default="scope">
                             <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
+                            <span class="fs_badge" :class="'fs_badge_priority_'+scope.row.priority">
+                                <i class="el-icon-s-flag"></i>  {{ scope.row.priority }}
+                            </span>
                         </template>
                     </el-table-column>
                     <el-table-column

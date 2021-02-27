@@ -1,0 +1,34 @@
+.fst_login_wrapper {
+    max-width: 500px;
+    form#loginform >p {
+        display: block;
+        margin-bottom: 15px;
+    }
+
+    form#loginform label {
+        display: block;
+        font-weight: 500;
+    }
+
+    form#loginform .input {
+        padding: 10px;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    form#loginform {
+        display: block;
+        overflow: hidden;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    input#wp-submit {
+        width: 100%;
+        padding: 15px;
+        background: #0275ff;
+        color: white;
+        border: 0;
+        border-radius: 5px;
+    }
+}
