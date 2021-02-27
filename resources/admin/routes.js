@@ -10,8 +10,8 @@ import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 
 import Customers from './Modules/Customers/Customers';
-
 import SavedReplies from './Modules/SavedReplies/Replies';
+import Reports from './Modules/Reports/Reports';
 
 export default [
     {
@@ -90,6 +90,14 @@ export default [
         component: SavedReplies,
         meta: {
             active: 'saved_replies'
+        }
+    },
+    {
+        path: '/reports',
+        name: 'reports',
+        component: Reports,
+        meta: {
+            active: 'reports'
         }
     }
 ];

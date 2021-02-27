@@ -9,7 +9,7 @@ class StatModule
 {
     public static function getAgentStat($agentId, $startDate = false, $endDate = false)
     {
-        if(!$startDate) {
+        if (!$startDate) {
             $currentDate = current_time('mysql');
             $startDate = $currentDate;
             $endDate = $currentDate;
@@ -37,7 +37,7 @@ class StatModule
             ->count();
 
         return [
-            'new_tickets' => [
+            'new_tickets'    => [
                 'title' => 'New Tickets',
                 'count' => $newTickets
             ],
@@ -49,10 +49,56 @@ class StatModule
                 'title' => 'Closed Tickets',
                 'count' => $closedTickets
             ],
-            'responses' => [
+            'responses'      => [
                 'title' => 'Responses',
                 'count' => $responses
             ]
         ];
     }
+
+    public static function getOverAllStats($startDate = false, $endDate = false)
+    {
+        if (!$startDate) {
+            $currentDate = current_time('mysql');
+            $startDate = $currentDate;
+            $endDate = $currentDate;
+        }
+
+        $startDate = date('Y-m-d 00:00.01', strtotime($startDate));
+        $endDate = date('Y-m-d 23:59.59', strtotime($endDate));
+
+        $newTickets = Ticket::where('status', 'new')
+            ->count();
+
+        $activeTickets = Ticket::where('status', 'active')
+            ->count();
+
+        $closedTickets = Ticket::where('status', 'closed')
+            ->whereBetween('resolved_at', [$startDate, $endDate])
+            ->count();
+
+        $responses = Response::where('conversation_type', 'response')
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->count();
+
+        return [
+            'new_tickets'    => [
+                'title' => 'New Tickets',
+                'count' => $newTickets
+            ],
+            'active_tickets' => [
+                'title' => 'Active Tickets',
+                'count' => $activeTickets
+            ],
+            'closed_tickets' => [
+                'title' => 'Closed Tickets',
+                'count' => $closedTickets
+            ],
+            'responses'      => [
+                'title' => 'Responses',
+                'count' => $responses
+            ]
+        ];
+    }
+
 }

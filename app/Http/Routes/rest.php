@@ -45,20 +45,25 @@ $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles')
     ->withPolicy('PortalPolicy');
 
 $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
+    $router->get('my_stats', 'AgentController@myStats');
     $router->get('/', 'SettingsController@getSettings');
     $router->post('/', 'SettingsController@saveSettings');
-
     $router->get('/integration', 'IntegrationController@getSettings');
     $router->post('/integration', 'IntegrationController@saveSettings');
 
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
-    $router->get('my_stats', 'AgentController@myStats');
+
     $router->get('/', 'AgentController@index');
     $router->post('/', 'AgentController@addAgent');
     $router->put('/{agent_id}', 'AgentController@updateAgent');
     $router->delete('/{agent_id}', 'AgentController@deleteAgent');
+});
+
+
+$router->prefix('reports')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
+    $router->get('/', 'ReportingController@getOverallReports');
 });
 
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
