@@ -3,6 +3,9 @@
 namespace FluentSupport\App\Services\Integrations;
 
 
+use FluentSupport\App\Modules\IntegrationSettingsModule;
+use FluentSupport\App\Services\Integrations\Telegram\TelegramNotification;
+
 class IntegrationInit
 {
     public function init()
@@ -16,5 +19,11 @@ class IntegrationInit
             (new FluentCRM())->boot();
         }
 
+        $this->addNotificationIntegrations();
+    }
+
+    private function addNotificationIntegrations()
+    {
+        IntegrationSettingsModule::addIntegration(new TelegramNotification());
     }
 }

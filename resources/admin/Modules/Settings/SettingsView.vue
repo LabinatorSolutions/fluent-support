@@ -2,17 +2,10 @@
     <div class="fs_tickets_view">
         <div class="inner_sidebar">
             <ul>
-                <li>
-                    <router-link :to="{ name: 'business_settings' }">Business Settings</router-link>
-                </li>
-                <li>
-                    <router-link :to="{ name: 'products' }">Products</router-link>
-                </li>
-                <li>
-                    <router-link :to="{ name: 'email_notifications' }">Email Notifications</router-link>
-                </li>
-                <li>
-                    <router-link :to="{ name: 'support-staffs' }">Support Staffs</router-link>
+                <li v-for="(settings_menu, settings_index) in settings_items">
+                    <router-link :to="{ name: settings_menu.route_name, query: settings_menu.route_query }">
+                        {{settings_menu.title}}
+                    </router-link>
                 </li>
             </ul>
         </div>
@@ -24,6 +17,39 @@
 
 <script type="text/babel">
 export default {
-    name: 'SettingsView'
+    name: 'SettingsView',
+    data() {
+        return {
+            settings_items: [
+                {
+                    title: 'Business Settings',
+                    route_name: 'business_settings',
+                    route_query: {}
+                },
+                {
+                    title: 'Products',
+                    route_name: 'products',
+                    route_query: {}
+                },
+                {
+                    title: 'Email Notifications',
+                    route_name: 'email_notifications',
+                    route_query: {}
+                },
+                {
+                    title: 'Support Staffs',
+                    route_name: 'support-staffs',
+                    route_query: {}
+                },
+                {
+                    title: 'Telegram Notifications',
+                    route_name: 'integration',
+                    route_query: {
+                        item_key: 'telegram_settings'
+                    }
+                }
+            ]
+        }
+    }
 }
 </script>
