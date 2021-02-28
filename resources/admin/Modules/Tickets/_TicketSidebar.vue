@@ -20,9 +20,23 @@
                 </div>
             </div>
         </div>
+
+        <div class="text-center fs_tk_card" style="height: 100px" v-if="loading">
+            <el-skeleton :rows="1" animated />
+        </div>
+
+        <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key" :class="'fs_tk_widget' + widget_key" class="fs_tk_card fs_tk_extra_card">
+            <div class="fs_tk_card_header">
+                <h3 v-html="widget.header"></h3>
+            </div>
+            <div class="fs_tk_card_body">
+                <div v-html="widget.body_html"></div>
+            </div>
+        </div>
+
         <div v-if="other_tickets.length" class="fs_tk_card fs_tk_other_tickets_card">
             <div class="fs_tk_card_header">
-                <h3>Previous Conversations</h3>
+                <h3>Previous Conversations ({{other_tickets.length}})</h3>
             </div>
             <div class="fs_tk_card_body">
                 <ul>
@@ -39,18 +53,6 @@
             </div>
         </div>
 
-        <div class="text-center fs_tk_card" style="height: 100px" v-if="loading">
-            <el-skeleton :rows="1" animated />
-        </div>
-
-        <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key" :class="'fs_tk_widget' + widget_key" class="fs_tk_card fs_tk_extra_card">
-            <div class="fs_tk_card_header">
-                <h3 v-html="widget.header"></h3>
-            </div>
-            <div class="fs_tk_card_body">
-                <div v-html="widget.body_html"></div>
-            </div>
-        </div>
     </div>
 </template>
 

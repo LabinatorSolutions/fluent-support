@@ -44,6 +44,10 @@ import {
     ElTabPane,
 
     ElPopover,
+    ElPopconfirm,
+    ElDropdown,
+    ElDropdownMenu,
+    ElDropdownItem,
 
     ElLoading,
     ElMessage,
@@ -92,6 +96,10 @@ const components = [
     ElTooltip,
     ElCheckbox,
     ElCheckboxGroup,
+    ElPopconfirm,
+    ElDropdown,
+    ElDropdownMenu,
+    ElDropdownItem,
 ];
 
 components.forEach(component => {

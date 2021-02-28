@@ -78,28 +78,35 @@
                         </el-input>
                     </div>
                     <div class="fs_tk_filter">
-                        <el-button :type="(has_active_filter) ? 'danger' : 'default'" @click="resetFilters()" size="small">Reset Filters</el-button>
+                        <el-button :type="(has_active_filter) ? 'danger' : 'default'" @click="resetFilters()"
+                                   size="small">Reset Filters
+                        </el-button>
                     </div>
                 </div>
                 <el-table
                     :data="tickets"
                     stripe
                     @row-click="gotToTicket"
+                    @selection-change="handleSelectionChange"
                     style="width: 100%">
-                    <el-table-column width="160" label="Customer">
+                    <el-table-column
+                        type="selection"
+                        width="55">
+                    </el-table-column>
+                    <el-table-column width="70" label="">
                         <template #default="scope">
-                            <span v-if="scope.row.customer">{{ scope.row.customer.full_name }}</span>
-                            <span v-else>n/a</span>
+                            <img :title="scope.row.customer.full_name" :alt="scope.row.customer.full_name"
+                                 class="tk_customer_avatar" :src="scope.row.customer.photo"/>
                         </template>
                     </el-table-column>
                     <el-table-column label="Title">
                         <template #default="scope">
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
-                                <strong>{{ scope.row.title }}</strong> <span v-if="scope.row.product"
-                                                                             class="fs_product">{{
-                                    scope.row.product?.title
-                                }}</span>
+                                <strong>{{ scope.row.title }}</strong>
+                                <span style="margin-left: 5px;" v-if="scope.row.product" class="fs_badge">
+                                    {{ scope.row.product?.title }}
+                                </span>
                                 <span class="fs_tk_number"> #{{ scope.row.id }}</span>
                                 <p class="fs_tk_preview_text">{{ scope.row.excerpt }}</p>
                             </router-link>
@@ -130,13 +137,51 @@
                         width="180">
                         <template #default="scope">
                             <span title="Ticket Created At">
-                                <i class="el-icon-time"></i> {{$timeDiff(scope.row.created_at)}}
+                                <i class="el-icon-time"></i> {{ $timeDiff(scope.row.created_at) }}
                             </span>
+                            <span class="fs_badge fs_badge_new"
+                                  v-show="getWaitingStatus(scope.row)">{{ getWaitingStatus(scope.row) }}</span>
                         </template>
                     </el-table-column>
                 </el-table>
-                <div class="fframe_pagination_wrapper">
-                    <pagination @fetch="fetchTickets()" :pagination="pagination"/>
+                <div class="fs_row">
+                    <div class="fs_half fs_padded_20">
+                        <div v-if="ticket_selections.length">
+                            <el-popconfirm
+                                @confirm="deleteSelected()"
+                                title="Are you sure to delete the selected Tickets?"
+                            >
+                                <template #reference>
+                                    <el-button
+                                        v-loading="doing_bulk"
+                                        :disabled="doing_bulk"
+                                        type="danger"
+                                        size="mini">
+                                        Delete Selected Tickets ({{ ticket_selections.length }})
+                                    </el-button>
+                                </template>
+                            </el-popconfirm>
+
+                            <el-popconfirm
+                                @confirm="closeSelected()"
+                                title="Are you sure to close the selected Tickets?"
+                            >
+                                <template #reference>
+                                    <el-button
+                                        v-loading="doing_bulk"
+                                        :disabled="doing_bulk"
+                                        type="info"
+                                        size="mini">Close Selected Tickets ({{ ticket_selections.length }})
+                                    </el-button>
+                                </template>
+                            </el-popconfirm>
+                        </div>
+                    </div>
+                    <div class="fs_half">
+                        <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                            <pagination @fetch="fetchTickets()" :pagination="pagination"/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -183,7 +228,9 @@ export default {
                 last_agent_response: 'Last Agent Response',
                 last_customer_response: 'Last Customer Response',
                 response_count: 'Response Count'
-            }
+            },
+            ticket_selections: [],
+            doing_bulk: false
         }
     },
     watch: {
@@ -272,6 +319,69 @@ export default {
                 this.order_type = 'DESC';
             }
             this.fetchTickets();
+        },
+        getWaitingStatus(ticket) {
+            if (ticket.status == 'closed') {
+                return '';
+            }
+            if (!ticket.last_agent_response) {
+                return 'require response';
+            } else if (!ticket.last_customer_response) {
+                return '';
+            }
+            if (this.moment(ticket.last_agent_response).isAfter(ticket.last_customer_response, 'seconds')) {
+                return '';
+            }
+
+            return 'require response';
+        },
+        handleSelectionChange(selections) {
+            const selectionIds = [];
+            each(selections, (selection) => {
+                selectionIds.push(selection.id);
+            })
+            this.ticket_selections = selectionIds;
+        },
+        deleteSelected() {
+            this.doing_bulk = true;
+            this.$del('tickets/bulk', {
+                ticket_ids: this.ticket_selections
+            })
+                .then((response) => {
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right',
+                        type: 'success'
+                    });
+                    this.fetchTickets();
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.doing_bulk = false;
+                });
+        },
+        closeSelected() {
+            this.doing_bulk = true;
+            this.$post('tickets/bulk', {
+                ticket_ids: this.ticket_selections,
+                bulk_action: 'close_tickets'
+            })
+                .then((response) => {
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right',
+                        type: 'success'
+                    });
+                    this.fetchTickets();
+                })
+                .catch((errros) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.doing_bulk = false;
+                });
         }
     },
     mounted() {

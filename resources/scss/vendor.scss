@@ -21,6 +21,10 @@
 @import "~element-plus/lib/theme-chalk/el-input.css";
 @import "~element-plus/lib/theme-chalk/el-option.css";
 @import "~element-plus/lib/theme-chalk/el-tooltip.css";
+@import "~element-plus/lib/theme-chalk/el-popconfirm.css";
+@import "~element-plus/lib/theme-chalk/el-drawer.css";
+@import "~element-plus/lib/theme-chalk/el-dropdown-item.css";
+@import "~element-plus/lib/theme-chalk/el-dropdown-menu.css";
 
 // customize element ui css here
 .el {
@@ -99,5 +103,12 @@
     }
     .el-table.el-table--fit {
         border: 1px solid #ebeef5;
+    }
+}
+
+.el-dropdown-menu {
+    padding: 0 15px;list-style: none;
+    li {
+        margin-bottom: 10px;
     }
 }

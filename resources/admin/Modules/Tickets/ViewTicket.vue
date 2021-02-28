@@ -102,10 +102,12 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
+                                    <span :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i
+                                        class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
                                 </template>
 
-                                <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority" size="small">
+                                <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority"
+                                           size="small">
                                     <el-option
 
                                         v-for="(priorityLabel, priority) in admin_priorities"
@@ -133,7 +135,6 @@
                         Reopen This ticket
                     </el-button>
                 </div>
-
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
@@ -148,14 +149,24 @@
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong v-if="conversation.person">{{
-                                                conversation.person.full_name
-                                                }}</strong>
+                                            <strong v-if="conversation.person">
+                                                {{ getHumanName(conversation.person) }}</strong>
                                             <span v-if="conversation.conversation_type == 'response'"> replied</span>
                                             <span v-else> added a note</span>
                                         </div>
                                         <div class="fs_thread_actions">
                                             {{ $timeDiff(conversation.created_at) }}
+                                            <el-dropdown @command="handleResponseActionCommand" trigger="click">
+                                                <span class="el-dropdown-link">
+                                                    <i class="el-icon-arrow-down el-icon--right"></i>
+                                                </span>
+                                                <template #dropdown>
+                                                    <el-dropdown-menu>
+                                                        <el-dropdown-item :command="{ type: 'edit', conversation: conversation }" icon="el-icon-edit"> Edit</el-dropdown-item>
+                                                        <el-dropdown-item :command="{ type: 'delete', conversation: conversation }" icon="el-icon-delete"> Delete</el-dropdown-item>
+                                                    </el-dropdown-menu>
+                                                </template>
+                                            </el-dropdown>
                                         </div>
                                     </div>
                                     <div v-html="conversation.content" class="fs_thread_body"></div>
@@ -205,11 +216,20 @@
         <div style="padding: 20px;" class="fs_ticket_body" v-else>
             <el-skeleton :rows="10" animated/>
         </div>
+
+        <el-dialog
+            title="Edit Response"
+            v-model="edit_response_modal"
+            width="60%">
+            <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response" :response="editing_response" />
+        </el-dialog>
+
     </div>
 </template>
 
 <script type="text/babel">
 import CreateResponse from './_CreateResponse';
+import EditResponse from './_EditResponse';
 import TicketSidebar from './_TicketSidebar';
 import each from 'lodash/each';
 
@@ -218,7 +238,8 @@ export default {
     props: ['ticket_id'],
     components: {
         CreateResponse,
-        TicketSidebar
+        TicketSidebar,
+        EditResponse
     },
     data() {
         return {
@@ -230,7 +251,9 @@ export default {
             agents: this.appVars.support_agents,
             admin_priorities: this.appVars.admin_priorities,
             updating: false,
-            active_agents: []
+            active_agents: [],
+            edit_response_modal: false,
+            editing_response: false
         }
     },
     watch: {
@@ -301,7 +324,7 @@ export default {
                 });
         },
         getHumanName(person) {
-            if (this.appVars.auth_person?.id == person.id) {
+            if (this.appVars.me?.id == person.id) {
                 return 'You';
             }
 
@@ -347,6 +370,41 @@ export default {
         onTicketDataChange(item) {
             let data = item.val();
             this.ticket[data.type] = data.data;
+        },
+        handleResponseActionCommand(data) {
+            const actionType = data.type;
+            const conversation = data.conversation;
+
+            if(actionType == 'delete') {
+                this.$confirm('This will permanently delete response. Continue?', 'Warning', {
+                    confirmButtonText: 'Delete Response',
+                    cancelButtonText: 'Cancel',
+                    type: 'warning'
+                }).then(() => {
+                    this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)
+                    .then(response => {
+                        this.$notify.success({
+                            message: response.message,
+                            position: 'bottom-right',
+                            type: 'success'
+                        });
+                        this.fetchTicket();
+                    })
+                });
+            } else if(actionType == 'edit') {
+                if(this.ticket.status == 'closed') {
+                    this.$notify({
+                        type: 'error',
+                        message: 'You can not edit responses when it is in close state',
+                        position: 'bottom-right'
+                    });
+                    return false;
+                }
+                this.editing_response = conversation;
+                this.edit_response_modal = true;
+            }
+
+            console.log(data);
         }
     },
     mounted() {
