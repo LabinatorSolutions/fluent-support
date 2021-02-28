@@ -12,6 +12,14 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->get('/{ticket_id}/widgets', 'TicketController@getTicketWidgets')->int('ticket_id');
     $router->post('/{ticket_id}/responses', 'TicketController@createResponse')->int('ticket_id');
 
+    $router->put('/{ticket_id}/responses/{response_id}', 'TicketController@updateResponse')
+        ->int('ticket_id')
+        ->int('response_id');
+
+    $router->delete('/{ticket_id}/responses/{response_id}', 'TicketController@deleteResponse')
+        ->int('ticket_id')
+        ->int('response_id');
+
     $router->post('/{ticket_id}/customer-responses', 'ConversationController@createCustomerReply')
         ->int('ticket_id');
 
@@ -19,6 +27,9 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->post('/{ticket_id}/close', 'TicketController@closeTicket')->int('ticket_id');
     $router->post('/{ticket_id}/re-open', 'TicketController@reOpenTicket')->int('ticket_id');
+
+    $router->post('bulk', 'TicketController@doBulkActions');
+    $router->delete('bulk', 'TicketController@deleteBulk');
 
 });
 

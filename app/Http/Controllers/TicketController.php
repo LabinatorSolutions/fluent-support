@@ -18,11 +18,11 @@ class TicketController extends Controller
         $user = wp_get_current_user();
 
         return [
-            'user_id' => $user->id,
-            'email'   => $user->user_email,
-            'person'  => Helper::getAgentByUserId($user->ID),
+            'user_id'     => $user->id,
+            'email'       => $user->user_email,
+            'person'      => Helper::getAgentByUserId($user->ID),
             'permissions' => PermissionManager::currentUserPermissions(),
-            'request' => $request->all()
+            'request'     => $request->all()
         ];
     }
 
@@ -321,6 +321,122 @@ class TicketController extends Controller
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
             'ticket'  => $ticket
+        ];
+    }
+
+    public function doBulkActions(Request $request)
+    {
+        $ticketIds = $request->get('ticket_ids', []);
+        $action = $request->get('bulk_action');
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+        $agent = Helper::getAgentByUserId();
+        $query = Ticket::whereIn('id', $ticketIds);
+
+        if (!$hasAllPermission) {
+            $query->where('agent_id', $agent->id);
+        }
+
+        if ($action == 'close_tickets') {
+            $query->where('status', '!=', 'closed');
+        }
+
+        $tickets = $query->get();
+
+        if ($action == 'close_tickets') {
+            foreach ($tickets as $ticket) {
+                $ticket->status = 'closed';
+                $ticket->save();
+                do_action('fluent_support/ticket_closed', $ticket, $agent);
+                do_action('fluent_support/ticket_closed_by_' . $agent->person_type, $ticket, $agent);
+            }
+
+            return [
+                'message' => count($tickets) . ' tickets have been closed'
+            ];
+        }
+
+        $this->sendError([
+            'message' => 'Sorry no action found as available'
+        ]);
+
+
+    }
+
+    public function deleteBulk(Request $request)
+    {
+        $ticketIds = $request->get('ticket_ids', []);
+
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+        $agent = Helper::getAgentByUserId();
+        $query = Ticket::whereIn('id', $ticketIds);
+
+        if (!$hasAllPermission) {
+            $query->where('agent_id', $agent->id);
+        }
+
+        $tickets = $query->get();
+
+        foreach ($tickets as $ticket) {
+            $ticket->deleteTicket();
+        }
+
+        return [
+            'message' => count($tickets) . ' has been deleted successfully'
+        ];
+    }
+
+    public function deleteResponse(Request $request, $ticketId, $responseId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $response = Response::findOrFail($responseId);
+        $agent = Helper::getAgentByUserId();
+
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+
+        if (!$hasAllPermission) {
+            if ($ticket->agent_id != $agent->id) {
+                return $this->sendError([
+                    'message' => 'Sorry, You do not have permission to delete this response'
+                ]);
+            }
+        }
+
+        Response::where('id', $response->id)->delete();
+
+        return [
+            'message' => 'Selected response has been deleted'
+        ];
+
+    }
+
+    public function updateResponse(Request $request, $ticketId, $responseId)
+    {
+        $data = $request->all();
+
+        $this->validate($data, [
+            'content' => 'required'
+        ]);
+
+        $ticket = Ticket::findOrFail($ticketId);
+        $response = Response::findOrFail($responseId);
+        $agent = Helper::getAgentByUserId();
+
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+
+        if (!$hasAllPermission) {
+            if ($ticket->agent_id != $agent->id) {
+                return $this->sendError([
+                    'message' => 'Sorry, You do not have permission to delete this response'
+                ]);
+            }
+        }
+
+        $response->content = wp_unslash(wp_kses_post($data['content']));
+        $response->save();
+
+        return [
+            'message' => 'Selected response has been updated',
+            'response' => $response
         ];
     }
 

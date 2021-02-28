@@ -10,7 +10,7 @@ class FluentCRM
 {
     public function boot()
     {
-        add_filter('fluent_support/customer_extra_widgets', array($this, 'getCRMProfile'), 10, 2);
+        add_filter('fluent_support/customer_extra_widgets', array($this, 'getCRMProfile'), 20, 2);
         add_filter('fluentcrm-support_tickets_providers', array($this, 'pushProvider'));
         add_filter('fluentcrm-get_support_tickets_fluent_support', array($this, 'getSupportTickets'), 10, 2);
     }

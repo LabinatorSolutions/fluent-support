@@ -164,7 +164,7 @@ export default {
                 .replaceAll('_', ' ');
         },
         deleteAgent(agentId) {
-            this.$prompt('Please provide Fallback Agent ID', 'Fallack Agent ID', {
+            this.$prompt('Please provide Fallback Agent ID', 'Fallback Agent ID', {
                 confirmButtonText: 'Confirm Delete',
                 cancelButtonText: 'Cancel',
                 inputErrorMessage: 'Invalid ID'

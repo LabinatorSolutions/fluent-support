@@ -21,6 +21,7 @@
                 type: Object
             }
         },
+        emits: ['fetch'],
         computed: {
             page_sizes() {
                 return [
