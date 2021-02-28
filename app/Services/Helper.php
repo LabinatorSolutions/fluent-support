@@ -153,7 +153,6 @@ class Helper
         return $settings;
     }
 
-
     public static function getEmailSettings()
     {
         static $settings;
@@ -166,4 +165,42 @@ class Helper
         return $settings;
     }
 
+    public static function getTicketMeta($ticketId, $key, $default = '')
+    {
+        $data = Meta::where('object_type', 'ticket_mata')
+            ->where('key', $key)
+            ->where('object_id', $ticketId)
+            ->first();
+
+        if($data) {
+            $value = maybe_unserialize($data->value);
+            if($value) {
+                return $value;
+            }
+        }
+
+        return $default;
+    }
+
+    public static function updateTicketMeta($ticketId, $key, $value)
+    {
+        $data = Meta::where('object_type', 'ticket_mata')
+            ->where('key', $key)
+            ->where('object_id', $ticketId)
+            ->first();
+
+        if($data) {
+            return Meta::where('id', $data->id)
+                ->update([
+                    'value' => maybe_serialize($value)
+                ]);
+        }
+
+        return Meta::insert([
+            'object_type' => 'ticket_mata',
+            'object_id' => $ticketId,
+            'key' => $key,
+            'value' => maybe_serialize($value)
+        ]);
+    }
 }
