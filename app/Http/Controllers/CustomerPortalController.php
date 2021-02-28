@@ -67,6 +67,8 @@ class CustomerPortalController extends Controller
             'content' => 'required'
         ]);
 
+        $data['content'] = wp_unslash(wp_kses_post($data['content']));
+
         $customer = $this->resolveCustomer($request, true);
 
         if (!$customer) {
@@ -167,6 +169,8 @@ class CustomerPortalController extends Controller
         $this->validate($data, [
             'content' => 'required'
         ]);
+
+        $data['content'] = wp_unslash(wp_kses_post($data['content']));
 
         $customer = $this->resolveCustomer($request);
 
