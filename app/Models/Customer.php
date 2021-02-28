@@ -30,6 +30,9 @@ class Customer extends Person
         }
 
         if(!$customer) {
+            if(!empty($customerData['last_ip_address'])) {
+                $customerData['ip_address'] = $customerData['last_ip_address'];
+            }
             // we have to create customer
             $customer = self::create($customerData);
         } else {

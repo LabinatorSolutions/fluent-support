@@ -22,7 +22,15 @@ class Person extends Model
         'person_type',
         'user_id',
         'last_response_at',
-        'status'
+        'status',
+        'ip_address',
+        'last_ip_address',
+        'address_line_1',
+        'address_line_2',
+        'city',
+        'state',
+        'zip',
+        'country'
     ];
 
 
