@@ -318,8 +318,9 @@ class CustomerPortalController extends Controller
                 return false;
             }
             $onBehalf = [
-                'user_id' => $user->id,
-                'email'   => $user->user_email
+                'user_id'         => $user->id,
+                'email'           => $user->user_email,
+                'last_ip_address' => $request->getIp()
             ];
         }
 
