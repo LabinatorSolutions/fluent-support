@@ -24,6 +24,7 @@
                               v-for="permission in scope.row.permissions">{{ readable(permission) }}</span>
                     </template>
                 </el-table-column>
+                <el-table-column label="Replies" prop="replies_count" width="140"/>
                 <el-table-column label="Actions" width="100">
                     <template #default="scope">
                         <el-button @click="initEdit(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
@@ -103,7 +104,7 @@ export default {
         fetchAgents() {
             this.loading = true;
             this.$get('agents', {
-                per_page: this.per_page,
+                per_page: this.pagination.per_page,
                 page: this.pagination.current_page
             })
                 .then(response => {

@@ -21,6 +21,7 @@ class Person extends Model
         'email',
         'person_type',
         'user_id',
+        'remote_uid',
         'last_response_at',
         'status',
         'ip_address',

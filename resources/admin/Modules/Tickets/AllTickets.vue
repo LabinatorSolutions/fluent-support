@@ -84,6 +84,7 @@
                     </div>
                 </div>
                 <el-table
+                    v-if="app_ready"
                     :data="tickets"
                     stripe
                     @row-click="gotToTicket"
@@ -95,7 +96,7 @@
                     </el-table-column>
                     <el-table-column width="70" label="">
                         <template #default="scope">
-                            <img :title="scope.row.customer.full_name" :alt="scope.row.customer.full_name"
+                            <img v-if="scope.row.customer" :title="scope.row.customer.full_name" :alt="scope.row.customer.full_name"
                                  class="tk_customer_avatar" :src="scope.row.customer.photo"/>
                         </template>
                     </el-table-column>
@@ -230,13 +231,16 @@ export default {
                 response_count: 'Response Count'
             },
             ticket_selections: [],
-            doing_bulk: false
+            doing_bulk: false,
+            app_ready: false
         }
     },
     watch: {
         '$route.query.agent_id'() {
-            this.filters.agent_id = this.$route.query.agent_id;
-            this.fetchTickets();
+            if(this.app_ready) {
+                this.filters.agent_id = this.$route.query.agent_id;
+                this.fetchTickets();
+            }
         }
     },
     computed: {
@@ -394,7 +398,10 @@ export default {
             this.search = this.$route.query.search;
         }
 
-        this.fetchTickets();
+        this.app_ready = true;
+        this.$nextTick(() => {
+            this.fetchTickets();
+        });
     }
 }
 </script>

@@ -19,7 +19,7 @@ class AgentController extends Controller
     public function index(Request $request)
     {
         $agents = Agent::orderBy('id', 'DESC')
-            ->whereNotNull('user_id')
+            //->whereNotNull('user_id')
             ->paginate();
 
         foreach ($agents as $agent) {
@@ -27,6 +27,7 @@ class AgentController extends Controller
             if($agent->user_id) {
                 $agent->user_profile = admin_url('user-edit.php?user_id='.$agent->user_id);
             }
+            $agent->replies_count = Response::where('person_id', $agent->id)->count();
         }
 
         return [
@@ -39,9 +40,7 @@ class AgentController extends Controller
     {
         $data = $request->all();
         $this->validate($data, [
-            'email' => 'required|email',
-            'first_name' => 'required',
-            'last_name' => 'required'
+            'email' => 'required|email'
         ]);
 
         $email = $data['email'];
@@ -52,6 +51,14 @@ class AgentController extends Controller
             return $this->sendError([
                 'message' => __('Sorry, Connected user could not be found with the provided email address', 'fluent-support')
             ]);
+        }
+
+        if(empty($data['first_name'])) {
+            $data['first_name'] = $user->first_name;
+        }
+
+        if(empty($data['last_name'])) {
+            $data['last_name'] = $user->last_name;
         }
 
         // check if another agent has same email address
