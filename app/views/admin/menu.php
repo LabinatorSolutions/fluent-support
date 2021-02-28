@@ -26,9 +26,9 @@
                     </li>
                 <?php endforeach; ?>
             </ul>
-            <?php if($secondayItems): ?>
+            <?php if($secondaryItems): ?>
             <ul class="frame_secondary_menu fframe_menu">
-                <?php foreach ($secondayItems as $item): ?>
+                <?php foreach ($secondaryItems as $item): ?>
                     <?php $hasSubMenu = !empty($item['sub_items']); ?>
                     <li data-key="<?php echo $item['key']; ?>" class="fframe_menu_item <?php echo ($hasSubMenu) ? 'fframe_has_sub_items' : ''; ?> fframe_item_<?php echo $item['key']; ?>">
                         <a class="fframe_menu_primary" href="<?php echo $item['permalink']; ?>">

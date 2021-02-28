@@ -86,6 +86,8 @@ class Menu
             ];
         }
 
+        $menuItems = apply_filters('fluent_support/primary_menu_items', $menuItems);
+        $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems);
 
         $app = App::getInstance();
         $this->enqueueAssets();
@@ -93,7 +95,7 @@ class Menu
             'base_url'      => $baseUrl,
             'logo'          => $assets . 'images/logo.svg',
             'menuItems'     => $menuItems,
-            'secondayItems' => $secondayItems
+            'secondaryItems' => $secondayItems
         ]);
     }
 

@@ -57,6 +57,16 @@ add_shortcode('fluent_support_admin_portal', function () {
         return home_url(add_query_arg(array(), $wp->request)) . '/#/';
     });
 
+    add_filter('fluent_support/secondary_menu_items', function ($items) {
+        global $wp;
+        $items[] = [
+            'key'       => 'logout',
+            'label'     => __('Logout', 'fluent-support'),
+            'permalink' => wp_logout_url(home_url(add_query_arg(array(), $wp->request)))
+        ];
+        return $items;
+    });
+
     ob_start();
     echo '<div class="fst_front">';
     (new \FluentSupport\App\Hooks\Handlers\Menu())->renderApp();
