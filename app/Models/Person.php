@@ -104,7 +104,6 @@ class Person extends Model
             return $this->attributes['avatar'];
         }
 
-
         $hash = md5(strtolower(trim($this->attributes['email'])));
         return apply_filters(
             'fluent_support/get_avatar',

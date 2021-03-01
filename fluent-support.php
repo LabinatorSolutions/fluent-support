@@ -1,12 +1,12 @@
 <?php defined('ABSPATH') or die;
 
 /*
-Plugin Name: Alpha
-Description: An accounting plugin to manage expenses.
+Plugin Name: Fluent Support
+Description: The Ultimate Support Plugin For Your Own WordPress.
 Version: 1.0.0
-Author: Sheikh Heera
-Author URI: https://heera.it
-Plugin URI: https://heera.it
+Author: WPManageNinja LLC
+Author URI: https://wpmanageninja.com
+Plugin URI: https://wpmanageninja.com
 License: GPLv2 or later
 Text Domain: alpha
 Domain Path: /language
@@ -20,3 +20,4 @@ require __DIR__.'/vendor/autoload.php';
 call_user_func(function($bootstrap) {
     $bootstrap(__FILE__);
 }, require(__DIR__.'/boot/app.php'));
+

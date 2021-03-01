@@ -29,6 +29,7 @@ class TicketsMigrator
                 `title` VARCHAR(192) NULL,
                 `slug` VARCHAR(192) NULL,
                 `hash` VARCHAR(192) NULL,
+                `source` VARCHAR(192) NULL,
                 `content` LONGTEXT NULL,
                 `secret_content` LONGTEXT NULL,
                 `last_agent_response` TIMESTAMP NULL,

@@ -105,12 +105,6 @@ class Menu
 
         $assets = $app['url.assets'];
 
-        wp_enqueue_script(
-            'fluent_support_admin_app_boot',
-            $assets . 'admin/js/boot.js',
-            array('jquery')
-        );
-
         wp_enqueue_style(
             'fluent_support_admin_app', $assets . 'admin/css/alpha-admin.css'
         );
@@ -134,7 +128,23 @@ class Menu
 
         $me->permissions = PermissionManager::currentUserPermissions();
 
-        wp_localize_script('fluent_support_admin_app_boot', 'fluentSupportAdmin', array(
+        do_action('fluent_support_loading_app', $app);
+
+        // Editor default styles.
+        add_filter('user_can_richedit', '__return_true');
+        wp_tinymce_inline_scripts();
+        wp_enqueue_editor();
+        wp_enqueue_media();
+
+        wp_enqueue_script(
+            'fluent_support_admin_app_start',
+            $assets . 'admin/js/start.js',
+            array('jquery'),
+            '1.0',
+            true
+        );
+
+        wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', array(
             'slug'              => $slug = $app->config->get('app.slug'),
             'nonce'             => wp_create_nonce($slug),
             'rest'              => $this->getRestInfo($app),
@@ -153,21 +163,16 @@ class Menu
             'server_time'       => current_time('mysql')
         ));
 
-        do_action('fluent_support_loading_app');
-
-        // Editor default styles.
-        add_filter('user_can_richedit', '__return_true');
-        wp_tinymce_inline_scripts();
-        wp_enqueue_editor();
-        wp_enqueue_media();
+        do_action('fluent_support_admin_app_loaded', $app);
 
         wp_enqueue_script(
-            'fluent_support_admin_app_start',
-            $assets . 'admin/js/start.js',
-            array('fluent_support_admin_app_boot'),
+            'fluent_support_firebase',
+            $assets . 'admin/js/firebase_notify.js',
+            array('jquery'),
             '1.0',
             true
         );
+
     }
 
     protected function getRestInfo($app)

@@ -30,7 +30,7 @@ class TicketController extends Controller
     {
         $ticketsQuery = Ticket::with([
             'customer' => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
+                $query->select(['first_name', 'last_name', 'email', 'id']);
             }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
@@ -79,7 +79,7 @@ class TicketController extends Controller
     {
         $ticketWith = $request->get('with', ['customer', 'agent', 'product']);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
-
+        
         $ticket = Ticket::with($ticketWith)
             ->findOrFail($ticketId);
 

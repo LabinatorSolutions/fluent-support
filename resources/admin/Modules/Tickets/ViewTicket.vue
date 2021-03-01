@@ -208,6 +208,9 @@
                         </div>
                     </article>
                 </div>
+
+                <ticket-footer-extra-data />
+
             </div>
             <div class="fs_ticket_sidebar">
                 <ticket-sidebar :ticket_id="ticket_id" :ticket="ticket"/>
@@ -216,14 +219,12 @@
         <div style="padding: 20px;" class="fs_ticket_body" v-else>
             <el-skeleton :rows="10" animated/>
         </div>
-
         <el-dialog
             title="Edit Response"
             v-model="edit_response_modal"
             width="60%">
             <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response" :response="editing_response" />
         </el-dialog>
-
     </div>
 </template>
 
@@ -232,6 +233,7 @@ import CreateResponse from './_CreateResponse';
 import EditResponse from './_EditResponse';
 import TicketSidebar from './_TicketSidebar';
 import each from 'lodash/each';
+import {doAction} from "@wordpress/hooks";
 
 export default {
     name: 'ViewTicket',
@@ -258,10 +260,14 @@ export default {
     },
     watch: {
         '$route.params.ticket_id'(ticketId) {
-            this.ticket = false;
-            this.$nextTick(() => {
-                this.fetchTicket();
-            });
+            if(ticketId) {
+                this.doAction('ticket_view_exit', this.ticket.id);
+                this.ticket = false;
+                this.$nextTick(() => {
+                    this.doAction('ticket_view_entered', ticketId);
+                    this.fetchTicket();
+                });
+            }
         }
     },
     methods: {
@@ -409,8 +415,13 @@ export default {
     },
     mounted() {
         this.fetchTicket();
+        this.doAction('ticket_view_entered', this.ticket_id, this);
+        // this.component('extra-data', {
+        //     template: '<h1>Ok fine</h1>'
+        // });
     },
     beforeUnmount() {
+        this.doAction('ticket_view_exit', this.ticket_id);
     }
 }
 </script>

@@ -23,7 +23,6 @@ add_shortcode('fluent_support_portal', function () {
     return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
 });
 
-
 add_shortcode('fluent_support_login', function () {
     $return = '<div class="fst_login_wrapper">';
     $return .= wp_login_form([
