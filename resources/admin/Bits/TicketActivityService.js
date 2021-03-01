@@ -19,7 +19,10 @@ class TicketActivityService {
     }
 
     ticketChanged(ticketId, dataType, data) {
-        return db.child('ticket_update_' + ticketId).update({type: dataType, data: data});
+        return db.child('ticket_update_' + ticketId).update({
+            type: dataType,
+            data: data
+        });
     }
 
     getTicketUpdates(ticketId) {

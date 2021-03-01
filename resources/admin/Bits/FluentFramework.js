@@ -15,6 +15,7 @@ moment.locale('en-gb');
 
 const appStartTime = new Date();
 
+
 export default class FluentFramework {
     constructor() {
         this.doAction = doAction;
@@ -29,9 +30,7 @@ export default class FluentFramework {
     }
 
     extendVueConstructor() {
-
         const self = this;
-
         app.mixin({
             data() {
                 return {
@@ -69,6 +68,14 @@ export default class FluentFramework {
         return app;
     }
 
+    getExtraComponents() {
+        return {
+            'ticket-header': {
+                template: `<h1>OK</h1>`
+            }
+        }
+    }
+
     registerBlock(blockLocation, blockName, block) {
         this.addFilter(blockLocation, this.appVars.slug, function (components) {
             components[blockName] = block;
@@ -98,23 +105,23 @@ export default class FluentFramework {
     }
 
     $get(url, options = {}) {
-        return window.FluentFramework.$rest.get(url, options);
+        return Rest.get(url, options);
     }
 
     $post(url, options = {}) {
-        return window.FluentFramework.$rest.post(url, options);
+        return Rest.post(url, options);
     }
 
     $del(url, options = {}) {
-        return window.FluentFramework.$rest.delete(url, options);
+        return Rest.delete(url, options);
     }
 
     $put(url, options = {}) {
-        return window.FluentFramework.$rest.put(url, options);
+        return Rest.put(url, options);
     }
 
     $patch(url, options = {}) {
-        return window.FluentFramework.$rest.patch(url, options);
+        return Rest.patch(url, options);
     }
 
     dateTimeFormat(date, format) {
@@ -136,7 +143,7 @@ export default class FluentFramework {
     saveData(key, data) {
         let existingData = window.localStorage.getItem('__fluentsupport_data');
 
-        if(!existingData) {
+        if (!existingData) {
             existingData = {};
         } else {
             existingData = JSON.parse(existingData);
@@ -150,11 +157,11 @@ export default class FluentFramework {
     getData(key, defaultValue = false) {
         let existingData = window.localStorage.getItem('__fluentsupport_data');
         existingData = JSON.parse(existingData);
-        if(!existingData) {
+        if (!existingData) {
             return defaultValue;
         }
 
-        if(existingData[key]) {
+        if (existingData[key]) {
             return existingData[key];
         }
 
@@ -188,7 +195,7 @@ export default class FluentFramework {
     }
 
     handleError(response) {
-        if(response.responseJSON) {
+        if (response.responseJSON) {
             response = response.responseJSON;
         }
         let errorMessage = '';
@@ -242,7 +249,7 @@ export default class FluentFramework {
     }
 
     waitingTime(time1, time2) {
-        if(!time2 || !time1) {
+        if (!time2 || !time1) {
             return '';
         }
         time1 = moment(time1);

@@ -167,7 +167,7 @@ class AgentController extends Controller
         if(PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
             $stats['unassigned_tickets'] = [
                 'title' => 'Unassigned Tickets',
-                'count' => Ticket::whereNull('agent_id')->count()
+                'count' => Ticket::whereNull('agent_id')->where('status', '!=', 'closed')->count()
             ];
         }
 
