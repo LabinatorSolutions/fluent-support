@@ -31,6 +31,7 @@ class PersonsMigrator
                 `zip` VARCHAR(192) NULL,
                 `state` VARCHAR(192) NULL,
                 `country` VARCHAR(192) NULL,
+                `note` LONGTEXT NULL,
                 `hash` VARCHAR(192) NULL,
                 `user_id` BIGINT(20) UNSIGNED NULL,
                 `remote_uid` BIGINT(20) UNSIGNED NULL,

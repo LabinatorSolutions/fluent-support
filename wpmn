@@ -47,15 +47,15 @@ $commands = array(
         mkdir($targetDir);
 
         foreach ([
-            'app', 'assets', 'database', 'vendor', 'language', 'plugin.php', 'index.php', 'composer.json'
+            'app', 'assets', 'boot', 'config', 'database', 'vendor', 'language', 'fluent-support.php', 'readme.txt', 'index.php', 'composer.json'
         ] as $src) {
             $command = "cp -a {$src} {$targetDir}";
             shell_exec(escapeshellcmd($command));
         }
 
         $deleteables = [
-            '/database/Faker',
-            '/boot/globals_dev.php'
+//            '/database/Faker',
+//            '/boot/globals_dev.php'
         ];
 
         foreach ($deleteables as $path) {

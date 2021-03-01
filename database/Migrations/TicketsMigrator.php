@@ -30,6 +30,7 @@ class TicketsMigrator
                 `slug` VARCHAR(192) NULL,
                 `hash` VARCHAR(192) NULL,
                 `content` LONGTEXT NULL,
+                `secret_content` LONGTEXT NULL,
                 `last_agent_response` TIMESTAMP NULL,
                 `last_customer_response` TIMESTAMP NULL,
                 `response_count` INT(11) DEFAULT 0,
