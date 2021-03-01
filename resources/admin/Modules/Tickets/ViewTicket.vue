@@ -208,9 +208,6 @@
                         </div>
                     </article>
                 </div>
-
-                <ticket-footer-extra-data />
-
             </div>
             <div class="fs_ticket_sidebar">
                 <ticket-sidebar :ticket_id="ticket_id" :ticket="ticket"/>
@@ -225,6 +222,7 @@
             width="60%">
             <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response" :response="editing_response" />
         </el-dialog>
+        <active-agents :ticket="ticket" v-if="ticket && ticket.id" />
     </div>
 </template>
 
@@ -233,7 +231,7 @@ import CreateResponse from './_CreateResponse';
 import EditResponse from './_EditResponse';
 import TicketSidebar from './_TicketSidebar';
 import each from 'lodash/each';
-import {doAction} from "@wordpress/hooks";
+import ActiveAgents from './_active_agents';
 
 export default {
     name: 'ViewTicket',
@@ -241,7 +239,8 @@ export default {
     components: {
         CreateResponse,
         TicketSidebar,
-        EditResponse
+        EditResponse,
+        ActiveAgents
     },
     data() {
         return {

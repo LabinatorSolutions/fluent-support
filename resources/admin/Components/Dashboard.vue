@@ -50,7 +50,7 @@ export default {
     methods: {
         fetchStat() {
             this.loading = true;
-            this.$get('agents/my_stats')
+            this.$get('tickets/my_stats')
                 .then(response => {
                     this.stats = response.stats;
                 })

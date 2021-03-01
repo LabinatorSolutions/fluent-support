@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
+use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -77,9 +78,10 @@ class TicketController extends Controller
 
     public function getTicket(Request $request, $ticketId)
     {
+        $agent = Helper::getAgentByUserId();
         $ticketWith = $request->get('with', ['customer', 'agent', 'product']);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
-        
+
         $ticket = Ticket::with($ticketWith)
             ->findOrFail($ticketId);
 
@@ -103,9 +105,12 @@ class TicketController extends Controller
             ->orderBy('id', 'DESC')
             ->get();
 
+        $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
+
         return [
-            'ticket'    => $ticket,
-            'responses' => $responses
+            'ticket'        => $ticket,
+            'responses'     => $responses,
+            'agent_id' => $agent->id
         ];
     }
 
@@ -269,7 +274,6 @@ class TicketController extends Controller
             'update_data' => $updateData
         ];
     }
-
 
     public function closeTicket(Request $request, $ticketId)
     {
@@ -435,8 +439,28 @@ class TicketController extends Controller
         $response->save();
 
         return [
-            'message' => 'Selected response has been updated',
+            'message'  => 'Selected response has been updated',
             'response' => $response
+        ];
+    }
+
+
+    public function getLiveActivity(Request $request, $ticketId)
+    {
+        $agent = Helper::getAgentByUserId();
+
+        return [
+            'live_activity' => TicketHelper::getActivity($ticketId, $agent->id)
+        ];
+    }
+
+    public function removeLiveActivity(Request $request, $ticketId)
+    {
+        $agent = Helper::getAgentByUserId();
+
+        return [
+            'result' => TicketHelper::removeFromActivities($ticketId, $agent->id),
+            'agent_id' => $agent->id
         ];
     }
 

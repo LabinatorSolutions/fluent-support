@@ -6,11 +6,16 @@
 
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
 
+    $router->get('my_stats', 'AgentController@myStats');
+
     $router->get('/', 'TicketController@index');
     $router->get('/{ticket_id}', 'TicketController@getTicket')->int('ticket_id');
 
     $router->get('/{ticket_id}/widgets', 'TicketController@getTicketWidgets')->int('ticket_id');
     $router->post('/{ticket_id}/responses', 'TicketController@createResponse')->int('ticket_id');
+
+    $router->get('/{ticket_id}/live_activity', 'TicketController@getLiveActivity')->int('ticket_id');
+    $router->delete('/{ticket_id}/live_activity', 'TicketController@removeLiveActivity')->int('ticket_id');
 
     $router->put('/{ticket_id}/responses/{response_id}', 'TicketController@updateResponse')
         ->int('ticket_id')
@@ -64,7 +69,6 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
-    $router->get('my_stats', 'AgentController@myStats');
     $router->get('/', 'AgentController@index');
     $router->post('/', 'AgentController@addAgent');
     $router->put('/{agent_id}', 'AgentController@updateAgent');
