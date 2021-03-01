@@ -283,4 +283,5 @@ class Ticket extends Model
         }
         return $slug;
     }
+
 }
