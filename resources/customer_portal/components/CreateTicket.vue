@@ -19,7 +19,7 @@
                 </el-form-item>
 
                 <div class="fs_tk_actions">
-                    <div class="fs_tk_left">
+                    <div v-if="products.length" class="fs_tk_left">
                         <el-form-item label="Related Product/Service">
                             <el-select v-model="ticket.product_id" placeholder="Select related Product/Service">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
