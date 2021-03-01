@@ -13,6 +13,7 @@ class Agent extends Person
     {
         static::creating(function ($model) {
             $model->person_type = static::$type;
+            $model->hash = md5(time().wp_generate_uuid4());
         });
 
         static::addGlobalScope(new AgentScope());

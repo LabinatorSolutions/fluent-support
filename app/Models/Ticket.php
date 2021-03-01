@@ -23,6 +23,7 @@ class Ticket extends Model
         'status',
         'title',
         'slug',
+        'hash',
         'content',
         'last_agent_response',
         'last_customer_response',
@@ -35,9 +36,10 @@ class Ticket extends Model
 
     public static function boot()
     {
-//        static::creating(function ($model) {
-//            $model->person_type = static::$type;
-//        });
+        static::creating(function ($model) {
+            $model->slug = static::slugify($model->title);
+            $model->hash = md5(time().wp_generate_uuid4());
+        });
     }
 
     /**
@@ -271,7 +273,14 @@ class Ticket extends Model
         // Delete Attachments
         Attachment::where('ticket_id', $this->id)->delete();
         Ticket::where('id', $this->id)->delete();
-
     }
 
+    public static function slugify($title)
+    {
+        $slug = sanitize_title($title, 'support-ticket-'.time(), 'display');
+        if(Ticket::where('slug', $slug)->first()) {
+            $slug .= '-'.time();
+        }
+        return $slug;
+    }
 }

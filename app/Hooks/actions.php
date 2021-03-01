@@ -83,6 +83,7 @@ add_shortcode('fluent_support_admin_portal', function () {
 
 $app->addAction('fluent_support/ticket_created', 'EmailNotificationHandler@ticketCreated', 10, 2);
 $app->addAction('fluent_support/response_added_by_agent', 'EmailNotificationHandler@agentReplied', 10, 3);
+$app->addAction('fluent_support/ticket_closed_by_agent', 'EmailNotificationHandler@closedByAgent', 10, 2);
 
 
 if (isset($_GET['fst_file'])) {

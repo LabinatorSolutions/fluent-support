@@ -8,21 +8,21 @@ class Settings
 {
     public function get($settingsKey)
     {
-        if($settingsKey == 'global_email_settings') {
+        if ($settingsKey == 'global_email_settings') {
             return [
                 'settings' => $this->globalEmailSettings(),
-                'fields' => $this->getGlobalEmailSettingsFields()
+                'fields'   => $this->getGlobalEmailSettingsFields()
             ];
-        } else if($settingsKey == 'global_business_settings') {
+        } else if ($settingsKey == 'global_business_settings') {
             return [
                 'settings' => $this->globalBusinessSettings(),
-                'fields' => $this->getGlobalBusinessSettingsFields()
+                'fields'   => $this->getGlobalBusinessSettingsFields()
             ];
         }
 
         return [
             'settings' => [],
-            'fields' => []
+            'fields'   => []
         ];
     }
 
@@ -34,14 +34,14 @@ class Settings
     public function globalBusinessSettings()
     {
         $defaults = [
-            'business_name' => '',
+            'business_name'  => '',
             'portal_page_id' => '',
-            'login_message' => '<p>Please login to access Custom Support Portal</p> [fluent_support_login]'
+            'login_message'  => '<p>Please login to access Custom Support Portal</p> [fluent_support_login]'
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
 
-        if(!$existingSettings) {
+        if (!$existingSettings) {
             return $defaults;
         }
 
@@ -51,20 +51,20 @@ class Settings
     private function getGlobalBusinessSettingsFields()
     {
         return [
-            'business_name' => [
-                'type' => 'input-text',
-                'data-type' => 'text',
+            'business_name'  => [
+                'type'        => 'input-text',
+                'data-type'   => 'text',
                 'placeholder' => 'Business Name',
-                'label' => 'Business Name'
+                'label'       => 'Business Name'
             ],
             'portal_page_id' => [
-                'type' => 'input-text',
+                'type'      => 'input-text',
                 'data-type' => 'number',
-                'label' => 'Portal Page ID'
+                'label'     => 'Portal Page ID'
             ],
-            'login_message' => [
-                'type' => 'wp-editor',
-                'label' => 'Message for non logged in users',
+            'login_message'  => [
+                'type'        => 'wp-editor',
+                'label'       => 'Message for non logged in users',
                 'inline_help' => 'Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show builtin login form'
             ]
         ];
@@ -73,18 +73,23 @@ class Settings
     public function globalEmailSettings()
     {
         $defaults = [
-            'send_as_html' => 'yes',
-            'template' => 'minimal',
-            'header' => '',
-            'footer' => '',
-            'sender_name' => '',
-            'sender_email' => '',
-            'reply_to_email' => ''
+            'send_as_html'   => 'yes',
+            'template'       => 'minimal',
+            'header'         => '',
+            'footer'         => '',
+            'sender_name'    => '',
+            'sender_email'   => '',
+            'reply_to_email' => '',
+            'notification_events' => [
+                'ticket_created',
+                'ticket_closed_by_agent',
+                'response_added_by_agent'
+            ]
         ];
 
         $existingSettings = Helper::getOption('global_email_settings', []);
 
-        if(!$existingSettings) {
+        if (!$existingSettings) {
             return $defaults;
         }
 
@@ -94,44 +99,52 @@ class Settings
     private function getGlobalEmailSettingsFields()
     {
         return [
-            'template' => [
-                'type' => 'input-radio',
-                'label' => 'Email Template Type',
-                'options' => [
+            'template'            => [
+                'type'        => 'input-radio',
+                'label'       => 'Email Template Type',
+                'options'     => [
                     [
-                        'id' => 'minimal',
+                        'id'    => 'minimal',
                         'label' => 'Minimal'
                     ],
                     [
-                        'id' => 'boxed',
+                        'id'    => 'boxed',
                         'label' => 'Boxed'
                     ],
                     [
-                        'id' => 'centered',
+                        'id'    => 'centered',
                         'label' => 'Plain Centered'
                     ]
                 ],
-
                 'inline_help' => 'Your Email Template Type'
             ],
-            'sender_name' => [
-                'type' => 'input-text',
-                'data_type' => 'text',
+            'sender_name'         => [
+                'type'        => 'input-text',
+                'data_type'   => 'text',
                 'placeholder' => 'From Email Name',
-                'label' => 'From Email Name'
+                'label'       => 'From Email Name'
             ],
-            'sender_email' => [
-                'type' => 'input-text',
-                'data_type' => 'email',
+            'sender_email'        => [
+                'type'        => 'input-text',
+                'data_type'   => 'email',
                 'placeholder' => 'From Email',
-                'label' => 'From Email'
+                'label'       => 'From Email'
             ],
-            'reply_to_email' => [
-                'type' => 'input-text',
-                'data_type' => 'email',
+            'reply_to_email'      => [
+                'type'        => 'input-text',
+                'data_type'   => 'email',
                 'placeholder' => 'Reply To Email',
-                'label' => 'Reply To Email'
-            ]
+                'label'       => 'Reply To Email'
+            ],
+            'notification_events' => [
+                'type'    => 'checkbox-group',
+                'label'   => 'Notification Events',
+                'options' => [
+                    'ticket_created'          => 'Ticket Created (send to customer)',
+                    'ticket_closed_by_agent'  => 'Ticket Closed by Agent (send to customer)',
+                    'response_added_by_agent' => 'Replied by Agent (send to customer)'
+                ]
+            ],
         ];
     }
 }

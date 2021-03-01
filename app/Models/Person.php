@@ -22,6 +22,7 @@ class Person extends Model
         'person_type',
         'user_id',
         'remote_uid',
+        'hash',
         'last_response_at',
         'status',
         'ip_address',
