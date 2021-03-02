@@ -39,6 +39,7 @@ class Ticket extends Model
         static::creating(function ($model) {
             $model->slug = static::slugify($model->title);
             $model->hash = md5(time().wp_generate_uuid4());
+            $model->last_customer_response = current_time('mysql');
         });
     }
 
@@ -112,7 +113,7 @@ class Ticket extends Model
     {
         $supportedColumns = ['product_id', 'agent_id', 'client_priority', 'priority'];
         foreach ($filters as $filterKey => $filterValue) {
-            if(!$filterValue) {
+            if(!$filterValue && ($filterValue !== '0' || $filterValue !== 0) ) {
                 continue;
             }
             if($filterKey == 'status_type') {
