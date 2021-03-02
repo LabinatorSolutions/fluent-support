@@ -119,7 +119,7 @@
                                 </span>
                                 <span class="fs_tk_number">
                                     #{{ scope.row.id }}
-                                     <span class="fs_inline_avatars avatars_small">
+                                     <span v-if="scope.row.live_activity && scope.row.live_activity.length" class="fs_inline_avatars avatars_small">
                                         <img v-for="activity in scope.row.live_activity" :title="activity.full_name" :src="activity.photo" />
                                     </span>
                                 </span>
