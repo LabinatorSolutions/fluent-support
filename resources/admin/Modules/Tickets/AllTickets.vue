@@ -120,7 +120,9 @@
                                 <span class="fs_tk_number">
                                     #{{ scope.row.id }}
                                      <span v-if="scope.row.live_activity && scope.row.live_activity.length" class="fs_inline_avatars avatars_small">
-                                        <img v-for="activity in scope.row.live_activity" :title="activity.full_name" :src="activity.photo" />
+                                        <span>
+                                            <img v-for="activity in scope.row.live_activity" :title="activity.full_name" :src="activity.photo" />
+                                        </span>
                                     </span>
                                 </span>
                                 <p class="fs_tk_preview_text">{{ scope.row.excerpt }}</p>

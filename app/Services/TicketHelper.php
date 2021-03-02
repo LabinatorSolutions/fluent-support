@@ -4,6 +4,8 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Modules\PermissionManager;
 
 class TicketHelper
 {
@@ -84,5 +86,31 @@ class TicketHelper
         $meta->save();
 
         return true;
+    }
+
+    public static function getSuggestedTickets($agentId, $limit = 5)
+    {
+        $tickets = Ticket::where('agent_id', $agentId)
+            ->where('status', '!=', 'closed')
+            ->applyFilters([
+                'waiting_for_reply' => 'yes'
+            ])
+            ->orderBy('last_customer_response', 'ASC')
+            ->limit($limit)
+            ->with('customer')
+            ->get();
+
+        if($tickets->isEmpty() && PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
+            $tickets = Ticket::where('status', '!=', 'closed')
+                ->orderBy('id', 'ASC')
+                ->whereNull('agent_id')
+                ->with('customer')
+                ->limit($limit)
+                ->get();
+        }
+
+
+        return $tickets;
+
     }
 }

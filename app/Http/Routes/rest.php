@@ -75,9 +75,11 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->delete('/{agent_id}', 'AgentController@deleteAgent');
 });
 
-
 $router->prefix('reports')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'ReportingController@getOverallReports');
+    $router->get('/tickets-growth', 'ReportingController@getTicketsChart');
+    $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
+    $router->get('/response-growth', 'ReportingController@getResponseChart');
 });
 
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
