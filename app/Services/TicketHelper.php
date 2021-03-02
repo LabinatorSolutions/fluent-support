@@ -103,7 +103,10 @@ class TicketHelper
         if($tickets->isEmpty() && PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
             $tickets = Ticket::where('status', '!=', 'closed')
                 ->orderBy('id', 'ASC')
-                ->whereNull('agent_id')
+                ->where(function ($q) {
+                    $q->whereNull('agent_id');
+                    $q->orWhere('agent_id', '0');
+                })
                 ->with('customer')
                 ->limit($limit)
                 ->get();
