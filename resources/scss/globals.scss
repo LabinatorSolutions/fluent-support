@@ -155,3 +155,11 @@
 .fs_padded_20 {
     padding: 20px;
 }
+
+span.fs_inline_avatars img {
+    display: inline-block;
+    width: 20px;
+    margin-bottom: -4px;
+    margin-right: 5px;
+    border-radius: 50%;
+}

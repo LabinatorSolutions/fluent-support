@@ -17,7 +17,7 @@
         >
             <el-button size="small" type="primary">Click to upload</el-button>
             <template #tip>
-                <div class="el-upload__tip">Files with a size less than 2MB</div>
+                <div class="el-upload__tip">Files with a size less than 2MB. Supported Types: images, text, pdf, zip</div>
             </template>
         </el-upload>
         <p style="color: red;" v-if="error_message" @click="error_message = ''">{{ error_message }}</p>

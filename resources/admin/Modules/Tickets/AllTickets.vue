@@ -3,7 +3,11 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Tickets <span class="fs_badge">{{pagination.total}}</span></h3>
+                    <h3>Tickets <span class="fs_badge">{{ pagination.total }}</span></h3>
+                    <el-button v-loading="loading"
+                               @click="fetchTickets()"
+                               icon="el-icon-refresh"
+                               size="mini"></el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-select @change="fetchTickets()" v-model="order_by" size="mini">
@@ -96,7 +100,8 @@
                     </el-table-column>
                     <el-table-column width="70" label="">
                         <template #default="scope">
-                            <img v-if="scope.row.customer" :title="scope.row.customer.full_name" :alt="scope.row.customer.full_name"
+                            <img v-if="scope.row.customer" :title="scope.row.customer.full_name"
+                                 :alt="scope.row.customer.full_name"
                                  class="tk_customer_avatar" :src="scope.row.customer.photo"/>
                         </template>
                     </el-table-column>
@@ -108,7 +113,16 @@
                                 <span style="margin-left: 5px;" v-if="scope.row.product" class="fs_badge">
                                     {{ scope.row.product?.title }}
                                 </span>
-                                <span class="fs_tk_number"> #{{ scope.row.id }}</span>
+                                <span style="margin-left: 10px;" class="fs_badge fs_badge_new"
+                                      v-show="getWaitingStatus(scope.row)">
+                                    {{ getWaitingStatus(scope.row) }}
+                                </span>
+                                <span class="fs_tk_number">
+                                    #{{ scope.row.id }}
+                                     <span class="fs_inline_avatars avatars_small">
+                                        <img v-for="activity in scope.row.live_activity" :title="activity.full_name" :src="activity.photo" />
+                                    </span>
+                                </span>
                                 <p class="fs_tk_preview_text">{{ scope.row.excerpt }}</p>
                             </router-link>
                         </template>
@@ -137,11 +151,12 @@
                         label="Date"
                         width="180">
                         <template #default="scope">
-                            <span title="Ticket Created At">
+                            <span style="opacity: 0.4;" title="Ticket Created At">
                                 <i class="el-icon-time"></i> {{ $timeDiff(scope.row.created_at) }}
                             </span>
-                            <span class="fs_badge fs_badge_new"
-                                  v-show="getWaitingStatus(scope.row)">{{ getWaitingStatus(scope.row) }}</span>
+                            <span style="display: block;" title="Last Response">
+                                <i class="el-icon-chat-line-square"></i> {{ getLastResponse(scope.row) }}
+                            </span>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -237,7 +252,7 @@ export default {
     },
     watch: {
         '$route.query.agent_id'() {
-            if(this.app_ready) {
+            if (this.app_ready) {
                 this.filters.agent_id = this.$route.query.agent_id;
                 this.fetchTickets();
             }
@@ -338,6 +353,13 @@ export default {
             }
 
             return 'require response';
+        },
+        getLastResponse(ticket) {
+            if (this.moment(ticket.last_agent_response).isAfter(ticket.last_customer_response, 'seconds')) {
+                return this.$timeDiff(ticket.last_agent_response);
+            } else {
+                return this.$timeDiff(ticket.last_customer_response);
+            }
         },
         handleSelectionChange(selections) {
             const selectionIds = [];
