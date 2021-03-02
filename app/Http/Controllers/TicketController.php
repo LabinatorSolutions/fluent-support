@@ -105,6 +105,12 @@ class TicketController extends Controller
             ->orderBy('id', 'DESC')
             ->get();
 
+        foreach ($responses as $response) {
+            $response->content = make_clickable($response->content);
+        }
+
+        $ticket->content = make_clickable($ticket->content);
+
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
         return [

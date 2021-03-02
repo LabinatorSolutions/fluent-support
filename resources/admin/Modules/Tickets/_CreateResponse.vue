@@ -7,10 +7,11 @@
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
-                    <el-button v-loading="creating" @click="create()" size="large" type="success">
+                    <el-button v-loading="creating" @click="create('no')" size="large" type="success">
                         <span v-if="type== 'note'">Add Internal Note</span>
                         <span v-else>Add Reply</span>
                     </el-button>
+                    <el-button v-if="type != 'note'" @click="create('yes')" size="large" type="danger">Relay and Close</el-button>
                     <p v-if="type== 'note'">You are adding internal Note. Only support staffs can see this note</p>
                 </div>
             </div>
@@ -44,12 +45,12 @@ export default {
         }
     },
     methods: {
-        create() {
+        create(closed = 'no') {
             this.creating = true;
             this.$post(`tickets/${this.ticket.id}/responses`, {
                 content: this.response_body,
                 conversation_type: this.type,
-                close_ticket: this.close_ticket,
+                close_ticket: closed,
                 attachments: this.attachments
             })
             .then(response => {

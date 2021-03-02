@@ -37,10 +37,9 @@
 .fst_front {
     .fframe_app {
         display: flex;
-        flex-wrap: wrap;
         .fframe_main-menu-items {
-            flex-basis: 200px;
-            flex-grow: 1;
+            width: 180px;
+            margin-bottom: 0;
             ul.fframe_menu {
                 margin: 0 !important;
                 li {
@@ -55,8 +54,8 @@
             }
         }
         .fframe_body {
-            flex-basis: 0;
-            flex-grow: 999;
+            flex: 1;
+            overflow: auto;
             .fs_tickets_view {
                 display: block;
                 .inner_body {

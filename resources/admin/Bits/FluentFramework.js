@@ -61,7 +61,10 @@ export default class FluentFramework {
                 $getData: self.getData,
                 $timeDiff: self.humanDiffTime,
                 $waitingTime: self.waitingTime,
-                convertToText: self.convertToText
+                convertToText: self.convertToText,
+                $setTitle(title) {
+                    document.title = title;
+                }
             }
         });
 

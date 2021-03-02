@@ -74,6 +74,7 @@ export default {
     },
     mounted() {
         this.fetchSettings();
+        this.$setTitle('Business Settings');
     }
 }
 </script>

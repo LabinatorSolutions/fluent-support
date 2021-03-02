@@ -78,8 +78,10 @@ export default {
             .always(() => {
                 this.loading = false;
             })
-
         }
+    },
+    mounted() {
+        this.$setTitle('Email Notifications');
     }
 }
 </script>

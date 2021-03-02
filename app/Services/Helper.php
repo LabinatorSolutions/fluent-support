@@ -81,6 +81,7 @@ class Helper
             'image/ktx',
             'image/png',
             'application/pdf',
+            'application/zip',
             'application/json',
             'application/jsonml+json'
         ]);
