@@ -84,6 +84,7 @@ export default {
     },
     mounted() {
         this.fetchCustomers();
+        this.$setTitle('Customers');
     }
 }
 </script>

@@ -275,6 +275,7 @@ export default {
             this.$get(`tickets/${this.ticket_id}`)
                 .then(response => {
                     this.ticket = response.ticket;
+                    this.$setTitle(response.ticket.title);
                     this.conversations = response.responses;
                 })
                 .catch((errors) => {
@@ -415,9 +416,6 @@ export default {
     mounted() {
         this.fetchTicket();
         this.doAction('ticket_view_entered', this.ticket_id, this);
-        // this.component('extra-data', {
-        //     template: '<h1>Ok fine</h1>'
-        // });
     },
     beforeUnmount() {
         this.doAction('ticket_view_exit', this.ticket_id);

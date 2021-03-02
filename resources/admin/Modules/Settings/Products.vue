@@ -156,6 +156,7 @@ export default {
     },
     mounted() {
         this.getProducts();
+        this.$setTitle('Products Settings');
     }
 }
 </script>

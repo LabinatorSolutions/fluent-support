@@ -12,8 +12,11 @@ class UploaderController extends Controller
     public function uploadTicketFiles(Request $request)
     {
         $files = $this->validate($this->request->files(), [
-            'file' => 'mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
-        ], ['file.mimetypes' => 'Only image and couments are allowed']);
+            'file' => 'max:2000|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
+        ], [
+            'file.mimetypes' => __('Only images, documents or zip files are allowed. Please upload as ZIP File', 'fluent-support'),
+            'file.max' => __('The file can not be more than 2MB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support')
+        ]);
 
 
         $ticketId=  $request->get('ticket_id');

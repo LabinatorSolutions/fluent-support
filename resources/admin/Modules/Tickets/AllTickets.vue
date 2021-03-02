@@ -3,7 +3,7 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Tickets</h3>
+                    <h3>Tickets <span class="fs_badge">{{pagination.total}}</span></h3>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-select @change="fetchTickets()" v-model="order_by" size="mini">
@@ -402,6 +402,8 @@ export default {
         this.$nextTick(() => {
             this.fetchTickets();
         });
+
+        this.$setTitle('All Tickets');
     }
 }
 </script>

@@ -55,6 +55,7 @@ export default {
     },
     mounted() {
         this.fetchReports();
+        this.$setTitle('Reports');
     }
 }
 </script>

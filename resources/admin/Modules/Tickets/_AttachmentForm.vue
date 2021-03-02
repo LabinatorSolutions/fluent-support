@@ -7,6 +7,7 @@
             :on-remove="handleRemove"
             :on-success="handleUploadSuccess"
             :with-credentials="true"
+            :on-error="handleError"
             multiple
             :headers="requestHeaders"
             :data="upload_data"
@@ -19,6 +20,7 @@
                 <div class="el-upload__tip">Files with a size less than 2MB</div>
             </template>
         </el-upload>
+        <p style="color: red;" v-if="error_message" @click="error_message = ''">{{ error_message }}</p>
     </div>
 </template>
 
@@ -35,11 +37,13 @@ export default {
             file_lists: [],
             requestHeaders: {
                 'X-WP-Nonce': this.appVars.rest.nonce
-            }
+            },
+            error_message: ''
         }
     },
     methods: {
         handleRemove(file, fileList) {
+            this.error_message = '';
             this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
         },
         handlePreview() {
@@ -48,7 +52,18 @@ export default {
         handleExceed() {
 
         },
+        handleError(err, file, fileList) {
+            console.log(file.name);
+            let message = this.convertToText(JSON.parse(err.message));
+            if(!message) {
+                message = 'File failed to upload';
+            }
+
+            message = file.name + ': ' + message;
+            this.error_message = message;
+        },
         handleUploadSuccess(response, file, fileList) {
+            this.error_message = '';
             this.attachments.push(...response.attachments);
         }
     }

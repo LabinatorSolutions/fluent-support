@@ -49,6 +49,7 @@ export default {
             .then(response => {
                 this.settings = response.settings;
                 this.fields = response.fields;
+                this.$setTitle(response.fields.title);
             })
             .catch((errors) => {
                 this.$handleError(errors)

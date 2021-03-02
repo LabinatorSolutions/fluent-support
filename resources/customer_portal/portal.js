@@ -90,6 +90,24 @@ app.mixin({
         },
         $patch(route, data) {
             return request('PATCH', route, data);
+        },
+        convertToText(obj) {
+            const string = [];
+            if (typeof (obj) === 'object' && (obj.join === undefined)) {
+                for (const prop in obj) {
+                    string.push(this.convertToText(obj[prop]));
+                }
+            } else if (typeof (obj) === 'object' && !(obj.join === undefined)) {
+                for (const prop in obj) {
+                    string.push(this.convertToText(obj[prop]));
+                }
+            } else if (typeof (obj) === 'function') {
+
+            } else if (typeof (obj) === 'string') {
+                string.push(obj)
+            }
+
+            return string.join('<br />')
         }
     }
 });

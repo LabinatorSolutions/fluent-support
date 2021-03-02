@@ -67,6 +67,8 @@ class CustomerPortalController extends Controller
             'content' => 'required'
         ]);
 
+        $data['title'] = sanitize_text_field(wp_unslash($data['title']));
+
         $data['content'] = wp_unslash(wp_kses_post($data['content']));
 
         $customer = $this->resolveCustomer($request, true);
@@ -136,10 +138,13 @@ class CustomerPortalController extends Controller
             ->get();
 
         foreach ($responses as $response) {
+            $response->content = make_clickable($response->content);
             if ($response->person) {
                 $response->person->setHidden(['email']);
             }
         }
+
+        $ticket->content = make_clickable($ticket->content);
 
         if ($ticket->customer) {
             $ticket->customer->setHidden(['email']);

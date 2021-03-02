@@ -180,6 +180,7 @@ export default {
     },
     mounted() {
         this.fetch();
+        this.$setTitle('Saved Replies');
     }
 }
 </script>
