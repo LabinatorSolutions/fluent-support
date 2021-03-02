@@ -42,3 +42,4 @@ if (!function_exists('fluentSupportGravatar')) {
         return "https://www.gravatar.com/avatar/${hash}?s=128";
     }
 }
+

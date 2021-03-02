@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\Framework\Request\Request;
 
@@ -11,19 +12,36 @@ class ReportingController extends Controller
     public function getOverallReports(Request $request)
     {
         $overallStats = StatModule::getOverAllStats();
-        $agents = Agent::all();
-        $agent_reports = [];
-
-        foreach ($agents as $agent) {
-            $agent_reports[] = [
-                'agent' => $agent,
-                'reports' => StatModule::getAgentStat($agent->id)
-            ];
-        }
 
         return [
-            'overall_reports' => $overallStats,
-            'agent_reports' => $agent_reports
+            'overall_reports' => $overallStats
+        ];
+    }
+
+    public function getTicketsChart(Request $request, Reporting $reporting)
+    {
+        $stats = $reporting->getTicketsGrowth();
+
+        return [
+            'stats' => $stats
+        ];
+    }
+
+    public function getResolveChart(Request $request, Reporting $reporting)
+    {
+        $stats = $reporting->getTicketResolveGrowth();
+
+        return [
+            'stats' => $stats
+        ];
+    }
+
+    public function getResponseChart(Request $request, Reporting $reporting)
+    {
+        $stats = $reporting->getResponseGrowth();
+
+        return [
+            'stats' => $stats
         ];
     }
 }

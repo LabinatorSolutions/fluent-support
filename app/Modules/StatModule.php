@@ -56,17 +56,8 @@ class StatModule
         ];
     }
 
-    public static function getOverAllStats($startDate = false, $endDate = false)
+    public static function getOverAllStats()
     {
-        if (!$startDate) {
-            $currentDate = current_time('mysql');
-            $startDate = $currentDate;
-            $endDate = $currentDate;
-        }
-
-        $startDate = date('Y-m-d 00:00.01', strtotime($startDate));
-        $endDate = date('Y-m-d 23:59.59', strtotime($endDate));
-
         $newTickets = Ticket::where('status', 'new')
             ->count();
 
@@ -74,11 +65,9 @@ class StatModule
             ->count();
 
         $closedTickets = Ticket::where('status', 'closed')
-            ->whereBetween('resolved_at', [$startDate, $endDate])
             ->count();
 
         $responses = Response::where('conversation_type', 'response')
-            ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
 
         return [
