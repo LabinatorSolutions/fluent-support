@@ -69,7 +69,11 @@ class TicketController extends Controller
         $tickets = $ticketsQuery->paginate();
         foreach ($tickets as $ticket) {
             $ticket->excerpt = $ticket->getExcerpt();
-            $ticket->live_activity = TicketHelper::getActivity($ticket->id);
+            if($ticket->status != 'closed') {
+                $ticket->live_activity = TicketHelper::getActivity($ticket->id);
+            } else {
+                $ticket->live_activity = [];
+            }
         }
 
         return [
