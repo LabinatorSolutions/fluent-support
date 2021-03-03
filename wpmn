@@ -66,6 +66,34 @@ $commands = array(
         $dirPath = realpath(dirname(__FILE__) . '/..');
         die("\nYour plugin is ready for production at the following path:\n\n{$dirPath}{$newPath} \n\n");
     },
+    'build_to_support' => function() {
+        echo "\nPlease wait, packaging the plugin for production...\n";
+
+
+
+        $targetDir = '/Users/jewel/sites/support/wp-content/plugins/fluent-support/';
+
+
+        foreach ([
+                     'app', 'assets', 'boot', 'config', 'database', 'vendor', 'language', 'fluent-support.php', 'readme.txt', 'index.php', 'composer.json'
+                 ] as $src) {
+            $command = "cp -a {$src} {$targetDir}";
+            shell_exec(escapeshellcmd($command));
+        }
+
+        $deleteables = [
+//            '/database/Faker',
+            '/assets/admin/js/start.js.map'
+        ];
+
+        foreach ($deleteables as $path) {
+            shell_exec("rm -rf ".escapeshellarg($targetDir . $path));
+        }
+
+        $newPath = trim($targetDir, '.');
+        $dirPath = realpath(dirname(__FILE__) . '/..');
+        die("\nYour plugin is ready for production at the following path:\n\n{$targetDir} \n\n");
+    },
     'help' => function($commands) {
         $validCommands = implode("\n", array_keys($commands));
         die(

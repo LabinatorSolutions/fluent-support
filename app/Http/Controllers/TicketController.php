@@ -67,7 +67,7 @@ class TicketController extends Controller
         $ticketsQuery->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
 
         $tickets = $ticketsQuery->paginate();
-        
+
         $perPage = $request->get('per_page');
 
         foreach ($tickets as $ticket) {
@@ -82,7 +82,7 @@ class TicketController extends Controller
         	}
 
         }
-        
+
         return [
             'tickets' => $tickets
         ];
@@ -367,6 +367,7 @@ class TicketController extends Controller
         if ($action == 'close_tickets') {
             foreach ($tickets as $ticket) {
                 $ticket->status = 'closed';
+                $ticket->resolved_at = current_time('mysql');
                 $ticket->save();
                 do_action('fluent_support/ticket_closed', $ticket, $agent);
                 do_action('fluent_support/ticket_closed_by_' . $agent->person_type, $ticket, $agent);
@@ -380,8 +381,6 @@ class TicketController extends Controller
         $this->sendError([
             'message' => 'Sorry no action found as available'
         ]);
-
-
     }
 
     public function deleteBulk(Request $request)

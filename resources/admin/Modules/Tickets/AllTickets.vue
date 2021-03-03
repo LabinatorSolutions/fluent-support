@@ -30,6 +30,7 @@
                         <label>Status</label>
                         <el-radio-group size="small" @change="fetchTickets()" v-model="filters.status_type">
                             <el-radio-button label="open">Open</el-radio-button>
+                            <el-radio-button label="active">Active</el-radio-button>
                             <el-radio-button label="new">New</el-radio-button>
                             <el-radio-button label="closed">Closed</el-radio-button>
                             <el-radio-button label="all">All</el-radio-button>
@@ -153,10 +154,10 @@
                         label="Date"
                         width="180">
                         <template #default="scope">
-                            <span style="opacity: 0.4;" title="Ticket Created At">
+                            <span style="opacity: 0.4;" :title="'Ticket created at ' + scope.row.created_at">
                                 <i class="el-icon-time"></i> {{ $timeDiff(scope.row.created_at) }}
                             </span>
-                            <span style="display: block;" title="Last Response">
+                            <span style="display: block;" title="Last response">
                                 <i class="el-icon-chat-line-square"></i> {{ getLastResponse(scope.row) }}
                             </span>
                         </template>
@@ -222,7 +223,7 @@ export default {
             pagination: {
                 current_page: 1,
                 total: 0,
-                per_page: 15
+                per_page: 10
             },
             filters: {
                 status_type: 'open',
@@ -233,7 +234,7 @@ export default {
                 waiting_for_reply: ''
             },
             search: '',
-            order_by: 'id',
+            order_by: 'last_customer_response',
             order_type: 'ASC',
             products: this.appVars.support_products,
             agents: this.appVars.support_agents,
@@ -268,6 +269,9 @@ export default {
     },
     methods: {
         fetchTickets() {
+            if(!this.app_ready) {
+                return false;
+            }
             this.loading = true;
             this.$get('tickets', {
                 page: this.pagination.current_page,
