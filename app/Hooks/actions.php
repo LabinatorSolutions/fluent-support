@@ -90,3 +90,10 @@ if (isset($_GET['fst_file'])) {
         (new \FluentSupport\App\Hooks\Handlers\ExternalPages())->view_attachment();
     });
 }
+
+
+
+// require the CLI
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+    \WP_CLI::add_command( 'fluent_support', '\FluentSupport\App\Hooks\CLI\FluentCli' );
+}

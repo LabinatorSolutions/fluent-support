@@ -7,3 +7,4 @@ assets/*
 package-lock.json
 vendor/composer/*
 vendor/autoload.php
+.DS_Store
