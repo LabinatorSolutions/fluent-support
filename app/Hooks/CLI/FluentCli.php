@@ -20,6 +20,33 @@ class FluentCli
         );
     }
 
+    public function fix_resolve_null()
+    {
+        $targetTickets = Ticket::where('resolved_at', '0000-00-00 00:00:00')
+            ->where('status', 'closed')
+            ->get();
+
+        if ($targetTickets->isEmpty()) {
+            \WP_CLI::error('No tickets found!', true);
+        }
+
+        \WP_CLI::confirm(count($targetTickets) . " tickets will be affected.");
+
+
+        $total = count($targetTickets);
+        $progress = \WP_CLI\Utils\make_progress_bar('Replacing: ', $total , 1);
+
+        foreach ($targetTickets as $index => $ticket) {
+            $ticket->resolved_at = $ticket->updated_at;
+            $ticket->save();
+            $completed = $index + 1;
+            $progress->tick(1, "$completed / $total : Completed - ".$completed);
+        }
+
+        $progress->finish();
+        \WP_CLI::line( 'All Done! Cheers!!');
+    }
+
     public function replace_null_column_value($args, $assoc_args)
     {
         $column = \WP_CLI\Utils\get_flag_value($assoc_args, 'column', '');

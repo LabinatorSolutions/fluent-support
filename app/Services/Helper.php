@@ -49,6 +49,7 @@ class Helper
     {
         return apply_filters('fluent_support/ticket_status_groups', [
             'open'   => ['new', 'active'],
+            'active' => ['active'],
             'closed' => ['closed'],
             'new' => ['new'],
             'all'    => []

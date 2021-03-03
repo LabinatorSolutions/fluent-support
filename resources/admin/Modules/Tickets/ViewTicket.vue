@@ -155,7 +155,7 @@
                                             <span v-else> added a note</span>
                                         </div>
                                         <div class="fs_thread_actions">
-                                            {{ $timeDiff(conversation.created_at) }}
+                                            <span :title="conversation.created_at">{{ $timeDiff(conversation.created_at) }}</span>
                                             <el-dropdown @command="handleResponseActionCommand" trigger="click">
                                                 <span class="el-dropdown-link">
                                                     <i class="el-icon-arrow-down el-icon--right"></i>
@@ -199,7 +199,7 @@
                                             <strong>{{ ticket.customer?.full_name }}</strong> started the conversation
                                         </div>
                                         <div class="fs_thread_actions">
-                                            {{ $timeDiff(ticket.created_at) }}
+                                            <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
                                         </div>
                                     </div>
                                     <div v-html="ticket.content" class="fs_thread_body"></div>
