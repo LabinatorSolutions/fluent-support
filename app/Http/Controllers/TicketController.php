@@ -67,15 +67,22 @@ class TicketController extends Controller
         $ticketsQuery->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
 
         $tickets = $ticketsQuery->paginate();
-        foreach ($tickets as $ticket) {
-            $ticket->excerpt = $ticket->getExcerpt();
-            if($ticket->status != 'closed') {
-                $ticket->live_activity = TicketHelper::getActivity($ticket->id);
-            } else {
-                $ticket->live_activity = [];
-            }
-        }
+        
+        $perPage = $request->get('per_page');
 
+        foreach ($tickets as $ticket) {
+	        $ticket->excerpt = $ticket->getExcerpt();
+
+	        if($perPage < 15) {
+	            if($ticket->status != 'closed') {
+	                $ticket->live_activity = TicketHelper::getActivity($ticket->id);
+	            } else {
+	                $ticket->live_activity = [];
+	            }
+        	}
+
+        }
+        
         return [
             'tickets' => $tickets
         ];
