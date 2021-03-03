@@ -103,14 +103,18 @@ class Person extends Model
         if (!empty($this->attributes['avatar'])) {
             return $this->attributes['avatar'];
         }
+        
+        $email = '';
+        if(isset($this->attributes['email'])) {
+            $email = trim($this->attributes['email']);
+        }
 
-        $hash = md5(strtolower(trim($this->attributes['email'])));
+        $hash = md5(strtolower($email));
         return apply_filters(
             'fluent_support/get_avatar',
             "https://www.gravatar.com/avatar/${hash}?s=128",
-            $this->attributes['email']
+            $email
         );
-
     }
 
     /**
