@@ -8,6 +8,8 @@ class Ticket extends Model
 {
     protected $table = 'fs_tickets';
 
+    protected $appends = ['excerpt'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -24,6 +26,7 @@ class Ticket extends Model
         'title',
         'slug',
         'hash',
+        'message_id',
         'content',
         'last_agent_response',
         'last_customer_response',
@@ -255,13 +258,14 @@ class Ticket extends Model
         );
     }
 
+
     /**
      * Accessor to get dynamic full_name attribute
      * @return string
      */
-    public function getExcerpt()
+    public function getExcerptAttribute()
     {
-        $content = $this->content;
+        $content = $this->attributes['content'];
         $content = substr(preg_replace( "/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($content))) ), 0, 180);
         return $content.'...';
     }

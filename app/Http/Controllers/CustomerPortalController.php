@@ -49,10 +49,6 @@ class CustomerPortalController extends Controller
 
         $tickets = $ticketsQuery->paginate();
 
-        foreach ($tickets as $ticket) {
-            $ticket->excerpt = $ticket->getExcerpt();
-        }
-
         return [
             'tickets' => $tickets
         ];

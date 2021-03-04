@@ -12,7 +12,7 @@ class ByMailHandler
     public static function handleEmailData($data)
     {
         $subject = self::getActualSubject(Arr::get($data, 'subject', 'Subject not defined'));
-        
+
         $onBehalf = Arr::get($data, 'sender');
         $fullName = $onBehalf['name'];
         unset($onBehalf['name']);
@@ -25,10 +25,7 @@ class ByMailHandler
             $onBehalf['first_name'] = $fullName;
         }
 
-        $customer = Customer::getCustomerFromData($onBehalf);
-        if (!$customer) {
-            $customer = Customer::maybeCreateCustomer($onBehalf);
-        }
+        $customer = Customer::maybeCreateCustomer($onBehalf);
 
         $existingTicket = Ticket::where('customer_id', $customer->id)
             ->where('title', 'like', '%%' . $subject . '%%')
@@ -36,6 +33,7 @@ class ByMailHandler
 
         $responseOrTicketData = [
             'title'   => $subject,
+            'message_id' => $data['message_id'],
             'content' => wp_unslash(wp_kses_post($data['content']))
         ];
 
@@ -70,6 +68,11 @@ class ByMailHandler
             $existingTicket->status = 'active';
             $existingTicket->last_customer_response = current_time('mysql');
             $existingTicket->response_count += 1;
+
+            if(!empty($data['message_id'])) {
+                $existingTicket->message_id = $data['message_id'];
+            }
+
             $existingTicket->save();
         }
         do_action('fluent_support/response_added_by_customer', $createdResponse, $existingTicket, $customer);
