@@ -14,6 +14,7 @@ class Response extends Model
     protected $fillable = [
         'ticket_id',
         'person_id',
+        'message_id',
         'conversation_type',
         'content',
         'source',

@@ -7,11 +7,15 @@ use FluentSupport\Framework\Support\Arr;
 
 class Mailer
 {
-    public static function send($to, $subject, $body)
+    public static function send($to, $subject, $body, $extraHeader = [])
     {
         $headers = self::getHeaders();
 
-        //$body = self::getWithTemplate($body);
+        if($extraHeader) {
+            foreach ($extraHeader as $header) {
+                $headers[] = $header;
+            }
+        }
 
         return wp_mail($to, $subject, $body, $headers);
     }

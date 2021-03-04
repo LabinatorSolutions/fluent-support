@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\App\Services\Emogrifier;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Mailer;
 use FluentSupport\Framework\Support\Arr;
@@ -25,9 +26,15 @@ class EmailNotificationHandler
             'settings' => Helper::getBusinessSettings()
         ]);
 
-        $subject = 'Request Received: ' . $ticket->title;
+        $headers = [];
 
-        Mailer::send($customer->email, $subject, $emailBody);
+        if($ticket->message_id) {
+            $headers[] = 'Message-ID: '. $ticket->message_id;
+        }
+
+        $subject = 'Re: ' . $ticket->title;
+
+        Mailer::send($customer->email, $subject, $emailBody, $headers);
     }
 
     public function agentReplied($response, $ticket, $agent)
@@ -44,6 +51,8 @@ class EmailNotificationHandler
 
         $customer = $ticket->customer;
 
+      //  $response->content = wpautop($response->content);
+
         $emailBody = $app->view->make('emails.response_by_agent', [
             'ticket'   => $ticket,
             'agent'    => $agent,
@@ -52,9 +61,18 @@ class EmailNotificationHandler
             'settings' => Helper::getBusinessSettings()
         ]);
 
+        $emogrifier = new Emogrifier($emailBody, $this->emailTemplateCss());
+        $emogrifier->disableInvisibleNodeRemoval();
+        $emailBody = $emogrifier->emogrify();
+
         $subject = 'Re: ' . $ticket->title;
 
-        Mailer::send($customer->email, $subject, $emailBody);
+        $headers = [];
+        if($ticket->message_id) {
+            $headers[] = 'Message-ID: '. $ticket->message_id;
+        }
+
+        Mailer::send($customer->email, $subject, $emailBody, $headers);
     }
 
     public function closedByAgent($ticket, $agent)
@@ -79,9 +97,20 @@ class EmailNotificationHandler
             'settings' => $settings
         ]);
 
-        $subject = 'Request Received: ' . $ticket->title;
+        $subject = 'Re: ' . $ticket->title;
 
-        Mailer::send($customer->email, $subject, $emailBody);
+        $headers = [];
+        if($ticket->message_id) {
+            $headers[] = 'Message-ID: '. $ticket->message_id;
+        }
+
+        Mailer::send($customer->email, $subject, $emailBody, $headers);
+    }
+
+    private function emailTemplateCss()
+    {
+        $app = App::getInstance();
+        return $app->view->make('emails.styles');
     }
 
 }

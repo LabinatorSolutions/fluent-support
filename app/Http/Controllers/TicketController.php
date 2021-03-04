@@ -71,8 +71,6 @@ class TicketController extends Controller
         $perPage = $request->get('per_page');
 
         foreach ($tickets as $ticket) {
-	        $ticket->excerpt = $ticket->getExcerpt();
-
 	        if($perPage < 15) {
 	            if($ticket->status != 'closed') {
 	                $ticket->live_activity = TicketHelper::getActivity($ticket->id);
@@ -80,7 +78,6 @@ class TicketController extends Controller
 	                $ticket->live_activity = [];
 	            }
         	}
-
         }
 
         return [

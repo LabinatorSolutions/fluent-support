@@ -25,8 +25,12 @@ class Customer extends Person
 
         $user = get_user_by('email', $customerData['email']);
         if($user) {
-            $customerData['first_name'] = $user->first_name;
-            $customerData['last_name'] = $user->last_name;
+            if($user->first_name) {
+                $customerData['first_name'] = $user->first_name;
+            }
+            if($user->last_name) {
+                $customerData['last_name'] = $user->last_name;
+            }
             $customerData['user_id'] = $user->ID;
         }
 

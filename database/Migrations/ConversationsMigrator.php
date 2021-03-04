@@ -11,7 +11,6 @@ class ConversationsMigrator
         global $wpdb;
 
         $charsetCollate = $wpdb->get_charset_collate();
-
         $table = $wpdb->prefix . static::$tableName;
 
         if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
@@ -23,6 +22,7 @@ class ConversationsMigrator
                 `conversation_type` VARCHAR(100) DEFAULT 'response',
                 `content` LONGTEXT NULL,
                 `source` VARCHAR(100) DEFAULT 'web',
+                `message_id` VARCHAR(192) NULL,
                 `is_important` ENUM('yes', 'no') DEFAULT 'no',
                 `created_at` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL
