@@ -19,7 +19,7 @@ class TicketsMigrator
                 `id` BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 `customer_id` BIGINT(20) UNSIGNED NULL,
                 `agent_id` BIGINT(20) UNSIGNED NULL,
-                `category_id` BIGINT(20) UNSIGNED NULL,
+                `mailbox_id` BIGINT(20) UNSIGNED NULL,
                 `product_id` BIGINT(20) UNSIGNED NULL,
                 `product_source` VARCHAR(192) NULL,
                 `privacy` VARCHAR(100) DEFAULT 'private',

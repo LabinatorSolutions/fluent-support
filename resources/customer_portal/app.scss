@@ -225,7 +225,7 @@
             pre, code {
                 background: #e1ebee;
                 font-family: "Courier 10 Pitch", Courier, monospace;
-                font-size: 0.9375rem;
+                font-size: 0.9376rem;
                 line-height: 1.6;
                 max-width: 100%;
                 overflow: auto;
@@ -346,4 +346,8 @@
 
 .fs_attachments_form {
     padding: 10px 0px;
+}
+
+#fluent_support_client_app .el-table--fit.el-table table tr td {
+    padding: 12px 0px !important;
 }

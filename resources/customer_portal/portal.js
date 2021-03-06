@@ -106,7 +106,6 @@ app.mixin({
             } else if (typeof (obj) === 'string') {
                 string.push(obj)
             }
-
             return string.join('<br />')
         }
     }

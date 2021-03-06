@@ -27,14 +27,31 @@ class ByMailHandler
 
         $customer = Customer::maybeCreateCustomer($onBehalf);
 
-        $existingTicket = Ticket::where('customer_id', $customer->id)
-            ->where('title', 'like', '%%' . $subject . '%%')
-            ->first();
+        $existingTicket = false;
+
+        if (!$customer->newly_created) {
+            $existingTicket = Ticket::where('customer_id', $customer->id)
+                ->where('title', 'like', '%%' . $subject . '%%')
+                ->orderBy('ID', 'DESC')
+                ->first();
+
+            if (!$existingTicket) {
+                // check if user has any active ticket
+                $existingTicket = Ticket::where('customer_id', $customer->id)
+                    ->where('status', '!=', 'closed')
+                    ->orderBy('ID', 'DESC')
+                    ->first();
+
+                if ($existingTicket) {
+                    $data['content'] = '<h4>---- New Email Subject: ' . $subject . ' -----</h4>';
+                }
+            }
+        }
 
         $responseOrTicketData = [
-            'title'   => $subject,
+            'title'      => $subject,
             'message_id' => $data['message_id'],
-            'content' => wp_unslash(wp_kses_post($data['content']))
+            'content'    => wp_unslash(wp_kses_post($data['content']))
         ];
 
         if (!$existingTicket) {
@@ -52,7 +69,7 @@ class ByMailHandler
             return [
                 'type'      => 'new_ticket',
                 'ticket_id' => $createdTicket->id,
-                'ticket' => $createdTicket
+                'ticket'    => $createdTicket
             ];
         }
 
@@ -69,7 +86,7 @@ class ByMailHandler
             $existingTicket->last_customer_response = current_time('mysql');
             $existingTicket->response_count += 1;
 
-            if(!empty($data['message_id'])) {
+            if (!empty($data['message_id'])) {
                 $existingTicket->message_id = $data['message_id'];
             }
 
@@ -80,8 +97,8 @@ class ByMailHandler
             'type'        => 'new_response',
             'ticket_id'   => $existingTicket->id,
             'response_id' => $createdResponse->id,
-            'response' => $createdResponse,
-            'customer' => $customer
+            'response'    => $createdResponse,
+            'customer'    => $customer
         ];
     }
 

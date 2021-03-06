@@ -13,6 +13,10 @@ import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
 import Reports from './Modules/Reports/Reports';
 
+import MailBoxRoot from './Modules/MailBoxes/MailBoxRoot';
+import ChooseMailBox from './Modules/MailBoxes/ChooseMailBox';
+import MailBoxSettings from './Modules/MailBoxes/MailBoxSettings';
+
 export default [
     {
         path: '/',
@@ -73,6 +77,29 @@ export default [
                 path: 'integration',
                 name: 'integration',
                 component: IntegrationView
+            }
+        ]
+    },
+    {
+        path: '/mailboxes',
+        component: ChooseMailBox,
+        name: 'mailboxes',
+        meta: {
+            active: 'mailboxes'
+        }
+    },
+    {
+        path: '/mailboxes/:box_id',
+        component: MailBoxRoot,
+        props: true,
+        meta: {
+            active: 'mailboxes'
+        },
+        children: [
+            {
+                path: 'settings',
+                name: 'box_settings',
+                component: MailBoxSettings
             }
         ]
     },
