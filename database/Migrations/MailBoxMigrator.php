@@ -2,9 +2,9 @@
 
 namespace FluentSupport\App\Database\Migrations;
 
-class ProductsMigrator
+class MailBoxMigrator
 {
-    static $tableName = 'fs_products';
+    static $tableName = 'fs_mail_boxes';
 
     public static function migrate()
     {
@@ -17,18 +17,20 @@ class ProductsMigrator
         if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
             $sql = "CREATE TABLE $table (
                 `id` BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                `source_uid` BIGINT(20) UNSIGNED NULL,
-                `mailbox_id` BIGINT(20) UNSIGNED NULL,
-                `title` VARCHAR(192) NULL,
-                `description` TEXT NULL,
+                `name` VARCHAR(192) NOT NULL,
+                `slug` VARCHAR(192) NOT NULL,
+                `box_type` VARCHAR(50) default 'web',
+                `email` VARCHAR(192) NOT NULL,
+                `mapped_email` VARCHAR(192) NULL,
+                `email_footer` LONGTEXT NULL,
                 `settings` LONGTEXT NULL,
-                `source` VARCHAR(100) DEFAULT 'local',
+                `avatar` VARCHAR(192) NULL,
                 `created_by` BIGINT(20) UNSIGNED NULL,
+                `is_default` ENUM('yes', 'no') DEFAULT 'no',
                 `created_at` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL
             ) $charsetCollate;";
             dbDelta($sql);
         }
-        
     }
 }

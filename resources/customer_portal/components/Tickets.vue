@@ -27,7 +27,7 @@
                         <router-link class="fs_tk_preview"
                                      :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                             <strong>{{ scope.row.title }}</strong>
-                            <p class="fs_tk_preview_text">{{ scope.row.excerpt }}</p>
+                            <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
                         </router-link>
                     </template>
                 </el-table-column>
@@ -109,6 +109,13 @@ export default {
                 name: 'view_ticket',
                 params: {ticket_id: row.id}
             });
+        },
+        getExcerpt(row) {
+            let text = row.content;
+            if(!text) {
+                return '';
+            }
+            return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
         }
     },
     mounted() {

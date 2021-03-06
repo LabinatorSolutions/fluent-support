@@ -40,9 +40,13 @@ class Customer extends Person
             }
             // we have to create customer
             $customer = self::create($customerData);
+
+            $customer->newly_created = true;
+
         } else {
             $customer->fill($customerData);
             $customer->save();
+            $customer->newly_created = false;
         }
 
         return $customer;

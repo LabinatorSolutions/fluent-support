@@ -126,7 +126,7 @@
                                         </span>
                                     </span>
                                 </span>
-                                <p class="fs_tk_preview_text">{{ scope.row.excerpt }}</p>
+                                <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
                             </router-link>
                         </template>
                     </el-table-column>
@@ -414,6 +414,13 @@ export default {
                 .always(() => {
                     this.doing_bulk = false;
                 });
+        },
+        getExcerpt(row) {
+            let text = row.content;
+            if(!text) {
+                return '';
+            }
+            return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
         }
     },
     mounted() {

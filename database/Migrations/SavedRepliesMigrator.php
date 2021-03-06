@@ -18,6 +18,7 @@ class SavedRepliesMigrator
             $sql = "CREATE TABLE $table (
                 `id` BIGINT(20) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
                 `created_by` BIGINT(20) UNSIGNED NULL,
+                `mailbox_id` BIGINT(20) UNSIGNED NULL,
                 `product_id` BIGINT(20) UNSIGNED NULL,
                 `title` VARCHAR(192) NULL,
                 `content` LONGTEXT NULL,
@@ -26,5 +27,6 @@ class SavedRepliesMigrator
             ) $charsetCollate;";
             dbDelta($sql);
         }
+
     }
 }

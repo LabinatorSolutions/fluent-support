@@ -4,10 +4,16 @@
  * @var $router FluentSupport\Framework\Rest\Rest
  */
 
+$router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
+    $router->get('/', 'MailBoxController@index');
+    $router->post('/', 'MailBoxController@save');
+    $router->get('/{id}', 'MailBoxController@get')->int('id');
+    $router->put('/{id}', 'MailBoxController@update')->int('id');
+});
+
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
 
     $router->get('my_stats', 'AgentController@myStats');
-
     $router->get('/', 'TicketController@index');
     $router->get('/{ticket_id}', 'TicketController@getTicket')->int('ticket_id');
 

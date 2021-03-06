@@ -80,9 +80,9 @@ class Menu
 
         if(PermissionManager::currentUserCan('fst_manage_settings')) {
             $secondayItems[] = [
-                'key'       => 'settings',
-                'label'     => __('Settings', 'fluent-support'),
-                'permalink' => $baseUrl . 'settings/products'
+                'key'       => 'mailboxes',
+                'label'     => __('Business Settings', 'fluent-support'),
+                'permalink' => $baseUrl . 'mailboxes'
             ];
         }
 
