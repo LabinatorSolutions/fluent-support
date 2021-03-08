@@ -46,16 +46,11 @@ class Settings
     private function getGlobalBusinessSettingsFields()
     {
         return [
-            'business_name'  => [
-                'type'        => 'input-text',
-                'data-type'   => 'text',
-                'placeholder' => 'Business Name',
-                'label'       => 'Business Name'
-            ],
             'portal_page_id' => [
                 'type'      => 'input-text',
                 'data-type' => 'number',
-                'label'     => 'Portal Page ID'
+                'label'     => 'Portal Page ID',
+                'inline_help' => 'Please provide the page id where you want to show the tickets for your customers. Use shortoce <code>[fluent_support_admin_portal]</code> in that page'
             ],
             'login_message'  => [
                 'type'        => 'wp-editor',

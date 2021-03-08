@@ -25,6 +25,7 @@ class Ticket extends Model
         'title',
         'slug',
         'hash',
+        'source',
         'message_id',
         'content',
         'last_agent_response',
