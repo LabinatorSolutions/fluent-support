@@ -22,6 +22,10 @@ export default {
         return {
             settings_items: [
                 {
+                    title: 'Global Settings',
+                    route_name: 'global_settings'
+                },
+                {
                     title: 'Products',
                     route_name: 'products',
                     route_query: {}

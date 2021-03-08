@@ -2,7 +2,7 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>Business Settings</h3>
+                <h3>Global Settings</h3>
             </div>
             <div class="fs_box_actions">
 
