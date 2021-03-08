@@ -191,7 +191,7 @@ class FeedIntegration extends IntegrationManager
         $data = $feed['processedValues'];
 
         if (!empty($data['email']) && !is_email($data['email'])) {
-            $data['email'] = Arr::get($data, $data['email']);
+            $data['email'] = Arr::get($formData, $data['email']);
         }
 
         $ticketData = [
@@ -210,10 +210,11 @@ class FeedIntegration extends IntegrationManager
         }
 
         $customerData = Arr::only($data, ['first_name', 'last_name', 'email']);
-        $user = wp_get_current_user();
+
+        $user = get_user_by('ID', get_current_user_id());
 
         if(!$user) {
-            $user = get_user_by('user_email', $customerData['email']);
+            $user = get_user_by('email', $customerData['email']);
         }
 
         if($user) {

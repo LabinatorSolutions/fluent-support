@@ -172,7 +172,6 @@ class Helper
         }
 
         $mailerSettings = $mailBox->getMailerSettings();
-
         $mailerSettings['email_footer'] = $mailBox->email_footer;
         $mailerSettings['box_type'] = $mailBox->box_type;
 

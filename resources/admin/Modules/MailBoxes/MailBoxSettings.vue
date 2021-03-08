@@ -8,12 +8,17 @@
                 <el-input type="email" v-model="mailbox.email"></el-input>
                 <p>Please make sure your website can send emails from this email address</p>
             </el-form-item>
+            <el-form-item label="Admin Email Address">
+                <el-input type="email" v-model="mailbox.settings.admin_email_address"></el-input>
+                <p>Please provide the email address where admin will get email if enabled in email settings</p>
+            </el-form-item>
             <el-form-item label="Support Channel">
                 <el-radio-group v-model="mailbox.box_type">
                     <el-radio label="web">Web Based</el-radio>
                     <el-radio label="email">Email Based (MailBox)</el-radio>
                 </el-radio-group>
             </el-form-item>
+
             <el-form-item v-if="mailbox.box_type == 'email'" label="Mapped Email">
                 <el-input type="email" v-model="mailbox.mapped_email"></el-input>
                 <p>Please provide mapped webhook email from where you will send emails as webhook</p>

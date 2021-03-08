@@ -122,8 +122,7 @@ export default {
                     '{{agent.last_name}}': 'Agent Last Name',
                     '{{agent.full_name}}': 'Agent Full Name',
                     '{{response.title}}': 'Response Title',
-                    '{{response.content}}': 'Response Content',
-                    '{{response.full_content}}': 'Response Content with Attachment List'
+                    '{{response.content}}': 'Response Content'
                 }
             }
         }
