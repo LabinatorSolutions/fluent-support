@@ -8,12 +8,7 @@ class Settings
 {
     public function get($settingsKey)
     {
-        if ($settingsKey == 'global_email_settings') {
-            return [
-                'settings' => $this->globalEmailSettings(),
-                'fields'   => $this->getGlobalEmailSettingsFields()
-            ];
-        } else if ($settingsKey == 'global_business_settings') {
+        if ($settingsKey == 'global_business_settings') {
             return [
                 'settings' => $this->globalBusinessSettings(),
                 'fields'   => $this->getGlobalBusinessSettingsFields()
@@ -70,81 +65,104 @@ class Settings
         ];
     }
 
-    public function globalEmailSettings()
+    public function saveBoxEmailSettings($box, $emailKey, $settings)
     {
-        $defaults = [
-            'send_as_html'   => 'yes',
-            'template'       => 'minimal',
-            'header'         => '',
-            'footer'         => '',
-            'sender_name'    => '',
-            'sender_email'   => '',
-            'reply_to_email' => '',
-            'notification_events' => [
-                'ticket_created',
-                'ticket_closed_by_agent',
-                'response_added_by_agent'
+        return $box->saveMeta('_email_'.$emailKey, $settings);
+    }
+
+    public function getBoxEmailSettings($box, $emailKey)
+    {
+
+        $strictSubjectKeys = apply_filters('fluent_support_strict_subjects', [
+            'ticket_replied_by_agent_email_to_customer',
+            'ticket_closed_by_agent_email_to_customer',
+            'ticket_closed_by_agent_email_to_customer'
+        ]);
+
+        $settingsDefaults = [
+            'ticket_created_email_to_customer'          => [
+                'email_subject'        => 'Request received: {{ticket.title}} #{{ticket.id}}',
+                'default_status' => 'no'
+            ],
+            'ticket_replied_by_agent_email_to_customer' => [
+                'email_subject'        => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'default_status' => 'yes'
+            ],
+            'ticket_closed_by_agent_email_to_customer'  => [
+                'email_subject'        => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'default_status' => 'yes'
+            ],
+            'ticket_created_email_to_admin'             => [
+                'email_subject'        => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
+                'default_status' => 'yes'
+            ],
+            'ticket_replied_by_customer_email_to_admin' => [
+                'email_subject'        => 'New Response: {{ticket.title}} #{{ticket.id}}',
+                'default_status' => 'yes'
             ]
         ];
 
-        $existingSettings = Helper::getOption('global_email_settings', []);
-
-        if (!$existingSettings) {
-            return $defaults;
+        if (!isset($settingsDefaults[$emailKey])) {
+            return false;
         }
 
-        return wp_parse_args($existingSettings, $defaults);
+        $savedSettings = (array)$box->getMeta('_email_' . $emailKey, []);
+
+        if (!$savedSettings) {
+            return [
+                'email_subject'    => $settingsDefaults[$emailKey]['email_subject'],
+                'email_body'       => $this->getDefaultEmailBody($emailKey, $box->box_type),
+                'status'           => $settingsDefaults[$emailKey]['default_status'],
+                'can_edit_subject' => (in_array($emailKey, $strictSubjectKeys) && $box->box_type == 'email') ? 'no' : 'yes'
+            ];
+        }
+
+        if ($box->box_type == 'email' && in_array($emailKey, $strictSubjectKeys)) {
+            $savedSettings['email_subject'] = $settingsDefaults[$emailKey]['email_subject'];
+            $savedSettings['can_edit_subject'] = 'no';
+        }
+
+        if(empty($savedSettings['email_subject'])) {
+            $savedSettings['email_subject'] = $settingsDefaults[$emailKey]['email_subject'];
+        }
+
+        if (empty($savedSettings['status'])) {
+            $savedSettings['status'] = $settingsDefaults[$emailKey]['default_status'];
+        }
+
+        if (empty($savedSettings['email_body'])) {
+            $savedSettings['email_body'] = $this->getDefaultEmailBody($emailKey, $box->box_type);
+        }
+
+        return $savedSettings;
     }
 
-    private function getGlobalEmailSettingsFields()
+    private function getDefaultEmailBody($emailKey, $type = 'web')
     {
-        return [
-            'template'            => [
-                'type'        => 'input-radio',
-                'label'       => 'Email Template Type',
-                'options'     => [
-                    [
-                        'id'    => 'minimal',
-                        'label' => 'Minimal'
-                    ],
-                    [
-                        'id'    => 'boxed',
-                        'label' => 'Boxed'
-                    ],
-                    [
-                        'id'    => 'centered',
-                        'label' => 'Plain Centered'
-                    ]
-                ],
-                'inline_help' => 'Your Email Template Type'
-            ],
-            'sender_name'         => [
-                'type'        => 'input-text',
-                'data_type'   => 'text',
-                'placeholder' => 'From Email Name',
-                'label'       => 'From Email Name'
-            ],
-            'sender_email'        => [
-                'type'        => 'input-text',
-                'data_type'   => 'email',
-                'placeholder' => 'From Email',
-                'label'       => 'From Email'
-            ],
-            'reply_to_email'      => [
-                'type'        => 'input-text',
-                'data_type'   => 'email',
-                'placeholder' => 'Reply To Email',
-                'label'       => 'Reply To Email'
-            ],
-            'notification_events' => [
-                'type'    => 'checkbox-group',
-                'label'   => 'Notification Events',
-                'options' => [
-                    'ticket_created'          => 'Ticket Created (send to customer)',
-                    'ticket_closed_by_agent'  => 'Ticket Closed by Agent (send to customer)',
-                    'response_added_by_agent' => 'Replied by Agent (send to customer)'
-                ]
-            ],
-        ];
+        if ($emailKey == 'ticket_created_email_to_customer') {
+            if ($type == 'web') {
+                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>Your request (<a href="{{ticket.public_url}}">#{{ticket.id}}</a>) has been received, and is being reviewed by our support staff.</p><p>To add additional comments, follow the link below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>&nbsp;</p><p>or follow this link: {{ticket.public_url}}</p><hr /><p>{{business.name}}</p>';
+            } else {
+                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>Your request has been received, and is being reviewed by our support staff.</p><p>Our support staff will reply back to you soon</p>';
+            }
+        } else if ($emailKey == 'ticket_replied_by_agent_email_to_customer') {
+            if ($type == 'web') {
+                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>An agent just replied to your ticket "<strong>{{ticket.title}}</strong>" (<a href="{{ticket.public_url}}">#{ticket.id}</a>). To view his reply or add additional comments, click the button below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>or follow this link: {{ticket.public_url}}</p><hr /><p>Regards,<br />{business.name}</p>';
+            } else {
+                return '{{response.full_content}}<p>Regards,<br />{{agent.full_name}}</p>';
+            }
+        } else if ($emailKey == 'ticket_closed_by_agent_email_to_customer') {
+            if ($type == 'web') {
+                return '<p>Hi <strong><em>{{customer.full_name}},</strong></p><p>Your ticket - {{ticket.ticket}}</p><p>We hope that the ticket was resolved to your satisfaction. If you feel that the ticket should not be closed or if the ticket has not been resolved, please reopen the ticket (<a href="{{ticket.public_url}}">#{{ticket.id}}</a>)</p><p>Regards,<br />{{business.name}}</p>';
+            } else {
+                return '<p>Hi <strong><em>{{customer.full_name}},</strong></p><p>Your ticket - {{ticket.ticket}}</p><p>We hope that the ticket was resolved to your satisfaction. If you feel that the ticket should not be closed or if the ticket has not been resolved, please feel free to reply back.<p>Regards,<br />{{business.name}}</p>';
+            }
+        } else if ($emailKey == 'ticket_created_email_to_admin') {
+            return '<p>A new ticket (<a href="{{ticket.admin_url}}">{{ticket.title}}</a>) as been submitted by {{customer.full_name}}</p><h4>Ticket Body</h4><p>{{ticket.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
+        } else if ($emailKey == 'ticket_replied_by_customer_email_to_admin') {
+            return '<p>A new response has been added to "<a href="{{ticket.admin_url}}">{{ticket.title}}</a>"  by {{customer.full_name}}</p><h4>Response Body</h4><p>{{response.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
+        }
+
+        return '';
     }
 }

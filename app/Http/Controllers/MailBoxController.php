@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\MailBox;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Request\Request;
 
 class MailBoxController extends Controller
@@ -18,7 +19,7 @@ class MailBoxController extends Controller
 
     public function get(Request $request, $id)
     {
-        $mailbox =  MailBox::findOrFail($id);
+        $mailbox = MailBox::findOrFail($id);
 
         return $this->sendSuccess([
             'mailbox' => $mailbox
@@ -57,7 +58,7 @@ class MailBoxController extends Controller
             }
             $settings['hosted_page_id'] = intval($pageId);
         } else {
-            if(empty($data['mapped_email'])) {
+            if (empty($data['mapped_email'])) {
                 return $this->sendError([
                     'message' => 'Mapped Email Address is required'
                 ]);
@@ -94,7 +95,7 @@ class MailBoxController extends Controller
                 ]);
             }
         } else {
-            if(empty($data['mapped_email'])) {
+            if (empty($data['mapped_email'])) {
                 return $this->sendError([
                     'message' => 'Mapped Email Address is required'
                 ]);
@@ -107,6 +108,36 @@ class MailBoxController extends Controller
         return [
             'message' => 'Mailbox has been saved',
             'mailbox' => $mailbox
+        ];
+    }
+
+    public function getEmailSettings(Request $request, Settings $settings, $boxId)
+    {
+        $box = MailBox::findOrFail($boxId);
+        $emailType = $request->get('email_type');
+
+        return [
+            'email_settings' => $settings->getBoxEmailSettings($box, $emailType)
+        ];
+    }
+
+    public function saveEmailSettings(Request $request, Settings $settings, $boxId)
+    {
+        $data = wp_unslash($request->get('email_settings'));
+        $this->validate($data, [
+            'email_subject' => 'required',
+            'email_body'    => 'required'
+        ]);
+
+        $data['email_body'] = wp_kses_post($data['email_body']);
+
+        $box = MailBox::findOrFail($boxId);
+        $emailType = $request->get('email_type');
+
+        $settings->saveBoxEmailSettings($box, $emailType, $data);
+
+        return [
+            'message' => __('Settings has been updated', 'fluent-support')
         ];
     }
 }

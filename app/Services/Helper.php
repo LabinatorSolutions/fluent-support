@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
@@ -155,16 +156,27 @@ class Helper
         return $settings;
     }
 
-    public static function getEmailSettings()
+    public static function getEmailSettings($ticket)
     {
-        static $settings;
-
-        if($settings) {
-            return $settings;
+        $mailBox = false;
+        if($ticket->mailbox_id) {
+            $mailBox = MailBox::find($ticket->mailbox_id);
         }
 
-        $settings = self::getOption('global_email_settings');
-        return $settings;
+        if(!$mailBox) {
+            $mailBox = MailBox::orderBy('id', 'ASC')->where('is_default', 'yes')->first();
+        }
+
+        if(!$mailBox) {
+            return [];
+        }
+
+        $mailerSettings = $mailBox->getMailerSettings();
+
+        $mailerSettings['email_footer'] = $mailBox->email_footer;
+        $mailerSettings['box_type'] = $mailBox->box_type;
+
+        return $mailerSettings;
     }
 
     public static function getTicketMeta($ticketId, $key, $default = '')

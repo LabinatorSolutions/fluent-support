@@ -84,6 +84,12 @@ class Menu
                 'label'     => __('Business Settings', 'fluent-support'),
                 'permalink' => $baseUrl . 'mailboxes'
             ];
+
+            $secondayItems[] = [
+                'key'       => 'settings',
+                'label'     => __('Global Settings', 'fluent-support'),
+                'permalink' => $baseUrl . 'settings/products'
+            ];
         }
 
         $menuItems = apply_filters('fluent_support/primary_menu_items', $menuItems);

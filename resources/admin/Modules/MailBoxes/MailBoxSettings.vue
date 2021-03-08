@@ -18,13 +18,12 @@
                 <el-input type="email" v-model="mailbox.mapped_email"></el-input>
                 <p>Please provide mapped webhook email from where you will send emails as webhook</p>
             </el-form-item>
-            <template v-if="mailbox.box_type == 'web'">
-                <el-form-item label="Customer Support Portal Page Id">
-                    <el-input type="number" v-model="mailbox.settings.hosted_page_id"></el-input>
-                    <p>Please add the following shortcode in a page where you want to show tickets and manage tickets to
-                        your customers <code>[fluent_support_portal]</code></p>
-                </el-form-item>
-            </template>
+
+            <el-form-item label="Customer Support Portal Page Id">
+                <el-input type="number" v-model="mailbox.settings.hosted_page_id"></el-input>
+                <p>Please add the following shortcode in a page where you want to show tickets and manage tickets to
+                    your customers <code>[fluent_support_portal]</code></p>
+            </el-form-item>
 
             <el-form-item label="Email Footer For Customers">
                 <wp-editor :height="100" v-model="mailbox.email_footer"/>
@@ -34,20 +33,6 @@
                         <li v-for="(code, codeName) in smartCodes">{{code}}: {{codeName}}</li>
                     </ul>
                 </div>
-            </el-form-item>
-
-            <el-form-item label="Email Notifications to Customers">
-                <el-checkbox-group v-model="mailbox.settings.client_notifications">
-                    <el-checkbox v-for="(notification_name, notification_key) in filtered_client_notifications"
-                                 :label="notification_key">{{notification_name}}</el-checkbox>
-                </el-checkbox-group>
-            </el-form-item>
-
-            <el-form-item label="Email Notifications to Admin">
-                <el-checkbox-group v-model="mailbox.settings.admin_notifications">
-                    <el-checkbox v-for="(notification_name, notification_key) in admin_notifications"
-                                 :label="notification_key">{{notification_name}}</el-checkbox>
-                </el-checkbox-group>
             </el-form-item>
 
             <el-form-item>
@@ -78,16 +63,7 @@ export default {
                 '{{ticket.public_url}}': 'Ticket Public URL',
                 '{{ticket.title}}': 'Ticket Title'
             },
-            saving: false,
-            client_notifications: {
-                ticket_created: 'Ticket Received Welcome Email',
-                ticket_closed_by_agent: 'Ticket Closed By Agent',
-                response_added_by_agent: 'Response Added by Agent'
-            },
-            admin_notifications: {
-                ticket_created: 'New Ticket added by Customer',
-                response_added_by_customer: 'New Reply by Customer'
-            }
+            saving: false
         }
     },
     computed: {

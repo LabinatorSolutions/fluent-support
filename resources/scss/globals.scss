@@ -212,3 +212,25 @@ ul.fs_card_list {
     width: 32px;
     border-radius: 50%;
 }
+
+
+ul.fs_inner_menu_items {
+    padding: 0;
+    list-style: none;
+    background: #f1f2f5;
+    margin: -20px -20px 20px;
+    li {
+        display: inline-block;
+        padding: 15px 15px 12px;
+        margin: 0;
+        cursor: pointer;
+        &.fs_active_item {
+            background: white;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            border-bottom: 0;
+            font-weight: 500;
+        }
+    }
+}
+
