@@ -79,7 +79,7 @@ class Settings
 
         $settingsDefaults = [
             'ticket_created_email_to_customer'          => [
-                'email_subject'        => 'Request received: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'        => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'no'
             ],
             'ticket_replied_by_agent_email_to_customer' => [
