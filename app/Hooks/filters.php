@@ -10,5 +10,10 @@
  */
 
 /**
- * @var $app \FluentCrm\Includes\Core\Application
+ * @var $app \FluentSupport\Framework\Foundation\Application;
  */
+
+
+$app->addCustomFilter('parse_smartcode_data', function ($string, $data) {
+    return (new \FluentSupport\App\Services\Parser\Parser())->parse($string, $data);
+}, 10, 2);

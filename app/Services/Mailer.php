@@ -7,9 +7,9 @@ use FluentSupport\Framework\Support\Arr;
 
 class Mailer
 {
-    public static function send($to, $subject, $body, $extraHeader = [], $ticket = false)
+    public static function send($to, $subject, $body, $extraHeader = [])
     {
-        $headers = self::getHeaders($ticket);
+        $headers = self::getHeaders();
 
         if($extraHeader) {
             foreach ($extraHeader as $header) {
@@ -23,29 +23,6 @@ class Mailer
     public static function getHeaders($ticket = false)
     {
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
-
-        if(!$ticket) {
-            return $headers;
-        }
-        $emailSettings = Helper::getEmailSettings($ticket);
-        $fromName = Arr::get($emailSettings, 'sender_name');
-        $fromEmail = Arr::get($emailSettings, 'sender_email');
-        $replyTo = Arr::get($emailSettings, 'reply_to_email');
-
-        $fromString = $fromName;
-        if($fromEmail) {
-            $fromString .= ' <'.$fromEmail.'>';
-        }
-
-        if ($fromString) {
-            $headers[] = "From: {$fromString}";
-        }
-
-        // Set Reply-To Header
-        if ($replyTo) {
-            $headers[] = "Reply-To: $replyTo";
-        }
-
         return $headers;
     }
 

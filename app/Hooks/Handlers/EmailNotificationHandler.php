@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Emogrifier;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Mailer;
@@ -12,105 +13,213 @@ class EmailNotificationHandler
 {
     public function ticketCreated($ticket, $customer)
     {
-        $mailerSettings = Helper::getEmailSettings($ticket);
-        if(!$mailerSettings) {
+        $mailbox = $ticket->mailbox;
+
+        if (!$mailbox) {
             return;
         }
 
-        $app = App::getInstance();
-        $ticket->view_url = Helper::getTicketViewUrl($ticket);
+        // Let's send welcome email to customer if enabled
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_customer');
+        if ($emailSettings && $emailSettings['status'] == 'yes') {
 
-        $emailBody = $app->view->make('emails.ticket_created', [
-            'ticket'   => $ticket,
-            'customer' => $customer,
-            'settings' => Helper::getBusinessSettings()
-        ]);
+            $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
+                'customer' => $customer,
+                'business' => $mailbox,
+                'ticket'   => $ticket
+            ]);
 
-        $headers = [];
+            $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
+                'customer'   => $customer,
+                'business'   => $mailbox,
+                'ticket'     => $ticket,
+                'email_type' => 'ticket_created_email_to_customer'
+            ]);
 
-        if($ticket->message_id) {
-            $headers[] = 'Message-ID: '. $ticket->message_id;
+            $headers = $mailbox->getMailerHeader();
+            if ($ticket->message_id) {
+                $headers[] = 'Message-ID: ' . $ticket->message_id;
+            }
+            Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
 
-        $subject = 'Re: ' . $ticket->title;
+        // let's send email to admin if enabled
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_admin');
+        if ($emailSettings && $emailSettings['status'] == 'yes' && is_email($mailbox->settings['admin_email_address'])) {
 
-        Mailer::send($customer->email, $subject, $emailBody, $headers);
+            $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
+                'customer' => $customer,
+                'business' => $mailbox,
+                'ticket'   => $ticket
+            ]);
+
+            $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
+                'customer'   => $customer,
+                'business'   => $mailbox,
+                'ticket'     => $ticket,
+                'email_type' => 'ticket_created_email_to_admin'
+            ]);
+
+            $headers = $mailbox->getMailerHeader();
+            if ($ticket->message_id) {
+                $headers[] = 'Message-ID: ' . $ticket->message_id;
+            }
+            Mailer::send($mailbox->settings['admin_email_address'], $subject, $emailBody, $headers);
+        }
+
     }
 
     public function agentReplied($response, $ticket, $agent)
     {
-        $emailSettings = Helper::getEmailSettings($ticket);
-        if(!in_array('response_added_by_agent', Arr::get($emailSettings, 'notification_events', []))) {
+        $mailbox = $ticket->mailbox;
+        if (!$mailbox) {
             return;
         }
 
-        $app = App::getInstance();
-        $ticket->view_url = Helper::getTicketViewUrl($ticket);
+        // Let's send welcome email to customer if enabled
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_replied_by_agent_email_to_customer');
+        if ($emailSettings && $emailSettings['status'] == 'yes') {
 
-        $ticket->load('customer');
+            $ticket->load('customer');
+            $customer = $ticket->customer;
 
-        $customer = $ticket->customer;
+            $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
+                'customer' => $customer,
+                'business' => $mailbox,
+                'ticket'   => $ticket,
+                'response' => $response,
+                'agent'    => $agent
+            ]);
 
-      //  $response->content = wpautop($response->content);
+            $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
+                'customer'   => $customer,
+                'business'   => $mailbox,
+                'ticket'     => $ticket,
+                'response'   => $response,
+                'agent'      => $agent,
+                'email_type' => 'ticket_replied_by_agent_email_to_customer'
+            ]);
 
-        $emailBody = $app->view->make('emails.response_by_agent', [
-            'ticket'   => $ticket,
-            'agent'    => $agent,
-            'customer' => $customer,
-            'response' => $response,
-            'settings' => Helper::getBusinessSettings()
-        ]);
-
-        $emogrifier = new Emogrifier($emailBody, $this->emailTemplateCss());
-        $emogrifier->disableInvisibleNodeRemoval();
-        $emailBody = $emogrifier->emogrify();
-
-        $subject = 'Re: ' . $ticket->title;
-
-        $headers = [];
-        if($ticket->message_id) {
-            $headers[] = 'Message-ID: '. $ticket->message_id;
+            $headers = $mailbox->getMailerHeader();
+            if ($ticket->message_id) {
+                $headers[] = 'Message-ID: ' . $ticket->message_id;
+            }
+            Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
-
-        Mailer::send($customer->email, $subject, $emailBody, $headers);
     }
 
     public function closedByAgent($ticket, $agent)
     {
-        $emailSettings = Helper::getEmailSettings($ticket);
-        if(!in_array('ticket_closed_by_agent', Arr::get($emailSettings, 'notification_events', []))) {
+        $mailbox = $ticket->mailbox;
+        if (!$mailbox) {
             return;
         }
 
-        $settings = Helper::getBusinessSettings();
+        // Let's send welcome email to customer if enabled
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_closed_by_agent_email_to_customer');
+        if ($emailSettings && $emailSettings['status'] == 'yes') {
 
-        $app = App::getInstance();
-        $ticket->view_url = Helper::getTicketViewUrl($ticket);
+            $ticket->load('customer');
+            $customer = $ticket->customer;
 
-        $ticket->load('customer');
+            $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
+                'customer' => $customer,
+                'business' => $mailbox,
+                'ticket'   => $ticket,
+                'agent'    => $agent,
+            ]);
 
-        $customer = $ticket->customer;
+            $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
+                'customer'   => $customer,
+                'business'   => $mailbox,
+                'ticket'     => $ticket,
+                'agent'      => $agent,
+                'email_type' => 'ticket_closed_by_agent_email_to_customer'
+            ]);
 
-        $emailBody = $app->view->make('emails.ticket_closed', [
-            'ticket'   => $ticket,
-            'customer' => $customer,
-            'settings' => $settings
-        ]);
+            $headers = $mailbox->getMailerHeader();
+            if ($ticket->message_id) {
+                $headers[] = 'Message-ID: ' . $ticket->message_id;
+            }
+            Mailer::send($customer->email, $subject, $emailBody, $headers);
+        }
+    }
 
-        $subject = 'Re: ' . $ticket->title;
-
-        $headers = [];
-        if($ticket->message_id) {
-            $headers[] = 'Message-ID: '. $ticket->message_id;
+    public function customerReplied($response, $ticket, $customer)
+    {
+        $mailbox = $ticket->mailbox;
+        if (!$mailbox) {
+            return;
         }
 
-        Mailer::send($customer->email, $subject, $emailBody, $headers);
+        // Let's send welcome email to customer if enabled
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_replied_by_customer_email_to_admin');
+        if ($emailSettings && $emailSettings['status'] == 'yes') {
+
+            $ticket->load('agent');
+            $agent = $ticket->agent;
+
+            $emailTo = $mailbox->settings['admin_email_address'];
+            if($agent) {
+                $emailTo = $agent->email;
+            }
+
+            if(!$emailTo || !is_email($emailTo)) {
+                return;
+            }
+
+            $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
+                'customer' => $customer,
+                'business' => $mailbox,
+                'ticket'   => $ticket,
+                'response' => $response,
+                'agent'    => $agent
+            ]);
+
+            $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
+                'customer'   => $customer,
+                'business'   => $mailbox,
+                'ticket'     => $ticket,
+                'response'   => $response,
+                'agent'      => $agent,
+                'email_type' => 'ticket_replied_by_customer_email_to_admin'
+            ]);
+
+            $headers = $mailbox->getMailerHeader();
+            if ($ticket->message_id) {
+                $headers[] = 'Message-ID: ' . $ticket->message_id;
+            }
+
+            Mailer::send($customer->email, $subject, $emailBody, $headers);
+        }
     }
 
     private function emailTemplateCss()
     {
         $app = App::getInstance();
         return $app->view->make('emails.styles');
+    }
+
+    protected function parseEmailBody($emailBody, $data)
+    {
+        $data['email_body'] = apply_filters('fluent_support/parse_smartcode_data', $emailBody, $data);
+
+        $app = App::getInstance();
+
+        if (isset($data['business'])) {
+            $businessName = $data['business']->name;
+        } else {
+            $businessName = get_bloginfo('name');
+        }
+
+        $footerText = apply_filters('fluent_support/email_footer_credit', 'This email is a service from ' . $businessName . '. Support Plugin is Powered by <a href="https://fluentsupport.com/?utm_source=user&utm_medium=wp&utm_campaign=mail_footer" style="color:#9e9e9e;" target="_new">FluentSupport</a>.');
+
+        $data['email_footer'] = $footerText;
+
+        $emailBody = $app->view->make('emails.ticket_template', $data);
+        $emogrifier = new Emogrifier($emailBody, $this->emailTemplateCss());
+        $emogrifier->disableInvisibleNodeRemoval();
+        return $emogrifier->emogrify();
     }
 
 }

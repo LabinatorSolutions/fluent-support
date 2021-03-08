@@ -17,6 +17,7 @@ class Ticket extends Model
         'customer_id',
         'agent_id',
         'product_id',
+        'mailbox_id',
         'product_source',
         'privacy',
         'priority',

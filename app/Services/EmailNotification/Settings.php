@@ -72,6 +72,9 @@ class Settings
 
     public function getBoxEmailSettings($box, $emailKey)
     {
+        if(!$box) {
+            return false;
+        }
 
         $strictSubjectKeys = apply_filters('fluent_support_strict_subjects', [
             'ticket_replied_by_agent_email_to_customer',

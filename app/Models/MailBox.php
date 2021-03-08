@@ -59,13 +59,22 @@ class MailBox extends Model
         return $slug;
     }
 
-    public function getMailerSettings()
+    public function getMailerHeader()
     {
-        return [
-            'from_email' => $this->email,
-            'from_name' => $this->name,
-            'reply_to_email' => $this->email,
-        ];
+        $headers = [];
+        $fromString = $this->name;
+        if($this->email) {
+            $fromString .= ' <'.$this->email.'>';
+        }
+
+        if ($fromString) {
+            $headers[] = "From: {$fromString}";
+        }
+
+        // Set Reply-To Header
+        $headers[] = "Reply-To: $this->email";
+
+        return $headers;
     }
 
     public function getMeta($key, $default = '')
