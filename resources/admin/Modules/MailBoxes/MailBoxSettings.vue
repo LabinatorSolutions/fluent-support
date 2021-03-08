@@ -24,12 +24,6 @@
                 <p>Please provide mapped webhook email from where you will send emails as webhook</p>
             </el-form-item>
 
-            <el-form-item label="Customer Support Portal Page Id">
-                <el-input type="number" v-model="mailbox.settings.hosted_page_id"></el-input>
-                <p>Please add the following shortcode in a page where you want to show tickets and manage tickets to
-                    your customers <code>[fluent_support_portal]</code></p>
-            </el-form-item>
-
             <el-form-item label="Email Footer For Customers">
                 <wp-editor :height="100" v-model="mailbox.email_footer"/>
                 <div>

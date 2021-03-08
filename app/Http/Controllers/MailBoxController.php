@@ -37,26 +37,11 @@ class MailBoxController extends Controller
         ]);
 
         $settings = [
-            'hosted_page_id'        => '',
-            'non_logged_in_message' => '',
-            'client_notifications'  => [
-                'ticket_created',
-                'response_added_by_agent'
-            ],
-            'admin_notifications'   => [
-                'ticket_created',
-                'response_added_by_customer'
-            ]
+            'non_logged_in_message' => ''
         ];
 
         if ($data['box_type'] == 'web') {
-            $pageId = $data['customer_portal_page_id'];
-            if (!$pageId) {
-                return $this->sendError([
-                    'message' => 'Customer Portal Page is required'
-                ]);
-            }
-            $settings['hosted_page_id'] = intval($pageId);
+
         } else {
             if (empty($data['mapped_email'])) {
                 return $this->sendError([
@@ -88,12 +73,7 @@ class MailBoxController extends Controller
         $mailbox = MailBox::findOrFail($mailBoxId);
 
         if ($data['box_type'] == 'web') {
-            $pageId = $data['settings']['hosted_page_id'];
-            if (!$pageId) {
-                return $this->sendError([
-                    'message' => 'Customer Portal Page is required'
-                ]);
-            }
+
         } else {
             if (empty($data['mapped_email'])) {
                 return $this->sendError([

@@ -33,8 +33,6 @@ class MailBox extends Model
         static::creating(function ($model) {
             $model->slug = static::slugify($model->name);
             $model->settings = $model->settings ?: [
-                'hosted_page_id'        => '',
-                'non_logged_in_message' => '',
                 'admin_email_address' => ''
             ];
         });
