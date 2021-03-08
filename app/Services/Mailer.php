@@ -20,7 +20,7 @@ class Mailer
         return wp_mail($to, $subject, $body, $headers);
     }
 
-    public static function getHeaders($ticket = false)
+    public static function getHeaders()
     {
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
         return $headers;

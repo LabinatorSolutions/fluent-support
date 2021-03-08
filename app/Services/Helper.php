@@ -156,28 +156,6 @@ class Helper
         return $settings;
     }
 
-    public static function getEmailSettings($ticket)
-    {
-        $mailBox = false;
-        if($ticket->mailbox_id) {
-            $mailBox = MailBox::find($ticket->mailbox_id);
-        }
-
-        if(!$mailBox) {
-            $mailBox = MailBox::orderBy('id', 'ASC')->where('is_default', 'yes')->first();
-        }
-
-        if(!$mailBox) {
-            return [];
-        }
-
-        $mailerSettings = $mailBox->getMailerSettings();
-        $mailerSettings['email_footer'] = $mailBox->email_footer;
-        $mailerSettings['box_type'] = $mailBox->box_type;
-
-        return $mailerSettings;
-    }
-
     public static function getTicketMeta($ticketId, $key, $default = '')
     {
         $data = Meta::where('object_type', 'ticket_mata')
