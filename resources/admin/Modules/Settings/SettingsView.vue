@@ -22,18 +22,8 @@ export default {
         return {
             settings_items: [
                 {
-                    title: 'Business Settings',
-                    route_name: 'business_settings',
-                    route_query: {}
-                },
-                {
                     title: 'Products',
                     route_name: 'products',
-                    route_query: {}
-                },
-                {
-                    title: 'Email Notifications',
-                    route_name: 'email_notifications',
                     route_query: {}
                 },
                 {

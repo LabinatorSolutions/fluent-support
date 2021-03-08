@@ -112,7 +112,7 @@ class Ticket extends Model
 
     public function scopeApplyFilters($query, $filters)
     {
-        $supportedColumns = ['product_id', 'agent_id', 'client_priority', 'priority'];
+        $supportedColumns = ['product_id', 'agent_id', 'client_priority', 'priority', 'mailbox_id'];
         foreach ($filters as $filterKey => $filterValue) {
             if(!$filterValue && ($filterValue !== '0' || $filterValue !== 0) ) {
                 continue;
@@ -253,6 +253,15 @@ class Ticket extends Model
 
         return $this->belongsTo(
             $class, 'product_id', 'id'
+        );
+    }
+
+    public function mailbox()
+    {
+        $class = __NAMESPACE__ . '\MailBox';
+
+        return $this->belongsTo(
+            $class, 'mailbox_id', 'id'
         );
     }
 

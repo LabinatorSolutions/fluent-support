@@ -7,9 +7,9 @@ use FluentSupport\Framework\Support\Arr;
 
 class Mailer
 {
-    public static function send($to, $subject, $body, $extraHeader = [])
+    public static function send($to, $subject, $body, $extraHeader = [], $ticket = false)
     {
-        $headers = self::getHeaders();
+        $headers = self::getHeaders($ticket);
 
         if($extraHeader) {
             foreach ($extraHeader as $header) {
@@ -20,11 +20,14 @@ class Mailer
         return wp_mail($to, $subject, $body, $headers);
     }
 
-    public static function getHeaders()
+    public static function getHeaders($ticket = false)
     {
-        $emailSettings = Helper::getEmailSettings();
         $headers[] = 'Content-Type: text/html; charset=UTF-8';
 
+        if(!$ticket) {
+            return $headers;
+        }
+        $emailSettings = Helper::getEmailSettings($ticket);
         $fromName = Arr::get($emailSettings, 'sender_name');
         $fromEmail = Arr::get($emailSettings, 'sender_email');
         $replyTo = Arr::get($emailSettings, 'reply_to_email');

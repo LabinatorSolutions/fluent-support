@@ -9,6 +9,10 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
     $router->post('/', 'MailBoxController@save');
     $router->get('/{id}', 'MailBoxController@get')->int('id');
     $router->put('/{id}', 'MailBoxController@update')->int('id');
+
+    $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
+    $router->put('/{id}/email_settings', 'MailBoxController@saveEmailSettings')->int('id');
+
 });
 
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {

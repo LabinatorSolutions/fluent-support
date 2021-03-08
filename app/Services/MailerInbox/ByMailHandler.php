@@ -18,6 +18,7 @@ class ByMailHandler
         unset($onBehalf['name']);
 
         $nameArray = explode(' ', $fullName);
+
         if (count($nameArray) >= 2) {
             $onBehalf['last_name'] = array_pop($nameArray);
             $onBehalf['first_name'] = implode(' ', $nameArray);

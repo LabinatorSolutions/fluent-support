@@ -4,8 +4,6 @@ import AllTickets from './Modules/Tickets/AllTickets';
 import ViewTicket from './Modules/Tickets/ViewTicket';
 import SettingsView from './Modules/Settings/SettingsView';
 import Products from './Modules/Settings/Products';
-import EmailNotifications from './Modules/Settings/EmailNotifications';
-import BusinessSettings from './Modules/Settings/BusinessSettings';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 
@@ -16,6 +14,7 @@ import Reports from './Modules/Reports/Reports';
 import MailBoxRoot from './Modules/MailBoxes/MailBoxRoot';
 import ChooseMailBox from './Modules/MailBoxes/ChooseMailBox';
 import MailBoxSettings from './Modules/MailBoxes/MailBoxSettings';
+import MailBoxEmailSettings from './Modules/MailBoxes/BoxEmailSettings';
 
 export default [
     {
@@ -54,19 +53,9 @@ export default [
         },
         children: [
             {
-                name: 'business_settings',
-                path: '',
-                component: BusinessSettings
-            },
-            {
                 name: 'products',
                 path: 'products',
                 component: Products
-            },
-            {
-                name: 'email_notifications',
-                path: 'email_notifications',
-                component: EmailNotifications
             },
             {
                 path: 'support-staffs',
@@ -97,9 +86,16 @@ export default [
         },
         children: [
             {
+                props: true,
                 path: 'settings',
                 name: 'box_settings',
                 component: MailBoxSettings
+            },
+            {
+                props: true,
+                path: 'email_settings',
+                name: 'email_settings',
+                component: MailBoxEmailSettings
             }
         ]
     },

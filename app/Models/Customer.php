@@ -31,6 +31,10 @@ class Customer extends Person
             if($user->last_name) {
                 $customerData['last_name'] = $user->last_name;
             }
+            if(empty($customerData['first_name']) && empty($customerData['last_name'])) {
+                $customerData['first_name'] = $user->display_name;
+            }
+
             $customerData['user_id'] = $user->ID;
         }
 
@@ -44,8 +48,12 @@ class Customer extends Person
             $customer->newly_created = true;
 
         } else {
-            $customer->fill($customerData);
-            $customer->save();
+            if(!empty($customerData['user_id']) || !empty($customerData['remote_uid'])) {
+                $customerData = array_filter($customerData);
+                $customer->fill($customerData);
+                $customer->save();
+            }
+
             $customer->newly_created = false;
         }
 

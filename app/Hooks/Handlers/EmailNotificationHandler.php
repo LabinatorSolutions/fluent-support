@@ -12,8 +12,8 @@ class EmailNotificationHandler
 {
     public function ticketCreated($ticket, $customer)
     {
-        $emailSettings = Helper::getEmailSettings();
-        if(!in_array('ticket_created', Arr::get($emailSettings, 'notification_events', []))) {
+        $mailerSettings = Helper::getEmailSettings($ticket);
+        if(!$mailerSettings) {
             return;
         }
 
@@ -39,7 +39,7 @@ class EmailNotificationHandler
 
     public function agentReplied($response, $ticket, $agent)
     {
-        $emailSettings = Helper::getEmailSettings();
+        $emailSettings = Helper::getEmailSettings($ticket);
         if(!in_array('response_added_by_agent', Arr::get($emailSettings, 'notification_events', []))) {
             return;
         }
@@ -77,7 +77,7 @@ class EmailNotificationHandler
 
     public function closedByAgent($ticket, $agent)
     {
-        $emailSettings = Helper::getEmailSettings();
+        $emailSettings = Helper::getEmailSettings($ticket);
         if(!in_array('ticket_closed_by_agent', Arr::get($emailSettings, 'notification_events', []))) {
             return;
         }
