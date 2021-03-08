@@ -60,8 +60,6 @@ class ByMailHandler
 
             $createdTicket = Ticket::create($ticketData);
 
-            $createdTicket->load('customer');
-
             do_action('fluent_support/ticket_created', $createdTicket, $customer);
 
             return [
