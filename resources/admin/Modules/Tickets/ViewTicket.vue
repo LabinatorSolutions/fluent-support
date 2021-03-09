@@ -57,7 +57,9 @@
                             trigger="click"
                         >
                             <template #reference>
-                                <span><i class="el-icon-goods"></i> {{ ticket.product?.title }}</span>
+                                <span style="margin-right: 10px;"><i class="el-icon-goods"></i> {{
+                                        ticket.product?.title
+                                    }}</span>
                             </template>
 
                             <el-select @change="updateTicketAttr('product_id')" v-model="ticket.product_id">
@@ -69,6 +71,8 @@
                             </el-select>
 
                         </el-popover>
+                        <span><i
+                            class="el-icon-office-building"></i> {{ ticket.mailbox?.name }}</span>
                     </div>
                 </div>
                 <div class="fs_th_header">
@@ -155,15 +159,25 @@
                                             <span v-else> added a note</span>
                                         </div>
                                         <div class="fs_thread_actions">
-                                            <span :title="conversation.created_at">{{ $timeDiff(conversation.created_at) }}</span>
+                                            <span style="margin-right: 5px" v-if="conversation.source == 'email'"
+                                                  title="Added By Email"><i class="el-icon-message"></i></span>
+                                            <span :title="conversation.created_at">{{
+                                                    $timeDiff(conversation.created_at)
+                                                }}</span>
                                             <el-dropdown @command="handleResponseActionCommand" trigger="click">
                                                 <span class="el-dropdown-link">
                                                     <i class="el-icon-arrow-down el-icon--right"></i>
                                                 </span>
                                                 <template #dropdown>
                                                     <el-dropdown-menu>
-                                                        <el-dropdown-item :command="{ type: 'edit', conversation: conversation }" icon="el-icon-edit"> Edit</el-dropdown-item>
-                                                        <el-dropdown-item :command="{ type: 'delete', conversation: conversation }" icon="el-icon-delete"> Delete</el-dropdown-item>
+                                                        <el-dropdown-item
+                                                            :command="{ type: 'edit', conversation: conversation }"
+                                                            icon="el-icon-edit"> Edit
+                                                        </el-dropdown-item>
+                                                        <el-dropdown-item
+                                                            :command="{ type: 'delete', conversation: conversation }"
+                                                            icon="el-icon-delete"> Delete
+                                                        </el-dropdown-item>
                                                     </el-dropdown-menu>
                                                 </template>
                                             </el-dropdown>
@@ -179,7 +193,7 @@
                                                 :key="attachment.file_hash"
                                             >
                                                 <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
-                                                                                     :href="attachment.secureUrl">{{attachment.title}}</a>
+                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -199,6 +213,8 @@
                                             <strong>{{ ticket.customer?.full_name }}</strong> started the conversation
                                         </div>
                                         <div class="fs_thread_actions">
+                                            <span style="margin-right: 5px" v-if="ticket.source == 'email'"
+                                                  title="Added By Email"><i class="el-icon-message"></i></span>
                                             <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
                                         </div>
                                     </div>
@@ -220,9 +236,10 @@
             title="Edit Response"
             v-model="edit_response_modal"
             width="60%">
-            <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response" :response="editing_response" />
+            <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response"
+                           :response="editing_response"/>
         </el-dialog>
-        <active-agents :ticket="ticket" v-if="ticket && ticket.id" />
+        <active-agents :ticket="ticket" v-if="ticket && ticket.id"/>
     </div>
 </template>
 
@@ -259,7 +276,7 @@ export default {
     },
     watch: {
         '$route.params.ticket_id'(ticketId) {
-            if(ticketId) {
+            if (ticketId) {
                 this.doAction('ticket_view_exit', this.ticket.id);
                 this.ticket = false;
                 this.$nextTick(() => {
@@ -308,9 +325,10 @@ export default {
             });
 
             if (this.appVars.pref.go_back_after_reply == 'yes') {
-                this.$router.go(-1);
+                if (window.history.state.back) {
+                    this.$router.go(-1);
+                }
             }
-
         },
         updateTicketAttr(propName) {
             this.$put(`tickets/${this.ticket.id}/property`, {
@@ -340,10 +358,11 @@ export default {
             this.updating = true;
             this.$post(`tickets/${this.ticket.id}/close`)
                 .then(response => {
-                    TicketActivityService.ticketChanged(this.ticket_id, 'status', 'close');
                     this.ticket.status = response.ticket.status;
                     this.$notify.success(response.message);
-                    this.$router.go(-1);
+                    if (window.history.state.back) {
+                        this.$router.go(-1);
+                    }
                 })
                 .catch((errors) => {
                     console.log(errors);
@@ -357,7 +376,6 @@ export default {
             this.$post(`tickets/${this.ticket.id}/re-open`)
                 .then(response => {
                     this.ticket.status = response.ticket.status;
-                    TicketActivityService.ticketChanged(this.ticket_id, 'status', 'active');
                 })
                 .catch((errors) => {
                     console.log(errors);
@@ -381,24 +399,24 @@ export default {
             const actionType = data.type;
             const conversation = data.conversation;
 
-            if(actionType == 'delete') {
+            if (actionType == 'delete') {
                 this.$confirm('This will permanently delete response. Continue?', 'Warning', {
                     confirmButtonText: 'Delete Response',
                     cancelButtonText: 'Cancel',
                     type: 'warning'
                 }).then(() => {
                     this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)
-                    .then(response => {
-                        this.$notify.success({
-                            message: response.message,
-                            position: 'bottom-right',
-                            type: 'success'
-                        });
-                        this.fetchTicket();
-                    })
+                        .then(response => {
+                            this.$notify.success({
+                                message: response.message,
+                                position: 'bottom-right',
+                                type: 'success'
+                            });
+                            this.fetchTicket();
+                        })
                 });
-            } else if(actionType == 'edit') {
-                if(this.ticket.status == 'closed') {
+            } else if (actionType == 'edit') {
+                if (this.ticket.status == 'closed') {
                     this.$notify({
                         type: 'error',
                         message: 'You can not edit responses when it is in close state',
