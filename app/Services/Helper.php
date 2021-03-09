@@ -131,6 +131,12 @@ class Helper
         return $baseUrl.'/#/ticket/'.$ticket->id.'/view';
     }
 
+    public static function getTicketAdminUrl($ticket)
+    {
+        $baseUrl = self::getPortalAdminBaseUrl();
+        return $baseUrl.'tickets/'.$ticket->id.'/view';
+    }
+
     public static function getPortalBaseUrl()
     {
         $businessSettings = self::getBusinessSettings();

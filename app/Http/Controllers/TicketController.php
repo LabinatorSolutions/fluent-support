@@ -88,7 +88,7 @@ class TicketController extends Controller
     public function getTicket(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product']);
+        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox']);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
 
         $ticket = Ticket::with($ticketWith)
