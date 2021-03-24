@@ -28,7 +28,7 @@
                     </el-table-column>
                     <el-table-column label="Stats" width="160">
                         <template #default="scope">
-                            <router-link :to="{ name: 'tickets', query: { search: 'id:'+scope.row.id } }">
+                            <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
                                 <span class="fs_badge"><i class="el-icon-folder"></i> {{scope.row.total_tickets}}</span>
                             </router-link>
                             <span class="fs_badge"><i class="el-icon-chat-line-round"></i> {{scope.row.total_responses}}</span>

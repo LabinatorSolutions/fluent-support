@@ -22,6 +22,7 @@ class ConversationsMigrator
                 `conversation_type` VARCHAR(100) DEFAULT 'response',
                 `content` LONGTEXT NULL,
                 `source` VARCHAR(100) DEFAULT 'web',
+                `content_hash` VARCHAR(192) NULL,
                 `message_id` VARCHAR(192) NULL,
                 `is_important` ENUM('yes', 'no') DEFAULT 'no',
                 `created_at` TIMESTAMP NULL,

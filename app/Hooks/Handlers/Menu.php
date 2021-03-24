@@ -31,7 +31,7 @@ class Menu
             'fluent-support',
             array($this, 'renderApp'),
             $this->getMenuIcon(),
-            6
+            4
         );
     }
 
