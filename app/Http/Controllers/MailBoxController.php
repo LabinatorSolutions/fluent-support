@@ -52,6 +52,10 @@ class MailBoxController extends Controller
 
         $data['settings'] = $settings;
 
+        if(!MailBox::first()) {
+            $data['is_default'] = 'yes';
+        }
+
         $mailbox = MailBox::create($data);
 
         return [

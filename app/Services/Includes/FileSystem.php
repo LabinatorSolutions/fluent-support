@@ -130,14 +130,18 @@ class FileSystem
 
         if($this->subDir) {
             $folderName .= '/'.$this->subDir;
+            if(!is_dir($param['basedir'] . $folderName)) {
+                @mkdir($param['basedir'] . $folderName, 0755);
+            }
         }
 
         $param['url'] = $param['baseurl'] . $folderName;
 
         $param['path'] = $param['basedir'] . $folderName;
 
+
         if (!is_dir($param['path'])) {
-            mkdir($param['path'], 0755);
+            @mkdir($param['path'], 0755);
         }
 
         return $param;
