@@ -24,6 +24,9 @@ add_shortcode('fluent_support_portal', function () {
 });
 
 add_shortcode('fluent_support_login', function () {
+    $app = App::getInstance();
+    $assets = $app['url.assets'];
+    wp_enqueue_style('fluent_support_login_style', $assets.'admin/css/all_public.css');
     $return = '<div class="fst_login_wrapper">';
     $return .= wp_login_form([
         'echo'           => false,

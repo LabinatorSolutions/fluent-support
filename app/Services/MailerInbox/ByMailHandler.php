@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services\MailerInbox;
 
+use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Response;
@@ -60,6 +61,8 @@ class ByMailHandler
 
             $createdTicket = Ticket::create($ticketData);
 
+            self::handleAttachments($data, $createdTicket, $customer);
+
             do_action('fluent_support/ticket_created', $createdTicket, $customer);
 
             return [
@@ -69,8 +72,9 @@ class ByMailHandler
             ];
         }
 
-        if ($existingTicket->extra_content) {
+        if (!empty($existingTicket->extra_content)) {
             $responseOrTicketData['content'] = $existingTicket->extra_content . $responseOrTicketData['content'];
+            unset($existingTicket->extra_content);
         }
 
         // we have to create a response
@@ -92,6 +96,8 @@ class ByMailHandler
 
             $existingTicket->save();
         }
+
+        self::handleAttachments($data, $existingTicket, $customer, $createdResponse);
 
         do_action('fluent_support/response_added_by_customer', $createdResponse, $existingTicket, $customer);
 
@@ -160,19 +166,36 @@ class ByMailHandler
             ->orderBy('ID', 'DESC')
             ->first();
 
-        if (!$existingTicket) {
-            // check if user has any active ticket
-            $existingTicket = Ticket::where('customer_id', $customer->id)
-                ->where('status', '!=', 'closed')
-                ->orderBy('ID', 'DESC')
-                ->first();
-
-            if ($existingTicket) {
-                $existingTicket->extra_content = '<h4>---- Email Subject: ' . $data['subject'] . ' -----</h4>';
-            }
-        }
+//        if (!$existingTicket) {
+//            // check if user has any active ticket
+//            $existingTicket = Ticket::where('customer_id', $customer->id)
+//                ->where('status', '!=', 'closed')
+//                ->orderBy('ID', 'DESC')
+//                ->first();
+//
+//            if ($existingTicket) {
+//                $existingTicket->extra_content = '<h4>---- Email Subject: ' . $data['subject'] . ' -----</h4>';
+//            }
+//        }
 
         return $existingTicket;
     }
 
+    private static function handleAttachments($data, $ticket, $customer, $response = false)
+    {
+        $attachments = Arr::get($data, 'attachments', []);
+        if(!$attachments) {
+            return;
+        }
+
+        foreach ($attachments as $attachment) {
+            $attachment['ticket_id'] = $ticket->id;
+            $attachment['person_id'] = $customer->id;
+            if($response) {
+                $attachment['conversation_id'] = $response->id;
+            }
+            Attachment::create($attachment);
+        }
+
+    }
 }
