@@ -44,11 +44,13 @@ class Settings
 
     private function getGlobalBusinessSettingsFields()
     {
+
         return [
             'portal_page_id' => [
-                'type'      => 'input-text',
-                'data-type' => 'number',
-                'label'     => 'Portal Page ID',
+                'type'      => 'input-options',
+                'label'     => 'Portal Page',
+                'placeholder' => 'Select Portal Page',
+                'options' => Helper::getWPPages(),
                 'inline_help' => 'Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page'
             ],
             'login_message'  => [

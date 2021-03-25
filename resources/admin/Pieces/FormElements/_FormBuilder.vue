@@ -14,10 +14,9 @@ import InputText from './_InputText';
 import WpEditor from '../_wp_editor'
 import ImageRadio from './_ImageRadio'
 import InputRadio from './_InputRadio'
-import OptionSelector from './_OptionSelector'
+import InputOptions from './_InputOptions'
 import InlineCheckbox from './_InlineCheckbox'
 import VerifiedEmailInput from './_VerifiedEmailInput'
-import InputTagList from './_InputTagList'
 import CheckboxGroup from './_InputCheckboxes'
 
 export default {
@@ -28,10 +27,9 @@ export default {
         WpEditor,
         ImageRadio,
         InputRadio,
-        OptionSelector,
+        InputOptions,
         InlineCheckbox,
         VerifiedEmailInput,
-        InputTagList,
         CheckboxGroup
     },
     props: {
