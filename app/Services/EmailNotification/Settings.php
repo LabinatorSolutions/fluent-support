@@ -44,13 +44,13 @@ class Settings
 
     private function getGlobalBusinessSettingsFields()
     {
-
         return [
             'portal_page_id' => [
-                'type'      => 'input-options',
-                'label'     => 'Portal Page',
+                'type'        => 'input-options',
+                'label'       => 'Portal Page',
+                'show_id'     => true,
                 'placeholder' => 'Select Portal Page',
-                'options' => Helper::getWPPages(),
+                'options'     => Helper::getWPPages(),
                 'inline_help' => 'Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page'
             ],
             'login_message'  => [
@@ -63,12 +63,12 @@ class Settings
 
     public function saveBoxEmailSettings($box, $emailKey, $settings)
     {
-        return $box->saveMeta('_email_'.$emailKey, $settings);
+        return $box->saveMeta('_email_' . $emailKey, $settings);
     }
 
     public function getBoxEmailSettings($box, $emailKey)
     {
-        if(!$box) {
+        if (!$box) {
             return false;
         }
 
@@ -80,23 +80,23 @@ class Settings
 
         $settingsDefaults = [
             'ticket_created_email_to_customer'          => [
-                'email_subject'        => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'no'
             ],
             'ticket_replied_by_agent_email_to_customer' => [
-                'email_subject'        => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_closed_by_agent_email_to_customer'  => [
-                'email_subject'        => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_created_email_to_admin'             => [
-                'email_subject'        => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_replied_by_customer_email_to_admin' => [
-                'email_subject'        => 'New Response: {{ticket.title}} #{{ticket.id}}',
+                'email_subject'  => 'New Response: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ]
         ];
@@ -121,7 +121,7 @@ class Settings
             $savedSettings['can_edit_subject'] = 'no';
         }
 
-        if(empty($savedSettings['email_subject'])) {
+        if (empty($savedSettings['email_subject'])) {
             $savedSettings['email_subject'] = $settingsDefaults[$emailKey]['email_subject'];
         }
 

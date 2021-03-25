@@ -22,11 +22,11 @@
                                        v-model="global_settings.portal_page_id">
                                 <el-option
                                     v-for="item in pages"
-                                    :key="item.ID"
-                                    :label="item.post_title"
-                                    :value="item.ID">
-                                    <span style="float: left">{{ item.post_title }}</span>
-                                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.ID }}</span>
+                                    :key="item.id"
+                                    :label="item.title"
+                                    :value="item.id">
+                                    <span style="float: left">{{ item.title }}</span>
+                                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.id }}</span>
                                 </el-option>
                             </el-select>
                             <p>Use shortcode <code>[fluent_support_portal]</code> in the selected page.</p>
