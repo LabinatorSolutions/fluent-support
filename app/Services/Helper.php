@@ -141,6 +141,7 @@ class Helper
     {
         $businessSettings = self::getBusinessSettings();
         $baseUrl = get_permalink($businessSettings['portal_page_id']);
+        $baseUrl = rtrim($baseUrl, '/\\');
         return apply_filters('fluent_support/portal_base_url', $baseUrl);
     }
 

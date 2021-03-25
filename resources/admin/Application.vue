@@ -9,6 +9,9 @@
 
 <script type="text/babel">
     export default {
-        name: 'FluentFrameworkDashboard'
+        name: 'FluentFrameworkDashboard',
+        mounted() {
+            jQuery('.update-nag,.notice, #wpbody-content > .updated, #wpbody-content > .error').remove();
+        }
     };
 </script>

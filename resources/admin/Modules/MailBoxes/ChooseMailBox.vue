@@ -49,11 +49,6 @@
                     <el-input type="email" v-model="new_business.mapped_email"></el-input>
                     <p>Please provide mapped webhook email from where you will send emails as webhook</p>
                 </el-form-item>
-                <el-form-item label="Customer Support Portal Page Id">
-                    <el-input type="number" v-model="new_business.customer_portal_page_id"></el-input>
-                    <p>Please add the following shortcode in a page where you want to show tickets and manage tickets to
-                        your customers <code>[fluent_support_portal]</code></p>
-                </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
