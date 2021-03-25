@@ -18,7 +18,7 @@ class Helper
 
     public static function getAgentByUserId($userId = null)
     {
-        if($userId === null) {
+        if ($userId === null) {
             $userId = get_current_user_id();
         }
         if (!$userId) {
@@ -52,7 +52,7 @@ class Helper
             'open'   => ['new', 'active'],
             'active' => ['active'],
             'closed' => ['closed'],
-            'new' => ['new'],
+            'new'    => ['new'],
             'all'    => []
         ]);
     }
@@ -92,12 +92,12 @@ class Helper
     public static function getOption($key, $default = '')
     {
         $data = Meta::where('object_type', 'option')
-                    ->where('key', $key)
-                    ->first();
+            ->where('key', $key)
+            ->first();
 
-        if($data) {
+        if ($data) {
             $value = maybe_unserialize($data->value);
-            if($value) {
+            if ($value) {
                 return $value;
             }
         }
@@ -111,7 +111,7 @@ class Helper
             ->where('key', $key)
             ->first();
 
-        if($data) {
+        if ($data) {
             return Meta::where('id', $data->id)
                 ->update([
                     'value' => maybe_serialize($value)
@@ -120,21 +120,21 @@ class Helper
 
         return Meta::insert([
             'object_type' => 'option',
-            'key' => $key,
-            'value' => maybe_serialize($value)
+            'key'         => $key,
+            'value'       => maybe_serialize($value)
         ]);
     }
 
     public static function getTicketViewUrl($ticket)
     {
         $baseUrl = self::getPortalBaseUrl();
-        return $baseUrl.'/#/ticket/'.$ticket->id.'/view';
+        return $baseUrl . '/#/ticket/' . $ticket->id . '/view';
     }
 
     public static function getTicketAdminUrl($ticket)
     {
         $baseUrl = self::getPortalAdminBaseUrl();
-        return $baseUrl.'tickets/'.$ticket->id.'/view';
+        return $baseUrl . 'tickets/' . $ticket->id . '/view';
     }
 
     public static function getPortalBaseUrl()
@@ -154,7 +154,7 @@ class Helper
     {
         static $settings;
 
-        if($settings) {
+        if ($settings) {
             return $settings;
         }
 
@@ -170,9 +170,9 @@ class Helper
             ->where('object_id', $ticketId)
             ->first();
 
-        if($data) {
+        if ($data) {
             $value = maybe_unserialize($data->value);
-            if($value) {
+            if ($value) {
                 return $value;
             }
         }
@@ -187,7 +187,7 @@ class Helper
             ->where('object_id', $ticketId)
             ->first();
 
-        if($data) {
+        if ($data) {
             return Meta::where('id', $data->id)
                 ->update([
                     'value' => maybe_serialize($value)
@@ -196,9 +196,28 @@ class Helper
 
         return Meta::insert([
             'object_type' => 'ticket_mata',
-            'object_id' => $ticketId,
-            'key' => $key,
-            'value' => maybe_serialize($value)
+            'object_id'   => $ticketId,
+            'key'         => $key,
+            'value'       => maybe_serialize($value)
         ]);
+    }
+
+    public static function getWPPages()
+    {
+        $pages = (self::FluentSupport())->app->db
+            ->table('posts')
+            ->select(['ID', 'post_title'])
+            ->where('post_type', 'page')
+            ->where('post_status', 'publish')
+            ->orderBy('ID', 'DESC')
+            ->get();
+        $formattedPages = [];
+        foreach ($pages as $page) {
+            $formattedPages[] = [
+                'id' => (string) $page->ID,
+                'title' => $page->post_title
+            ];
+        }
+        return $formattedPages;
     }
 }

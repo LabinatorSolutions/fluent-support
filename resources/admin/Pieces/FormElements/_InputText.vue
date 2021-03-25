@@ -1,19 +1,15 @@
 <template>
-    <el-input :type="field.data_type" :placeholder="field.placeholder" v-model="model"></el-input>
+    <el-input :type="field.data_type" :placeholder="field.placeholder" v-model="modelValue"></el-input>
 </template>
 
 <script type="text/babel">
 export default {
     name: 'InputText',
-    props: ['field', 'value'],
-    data() {
-        return {
-            model: this.value
-        }
-    },
+    props: ['field', 'modelValue'],
+    emits: ['update:modelValue'],
     watch: {
-        model(value) {
-            this.$emit('input', value);
+        modelValue(value) {
+            this.$emit('update:modelValue', value);
         }
     }
 }

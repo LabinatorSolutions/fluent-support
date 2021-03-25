@@ -47,7 +47,7 @@ class MailBoxController extends Controller
         $data['settings'] = [
             'admin_email_address' => $data['email']
         ];
-        
+
         if (!MailBox::first()) {
             $data['is_default'] = 'yes';
         }
