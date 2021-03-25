@@ -4,6 +4,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
@@ -78,6 +79,7 @@ class CustomerPortalController extends Controller
 
         $data['customer_id'] = $customer->id;
         $data['product_source'] = 'local';
+        $data['mailbox_id'] = $this->resolveMailboxId($request);
 
         $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
         do_action('fluent_support/before_ticket_create', $data, $customer);
@@ -381,6 +383,31 @@ class CustomerPortalController extends Controller
         return [
             'attachments' => $attachments
         ];
+    }
+
+    private function resolveMailboxId($request)
+    {
+        if($mailboxId = $request->get('mailbox_id')) {
+            $mailbox = MailBox::find($mailboxId);
+            if($mailbox) {
+                return $mailbox->id;
+            }
+        }
+
+        $mailbox = MailBox::where('is_default', 'yes')->first();
+
+        if($mailbox) {
+            return $mailbox->id;
+        }
+
+        $mailbox = MailBox::orderBy('id', 'ASC')->first();
+
+        if($mailbox) {
+            return $mailbox->id;
+        }
+
+        return null;
+
     }
 
 }

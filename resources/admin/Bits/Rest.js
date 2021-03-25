@@ -1,13 +1,18 @@
 const request = function(method, route, data = {}) {
     const url = `${window.fluentSupportAdmin.rest.url}/${route}`;
 
+    const headers = {'X-WP-Nonce': window.fluentSupportAdmin.rest.nonce};
+
+    if (['PUT', 'PATCH', 'DELETE'].indexOf(method.toUpperCase()) !== -1) {
+        headers['X-HTTP-Method-Override'] = method;
+        method = 'POST';
+    }
+
     return window.jQuery.ajax({
         url: url,
         type: method,
         data: data,
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', window.fluentSupportAdmin.rest.nonce);
-        }
+        headers: headers
     });
 }
 

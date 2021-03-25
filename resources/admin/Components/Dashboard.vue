@@ -104,6 +104,7 @@ export default {
     mounted() {
         this.can_access_unassigned_tickets = this.appVars.me.permissions.indexOf('fst_manage_unassigned_tickets') > -1
         this.fetchStat();
+        jQuery('.update-nag,.notice, #wpbody-content > .updated, #wpbody-content > .error').remove();
     }
 };
 </script>
