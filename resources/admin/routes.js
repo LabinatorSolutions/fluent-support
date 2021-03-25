@@ -1,4 +1,5 @@
 import Dashboard from './Components/Dashboard';
+import Setup from './Components/Setup';
 import TicketsView from './Modules/Tickets/TicketsView';
 import AllTickets from './Modules/Tickets/AllTickets';
 import ViewTicket from './Modules/Tickets/ViewTicket';
@@ -25,6 +26,14 @@ export default [
         component: Dashboard,
         meta: {
             active: 'dashboard'
+        }
+    },
+    {
+        path: '/setup',
+        name: 'setup',
+        component: Setup,
+        meta: {
+            active: ''
         }
     },
     {

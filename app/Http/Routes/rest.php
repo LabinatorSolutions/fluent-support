@@ -75,7 +75,8 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->post('/', 'SettingsController@saveSettings');
     $router->get('/integration', 'IntegrationController@getSettings');
     $router->post('/integration', 'IntegrationController@saveSettings');
-
+    $router->get('/pages', 'SettingsController@getPages');
+    $router->post('/setup', 'SettingsController@setupPortal');
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {

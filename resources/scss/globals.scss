@@ -234,3 +234,10 @@ ul.fs_inner_menu_items {
     }
 }
 
+.fs_listed {
+    list-style: disc;
+    padding: 0px 0px 0px 20px;
+    li {
+        display: list-item;
+    }
+}

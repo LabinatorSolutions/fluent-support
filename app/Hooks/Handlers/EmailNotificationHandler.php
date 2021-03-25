@@ -5,9 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Emogrifier;
-use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Mailer;
-use FluentSupport\Framework\Support\Arr;
 
 class EmailNotificationHandler
 {

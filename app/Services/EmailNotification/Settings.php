@@ -29,7 +29,6 @@ class Settings
     public function globalBusinessSettings()
     {
         $defaults = [
-            'business_name'  => '',
             'portal_page_id' => '',
             'login_message'  => '<p>Please login to access Custom Support Portal</p> [fluent_support_login]'
         ];
@@ -50,7 +49,7 @@ class Settings
                 'type'      => 'input-text',
                 'data-type' => 'number',
                 'label'     => 'Portal Page ID',
-                'inline_help' => 'Please provide the page id where you want to show the tickets for your customers. Use shortoce <code>[fluent_support_portal]</code> in that page'
+                'inline_help' => 'Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page'
             ],
             'login_message'  => [
                 'type'        => 'wp-editor',

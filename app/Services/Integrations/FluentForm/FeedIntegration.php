@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services\Integrations\FluentForm;
 
 use FluentForm\App\Services\Integrations\IntegrationManager;
 use FluentForm\Framework\Foundation\Application;
+use FluentSupport\App\App;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
@@ -28,7 +29,11 @@ class FeedIntegration extends IntegrationManager
             16
         );
 
-        $this->logo = $this->app->url('public/img/integrations/drip.png');
+        $app = App::getInstance();
+
+        $assets = $app['url.assets'];
+
+        $this->logo = $assets.'/images/fluent-support-logo.png';
 
         $this->description = 'Create Support Ticket From Your Form Submission in FluentSUpport';
 
