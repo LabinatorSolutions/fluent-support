@@ -5,6 +5,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Services\EmailNotification\Settings;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
 
 class SettingsController extends Controller
@@ -31,15 +32,8 @@ class SettingsController extends Controller
 
     public function getPages()
     {
-        $pages = $this->app->db
-            ->table('posts')
-            ->select(['ID', 'post_title'])
-            ->where('post_type', 'page')
-            ->where('post_status', 'publish')
-            ->orderBy('ID', 'DESC')
-            ->get();
         return [
-            'pages' => $pages
+            'pages' => Helper::getWPPages()
         ];
     }
 
