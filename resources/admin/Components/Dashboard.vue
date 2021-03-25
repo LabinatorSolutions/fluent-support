@@ -3,7 +3,7 @@
 
         <div class="fs_box fs_dashboard_box">
             <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                Good {{greetingTime}} {{me.full_name}}, Here are few tickets you may take a look
+                Good {{greetingTime}} {{me.full_name}}, <span style="font-weight: normal;">Here are a few tickets you may want to take a look at</span>
             </div>
             <div class="fs_box_body">
                 <template v-if="!loading">
@@ -17,7 +17,7 @@
                         </li>
                     </ul>
 
-                    <p class="fs_padded_20" v-else>Looks like you have done up everything for now. <b>Good Job, {{me.full_name}}!</b></p>
+                    <p class="fs_padded_20" v-else>Looks like you have caught up everything for now. <b>Good Job, {{me.full_name}}!</b></p>
 
                 </template>
                 <div class="fs_padded_20" v-else>
@@ -102,6 +102,9 @@ export default {
         }
     },
     mounted() {
+        if (!this.appVars.mailboxes.length) {
+            this.$router.push({name: 'setup', query: { t: Date.now() }});
+        }
         this.can_access_unassigned_tickets = this.appVars.me.permissions.indexOf('fst_manage_unassigned_tickets') > -1
         this.fetchStat();
         jQuery('.update-nag,.notice, #wpbody-content > .updated, #wpbody-content > .error').remove();

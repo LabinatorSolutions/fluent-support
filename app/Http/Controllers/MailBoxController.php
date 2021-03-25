@@ -36,13 +36,7 @@ class MailBoxController extends Controller
             'email' => 'required'
         ]);
 
-        $settings = [
-            'non_logged_in_message' => ''
-        ];
-
-        if ($data['box_type'] == 'web') {
-
-        } else {
+        if ($data['box_type'] == 'email') {
             if (empty($data['mapped_email'])) {
                 return $this->sendError([
                     'message' => 'Mapped Email Address is required'
@@ -50,9 +44,11 @@ class MailBoxController extends Controller
             }
         }
 
-        $data['settings'] = $settings;
-
-        if(!MailBox::first()) {
+        $data['settings'] = [
+            'admin_email_address' => $data['email']
+        ];
+        
+        if (!MailBox::first()) {
             $data['is_default'] = 'yes';
         }
 
@@ -76,14 +72,10 @@ class MailBoxController extends Controller
 
         $mailbox = MailBox::findOrFail($mailBoxId);
 
-        if ($data['box_type'] == 'web') {
-
-        } else {
-            if (empty($data['mapped_email'])) {
-                return $this->sendError([
-                    'message' => 'Mapped Email Address is required'
-                ]);
-            }
+        if ($data['box_type'] == 'email' && empty($data['mapped_email'])) {
+            return $this->sendError([
+                'message' => 'Mapped Email Address is required'
+            ]);
         }
 
         $mailbox->fill($data);

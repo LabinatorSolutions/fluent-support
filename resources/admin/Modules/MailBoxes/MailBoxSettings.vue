@@ -15,7 +15,7 @@
             <el-form-item label="Support Channel">
                 <el-radio-group v-model="mailbox.box_type">
                     <el-radio label="web">Web Based</el-radio>
-                    <el-radio label="email">Email Based (MailBox)</el-radio>
+                    <el-radio :disabled="appVars.has_email_parser" label="email">Email Based (MailBox)</el-radio>
                 </el-radio-group>
             </el-form-item>
 

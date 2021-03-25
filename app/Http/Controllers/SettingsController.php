@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Request\Request;
 
@@ -25,5 +26,79 @@ class SettingsController extends Controller
         return [
             'message' => __('Settings has been updated', 'fluent-support')
         ];
+    }
+
+
+    public function getPages()
+    {
+        $pages = $this->app->db
+            ->table('posts')
+            ->select(['ID', 'post_title'])
+            ->where('post_type', 'page')
+            ->where('post_status', 'publish')
+            ->orderBy('ID', 'DESC')
+            ->get();
+        return [
+            'pages' => $pages
+        ];
+    }
+
+    public function setupPortal(Request $request)
+    {
+        $mailbox = $request->get('mailbox');
+        $this->validate($mailbox, [
+            'name'     => 'required',
+            'email'    => 'required|email',
+            'box_type' => 'required'
+        ]);
+
+        $settings = $request->get('global_settings');
+
+        $createPage = $settings['create_portal_page'] == 'yes';
+
+        if (!$createPage && empty($settings['portal_page_id'])) {
+            return $this->sendError([
+                'message' => 'Please select a page or enable create page'
+            ]);
+        }
+
+        if ($createPage) {
+            // we have to created the page
+            $page_id = wp_insert_post(
+                array(
+                    'comment_status' => 'close',
+                    'ping_status'    => 'close',
+                    'post_author'    => get_current_user_id(),
+                    'post_title'     => __('Support Portal'),
+                    'post_status'    => 'publish',
+                    'post_content'   => '[fluent_support_portal]',
+                    'post_type'      => 'page'
+                )
+            );
+        } else {
+            $page_id = intval($settings['portal_page_id']);
+        }
+
+        $newMailBox = MailBox::first();
+        if (!$newMailBox) {
+            $mailbox['is_default'] = 'yes';
+            $mailbox['created_by'] = get_current_user_id();
+            $mailbox['settings']['admin_email_address'] = $mailbox['email'];
+            $newMailBox = MailBox::create($mailbox);
+        }
+
+        $settingsClass = new Settings();
+        $globalSettings = $settingsClass->globalBusinessSettings();
+
+        $globalSettings['portal_page_id'] = $page_id;
+
+        $settingsClass->save('global_business_settings', $globalSettings);
+
+        return [
+            'mailbox' => $newMailBox,
+            'global_settings' => $globalSettings,
+            'mailboxes' => MailBox::select(['id', 'name', 'settings'])->get()
+        ];
+
     }
 }

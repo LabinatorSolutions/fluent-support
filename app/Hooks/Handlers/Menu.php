@@ -4,6 +4,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
@@ -14,13 +15,13 @@ class Menu
     {
         $currentUserPermissions = PermissionManager::currentUserPermissions();
 
-        if(!$currentUserPermissions) {
+        if (!$currentUserPermissions) {
             return;
         }
 
         $permission = 'fst_view_dashboard';
 
-        if(current_user_can('manage_options')) {
+        if (current_user_can('manage_options')) {
             $permission = 'manage_options';
         }
 
@@ -57,7 +58,7 @@ class Menu
         ];
 
         $hasSensitiveAccess = PermissionManager::currentUserCan('fst_sensitive_data');
-        if($hasSensitiveAccess) {
+        if ($hasSensitiveAccess) {
             $menuItems[] = [
                 'key'       => 'customers',
                 'label'     => __('Customers', 'fluent-support'),
@@ -72,13 +73,13 @@ class Menu
 
         $secondayItems = [
             [
-                'key' => 'saved_replies',
-                'label' => __('Saved Replies', 'fluent-support'),
+                'key'       => 'saved_replies',
+                'label'     => __('Saved Replies', 'fluent-support'),
                 'permalink' => $baseUrl . 'saved-replies'
             ]
         ];
 
-        if(PermissionManager::currentUserCan('fst_manage_settings')) {
+        if (PermissionManager::currentUserCan('fst_manage_settings')) {
             $secondayItems[] = [
                 'key'       => 'mailboxes',
                 'label'     => __('Business Settings', 'fluent-support'),
@@ -88,7 +89,7 @@ class Menu
             $secondayItems[] = [
                 'key'       => 'settings',
                 'label'     => __('Global Settings', 'fluent-support'),
-                'permalink' => $baseUrl . 'settings/products'
+                'permalink' => $baseUrl . 'settings'
             ];
         }
 
@@ -98,9 +99,9 @@ class Menu
         $app = App::getInstance();
         $this->enqueueAssets();
         $app->view->render('admin.menu', [
-            'base_url'      => $baseUrl,
-            'logo'          => $assets . 'images/logo.svg',
-            'menuItems'     => $menuItems,
+            'base_url'       => $baseUrl,
+            'logo'           => $assets . 'images/logo.svg',
+            'menuItems'      => $menuItems,
             'secondaryItems' => $secondayItems
         ]);
     }
@@ -121,14 +122,14 @@ class Menu
 
         $me = Helper::getAgentByUserId(get_current_user_id());
 
-        if(!$me && current_user_can('manage_options')) {
+        if (!$me && current_user_can('manage_options')) {
             // we should create the agent
             $user = wp_get_current_user();
             $me = Agent::create([
-                'email' => $user->user_email,
+                'email'      => $user->user_email,
                 'first_name' => $user->first_name,
-                'last_name' => $user->last_name,
-                'user_id' => $user->ID
+                'last_name'  => $user->last_name,
+                'user_id'    => $user->ID
             ]);
         }
 
@@ -162,11 +163,13 @@ class Menu
             'support_products'  => Product::select(['id', 'title'])->get(),
             'client_priorities' => Helper::customerTicketPriorities(),
             'admin_priorities'  => Helper::adminTicketPriorities(),
+            'mailboxes'         => MailBox::select(['id', 'name', 'settings'])->get(),
             'me'                => $me,
             'pref'              => [
                 'go_back_after_reply' => 'yes'
             ],
-            'server_time'       => current_time('mysql')
+            'server_time'       => current_time('mysql'),
+            'has_email_parser' => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH')
         ));
 
         do_action('fluent_support_admin_app_loaded', $app);

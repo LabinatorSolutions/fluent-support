@@ -14,12 +14,14 @@
                     <el-col style="max-width: 30%;" v-for="box in mailboxes" :key="box.id" :sm="12" :md="6" :xl="6">
                         <div class="fs_mail_box">
                             <div class="fs_mail_title">
-                                <h3>{{box.name}}</h3>
+                                <h3>{{ box.name }}</h3>
                             </div>
                             <div class="fs_mail_body">
-                                <p>{{box.email}}</p>
-                                <p>Type: {{box.box_type}}</p>
-                                <router-link class="el-button el-button--success el-button--small" :to="{name: 'box_settings', params: { box_id: box.id }}">View Settings</router-link>
+                                <p>{{ box.email }}</p>
+                                <p>Type: {{ box.box_type }}</p>
+                                <router-link class="el-button el-button--success el-button--small"
+                                             :to="{name: 'box_settings', params: { box_id: box.id }}">View Settings
+                                </router-link>
                             </div>
                         </div>
                     </el-col>
@@ -42,7 +44,7 @@
                 <el-form-item label="Support Channel">
                     <el-radio-group v-model="new_business.box_type">
                         <el-radio label="web">Web Based</el-radio>
-                        <el-radio label="email">Email Based (MailBox)</el-radio>
+                        <el-radio :disabled="appVars.has_email_parser" label="email">Email Based (MailBox)</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item v-if="new_business.box_type == 'email'" label="Mapped Email">
@@ -113,14 +115,16 @@ export default {
                         type: 'success',
                         message: response.message,
                         position: 'bottom-right'
-                    })
-                        .catch((errors) => {
-                            this.$handleError(errors);
-                        })
-                        .always(() => {
-                            this.creating = false;
-                        });
+                    });
+
+                    this.$router.push({ name: 'box_settings', params: { box_id: response.mailbox.id } })
                 })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.creating = false;
+                });
         }
     },
     mounted() {
@@ -135,18 +139,22 @@ export default {
     border-radius: 5px;
     margin-top: 20px;
     text-align: center;
+
     .fs_mail_title {
         border-bottom: 1px solid #e3e8ed;
         background: white;
         padding: 10px 15px;
     }
+
     .fs_mail_body {
         padding: 15px;
         background: #f7fafc;
     }
+
     p, h3 {
         margin: 5px;
     }
+
     a {
         text-decoration: none;
     }
