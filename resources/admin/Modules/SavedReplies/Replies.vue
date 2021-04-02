@@ -25,7 +25,7 @@
                             {{scope.row.person?.full_name}}
                         </template>
                     </el-table-column>
-                    <el-table-column width="180" label="Created At">
+                    <el-table-column width="180" label="Created On">
                         <template #default="scope">
                             {{$timeDiff(scope.row.created_at)}}
                         </template>

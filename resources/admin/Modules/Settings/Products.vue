@@ -31,7 +31,7 @@
 
         <el-dialog
             :append-to-body="true"
-            :title="(editing_product && editing_product.id) ? 'Edit Product' : 'Create new Support Product'"
+            :title="(editing_product && editing_product.id) ? 'Edit Product' : 'Create New Supported Product'"
             v-model="ticket_modal"
             v-if="editing_product"
             width="60%">

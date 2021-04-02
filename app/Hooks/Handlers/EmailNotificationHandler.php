@@ -188,7 +188,7 @@ class EmailNotificationHandler
                 $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
-            Mailer::send($customer->email, $subject, $emailBody, $headers);
+            Mailer::send($agent->email, $subject, $emailBody, $headers);
         }
     }
 

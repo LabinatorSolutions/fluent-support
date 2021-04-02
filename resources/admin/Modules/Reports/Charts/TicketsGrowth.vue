@@ -90,7 +90,7 @@ export default {
                 statData.push(parseInt(count));
             });
             chartData.datasets.push({
-                label: 'Tickets Growth',
+                label: 'Ticket Activity',
                 backgroundColor: '#7757e6',
                 data: statData
             });

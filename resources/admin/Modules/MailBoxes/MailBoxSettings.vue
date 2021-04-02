@@ -27,7 +27,7 @@
             <el-form-item label="Email Footer For Customers">
                 <wp-editor :height="100" v-model="mailbox.email_footer"/>
                 <div>
-                    <p @click="show_codes = !show_codes">Click to see Available Dynamic Codes:</p>
+                    <p style="cursor: pointer;" @click="show_codes = !show_codes">Click to see Available Dynamic Codes:</p>
                     <ul v-if="show_codes">
                         <li v-for="(code, codeName) in smartCodes">{{code}}: {{codeName}}</li>
                     </ul>

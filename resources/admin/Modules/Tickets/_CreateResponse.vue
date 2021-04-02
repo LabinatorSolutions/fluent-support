@@ -11,8 +11,8 @@
                         <span v-if="type== 'note'">Add Internal Note</span>
                         <span v-else>Add Reply</span>
                     </el-button>
-                    <el-button v-if="type != 'note'" @click="create('yes')" size="large" type="danger">Relay and Close</el-button>
-                    <p v-if="type== 'note'">You are adding internal Note. Only support staffs can see this note</p>
+                    <el-button v-if="type != 'note'" @click="create('yes')" size="large" type="danger">Reply and Close</el-button>
+                    <p v-if="type== 'note'">You are adding internal Note. Only support staff can see this note</p>
                 </div>
             </div>
             <div class="fs_half">

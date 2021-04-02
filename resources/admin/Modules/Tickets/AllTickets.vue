@@ -39,7 +39,7 @@
                     <div class="fs_tk_filter">
                         <label>Product</label>
                         <el-select clearable size="small" @change="fetchTickets()" v-model="filters.product_id"
-                                   placeholder="All Product">
+                                   placeholder="All Products">
                             <el-option v-for="product in products" :key="product.id" :value="product.id"
                                        :label="product.title"></el-option>
                         </el-select>

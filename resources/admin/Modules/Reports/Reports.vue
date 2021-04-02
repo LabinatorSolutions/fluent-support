@@ -76,7 +76,7 @@ export default {
             date_range: ['', ''],
             showing_charts: true,
             chartMaps: {
-                'tickets-chart': 'Tickets Stats',
+                'tickets-chart': 'Ticket Stats',
                 'resolve-chart': 'Resolve Stats',
                 'response-chart': 'Response Stats'
             }

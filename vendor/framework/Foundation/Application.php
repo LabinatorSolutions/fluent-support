@@ -112,7 +112,7 @@ class Application extends Container
     {
         $this->addAction('init', function() {
             load_plugin_textdomain(
-                $this->config->get('app.text_domain'), false, $this->config->get('app.domain_path')
+                'fluent-support', false, $this->config->get('app.domain_path')
             );
         });
     }

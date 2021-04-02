@@ -59,7 +59,7 @@
                             </router-link>
                         </li>
                         <li>
-                            <router-link :to="{ name: 'support-staffs' }">Manage Support Staffs</router-link>
+                            <router-link :to="{ name: 'support-staffs' }">Manage Support Staff</router-link>
                         </li>
                         <li>
                             <router-link :to="{ name: 'global_settings' }">Global Settings</router-link>

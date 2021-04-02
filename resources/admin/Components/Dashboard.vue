@@ -28,7 +28,7 @@
 
         <div class="fs_box fs_dashboard_box">
             <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                Your Today's Overview
+                Your Overview for Today
             </div>
             <div class="fs_box_body">
                 <template v-if="!loading">

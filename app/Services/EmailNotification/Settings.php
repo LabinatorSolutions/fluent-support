@@ -30,7 +30,7 @@ class Settings
     {
         $defaults = [
             'portal_page_id' => '',
-            'login_message'  => '<p>Please login to access Custom Support Portal</p> [fluent_support_login]'
+            'login_message'  => '<p>Please login to access the Customer Support Portal</p> [fluent_support_login]'
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
@@ -56,7 +56,7 @@ class Settings
             'login_message'  => [
                 'type'        => 'wp-editor',
                 'label'       => 'Message for non logged in users',
-                'inline_help' => 'Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show builtin login form'
+                'inline_help' => 'Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form'
             ]
         ];
     }
