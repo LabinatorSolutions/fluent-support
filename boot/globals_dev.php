@@ -1,14 +1,20 @@
 <?php
 
-if (!function_exists('wpmn_eqL')) {
-    function wpmn_eql()
+/**
+ * Enable Query Log
+ */
+if (!function_exists('wpfluent_eqL')) {
+    function wpfluent_eql()
     {
         defined('SAVEQUERIES') || define('SAVEQUERIES', true);
     }
 }
 
-if (!function_exists('wpmn_gql')) {
-    function wpmn_gql()
+/**
+ * Get Query Log
+ */
+if (!function_exists('wpfluent_gql')) {
+    function wpfluent_gql()
     {
         $result = [];
         foreach ((array)$GLOBALS['wpdb']->queries as $key => $query) {

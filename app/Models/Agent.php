@@ -2,7 +2,6 @@
 
 namespace FluentSupport\App\Models;
 
-use FluentSupport\App\Scopes\AgentScope;
 
 class Agent extends Person
 {
@@ -16,7 +15,9 @@ class Agent extends Person
             $model->hash = md5(time().wp_generate_uuid4());
         });
 
-        static::addGlobalScope(new AgentScope());
+        static::addGlobalScope(function ($builder) {
+            $builder->where('person_type', 'agent');
+        });
     }
 
     /**

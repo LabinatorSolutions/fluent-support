@@ -1,20 +1,20 @@
 <?php
 
-namespace FluentSupport\App\Database;
+namespace FluentSupport\Database;
 
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-use FluentSupport\App\Database\Migrations\MailBoxMigrator;
-use FluentSupport\App\Database\Migrations\MetaMigrator;
-use FluentSupport\App\Database\Migrations\PersonsMigrator;
-use FluentSupport\App\Database\Migrations\SavedRepliesMigrator;
-use FluentSupport\App\Database\Migrations\TicketsMigrator;
-use FluentSupport\App\Database\Migrations\ConversationsMigrator;
-use FluentSupport\App\Database\Migrations\AttachmentsMigrator;
-use FluentSupport\App\Database\Migrations\TaggablesMigrator;
-use FluentSupport\App\Database\Migrations\TagRelationsMigrator;
-use FluentSupport\App\Database\Migrations\DataMetrixMigrator;
-use FluentSupport\App\Database\Migrations\ProductsMigrator;
+use FluentSupport\Database\Migrations\MailBoxMigrator;
+use FluentSupport\Database\Migrations\MetaMigrator;
+use FluentSupport\Database\Migrations\PersonsMigrator;
+use FluentSupport\Database\Migrations\SavedRepliesMigrator;
+use FluentSupport\Database\Migrations\TicketsMigrator;
+use FluentSupport\Database\Migrations\ConversationsMigrator;
+use FluentSupport\Database\Migrations\AttachmentsMigrator;
+use FluentSupport\Database\Migrations\TaggablesMigrator;
+use FluentSupport\Database\Migrations\TagRelationsMigrator;
+use FluentSupport\Database\Migrations\DataMetrixMigrator;
+use FluentSupport\Database\Migrations\ProductsMigrator;
 
 class DBMigrator
 {

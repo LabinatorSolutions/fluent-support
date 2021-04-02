@@ -7,6 +7,7 @@
  * so the $app is not available here, only declare functions here.
  */
 
+
 is_readable(__DIR__ . '/globals_dev.php') && include 'globals_dev.php';
 
 if (!function_exists('dd')) {
@@ -20,26 +21,3 @@ if (!function_exists('dd')) {
         die();
     }
 }
-
-if (!function_exists('fluentSupportTimestamp')) {
-    function fluentSupportTimestamp()
-    {
-        return current_time('mysql');
-    }
-}
-
-if (!function_exists('fluentSupportGravatar')) {
-    /**
-     * Get the gravatar from an email.
-     *
-     * @param string $email
-     * @return string
-     */
-    function fluentSupportGravatar($email)
-    {
-        $hash = md5(strtolower(trim($email)));
-
-        return "https://www.gravatar.com/avatar/${hash}?s=128";
-    }
-}
-

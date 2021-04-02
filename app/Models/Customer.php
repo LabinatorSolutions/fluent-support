@@ -2,7 +2,7 @@
 
 namespace FluentSupport\App\Models;
 
-use FluentSupport\App\Scopes\CustomerScope;
+use FluentSupport\Framework\Database\Orm\Builder;
 use FluentSupport\Framework\Support\Arr;
 
 class Customer extends Person
@@ -11,12 +11,17 @@ class Customer extends Person
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             $model->person_type = static::$type;
             $model->hash = md5(time().wp_generate_uuid4());
         });
 
-        static::addGlobalScope(new CustomerScope);
+        static::addGlobalScope(function (Builder $builder) {
+            $builder->where('person_type', 'customer');
+        });
+
     }
 
     public static function maybeCreateCustomer($customerData)
