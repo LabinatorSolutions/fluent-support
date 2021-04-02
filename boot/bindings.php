@@ -2,7 +2,7 @@
 
 /**
  * Add only the plugin specific bindings here.
- *
+ * 
  * $app
- * @var FluentSupport\Framework\Foundation\Application
+ * @var WPFluent\Foundation\Application
  */

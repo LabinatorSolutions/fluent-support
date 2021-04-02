@@ -1,6 +1,6 @@
 <?php
 
-namespace FluentSupport\App\Database\Migrations;
+namespace FluentSupport\Database\Migrations;
 
 class SavedRepliesMigrator
 {

@@ -1,1 +1,1 @@
-# Fluent Support - Next Generation Support Plugin for WordPress
+# WPFluent - WordPress Plugin development made easy.

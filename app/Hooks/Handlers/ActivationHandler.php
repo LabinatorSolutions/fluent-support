@@ -2,7 +2,7 @@
 
 namespace FluentSupport\App\Hooks\Handlers;
 
-use FluentSupport\App\Database\DBMigrator;
+use FluentSupport\Database\DBMigrator;
 
 class ActivationHandler
 {

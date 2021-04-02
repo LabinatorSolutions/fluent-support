@@ -1,6 +1,6 @@
 <?php
 
-namespace FluentSupport\App\Database\Migrations;
+namespace FluentSupport\Database\Migrations;
 
 class ProductsMigrator
 {
@@ -29,6 +29,6 @@ class ProductsMigrator
             ) $charsetCollate;";
             dbDelta($sql);
         }
-        
+
     }
 }

@@ -2,7 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\Framework\Foundation\Controller as BaseController;
+use FluentSupport\Framework\Http\Controller as BaseController;
 
 abstract class Controller extends BaseController
 {
