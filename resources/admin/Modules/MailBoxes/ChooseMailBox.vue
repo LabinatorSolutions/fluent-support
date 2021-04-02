@@ -3,7 +3,7 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Support Businesses</h3>
+                    <h3>Businesses</h3>
                 </div>
                 <div class="fs_box_actions">
                     <el-button size="small" @click="showNewBusinessModal()" type="primary">Add New Business</el-button>
@@ -30,7 +30,7 @@
         </div>
 
         <el-dialog
-            title="Create a Business Box"
+            title="Add a Business"
             v-model="create_modal"
             width="60%">
             <el-form :data="new_business" label-position="top">
@@ -55,7 +55,7 @@
             <template #footer>
                 <span class="dialog-footer">
                   <el-button @click="create_modal = false">Cancel</el-button>
-                  <el-button type="primary" @click="createMailBox()">Create Business Box</el-button>
+                  <el-button type="primary" @click="createMailBox()">Add Business</el-button>
                 </span>
             </template>
         </el-dialog>

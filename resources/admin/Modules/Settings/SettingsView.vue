@@ -31,7 +31,7 @@ export default {
                     route_query: {}
                 },
                 {
-                    title: 'Support Staffs',
+                    title: 'Support Staff',
                     route_name: 'support-staffs',
                     route_query: {}
                 },

@@ -3,16 +3,16 @@
 /*
 Plugin Name: Fluent Support
 Description: The Ultimate Support Plugin For Your Own WordPress.
-Version: 1.0.0
+Version: 1.0
 Author: WPManageNinja LLC
 Author URI: https://wpmanageninja.com
-Plugin URI: https://wpmanageninja.com
+Plugin URI: https://fluentsupport.com
 License: GPLv2 or later
-Text Domain: alpha
+Text Domain: fluent-support
 Domain Path: /language
 */
 
-define('FLUENT_SUPPORT_VERSION', '0.2');
+define('FLUENT_SUPPORT_VERSION', '1.0');
 define('FLUENT_SUPPORT_UPLOAD_DIR', 'fluent-support');
 
 require __DIR__.'/vendor/autoload.php';
@@ -20,4 +20,3 @@ require __DIR__.'/vendor/autoload.php';
 call_user_func(function($bootstrap) {
     $bootstrap(__FILE__);
 }, require(__DIR__.'/boot/app.php'));
-

@@ -92,11 +92,7 @@
                                               v-model="ticket.title"></el-input>
                                     <p>Press enter to save</p>
                                 </el-popover>
-
                             </h2>
-                            <div class="fs_tk_tags">
-                                <span class="fs_badge"></span>
-                            </div>
                         </div>
                         <div class="fs_tk_badges">
                             <span class="fs_ticket_id">#{{ ticket.id }}</span>
