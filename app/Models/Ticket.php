@@ -275,6 +275,8 @@ class Ticket extends Model
         do_action('fluent_support/deleting_ticket', $this);
         // delete the responses first
         Response::where('ticket_id', $this->id)->delete();
+        // Delete the ticket meta
+        Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)->delete();
         // Delete Attachments
         Attachment::where('ticket_id', $this->id)->delete();
         Ticket::where('id', $this->id)->delete();

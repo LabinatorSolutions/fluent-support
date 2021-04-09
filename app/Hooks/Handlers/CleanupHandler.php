@@ -2,7 +2,6 @@
 
 namespace FluentSupport\App\Hooks\Handlers;
 
-
 use FluentSupport\App\Models\Meta;
 
 class CleanupHandler
@@ -18,6 +17,7 @@ class CleanupHandler
         $oldDateTime = date('Y-m-d H:i:s', strtotime(current_time('mysql')) - 86400);
 
         Meta::where('key', '_live_activity')
+            ->where('object_type', 'ticket_meta')
             ->where('updated_at', '<', $oldDateTime)
             ->delete();
     }
