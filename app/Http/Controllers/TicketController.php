@@ -352,6 +352,7 @@ class TicketController extends Controller
             $ticket->status = 'closed';
             $ticket->resolved_at = current_time('mysql');
             $ticket->closed_by = $agent->id;
+
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $ticket->save();
             do_action('fluent_support/ticket_closed', $ticket, $agent);
