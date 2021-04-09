@@ -74,7 +74,7 @@
                     </div>
                     <div class="fs_tk_filter">
                         <label>Waiting for Reply</label>
-                        <el-switch @change="fetchTickets()" active-value="yes" :inactive-value="false"
+                        <el-switch @change="maybeChangeWaitingReply()" active-value="yes" :inactive-value="false"
                                    v-model="filters.waiting_for_reply"></el-switch>
                     </div>
                     <div class="fs_tk_filter">
@@ -439,6 +439,12 @@ export default {
                 return '';
             }
             return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+        },
+        maybeChangeWaitingReply() {
+            if(this.filters.waiting_for_reply == 'yes') {
+                this.filters.status_type = 'open';
+            }
+            this.fetchTickets();
         }
     },
     mounted() {
