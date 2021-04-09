@@ -89,14 +89,14 @@ $app->addAction('fluent_support/response_added_by_agent', 'EmailNotificationHand
 $app->addAction('fluent_support/response_added_by_customer', 'EmailNotificationHandler@customerReplied', 10, 3);
 $app->addAction('fluent_support/ticket_closed_by_agent', 'EmailNotificationHandler@closedByAgent', 10, 2);
 
+// Cleanup
+$app->addAction('fluent_support_hourly_tasks', 'CleanupHandler@initHourlyTasks');
 
 if (isset($_GET['fst_file'])) {
     add_action('init', function () {
         (new \FluentSupport\App\Hooks\Handlers\ExternalPages())->view_attachment();
     });
 }
-
-
 
 // require the CLI
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
