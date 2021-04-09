@@ -33,11 +33,12 @@ class Edd
             return $widgets;
         }
 
+
         ob_start();
         ?>
         <ul>
             <?php foreach ($payments as $payment): ?>
-                <li>
+                <li title="Purchase Date: <?php echo $payment->completed_date; ?>">
                     <?php foreach ($payment->cart_details as $cart_detail): ?>
                         <?php
                         echo $cart_detail['name'] . ' <code>' . $payment->status_nicename . '</code>';
