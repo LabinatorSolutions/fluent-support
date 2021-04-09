@@ -93,12 +93,12 @@ class Customer extends Person
                     $query->orWhere(function ($q) use ($nameArray) {
                         $fname = array_shift($nameArray);
                         $lastName = implode(' ', $nameArray);
-                        $q->where('first_name', 'LIKE', "$fname%");
-                        $q->where('last_name', 'LIKE', "$lastName%");
+                        $q->where('first_name', 'LIKE', "%$fname%");
+                        $q->where('last_name', 'LIKE', "%$lastName%");
                     });
                 }
                 foreach ($fields as $field) {
-                    $query->orWhere($field, 'LIKE', "$search%");
+                    $query->orWhere($field, 'LIKE', "%$search%");
                 }
             });
         }
