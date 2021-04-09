@@ -56,6 +56,8 @@ class ByMailHandler
                 $responseOrTicketData['mailbox_id'] = $mailBox->id;
             }
 
+            $responseOrTicketData['source'] = 'email';
+
             $ticketData = apply_filters('fluent_support/create_ticket_data', $responseOrTicketData, $customer);
             do_action('fluent_support/before_ticket_create', $responseOrTicketData, $customer);
 

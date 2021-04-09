@@ -6,6 +6,18 @@ use FluentSupport\App\Services\Helper;
 
 class Settings
 {
+
+    public function getEmailSettingsKeys()
+    {
+        return [
+            'ticket_created_email_to_customer',
+            'ticket_replied_by_agent_email_to_customer',
+            'ticket_closed_by_agent_email_to_customer',
+            'ticket_created_email_to_admin',
+            'ticket_replied_by_customer_email_to_admin'
+        ];
+    }
+
     public function get($settingsKey)
     {
         if ($settingsKey == 'global_business_settings') {

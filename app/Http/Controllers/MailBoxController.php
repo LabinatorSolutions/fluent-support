@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\MailBox;
+use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Request\Request;
 
@@ -11,6 +12,10 @@ class MailBoxController extends Controller
     public function index(Request $request)
     {
         $mailboxes = MailBox::all();
+
+        foreach ($mailboxes as $mailbox) {
+            $mailbox->tickets_count = Ticket::where('mailbox_id', $mailbox->id)->count();
+        }
 
         return [
             'mailboxes' => $mailboxes
@@ -85,6 +90,38 @@ class MailBoxController extends Controller
             'message' => 'Mailbox has been saved',
             'mailbox' => $mailbox
         ];
+    }
+
+    public function delete(Request $request, $mailBoxId)
+    {
+        $fallbackId = $request->get('fallback_id');
+
+        if($fallbackId == $mailBoxId) {
+            return $this->sendError([
+                'message' => 'Fallback Box can not be the same as MailBox ID'
+            ]);
+        }
+
+        $box = MailBox::findOrFail($mailBoxId);
+        $fallbackBox = MailBox::findOrFail($fallbackId);
+
+
+        do_action('fluent_support/before_delete_email_box', $box, $fallbackBox);
+        $box->deleteAllMeta();
+        MailBox::where('id', $mailBoxId)->delete();
+
+        // lets transfer the tickets now
+        Ticket::where('mailbox_id', $mailBoxId)
+            ->update([
+                'mailbox_id' => $fallbackBox->id
+            ]);
+
+        do_action('fluent_support/mailbox_deleted', $mailBoxId, $fallbackBox);
+
+        return [
+            'message' => __('Selected Business has been deleted', 'fluent-support')
+        ];
+
     }
 
     public function getEmailSettings(Request $request, Settings $settings, $boxId)

@@ -32,4 +32,3 @@ router.afterEach((to, from) => {
         jQuery('.fframe_main-menu-items').find('li[data-key='+active+']').addClass('fs_active');
     }
 });
-

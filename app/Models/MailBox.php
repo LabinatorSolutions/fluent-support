@@ -114,4 +114,23 @@ class MailBox extends Model
         ]);
         return true;
     }
+
+    public function deleteMeta($key)
+    {
+        $class = __NAMESPACE__ . '\MailBox';
+
+        $meta = Meta::where('object_type', $class)
+            ->where('object_id', $this->id)
+            ->where('key', $key)
+            ->delete();
+    }
+
+    public function deleteAllMeta()
+    {
+        $class = __NAMESPACE__ . '\MailBox';
+
+        $meta = Meta::where('object_type', $class)
+            ->where('object_id', $this->id)
+            ->delete();
+    }
 }

@@ -1,12 +1,14 @@
 <div id='alpha_app'>
     <div class="fframe_app">
         <div class="fframe_main-menu-items">
+
             <div class="menu_logo_holder">
                 <a href="<?php echo $base_url; ?>">
                     <img src="<?php echo $logo; ?>" />
                 </a>
             </div>
             <div class="fframe_handheld"><span class="dashicons dashicons-menu-alt3"></span></div>
+
             <ul class="fframe_menu">
                 <?php foreach ($menuItems as $item): ?>
                     <?php $hasSubMenu = !empty($item['sub_items']); ?>

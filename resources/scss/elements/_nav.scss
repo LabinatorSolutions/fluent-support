@@ -8,6 +8,7 @@
         background: white;
         margin-left: -20px;
         padding-left: 20px;
+        overflow: hidden;
 
         .menu_logo_holder {
             max-height: 40px;
@@ -133,7 +134,7 @@
         .#{$slug}handheld {
             display: none;
         }
-        @media all and (max-width: 426px) {
+        @media all and (max-width: 1024px) {
             margin-right: 10px;
             ul.#{$slug}menu {
                 display: none;
@@ -165,6 +166,10 @@
                     font-size: 30px;
                     width: 100%;
                 }
+            }
+            ul.#{$slug}menu.frame_secondary_menu {
+                float: none !important;
+                border-top: 0 !important;
             }
         }
     }

@@ -20,13 +20,20 @@
         text-decoration: none;
         color: #314351;
         font-size: 13px;
+
         p {
             padding: 0;
             margin: 0;
             text-overflow: ellipsis;
             width: 100%;
-            white-space: nowrap;
+            height: 16px;
+            white-space: pre-wrap;
             overflow: hidden;
+            font-size: 14px;
+            line-height: 16px;
+        }
+        strong {
+            word-break: break-word;
         }
     }
 
@@ -88,7 +95,7 @@
         .fs_tk_subject {
             zoom: 1;
             word-break: break-word;
-            padding-right: 150px;
+            padding-right: 215px;
             h2 {
                 color: #314351;
                 font-weight: 400;
@@ -231,6 +238,14 @@
                 overflow: auto;
                 padding: 1.5em;
                 white-space: pre-wrap;
+                code {
+                    padding: 0;
+                }
+            }
+            p, ul {
+                code {
+                    padding: 2px 5px;
+                }
             }
         }
     }
@@ -329,6 +344,52 @@
             list-style: none;
             li {
                 margin-bottom: 10px;
+            }
+        }
+    }
+
+    @media all and (max-width: 768px) {
+        .fs_thread_body {
+            width: 100%;
+        }
+        .fs_th_header {
+            > hgroup {
+                display: flex;
+                flex-direction: column-reverse;
+            }
+            .fs_tk_subject {
+                width: 100%;
+                padding-right: 0;
+            }
+            .fs_tk_actions {
+                position: relative;
+                width: 100%;
+                border-bottom: 1px solid #a4b2bd;
+                padding-bottom: 10px;
+            }
+        }
+        .fs_thread {
+            .fs_avatar {
+                margin: 10px 10px 5px 20px;
+            }
+            .fs_thread_wrap {
+                width: 100%;
+                margin: 0;
+                .fs_thread_head {
+                    width: 100%;
+                }
+            }
+        }
+
+        .fs_tk_header {
+            .el-radio-button__inner {
+                padding: 6px 10px;
+            }
+            .el-button--small {
+                min-height: 28px;
+                padding: 5px 10px;
+                font-size: 12px;
+                border-radius: 3px;
             }
         }
     }

@@ -3,7 +3,7 @@
         <div class="fc_template_box">
             <template-inserter @insert="insertTemplate" />
         </div>
-        <wp-editor v-if="editor_ready" v-model="response_body" />
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" />
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">

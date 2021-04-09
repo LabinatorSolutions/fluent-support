@@ -70,7 +70,7 @@
             .fs_tk_subject {
                 zoom: 1;
                 word-break: break-word;
-                padding-right: 150px;
+                padding-right: 215px;
 
                 h2 {
                     color: #314351;
@@ -434,7 +434,8 @@ img.tk_customer_avatar {
         margin: 0;
         text-overflow: ellipsis;
         width: 100%;
-        white-space: nowrap;
+        height: 16px;
+        white-space: pre-wrap;
         overflow: hidden;
     }
 }

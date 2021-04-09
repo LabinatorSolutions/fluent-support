@@ -22,12 +22,14 @@
                 @row-click="gotToTicket"
                 v-loading="fetching"
                 style="width: 100%">
-                <el-table-column label="Conversation">
+                <el-table-column min-width="200px" label="Conversation">
                     <template #default="scope">
                         <router-link class="fs_tk_preview"
                                      :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                             <strong>{{ scope.row.title }}</strong>
-                            <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
+                            <div class="prev_text_parent">
+                                <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
+                            </div>
                         </router-link>
                     </template>
                 </el-table-column>

@@ -43,6 +43,8 @@ class Ticket extends Model
             $model->slug = static::slugify($model->title);
             $model->hash = md5(time().wp_generate_uuid4());
             $model->last_customer_response = current_time('mysql');
+            $model->created_at = current_time('mysql');
+            $model->updated_at = current_time('mysql');
         });
     }
 

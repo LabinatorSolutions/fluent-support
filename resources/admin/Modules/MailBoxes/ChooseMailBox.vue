@@ -15,10 +15,23 @@
                         <div class="fs_mail_box">
                             <div class="fs_mail_title">
                                 <h3>{{ box.name }}</h3>
+                                <el-dropdown @command="handleBoxCommand" class="fs_mail_action" trigger="click">
+                                      <span class="el-dropdown-link">
+                                            <i class="el-icon-arrow-down el-icon--right"></i>
+                                      </span>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item :command="{ type: 'delete', box_id: box.id }"
+                                                              icon="el-icon-delete">Delete
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
                             </div>
                             <div class="fs_mail_body">
                                 <p>{{ box.email }}</p>
                                 <p>Type: {{ box.box_type }}</p>
+                                <p>Tickets Counts: {{ box.tickets_count }}</p>
                                 <router-link class="el-button el-button--success el-button--small"
                                              :to="{name: 'box_settings', params: { box_id: box.id }}">View Settings
                                 </router-link>
@@ -31,7 +44,7 @@
 
         <el-dialog
             title="Add a Business"
-            v-model="create_modal"
+            v-model.sync="create_modal"
             width="60%">
             <el-form :data="new_business" label-position="top">
                 <el-form-item label="Business Name">
@@ -60,6 +73,28 @@
             </template>
         </el-dialog>
 
+        <el-dialog
+            title="Are You Sure? You can not undo this action."
+            v-model.sync="deleting_box.show_modal"
+            width="60%">
+            <el-form :data="deleting_box" label-position="top">
+                <el-form-item label="Fallback Business">
+                    <el-select v-model="deleting_box.fallback_box" placeholder="Select related Product/Service">
+                        <el-option :disabled="mailbox.id == deleting_box.box_id" v-for="mailbox in mailboxes"
+                                   :key="mailbox.id" :value="mailbox.id"
+                                   :label="mailbox.name"></el-option>
+                    </el-select>
+                    <p>Please select the fallback business in where the existing tickets will be transferred</p>
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <span class="dialog-footer">
+                  <el-button @click="deleting_box.show_modal = false">Cancel</el-button>
+                  <el-button v-loading="deleteing" :disabled="deleteing" type="danger" @click="deleteMailBox()">Confirm Delete This Business</el-button>
+                </span>
+            </template>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -78,7 +113,13 @@ export default {
                 mapped_email: '',
                 customer_portal_page_id: ''
             },
-            creating: false
+            creating: false,
+            deleting_box: {
+                show_modal: false,
+                box_id: '',
+                fallback_box: ''
+            },
+            deleteing: false
         }
     },
     methods: {
@@ -117,13 +158,45 @@ export default {
                         position: 'bottom-right'
                     });
 
-                    this.$router.push({ name: 'box_settings', params: { box_id: response.mailbox.id } })
+                    this.$router.push({name: 'box_settings', params: {box_id: response.mailbox.id}})
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
                 })
                 .always(() => {
                     this.creating = false;
+                });
+        },
+        handleBoxCommand(command) {
+            if (command.type == 'delete') {
+                this.deleting_box.box_id = command.box_id;
+                this.deleting_box.show_modal = true;
+            }
+        },
+        deleteMailBox() {
+            if (!this.deleting_box.fallback_box || !this.deleting_box.box_id) {
+                alert('Please provide fallback box');
+                return false;
+            }
+
+            this.deleteing = true;
+            this.$del(`mailboxes/${this.deleting_box.box_id}`, {
+                fallback_id: this.deleting_box.fallback_box,
+            })
+                .then(response => {
+                    this.$notify.success(response.message);
+                    this.fetch();
+                    this.deleting_box = {
+                        show_modal: false,
+                        box_id: '',
+                        fallback_box: ''
+                    };
+                })
+                .catch((errors) => {
+                    this.handleError(errors);
+                })
+                .always(() => {
+                    this.deleteing = false;
                 });
         }
     },
@@ -144,6 +217,17 @@ export default {
         border-bottom: 1px solid #e3e8ed;
         background: white;
         padding: 10px 15px;
+        text-align: left;
+        overflow: hidden;
+
+        h3 {
+            float: left;
+        }
+
+        .fs_mail_action {
+            float: right;
+            line-height: 27px;
+        }
     }
 
     .fs_mail_body {

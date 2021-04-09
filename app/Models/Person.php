@@ -103,7 +103,7 @@ class Person extends Model
         if (!empty($this->attributes['avatar'])) {
             return $this->attributes['avatar'];
         }
-        
+
         $email = '';
         if(isset($this->attributes['email'])) {
             $email = trim($this->attributes['email']);
@@ -123,8 +123,8 @@ class Person extends Model
      */
     public function getFullNameAttribute()
     {
-        $fname = $this->attributes['first_name'];
-        $lname = $this->attributes['last_name'];
+        $fname = isset($this->attributes['first_name']) ? $this->attributes['first_name'] : '';
+        $lname = isset($this->attributes['last_name']) ? $this->attributes['last_name'] : '';
         return trim("{$fname} {$lname}");
     }
 

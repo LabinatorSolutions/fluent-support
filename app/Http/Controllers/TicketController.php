@@ -3,6 +3,8 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Customer;
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
@@ -83,6 +85,46 @@ class TicketController extends Controller
         return [
             'tickets' => $tickets
         ];
+    }
+
+    public function createTicket(Request $request)
+    {
+        $ticketData = $request->get('ticket', []);
+        $this->validate($ticketData, [
+            'customer_id' => 'required',
+            'title' => 'required',
+            'content' => 'required'
+        ]);
+
+        $customer = Customer::findOrFail($ticketData['customer_id']);
+
+        if(empty($ticketData['mailbox_id'])) {
+            $mailbox = Helper::getDefaultMailBox();
+            $ticketData['mailbox_id'] = $mailbox->id;
+        } else {
+            $mailbox = MailBox::findOrFail($ticketData['mailbox_id']); // just for validation
+        }
+
+        if(!empty($ticketData['product_id'])) {
+            $data['product_source'] = 'local';
+        }
+
+        $ticketData['title'] = sanitize_text_field(wp_unslash($ticketData['title']));
+
+        $ticketData['content'] = wp_unslash(wp_kses_post($ticketData['content']));
+
+        $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
+        do_action('fluent_support/before_ticket_create', $ticketData, $customer);
+
+        $createdTicket = Ticket::create($ticketData);
+
+        do_action('fluent_support/ticket_created', $createdTicket, $customer);
+
+        return [
+            'message' => __('Ticket has been created successfully', 'fluent-support'),
+            'ticket'  => $createdTicket
+        ];
+
     }
 
     public function getTicket(Request $request, $ticketId)
@@ -176,14 +218,18 @@ class TicketController extends Controller
             $createdResponse->load('attachments');
         }
 
-        if ($ticket->status == 'new') {
+        if ($ticket->status == 'new' && $convoType == 'response') {
             $ticket->status = 'active';
-            $ticket->first_response_time = current_time('timestamp') - strtotime($ticket->created_at);
+            if($ticket->created_at) {
+                $ticket->first_response_time = strtotime(current_time('mysql')) - strtotime($ticket->created_at);
+            } else {
+                $ticket->first_response_time = 300;
+            }
         }
 
         $agentAdded = false;
         $updateData = [];
-        if (!$ticket->agent_id) {
+        if (!$ticket->agent_id && $convoType == 'response') {
             $ticket->agent_id = $agent->id;
             $agentAdded = true;
             $ticket->load('agent');

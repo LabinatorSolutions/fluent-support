@@ -4,13 +4,17 @@
             <div class="fs_box_header">
                 <div class="fs_box_head">
                     <h3>Tickets <span class="fs_badge">{{ pagination.total }}</span></h3>
+                    <el-button
+                        @click="add_ticket_modal = true"
+                        size="mini"
+                        icon="el-icon-plus">Add Ticket</el-button>
                     <el-button v-loading="loading"
                                @click="fetchTickets()"
                                icon="el-icon-refresh"
                                size="mini"></el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
-                    <el-select @change="fetchTickets()" v-model="order_by" size="mini">
+                    <el-select filterable @change="fetchTickets()" v-model="order_by" size="mini">
                         <el-option
                             v-for="(column, columnName) in filterColumns"
                             :key="columnName"
@@ -38,7 +42,7 @@
                     </div>
                     <div class="fs_tk_filter">
                         <label>Product</label>
-                        <el-select clearable size="small" @change="fetchTickets()" v-model="filters.product_id"
+                        <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.product_id"
                                    placeholder="All Products">
                             <el-option v-for="product in products" :key="product.id" :value="product.id"
                                        :label="product.title"></el-option>
@@ -46,7 +50,7 @@
                     </div>
                     <div class="fs_tk_filter">
                         <label>Support Staff</label>
-                        <el-select clearable size="small" @change="fetchTickets()" v-model="filters.agent_id"
+                        <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.agent_id"
                                    placeholder="All Support Staff">
                             <el-option v-for="agent in agents" :key="agent.id" :value="agent.id"
                                        :label="agent.full_name"></el-option>
@@ -106,7 +110,7 @@
                                  class="tk_customer_avatar" :src="scope.row.customer.photo"/>
                         </template>
                     </el-table-column>
-                    <el-table-column label="Title">
+                    <el-table-column min-width="300" label="Title">
                         <template #default="scope">
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
@@ -127,7 +131,9 @@
                                     </span>
                                 </span>
                                 <span v-if="scope.row.source == 'email'"><i class="el-icon-message"></i></span>
-                                <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
+                                <div class="prev_text_parent">
+                                    <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
+                                </div>
                             </router-link>
                         </template>
                     </el-table-column>
@@ -146,8 +152,8 @@
                     <el-table-column width="120" label="Status">
                         <template #default="scope">
                             <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
-                            <span class="fs_badge" :class="'fs_badge_priority_'+scope.row.priority">
-                                <i class="el-icon-s-flag"></i>  {{ scope.row.priority }}
+                            <span class="fs_badge" :class="'fs_badge_priority_'+scope.row.client_priority">
+                                <i class="el-icon-s-flag"></i>  {{ scope.row.client_priority }}
                             </span>
                         </template>
                     </el-table-column>
@@ -205,17 +211,26 @@
                 </div>
             </div>
         </div>
+        <el-dialog
+            title="Create a Ticket"
+            v-model.sync="add_ticket_modal"
+            width="60%">
+            <add-ticket v-if="add_ticket_modal"></add-ticket>
+        </el-dialog>
+
     </div>
 </template>
 
 <script type="text/babel">
 import Pagination from '../../Pieces/Pagination'
 import each from 'lodash/each';
+import AddTicket from './_AddTicket';
 
 export default {
     name: 'AllTickets',
     components: {
-        Pagination
+        Pagination,
+        AddTicket
     },
     data() {
         return {
@@ -247,11 +262,13 @@ export default {
                 title: 'Title',
                 last_agent_response: 'Last Agent Response',
                 last_customer_response: 'Last Customer Response',
-                response_count: 'Response Count'
+                response_count: 'Response Count',
+                created_at: 'Created At'
             },
             ticket_selections: [],
             doing_bulk: false,
-            app_ready: false
+            app_ready: false,
+            add_ticket_modal: false
         }
     },
     watch: {
