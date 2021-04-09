@@ -122,7 +122,7 @@ export default {
 
         updateCursorPos() {
             var cursorPos = jQuery('.wp_vue_editor_plain').prop('selectionStart');
-            this.$set(this, 'cursorPos', cursorPos);
+            this.cursorPos = cursorPos;
         }
     },
     mounted() {

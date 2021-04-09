@@ -4,7 +4,11 @@
 
         <div v-else class="fs_reply_wrap">
             <h3>Write a reply</h3>
-            <wp-editor :autofocus="true" :mediaButtons="false" :height="150" v-model="response_body" />
+            <div>
+                <wp-editor :autofocus="true" :mediaButtons="false" :height="150" v-model="response_body" />
+                <error :error="errors.get('content')"/>
+            </div>
+
             <div class="fs_row">
                 <div class="fs_half">
                     <attachment-form :ticket="ticket" :attachments="attachments" />
@@ -26,16 +30,20 @@
 <script type="text/babel">
 import WpEditor from '../../admin/Pieces/_wp_editor';
 import AttachmentForm from '../../admin/Modules/Tickets/_AttachmentForm';
+import Error from '../../admin/Pieces/Error';
+import Errors from '../../admin/Bits/Errors';
 
 export default {
     name: 'InlineReply',
     props: ['ticket'],
     components: {
         WpEditor,
-        AttachmentForm
+        AttachmentForm,
+        Error
     },
     data() {
         return {
+            errors: new Errors(),
             is_focused: false,
             response_body: '',
             close_ticket: 'no',
@@ -46,6 +54,7 @@ export default {
     methods: {
         reply() {
             this.creating = true;
+            this.errors.clear();
             this.$post(`tickets/${this.ticket.id}/responses`, {
                 content: this.response_body,
                 conversation_type: this.type,
@@ -60,6 +69,7 @@ export default {
                     this.$emit('created', response.response, response.ticket);
                 })
                 .catch((errors) => {
+                    this.errors.record(errors);
                     console.log(errors);
                 })
                 .always(() => {
