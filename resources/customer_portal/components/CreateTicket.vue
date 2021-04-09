@@ -12,10 +12,12 @@
             <el-form :data="ticket" label-position="top">
                 <el-form-item label="Subject">
                     <el-input placeholder="What's about this support ticket" type="text" v-model="ticket.title"></el-input>
+                    <error :error="errors.get('title')"/>
                 </el-form-item>
                 <el-form-item label="Ticket Details">
                     <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" />
                     <p>Please provide details about your problem</p>
+                    <error :error="errors.get('content')"/>
                 </el-form-item>
 
                 <div class="fs_tk_actions">
@@ -25,6 +27,7 @@
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
                             </el-select>
                         </el-form-item>
+                        <error :error="errors.get('product_id')"/>
                     </div>
                     <div class="fs_tk_left">
                         <el-form-item label="Priority">
@@ -32,6 +35,7 @@
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
                             </el-select>
                         </el-form-item>
+                        <error :error="errors.get('Priority')"/>
                     </div>
                 </div>
 
@@ -46,14 +50,19 @@
 
 <script type="text/babel">
 import WpEditor from '../../admin/Pieces/_wp_editor';
+import Error from '../../admin/Pieces/Error';
+import Errors from '../../admin/Bits/Errors';
+
 
 export default {
     name: 'CreateTicket',
     components: {
-        WpEditor
+        WpEditor,
+        Error
     },
     data() {
         return {
+            errors: new Errors(),
             creating: false,
             ticket: {
                 title: '',
@@ -67,6 +76,7 @@ export default {
     },
     methods: {
         create() {
+            this.errors.clear();
             this.creating = false;
             this.$post('tickets', {
                 ...this.ticket
@@ -75,10 +85,10 @@ export default {
                 this.$router.push({ name: 'view_ticket', params: { ticket_id: response.ticket.id } });
             })
             .catch((errors) => {
-                console.log(errors);
+                this.errors.record(errors);
             })
             .always(() => {
-                this.creating = true;
+                this.creating = false;
             });
         }
     }

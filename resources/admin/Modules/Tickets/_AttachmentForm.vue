@@ -53,7 +53,6 @@ export default {
 
         },
         handleError(err, file, fileList) {
-            console.log(file.name);
             let message = this.convertToText(JSON.parse(err.message));
             if(!message) {
                 message = 'File failed to upload';

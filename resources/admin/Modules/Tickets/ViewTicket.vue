@@ -38,12 +38,14 @@
                             </el-popover>
 
                         </li>
-                        <li>
-                            <i class="el-icon-price-tag"/>
-                        </li>
-                        <li>
-                            <i class="el-icon-position"/>
-                        </li>
+                        <template v-if="false">
+                            <li>
+                                <i class="el-icon-price-tag"/>
+                            </li>
+                            <li>
+                                <i class="el-icon-position"/>
+                            </li>
+                        </template>
                     </ul>
                     <div class="fs_product">
                         <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"

@@ -37,6 +37,10 @@
         }
     }
 
+    .el-form-item__error {
+        position: relative;
+    }
+
     span.fs_thread_count {
         background: #f1f3f5;
         border: 1px solid #d5dce1;

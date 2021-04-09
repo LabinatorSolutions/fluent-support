@@ -10,19 +10,23 @@
                     label_joiner=" - "
                     :label_selectors="['full_name','email']"
                 />
+                <error :error="errors.get('customer_id')"/>
             </el-form-item>
             <el-form-item v-if="mailboxes.length > 1" label="Select Business">
                 <el-select v-model="ticket.mailbox_id" placeholder="Select related Product/Service">
                     <el-option v-for="mailbox in mailboxes" :key="mailbox.id" :value="mailbox.id"
                                :label="mailbox.name"></el-option>
                 </el-select>
+                <error :error="errors.get('mailbox_id')"/>
             </el-form-item>
 
             <el-form-item label="Subject">
                 <el-input placeholder="What's about this support ticket" type="text" v-model="ticket.title"></el-input>
+                <error :error="errors.get('title')"/>
             </el-form-item>
             <el-form-item label="Ticket Details">
                 <wp-editor :height="150" :media-buttons="false" v-model="ticket.content"/>
+                <error :error="errors.get('content')"/>
             </el-form-item>
 
             <div class="fs_tk_actions">
@@ -32,6 +36,7 @@
                             <el-option v-for="product in products" :key="product.id" :value="product.id"
                                        :label="product.title"></el-option>
                         </el-select>
+                        <error :error="errors.get('product_id')"/>
                     </el-form-item>
                 </div>
                 <div class="fs_tk_left">
@@ -40,6 +45,7 @@
                             <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey"
                                        :value="priorityKey" :label="priority"></el-option>
                         </el-select>
+                        <error :error="errors.get('client_priority')"/>
                     </el-form-item>
                 </div>
             </div>
@@ -57,12 +63,15 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 import RemoteSelector from '../../Pieces/RemoteSelector';
+import Error from '../../../admin/Pieces/Error';
+import Errors from '../../../admin/Bits/Errors';
 
 export default {
     name: 'CreateTicketForm',
     components: {
         WpEditor,
-        RemoteSelector
+        RemoteSelector,
+        Error
     },
     data() {
         return {
@@ -70,6 +79,7 @@ export default {
             products: this.appVars.support_products,
             priorities: this.appVars.client_priorities,
             mailboxes: this.appVars.mailboxes,
+            errors: new Errors(),
             ticket: {
                 customer_id: '',
                 mailbox_id: '',
@@ -82,6 +92,7 @@ export default {
     },
     methods: {
         create() {
+            this.errors.clear();
             this.creating = true;
             this.$post('tickets', {
                 ticket: this.ticket
@@ -91,7 +102,7 @@ export default {
                     this.$router.push({name: 'view_ticket', params: {ticket_id: response.ticket.id}});
                 })
                 .catch((errors) => {
-                    this.handleError(errors);
+                    this.errors.record(errors);
                 })
                 .always(() => {
                     this.creating = false;
