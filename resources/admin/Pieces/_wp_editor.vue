@@ -43,6 +43,12 @@ export default {
             default() {
                 return true;
             }
+        },
+        autofocus: {
+            type: Boolean,
+            default() {
+                return false;
+            }
         }
     },
     emits: ['update:modelValue'],
@@ -71,17 +77,23 @@ export default {
 
             this.editor.remove(this.editor_id);
             const that = this;
+            const mceConfig = {
+                height: that.height,
+                toolbar1: 'formatselect,code,table,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,underline,strikethrough,forecolor,removeformat,codeformat,outdent,indent,undo,redo',
+                setup(editor) {
+                    editor.on('change', function (ed, l) {
+                        that.changeContentEvent();
+                    });
+                }
+            };
+
+            if (this.autofocus) {
+                mceConfig.auto_focus = this.editor_id;
+            }
+
             this.editor.initialize(this.editor_id, {
                 mediaButtons: this.mediaButtons,
-                tinymce: {
-                    height: that.height,
-                    toolbar1: 'formatselect,customInsertButton,table,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,underline,strikethrough,forecolor,removeformat,codeformat,outdent,indent,undo,redo',
-                    setup(editor) {
-                        editor.on('change', function (ed, l) {
-                            that.changeContentEvent();
-                        });
-                    }
-                },
+                tinymce: mceConfig,
                 quicktags: true
             });
 

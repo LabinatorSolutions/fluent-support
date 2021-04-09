@@ -1,0 +1,54 @@
+@media all and (max-width: 1024px) {
+    .fframe_body {
+        .fs_tickets_view {
+            display: block;
+        }
+        .inner_sidebar {
+            width: 100%;
+            ul {
+                li {
+                    display: inline-block;
+                    margin-bottom: 10px;
+                    padding-right: 15px;
+                }
+            }
+        }
+        .inner_body {
+            width: 100%;
+        }
+    }
+}
+
+@media all and (max-width: 768px) {
+    .fframe_body {
+        .fs_view_ticket {
+            display: block;
+        }
+        .fs_tickets_view {
+            .fs_ticket_sidebar {
+                margin-top: 80px;
+                width: 100%;
+            }
+            .fs_ticket_body {
+                width: 100%;
+                .fs_th_header {
+                    padding: 16px 10px 24px;
+                    .fs_tk_subject {
+                        width: 100%;
+                        padding-right: 0;
+                    }
+                    .fs_tk_badges {
+                        position: relative;
+                    }
+                }
+                .fs_thread_wrap {
+                    margin: 0;
+                    padding: 25px 10px;
+                }
+                .fs_thread_body {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

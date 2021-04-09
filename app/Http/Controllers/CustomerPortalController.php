@@ -210,11 +210,6 @@ class CustomerPortalController extends Controller
             $createdResponse->load('attachments');
         }
 
-        if ($ticket->status == 'new') {
-            $ticket->status = 'active';
-            $ticket->first_response_time = current_time('timestamp') - strtotime($ticket->created_at);
-        }
-
         $ticket->last_customer_response = current_time('mysql');
         $ticket->response_count += 1;
 
@@ -394,20 +389,12 @@ class CustomerPortalController extends Controller
             }
         }
 
-        $mailbox = MailBox::where('is_default', 'yes')->first();
+        $mailbox = Helper::getDefaultMailBox();
 
         if($mailbox) {
             return $mailbox->id;
         }
-
-        $mailbox = MailBox::orderBy('id', 'ASC')->first();
-
-        if($mailbox) {
-            return $mailbox->id;
-        }
-
         return null;
-
     }
 
 }

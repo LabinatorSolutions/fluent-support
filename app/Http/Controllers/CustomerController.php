@@ -11,8 +11,10 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $customers = Customer::orderBy('id', 'DESC')
+            ->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'))
+            ->searchBy($request->get('search'))
             ->paginate();
-        
+
         foreach ($customers as $customer) {
             $customer->total_tickets = $customer->getTicketCounts();
             $customer->total_responses = $customer->getResponseCounts();

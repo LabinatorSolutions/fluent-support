@@ -4,7 +4,7 @@
 
         <div v-else class="fs_reply_wrap">
             <h3>Write a reply</h3>
-            <wp-editor :mediaButtons="false" :height="150" v-model="response_body" />
+            <wp-editor :autofocus="true" :mediaButtons="false" :height="150" v-model="response_body" />
             <div class="fs_row">
                 <div class="fs_half">
                     <attachment-form :ticket="ticket" :attachments="attachments" />

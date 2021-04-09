@@ -6,6 +6,12 @@
                     <h3>All Customers</h3>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
+                    <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="mini"
+                              placeholder="Search Customers" v-model="search">
+                        <template #append>
+                            <el-button @click="fetchCustomers()" icon="el-icon-search"></el-button>
+                        </template>
+                    </el-input>
                 </div>
             </div>
             <div class="fs_box_body fs_padded_20">
@@ -60,6 +66,7 @@ export default {
                 current_page: 1,
                 total: 0
             },
+            search: '',
             loading: false
         }
     },
@@ -68,7 +75,8 @@ export default {
             this.loading = true;
             this.$get('customers', {
                 per_page: this.pagination.per_page,
-                page: this.pagination.current_page
+                page: this.pagination.current_page,
+                search: this.search
             })
                 .then((response) => {
                     this.customers = response.customers.data;

@@ -220,4 +220,15 @@ class Helper
         }
         return $formattedPages;
     }
+
+    public static function getDefaultMailBox()
+    {
+        $mailbox = MailBox::where('is_default', 'yes')->first();
+
+        if($mailbox) {
+            return $mailbox;
+        }
+
+        return MailBox::orderBy('id', 'ASC')->first();
+    }
 }

@@ -102,15 +102,15 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i
-                                        class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
+                                    <span :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge"><i
+                                        class="el-icon-s-flag"></i> {{ ticket.client_priority }}</span>
                                 </template>
 
-                                <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority"
+                                <el-select @change="updateTicketAttr('client_priority')" v-model="ticket.client_priority"
                                            size="small">
                                     <el-option
 
-                                        v-for="(priorityLabel, priority) in admin_priorities"
+                                        v-for="(priorityLabel, priority) in client_priorities"
                                         :key="priority" :value="priority"
                                         :label="priorityLabel"></el-option>
                                 </el-select>
@@ -179,7 +179,7 @@
                                             </el-dropdown>
                                         </div>
                                     </div>
-                                    <div v-html="conversation.content" class="fs_thread_body"></div>
+                                    <div v-html="santizeContent(conversation.content)" class="fs_thread_body"></div>
 
                                     <div class="fst_file_lists" v-if="conversation.attachments?.length">
                                         <hr/>
@@ -214,7 +214,7 @@
                                             <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
                                         </div>
                                     </div>
-                                    <div v-html="ticket.content" class="fs_thread_body"></div>
+                                    <div v-html="santizeContent(ticket.content)" class="fs_thread_body"></div>
                                 </section>
                             </section>
                         </div>
@@ -264,6 +264,7 @@ export default {
             products: this.appVars.support_products,
             agents: this.appVars.support_agents,
             admin_priorities: this.appVars.admin_priorities,
+            client_priorities: this.appVars.client_priorities,
             updating: false,
             active_agents: [],
             edit_response_modal: false,
@@ -425,6 +426,12 @@ export default {
             }
 
             console.log(data);
+        },
+        santizeContent(content) {
+            if (!content) {
+               return content;
+            }
+            return content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
         }
     },
     mounted() {

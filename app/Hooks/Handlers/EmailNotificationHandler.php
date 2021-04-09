@@ -6,6 +6,7 @@ use FluentSupport\App\App;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Emogrifier;
 use FluentSupport\App\Services\Mailer;
+use FluentSupport\Framework\Support\Arr;
 
 class EmailNotificationHandler
 {
@@ -45,6 +46,11 @@ class EmailNotificationHandler
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_admin');
         if ($emailSettings && $emailSettings['status'] == 'yes' && is_email($mailbox->settings['admin_email_address'])) {
 
+            $mailTo = Arr::get($mailbox->settings, 'admin_email_address');
+            if(!$mailTo || !is_email($mailTo)) {
+                return;
+            }
+
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
                 'business' => $mailbox,
@@ -62,7 +68,7 @@ class EmailNotificationHandler
             if ($ticket->message_id) {
                 $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
-            Mailer::send($mailbox->settings['admin_email_address'], $subject, $emailBody, $headers);
+            Mailer::send($mailTo, $subject, $emailBody, $headers);
         }
 
     }
@@ -188,7 +194,7 @@ class EmailNotificationHandler
                 $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
-            Mailer::send($agent->email, $subject, $emailBody, $headers);
+            Mailer::send($emailTo, $subject, $emailBody, $headers);
         }
     }
 

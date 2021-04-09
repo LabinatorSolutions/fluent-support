@@ -113,7 +113,7 @@ class Menu
         $assets = $app['url.assets'];
 
         wp_enqueue_style(
-            'fluent_support_admin_app', $assets . 'admin/css/alpha-admin.css'
+            'fluent_support_admin_app', $assets . 'admin/css/alpha-admin.css', [], FLUENT_SUPPORT_VERSION
         );
 
         $agents = Agent::select(['id', 'first_name', 'last_name'])
@@ -147,7 +147,15 @@ class Menu
             'fluent_support_admin_app_start',
             $assets . 'admin/js/start.js',
             array('jquery'),
-            '1.0',
+            FLUENT_SUPPORT_VERSION,
+            true
+        );
+
+        wp_enqueue_script(
+            'fluent_support_global_admin',
+            $assets . 'admin/js/global_admin.js',
+            array('jquery'),
+            FLUENT_SUPPORT_VERSION,
             true
         );
 
@@ -174,13 +182,6 @@ class Menu
 
         do_action('fluent_support_admin_app_loaded', $app);
 
-        wp_enqueue_script(
-            'fluent_support_firebase',
-            $assets . 'admin/js/firebase_notify.js',
-            array('jquery'),
-            '1.0',
-            true
-        );
 
     }
 
