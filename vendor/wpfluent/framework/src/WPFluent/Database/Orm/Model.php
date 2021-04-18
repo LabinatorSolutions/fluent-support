@@ -2624,6 +2624,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
             $values = array_diff_key($values, array_flip($this->getHidden()));
         }
 
+
         return $values;
     }
 
@@ -2670,7 +2671,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
         // instance on retrieval, which makes it quite convenient to work with
         // date fields without having to create a mutator for each property.
 //        if (in_array($key, $this->getDates()) && ! is_null($value)) {
-//            //return $this->asDateTime($value);
+//            return $this->asDateTime($value);
 //        }
 
         return $value;
