@@ -1801,11 +1801,11 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get a fresh timestamp for the model.
      *
-     * @return \DateTime
+     * @return string DateTime as Y-m-d H:i:s format as WordPress Timestamp
      */
     public function freshTimestamp()
 	{
-		return new DateTime('now', $this->getTimezone());
+		return current_time('mysql');
 	}
 
     /**
@@ -1815,7 +1815,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      */
     public function freshTimestampString()
     {
-        return $this->fromDateTime($this->freshTimestamp());
+        return $this->freshTimestamp();
     }
 
     /**
@@ -2901,9 +2901,9 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
         // If an attribute is listed as a "date", we'll convert it from a DateTime
         // instance into a form proper for storage on the database tables using
         // the connection grammar's date format. We will auto set the values.
-        elseif ($value && (in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
-            $value = $this->fromDateTime($value);
-        }
+//        elseif ($value && (in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
+//           $value = $this->fromDateTime($value);
+//        }
 
         if ($this->isJsonCastable($key) && ! is_null($value)) {
             $value = $this->asJson($value);

@@ -48,7 +48,8 @@ class ByMailHandler
 
             // find mailbox
             $mailBox = MailBox::where('mapped_email', $data['mailbox_email'])->first();
-            if($mailBox) {
+
+            if(!$mailBox) {
                 $mailBox = MailBox::where('is_default', 'yes')->orderBy('id', 'ASC')->first();
             }
 
@@ -87,17 +88,19 @@ class ByMailHandler
         $responseOrTicketData['source'] = 'email';
 
         $createdResponse = Response::create($responseOrTicketData);
+
         if ($existingTicket->status != 'active') {
             $existingTicket->status = 'active';
-            $existingTicket->last_customer_response = current_time('mysql');
-            $existingTicket->response_count += 1;
-
-            if (!empty($data['message_id'])) {
-                $existingTicket->message_id = $data['message_id'];
-            }
-
-            $existingTicket->save();
         }
+
+        $existingTicket->last_customer_response = current_time('mysql');
+        $existingTicket->response_count += 1;
+
+        if (!empty($data['message_id']) && !$existingTicket->message_id) {
+            $existingTicket->message_id = $data['message_id'];
+        }
+
+        $existingTicket->save();
 
         self::handleAttachments($data, $existingTicket, $customer, $createdResponse);
 
