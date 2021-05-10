@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",(function(e){var n=window.location.href,t=document.querySelectorAll(".fst_login_wrapper input[name=redirect_to]");t&&t.length&&(t[0].value=n)}));

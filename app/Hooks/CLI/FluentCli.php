@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\CLI;
 
 use FluentSupport\App\Models\Person;
+use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\StatModule;
 
@@ -18,6 +19,53 @@ class FluentCli
             $overallStats,
             ['title', 'count']
         );
+    }
+
+    public function fix_timestamps($args, $assoc_args)
+    {
+        $targetTickets = Ticket::whereIn('status', ['active', 'new'])
+            ->get();
+        \WP_CLI::confirm(count($targetTickets) . " tickets will be affected. Continue?");
+
+        $counter = 0;
+
+        foreach ($targetTickets as $ticket) {
+            // get last customer response
+            $lastCustomerResponse = Response::where('ticket_id', $ticket->id)
+                ->where('conversation_type', 'response')
+                ->where('person_id', $ticket->customer_id)
+                ->orderBy('id', 'DESC')
+                ->first();
+            $isDirty = false;
+            if($lastCustomerResponse && $ticket->last_customer_response != $lastCustomerResponse->created_at) {
+                $ticket->last_customer_response = $lastCustomerResponse->created_at;
+                $isDirty = true;
+            }
+
+            if($ticket->status != 'new') {
+                $lastAgentResponse = Response::where('ticket_id', $ticket->id)
+                    ->where('conversation_type', 'response')
+                    ->where('person_id', '!=', $ticket->customer_id)
+                    ->orderBy('id', 'DESC')
+                    ->first();
+                if($lastAgentResponse && $ticket->last_agent_response != $lastAgentResponse->created_at) {
+                    $ticket->last_agent_response = $lastAgentResponse->created_at;
+                    $isDirty = true;
+                }
+            }
+
+            if($isDirty) {
+                $ticket->save();
+                \WP_CLI::line( 'Ticket Done at '. $ticket->id);
+                $counter++;
+            } else {
+                \WP_CLI::line( 'Ticket Skipped at '. $ticket->id);
+            }
+        }
+
+        \WP_CLI::line( 'All Done '. $counter);
+
+
     }
 
     public function fix_resolve_null()

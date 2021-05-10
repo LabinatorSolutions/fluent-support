@@ -2,9 +2,6 @@
 node_modules
 svn/*
 dist/
-assets/*
 !assets/index.php
 package-lock.json
-vendor/composer/*
-vendor/autoload.php
 .DS_Store

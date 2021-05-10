@@ -231,7 +231,6 @@ class CustomerPortalController extends Controller
             do_action('fluent_support/ticket_closed_by_' . $customer->person_type, $ticket, $customer);
         }
 
-
         return [
             'message'  => __('Reply has been added', 'fluent-support'),
             'response' => $response,
