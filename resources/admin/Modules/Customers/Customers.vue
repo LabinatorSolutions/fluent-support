@@ -19,7 +19,8 @@
                     <el-table-column prop="id" label="ID" width="100"></el-table-column>
                     <el-table-column label="Name" width="160">
                         <template #default="scope">
-                            <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
+                            <a v-if="scope.row.user_profile" :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
+                            <span v-else>{{scope.row.full_name}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column label="Email">
@@ -32,12 +33,13 @@
                             {{$timeDiff(scope.row.last_response_at)}}
                         </template>
                     </el-table-column>
-                    <el-table-column label="Stats" width="160">
+                    <el-table-column label="Stats" width="180">
                         <template #default="scope">
                             <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
                                 <span class="fs_badge"><i class="el-icon-folder"></i> {{scope.row.total_tickets}}</span>
                             </router-link>
                             <span class="fs_badge"><i class="el-icon-chat-line-round"></i> {{scope.row.total_responses}}</span>
+                            <span @click="showEditCustomerModal(scope.row)" class="fs_badge"><i class="el-icon-edit"></i></span>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -47,16 +49,26 @@
                 </div>
             </div>
         </div>
+        <el-dialog
+            :append-to-body="true"
+            title="Update Customer"
+            v-model="showEditModal"
+            v-if="editing_customer"
+            width="60%">
+            <customer-form @updated="closeModal()" :customer="editing_customer" />
+        </el-dialog>
     </div>
 </template>
 
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
+import CustomerForm from './_CustomerForm';
 
 export default {
     name: 'Customers',
     components: {
-        Pagination
+        Pagination,
+        CustomerForm
     },
     data() {
         return {
@@ -67,7 +79,9 @@ export default {
                 total: 0
             },
             search: '',
-            loading: false
+            loading: false,
+            editing_customer: null,
+            showEditModal: false
         }
     },
     methods: {
@@ -88,6 +102,15 @@ export default {
                 .always(() => {
                     this.loading = false;
                 });
+        },
+        showEditCustomerModal(customer) {
+            this.editing_customer = customer;
+            this.showEditModal = true;
+        },
+        closeModal() {
+            this.editing_customer = false;
+            this.showEditModal = false;
+            this.fetchCustomers();
         }
     },
     mounted() {
