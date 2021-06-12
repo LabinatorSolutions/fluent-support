@@ -10,6 +10,8 @@ use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
+use FluentSupport\App\Services\Tickets\ResponseService;
+use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -191,50 +193,13 @@ class CustomerPortalController extends Controller
             ]);
         }
 
-        $responseData = [
-            'person_id'         => $customer->id,
-            'ticket_id'         => $ticketId,
-            'conversation_type' => 'response',
-            'content'           => wp_unslash(wp_kses_post($data['content'])),
-            'source'            => (isset($data['source'])) ? $data['source'] : 'web'
-        ];
-
-        $createdResponse = Response::create($responseData);
-
-        if ($attachments = $request->get('attachments')) {
-            Attachment::where('ticket_id', $ticketId)
-                ->whereIn('file_hash', $attachments)
-                ->update([
-                    'conversation_id' => $createdResponse->id
-                ]);
-            $createdResponse->load('attachments');
-        }
-
-        $ticket->last_customer_response = current_time('mysql');
-        $ticket->response_count += 1;
-
-        $closed = false;
-        if ($isClose = $request->get('close_ticket') == 'yes' && $ticket->status != 'closed') {
-            $ticket->status = 'closed';
-            $ticket->resolved_at = current_time('mysql');
-            $ticket->closed_by = $customer->id;
-            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
-            $closed = true;
-        }
-        $ticket->save();
-
-        $response = Response::with('person', 'attachments')->find($createdResponse->id);
-        do_action('fluent_support/response_added_by_customer', $response, $ticket, $customer);
-
-        if ($closed) {
-            do_action('fluent_support/ticket_closed', $ticket, $customer);
-            do_action('fluent_support/ticket_closed_by_' . $customer->person_type, $ticket, $customer);
-        }
+        $data['conversation_type'] = 'response';
+        $responseData = (new ResponseService())->createResponse($data, $customer, $ticket);
 
         return [
             'message'  => __('Reply has been added', 'fluent-support'),
-            'response' => $response,
-            'ticket'   => $ticket
+            'response' => $responseData['response'],
+            'ticket'   => $responseData['ticket']
         ];
     }
 
@@ -256,19 +221,9 @@ class CustomerPortalController extends Controller
             ]);
         }
 
-        if ($ticket->status != 'closed') {
-            $ticket->status = 'closed';
-            $ticket->resolved_at = current_time('mysql');
-            $ticket->closed_by = $customer->id;
-            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
-            $ticket->save();
-            do_action('fluent_support/ticket_closed', $ticket, $customer);
-            do_action('fluent_support/ticket_closed_by_' . $customer->person_type, $ticket, $customer);
-        }
-
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => $ticket
+            'ticket'  => (new TicketService())->close($ticket, $customer)
         ];
     }
 
@@ -290,16 +245,10 @@ class CustomerPortalController extends Controller
             ]);
         }
 
-        if ($ticket->status == 'closed') {
-            $ticket->status = 'active';
-            $ticket->save();
-            do_action('fluent_support/ticket_reopen', $ticket, $customer);
-            do_action('fluent_support/ticket_reopen_by_' . $customer->person_type, $ticket, $customer);
-        }
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket'  => $ticket
+            'ticket'  => (new TicketService())->reopen($ticket, $customer)
         ];
 
 
@@ -395,5 +344,4 @@ class CustomerPortalController extends Controller
         }
         return null;
     }
-
 }

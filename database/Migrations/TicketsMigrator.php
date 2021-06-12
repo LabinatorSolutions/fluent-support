@@ -36,6 +36,7 @@ class TicketsMigrator
                 `secret_content` LONGTEXT NULL,
                 `last_agent_response` TIMESTAMP NULL,
                 `last_customer_response` TIMESTAMP NULL,
+                `waiting_since` TIMESTAMP NULL,
                 `response_count` INT(11) DEFAULT 0,
                 `first_response_time` INT(11) NULL, /* Seconds took for first contact */
                 `total_close_time` INT(11) NULL, /* Seconds took for closing this ticket */
