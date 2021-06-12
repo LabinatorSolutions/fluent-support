@@ -5,6 +5,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Customer;
 use FluentSupport\Framework\Request\Request;
+use FluentSupport\Framework\Support\Arr;
 
 class CustomerController extends Controller
 {
@@ -65,37 +66,40 @@ class CustomerController extends Controller
         ];
     }
 
-    public function updateAgent(Request $request, $agentId)
+    public function update(Request $request, $customerId)
     {
-        $agent = Agent::findOrFail($agentId);
+        $customer = Customer::findOrFail($customerId);
         $data = $request->all();
         $this->validate($data, [
             'email' => 'required|email',
-            'first_name' => 'required',
-            'last_name' => 'required'
+            'first_name' => 'required'
         ]);
 
-        $user = get_user_by('ID', $agent->user_id);
-
-        if(!$user || is_wp_error($user)) {
+        if($otherCustomer = Customer::where('id', '!=', $customerId)->where('email', $data['email'])->first()) {
             return $this->sendError([
-                'message' => __('Sorry, Connected user could not be found with the provided email address', 'fluent-support')
-            ]);
+                'message' => __('Another Customer has same email address', 'fluent-support'),
+                'errors' => [
+                    'email' => [
+                        'unique' => 'Email address has been assigned to other customer'
+                    ]
+                ]
+            ], 423);
         }
 
-        PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
+        $updateData = Arr::only($data, ['first_name', 'last_name', 'email']);
 
-        $updateData = Arr::only($data, ['first_name', 'last_name']);
-        $updateData['email'] = $user->user_email;
+        $user = get_user_by('email', $data['email']);
 
-        Agent::where('id', $agent->id)
+        if($user) {
+            $updateData['user_id'] = $user->ID;
+        }
+
+        Customer::where('id', $customer->id)
             ->update($updateData);
 
-        PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
-
         return [
-            'message' => __('Support Staff has been updated', 'fluent-support'),
-            'agent' => Agent::findOrFail($agentId)
+            'message' => __('Customer has been updated', 'fluent-support'),
+            'customer' => Customer::findOrFail($customerId)
         ];
     }
 
