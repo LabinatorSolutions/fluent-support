@@ -2,7 +2,6 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-
 use FluentSupport\App\Models\Customer;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
@@ -29,40 +28,34 @@ class CustomerController extends Controller
         ];
     }
 
-    public function addAgent(Request $request)
+    public function create(Request $request)
     {
         $data = $request->all();
         $this->validate($data, [
-            'email' => 'required|email',
-            'first_name' => 'required',
-            'last_name' => 'required'
+            'email' => 'required|email|unique:fs_persons'
         ]);
 
         $email = $data['email'];
 
+        $data = Arr::only($data, ['first_name', 'last_name', 'email']);
+
         $user = get_user_by('email', $email);
 
-        if(!$user || is_wp_error($user)) {
-            return $this->sendError([
-                'message' => __('Sorry, Connected user could not be found with the provided email address', 'fluent-support')
-            ]);
+        if($user) {
+            $data['user_id'] = $user->ID;
+            if(empty($data['first_name'])) {
+                $data['first_name'] = $user->first_name;
+            }
+            if(empty($data['last_name'])) {
+                $data['last_name'] = $user->last_name;
+            }
         }
 
-        // check if another agent has same email address
-        $exist = Person::where('email', $email)->first();
-        if($exist) {
-            return $this->sendError([
-                'message' => __('Sorry, Another agent/person exist with the same email address. Please use a different email address', 'fluent-support')
-            ]);
-        }
-
-        $data['user_id'] = $user->ID;
-        $agent = Agent::create($data);
-        PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
+        $customer = Customer::create($data);
 
         return [
-            'message' => __('Support Staff has been added', 'fluent-support'),
-            'agent' => $agent
+            'message' => __('Customer has been added', 'fluent-support'),
+            'customer' => $customer
         ];
     }
 
@@ -103,43 +96,8 @@ class CustomerController extends Controller
         ];
     }
 
-    public function deleteAgent(Request $request, $agentId)
+    public function delete(Request $request, $customerId)
     {
-        $fallBackAgentId = $request->get('fallback_agent_id');
-
-        if($fallBackAgentId == $agentId) {
-            return $this->sendError([
-                'message' => 'Old Agent and New agent is same person'
-            ]);
-        }
-
-        $agent = Agent::findOrFail($agentId);
-
-        PermissionManager::attachPermissions($agent->user_id, []);
-
-        $newAgent = Agent::findOrFail($fallBackAgentId);
-
-        Attachment::where('person_id', $agentId)->update([
-            'person_id' => $newAgent->id
-        ]);
-
-        Response::where('person_id', $agentId)->update([
-            'person_id' => $newAgent->id
-        ]);
-
-        Product::where('created_by', $agentId)->update([
-            'created_by' => $newAgent->id
-        ]);
-
-        Ticket::where('agent_id', $agentId)->update([
-            'agent_id' => $newAgent->id
-        ]);
-
-        Agent::where('id', $agentId)->delete();
-
-        return [
-            'message' => __('Selected support staff has been deleted', 'fluent-support')
-        ];
 
     }
 }

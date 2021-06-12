@@ -4,6 +4,10 @@
             <div class="fs_box_header">
                 <div class="fs_box_head">
                     <h3>All Customers</h3>
+                    <el-button
+                        @click="showEditCustomerModal({})"
+                        size="mini"
+                        icon="el-icon-plus">Add Customer</el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="mini"
@@ -51,7 +55,7 @@
         </div>
         <el-dialog
             :append-to-body="true"
-            title="Update Customer"
+            :title="(editing_customer.id) ? 'Update customer' : 'Add new customer'"
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%">
@@ -80,7 +84,7 @@ export default {
             },
             search: '',
             loading: false,
-            editing_customer: null,
+            editing_customer: {},
             showEditModal: false
         }
     },
@@ -108,7 +112,7 @@ export default {
             this.showEditModal = true;
         },
         closeModal() {
-            this.editing_customer = false;
+            this.editing_customer = {};
             this.showEditModal = false;
             this.fetchCustomers();
         }

@@ -98,6 +98,7 @@ $router->prefix('reports')->withPolicy('AdminSensitivePolicy')->group(function (
 
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'CustomerController@index');
+    $router->post('/', 'CustomerController@create');
     $router->put('/{customer_id}', 'CustomerController@update');
     $router->delete('/{customer_id}', 'CustomerController@delete');
 });

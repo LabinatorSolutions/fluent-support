@@ -59,7 +59,22 @@ export default {
             });
         },
         createCustomer() {
-
+            this.loading = true;
+            this.$post('customers',  {
+                first_name: this.customer.first_name,
+                last_name: this.customer.last_name,
+                email: this.customer.email,
+            })
+                .then(response => {
+                    this.$notify.success(response.message);
+                    this.$emit('updated', response.customer);
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
         }
     }
 }
