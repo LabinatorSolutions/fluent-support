@@ -11,6 +11,8 @@ use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
+use FluentSupport\App\Services\Tickets\ResponseService;
+use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -195,84 +197,13 @@ class TicketController extends Controller
             ]);
         }
 
-        $convoType = Arr::get($data, 'conversation_type', 'response');
-
-        $response = [
-            'person_id'         => $agent->id,
-            'ticket_id'         => $ticketId,
-            'conversation_type' => $convoType,
-            'content'           => wp_unslash(wp_kses_post($data['content'])),
-            'source'            => 'web'
-        ];
-
-        $response = apply_filters('fluent_support/new_agent_' . $convoType, $response, $ticket, $agent);
-
-        $createdResponse = Response::create($response);
-
-        if ($attachments = $request->get('attachments')) {
-            Attachment::where('ticket_id', $ticketId)
-                ->whereIn('file_hash', $attachments)
-                ->update([
-                    'conversation_id' => $createdResponse->id
-                ]);
-            $createdResponse->load('attachments');
-        }
-
-        if ($ticket->status == 'new' && $convoType == 'response') {
-            $ticket->status = 'active';
-            if($ticket->created_at) {
-                $ticket->first_response_time = strtotime(current_time('mysql')) - strtotime($ticket->created_at);
-            } else {
-                $ticket->first_response_time = 300;
-            }
-        }
-
-        $agentAdded = false;
-        $updateData = [];
-        if (!$ticket->agent_id && $convoType == 'response') {
-            $ticket->agent_id = $agent->id;
-            $agentAdded = true;
-            $ticket->load('agent');
-            $updateData = [
-                'agent_id' => $agent->id,
-                'agent'    => $ticket->agent
-            ];
-        }
-
-        $ticket->last_agent_response = current_time('mysql');
-        $ticket->response_count += 1;
-
-
-        $closed = false;
-        if ($isClose = $request->get('close_ticket') == 'yes' && $ticket->status != 'closed') {
-            $ticket->status = 'closed';
-            $ticket->resolved_at = current_time('mysql');
-            $ticket->closed_by = $agent->id;
-            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
-            $closed = true;
-        }
-
-        $ticket->save();
-
-        $createdResponse->load(['person']);
-
-        do_action('fluent_support/' . $convoType . '_added_by_agent', $createdResponse, $ticket, $agent);
-
-        if ($agentAdded) {
-            do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket);
-        }
-
-
-        if ($closed) {
-            do_action('fluent_support/ticket_closed', $ticket, $agent);
-            do_action('fluent_support/ticket_closed_by_' . $agent->person_type, $ticket, $agent);
-        }
+        $responseData = (new ResponseService())->createResponse($data, $agent, $ticket);
 
         return [
             'message'     => __('Response has been added'),
-            'response'    => $createdResponse,
-            'ticket'      => $ticket,
-            'update_data' => $updateData
+            'response'    => $responseData['response'],
+            'ticket'      => $responseData['ticket'],
+            'update_data' => $responseData['update_data']
         ];
     }
 
@@ -348,20 +279,9 @@ class TicketController extends Controller
             ]);
         }
 
-        if ($ticket->status != 'closed') {
-            $ticket->status = 'closed';
-            $ticket->resolved_at = current_time('mysql');
-            $ticket->closed_by = $agent->id;
-
-            $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
-            $ticket->save();
-            do_action('fluent_support/ticket_closed', $ticket, $agent);
-            do_action('fluent_support/ticket_closed_by_' . $agent->person_type, $ticket, $agent);
-        }
-
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => $ticket
+            'ticket'  => (new TicketService())->close($ticket, $agent)
         ];
     }
 
@@ -377,16 +297,9 @@ class TicketController extends Controller
             ]);
         }
 
-        if ($ticket->status == 'closed') {
-            $ticket->status = 'active';
-            $ticket->save();
-            do_action('fluent_support/ticket_reopen', $ticket, $agent);
-            do_action('fluent_support/ticket_reopen_by_' . $agent->person_type, $ticket, $agent);
-        }
-
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket'  => $ticket
+            'ticket'  => (new TicketService())->reopen($ticket, $agent)
         ];
     }
 

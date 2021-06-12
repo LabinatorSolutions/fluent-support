@@ -30,6 +30,7 @@ class Ticket extends Model
         'content',
         'last_agent_response',
         'last_customer_response',
+        'waiting_since',
         'response_count',
         'first_response_time',
         'total_close_time',
@@ -41,10 +42,11 @@ class Ticket extends Model
     {
         static::creating(function ($model) {
             $model->slug = static::slugify($model->title);
-            $model->hash = md5(time().wp_generate_uuid4());
+            $model->hash = md5(time() . wp_generate_uuid4());
             $model->last_customer_response = current_time('mysql');
             $model->created_at = current_time('mysql');
             $model->updated_at = current_time('mysql');
+            $model->waiting_since = current_time('mysql');
         });
     }
 
@@ -69,15 +71,15 @@ class Ticket extends Model
     {
         if ($search) {
 
-            if(strpos($search, ':')) {
+            if (strpos($search, ':')) {
                 $array = explode(':', $search);
                 $column = $array[0];
                 $value = $array[1];
-                $columns  = $this->fillable;
+                $columns = $this->fillable;
                 $columns[] = 'id';
 
-                if(in_array($column, $columns) && $value) {
-                    if(is_numeric($value)) {
+                if (in_array($column, $columns) && $value) {
+                    if (is_numeric($value)) {
                         $query->where($column, $value);
                     } else {
                         $query->where($column, 'LIKE', "%$value%");
@@ -118,23 +120,23 @@ class Ticket extends Model
     {
         $supportedColumns = ['product_id', 'agent_id', 'client_priority', 'priority', 'mailbox_id'];
         foreach ($filters as $filterKey => $filterValue) {
-            if(!$filterValue && ($filterValue !== '0' || $filterValue !== 0) ) {
+            if (!$filterValue && ($filterValue !== '0' || $filterValue !== 0)) {
                 continue;
             }
-            if($filterKey == 'status_type') {
+            if ($filterKey == 'status_type') {
                 $statusArray = Helper::getTkStatusesByGroupName($filterValue);
-                if($statusArray) {
+                if ($statusArray) {
                     $query->whereIn('status', $statusArray);
                 }
-            } else if(in_array($filterKey, $supportedColumns)) {
+            } else if (in_array($filterKey, $supportedColumns)) {
                 $query->where($filterKey, $filterValue);
-            } else if($filterKey == 'waiting_for_reply') {
-                if($filterValue != 'yes') {
+            } else if ($filterKey == 'waiting_for_reply') {
+                if ($filterValue != 'yes') {
                     continue;
                 }
                 global $wpdb;
                 $query->where(function ($q) use ($wpdb) {
-                    $q->whereRaw($wpdb->prefix.'fs_tickets.last_agent_response < '.$wpdb->prefix.'fs_tickets.last_customer_response')
+                    $q->whereRaw($wpdb->prefix . 'fs_tickets.last_agent_response < ' . $wpdb->prefix . 'fs_tickets.last_customer_response')
                         ->orWhereNull('last_agent_response')
                         ->orWhere('status', 'new');
                 });
@@ -284,9 +286,9 @@ class Ticket extends Model
 
     public static function slugify($title)
     {
-        $slug = sanitize_title($title, 'support-ticket-'.time(), 'display');
-        if(Ticket::where('slug', $slug)->first()) {
-            $slug .= '-'.time();
+        $slug = sanitize_title($title, 'support-ticket-' . time(), 'display');
+        if (Ticket::where('slug', $slug)->first()) {
+            $slug .= '-' . time();
         }
         return $slug;
     }
