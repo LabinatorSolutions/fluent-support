@@ -53,7 +53,11 @@ class ResponseService
                     'agent_id' => $person->id
                 ];
             }
-            $ticket->last_agent_response = current_time('mysql');
+
+            if($convoType == 'response') {
+                $ticket->last_agent_response = current_time('mysql');
+                $ticket->waiting_since = current_time('mysql');
+            }
         } else {
             $ticket->last_customer_response = current_time('mysql');
         }
