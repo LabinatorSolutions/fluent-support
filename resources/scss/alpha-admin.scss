@@ -25,7 +25,7 @@
 .fframe_body {
     margin-right: 20px;
     .inner_sidebar {
-        padding-left: 20px;
+        padding: 0 15px 0 0;
         ul {
             list-style: none;
             margin: 0;
@@ -36,8 +36,31 @@
                     text-decoration: none;
                     color: #1d0e5a;
                     font-size: 12px;
+                    display: block;
+                    padding: .6875rem .5rem .6875rem 1rem;
+                    &.router-link-exact-active {
+                        border: 1px solid #e3e6ef;
+                        box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
+                        background: white;
+                    }
+                    &.router_not_exactly_matched {
+                        border: 0;
+                        box-shadow: none;
+                        background: transparent;
+                    }
                 }
             }
+        }
+    }
+}
+
+.fframe_body {
+    .fs_settings_view {
+        .inner_sidebar {
+            width: 250px;
+        }
+        .inner_body {
+            width: calc(100% - 250px);
         }
     }
 }

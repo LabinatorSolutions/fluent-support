@@ -3,10 +3,10 @@
         <div class="inner_sidebar">
             <ul>
                 <li>
-                    <router-link :to="{ name: 'tickets' }">All Tickets</router-link>
+                    <router-link :class="{router_not_exactly_matched: isMine}" :to="{ name: 'tickets' }">All Tickets</router-link>
                 </li>
                 <li>
-                    <router-link :to="{ name: 'tickets', query: { agent_id: appVars.me.id } }">My Tickets</router-link>
+                    <router-link :class="{router_not_exactly_matched: !isMine}" :to="{ name: 'tickets', query: { agent_id: appVars.me.id } }">My Tickets</router-link>
                 </li>
             </ul>
         </div>
@@ -22,6 +22,11 @@ export default {
     data() {
         return {
 
+        }
+    },
+    computed: {
+        isMine() {
+            return this.appVars.me.id == this.$route.query.agent_id;
         }
     }
 }
