@@ -223,7 +223,7 @@ class Ticket extends Model
      */
     public function responses()
     {
-        $class = __NAMESPACE__ . '\Response';
+        $class = __NAMESPACE__ . '\Conversation';
 
         return $this->hasMany(
             $class, 'ticket_id', 'id'
