@@ -46,6 +46,14 @@ class TicketsMigrator
                 `updated_at` TIMESTAMP NULL
             ) $charsetCollate;";
             dbDelta($sql);
+        } else {
+            // @todo: We will remove this on final release
+            // This is only for beta users
+            $existing_columns = $wpdb->get_col("DESC {$table}", 0);
+            if(!in_array('waiting_since', $existing_columns)) {
+                $query = 'ALTER TABLE '.$table.' ADD `waiting_since` timestamp NULL AFTER `last_customer_response`';
+                $wpdb->query($query);
+            }
         }
     }
 }
