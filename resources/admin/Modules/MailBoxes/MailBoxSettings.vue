@@ -1,7 +1,7 @@
 <template>
     <div class="fs_mailbox_settings">
         <el-form :data="mailbox" label-position="top">
-            <el-form-item label="Business Name">
+            <el-form-item label="Inbox Name">
                 <el-input type="text" v-model="mailbox.name"></el-input>
             </el-form-item>
             <el-form-item label="Business Email">
@@ -35,7 +35,8 @@
             </el-form-item>
 
             <el-form-item>
-                <el-button v-loading="saving" :disabled="saving" @click="saveSettings()" type="primary">Save Settings
+                <el-button v-loading="saving" :disabled="saving" @click="saveSettings()" type="primary">
+                    Save Settings
                 </el-button>
             </el-form-item>
         </el-form>

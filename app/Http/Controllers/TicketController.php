@@ -324,12 +324,9 @@ class TicketController extends Controller
         $tickets = $query->get();
 
         if ($action == 'close_tickets') {
+
             foreach ($tickets as $ticket) {
-                $ticket->status = 'closed';
-                $ticket->resolved_at = current_time('mysql');
-                $ticket->save();
-                do_action('fluent_support/ticket_closed', $ticket, $agent);
-                do_action('fluent_support/ticket_closed_by_' . $agent->person_type, $ticket, $agent);
+                (new TicketService())->close($ticket, $agent);
             }
 
             return [

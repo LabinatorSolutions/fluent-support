@@ -38,6 +38,7 @@
                     font-size: 12px;
                     display: block;
                     padding: .6875rem .5rem .6875rem 1rem;
+                    border-radius: 3px;
                     &.router-link-exact-active {
                         border: 1px solid #e3e6ef;
                         box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
@@ -61,6 +62,8 @@
         }
         .inner_body {
             width: calc(100% - 250px);
+            border-radius: 3px;
+            box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
         }
     }
 }

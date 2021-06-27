@@ -1,6 +1,6 @@
 <template>
     <div style="margin-top: 20px;" class="fs_agent_reports">
-        <div class="fs_box_wrapper">
+        <div v-if="!loading" class="fs_box_wrapper">
             <div class="fs_box">
                 <div class="fs_box_header">
                     <div class="fs_box_head">
@@ -56,6 +56,9 @@
                     </el-table>
                 </div>
             </div>
+        </div>
+        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+            <el-skeleton :rows="5" animated/>
         </div>
     </div>
 </template>

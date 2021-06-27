@@ -8,9 +8,12 @@
 
             </div>
         </div>
-        <div style="padding: 20px;" v-loading="loading" class="fs_box_body">
+        <div style="padding: 20px;" v-if="!fetching" v-loading="loading" class="fs_box_body">
             <form-builder v-if="app_ready" :fields="fields" :form-data="settings" label_position="top" />
             <el-button size="small" type="success" @click="saveSettings()">Save Settings</el-button>
+        </div>
+        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+            <el-skeleton :rows="5" animated/>
         </div>
     </div>
 </template>
@@ -27,6 +30,7 @@ export default {
         return {
             settings: {},
             fields: {},
+            fetching: false,
             loading: false,
             app_ready: false,
             settings_key: 'global_business_settings'
@@ -34,7 +38,7 @@ export default {
     },
     methods: {
         fetchSettings() {
-            this.loading = true;
+            this.fetching = true;
             this.$get('settings', {
                 settings_key: this.settings_key,
                 with: ['fields']
@@ -48,7 +52,7 @@ export default {
                     this.$handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    this.fetching = false;
                 });
         },
         saveSettings() {

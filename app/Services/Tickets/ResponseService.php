@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Response;
 use FluentSupport\Framework\Support\Arr;
 
 class ResponseService
@@ -76,6 +77,12 @@ class ResponseService
             $ticket->closed_by = $person->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $closed = true;
+            Response::create([
+                'ticket_id' => $ticket->id,
+                'person_id' => $person->id,
+                'conversation_type' => 'internal_info',
+                'content' => __('Ticket has been closed', 'fluent-support')
+            ]);
         }
 
         $ticket->save();

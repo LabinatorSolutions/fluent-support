@@ -14,7 +14,7 @@
                     <ul>
                         <li>
                             <router-link :to="{ name: 'box_settings', params: { box_id: mailbox.id } }">
-                                Business Settings
+                                Inbox Settings
                             </router-link>
                         </li>
                         <li>
