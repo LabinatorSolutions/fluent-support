@@ -2,7 +2,7 @@
 
 namespace FluentSupport\App\Models;
 
-class Response extends Model
+class Conversation extends Model
 {
     protected $table = 'fs_conversations';
 

@@ -6,7 +6,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Person;
 use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
@@ -29,7 +29,7 @@ class AgentController extends Controller
             if ($agent->user_id) {
                 $agent->user_profile = admin_url('user-edit.php?user_id=' . $agent->user_id);
             }
-            $agent->replies_count = Response::where('person_id', $agent->id)->count();
+            $agent->replies_count = Conversation::where('person_id', $agent->id)->count();
             $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
         }
 
@@ -150,7 +150,7 @@ class AgentController extends Controller
             'person_id' => $newAgent->id
         ]);
 
-        Response::where('person_id', $agentId)->update([
+        Conversation::where('person_id', $agentId)->update([
             'person_id' => $newAgent->id
         ]);
 

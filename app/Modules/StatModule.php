@@ -2,7 +2,7 @@
 
 namespace FluentSupport\App\Modules;
 
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 
 class StatModule
@@ -31,7 +31,7 @@ class StatModule
             ->whereBetween('resolved_at', [$startDate, $endDate])
             ->count();
 
-        $responses = Response::where('conversation_type', 'response')
+        $responses = Conversation::where('conversation_type', 'response')
             ->where('person_id', $agentId)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
@@ -67,7 +67,7 @@ class StatModule
         $closedTickets = Ticket::where('status', 'closed')
             ->count();
 
-        $responses = Response::where('conversation_type', 'response')
+        $responses = Conversation::where('conversation_type', 'response')
             ->count();
 
         return [

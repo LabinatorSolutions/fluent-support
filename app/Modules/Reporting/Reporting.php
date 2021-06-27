@@ -3,7 +3,7 @@
 namespace FluentSupport\App\Modules\Reporting;
 
 use FluentSupport\App\Models\Agent;
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 
 class Reporting
@@ -147,7 +147,7 @@ class Reporting
 
         $reports = $this->pushAgentsReport('opens', $openTickets, $reports);
 
-        $responses = Response::select([
+        $responses = Conversation::select([
             $this->db()->raw('COUNT(id) AS count'),
             $this->db()->raw('person_id as agent_id'),
         ])
@@ -162,7 +162,7 @@ class Reporting
         $reports = $this->pushAgentsReport('responses', $responses, $reports);
 
         foreach ($responses as $response) {
-            $reports[$response->agent_id]['interactions'] = Response::where('person_id', $response->agent_id)
+            $reports[$response->agent_id]['interactions'] = Conversation::where('person_id', $response->agent_id)
                 ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
                 ->groupBy('ticket_id')
                 ->get()

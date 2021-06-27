@@ -3,7 +3,7 @@
 namespace FluentSupport\App\Hooks\CLI;
 
 use FluentSupport\App\Models\Person;
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\StatModule;
 
@@ -31,7 +31,7 @@ class FluentCli
 
         foreach ($targetTickets as $ticket) {
             // get last customer response
-            $lastCustomerResponse = Response::where('ticket_id', $ticket->id)
+            $lastCustomerResponse = Conversation::where('ticket_id', $ticket->id)
                 ->where('conversation_type', 'response')
                 ->where('person_id', $ticket->customer_id)
                 ->orderBy('id', 'DESC')
@@ -43,7 +43,7 @@ class FluentCli
             }
 
             if($ticket->status != 'new') {
-                $lastAgentResponse = Response::where('ticket_id', $ticket->id)
+                $lastAgentResponse = Conversation::where('ticket_id', $ticket->id)
                     ->where('conversation_type', 'response')
                     ->where('person_id', '!=', $ticket->customer_id)
                     ->orderBy('id', 'DESC')
@@ -200,7 +200,7 @@ class FluentCli
                         ->whereNull('waiting_since')
                         ->get();
         foreach ($tickets as $ticket) {
-            $responses = Response::where('ticket_id', $ticket->id)
+            $responses = Conversation::where('ticket_id', $ticket->id)
                             ->orderBy('id', 'ASC')
                             ->get();
             $lastResponseFrom = 'customer';
