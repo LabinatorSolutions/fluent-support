@@ -159,10 +159,10 @@ class TicketController extends Controller
             ->get();
 
         foreach ($responses as $response) {
-            $response->content = make_clickable($response->content);
+            $response->content = make_clickable(wpautop($response->content, false));
         }
 
-        $ticket->content = make_clickable($ticket->content);
+        $ticket->content = make_clickable(wpautop($ticket->content, false));
 
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
@@ -198,6 +198,8 @@ class TicketController extends Controller
         }
 
         $responseData = (new ResponseService())->createResponse($data, $agent, $ticket);
+
+        $responseData['response']->content = make_clickable(wpautop($responseData['response']->content, false));
 
         return [
             'message'     => __('Response has been added'),

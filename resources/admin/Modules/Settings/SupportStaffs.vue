@@ -62,6 +62,12 @@
                         <el-checkbox v-for="permission in permissions" :label="permission" :key="permission">{{readable(permission)}}</el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
+
+                <h3>Telegram Integration</h3>
+                <el-form-item label="Telegram Chat ID">
+                    <el-input type="text" placeholder="Telegram Chat ID" v-model="editing_agent.telegram_chat_id"/>
+                </el-form-item>
+
             </el-form>
 
             <template #footer>

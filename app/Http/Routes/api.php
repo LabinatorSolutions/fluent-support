@@ -94,6 +94,7 @@ $router->prefix('reports')->withPolicy('AdminSensitivePolicy')->group(function (
     $router->get('/tickets-growth', 'ReportingController@getTicketsChart');
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
     $router->get('/response-growth', 'ReportingController@getResponseChart');
+    $router->get('/agents-summary', 'ReportingController@getAgentsSummary');
 });
 
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {

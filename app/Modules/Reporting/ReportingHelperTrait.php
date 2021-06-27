@@ -19,7 +19,7 @@ trait ReportingHelperTrait
         return new \DateTime($from);
     }
 
-    protected function makeToDate($to)
+    protected function makeToDate($to = false)
     {
         $to = $to ?: '+1 days';
 
