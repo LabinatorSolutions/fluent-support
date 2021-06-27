@@ -221,8 +221,18 @@ class Reporting
             return false;
         }
 
+        $waitStat->avg_waiting = intval($waitStat->avg_waiting);
+
+        $waitSeconds = time() -  $waitStat->avg_waiting;
+
+        if( $waitSeconds < 172800 && $waitSeconds > 7200) {
+            $avgWait = ceil($waitSeconds / 3600) .' hours';
+        } else {
+            $avgWait = human_time_diff($waitStat->avg_waiting, time());
+        }
+
         return [
-            'average_waiting' => human_time_diff(intval($waitStat->avg_waiting), time()),
+            'average_waiting' => $avgWait,
             'max_waiting' => human_time_diff(intval($waitStat->max_waiting), time()),
             'waiting_tickets' => $waitStat->total_tickets
         ];

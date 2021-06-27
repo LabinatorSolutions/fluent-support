@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_tickets_view">
+    <div class="fs_tickets_view fs_settings_view">
         <div class="inner_sidebar">
             <ul>
                 <li v-for="(settings_menu, settings_index) in settings_items">
