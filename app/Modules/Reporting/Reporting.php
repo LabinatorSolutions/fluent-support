@@ -115,10 +115,12 @@ class Reporting
 
         if(!$to) {
             $to = date('Y-m-d', current_time('timestamp') + 86400);
+        } else {
+            $to = date('Y-m-d', strtotime($to) + 86400);
         }
 
         $from = $this->makeFromDate($from);
-        $to = $this->makeFromDate($to);
+        $to = $this->makeToDate($to);
 
         $reports = [];
 
