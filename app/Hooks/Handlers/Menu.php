@@ -118,7 +118,11 @@ class Menu
 
         $agents = Agent::select(['id', 'first_name', 'last_name'])
             ->where('person_type', 'agent')
-            ->get();
+            ->get()->toArray();
+
+        foreach ($agents as $index => $agent) {
+            $agents[$index]['id'] = strval( $agent['id'] );
+        }
 
         $me = Helper::getAgentByUserId(get_current_user_id());
 

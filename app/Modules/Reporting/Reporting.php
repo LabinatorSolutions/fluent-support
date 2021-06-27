@@ -155,6 +155,7 @@ class Reporting
                 $q->where('person_type', '=', 'agent');
             })
             ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+            ->where('conversation_type', 'response')
             ->groupBy('agent_id')
             ->get();
 

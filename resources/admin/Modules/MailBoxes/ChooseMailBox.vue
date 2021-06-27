@@ -3,10 +3,10 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Businesses</h3>
+                    <h3>Business Inboxes</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button size="small" @click="showNewBusinessModal()" type="primary">Add New Business</el-button>
+                    <el-button size="small" @click="showNewBusinessModal()" type="primary">Add New Business Inbox</el-button>
                 </div>
             </div>
             <div class="">
@@ -43,11 +43,11 @@
         </div>
 
         <el-dialog
-            title="Add a Business"
+            title="Add a New Business Inbox"
             v-model.sync="create_modal"
             width="60%">
             <el-form :data="new_business" label-position="top">
-                <el-form-item label="Business Name">
+                <el-form-item label="Inbox Name">
                     <el-input type="text" v-model="new_business.name"></el-input>
                 </el-form-item>
                 <el-form-item label="Business Email">
@@ -68,7 +68,7 @@
             <template #footer>
                 <span class="dialog-footer">
                   <el-button @click="create_modal = false">Cancel</el-button>
-                  <el-button type="primary" @click="createMailBox()">Add Business</el-button>
+                  <el-button type="primary" @click="createMailBox()">Add Business Inbox</el-button>
                 </span>
             </template>
         </el-dialog>

@@ -10,7 +10,7 @@
                 </el-button>
             </div>
         </div>
-        <div class="fs_box_body">
+        <div v-if="!loading" class="fs_box_body">
             <el-table stripe :data="agents">
                 <el-table-column label="ID" prop="id" width="90"/>
                 <el-table-column label="Name" width="160">
@@ -36,7 +36,9 @@
             <div class="fframe_pagination_wrapper">
                 <pagination @fetch="fetchAgents()" :pagination="pagination"/>
             </div>
-
+        </div>
+        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+            <el-skeleton :rows="5" animated/>
         </div>
 
         <el-dialog

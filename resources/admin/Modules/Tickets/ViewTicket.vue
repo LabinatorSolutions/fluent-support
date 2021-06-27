@@ -34,9 +34,7 @@
                                         :value="agent.id"
                                         :label="agent.full_name"></el-option>
                                 </el-select>
-
                             </el-popover>
-
                         </li>
                         <template v-if="false">
                             <li>
@@ -154,7 +152,7 @@
                                             <strong v-if="conversation.person">
                                                 {{ getHumanName(conversation.person) }}</strong>
                                             <span v-if="conversation.conversation_type == 'response'"> replied</span>
-                                            <span v-else> added a note</span>
+                                            <span v-else-if="conversation.conversation_type == 'note'"> added a note</span>
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="conversation.source == 'email'"

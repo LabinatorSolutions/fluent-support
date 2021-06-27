@@ -10,7 +10,7 @@
                     </el-button>
                 </div>
             </div>
-            <div class="fs_box_body">
+            <div v-if="!fetching" class="fs_box_body">
                 <el-table stripe :data="products">
                     <el-table-column width="80" prop="id" label="ID"></el-table-column>
                     <el-table-column prop="title" label="Title"></el-table-column>
@@ -26,6 +26,9 @@
                 <div class="fframe_pagination_wrapper">
                     <pagination @fetch="getProducts()" :pagination="pagination"/>
                 </div>
+            </div>
+            <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                <el-skeleton :rows="5" animated/>
             </div>
         </div>
 

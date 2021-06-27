@@ -2,6 +2,8 @@
 
 namespace FluentSupport\App\Services\Tickets;
 
+use FluentSupport\App\Models\Response;
+
 class TicketService
 {
     public function close($ticket, $person)
@@ -14,6 +16,14 @@ class TicketService
             $ticket->save();
             do_action('fluent_support/ticket_closed', $ticket, $person);
             do_action('fluent_support/ticket_closed_by_' . $person->person_type, $ticket, $person);
+
+            Response::create([
+                'ticket_id' => $ticket->id,
+                'person_id' => $person->id,
+                'conversation_type' => 'internal_info',
+                'content' => __('Ticket has been closed', 'fluent-support')
+            ]);
+
         }
 
         return $ticket;
@@ -26,6 +36,12 @@ class TicketService
             $ticket->save();
             do_action('fluent_support/ticket_reopen', $ticket, $person);
             do_action('fluent_support/ticket_reopen_by_' . $person->person_type, $ticket, $person);
+            Response::create([
+                'ticket_id' => $ticket->id,
+                'person_id' => $person->id,
+                'conversation_type' => 'internal_info',
+                'content' => __('Ticket has been reopened', 'fluent-support')
+            ]);
         }
 
         return $person;
