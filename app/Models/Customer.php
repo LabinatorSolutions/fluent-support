@@ -150,6 +150,6 @@ class Customer extends Person
 
     public function getResponseCounts()
     {
-        return Response::where('person_id', $this->id)->count();
+        return Conversation::where('person_id', $this->id)->count();
     }
 }

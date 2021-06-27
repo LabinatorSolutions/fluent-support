@@ -6,7 +6,7 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
@@ -126,7 +126,7 @@ class CustomerPortalController extends Controller
             ]);
         }
 
-        $responses = Response::where('ticket_id', $ticketId)
+        $responses = Conversation::where('ticket_id', $ticketId)
             ->with([
                 'person' => function ($query) {
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);

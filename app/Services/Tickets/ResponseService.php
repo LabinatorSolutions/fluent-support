@@ -3,7 +3,7 @@
 namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\Framework\Support\Arr;
 
 class ResponseService
@@ -22,7 +22,7 @@ class ResponseService
 
         $response = apply_filters('fluent_support/new_'.$person->person_type.'_' . $convoType, $response, $ticket, $person);
 
-        $createdResponse = \FluentSupport\App\Models\Response::create($response);
+        $createdResponse = \FluentSupport\App\Models\Conversation::create($response);
         $createdResponse->load('person');
 
         if ($attachments = Arr::get($data, 'attachments')) {
@@ -77,7 +77,7 @@ class ResponseService
             $ticket->closed_by = $person->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $closed = true;
-            Response::create([
+            Conversation::create([
                 'ticket_id' => $ticket->id,
                 'person_id' => $person->id,
                 'conversation_type' => 'internal_info',

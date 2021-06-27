@@ -5,7 +5,7 @@ namespace FluentSupport\App\Services\MailerInbox;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\Framework\Support\Arr;
 
@@ -91,7 +91,7 @@ class ByMailHandler
             $existingTicket->waiting_since = current_time('mysql');
         }
 
-        $createdResponse = Response::create($responseOrTicketData);
+        $createdResponse = Conversation::create($responseOrTicketData);
 
         if ($existingTicket->status != 'active') {
             $existingTicket->status = 'active';

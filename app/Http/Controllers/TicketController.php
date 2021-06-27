@@ -5,7 +5,7 @@ namespace FluentSupport\App\Http\Controllers;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
-use FluentSupport\App\Models\Response;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
@@ -153,7 +153,7 @@ class TicketController extends Controller
             $ticket->load('closed_by_person');
         }
 
-        $responses = Response::where('ticket_id', $ticketId)
+        $responses = Conversation::where('ticket_id', $ticketId)
             ->with($responseWith)
             ->orderBy('id', 'DESC')
             ->get();
@@ -365,7 +365,7 @@ class TicketController extends Controller
     public function deleteResponse(Request $request, $ticketId, $responseId)
     {
         $ticket = Ticket::findOrFail($ticketId);
-        $response = Response::findOrFail($responseId);
+        $response = Conversation::findOrFail($responseId);
         $agent = Helper::getAgentByUserId();
 
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
@@ -378,7 +378,7 @@ class TicketController extends Controller
             }
         }
 
-        Response::where('id', $response->id)->delete();
+        Conversation::where('id', $response->id)->delete();
 
         return [
             'message' => 'Selected response has been deleted'
@@ -395,7 +395,7 @@ class TicketController extends Controller
         ]);
 
         $ticket = Ticket::findOrFail($ticketId);
-        $response = Response::findOrFail($responseId);
+        $response = Conversation::findOrFail($responseId);
         $agent = Helper::getAgentByUserId();
 
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
