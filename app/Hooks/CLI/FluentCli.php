@@ -194,4 +194,31 @@ class FluentCli
         }
     }
 
+    public function fix_waiting_since()
+    {
+        $tickets = Ticket::where('status', '!=', 'closed')
+                        ->whereNull('waiting_since')
+                        ->get();
+        foreach ($tickets as $ticket) {
+            $responses = Response::where('ticket_id', $ticket->id)
+                            ->orderBy('id', 'ASC')
+                            ->get();
+            $lastResponseFrom = 'customer';
+            $waitingSince = $ticket->created_at;
+
+            foreach ($responses as $response) {
+                if($response->person_id == $ticket->customer_id && $lastResponseFrom == 'customer') {
+                    // this is customer response and repeat response
+                } else {
+                    // this is agent response
+                    $waitingSince = $response->created_at;
+                    $lastResponseFrom = ($response->person_id == $ticket->customer_id) ? 'customer' : 'agent';
+                }
+            }
+
+            $ticket->waiting_since = $waitingSince;
+            $ticket->save();
+            \WP_CLI::line($ticket->waiting_since .' : '. $ticket->id.' : '. $ticket->title);
+        }
+    }
 }

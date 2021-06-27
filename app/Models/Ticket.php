@@ -116,9 +116,20 @@ class Ticket extends Model
         return $query;
     }
 
+    public function scopeWaitingOnly($query)
+    {
+        global $wpdb;
+        $query->where(function ($q) use ($wpdb) {
+            $q->whereRaw($wpdb->prefix . 'fs_tickets.last_agent_response < ' . $wpdb->prefix . 'fs_tickets.last_customer_response')
+                ->orWhereNull('last_agent_response')
+                ->orWhere('status', 'new');
+        });
+        return $query;
+    }
+
     public function scopeApplyFilters($query, $filters)
     {
-        $supportedColumns = ['product_id', 'agent_id', 'client_priority', 'priority', 'mailbox_id'];
+        $supportedColumns = ['product_id', 'client_priority', 'priority', 'mailbox_id'];
         foreach ($filters as $filterKey => $filterValue) {
             if (!$filterValue && ($filterValue !== '0' || $filterValue !== 0)) {
                 continue;
@@ -134,12 +145,13 @@ class Ticket extends Model
                 if ($filterValue != 'yes') {
                     continue;
                 }
-                global $wpdb;
-                $query->where(function ($q) use ($wpdb) {
-                    $q->whereRaw($wpdb->prefix . 'fs_tickets.last_agent_response < ' . $wpdb->prefix . 'fs_tickets.last_customer_response')
-                        ->orWhereNull('last_agent_response')
-                        ->orWhere('status', 'new');
-                });
+                $query = $this->scopeWaitingOnly($query);
+            } else if($filterKey == 'agent_id') {
+                if($filterValue == 'unassigned') {
+                    $query->whereNull($filterKey);
+                } else {
+                    $query->where($filterKey, $filterValue);
+                }
             }
         }
 

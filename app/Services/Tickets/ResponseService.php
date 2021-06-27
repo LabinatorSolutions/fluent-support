@@ -59,6 +59,11 @@ class ResponseService
                 $ticket->waiting_since = current_time('mysql');
             }
         } else {
+
+            if($ticket->last_agent_response && strtotime($ticket->last_agent_response) > strtotime($ticket->last_customer_response)) {
+                $ticket->waiting_since = current_time('mysql');
+            }
+
             $ticket->last_customer_response = current_time('mysql');
         }
 

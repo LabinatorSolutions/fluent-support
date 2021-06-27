@@ -2,6 +2,8 @@
 
 namespace FluentSupport\App\Modules\Reporting;
 
+use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
 
 class Reporting
@@ -102,6 +104,126 @@ class Reporting
         $items = $query->get();
 
         return $this->getResult($period, $items);
+    }
+
+
+    public function agentSummary($from = false, $to = false)
+    {
+        if(!$from) {
+            $from = current_time('mysql');
+        }
+
+        if(!$to) {
+            $to = date('Y-m-d', current_time('timestamp') + 86400);
+        }
+
+        $from = $this->makeFromDate($from);
+        $to = $this->makeFromDate($to);
+
+        $reports = [];
+
+        $resolves = $this->db()->table('fs_tickets')
+            ->select([
+                $this->db()->raw('COUNT(id) AS count'),
+                'agent_id'
+            ])
+            ->whereBetween('resolved_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+            ->groupBy('agent_id')
+            ->where('status', 'closed')
+            ->get();
+
+        $reports = $this->pushAgentsReport('closed', $resolves, $reports);
+
+        $openTickets = $this->db()->table('fs_tickets')
+            ->select([
+                $this->db()->raw('COUNT(id) AS count'),
+                'agent_id'
+            ])
+            ->groupBy('agent_id')
+            ->where('status', '!=', 'closed')
+            ->get();
+
+        $reports = $this->pushAgentsReport('opens', $openTickets, $reports);
+
+        $responses = Response::select([
+            $this->db()->raw('COUNT(id) AS count'),
+            $this->db()->raw('person_id as agent_id'),
+        ])
+            ->whereHas('person', function ($q) {
+                $q->where('person_type', '=', 'agent');
+            })
+            ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+            ->groupBy('agent_id')
+            ->get();
+
+        $reports = $this->pushAgentsReport('responses', $responses, $reports);
+
+        foreach ($responses as $response) {
+            $reports[$response->agent_id]['interactions'] = Response::where('person_id', $response->agent_id)
+                ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+                ->groupBy('ticket_id')
+                ->get()
+                ->count();
+        }
+
+        $agentIds = array_keys($reports);
+
+        $agents = Agent::select(['id', 'first_name', 'last_name'])
+            ->whereIn('id', $agentIds)
+            ->get();
+
+        foreach ($agents as $agent) {
+            $report = wp_parse_args($reports[$agent->id], [
+                'interactions' => 0,
+                'responses' => 0,
+                'opens' => 0,
+                'closed' => 0
+            ]);
+            $agent->stats = $report;
+        }
+
+        return $agents;
+    }
+
+    private function pushAgentsReport($type, $tickets, $reports)
+    {
+        foreach ($tickets as $ticket) {
+            if(!$ticket->agent_id) {
+                continue;
+            }
+
+            if(!isset($reports[$ticket->agent_id])) {
+                $reports[$ticket->agent_id] = [];
+            }
+
+            $reports[$ticket->agent_id][$type] = $ticket->count;
+        }
+
+        return $reports;
+    }
+
+    public function getActiveStats()
+    {
+        // We will calculate the wait times for open waiting tickets
+        $waitStat = Ticket::waitingOnly()
+            ->where('status', '!=', 'closed')
+            ->whereNotNull('waiting_since')
+            ->select([
+                $this->db()->raw('avg(UNIX_TIMESTAMP(waiting_since)) as avg_waiting'),
+                $this->db()->raw('MIN(UNIX_TIMESTAMP(waiting_since)) as max_waiting'),
+                $this->db()->raw('COUNT(*) as total_tickets')
+            ])
+            ->first();
+
+        if(!$waitStat) {
+            return false;
+        }
+
+        return [
+            'average_waiting' => human_time_diff(intval($waitStat->avg_waiting), time()),
+            'max_waiting' => human_time_diff(intval($waitStat->max_waiting), time()),
+            'waiting_tickets' => $waitStat->total_tickets
+        ];
     }
 
 }

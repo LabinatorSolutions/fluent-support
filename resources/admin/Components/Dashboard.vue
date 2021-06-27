@@ -19,6 +19,12 @@
 
                     <p class="fs_padded_20" v-else>Looks like you have caught up everything for now. <b>Good Job, {{me.full_name}}!</b></p>
 
+                    <p class="fs_padded_20" v-if="overall_stats">
+                        <span class="fs_highlight">{{overall_stats.waiting_tickets}} tickets</span> are waiting for reply with
+                        <span class="fs_highlight"> average {{overall_stats.average_waiting}} wait time</span> & max wait time
+                        <span class="fs_highlight">{{overall_stats.max_waiting}}</span>
+                    </p>
+
                 </template>
                 <div class="fs_padded_20" v-else>
                     <el-skeleton :rows="3" animated/>
@@ -56,7 +62,8 @@ export default {
             can_access_unassigned_tickets: false,
             loading: false,
             stats: {},
-            suggested_tickets: []
+            suggested_tickets: [],
+            overall_stats: false
         }
     },
     computed: {
@@ -87,11 +94,12 @@ export default {
         fetchStat() {
             this.loading = true;
             this.$get('tickets/my_stats', {
-                with: ['suggested_tickets']
+                with: ['suggested_tickets', 'overall_stats']
             })
                 .then(response => {
                     this.stats = response.stats;
-                    this.suggested_tickets = response.suggested_tickets
+                    this.suggested_tickets = response.suggested_tickets;
+                    this.overall_stats = response.overall_stats;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

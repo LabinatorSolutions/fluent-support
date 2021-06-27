@@ -29,6 +29,7 @@
                             <component v-if="showing_charts" :is="currently_showing" :date_range="date_range"></component>
                         </div>
                     </div>
+                    <agent-reports />
                 </el-col>
                 <el-col :sm="24" :md="8" :lg="6">
                     <div class="fs_box">
@@ -50,7 +51,6 @@
                     </div>
                 </el-col>
             </el-row>
-
         </div>
     </div>
 </template>
@@ -59,13 +59,15 @@
 import TicketsChart from "./Charts/TicketsGrowth";
 import ResponseChart from "./Charts/ResponseGrowth";
 import ResolveChart from "./Charts/ResolveGrowth";
+import AgentReports from "./AgentReports";
 
 export default {
     name: 'Reports',
     components: {
         TicketsChart,
         ResponseChart,
-        ResolveChart
+        ResolveChart,
+        AgentReports
     },
     data() {
         return {

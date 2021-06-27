@@ -52,6 +52,7 @@
                         <label>Support Staff</label>
                         <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.agent_id"
                                    placeholder="All Support Staff">
+                            <el-option value="unassigned" label="Un-Assigned"></el-option>
                             <el-option v-for="agent in agents" :key="agent.id" :value="agent.id"
                                        :label="agent.full_name"></el-option>
                         </el-select>
@@ -162,10 +163,10 @@
                         width="180">
                         <template #default="scope">
                             <span style="opacity: 0.4;" :title="'Ticket created at ' + scope.row.created_at">
-                                <i class="el-icon-time"></i> {{ $timeDiff(scope.row.created_at) }}
+                                <i class="el-icon-chat-line-square"></i> {{ $timeDiff(scope.row.created_at) }}
                             </span>
-                            <span style="display: block;" title="Last response">
-                                <i class="el-icon-chat-line-square"></i> {{ getLastResponse(scope.row) }}
+                            <span style="display: block;" title="Waiting Time">
+                                <i class="el-icon-stopwatch"></i> {{ $timeDiff(scope.row.waiting_since) }}
                             </span>
                         </template>
                     </el-table-column>
@@ -217,7 +218,6 @@
             width="60%">
             <add-ticket v-if="add_ticket_modal"></add-ticket>
         </el-dialog>
-
     </div>
 </template>
 
@@ -262,6 +262,7 @@ export default {
                 title: 'Title',
                 last_agent_response: 'Last Agent Response',
                 last_customer_response: 'Last Customer Response',
+                waiting_since: 'Waiting Time',
                 response_count: 'Response Count',
                 created_at: 'Created At'
             },

@@ -87,6 +87,10 @@ class ByMailHandler
         $responseOrTicketData['conversation_type'] = 'response';
         $responseOrTicketData['source'] = 'email';
 
+        if($existingTicket->last_agent_response && strtotime($existingTicket->last_agent_response) > strtotime($existingTicket->last_customer_response)) {
+            $existingTicket->waiting_since = current_time('mysql');
+        }
+
         $createdResponse = Response::create($responseOrTicketData);
 
         if ($existingTicket->status != 'active') {

@@ -24,7 +24,7 @@ class TelegramNotification extends NotificationIntegrationBase
                     'person' => $customer
                 ], 'ticket_created');
             }
-        }, 10, 2);
+        }, 20, 2);
 
         add_action('fluent_support/ticket_closed', function ($ticket, $person) {
             if ($this->isNotificationActivated('ticket_closed')) {
@@ -33,7 +33,7 @@ class TelegramNotification extends NotificationIntegrationBase
                     'person' => $person
                 ], 'ticket_closed');
             }
-        }, 10, 2);
+        }, 20, 2);
 
         add_action('fluent_support/response_added_by_customer', function ($response, $ticket, $customer) {
             if ($this->isNotificationActivated('response_added_by_customer')) {
@@ -43,7 +43,7 @@ class TelegramNotification extends NotificationIntegrationBase
                     'person'   => $customer
                 ], 'response_added_by_customer');
             }
-        }, 10, 3);
+        }, 20, 3);
 
         add_action('fluent_support/response_added_by_agent', function ($response, $ticket, $customer) {
             if ($this->isNotificationActivated('response_added_by_agent')) {
@@ -53,7 +53,7 @@ class TelegramNotification extends NotificationIntegrationBase
                     'person'   => $customer
                 ], 'response_added_by_customer');
             }
-        }, 10, 3);
+        }, 20, 3);
 
     }
 
@@ -168,11 +168,19 @@ class TelegramNotification extends NotificationIntegrationBase
         }
     }
 
-    protected function getApiClient($settings = false)
+    protected function getApiClient($settings = false, $ticket = false)
     {
         if (!$settings) {
             $settings = $this->get();
         }
+
+        if($ticket) {
+            $agent = $ticket->agent;
+            if($agent && $chatId = $agent->getMeta('telegram_chat_id')) {
+                $settings['chat_id'] = $chatId;
+            }
+        }
+
         return new TelegramApi(
             $settings['bot_token'],
             $settings['chat_id']
@@ -192,7 +200,7 @@ class TelegramNotification extends NotificationIntegrationBase
         }
 
         if ($message) {
-            return $this->getApiClient()->sendMessage($message, 'html');
+            return $this->getApiClient(false, $data['ticket'])->sendMessage($message, 'html');
         }
     }
 

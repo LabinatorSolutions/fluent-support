@@ -34,6 +34,7 @@ import {
     ElSlider,
     ElSwitch,
     ElTimePicker,
+    ElDatePicker,
     ElTimeSelect,
     ElDialog,
     ElSkeleton,
@@ -100,6 +101,7 @@ const components = [
     ElDropdown,
     ElDropdownMenu,
     ElDropdownItem,
+    ElDatePicker
 ];
 
 components.forEach(component => {

@@ -44,4 +44,11 @@ class ReportingController extends Controller
             'stats' => $stats
         ];
     }
+
+    public function getAgentsSummary(Request $request, Reporting $reporting)
+    {
+        return [
+          'summary' =>  $reporting->agentSummary($request->get('from'), $request->get('to'))
+        ];
+    }
 }

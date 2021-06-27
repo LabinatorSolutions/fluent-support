@@ -145,7 +145,6 @@ class Person extends Model
         return $record;
     }
 
-
     public function getUserProfileEditUrl()
     {
         $userEditUrl = '';
@@ -155,4 +154,46 @@ class Person extends Model
         return apply_filters('fluent_support/person_user_edit_url', $userEditUrl, $this);
     }
 
+    public function getMeta($metaKey, $default = '')
+    {
+        $meta = Meta::where('object_id', $this->id)
+            ->where('object_type', 'person_meta')
+            ->where('key', $metaKey)
+            ->first();
+        if($meta) {
+            $value = maybe_unserialize($meta->value);
+            if($value) {
+                return $value;
+            }
+        }
+
+        return $default;
+    }
+
+    public function updateMeta($metaKey, $metaValue)
+    {
+        $meta = Meta::where('object_id', $this->id)
+            ->where('object_type', 'person_meta')
+            ->where('key', $metaKey)
+            ->first();
+        if($meta) {
+            $meta->value = maybe_serialize($metaValue);
+            $meta->save();
+        }
+
+        Meta::create([
+            'object_type' => 'person_meta',
+            'object_id' => $this->id,
+            'key' => $metaKey,
+            'value' => maybe_serialize($metaValue)
+        ]);
+        return true;
+    }
+
+    public function deleteAllMeta()
+    {
+        Meta::where('object_id', $this->id)
+            ->where('object_type', 'person_meta')
+            ->delete();
+    }
 }

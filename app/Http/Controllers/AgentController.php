@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Person;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Response;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TicketHelper;
@@ -29,6 +30,7 @@ class AgentController extends Controller
                 $agent->user_profile = admin_url('user-edit.php?user_id=' . $agent->user_id);
             }
             $agent->replies_count = Response::where('person_id', $agent->id)->count();
+            $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
         }
 
         return [
@@ -74,6 +76,12 @@ class AgentController extends Controller
         $agent = Agent::create($data);
         PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
 
+        if(!empty($data['telegram_chat_id'])) {
+            $chatId = sanitize_text_field($data['telegram_chat_id']);
+            $agent->updateMeta('telegram_chat_id', $chatId);
+            $agent->telegram_chat_id = $chatId;
+        }
+
         return [
             'message' => __('Support Staff has been added', 'fluent-support'),
             'agent'   => $agent
@@ -108,9 +116,17 @@ class AgentController extends Controller
 
         PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
 
+        $agent = Agent::findOrFail($agentId);
+
+        if(isset($data['telegram_chat_id'])) {
+            $chatId = sanitize_text_field($data['telegram_chat_id']);
+            $agent->updateMeta('telegram_chat_id', $chatId);
+            $agent->telegram_chat_id = $chatId;
+        }
+
         return [
             'message' => __('Support Staff has been updated', 'fluent-support'),
-            'agent'   => Agent::findOrFail($agentId)
+            'agent'   => $agent
         ];
     }
 
@@ -146,6 +162,8 @@ class AgentController extends Controller
             'agent_id' => $newAgent->id
         ]);
 
+        $agent->deleteAllMeta();
+
         Agent::where('id', $agentId)->delete();
 
         return [
@@ -180,6 +198,10 @@ class AgentController extends Controller
 
         if (in_array('suggested_tickets', $with)) {
             $data['suggested_tickets'] = TicketHelper::getSuggestedTickets($agent->id);
+        }
+
+        if(in_array('overall_stats', $with)) {
+            $data['overall_stats'] = (new Reporting())->getActiveStats();
         }
 
         return $data;
