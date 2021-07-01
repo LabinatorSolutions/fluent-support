@@ -43,6 +43,11 @@
                             <b>{{stat.title}}: </b> {{stat.count}}
                         </li>
                     </ul>
+                    <p class="fs_padded_20" v-if="individual_stat">
+                        <span class="fs_highlight">{{individual_stat.waiting_tickets}} tickets</span> are waiting for your reply with
+                        <span class="fs_highlight"> average {{individual_stat.average_waiting}} wait time</span> & max wait time
+                        <span class="fs_highlight">{{individual_stat.max_waiting}}</span>
+                    </p>
                 </template>
                 <div class="fs_padded_20" v-else>
                     <el-skeleton :rows="3" animated/>
@@ -63,7 +68,8 @@ export default {
             loading: false,
             stats: {},
             suggested_tickets: [],
-            overall_stats: false
+            overall_stats: false,
+            individual_stat: false
         }
     },
     computed: {
@@ -94,12 +100,13 @@ export default {
         fetchStat() {
             this.loading = true;
             this.$get('tickets/my_stats', {
-                with: ['suggested_tickets', 'overall_stats']
+                with: ['suggested_tickets', 'overall_stats', 'individual_stat']
             })
                 .then(response => {
                     this.stats = response.stats;
                     this.suggested_tickets = response.suggested_tickets;
                     this.overall_stats = response.overall_stats;
+                    this.individual_stat = response.individual_stat;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
