@@ -53,6 +53,18 @@
                                 {{ scope.row.stats.closed }}
                             </template>
                         </el-table-column>
+
+                        <el-table-column min-width="150px" label="Current Overall">
+                            <template #default="scope">
+                                <template v-if="scope.row.active_stat">
+                                    <ul style="margin: 0; padding: 0; list-style: none;">
+                                        <li>Waiting Tickets: {{scope.row.active_stat.waiting_tickets}}</li>
+                                        <li>Average Waiting: {{scope.row.active_stat.average_waiting}}</li>
+                                        <li>Max Waiting: {{scope.row.active_stat.max_waiting}}</li>
+                                    </ul>
+                                </template>
+                            </template>
+                        </el-table-column>
                     </el-table>
                 </div>
             </div>

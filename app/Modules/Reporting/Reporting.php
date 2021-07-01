@@ -180,9 +180,11 @@ class Reporting
                 'interactions' => 0,
                 'responses' => 0,
                 'opens' => 0,
-                'closed' => 0
+                'closed' => 0,
+                'waiting_tickets' => 0
             ]);
             $agent->stats = $report;
+            $agent->active_stat = $this->getActiveStatByAgent($agent->id);
         }
 
         return $agents;
@@ -223,20 +225,57 @@ class Reporting
         }
 
         $waitStat->avg_waiting = intval($waitStat->avg_waiting);
-
-        $waitSeconds = time() -  $waitStat->avg_waiting;
-
-        if( $waitSeconds < 172800 && $waitSeconds > 7200) {
-            $avgWait = ceil($waitSeconds / 3600) .' hours';
+        if($waitStat->avg_waiting > 0) {
+            $waitSeconds = time() -  $waitStat->avg_waiting;
+            if( $waitSeconds < 172800 && $waitSeconds > 7200) {
+                $avgWait = ceil($waitSeconds / 3600) . ' hours';
+            } else {
+                $avgWait = human_time_diff($waitStat->avg_waiting, time());
+            }
         } else {
-            $avgWait = human_time_diff($waitStat->avg_waiting, time());
+            $avgWait = 0;
         }
 
         return [
             'average_waiting' => $avgWait,
-            'max_waiting' => human_time_diff(intval($waitStat->max_waiting), time()),
+            'max_waiting' => (intval($waitStat->max_waiting)) ? human_time_diff(intval($waitStat->max_waiting), time()) : 0,
             'waiting_tickets' => $waitStat->total_tickets
         ];
     }
 
+    public function getActiveStatByAgent($agentId)
+    {
+        $waitStat = Ticket::waitingOnly()
+            ->where('status', '!=', 'closed')
+            ->whereNotNull('waiting_since')
+            ->where('agent_id', $agentId)
+            ->select([
+                $this->db()->raw('avg(UNIX_TIMESTAMP(waiting_since)) as avg_waiting'),
+                $this->db()->raw('MIN(UNIX_TIMESTAMP(waiting_since)) as max_waiting'),
+                $this->db()->raw('COUNT(*) as total_tickets')
+            ])
+            ->first();
+
+        if(!$waitStat) {
+            return false;
+        }
+
+        $waitStat->avg_waiting = intval($waitStat->avg_waiting);
+        if($waitStat->avg_waiting > 0) {
+            $waitSeconds = time() -  $waitStat->avg_waiting;
+            if( $waitSeconds < 172800 && $waitSeconds > 7200) {
+                $avgWait = ceil($waitSeconds / 3600) . ' hours';
+            } else {
+                $avgWait = human_time_diff($waitStat->avg_waiting, time());
+            }
+        } else {
+            $avgWait = 0;
+        }
+
+        return [
+            'average_waiting' => $avgWait,
+            'max_waiting' => (intval($waitStat->max_waiting)) ? human_time_diff(intval($waitStat->max_waiting), time()) : 0,
+            'waiting_tickets' => $waitStat->total_tickets
+        ];
+    }
 }

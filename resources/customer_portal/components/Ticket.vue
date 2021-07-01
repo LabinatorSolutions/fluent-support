@@ -63,7 +63,7 @@
                                     </div>
                                     <div v-html="conversation.content" class="fs_thread_body"></div>
 
-                                    <div class="fst_file_lists" v-if="conversation.attachments.length">
+                                    <div class="fst_file_lists" v-if="conversation.attachments && conversation.attachments.length">
                                         <ul>
                                             <li
                                                 v-for="attachment in conversation.attachments"
