@@ -7,6 +7,7 @@ import ViewTicket from './Modules/Tickets/ViewTicket';
 import SettingsView from './Modules/Settings/SettingsView';
 import BusinessSettings from './Modules/Settings/BusinessSettings';
 import Products from './Modules/Settings/Products';
+import TicketTags from './Modules/Settings/TicketTags';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 
@@ -67,6 +68,11 @@ export default [
                 name: 'global_settings',
                 path: '',
                 component: BusinessSettings
+            },
+            {
+                name: 'tags',
+                path: 'ticket-tags',
+                component: TicketTags
             },
             {
                 name: 'products',
