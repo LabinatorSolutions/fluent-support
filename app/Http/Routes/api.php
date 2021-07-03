@@ -68,6 +68,15 @@ $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->delete('/{product_id}', 'ProductController@delete');
 });
 
+$router->prefix('ticket-tags')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
+    $router->get('/', 'TicketTagsController@index');
+    $router->post('/', 'TicketTagsController@create');
+    $router->get('/{tag_id}', 'TicketTagsController@get');
+    $router->post('/{tag_id}', 'TicketTagsController@create');
+    $router->put('/{tag_id}', 'TicketTagsController@update');
+    $router->delete('/{tag_id}', 'TicketTagsController@delete');
+});
+
 $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
 
 $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles')

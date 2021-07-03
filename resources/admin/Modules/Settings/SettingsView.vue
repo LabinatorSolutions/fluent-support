@@ -9,7 +9,7 @@
                 </li>
             </ul>
         </div>
-        <div class="inner_body">
+        <div style="padding-bottom: 20px; background: white;" class="inner_body">
             <router-view key="products_view"></router-view>
         </div>
     </div>
@@ -24,6 +24,11 @@ export default {
                 {
                     title: 'Global Settings',
                     route_name: 'global_settings'
+                },
+                {
+                    title: 'Tags',
+                    route_name: 'tags',
+                    route_query: {}
                 },
                 {
                     title: 'Products',
