@@ -21685,7 +21685,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           position: 'bottom-right'
         });
 
-        _this2.getTags();
+        _this2.fetchTags();
 
         _this2.tag_modal = false;
       })["catch"](function (errors) {
@@ -21721,7 +21721,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           position: 'bottom-right'
         });
 
-        _this3.getTags();
+        _this3.fetchTags();
       });
     }
   },
@@ -26888,7 +26888,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
     onClick: _cache[1] || (_cache[1] = function ($event) {
-      return _ctx.createModal();
+      return $options.createTagModal();
     }),
     type: "primary",
     icon: "el-icon-plus",

@@ -12,7 +12,7 @@ class TicketTagsController extends Controller
         $products = TicketTag::paginate();
 
         return [
-            'products' => $products
+            'tags' => $products
         ];
     }
 
@@ -36,7 +36,7 @@ class TicketTagsController extends Controller
 
         return [
             'message' => __('Tag has been successfully created', 'fluent-support'),
-            'product' => $product
+            'tag' => $product
         ];
     }
 
@@ -53,7 +53,7 @@ class TicketTagsController extends Controller
 
         return [
             'message' => __('Tag has been updated', 'fluent-support'),
-            'product' => TicketTag::find($tagId)
+            'tag' => TicketTag::find($tagId)
         ];
     }
 
@@ -66,5 +66,5 @@ class TicketTagsController extends Controller
             'message' => __('Tag has been deleted', 'fluent-support')
         ];
     }
-    
+
 }
