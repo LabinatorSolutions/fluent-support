@@ -6,7 +6,7 @@
                     <h3>Ticket Tags</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button @click="createModal()" type="primary" icon="el-icon-plus" size="small">
+                    <el-button @click="createTagModal()" type="primary" icon="el-icon-plus" size="small">
                         Add New
                     </el-button>
                 </div>
@@ -112,7 +112,7 @@ export default {
                         type: 'success',
                         position: 'bottom-right'
                     });
-                    this.getTags();
+                    this.fetchTags();
                     this.tag_modal = false;
                 })
                 .catch((errors) => {
@@ -149,7 +149,7 @@ export default {
                         position: 'bottom-right'
                     });
 
-                    this.getTags();
+                    this.fetchTags();
                 });
         }
     },
