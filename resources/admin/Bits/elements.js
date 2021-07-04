@@ -50,6 +50,8 @@ import {
     ElDropdownMenu,
     ElDropdownItem,
 
+    ElTag,
+
     ElLoading,
     ElMessage,
     ElMessageBox,
@@ -101,7 +103,8 @@ const components = [
     ElDropdown,
     ElDropdownMenu,
     ElDropdownItem,
-    ElDatePicker
+    ElDatePicker,
+    ElTag
 ];
 
 components.forEach(component => {

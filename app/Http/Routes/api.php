@@ -43,6 +43,10 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->put('/{ticket_id}/property', 'TicketController@updateTicketProperty')->int('ticket_id');
 
+
+    $router->post('/{ticket_id}/tags', 'TicketController@addTag')->int('ticket_id');
+    $router->delete('/{ticket_id}/tags/{tag_id}', 'TicketController@detachTag')->int('ticket_id')->int('tag_id');
+
     $router->post('/{ticket_id}/close', 'TicketController@closeTicket')->int('ticket_id');
     $router->post('/{ticket_id}/re-open', 'TicketController@reOpenTicket')->int('ticket_id');
 

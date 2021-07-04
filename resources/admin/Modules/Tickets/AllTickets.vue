@@ -119,6 +119,7 @@
                                 <span style="margin-left: 5px;" v-if="scope.row.product" class="fs_badge">
                                     {{ scope.row.product?.title }}
                                 </span>
+                                <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
                                 <span style="margin-left: 10px;" class="fs_badge fs_badge_new"
                                       v-show="getWaitingStatus(scope.row)">
                                     {{ getWaitingStatus(scope.row) }}
@@ -225,12 +226,14 @@
 import Pagination from '../../Pieces/Pagination'
 import each from 'lodash/each';
 import AddTicket from './_AddTicket';
+import TicketTags from './parts/_Tags';
 
 export default {
     name: 'AllTickets',
     components: {
         Pagination,
-        AddTicket
+        AddTicket,
+        TicketTags
     },
     data() {
         return {

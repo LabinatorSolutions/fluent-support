@@ -79,13 +79,14 @@
                     <hgroup>
                         <div class="fs_tk_subject">
                             <h2 title="Click to Edit Subject">
+                                <span class="fs_ticket_id">#{{ ticket.id }} </span>
                                 <el-popover
                                     placement="bottom"
                                     :width="400"
                                     trigger="click"
                                 >
                                     <template #reference>
-                                        <span><i class="el-icon-goods"></i> {{ ticket?.title }}</span>
+                                        <span> {{ ticket?.title }}</span>
                                     </template>
 
                                     <el-input @keyup.enter="updateTicketAttr('title')"
@@ -93,9 +94,9 @@
                                     <p>Press enter to save</p>
                                 </el-popover>
                             </h2>
+                            <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags" />
                         </div>
                         <div class="fs_tk_badges">
-                            <span class="fs_ticket_id">#{{ ticket.id }}</span>
                             <el-popover
                                 placement="bottom"
                                 :width="400"
@@ -245,6 +246,7 @@ import EditResponse from './_EditResponse';
 import TicketSidebar from './_TicketSidebar';
 import each from 'lodash/each';
 import ActiveAgents from './_active_agents';
+import TicketTags from './parts/_Tags';
 
 export default {
     name: 'ViewTicket',
@@ -253,7 +255,8 @@ export default {
         CreateResponse,
         TicketSidebar,
         EditResponse,
-        ActiveAgents
+        ActiveAgents,
+        TicketTags
     },
     data() {
         return {

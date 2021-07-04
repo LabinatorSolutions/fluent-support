@@ -32,4 +32,11 @@ class TicketTag extends Tag
         return $slug;
     }
 
+    public function tickets()
+    {
+        return $this->belongsToMany(
+            __NAMESPACE__.'\Ticket', 'fs_tag_pivot', 'tag_id', 'source_id'
+        )->where('source_type', 'ticket_tag');
+    }
+
 }

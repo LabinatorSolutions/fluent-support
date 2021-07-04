@@ -6,7 +6,9 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Tag;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
@@ -39,7 +41,8 @@ class TicketController extends Controller
             }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
-            'product'
+            'product',
+            'tags'
         ]);
 
         // apply filters by access level
@@ -132,7 +135,7 @@ class TicketController extends Controller
     public function getTicket(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox']);
+        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags']);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
 
         $ticket = Ticket::with($ticketWith)
@@ -417,7 +420,6 @@ class TicketController extends Controller
         ];
     }
 
-
     public function getLiveActivity(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
@@ -437,4 +439,30 @@ class TicketController extends Controller
         ];
     }
 
+    public function addTag(Request $request, $ticketId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+
+        $tagId = intval($request->get('tag_id'));
+
+        if(!$ticket->hasTag($tagId)) {
+            $ticket->tags()->attach($tagId, ['source_type' => 'ticket_tag']);
+        }
+
+        return [
+            'message' => __('Tag has been added to this ticket', 'fluent-support'),
+            'tags' => $ticket->tags
+        ];
+    }
+
+    public function detachTag($ticketId, $tagId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $ticket->tags()->detach($tagId);
+
+        return [
+            'message' => __('Tag has been removed from this ticket', 'fluent-support'),
+            'tags' => $ticket->tags
+        ];
+    }
 }

@@ -242,3 +242,15 @@ ul.fs_inner_menu_items {
         display: list-item;
     }
 }
+
+span.fs_ticket_id {
+    font-size: 70%;
+    color: gray;
+    padding-right: 5px;
+    vertical-align: top;
+}
+
+.fs_tags {
+    display: inline-block;
+    margin-left: 10px;
+}

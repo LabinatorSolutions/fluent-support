@@ -523,3 +523,37 @@ span.fs_agent_photo_icon img {
     overflow: auto;
 }
 
+
+.fs_tags_add_wrapper {
+    h3 {
+        margin: 0 0 10px;
+    }
+    ul {
+        display: block;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        border-left: 1px solid transparent;
+        max-height: 200px;
+        overflow: auto;
+        li {
+            display: block;
+            cursor: pointer;
+            padding: 5px;
+            &:hover {
+                color: #5d6cc3;
+                border-left: 1px solid #5d6cc3;
+            }
+        }
+    }
+}
+
+.fs_add_tag_icon {
+    font-size: 13px;
+    padding: 3px 5px;
+    line-height: 8px;
+    min-height: 18px;
+    margin-left: 5px;
+    color: #48a1ff;
+    border-color: #b3d8fe;
+}

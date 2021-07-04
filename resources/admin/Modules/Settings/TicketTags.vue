@@ -148,7 +148,6 @@ export default {
                         type: 'success',
                         position: 'bottom-right'
                     });
-
                     this.fetchTags();
                 });
         }
