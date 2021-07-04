@@ -28,6 +28,7 @@ import {
     ElRadioGroup,
     ElRate,
     ElSelect,
+    ElSelectV2,
     ElCheckbox,
     ElCheckboxGroup,
 
@@ -104,7 +105,8 @@ const components = [
     ElDropdownMenu,
     ElDropdownItem,
     ElDatePicker,
-    ElTag
+    ElTag,
+    ElSelectV2
 ];
 
 components.forEach(component => {

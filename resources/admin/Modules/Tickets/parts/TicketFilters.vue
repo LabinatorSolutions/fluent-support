@@ -44,6 +44,10 @@
             </el-select>
         </div>
         <div class="fs_tk_filter">
+            <label>Tags</label>
+
+        </div>
+        <div class="fs_tk_filter">
             <label>Waiting for Reply</label>
             <el-switch @change="maybeChangeWaitingReply()" active-value="yes" :inactive-value="false"
                        v-model="filters.waiting_for_reply"></el-switch>
