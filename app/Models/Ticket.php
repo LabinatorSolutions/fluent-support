@@ -152,6 +152,13 @@ class Ticket extends Model
                 } else {
                     $query->where($filterKey, $filterValue);
                 }
+            } else if($filterKey == 'ticket_tags') {
+                if(!$filterValue) {
+                    continue;
+                }
+                $query->whereHas('tags', function ($q) use ($filterValue) {
+                    $q->whereIn('tag_id', $filterValue);
+                });
             }
         }
 

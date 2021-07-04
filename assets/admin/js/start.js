@@ -23442,7 +23442,8 @@ __webpack_require__.r(__webpack_exports__);
         agent_id: '',
         priority: '',
         client_priority: '',
-        waiting_for_reply: ''
+        waiting_for_reply: '',
+        ticket_tags: []
       },
       search: '',
       order_by: 'last_customer_response',
@@ -23635,7 +23636,8 @@ __webpack_require__.r(__webpack_exports__);
         agent_id: '',
         priority: '',
         client_priority: '',
-        waiting_for_reply: ''
+        waiting_for_reply: '',
+        ticket_tags: []
       };
       this.search = '';
       this.fetchTickets();
@@ -24401,9 +24403,8 @@ __webpack_require__.r(__webpack_exports__);
         response_count: 'Response Count',
         created_at: 'Created At'
       },
-      products: this.appVars.support_products,
-      agents: this.appVars.support_agents,
-      searchInput: this.search
+      searchInput: this.search,
+      tagOptions: this.appVars.ticket_tags
     };
   },
   watch: {
@@ -24413,8 +24414,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     has_active_filter: function has_active_filter() {
+      var _f$ticket_tags;
+
       var f = this.filters;
-      return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput;
+      return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || ((_f$ticket_tags = f.ticket_tags) === null || _f$ticket_tags === void 0 ? void 0 : _f$ticket_tags.length);
     }
   },
   methods: {
@@ -24428,6 +24431,17 @@ __webpack_require__.r(__webpack_exports__);
 
       this.fetchTickets();
     }
+  },
+  mounted: function mounted() {
+    var ticketTags = JSON.parse(JSON.stringify(this.appVars.ticket_tags));
+    var options = ticketTags.map(function (tag) {
+      return {
+        label: tag.title,
+        value: tag.id
+      };
+    }); //  this.tagOptions = options;
+
+    console.log(options);
   }
 });
 
@@ -28707,6 +28721,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         prop: "description",
         label: "Description"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        prop: "count",
+        label: "Tickets"
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
         width: "120",
         label: "Action"
       }, {
@@ -31034,33 +31051,36 @@ var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 /* HOISTED */
 );
 
-var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
-  "class": "fs_tk_filter"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", null, "Tags")], -1
-/* HOISTED */
-);
-
-var _hoisted_18 = {
+var _hoisted_17 = {
+  key: 0,
   "class": "fs_tk_filter"
 };
 
-var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", null, "Waiting for Reply", -1
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", null, "Tags", -1
 /* HOISTED */
 );
 
-var _hoisted_20 = {
+var _hoisted_19 = {
   "class": "fs_tk_filter"
 };
 
-var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", null, "Search", -1
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", null, "Waiting for Reply", -1
 /* HOISTED */
 );
 
-var _hoisted_22 = {
+var _hoisted_21 = {
   "class": "fs_tk_filter"
 };
 
-var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Reset Filters ");
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", null, "Search", -1
+/* HOISTED */
+);
+
+var _hoisted_23 = {
+  "class": "fs_tk_filter"
+};
+
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Reset Filters ");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_el_radio_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-radio-button");
@@ -31154,7 +31174,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     placeholder: "All Products"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.products, function (product) {
+      return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.appVars.support_products, function (product) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
           key: product.id,
           value: product.id,
@@ -31188,7 +31208,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_option, {
         value: "unassigned",
         label: "Un-Assigned"
-      }), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.agents, function (agent) {
+      }), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.appVars.support_agents, function (agent) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
           key: agent.id,
           value: agent.id,
@@ -31265,36 +31285,68 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["modelValue"])]), _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_switch, {
+  , ["modelValue"])]), $data.tagOptions.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_17, [_hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_select, {
     onChange: _cache[11] || (_cache[11] = function ($event) {
+      return $options.fetchTickets();
+    }),
+    modelValue: $props.filters.ticket_tags,
+    "onUpdate:modelValue": _cache[12] || (_cache[12] = function ($event) {
+      return $props.filters.ticket_tags = $event;
+    }),
+    placeholder: "Filter By Tags",
+    multiple: "",
+    "popper-append-to-body": "true",
+    size: "small",
+    "collapse-tags": ""
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.appVars.ticket_tags, function (tag) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
+          key: tag.id,
+          label: tag.title,
+          value: tag.id
+        }, null, 8
+        /* PROPS */
+        , ["label", "value"]);
+      }), 128
+      /* KEYED_FRAGMENT */
+      ))];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["modelValue"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_switch, {
+    onChange: _cache[13] || (_cache[13] = function ($event) {
       return $options.maybeChangeWaitingReply();
     }),
     "active-value": "yes",
     "inactive-value": false,
     modelValue: $props.filters.waiting_for_reply,
-    "onUpdate:modelValue": _cache[12] || (_cache[12] = function ($event) {
+    "onUpdate:modelValue": _cache[14] || (_cache[14] = function ($event) {
       return $props.filters.waiting_for_reply = $event;
     })
   }, null, 8
   /* PROPS */
-  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_20, [_hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
-    onKeyup: _cache[14] || (_cache[14] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function ($event) {
+  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_21, [_hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
+    onKeyup: _cache[16] || (_cache[16] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function ($event) {
       return $options.fetchTickets();
     }, ["enter"])),
     clearable: "",
-    onClear: _cache[15] || (_cache[15] = function ($event) {
+    onClear: _cache[17] || (_cache[17] = function ($event) {
       return $options.fetchTickets();
     }),
     size: "mini",
     placeholder: "Please input",
     modelValue: $data.searchInput,
-    "onUpdate:modelValue": _cache[16] || (_cache[16] = function ($event) {
+    "onUpdate:modelValue": _cache[18] || (_cache[18] = function ($event) {
       return $data.searchInput = $event;
     })
   }, {
     append: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
-        onClick: _cache[13] || (_cache[13] = function ($event) {
+        onClick: _cache[15] || (_cache[15] = function ($event) {
           return $options.fetchTickets();
         }),
         icon: "el-icon-search"
@@ -31305,15 +31357,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
     type: $options.has_active_filter ? 'danger' : 'default',
-    onClick: _cache[17] || (_cache[17] = function ($event) {
+    onClick: _cache[19] || (_cache[19] = function ($event) {
       return $props.resetFilters();
     }),
     size: "small"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_23];
+      return [_hoisted_24];
     }),
     _: 1
     /* STABLE */
@@ -32216,7 +32268,7 @@ var FluentFramework = /*#__PURE__*/function () {
       _admin_Bits_elements__WEBPACK_IMPORTED_MODULE_0__.default.mixin({
         data: function data() {
           return {
-            appVars: self.appVars
+            appVars: {}
           };
         },
         methods: {
@@ -32247,6 +32299,9 @@ var FluentFramework = /*#__PURE__*/function () {
           $setTitle: function $setTitle(title) {
             document.title = title;
           }
+        },
+        created: function created() {
+          this.appVars = window.fluentSupportAdmin;
         }
       });
       return _admin_Bits_elements__WEBPACK_IMPORTED_MODULE_0__.default;
@@ -32747,20 +32802,9 @@ __webpack_require__.r(__webpack_exports__);
 var router = (0,vue_router__WEBPACK_IMPORTED_MODULE_2__.createRouter)({
   history: (0,vue_router__WEBPACK_IMPORTED_MODULE_2__.createWebHashHistory)(),
   routes: _routes__WEBPACK_IMPORTED_MODULE_0__.default
-}); // window.FluentFramework.request = function(method, route, data = {}) {
-//     const url = `${window.fluentSupportAdmin.rest.url}/${route}`;
-//
-//     return window.jQuery.ajax({
-//         url: url,
-//         type: method,
-//         data: data,
-//         beforeSend: function(xhr) {
-//             xhr.setRequestHeader('X-WP-Nonce', window.fluentSupportAdmin.rest.nonce);
-//         }
-//     });
-// };
-
+});
 var framerwork = new _Bits_FluentFramework__WEBPACK_IMPORTED_MODULE_1__.default();
+framerwork.app.config.globalProperties.appVars = window.fluentSupportAdmin;
 window.fluentSupportAppp = framerwork.app.use(router).mount('#alpha_app');
 router.afterEach(function (to, from) {
   jQuery('.fframe_menu_item').removeClass('fs_active');
