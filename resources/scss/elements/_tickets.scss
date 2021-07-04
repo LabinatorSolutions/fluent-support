@@ -295,6 +295,11 @@
             overflow: auto;
             padding: 1.5em;
             white-space: pre-wrap;
+            code {
+                padding: 0;
+                margin: 0;
+                background: transparent;
+            }
         }
     }
 
