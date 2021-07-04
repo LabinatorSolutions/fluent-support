@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="doing_action" class="fs_tags">
+    <div v-if="!appVars.ticket_tags.length" v-loading="doing_action" class="fs_tags">
         <el-tag
             effect="plain"
             v-for="(tag,tagIndex) in tags"
