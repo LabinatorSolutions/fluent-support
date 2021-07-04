@@ -16,7 +16,11 @@
                     <el-table-column width="80" prop="id" label="ID"></el-table-column>
                     <el-table-column prop="title" label="Title"></el-table-column>
                     <el-table-column prop="description" label="Description"></el-table-column>
-                    <el-table-column prop="count" label="Tickets"></el-table-column>
+                    <el-table-column label="Tickets">
+                        <template #default="scope">
+                            <router-link :to="{name: 'tickets', query: {tags: [scope.row.id]}}">{{scope.row.count}}</router-link>
+                        </template>
+                    </el-table-column>
                     <el-table-column width="120" label="Action">
                         <template #default="scope">
                             <el-button @click="editTagModal(scope.row)" size="mini" type="success"

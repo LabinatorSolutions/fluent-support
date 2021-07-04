@@ -391,6 +391,17 @@ export default {
             this.filters.agent_id = this.$route.query.agent_id;
         }
 
+        if(this.$route.query.tags) {
+            const tagIds = this.$route.query.tags;
+            if(typeof tagIds == 'object') {
+                this.filters.ticket_tags = tagIds.map(tagId => {
+                    return parseInt(tagId);
+                });
+            } else {
+                this.filters.ticket_tags = [parseInt(tagIds)];
+            }
+        }
+
         if (this.$route.query.search) {
             this.search = this.$route.query.search;
         }

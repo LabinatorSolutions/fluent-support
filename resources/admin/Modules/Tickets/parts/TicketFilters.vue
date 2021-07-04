@@ -43,7 +43,7 @@
                            :value="priorityKey" :label="priority"></el-option>
             </el-select>
         </div>
-        <div v-if="tagOptions.length" class="fs_tk_filter">
+        <div v-if="appVars.ticket_tags.length" class="fs_tk_filter">
             <label>Tags</label>
             <el-select
                 @change="fetchTickets()"
@@ -101,8 +101,7 @@ export default {
                 response_count: 'Response Count',
                 created_at: 'Created At'
             },
-            searchInput: this.search,
-            tagOptions: this.appVars.ticket_tags
+            searchInput: this.search
         }
     },
     watch: {
@@ -126,17 +125,6 @@ export default {
             }
             this.fetchTickets();
         }
-    },
-    mounted() {
-        const ticketTags = JSON.parse(JSON.stringify(this.appVars.ticket_tags));
-        const options = ticketTags.map(tag => {
-            return {
-                label: tag.title,
-                value: tag.id
-            }
-        });
-      //  this.tagOptions = options;
-        console.log(options);
     }
 }
 </script>
