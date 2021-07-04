@@ -32,11 +32,6 @@ export default class FluentFramework {
     extendVueConstructor() {
         const self = this;
         app.mixin({
-            data() {
-                return {
-                    appVars: {}
-                }
-            },
             methods: {
                 addFilter,
                 applyFilters,
@@ -65,10 +60,7 @@ export default class FluentFramework {
                 $setTitle(title) {
                     document.title = title;
                 }
-            },
-            created() {
-                this.appVars = window.fluentSupportAdmin;
-            },
+            }
         });
 
         return app;
