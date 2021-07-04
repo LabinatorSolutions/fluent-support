@@ -4,7 +4,7 @@ namespace FluentSupport\Database\Migrations;
 
 class TagRelationsMigrator
 {
-    static $tableName = 'fs_tickets';
+    static $tableName = 'fs_tag_pivot';
 
     public static function migrate()
     {

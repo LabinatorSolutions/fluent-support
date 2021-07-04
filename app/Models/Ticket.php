@@ -230,6 +230,15 @@ class Ticket extends Model
         );
     }
 
+    public function tags()
+    {
+        $class = __NAMESPACE__ . '\TicketTag';
+
+        return $this->belongsToMany(
+            $class, 'fs_tag_pivot', 'source_id', 'tag_id'
+        )->wherePivot('source_type', 'ticket_tag');
+    }
+
     /**
      * One2one: Customer has to many Click Tickets
      * @return Model Collection
@@ -303,6 +312,18 @@ class Ticket extends Model
             $slug .= '-' . time();
         }
         return $slug;
+    }
+
+    public function hasTag($tagId)
+    {
+        $tags = $this->tags;
+        foreach ($tags as $tag) {
+            if($tag->id == $tagId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

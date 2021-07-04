@@ -6,6 +6,7 @@ use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 
@@ -181,7 +182,8 @@ class Menu
                 'go_back_after_reply' => 'yes'
             ],
             'server_time'       => current_time('mysql'),
-            'has_email_parser' => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH')
+            'has_email_parser' => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH'),
+            'ticket_tags' => TicketTag::select(['id', 'title'])->get()
         ));
 
         do_action('fluent_support_admin_app_loaded', $app);
