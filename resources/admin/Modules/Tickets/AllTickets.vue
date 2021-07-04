@@ -195,7 +195,8 @@ export default {
                 agent_id: '',
                 priority: '',
                 client_priority: '',
-                waiting_for_reply: ''
+                waiting_for_reply: '',
+                ticket_tags: []
             },
             search: '',
             order_by: 'last_customer_response',
@@ -377,7 +378,8 @@ export default {
                 agent_id: '',
                 priority: '',
                 client_priority: '',
-                waiting_for_reply: ''
+                waiting_for_reply: '',
+                ticket_tags: []
             };
             this.search = '';
             this.fetchTickets();

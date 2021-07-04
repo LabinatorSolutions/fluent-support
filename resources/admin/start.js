@@ -8,22 +8,12 @@ const router = createRouter({
 });
 
 
-// window.FluentFramework.request = function(method, route, data = {}) {
-//     const url = `${window.fluentSupportAdmin.rest.url}/${route}`;
-//
-//     return window.jQuery.ajax({
-//         url: url,
-//         type: method,
-//         data: data,
-//         beforeSend: function(xhr) {
-//             xhr.setRequestHeader('X-WP-Nonce', window.fluentSupportAdmin.rest.nonce);
-//         }
-//     });
-// };
-
 const framerwork = new FluentFramework();
 
+framerwork.app.config.globalProperties.appVars = window.fluentSupportAdmin;
+
 window.fluentSupportAppp = framerwork.app.use(router).mount('#alpha_app');
+
 
 router.afterEach((to, from) => {
     jQuery('.fframe_menu_item').removeClass('fs_active');

@@ -14,7 +14,7 @@
             <label>Product</label>
             <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.product_id"
                        placeholder="All Products">
-                <el-option v-for="product in products" :key="product.id" :value="product.id"
+                <el-option v-for="product in appVars.support_products" :key="product.id" :value="product.id"
                            :label="product.title"></el-option>
             </el-select>
         </div>
@@ -23,7 +23,7 @@
             <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.agent_id"
                        placeholder="All Support Staff">
                 <el-option value="unassigned" label="Un-Assigned"></el-option>
-                <el-option v-for="agent in agents" :key="agent.id" :value="agent.id"
+                <el-option v-for="agent in appVars.support_agents" :key="agent.id" :value="agent.id"
                            :label="agent.full_name"></el-option>
             </el-select>
         </div>
@@ -43,9 +43,22 @@
                            :value="priorityKey" :label="priority"></el-option>
             </el-select>
         </div>
-        <div class="fs_tk_filter">
+        <div v-if="tagOptions.length" class="fs_tk_filter">
             <label>Tags</label>
-
+            <el-select
+                @change="fetchTickets()"
+                v-model="filters.ticket_tags"
+                placeholder="Filter By Tags"
+                multiple
+                popper-append-to-body="true"
+                size="small"
+                collapse-tags
+            >
+                <el-option v-for="tag in appVars.ticket_tags"
+                           :key="tag.id"
+                           :label="tag.title"
+                           :value="tag.id"></el-option>
+            </el-select>
         </div>
         <div class="fs_tk_filter">
             <label>Waiting for Reply</label>
@@ -88,9 +101,8 @@ export default {
                 response_count: 'Response Count',
                 created_at: 'Created At'
             },
-            products: this.appVars.support_products,
-            agents: this.appVars.support_agents,
-            searchInput: this.search
+            searchInput: this.search,
+            tagOptions: this.appVars.ticket_tags
         }
     },
     watch: {
@@ -101,7 +113,7 @@ export default {
     computed: {
         has_active_filter() {
             const f = this.filters;
-            return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput;
+            return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length;
         }
     },
     methods: {
@@ -114,6 +126,17 @@ export default {
             }
             this.fetchTickets();
         }
+    },
+    mounted() {
+        const ticketTags = JSON.parse(JSON.stringify(this.appVars.ticket_tags));
+        const options = ticketTags.map(tag => {
+            return {
+                label: tag.title,
+                value: tag.id
+            }
+        });
+      //  this.tagOptions = options;
+        console.log(options);
     }
 }
 </script>

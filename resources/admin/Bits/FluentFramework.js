@@ -34,7 +34,7 @@ export default class FluentFramework {
         app.mixin({
             data() {
                 return {
-                    appVars: self.appVars
+                    appVars: {}
                 }
             },
             methods: {
@@ -65,7 +65,10 @@ export default class FluentFramework {
                 $setTitle(title) {
                     document.title = title;
                 }
-            }
+            },
+            created() {
+                this.appVars = window.fluentSupportAdmin;
+            },
         });
 
         return app;
@@ -259,5 +262,4 @@ export default class FluentFramework {
         time2 = moment(time2);
         return time2.from(time1);
     }
-
 }

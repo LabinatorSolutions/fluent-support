@@ -9,10 +9,14 @@ class TicketTagsController extends Controller
 {
     public function index(Request $request)
     {
-        $products = TicketTag::paginate();
+        $tags = TicketTag::paginate();
+
+        foreach ($tags as $tag) {
+            $tag->count = $tag->tickets()->count();
+        }
 
         return [
-            'tags' => $products
+            'tags' => $tags
         ];
     }
 
