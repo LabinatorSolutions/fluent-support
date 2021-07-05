@@ -10,7 +10,7 @@
 
 
 
-#### Rune the project
+#### Run the project
 
 - `npm install` 
 - `npx mix watch` 
