@@ -7,3 +7,11 @@
 #### DB Changelog
 
 - `waiting_since` in fs_tickets has been added
+
+
+
+#### Run the project
+
+- `npm install` 
+- `npx mix watch` 
+- `npx mix --production`
