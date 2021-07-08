@@ -20,12 +20,12 @@ export default {
                 first_name: {
                     label: 'First Name',
                     data_type: 'text',
-                    placeholder: 'Email',
+                    placeholder: 'First Name',
                     type: 'input-text'
                 },
                 last_name: {
                     label: 'Last Name',
-                    data_type: 'email',
+                    data_type: 'text',
                     placeholder: 'Last Name',
                     type: 'input-text'
                 },
