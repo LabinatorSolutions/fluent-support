@@ -23217,7 +23217,7 @@ __webpack_require__.r(__webpack_exports__);
         route_name: 'products',
         route_query: {}
       }, {
-        title: 'Support Staff',
+        title: 'Support Staffs',
         route_name: 'support-staffs',
         route_query: {}
       }, {
@@ -28375,7 +28375,7 @@ var _hoisted_2 = {
 
 var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
   "class": "fs_box_head"
-}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Support Staff")], -1
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Support Staffs")], -1
 /* HOISTED */
 );
 

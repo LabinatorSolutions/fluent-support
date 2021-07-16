@@ -2,7 +2,7 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>Support Staff</h3>
+                <h3>Support Staffs</h3>
             </div>
             <div class="fs_box_actions">
                 <el-button @click="createStaffModal()" type="primary" icon="el-icon-plus" size="small">
