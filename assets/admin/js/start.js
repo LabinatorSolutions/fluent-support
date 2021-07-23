@@ -23295,6 +23295,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         email: '',
         first_name: '',
         last_name: '',
+        title: '',
         permissions: []
       };
       this.agent_modal = true;
@@ -28393,9 +28394,15 @@ var _hoisted_7 = {
   "class": "fs_badge"
 };
 var _hoisted_8 = {
-  "class": "fframe_pagination_wrapper"
+  style: {
+    "font-size": "14px",
+    "color": "#56c288"
+  }
 };
 var _hoisted_9 = {
+  "class": "fframe_pagination_wrapper"
+};
+var _hoisted_10 = {
   key: 1,
   style: {
     "padding": "20px",
@@ -28404,17 +28411,17 @@ var _hoisted_9 = {
   "class": "fs_box_body"
 };
 
-var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Telegram Integration", -1
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Telegram Integration", -1
 /* HOISTED */
 );
 
-var _hoisted_11 = {
+var _hoisted_12 = {
   "class": "dialog-footer"
 };
-var _hoisted_12 = {
+var _hoisted_13 = {
   key: 0
 };
-var _hoisted_13 = {
+var _hoisted_14 = {
   key: 1
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
@@ -28499,6 +28506,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         prop: "replies_count",
         width: "140"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        label: "Title"
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function (scope) {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(scope.row.title), 1
+          /* TEXT */
+          )];
+        }),
+        _: 1
+        /* STABLE */
+
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
         label: "Actions",
         width: "100"
       }, {
@@ -28533,14 +28551,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["data"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pagination, {
+  , ["data"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pagination, {
     onFetch: _cache[2] || (_cache[2] = function ($event) {
       return $options.fetchAgents();
     }),
     pagination: $data.pagination
   }, null, 8
   /* PROPS */
-  , ["pagination"])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+  , ["pagination"])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
     rows: 5,
     animated: ""
   })])), $data.editing_agent ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_dialog, {
@@ -28548,21 +28566,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "append-to-body": true,
     title: $data.editing_agent && $data.editing_agent.id ? 'Edit Staff' : 'Add new Support Staff',
     modelValue: $data.agent_modal,
-    "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+    "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
       return $data.agent_modal = $event;
     }),
     width: "60%"
   }, {
     footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
         disabled: $data.saving,
         type: "primary",
-        onClick: _cache[8] || (_cache[8] = function ($event) {
+        onClick: _cache[9] || (_cache[9] = function ($event) {
           return $options.createOrUpdateAgent();
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [$data.editing_agent.id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_12, "Update")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_13, "Create"))];
+          return [$data.editing_agent.id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_13, "Update")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_14, "Create"))];
         }),
         _: 1
         /* STABLE */
@@ -28633,12 +28651,30 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             /* STABLE */
 
           }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+            label: "Title"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
+                type: "text",
+                placeholder: "Agent Job Title( ex: Developer, Support Staff )",
+                modelValue: $data.editing_agent.title,
+                "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+                  return $data.editing_agent.title = $event;
+                })
+              }, null, 8
+              /* PROPS */
+              , ["modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
             label: "Permissions"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_checkbox_group, {
                 modelValue: $data.editing_agent.permissions,
-                "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+                "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
                   return $data.editing_agent.permissions = $event;
                 })
               }, {
@@ -28673,7 +28709,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          }), _hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+          }), _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
             label: "Telegram Chat ID"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -28681,7 +28717,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 type: "text",
                 placeholder: "Telegram Chat ID",
                 modelValue: $data.editing_agent.telegram_chat_id,
-                "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
+                "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
                   return $data.editing_agent.telegram_chat_id = $event;
                 })
               }, null, 8
@@ -29536,10 +29572,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19":
-/*!****************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19 ***!
-  \****************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -29548,6 +29584,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* binding */ render)
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+var _withId = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.withScopeId)("data-v-6b9d9a19");
+
+(0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-6b9d9a19");
 
 var _hoisted_1 = {
   "class": "fs_view_ticket"
@@ -29663,36 +29704,40 @@ var _hoisted_27 = {
   "class": "fs_threads_container"
 };
 var _hoisted_28 = {
-  "class": "fs_thread_content"
+  key: 0,
+  "class": "agent_title"
 };
 var _hoisted_29 = {
-  "class": "fs_avatar"
+  "class": "fs_thread_content"
 };
 var _hoisted_30 = {
-  "class": "fs_thread_wrap"
+  "class": "fs_avatar"
 };
 var _hoisted_31 = {
-  "class": "fs_thread_message"
+  "class": "fs_thread_wrap"
 };
 var _hoisted_32 = {
-  "class": "fs_thread_head"
+  "class": "fs_thread_message"
 };
 var _hoisted_33 = {
-  "class": "fs_thread_title"
+  "class": "fs_thread_head"
 };
 var _hoisted_34 = {
-  key: 0
+  "class": "fs_thread_title"
 };
 var _hoisted_35 = {
-  key: 1
+  key: 0
 };
 var _hoisted_36 = {
-  key: 2
+  key: 1
 };
 var _hoisted_37 = {
-  "class": "fs_thread_actions"
+  key: 2
 };
 var _hoisted_38 = {
+  "class": "fs_thread_actions"
+};
+var _hoisted_39 = {
   key: 0,
   style: {
     "margin-right": "5px"
@@ -29700,13 +29745,13 @@ var _hoisted_38 = {
   title: "Added By Email"
 };
 
-var _hoisted_39 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
+var _hoisted_40 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
   "class": "el-icon-message"
 }, null, -1
 /* HOISTED */
 );
 
-var _hoisted_40 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+var _hoisted_41 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
   "class": "el-dropdown-link"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
   "class": "el-icon-arrow-down el-icon--right"
@@ -29714,55 +29759,55 @@ var _hoisted_40 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(
 /* HOISTED */
 );
 
-var _hoisted_41 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Edit ");
+var _hoisted_42 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Edit ");
 
-var _hoisted_42 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Delete ");
+var _hoisted_43 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Delete ");
 
-var _hoisted_43 = {
+var _hoisted_44 = {
   key: 0,
   "class": "fst_file_lists"
 };
 
-var _hoisted_44 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
+var _hoisted_45 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
 /* HOISTED */
 );
 
-var _hoisted_45 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
+var _hoisted_46 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
   "class": "el-icon-paperclip"
 }, null, -1
 /* HOISTED */
 );
 
-var _hoisted_46 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)();
+var _hoisted_47 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)();
 
-var _hoisted_47 = {
+var _hoisted_48 = {
   "class": "fs_thread conversion_starter"
 };
-var _hoisted_48 = {
+var _hoisted_49 = {
   "class": "fs_thread_content"
 };
-var _hoisted_49 = {
+var _hoisted_50 = {
   "class": "fs_avatar"
 };
-var _hoisted_50 = {
+var _hoisted_51 = {
   "class": "fs_thread_wrap"
 };
-var _hoisted_51 = {
+var _hoisted_52 = {
   "class": "fs_thread_message"
 };
-var _hoisted_52 = {
+var _hoisted_53 = {
   "class": "fs_thread_head"
 };
-var _hoisted_53 = {
+var _hoisted_54 = {
   "class": "fs_thread_title"
 };
 
-var _hoisted_54 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" started the conversation ");
+var _hoisted_55 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" started the conversation ");
 
-var _hoisted_55 = {
+var _hoisted_56 = {
   "class": "fs_thread_actions"
 };
-var _hoisted_56 = {
+var _hoisted_57 = {
   key: 0,
   style: {
     "margin-right": "5px"
@@ -29770,23 +29815,26 @@ var _hoisted_56 = {
   title: "Added By Email"
 };
 
-var _hoisted_57 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
+var _hoisted_58 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("i", {
   "class": "el-icon-message"
 }, null, -1
 /* HOISTED */
 );
 
-var _hoisted_58 = {
+var _hoisted_59 = {
   "class": "fs_ticket_sidebar"
 };
-var _hoisted_59 = {
+var _hoisted_60 = {
   key: 1,
   style: {
     "padding": "20px"
   },
   "class": "fs_ticket_body"
 };
-function render(_ctx, _cache, $props, $setup, $data, $options) {
+
+(0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)();
+
+var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data, $options) {
   var _$data$ticket$agent, _$data$ticket$mailbox, _$data$ticket$custome, _$data$ticket$custome2, _$data$ticket$custome3;
 
   var _component_el_option = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-option");
@@ -29848,7 +29896,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     width: 400,
     trigger: "click"
   }, {
-    reference: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    reference: _withId(function () {
       var _$data$ticket$agent2, _$data$ticket$agent3;
 
       return [$data.ticket.agent ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
@@ -29858,7 +29906,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* PROPS */
       , ["alt", "src"])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("i", _hoisted_8))];
     }),
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    "default": _withId(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_select, {
         filterable: "",
         onChange: _cache[3] || (_cache[3] = function ($event) {
@@ -29869,7 +29917,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           return $data.ticket.agent_id = $event;
         })
       }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+        "default": _withId(function () {
           return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.agents, function (agent) {
             return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
               key: agent.id,
@@ -29912,7 +29960,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     type: "info",
     size: "small"
   }, {
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    "default": _withId(function () {
       return [_hoisted_12];
     }),
     _: 1
@@ -29925,14 +29973,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     width: 400,
     trigger: "click"
   }, {
-    reference: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    reference: _withId(function () {
       var _$data$ticket$product;
 
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$ticket$product = $data.ticket.product) === null || _$data$ticket$product === void 0 ? void 0 : _$data$ticket$product.title), 1
       /* TEXT */
       )])];
     }),
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    "default": _withId(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_select, {
         onChange: _cache[7] || (_cache[7] = function ($event) {
           return $options.updateTicketAttr('product_id');
@@ -29942,7 +29990,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           return $data.ticket.product_id = $event;
         })
       }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+        "default": _withId(function () {
           return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.products, function (product) {
             return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
               key: product.id,
@@ -29974,14 +30022,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     width: 400,
     trigger: "click"
   }, {
-    reference: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    reference: _withId(function () {
       var _$data$ticket;
 
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$ticket = $data.ticket) === null || _$data$ticket === void 0 ? void 0 : _$data$ticket.title), 1
       /* TEXT */
       )];
     }),
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    "default": _withId(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
         onKeyup: _cache[9] || (_cache[9] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function ($event) {
           return $options.updateTicketAttr('title');
@@ -30008,7 +30056,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     width: 400,
     trigger: "click"
   }, {
-    reference: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    reference: _withId(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
         "class": ['fs_badge_priority_' + $data.ticket.client_priority, "fs_badge"]
       }, [_hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ticket.client_priority), 1
@@ -30017,7 +30065,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* CLASS */
       )];
     }),
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    "default": _withId(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_select, {
         onChange: _cache[11] || (_cache[11] = function ($event) {
           return $options.updateTicketAttr('client_priority');
@@ -30028,7 +30076,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         }),
         size: "small"
       }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+        "default": _withId(function () {
           return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.client_priorities, function (priorityLabel, priority) {
             return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
               key: priority,
@@ -30077,7 +30125,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     type: "info",
     size: "small"
   }, {
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    "default": _withId(function () {
       return [_hoisted_26];
     }),
     _: 1
@@ -30090,16 +30138,18 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("article", {
       key: conversation.id,
-      "class": ["fs_thread", $options.getTicketClasses(conversation)]
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_28, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_29, [conversation.person ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("img", {
+      "class": ["fs_thread", $data.ticket.agent.title === '' ? $options.getTicketClasses(conversation) : 'fs_agent fs_conv_type_' + conversation.conversation_type]
+    }, [$data.ticket.agent.title ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_28, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ticket.agent.title), 1
+    /* TEXT */
+    )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_30, [conversation.person ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("img", {
       key: 0,
       src: (_conversation$person = conversation.person) === null || _conversation$person === void 0 ? void 0 : _conversation$person.photo,
-      alt: conversation.person.full_name
+      alts: conversation.person.full_name
     }, null, 8
     /* PROPS */
-    , ["src", "alt"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_33, [conversation.person ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("strong", _hoisted_34, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getHumanName(conversation.person)), 1
+    , ["src", "alts"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_31, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_34, [conversation.person ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("strong", _hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getHumanName(conversation.person)), 1
     /* TEXT */
-    )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), conversation.conversation_type == 'response' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_35, " replied")) : conversation.conversation_type == 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_36, " added a note")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_37, [conversation.source == 'email' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_38, [_hoisted_39])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+    )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), conversation.conversation_type == 'response' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_36, " replied")) : conversation.conversation_type == 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_37, " added a note")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_38, [conversation.source == 'email' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_39, [_hoisted_40])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
       title: conversation.created_at
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$timeDiff(conversation.created_at)), 9
     /* TEXT, PROPS */
@@ -30107,9 +30157,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       onCommand: $options.handleResponseActionCommand,
       trigger: "click"
     }, {
-      dropdown: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      dropdown: _withId(function () {
         return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dropdown_menu, null, {
-          "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          "default": _withId(function () {
             return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dropdown_item, {
               command: {
                 type: 'edit',
@@ -30117,8 +30167,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
               },
               icon: "el-icon-edit"
             }, {
-              "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-                return [_hoisted_41];
+              "default": _withId(function () {
+                return [_hoisted_42];
               }),
               _: 2
               /* DYNAMIC */
@@ -30132,8 +30182,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
               },
               icon: "el-icon-delete"
             }, {
-              "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-                return [_hoisted_42];
+              "default": _withId(function () {
+                return [_hoisted_43];
               }),
               _: 2
               /* DYNAMIC */
@@ -30149,8 +30199,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         /* DYNAMIC_SLOTS */
         )];
       }),
-      "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-        return [_hoisted_40];
+      "default": _withId(function () {
+        return [_hoisted_41];
       }),
       _: 2
       /* DYNAMIC */
@@ -30162,10 +30212,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "class": "fs_thread_body"
     }, null, 8
     /* PROPS */
-    , ["innerHTML"]), (_conversation$attachm = conversation.attachments) !== null && _conversation$attachm !== void 0 && _conversation$attachm.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_43, [_hoisted_44, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(conversation.attachments, function (attachment) {
+    , ["innerHTML"]), (_conversation$attachm = conversation.attachments) !== null && _conversation$attachm !== void 0 && _conversation$attachm.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_44, [_hoisted_45, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(conversation.attachments, function (attachment) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("li", {
         key: attachment.file_hash
-      }, [_hoisted_45, _hoisted_46, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
+      }, [_hoisted_46, _hoisted_47, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
         target: "_blank",
         rel: "noopener",
         href: attachment.secureUrl
@@ -30179,14 +30229,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     );
   }), 128
   /* KEYED_FRAGMENT */
-  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("article", _hoisted_47, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_48, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_49, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
+  )), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("article", _hoisted_48, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_49, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
     src: (_$data$ticket$custome = $data.ticket.customer) === null || _$data$ticket$custome === void 0 ? void 0 : _$data$ticket$custome.photo,
     alt: (_$data$ticket$custome2 = $data.ticket.customer) === null || _$data$ticket$custome2 === void 0 ? void 0 : _$data$ticket$custome2.full_name
   }, null, 8
   /* PROPS */
-  , ["src", "alt"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_52, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_53, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$ticket$custome3 = $data.ticket.customer) === null || _$data$ticket$custome3 === void 0 ? void 0 : _$data$ticket$custome3.full_name), 1
+  , ["src", "alt"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("section", _hoisted_52, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_53, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_54, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$ticket$custome3 = $data.ticket.customer) === null || _$data$ticket$custome3 === void 0 ? void 0 : _$data$ticket$custome3.full_name), 1
   /* TEXT */
-  ), _hoisted_54]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_55, [$data.ticket.source == 'email' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_56, [_hoisted_57])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
+  ), _hoisted_55]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_56, [$data.ticket.source == 'email' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_57, [_hoisted_58])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", {
     title: $data.ticket.created_at
   }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.$timeDiff($data.ticket.created_at)), 9
   /* TEXT, PROPS */
@@ -30195,14 +30245,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "fs_thread_body"
   }, null, 8
   /* PROPS */
-  , ["innerHTML"])])])])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_58, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ticket_sidebar, {
+  , ["innerHTML"])])])])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_59, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ticket_sidebar, {
     ticket_id: $props.ticket_id,
     ticket: $data.ticket
   }, null, 8
   /* PROPS */
   , ["ticket_id", "ticket"])])], 64
   /* STABLE_FRAGMENT */
-  )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_59, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+  )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_60, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
     rows: 10,
     animated: ""
   })])), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dialog, {
@@ -30213,7 +30263,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     width: "60%"
   }, {
-    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+    "default": _withId(function () {
       return [$data.editing_response ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_edit_response, {
         key: 0,
         onUpdated: _cache[15] || (_cache[15] = function ($event) {
@@ -30236,7 +30286,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 8
   /* PROPS */
   , ["ticket"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
-}
+});
 
 /***/ }),
 
@@ -32929,6 +32979,33 @@ router.afterEach(function (to, from) {
     jQuery('.fframe_main-menu-items').find('li[data-key=' + active + ']').addClass('fs_active');
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/cssWithMappingToString.js */ "./node_modules/css-loader/dist/runtime/cssWithMappingToString.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.agent_title[data-v-6b9d9a19]{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent[data-v-6b9d9a19]{\n    border-left: 4px solid #5d6cc3;\n}\n.fs_conv_type_note[data-v-6b9d9a19]{\n    border-left: 4px solid #e6a23c;\n}\n", "",{"version":3,"sources":["webpack://./resources/admin/Modules/Tickets/ViewTicket.vue"],"names":[],"mappings":";AAocA;IACI,WAAW;IACX,kBAAkB;IAClB,OAAO;IACP,MAAM;IACN,mBAAmB;IACnB,WAAW;IACX,iBAAiB;IACjB,eAAe;AACnB;AACA;IACI,8BAA8B;AAClC;AACA;IACI,8BAA8B;AAClC","sourcesContent":["<template>\n    <div class=\"fs_view_ticket\">\n        <template v-if=\"ticket && ticket.id\">\n            <div class=\"fs_ticket_body\">\n                <div class=\"fs_ticket_actions\">\n                    <ul class=\"fs_tk_actions\">\n                        <template v-if=\"ticket.status != 'closed'\">\n                            <li :class=\"(show_response_box == 'response') ? 'fs_action_active' : ''\"\n                                @click=\"show_response_box = 'response'\">\n                                <i class=\"el-icon-chat-line-square\"/>\n                            </li>\n                            <li :class=\"(show_response_box == 'note') ? 'fs_action_active' : ''\"\n                                @click=\"show_response_box = 'note'\">\n                                <i class=\"el-icon-notebook-1\"/>\n                            </li>\n                        </template>\n                        <li :title=\"'Assigned Agent ' + ticket.agent?.full_name\">\n                            <el-popover\n                                placement=\"bottom\"\n                                :width=\"400\"\n                                trigger=\"click\"\n                            >\n                                <template #reference>\n                                <span class=\"fs_agent_photo_icon\" v-if=\"ticket.agent\">\n                                    <img :alt=\"ticket.agent?.full_name\" :src=\"ticket.agent?.photo\"/>\n                                </span>\n                                    <i v-else class=\"el-icon-user\"/>\n                                </template>\n\n                                <el-select filterable @change=\"updateTicketAttr('agent_id')\" v-model=\"ticket.agent_id\">\n                                    <el-option\n                                        v-for=\"agent in agents\"\n                                        :key=\"agent.id\"\n                                        :value=\"agent.id\"\n                                        :label=\"agent.full_name\"></el-option>\n                                </el-select>\n                            </el-popover>\n                        </li>\n                        <template v-if=\"false\">\n                            <li>\n                                <i class=\"el-icon-price-tag\"/>\n                            </li>\n                            <li>\n                                <i class=\"el-icon-position\"/>\n                            </li>\n                        </template>\n                    </ul>\n                    <div class=\"fs_product\">\n                        <el-button v-loading=\"loading\" @click=\"fetchTicket()\" icon=\"el-icon-refresh\"\n                                   size=\"small\"></el-button>\n                        <el-button v-loading=\"updating\" :disabled=\"updating\" @click=\"closeTicket()\"\n                                   v-if=\"ticket.status != 'closed'\" class=\"fs_close_btn\" type=\"info\" size=\"small\">Close\n                        </el-button>\n                        <el-popover\n                            placement=\"bottom\"\n                            :width=\"400\"\n                            trigger=\"click\"\n                        >\n                            <template #reference>\n                                <span style=\"margin-right: 10px;\"><i class=\"el-icon-goods\"></i> {{\n                                        ticket.product?.title\n                                    }}</span>\n                            </template>\n\n                            <el-select @change=\"updateTicketAttr('product_id')\" v-model=\"ticket.product_id\">\n                                <el-option\n                                    v-for=\"product in products\"\n                                    :key=\"product.id\"\n                                    :value=\"product.id\"\n                                    :label=\"product.title\"></el-option>\n                            </el-select>\n\n                        </el-popover>\n                        <span><i\n                            class=\"el-icon-office-building\"></i> {{ ticket.mailbox?.name }}</span>\n                    </div>\n                </div>\n                <div class=\"fs_th_header\">\n                    <hgroup>\n                        <div class=\"fs_tk_subject\">\n                            <h2 title=\"Click to Edit Subject\">\n                                <span class=\"fs_ticket_id\">#{{ ticket.id }} </span>\n                                <el-popover\n                                    placement=\"bottom\"\n                                    :width=\"400\"\n                                    trigger=\"click\"\n                                >\n                                    <template #reference>\n                                        <span> {{ ticket?.title }}</span>\n                                    </template>\n\n                                    <el-input @keyup.enter=\"updateTicketAttr('title')\"\n                                              v-model=\"ticket.title\"></el-input>\n                                    <p>Press enter to save</p>\n                                </el-popover>\n                            </h2>\n                            <ticket-tags :creatable=\"true\" :ticket_id=\"ticket.id\" :tags.sync=\"ticket.tags\" />\n                        </div>\n                        <div class=\"fs_tk_badges\">\n                            <el-popover\n                                placement=\"bottom\"\n                                :width=\"400\"\n                                trigger=\"click\"\n                            >\n                                <template #reference>\n                                    <span :class=\"'fs_badge_priority_'+ticket.client_priority\" class=\"fs_badge\"><i\n                                        class=\"el-icon-s-flag\"></i> {{ ticket.client_priority }}</span>\n                                </template>\n\n                                <el-select @change=\"updateTicketAttr('client_priority')\" v-model=\"ticket.client_priority\"\n                                           size=\"small\">\n                                    <el-option\n\n                                        v-for=\"(priorityLabel, priority) in client_priorities\"\n                                        :key=\"priority\" :value=\"priority\"\n                                        :label=\"priorityLabel\"></el-option>\n                                </el-select>\n                            </el-popover>\n                            <span class=\"fs_badge\" :class=\"'fs_badge_' + ticket.status\">{{ ticket.status }}</span>\n                        </div>\n                    </hgroup>\n                </div>\n                <create-response\n                    v-if=\"show_response_box && ticket.status != 'closed'\"\n                    @created=\"recordNewResponse\"\n                    :ticket=\"ticket\"\n                    @close=\"show_response_box = ''\"\n                    :type=\"show_response_box\"\n                />\n                <div class=\"fs_create_response text-align-center\" v-if=\"ticket.status == 'closed'\">\n                    <p>This ticket has been closed at {{ ticket.resolved_at }}\n                        <span v-if=\"ticket.closed_by_person\">\n                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>\n                        </span></p>\n                    <el-button v-loading=\"updating\" :disabled=\"updating\" @click=\"reOpen()\" type=\"info\" size=\"small\">\n                        Reopen This ticket\n                    </el-button>\n                </div>\n                <div v-if=\"ticket && ticket.id\" class=\"fs_threads_container\">\n                    <article v-for=\"conversation in conversations\"\n                             :key=\"conversation.id\"\n                             class=\"fs_thread\"\n                             :class=\"(ticket.agent.title==='') ? getTicketClasses(conversation): 'fs_agent fs_conv_type_'+conversation.conversation_type\">\n\n                        <span class=\"agent_title\" v-if=\"ticket.agent.title\"> {{ticket.agent.title}} </span>\n\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img v-if=\"conversation.person\" :src=\"conversation.person?.photo\"\n                                     :alts=\"conversation.person.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong v-if=\"conversation.person\">\n                                                {{ getHumanName(conversation.person) }}</strong>\n                                            <span v-if=\"conversation.conversation_type == 'response'\"> replied</span>\n                                            <span v-else-if=\"conversation.conversation_type == 'note'\"> added a note</span>\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            <span style=\"margin-right: 5px\" v-if=\"conversation.source == 'email'\"\n                                                  title=\"Added By Email\"><i class=\"el-icon-message\"></i></span>\n                                            <span :title=\"conversation.created_at\">{{\n                                                    $timeDiff(conversation.created_at)\n                                                }}</span>\n                                            <el-dropdown @command=\"handleResponseActionCommand\" trigger=\"click\">\n                                                <span class=\"el-dropdown-link\">\n                                                    <i class=\"el-icon-arrow-down el-icon--right\"></i>\n                                                </span>\n                                                <template #dropdown>\n                                                    <el-dropdown-menu>\n                                                        <el-dropdown-item\n                                                            :command=\"{ type: 'edit', conversation: conversation }\"\n                                                            icon=\"el-icon-edit\"> Edit\n                                                        </el-dropdown-item>\n                                                        <el-dropdown-item\n                                                            :command=\"{ type: 'delete', conversation: conversation }\"\n                                                            icon=\"el-icon-delete\"> Delete\n                                                        </el-dropdown-item>\n                                                    </el-dropdown-menu>\n                                                </template>\n                                            </el-dropdown>\n                                        </div>\n                                    </div>\n                                    <div v-html=\"santizeContent(conversation.content)\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"conversation.attachments?.length\">\n                                        <hr/>\n                                        <ul>\n                                            <li\n                                                v-for=\"attachment in conversation.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                    <article class=\"fs_thread conversion_starter\">\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img :src=\"ticket.customer?.photo\" :alt=\"ticket.customer?.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong>{{ ticket.customer?.full_name }}</strong> started the conversation\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            <span style=\"margin-right: 5px\" v-if=\"ticket.source == 'email'\"\n                                                  title=\"Added By Email\"><i class=\"el-icon-message\"></i></span>\n                                            <span :title=\"ticket.created_at\">{{ $timeDiff(ticket.created_at) }}</span>\n                                        </div>\n                                    </div>\n                                    <div v-html=\"santizeContent(ticket.content)\" class=\"fs_thread_body\"></div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                </div>\n            </div>\n            <div class=\"fs_ticket_sidebar\">\n                <ticket-sidebar :ticket_id=\"ticket_id\" :ticket=\"ticket\"/>\n            </div>\n        </template>\n        <div style=\"padding: 20px;\" class=\"fs_ticket_body\" v-else>\n            <el-skeleton :rows=\"10\" animated/>\n        </div>\n        <el-dialog\n            title=\"Edit Response\"\n            v-model=\"edit_response_modal\"\n            width=\"60%\">\n            <edit-response @updated=\"edit_response_modal = false; editing_response = false\" v-if=\"editing_response\"\n                           :response=\"editing_response\"/>\n        </el-dialog>\n        <active-agents :ticket=\"ticket\" v-if=\"ticket && ticket.id\"/>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nimport CreateResponse from './_CreateResponse';\nimport EditResponse from './_EditResponse';\nimport TicketSidebar from './_TicketSidebar';\nimport each from 'lodash/each';\nimport ActiveAgents from './_active_agents';\nimport TicketTags from './parts/_Tags';\n\nexport default {\n    name: 'ViewTicket',\n    props: ['ticket_id'],\n    components: {\n        CreateResponse,\n        TicketSidebar,\n        EditResponse,\n        ActiveAgents,\n        TicketTags\n    },\n    data() {\n        return {\n            loading: false,\n            ticket: false,\n            conversations: [],\n            show_response_box: '',\n            products: this.appVars.support_products,\n            agents: this.appVars.support_agents,\n            admin_priorities: this.appVars.admin_priorities,\n            client_priorities: this.appVars.client_priorities,\n            updating: false,\n            active_agents: [],\n            edit_response_modal: false,\n            editing_response: false\n        }\n    },\n    watch: {\n        '$route.params.ticket_id'(ticketId) {\n            if (ticketId) {\n                this.doAction('ticket_view_exit', this.ticket.id);\n                this.ticket = false;\n                this.$nextTick(() => {\n                    this.doAction('ticket_view_entered', ticketId);\n                    this.fetchTicket();\n                });\n            }\n        }\n    },\n    methods: {\n        fetchTicket() {\n            this.loading = true;\n            this.$get(`tickets/${this.ticket_id}`)\n                .then(response => {\n                    this.ticket = response.ticket;\n                    this.$setTitle(response.ticket.title);\n                    this.conversations = response.responses;\n                })\n                .catch((errors) => {\n                    this.$handleError(errors);\n                })\n                .always(() => {\n                    this.loading = false;\n                });\n        },\n        getTicketClasses(conversation) {\n            const classes = [\n                'fs_thread'\n            ];\n\n            if (conversation.person) {\n                classes.push('fs_person_' + conversation.person.person_type);\n            }\n\n            classes.push('fs_conv_type_' + conversation.conversation_type);\n            return classes;\n        },\n        recordNewResponse(response, data) {\n            this.conversations.unshift(response);\n            this.ticket.status = data.ticket.status;\n            this.show_response_box = false;\n\n            each(data.update_data, (data, key) => {\n                this.ticket[key] = data;\n            });\n\n            if (this.appVars.pref.go_back_after_reply == 'yes') {\n                if (window.history.state.back) {\n                    this.$router.go(-1);\n                }\n            }\n        },\n        updateTicketAttr(propName) {\n            this.$put(`tickets/${this.ticket.id}/property`, {\n                prop_name: propName,\n                prop_value: this.ticket[propName]\n            })\n                .then(response => {\n                    this.$notify.success(response.message);\n\n                    each(response.update_data, (data, key) => {\n                        this.ticket[key] = data;\n                    });\n\n                })\n                .catch((errors) => {\n                    this.$handleError(errors);\n                });\n        },\n        getHumanName(person) {\n            if (this.appVars.me?.id == person.id) {\n                return 'You';\n            }\n\n            return person.full_name;\n        },\n        closeTicket() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket.id}/close`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                    this.$notify.success(response.message);\n                    if (window.history.state.back) {\n                        this.$router.go(-1);\n                    }\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        reOpen() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket.id}/re-open`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        onActivityChange(items) {\n            const personIds = [];\n            items.forEach((item) => {\n                personIds.push(item.val());\n            });\n            this.active_agents = personIds;\n        },\n        onTicketDataChange(item) {\n            let data = item.val();\n            this.ticket[data.type] = data.data;\n        },\n        handleResponseActionCommand(data) {\n            const actionType = data.type;\n            const conversation = data.conversation;\n\n            if (actionType == 'delete') {\n                this.$confirm('This will permanently delete response. Continue?', 'Warning', {\n                    confirmButtonText: 'Delete Response',\n                    cancelButtonText: 'Cancel',\n                    type: 'warning'\n                }).then(() => {\n                    this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)\n                        .then(response => {\n                            this.$notify.success({\n                                message: response.message,\n                                position: 'bottom-right',\n                                type: 'success'\n                            });\n                            this.fetchTicket();\n                        })\n                });\n            } else if (actionType == 'edit') {\n                if (this.ticket.status == 'closed') {\n                    this.$notify({\n                        type: 'error',\n                        message: 'You can not edit responses when it is in close state',\n                        position: 'bottom-right'\n                    });\n                    return false;\n                }\n                this.editing_response = conversation;\n                this.edit_response_modal = true;\n            }\n\n            console.log(data);\n        },\n        santizeContent(content) {\n            if (!content) {\n               return content;\n            }\n            return content.replace(/\\n\\s*\\n/g, '\\n').replace(/\\n\\s*\\n/g, '\\n');\n        }\n    },\n    mounted() {\n        this.fetchTicket();\n        this.doAction('ticket_view_entered', this.ticket_id, this);\n    },\n    beforeUnmount() {\n        this.doAction('ticket_view_exit', this.ticket_id);\n    }\n}\n</script>\n\n<style scoped>\n.agent_title{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent{\n    border-left: 4px solid #5d6cc3;\n}\n.fs_conv_type_note{\n    border-left: 4px solid #e6a23c;\n}\n</style>\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
 
 /***/ }),
 
@@ -62832,6 +62909,36 @@ var index = (function () {
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_style_index_0_id_6b9d9a19_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!../../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_style_index_0_id_6b9d9a19_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__.default, options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_style_index_0_id_6b9d9a19_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__.default.locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-14.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-14.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-14.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/MailBoxes/ChooseMailBox.vue?vue&type=style&index=0&id=12573580&lang=scss":
 /*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-14.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-14.use[2]!./node_modules/sass-loader/dist/cjs.js??clonedRuleSet-14.use[3]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/MailBoxes/ChooseMailBox.vue?vue&type=style&index=0&id=12573580&lang=scss ***!
@@ -63780,12 +63887,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _ViewTicket_vue_vue_type_template_id_6b9d9a19__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ViewTicket.vue?vue&type=template&id=6b9d9a19 */ "./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19");
+/* harmony import */ var _ViewTicket_vue_vue_type_template_id_6b9d9a19_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true */ "./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true");
 /* harmony import */ var _ViewTicket_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ViewTicket.vue?vue&type=script&lang=js */ "./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=script&lang=js");
+/* harmony import */ var _ViewTicket_vue_vue_type_style_index_0_id_6b9d9a19_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css */ "./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css");
 
 
 
-_ViewTicket_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default.render = _ViewTicket_vue_vue_type_template_id_6b9d9a19__WEBPACK_IMPORTED_MODULE_0__.render
+
+;
+_ViewTicket_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default.render = _ViewTicket_vue_vue_type_template_id_6b9d9a19_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render
+_ViewTicket_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default.__scopeId = "data-v-6b9d9a19"
 /* hot reload */
 if (false) {}
 
@@ -65458,18 +65569,18 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19":
-/*!**************************************************************************************!*\
-  !*** ./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19 ***!
-  \**************************************************************************************/
+/***/ "./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true":
+/*!**************************************************************************************************!*\
+  !*** ./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true ***!
+  \**************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_template_id_6b9d9a19__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_template_id_6b9d9a19_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_template_id_6b9d9a19__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./ViewTicket.vue?vue&type=template&id=6b9d9a19 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_template_id_6b9d9a19_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=template&id=6b9d9a19&scoped=true");
 
 
 /***/ }),
@@ -65822,6 +65933,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_wp_editor_vue_vue_type_template_id_0b1f8eb6__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_wp_editor_vue_vue_type_template_id_0b1f8eb6__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./_wp_editor.vue?vue&type=template&id=0b1f8eb6 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Pieces/_wp_editor.vue?vue&type=template&id=0b1f8eb6");
+
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css":
+/*!****************************************************************************************************************!*\
+  !*** ./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css ***!
+  \****************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_ViewTicket_vue_vue_type_style_index_0_id_6b9d9a19_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!../../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/ViewTicket.vue?vue&type=style&index=0&id=6b9d9a19&scoped=true&lang=css");
 
 
 /***/ }),

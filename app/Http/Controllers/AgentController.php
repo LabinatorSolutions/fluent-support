@@ -95,7 +95,7 @@ class AgentController extends Controller
         $this->validate($data, [
             'email'      => 'required|email',
             'first_name' => 'required',
-            'last_name'  => 'required'
+            'last_name'  => 'required',
         ]);
 
         $user = get_user_by('ID', $agent->user_id);
@@ -108,7 +108,7 @@ class AgentController extends Controller
 
         PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
 
-        $updateData = Arr::only($data, ['first_name', 'last_name']);
+        $updateData = Arr::only($data, ['first_name', 'last_name', 'title']);
         $updateData['email'] = $user->user_email;
 
         Agent::where('id', $agent->id)

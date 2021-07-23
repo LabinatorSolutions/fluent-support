@@ -43,7 +43,10 @@
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
-                             :class="getTicketClasses(conversation)">
+                             :class="(ticket.agent.title==='') ? getTicketClasses(conversation): 'fs_agent'">
+
+                        <span class="agent_title" v-if="ticket.agent.title"> {{ticket.agent.title}} </span>
+
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
                                 <img v-if="conversation.person" :src="conversation.person.photo"
@@ -115,7 +118,6 @@
 
 <script type="text/babel">
 import InlineReply from "./InlineReply";
-
 export default {
     name: 'ticket',
     props: ['ticket_id'],
@@ -214,3 +216,18 @@ export default {
     }
 }
 </script>
+<style scoped>
+.agent_title{
+    content: '';
+    position: relative;
+    left: 0;
+    top: 0;
+    background: #5d6cc3;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 11px;
+}
+.fs_agent{
+    border-left: 4px solid #5d6cc3;
+}
+</style>

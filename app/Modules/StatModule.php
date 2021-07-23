@@ -36,6 +36,12 @@ class StatModule
             ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
 
+        $interactions = Conversation::where('person_id', $agentId)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('ticket_id')
+            ->get()
+            ->count();
+
         return [
             'new_tickets'    => [
                 'title' => 'New Tickets',
@@ -52,6 +58,10 @@ class StatModule
             'responses'      => [
                 'title' => 'Responses',
                 'count' => $responses
+            ],
+            'interactions'  =>[
+                'title' =>'Interactions',
+                'count' => $interactions
             ]
         ];
     }

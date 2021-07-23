@@ -19,6 +19,7 @@ class Person extends Model
         'first_name',
         'last_name',
         'email',
+        'title',
         'person_type',
         'user_id',
         'remote_uid',
@@ -32,7 +33,7 @@ class Person extends Model
         'city',
         'state',
         'zip',
-        'country'
+        'country',
     ];
 
 
