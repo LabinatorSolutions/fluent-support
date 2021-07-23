@@ -147,7 +147,7 @@
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
                                 <img v-if="conversation.person" :src="conversation.person?.photo"
-                                     :alts="conversation.person.full_name"/>
+                                     :alt="conversation.person.full_name"/>
                             </section>
                             <section class="fs_thread_wrap">
                                 <section class="fs_thread_message">
