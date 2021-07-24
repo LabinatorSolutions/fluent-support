@@ -24187,7 +24187,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'CreateResponse',
-  props: ['ticket', 'type'],
+  props: ['ticket'],
   components: {
     WpEditor: _Pieces_wp_editor__WEBPACK_IMPORTED_MODULE_0__.default,
     AttachmentForm: _AttachmentForm__WEBPACK_IMPORTED_MODULE_1__.default,
@@ -24199,7 +24199,8 @@ __webpack_require__.r(__webpack_exports__);
       creating: false,
       close_ticket: 'no',
       attachments: [],
-      editor_ready: true
+      editor_ready: true,
+      typing: ''
     };
   },
   methods: {
@@ -30699,7 +30700,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _directive_loading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("loading");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
-    "class": ["fs_create_response", 'fs_reply_type_' + $props.type]
+    "class": ["fs_create_response", 'fs_reply_type_' + _ctx.$attrs.type]
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_template_inserter, {
     onInsert: $options.insertTemplate
   }, null, 8
@@ -30721,14 +30722,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     type: "success"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [$props.type == 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_5, "Add Internal Note")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_6, "Add Reply"))];
+      return [_ctx.type == 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_5, "Add Internal Note")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_6, "Add Reply"))];
     }),
     _: 1
     /* STABLE */
 
   }, 512
   /* NEED_PATCH */
-  ), [[_directive_loading, $data.creating]]), $props.type != 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_button, {
+  ), [[_directive_loading, $data.creating]]), _ctx.type != 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_button, {
     key: 0,
     onClick: _cache[3] || (_cache[3] = function ($event) {
       return $options.create('yes');
@@ -30742,7 +30743,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
     /* STABLE */
 
-  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $props.type == 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("p", _hoisted_8, "You are adding internal Note. Only support staff can see this note")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_attachment_form, {
+  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.type == 'note' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("p", _hoisted_8, "You are adding internal Note. Only support staff can see this note")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_attachment_form, {
     ticket: $props.ticket,
     attachments: $data.attachments
   }, null, 8

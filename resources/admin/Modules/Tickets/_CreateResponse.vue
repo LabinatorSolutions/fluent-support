@@ -1,9 +1,9 @@
 <template>
-    <div class="fs_create_response" :class="'fs_reply_type_'+type">
+    <div class="fs_create_response" :class="'fs_reply_type_'+$attrs.type">
         <div class="fc_template_box">
             <template-inserter @insert="insertTemplate" />
         </div>
-        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" />
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body"/>
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
@@ -29,7 +29,7 @@ import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateResponse',
-    props: ['ticket', 'type'],
+    props: ['ticket'],
     components: {
         WpEditor,
         AttachmentForm,
@@ -41,7 +41,8 @@ export default {
             creating: false,
             close_ticket: 'no',
             attachments: [],
-            editor_ready: true
+            editor_ready: true,
+            typing: ''
         }
     },
     methods: {
