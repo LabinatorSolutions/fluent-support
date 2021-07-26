@@ -112,7 +112,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last week',
+                    text: 'Last Week',
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -121,7 +121,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last month',
+                    text: 'Last Month',
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -130,11 +130,29 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last 3 months',
+                    text: 'Last 3 Months',
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
                         start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+                        return [start, end]
+                    })(),
+                },
+                {
+                    text: 'Last 6 Months',
+                    value: (() => {
+                        const end = new Date()
+                        const start = new Date()
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
+                        return [start, end]
+                    })(),
+                },
+                {
+                    text: 'Last 1 Year',
+                    value: (() => {
+                        const end = new Date()
+                        const start = new Date()
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 360)
                         return [start, end]
                     })(),
                 }
