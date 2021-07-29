@@ -43,9 +43,9 @@
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
-                             :class="(ticket.agent.title==='') ? getTicketClasses(conversation): 'fs_agent'">
+                             :class="(conversation.person.title==='') ? getTicketClasses(conversation): 'fs_agent'">
 
-                        <span class="agent_title" v-if="ticket.agent.title"> {{ticket.agent.title}} </span>
+                        <span class="agent_title" v-if="conversation.person.title"> {{conversation.person.title}} </span>
 
                         <div class="fs_thread_content">
                             <section class="fs_avatar">

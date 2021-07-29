@@ -100,4 +100,19 @@ class StatModule
         ];
     }
 
+    public static function getAgentOverallStats($agentId){
+        $replies_count = Conversation::where('person_id', $agentId)->count();
+        $total_closed = Ticket::where('agent_id', $agentId)->where('status', 'closed')->count();
+        return [
+            'replies_count' =>  [
+                'title' => 'Total Replies',
+                'count' => $replies_count
+            ],
+            'total_closed' => [
+                'title' => 'Total Closed',
+                'count' => $total_closed
+            ],
+        ];
+    }
+
 }

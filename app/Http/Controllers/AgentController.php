@@ -207,6 +207,9 @@ class AgentController extends Controller
         if(in_array('individual_stat', $with)) {
             $data['individual_stat'] = (new Reporting())->getActiveStatByAgent($agent->id);
         }
+        if(in_array('my_overall_stats', $with)){
+            $data['my_overall_stats'] = StatModule::getAgentOverallStats($agent->id);
+        }
 
         return $data;
     }

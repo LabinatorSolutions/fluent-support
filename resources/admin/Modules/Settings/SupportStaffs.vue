@@ -211,7 +211,7 @@ export default {
     },
     mounted() {
         this.fetchAgents();
-        this.$setTitle('Support Staff');
+        this.$setTitle('Support Staffs');
     }
 }
 </script>
