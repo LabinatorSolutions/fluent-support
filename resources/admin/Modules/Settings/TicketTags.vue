@@ -47,10 +47,10 @@
 
             <el-form label-position="top" :data="editing_tag">
                 <el-form-item label="Title">
-                    <el-input type="text" placeholder="Product Title" v-model="editing_tag.title"/>
+                    <el-input type="text" placeholder="Tag Title" v-model="editing_tag.title"/>
                 </el-form-item>
                 <el-form-item label="Description">
-                    <el-input type="textarea" placeholder="Product Description" v-model="editing_tag.description"/>
+                    <el-input type="textarea" placeholder="Tag Description" v-model="editing_tag.description"/>
                 </el-form-item>
             </el-form>
 

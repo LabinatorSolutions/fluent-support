@@ -29020,7 +29020,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
                 type: "text",
-                placeholder: "Product Title",
+                placeholder: "Tag Title",
                 modelValue: $data.editing_tag.title,
                 "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
                   return $data.editing_tag.title = $event;
@@ -29038,7 +29038,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
                 type: "textarea",
-                placeholder: "Product Description",
+                placeholder: "Tag Description",
                 modelValue: $data.editing_tag.description,
                 "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
                   return $data.editing_tag.description = $event;
