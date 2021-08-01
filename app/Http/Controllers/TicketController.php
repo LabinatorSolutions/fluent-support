@@ -237,6 +237,7 @@ class TicketController extends Controller
 
     public function updateTicketProperty(Request $request, $ticketId)
     {
+        $assigner = Helper::getAgentByUserId(get_current_user_id());
         $ticket = Ticket::findOrFail($ticketId);
         $propName = $request->get('prop_name');
         $propValue = $request->get('prop_value');
@@ -268,7 +269,8 @@ class TicketController extends Controller
 
         return [
             'message'     => $propName . ' has been updated',
-            'update_data' => $updateData
+            'update_data' => $updateData,
+            'assigner'      => (new TicketService())->onAgentChange($ticket, $assigner)
         ];
     }
 
