@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_create_response" :class="'fs_reply_type_'+$attrs.type">
+    <div class="fs_create_response" :class="'fs_reply_type_'+type">
         <div class="fc_template_box">
             <template-inserter @insert="insertTemplate" />
         </div>
@@ -29,7 +29,7 @@ import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateResponse',
-    props: ['ticket'],
+    props: ['ticket','type'],
     components: {
         WpEditor,
         AttachmentForm,
