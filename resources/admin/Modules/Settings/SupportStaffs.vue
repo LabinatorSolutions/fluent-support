@@ -25,6 +25,7 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="Replies" prop="replies_count" width="140"/>
+                <el-table-column label="Interactions" prop="interactions_count" width="140"/>
                 <el-table-column label="Title">
                     <template #default="scope">
                         <span  style="font-size: 14px; color: #56c288;">{{scope.row.title}}</span>
