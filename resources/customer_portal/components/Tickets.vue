@@ -53,8 +53,6 @@
                 <pagination @fetch="fetchTickets()" :pagination="pagination"/>
             </div>
         </div>
-
-
     </div>
 </template>
 
@@ -87,6 +85,7 @@ export default {
     methods: {
         fetchTickets() {
             this.fetching = true;
+
             this.$get('tickets', {
                 per_page: this.pagination.per_page,
                 page: this.pagination.current_page,

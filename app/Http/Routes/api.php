@@ -16,6 +16,7 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
 
 });
 
+
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
 
     $router->get('my_stats', 'AgentController@myStats');
