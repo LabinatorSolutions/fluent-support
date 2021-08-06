@@ -2,7 +2,7 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>Support Staff</h3>
+                <h3>Support Staffs</h3>
             </div>
             <div class="fs_box_actions">
                 <el-button @click="createStaffModal()" type="primary" icon="el-icon-plus" size="small">
@@ -25,6 +25,12 @@
                     </template>
                 </el-table-column>
                 <el-table-column label="Replies" prop="replies_count" width="140"/>
+                <el-table-column label="Interactions" prop="interactions_count" width="140"/>
+                <el-table-column label="Title">
+                    <template #default="scope">
+                        <span  style="font-size: 14px; color: #56c288;">{{scope.row.title}}</span>
+                    </template>
+                </el-table-column>
                 <el-table-column label="Actions" width="100">
                     <template #default="scope">
                         <el-button @click="initEdit(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
@@ -57,6 +63,9 @@
                 </el-form-item>
                 <el-form-item label="Last Name">
                     <el-input type="text" placeholder="Last Name" v-model="editing_agent.last_name"/>
+                </el-form-item>
+                <el-form-item label="Title">
+                    <el-input type="text" placeholder="Agent Job Title( ex: Developer, Support Staff )" v-model="editing_agent.title"/>
                 </el-form-item>
 
                 <el-form-item label="Permissions">
@@ -132,6 +141,7 @@ export default {
                 email: '',
                 first_name: '',
                 last_name: '',
+                title: '',
                 permissions: []
             }
             this.agent_modal = true;
@@ -202,7 +212,7 @@ export default {
     },
     mounted() {
         this.fetchAgents();
-        this.$setTitle('Support Staff');
+        this.$setTitle('Support Staffs');
     }
 }
 </script>

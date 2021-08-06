@@ -104,7 +104,7 @@ class CustomerPortalController extends Controller
                 'customer' => function ($query) {
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
                 }, 'agent' => function ($query) {
-                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title']);
                 },
                 'product'
             ])
@@ -129,7 +129,7 @@ class CustomerPortalController extends Controller
         $responses = Conversation::where('ticket_id', $ticketId)
             ->with([
                 'person' => function ($query) {
-                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title']);
                 },
                 'attachments'
             ])

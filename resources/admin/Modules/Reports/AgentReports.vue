@@ -24,6 +24,8 @@
                     <el-table
                         :data="sortedReports"
                         stripe
+                        :summary-method="getSummaries"
+                        show-summary
                         @sort-change="handleSorting"
                         v-loading="loading"
                         style="width: 100%">
@@ -77,6 +79,7 @@
 
 <script type="text/babel">
 import dayjs from 'dayjs';
+import each from 'lodash/each';
 
 export default {
     name: 'AgentReports',
@@ -109,7 +112,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last week',
+                    text: 'Last Week',
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -118,7 +121,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last month',
+                    text: 'Last Month',
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -127,11 +130,29 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last 3 months',
+                    text: 'Last 3 Months',
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
                         start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+                        return [start, end]
+                    })(),
+                },
+                {
+                    text: 'Last 6 Months',
+                    value: (() => {
+                        const end = new Date()
+                        const start = new Date()
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 180)
+                        return [start, end]
+                    })(),
+                },
+                {
+                    text: 'Last 1 Year',
+                    value: (() => {
+                        const end = new Date()
+                        const start = new Date()
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 360)
                         return [start, end]
                     })(),
                 }
@@ -146,6 +167,21 @@ export default {
                 return reports.sort((a, b) => (parseInt(a.stats[this.sort_column]) > parseInt(b.stats[this.sort_column])) ? 1 : -1)
             }
             return reports.sort((a, b) => (parseInt(a.stats[this.sort_column]) < parseInt(b.stats[this.sort_column])) ? 1 : -1)
+        },
+        totals() {
+            const summary = {
+                responses: 0,
+                interactions: 0,
+                opens: 0,
+                closed: 0
+            };
+            each(this.reports, (report) => {
+                summary.responses += parseInt(report.stats.responses);
+                summary.interactions += parseInt(report.stats.interactions);
+                summary.opens += parseInt(report.stats.opens);
+                summary.closed += parseInt(report.stats.closed);
+            });
+            return summary;
         }
     },
     methods: {
@@ -171,6 +207,18 @@ export default {
         },
         onlyPastDates(val) {
             return new Date() <= val;
+        },
+        getSummaries(param) {
+            const { columns } = param;
+            const sums = [];
+            columns.forEach((column, index) => {
+                if (index === 0) {
+                    sums[index] = "Total Summaries";
+                    return;
+                }
+                sums[index] = this.totals[column.property];
+            });
+            return sums;
         }
     },
     mounted() {
