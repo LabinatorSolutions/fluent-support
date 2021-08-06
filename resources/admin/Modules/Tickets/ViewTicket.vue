@@ -140,7 +140,10 @@
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
-                             :class="getTicketClasses(conversation)">
+                             :class="(conversation.person.title!='' && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) ">
+
+                        <span class="agent_title" v-if="conversation.person.title"> {{conversation.person.title}} </span>
+
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
                                 <img v-if="conversation.person" :src="conversation.person?.photo"
@@ -312,7 +315,6 @@ export default {
             }
 
             classes.push('fs_conv_type_' + conversation.conversation_type);
-
             return classes;
         },
         recordNewResponse(response, data) {
@@ -446,3 +448,22 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.agent_title{
+    content: '';
+    position: relative;
+    left: 0;
+    top: 0;
+    background: #5d6cc3;
+    color: #fff;
+    padding: 5px 10px;
+    font-size: 11px;
+}
+.fs_agent{
+    border-left: 4px solid #5d6cc3;
+}
+.fs_conv_type_note{
+    border-left: 4px solid #e6a23c;
+}
+</style>

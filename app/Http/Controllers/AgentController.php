@@ -30,6 +30,7 @@ class AgentController extends Controller
                 $agent->user_profile = admin_url('user-edit.php?user_id=' . $agent->user_id);
             }
             $agent->replies_count = Conversation::where('person_id', $agent->id)->count();
+            $agent->interactions_count = Conversation::where('person_id', $agent->id)->groupBy('ticket_id')->count();
             $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
         }
 
@@ -95,7 +96,7 @@ class AgentController extends Controller
         $this->validate($data, [
             'email'      => 'required|email',
             'first_name' => 'required',
-            'last_name'  => 'required'
+            'last_name'  => 'required',
         ]);
 
         $user = get_user_by('ID', $agent->user_id);
@@ -108,7 +109,7 @@ class AgentController extends Controller
 
         PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
 
-        $updateData = Arr::only($data, ['first_name', 'last_name']);
+        $updateData = Arr::only($data, ['first_name', 'last_name', 'title']);
         $updateData['email'] = $user->user_email;
 
         Agent::where('id', $agent->id)
@@ -206,6 +207,9 @@ class AgentController extends Controller
 
         if(in_array('individual_stat', $with)) {
             $data['individual_stat'] = (new Reporting())->getActiveStatByAgent($agent->id);
+        }
+        if(in_array('my_overall_stats', $with)){
+            $data['my_overall_stats'] = StatModule::getAgentOverallStats($agent->id);
         }
 
         return $data;

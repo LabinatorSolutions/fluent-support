@@ -20,6 +20,7 @@ class PersonsMigrator
                 `first_name` VARCHAR(192) NULL,
                 `last_name` VARCHAR(192) NULL,
                 `email` VARCHAR(192) NULL,
+                `title` VARCHAR(192) NULL,
                 `avatar` VARCHAR(192) NULL,
                 `person_type` VARCHAR(192) DEFAULT 'customer',
                 `status` VARCHAR(192) DEFAULT 'active',
