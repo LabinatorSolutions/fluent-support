@@ -3,7 +3,10 @@
 
         <div class="fs_box fs_dashboard_box">
             <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                Good {{greetingTime}} {{me.full_name}}, <span style="font-weight: normal;">Here are a few tickets you may want to take a look at</span>
+                Good {{greetingTime}} {{me.full_name}},
+                <span style="font-weight: normal;">
+                    Here are a few tickets you may want to take a look at
+                </span>
             </div>
             <div class="fs_box_body">
                 <template v-if="!loading">
