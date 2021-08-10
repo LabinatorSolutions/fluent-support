@@ -15,7 +15,7 @@
                             <router-link tag="li" :to="{ name: 'view_ticket', params: { ticket_id: ticket.id } }">
                                 <img class="fs_inline_photo_32" :src="ticket.customer.photo" />
                                 <span>{{ticket.title}}</span>
-                                <span style="padding: 0px 5px 2px;line-height: 100%;margin-left: 5px;margin-top: 7px;" class="fs_badge">{{ticket.status}}</span>
+                                <span style="padding: 0px 5px 2px;line-height: 100%;margin-left: 5px;margin-top: 7px;" class="fs_badge" :class="'fs_badge_'+ticket.status">{{ticket.status}}</span>
                             </router-link>
                         </li>
                     </ul>
