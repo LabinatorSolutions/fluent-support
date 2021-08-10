@@ -33,6 +33,7 @@ class TicketService
     {
         if ($ticket->status == 'closed') {
             $ticket->status = 'active';
+            $ticket->waiting_since = current_time('mysql');
             $ticket->save();
             do_action('fluent_support/ticket_reopen', $ticket, $person);
             do_action('fluent_support/ticket_reopen_by_' . $person->person_type, $ticket, $person);

@@ -262,6 +262,7 @@ class TicketController extends Controller
         } else if ($propName == 'agent_id') {
             $ticket->load('agent');
             $updateData['agent'] = $ticket->agent;
+            $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
             if ($prevValue != $ticket->{$propName}) {
                 do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket);
             }
@@ -269,8 +270,7 @@ class TicketController extends Controller
 
         return [
             'message'     => $propName . ' has been updated',
-            'update_data' => $updateData,
-            'assigner'      => (new TicketService())->onAgentChange($ticket, $assigner)
+            'update_data' => $updateData
         ];
     }
 
