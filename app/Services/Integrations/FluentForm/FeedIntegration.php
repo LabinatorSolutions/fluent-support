@@ -35,7 +35,7 @@ class FeedIntegration extends IntegrationManager
 
         $this->logo = $assets.'/images/fluent-support-logo.png';
 
-        $this->description = 'Create Support Ticket From Your Form Submission in FluentSUpport';
+        $this->description = 'Create Support Ticket From Your Form Submission in FluentSupport';
 
         $this->registerAdminHooks();
 
