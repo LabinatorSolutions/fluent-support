@@ -69,10 +69,11 @@ const request = function(method, route, data = {}) {
     });
 };
 
+app.config.globalProperties.appVars = window.fs_customer_portal;
+
 app.mixin({
     data() {
         return {
-            appVars: window.fs_customer_portal
         }
     },
     methods: {
@@ -112,7 +113,6 @@ app.mixin({
 });
 
 app.use(router).mount('#fluent_support_client_app');
-
 
 jQuery(document).ajaxSuccess((event, xhr, settings) => {
     const nonce = xhr.getResponseHeader('X-WP-Nonce');
