@@ -192,7 +192,7 @@ ul.fs_card_list {
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
     ul.fs_card_list li {
         span {
-            line-height: 32px;
+            line-height: 120%;
             display: inline-block;
             vertical-align: top;
             font-size: 16px;
@@ -201,8 +201,10 @@ ul.fs_card_list {
             background: #f1f1f1;
         }
         a {
-            display: block;
             color: #4f3d8e;
+            display: flex;
+            text-decoration: none;
+            align-items: center;
         }
     }
 }
