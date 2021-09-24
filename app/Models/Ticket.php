@@ -21,6 +21,7 @@ class Ticket extends Model
         'product_source',
         'privacy',
         'priority',
+        'client_priority',
         'status',
         'title',
         'slug',
