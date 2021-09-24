@@ -1,8 +1,5 @@
 import { createApp } from 'vue';
 
-import lang from 'element-plus/lib/locale/lang/en'
-import locale from 'element-plus/lib/locale'
-
 import {
     ElMenu,
     ElMenuItem,
@@ -59,9 +56,7 @@ import {
     ElNotification
 } from 'element-plus';
 
-
 const app = createApp({});
-locale.use(lang);
 
 const components = [
     ElMenu,

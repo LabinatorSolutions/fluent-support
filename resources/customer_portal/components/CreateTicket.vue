@@ -35,7 +35,7 @@
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
                             </el-select>
                         </el-form-item>
-                        <error :error="errors.get('Priority')"/>
+                        <error :error="errors.get('client_priority')"/>
                     </div>
                 </div>
 
