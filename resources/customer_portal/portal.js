@@ -4,10 +4,6 @@ const app = createApp(Application);
 import { createWebHashHistory, createRouter } from 'vue-router'
 import routes from "./routes";
 
-import lang from 'element-plus/lib/locale/lang/en'
-import locale from 'element-plus/lib/locale'
-locale.use(lang);
-
 import {
     ElTable,
     ElTableColumn,

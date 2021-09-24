@@ -23,7 +23,7 @@ mix.webpackConfig({
     },
     plugins: [
         // Ignore all locale files of moment.js
-        new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+        //new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     resolve: {
         extensions: ['.js', '.vue', '.json'],
