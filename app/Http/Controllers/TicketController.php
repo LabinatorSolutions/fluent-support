@@ -118,6 +118,10 @@ class TicketController extends Controller
 
         $ticketData['content'] = wp_unslash(wp_kses_post($ticketData['content']));
 
+        $ticketData['priority'] = sanitize_text_field($ticketData['client_priority']);
+
+        $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
+
         $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
         do_action('fluent_support/before_ticket_create', $ticketData, $customer);
 
