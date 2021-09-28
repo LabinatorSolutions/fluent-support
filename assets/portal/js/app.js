@@ -36618,7 +36618,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       requestHeaders: {
         'X-WP-Nonce': this.appVars.rest.nonce
       },
-      error_message: ''
+      error_message: '',
+      dialogImageUrl: '',
+      dialogVisible: false
     };
   },
   methods: {
@@ -36626,8 +36628,13 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.error_message = '';
       this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
     },
-    handlePreview: function handlePreview() {},
-    handleExceed: function handleExceed() {},
+    handlePreview: function handlePreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleExceed: function handleExceed(files, fileList) {
+      this.error_message = "You can upload maximum ".concat(fileList.length, " files");
+    },
     handleError: function handleError(err, file, fileList) {
       var message = this.convertToText(JSON.parse(err.message));
 
@@ -36851,6 +36858,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _admin_Pieces_wp_editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../admin/Pieces/_wp_editor */ "./resources/admin/Pieces/_wp_editor.vue");
 /* harmony import */ var _admin_Pieces_Error__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../admin/Pieces/Error */ "./resources/admin/Pieces/Error.vue");
 /* harmony import */ var _admin_Bits_Errors__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../admin/Bits/Errors */ "./resources/admin/Bits/Errors.js");
+/* harmony import */ var _admin_Modules_Tickets_AttachmentForm__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../admin/Modules/Tickets/_AttachmentForm */ "./resources/admin/Modules/Tickets/_AttachmentForm.vue");
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -36860,11 +36868,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'CreateTicket',
   components: {
     WpEditor: _admin_Pieces_wp_editor__WEBPACK_IMPORTED_MODULE_0__["default"],
-    Error: _admin_Pieces_Error__WEBPACK_IMPORTED_MODULE_1__["default"]
+    Error: _admin_Pieces_Error__WEBPACK_IMPORTED_MODULE_1__["default"],
+    AttachmentForm: _admin_Modules_Tickets_AttachmentForm__WEBPACK_IMPORTED_MODULE_3__["default"]
   },
   data: function data() {
     return {
@@ -36876,6 +36886,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         product_id: '',
         client_priority: 'normal'
       },
+      attachments: [],
       products: this.appVars.support_products,
       priorities: this.appVars.customer_ticket_priorities
     };
@@ -36886,7 +36897,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.errors.clear();
       this.creating = false;
-      this.$post('tickets', _objectSpread({}, this.ticket)).then(function (response) {
+      this.$post('tickets', _objectSpread(_objectSpread({}, this.ticket), {}, {
+        attachments: this.attachments
+      })).then(function (response) {
         _this.$router.push({
           name: 'view_ticket',
           params: {
@@ -37029,7 +37042,6 @@ __webpack_require__.r(__webpack_exports__);
 
       this.fetching = true;
       this.$get("tickets/".concat(this.ticket_id)).then(function (response) {
-        console.log(response);
         _this.ticket = response.ticket;
         _this.conversations = response.responses;
         _this.signon_id = response.sign_on_id;
@@ -37192,10 +37204,10 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e":
-/*!*********************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e ***!
-  \*********************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -37205,22 +37217,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
+
+var _withScopeId = function _withScopeId(n) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-0f76028e"), n = n(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)(), n;
+};
+
 var _hoisted_1 = {
   "class": "fs_attachments_form"
 };
 
 var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Click to upload");
 
-var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "el-upload__tip"
-}, "Files with a size less than 2MB. Supported Types: images, text, pdf, zip", -1
-/* HOISTED */
-);
+var _hoisted_3 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "el-upload__tip"
+  }, "Files with a size less than 2MB. Supported Types: images, text, pdf, zip", -1
+  /* HOISTED */
+  );
+});
 
+var _hoisted_4 = ["src"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
 
   var _component_el_upload = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-upload");
+
+  var _component_el_dialog = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dialog");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_upload, {
     "class": "upload-demo",
@@ -37235,7 +37257,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     data: $data.upload_data,
     limit: 3,
     "on-exceed": $options.handleExceed,
-    "file-list": $data.file_lists
+    "file-list": $data.file_lists,
+    "list-type": "picture"
   }, {
     tip: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [_hoisted_3];
@@ -37268,7 +37291,26 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.error_message), 1
   /* TEXT */
-  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dialog, {
+    modelValue: $data.dialogVisible,
+    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+      return $data.dialogVisible = $event;
+    })
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+        src: $data.dialogImageUrl,
+        alt: ""
+      }, null, 8
+      /* PROPS */
+      , _hoisted_4)];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["modelValue"])]);
 }
 
 /***/ }),
@@ -37463,6 +37505,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_wp_editor = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("wp-editor");
 
+  var _component_attachment_form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("attachment-form");
+
   var _component_el_option = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-option");
 
   var _component_el_select = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-select");
@@ -37535,7 +37579,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$data.products.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_attachment_form, {
+        ticket: $data.ticket,
+        attachments: $data.attachments
+      }, null, 8
+      /* PROPS */
+      , ["ticket", "attachments"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$data.products.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
         label: "Related Product/Service"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -37979,6 +38028,22 @@ var _hoisted_45 = {
 };
 var _hoisted_46 = ["innerHTML"];
 var _hoisted_47 = {
+  key: 0,
+  "class": "fst_file_lists"
+};
+
+var _hoisted_48 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+    "class": "el-icon-paperclip"
+  }, null, -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_49 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)();
+
+var _hoisted_50 = ["href"];
+var _hoisted_51 = {
   key: 1,
   style: {
     "padding": "20px",
@@ -37986,7 +38051,7 @@ var _hoisted_47 = {
   },
   "class": "fs_tk_body"
 };
-var _hoisted_48 = {
+var _hoisted_52 = {
   key: 2,
   style: {
     "padding": "20px",
@@ -37994,9 +38059,9 @@ var _hoisted_48 = {
   },
   "class": "fs_tk_body"
 };
-var _hoisted_49 = ["innerHTML"];
+var _hoisted_53 = ["innerHTML"];
 
-var _hoisted_50 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("View Your Tickets");
+var _hoisted_54 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("View Your Tickets");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
@@ -38114,7 +38179,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "class": "fs_thread_body"
     }, null, 8
     /* PROPS */
-    , _hoisted_31), conversation.attachments && conversation.attachments.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(conversation.attachments, function (attachment) {
+    , _hoisted_31), conversation.attachments && conversation.attachments.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [conversation.attachments.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+      key: 0
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(conversation.attachments, function (attachment) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
         key: attachment.file_hash
       }, [_hoisted_33, _hoisted_34, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
@@ -38126,7 +38193,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       , _hoisted_35)]);
     }), 128
     /* KEYED_FRAGMENT */
-    ))])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])], 2
+    )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])], 2
     /* CLASS */
     );
   }), 128
@@ -38145,16 +38212,30 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "fs_thread_body"
   }, null, 8
   /* PROPS */
-  , _hoisted_46)])])])])])])], 64
+  , _hoisted_46), $data.ticket.attachments && $data.ticket.attachments.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_47, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", null, [$data.ticket.attachments.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+    key: 0
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.ticket.attachments, function (attachment) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
+      key: attachment.file_hash
+    }, [_hoisted_48, _hoisted_49, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
+      target: "_blank",
+      rel: "noopener",
+      href: attachment.secureUrl
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(attachment.title), 9
+    /* TEXT, PROPS */
+    , _hoisted_50)]);
+  }), 128
+  /* KEYED_FRAGMENT */
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])])])], 64
   /* STABLE_FRAGMENT */
-  )) : !$data.error_message ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_47, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+  )) : !$data.error_message ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
     rows: 5,
     animated: ""
-  })])) : $data.error_message ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_48, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  })])) : $data.error_message ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_52, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
     innerHTML: $data.error_message
   }, null, 8
   /* PROPS */
-  , _hoisted_49), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+  , _hoisted_53), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
     type: "primary",
     onClick: _cache[4] || (_cache[4] = function ($event) {
       return _ctx.$router.push({
@@ -38164,7 +38245,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     size: "small"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_50];
+      return [_hoisted_54];
     }),
     _: 1
     /* STABLE */
@@ -38354,7 +38435,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         /* STABLE */
 
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
-        width: "40"
+        "min-width": "15"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function (scope) {
           return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(scope.row.response_count), 1
@@ -38498,6 +38579,33 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/cssWithMappingToString.js */ "./node_modules/css-loader/dist/runtime/cssWithMappingToString.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js");
+/* harmony import */ var _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1__);
+// Imports
+
+
+var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
+// Module
+___CSS_LOADER_EXPORT___.push([module.id, "\n.el-dialog__body img[data-v-0f76028e]{\n  width: 50%;\n  margin-left: 12em;\n}\n", "",{"version":3,"sources":["webpack://./../../../../_AttachmentForm.vue"],"names":[],"mappings":";AAgFA;EACE,UAAU;EACV,iBAAiB;AACnB","sourcesContent":["<template>\n    <div class=\"fs_attachments_form\">\n        <el-upload\n            class=\"upload-demo\"\n            :action=\"upload_url\"\n            :on-preview=\"handlePreview\"\n            :on-remove=\"handleRemove\"\n            :on-success=\"handleUploadSuccess\"\n            :with-credentials=\"true\"\n            :on-error=\"handleError\"\n            multiple\n            :headers=\"requestHeaders\"\n            :data=\"upload_data\"\n            :limit=\"3\"\n            :on-exceed=\"handleExceed\"\n            :file-list=\"file_lists\"\n            list-type=\"picture\"\n        >\n            <el-button size=\"small\" type=\"primary\">Click to upload</el-button>\n            <template #tip>\n                <div class=\"el-upload__tip\">Files with a size less than 2MB. Supported Types: images, text, pdf, zip</div>\n            </template>\n        </el-upload>\n        <p style=\"color: red;\" v-if=\"error_message\" @click=\"error_message = ''\">{{ error_message }}</p>\n\n        <el-dialog v-model=\"dialogVisible\">\n          <img :src=\"dialogImageUrl\" alt=\"\" />\n        </el-dialog>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nexport default {\n    name: 'AttachmentForm',\n    props: ['ticket', 'attachments'],\n    data() {\n        return {\n            upload_url: this.appVars.rest.url+'/ticket_file_upload',\n            upload_data: {\n                ticket_id: this.ticket.id\n            },\n            file_lists: [],\n            requestHeaders: {\n                'X-WP-Nonce': this.appVars.rest.nonce\n            },\n            error_message: '',\n            dialogImageUrl: '',\n            dialogVisible: false,\n        }\n    },\n    methods: {\n        handleRemove(file, fileList) {\n            this.error_message = '';\n            this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);\n        },\n        handlePreview(file) {\n            this.dialogImageUrl = file.url\n            this.dialogVisible = true\n        },\n        handleExceed(files,fileList) {\n            this.error_message = `You can upload maximum ${fileList.length} files`;\n        },\n        handleError(err, file, fileList) {\n            let message = this.convertToText(JSON.parse(err.message));\n            if(!message) {\n                message = 'File failed to upload';\n            }\n\n            message = file.name + ': ' + message;\n            this.error_message = message;\n        },\n        handleUploadSuccess(response, file, fileList) {\n            this.error_message = '';\n            this.attachments.push(...response.attachments);\n        }\n    }\n}\n</script>\n\n<style scoped>\n.el-dialog__body img{\n  width: 50%;\n  margin-left: 12em;\n}\n</style>\n"],"sourceRoot":""}]);
+// Exports
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/customer_portal/components/Ticket.vue?vue&type=style&index=0&id=6f85889b&scoped=true&lang=css":
 /*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/customer_portal/components/Ticket.vue?vue&type=style&index=0&id=6f85889b&scoped=true&lang=css ***!
@@ -38518,7 +38626,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.agent_title[data-v-6f85889b]{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent[data-v-6f85889b]{\n    border-left: 4px solid #5d6cc3;\n}\n", "",{"version":3,"sources":["webpack://./resources/customer_portal/components/Ticket.vue"],"names":[],"mappings":";AA4NA;IACI,WAAW;IACX,kBAAkB;IAClB,OAAO;IACP,MAAM;IACN,mBAAmB;IACnB,WAAW;IACX,iBAAiB;IACjB,eAAe;AACnB;AACA;IACI,8BAA8B;AAClC","sourcesContent":["<template>\n    <div v-loading=\"fetching\" class=\"fs_ticket\">\n        <template v-if=\"ticket\">\n            <div class=\"fs_tk_header\">\n                <div class=\"fs_th_header\">\n                    <hgroup>\n                        <div class=\"fs_tk_subject\">\n                            <h2 title=\"fs_tk_edit_subject\">\n                                <span class=\"fs_ticket_id\">#{{ ticket.id }}</span>\n                                {{ ticket.title }}\n                            </h2>\n                            <div class=\"fs_tk_tags\">\n                                <span v-if=\"ticket.product\" class=\"fs_badge\">{{ ticket.product.title }}</span>\n                                <span class=\"fs_badge\" :class=\"'fs_badge_' + ticket.status\">{{ ticket.status }}</span>\n                            </div>\n                        </div>\n                        <div class=\"fs_tk_actions\">\n                            <el-button v-loading=\"loading\" @click=\"fetchTicket()\" icon=\"el-icon-refresh\"\n                                       size=\"small\"></el-button>\n                            <el-button @click=\"$router.push({ name: 'dashboard' })\" size=\"small\">All</el-button>\n                            <el-button v-if=\"ticket.status != 'closed'\" :disabled=\"updating\" v-loading=\"updating\"\n                                       @click=\"closeTicket()\" size=\"small\"\n                                       type=\"danger\">Close Ticket\n                            </el-button>\n                        </div>\n                    </hgroup>\n                </div>\n            </div>\n            <div class=\"fs_tk_body\">\n                <div style=\"text-align: center;\" class=\"fst_reply_box\" v-if=\"ticket.status == 'closed'\">\n                    <p>This ticket has been closed at {{ ticket.resolved_at }}\n                        <span v-if=\"ticket.closed_by_person\">\n                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>\n                        </span>\n                        <br/>If you still have related issues. Please reopen this ticket and reply</p>\n                    <el-button :disabled=\"updating\" v-loading=\"updating\" @click=\"reOpen()\" type=\"info\" size=\"small\">\n                        Reopen This ticket\n                    </el-button>\n                </div>\n                <inline-reply v-else @created=\"recordNewResponse\" :ticket=\"ticket\"/>\n\n                <div class=\"fs_threads_container\">\n                    <article v-for=\"conversation in conversations\"\n                             :key=\"conversation.id\"\n                             class=\"fs_thread\"\n                             :class=\"(conversation.person.title!=='' && conversation.person.person_type !== 'customer') ? 'fs_agent' : getTicketClasses(conversation)\">\n\n                        <span class=\"agent_title\" v-if=\"conversation.person.title\"> {{conversation.person.title}} </span>\n\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img v-if=\"conversation.person\" :src=\"conversation.person.photo\"\n                                     :alt=\"conversation.person.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong v-if=\"conversation.person\">{{\n                                                    getHumanName(conversation.person)\n                                                }}</strong> replied\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            {{ conversation.created_at }}\n                                        </div>\n                                    </div>\n                                    <div v-html=\"conversation.content\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"conversation.attachments && conversation.attachments.length\">\n                                        <ul>\n                                            <li\n                                                v-for=\"attachment in conversation.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                    <article class=\"fs_thread conversion_starter\">\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img :src=\"ticket.customer.photo\" :alt=\"ticket.customer.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong>{{ getHumanName(ticket.customer) }}</strong> started the\n                                            conversation\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            {{ ticket.created_at }}\n                                        </div>\n                                    </div>\n                                    <div v-html=\"ticket.content\" class=\"fs_thread_body\"></div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                </div>\n            </div>\n        </template>\n\n        <div style=\"padding: 20px; background: white; \" class=\"fs_tk_body\" v-else-if=\"!error_message\">\n            <el-skeleton :rows=\"5\" animated/>\n        </div>\n        <div style=\"padding: 20px; text-align: center;\" class=\"fs_tk_body\" v-else-if=\"error_message\">\n            <p v-html=\"error_message\"></p>\n            <el-button type=\"primary\" @click=\"$router.push({ name: 'dashboard' })\" size=\"small\">View Your Tickets</el-button>\n        </div>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nimport InlineReply from \"./InlineReply\";\nexport default {\n    name: 'ticket',\n    props: ['ticket_id'],\n    components: {\n        InlineReply\n    },\n    data() {\n        return {\n            ticket: false,\n            conversations: [],\n            fetching: false,\n            signon_id: '',\n            updating: false,\n            error_message: ''\n        }\n    },\n    methods: {\n        fetchTicket() {\n            this.fetching = true;\n            this.$get(`tickets/${this.ticket_id}`)\n                .then(response => {\n                    console.log(response)\n                    this.ticket = response.ticket;\n                    this.conversations = response.responses;\n                    this.signon_id = response.sign_on_id;\n                })\n                .catch((errors) => {\n                    let message = 'Uknown error. Please reload this page';\n                    if(errors.responseJSON?.errors?.message) {\n                        message = errors.responseJSON?.errors?.message;\n                    } else if(errors.responseJSON?.message) {\n                        message = errors.responseJSON?.message;\n                    }\n                    this.error_message = message;\n                })\n                .always(() => {\n                    this.fetching = false;\n                });\n        },\n        getTicketClasses(conversation) {\n            const classes = [\n                'fs_thread'\n            ];\n\n            if (conversation.person) {\n                classes.push('fs_person_' + conversation.person.person_type);\n            }\n\n            if (conversation.person.id == this.signon_id) {\n                classes.push('fs_person_own');\n            }\n\n            classes.push('fs_conv_type_' + conversation.conversation_type);\n\n            return classes;\n        },\n        getHumanName(person) {\n            if (this.signon_id == person.id) {\n                return 'You';\n            }\n\n            return person.full_name;\n        },\n        recordNewResponse(response, ticket) {\n            this.conversations.unshift(response);\n            this.ticket.status = ticket.status;\n        },\n        closeTicket() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket_id}/close`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        reOpen() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket_id}/re-open`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        }\n    },\n    mounted() {\n        this.fetchTicket();\n    }\n}\n</script>\n<style scoped>\n.agent_title{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent{\n    border-left: 4px solid #5d6cc3;\n}\n</style>\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.agent_title[data-v-6f85889b]{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent[data-v-6f85889b]{\n    border-left: 4px solid #5d6cc3;\n}\n", "",{"version":3,"sources":["webpack://./resources/customer_portal/components/Ticket.vue"],"names":[],"mappings":";AAuOA;IACI,WAAW;IACX,kBAAkB;IAClB,OAAO;IACP,MAAM;IACN,mBAAmB;IACnB,WAAW;IACX,iBAAiB;IACjB,eAAe;AACnB;AACA;IACI,8BAA8B;AAClC","sourcesContent":["<template>\n    <div v-loading=\"fetching\" class=\"fs_ticket\">\n        <template v-if=\"ticket\">\n            <div class=\"fs_tk_header\">\n                <div class=\"fs_th_header\">\n                    <hgroup>\n                        <div class=\"fs_tk_subject\">\n                            <h2 title=\"fs_tk_edit_subject\">\n                                <span class=\"fs_ticket_id\">#{{ ticket.id }}</span>\n                                {{ ticket.title }}\n                            </h2>\n                            <div class=\"fs_tk_tags\">\n                                <span v-if=\"ticket.product\" class=\"fs_badge\">{{ ticket.product.title }}</span>\n                                <span class=\"fs_badge\" :class=\"'fs_badge_' + ticket.status\">{{ ticket.status }}</span>\n                            </div>\n                        </div>\n                        <div class=\"fs_tk_actions\">\n                            <el-button v-loading=\"loading\" @click=\"fetchTicket()\" icon=\"el-icon-refresh\"\n                                       size=\"small\"></el-button>\n                            <el-button @click=\"$router.push({ name: 'dashboard' })\" size=\"small\">All</el-button>\n                            <el-button v-if=\"ticket.status != 'closed'\" :disabled=\"updating\" v-loading=\"updating\"\n                                       @click=\"closeTicket()\" size=\"small\"\n                                       type=\"danger\">Close Ticket\n                            </el-button>\n                        </div>\n                    </hgroup>\n                </div>\n            </div>\n            <div class=\"fs_tk_body\">\n                <div style=\"text-align: center;\" class=\"fst_reply_box\" v-if=\"ticket.status == 'closed'\">\n                    <p>This ticket has been closed at {{ ticket.resolved_at }}\n                        <span v-if=\"ticket.closed_by_person\">\n                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>\n                        </span>\n                        <br/>If you still have related issues. Please reopen this ticket and reply</p>\n                    <el-button :disabled=\"updating\" v-loading=\"updating\" @click=\"reOpen()\" type=\"info\" size=\"small\">\n                        Reopen This ticket\n                    </el-button>\n                </div>\n                <inline-reply v-else @created=\"recordNewResponse\" :ticket=\"ticket\"/>\n\n                <div class=\"fs_threads_container\">\n                    <article v-for=\"conversation in conversations\"\n                             :key=\"conversation.id\"\n                             class=\"fs_thread\"\n                             :class=\"(conversation.person.title!=='' && conversation.person.person_type !== 'customer') ? 'fs_agent' : getTicketClasses(conversation)\">\n\n                        <span class=\"agent_title\" v-if=\"conversation.person.title\"> {{conversation.person.title}} </span>\n\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img v-if=\"conversation.person\" :src=\"conversation.person.photo\"\n                                     :alt=\"conversation.person.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong v-if=\"conversation.person\">{{\n                                                    getHumanName(conversation.person)\n                                                }}</strong> replied\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            {{ conversation.created_at }}\n                                        </div>\n                                    </div>\n                                    <div v-html=\"conversation.content\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"conversation.attachments && conversation.attachments.length\">\n                                        <ul>\n                                            <li v-if=\"conversation.attachments.length\"\n                                                v-for=\"attachment in conversation.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                    <article class=\"fs_thread conversion_starter\">\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img :src=\"ticket.customer.photo\" :alt=\"ticket.customer.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong>{{ getHumanName(ticket.customer) }}</strong> started the\n                                            conversation\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            {{ ticket.created_at }}\n                                        </div>\n                                    </div>\n                                    <div v-html=\"ticket.content\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"ticket.attachments && ticket.attachments.length\">\n                                        <ul>\n                                            <li v-if=\"ticket.attachments.length\"\n                                                v-for=\"attachment in ticket.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                </div>\n            </div>\n        </template>\n\n        <div style=\"padding: 20px; background: white; \" class=\"fs_tk_body\" v-else-if=\"!error_message\">\n            <el-skeleton :rows=\"5\" animated/>\n        </div>\n        <div style=\"padding: 20px; text-align: center;\" class=\"fs_tk_body\" v-else-if=\"error_message\">\n            <p v-html=\"error_message\"></p>\n            <el-button type=\"primary\" @click=\"$router.push({ name: 'dashboard' })\" size=\"small\">View Your Tickets</el-button>\n        </div>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nimport InlineReply from \"./InlineReply\";\nexport default {\n    name: 'ticket',\n    props: ['ticket_id'],\n    components: {\n        InlineReply\n    },\n    data() {\n        return {\n            ticket: false,\n            conversations: [],\n            fetching: false,\n            signon_id: '',\n            updating: false,\n            error_message: ''\n        }\n    },\n    methods: {\n        fetchTicket() {\n            this.fetching = true;\n            this.$get(`tickets/${this.ticket_id}`)\n                .then(response => {\n                    this.ticket = response.ticket;\n                    this.conversations = response.responses;\n                    this.signon_id = response.sign_on_id;\n                })\n                .catch((errors) => {\n                    let message = 'Uknown error. Please reload this page';\n                    if(errors.responseJSON?.errors?.message) {\n                        message = errors.responseJSON?.errors?.message;\n                    } else if(errors.responseJSON?.message) {\n                        message = errors.responseJSON?.message;\n                    }\n                    this.error_message = message;\n                })\n                .always(() => {\n                    this.fetching = false;\n                });\n        },\n        getTicketClasses(conversation) {\n            const classes = [\n                'fs_thread'\n            ];\n\n            if (conversation.person) {\n                classes.push('fs_person_' + conversation.person.person_type);\n            }\n\n            if (conversation.person.id == this.signon_id) {\n                classes.push('fs_person_own');\n            }\n\n            classes.push('fs_conv_type_' + conversation.conversation_type);\n\n            return classes;\n        },\n        getHumanName(person) {\n            if (this.signon_id == person.id) {\n                return 'You';\n            }\n\n            return person.full_name;\n        },\n        recordNewResponse(response, ticket) {\n            this.conversations.unshift(response);\n            this.ticket.status = ticket.status;\n        },\n        closeTicket() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket_id}/close`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        reOpen() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket_id}/re-open`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        }\n    },\n    mounted() {\n        this.fetchTicket();\n    }\n}\n</script>\n<style scoped>\n.agent_title{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent{\n    border-left: 4px solid #5d6cc3;\n}\n</style>\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -86637,6 +86745,36 @@ var index = (function () {
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
+/* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_style_index_0_id_0f76028e_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!../../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css");
+
+            
+
+var options = {};
+
+options.insert = "head";
+options.singleton = false;
+
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_style_index_0_id_0f76028e_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"], options);
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_style_index_0_id_0f76028e_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/customer_portal/components/Ticket.vue?vue&type=style&index=0&id=6f85889b&scoped=true&lang=css":
 /*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/customer_portal/components/Ticket.vue?vue&type=style&index=0&id=6f85889b&scoped=true&lang=css ***!
@@ -87008,18 +87146,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _AttachmentForm_vue_vue_type_template_id_0f76028e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_AttachmentForm.vue?vue&type=template&id=0f76028e */ "./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e");
+/* harmony import */ var _AttachmentForm_vue_vue_type_template_id_0f76028e_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true */ "./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true");
 /* harmony import */ var _AttachmentForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_AttachmentForm.vue?vue&type=script&lang=js */ "./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=script&lang=js");
-/* harmony import */ var _Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+/* harmony import */ var _AttachmentForm_vue_vue_type_style_index_0_id_0f76028e_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css */ "./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css");
+/* harmony import */ var _Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
 
 
 
+
+;
 /* hot reload */
 if (false) {}
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/*#__PURE__*/(0,_Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_AttachmentForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_AttachmentForm_vue_vue_type_template_id_0f76028e__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/admin/Modules/Tickets/_AttachmentForm.vue"]]));
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/*#__PURE__*/(0,_Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_3__["default"])(_AttachmentForm_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_AttachmentForm_vue_vue_type_template_id_0f76028e_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render],['__scopeId',"data-v-0f76028e"],['__file',"resources/admin/Modules/Tickets/_AttachmentForm.vue"]]));
 
 /***/ }),
 
@@ -87405,18 +87546,18 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e":
-/*!*******************************************************************************************!*\
-  !*** ./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e ***!
-  \*******************************************************************************************/
+/***/ "./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true":
+/*!*******************************************************************************************************!*\
+  !*** ./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true ***!
+  \*******************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_template_id_0f76028e__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_template_id_0f76028e_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_template_id_0f76028e__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./_AttachmentForm.vue?vue&type=template&id=0f76028e */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_template_id_0f76028e_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=template&id=0f76028e&scoped=true");
 
 
 /***/ }),
@@ -87561,6 +87702,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Tickets_vue_vue_type_template_id_f651a830__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Tickets_vue_vue_type_template_id_f651a830__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Tickets.vue?vue&type=template&id=f651a830 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/customer_portal/components/Tickets.vue?vue&type=template&id=f651a830");
+
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css":
+/*!*********************************************************************************************************************!*\
+  !*** ./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css ***!
+  \*********************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_11_use_1_node_modules_vue_loader_dist_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_11_use_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_AttachmentForm_vue_vue_type_style_index_0_id_0f76028e_scoped_true_lang_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!../../../../node_modules/vue-loader/dist/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-11.use[1]!./node_modules/vue-loader/dist/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-11.use[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/_AttachmentForm.vue?vue&type=style&index=0&id=0f76028e&scoped=true&lang=css");
 
 
 /***/ }),

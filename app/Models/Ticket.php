@@ -334,4 +334,9 @@ class Ticket extends Model
         return false;
     }
 
+    public function attachments()
+    {
+        $class = __NAMESPACE__ . '\Attachment';
+        return $this->hasMany($class, 'ticket_id', 'id')->where('conversation_id', NULL);
+    }
 }

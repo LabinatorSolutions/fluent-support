@@ -68,7 +68,7 @@
 
                                     <div class="fst_file_lists" v-if="conversation.attachments && conversation.attachments.length">
                                         <ul>
-                                            <li
+                                            <li v-if="conversation.attachments.length"
                                                 v-for="attachment in conversation.attachments"
                                                 :key="attachment.file_hash"
                                             >
@@ -98,6 +98,18 @@
                                         </div>
                                     </div>
                                     <div v-html="ticket.content" class="fs_thread_body"></div>
+
+                                    <div class="fst_file_lists" v-if="ticket.attachments && ticket.attachments.length">
+                                        <ul>
+                                            <li v-if="ticket.attachments.length"
+                                                v-for="attachment in ticket.attachments"
+                                                :key="attachment.file_hash"
+                                            >
+                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </section>
                             </section>
                         </div>
@@ -139,7 +151,6 @@ export default {
             this.fetching = true;
             this.$get(`tickets/${this.ticket_id}`)
                 .then(response => {
-                    console.log(response)
                     this.ticket = response.ticket;
                     this.conversations = response.responses;
                     this.signon_id = response.sign_on_id;

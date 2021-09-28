@@ -72,3 +72,26 @@
 .fst_front .fframe_body {
     margin-left: 20px;
 }
+
+.el-upload-list--picture {
+    .el-upload-list__item.is-success {
+        .el-upload-list__item-name {
+            line-height: 2.4em;
+        }
+    }
+    .el-upload-list__item-thumbnail {
+        width: 24%;
+        height: 2.6em;
+        margin: 0;
+        border-radius: 4%;
+    }
+    .el-upload-list__item {
+        height: 4em;
+        width: 14.8em;
+        padding: 9px 8px;
+        margin: .3em;
+    }
+}
+ul.el-upload-list.el-upload-list--picture {
+    display: flex;
+}

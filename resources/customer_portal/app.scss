@@ -50,6 +50,7 @@
         font-weight: 400;
         padding: .1em .4em;
         border-radius: 4px;
+        margin: 0 10% 0 20%;
     }
 
     .fs_badge {
@@ -63,6 +64,7 @@
         cursor: pointer;
         line-height: 14px;
         margin: 0 4px 0 0;
+        //margin: 0 10% 0 20%;
         top: 6px;
         &.fs_badge_new {
             background: #f56c6c;
@@ -416,4 +418,28 @@
 
 #fluent_support_client_app .el-table--fit.el-table table tr td {
     padding: 12px 0px !important;
+}
+
+.el-upload-list--picture {
+    .el-upload-list__item.is-success {
+        .el-upload-list__item-name {
+            line-height: 2.4em;
+        }
+    }
+    .el-upload-list__item-thumbnail {
+        width: 24%;
+        height: 2.6em;
+        margin: 0;
+        border-radius: 4%;
+    }
+    .el-upload-list__item {
+        height: 4em;
+        width: 14.8em;
+        padding: 9px 8px;
+        margin: .3em;
+    }
+}
+ul.el-upload-list.el-upload-list--picture {
+    display: -webkit-inline-box;
+    display: -webkit-box;
 }

@@ -132,7 +132,9 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
     $router->post('/tickets/{ticket_id}/close', 'CustomerPortalController@closeTicket')->int('ticket_id');
     $router->post('/tickets/{ticket_id}/re-open', 'CustomerPortalController@reOpenTicket')->int('ticket_id');
 
-    $router->post('ticket_file_upload', 'CustomerPortalController@uploadTicketFiles');
+    //$router->post('ticket_file_upload', 'CustomerPortalController@uploadTicketFiles');
+
+    $router->post('ticket_file_upload','UploaderController@uploadTicketFiles');
 
     $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
 
