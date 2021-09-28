@@ -14,6 +14,7 @@
             :limit="3"
             :on-exceed="handleExceed"
             :file-list="file_lists"
+            list-type="picture"
         >
             <el-button size="small" type="primary">Click to upload</el-button>
             <template #tip>
@@ -21,6 +22,10 @@
             </template>
         </el-upload>
         <p style="color: red;" v-if="error_message" @click="error_message = ''">{{ error_message }}</p>
+
+        <el-dialog v-model="dialogVisible">
+          <img :src="dialogImageUrl" alt="" />
+        </el-dialog>
     </div>
 </template>
 
@@ -38,7 +43,9 @@ export default {
             requestHeaders: {
                 'X-WP-Nonce': this.appVars.rest.nonce
             },
-            error_message: ''
+            error_message: '',
+            dialogImageUrl: '',
+            dialogVisible: false,
         }
     },
     methods: {
@@ -46,11 +53,12 @@ export default {
             this.error_message = '';
             this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
         },
-        handlePreview() {
-
+        handlePreview(file) {
+            this.dialogImageUrl = file.url
+            this.dialogVisible = true
         },
-        handleExceed() {
-
+        handleExceed(files,fileList) {
+            this.error_message = `You can upload maximum ${fileList.length} files`;
         },
         handleError(err, file, fileList) {
             let message = this.convertToText(JSON.parse(err.message));
@@ -68,3 +76,10 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.el-dialog__body img{
+  width: 50%;
+  margin-left: 12em;
+}
+</style>

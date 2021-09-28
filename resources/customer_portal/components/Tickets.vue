@@ -33,7 +33,7 @@
                         </router-link>
                     </template>
                 </el-table-column>
-                <el-table-column width="40">
+                <el-table-column min-width="15">
                     <template #default="scope">
                         <span class="fs_thread_count">{{ scope.row.response_count }}</span>
                     </template>

@@ -219,6 +219,18 @@
                                         </div>
                                     </div>
                                     <div v-html="santizeContent(ticket.content)" class="fs_thread_body"></div>
+
+                                    <div class="fst_file_lists" v-if="ticket.attachments && ticket.attachments.length">
+                                        <ul>
+                                            <li v-if="ticket.attachments.length"
+                                                v-for="attachment in ticket.attachments"
+                                                :key="attachment.file_hash"
+                                            >
+                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </section>
                             </section>
                         </div>

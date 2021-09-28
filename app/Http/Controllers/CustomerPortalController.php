@@ -87,9 +87,18 @@ class CustomerPortalController extends Controller
 
         $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
         do_action('fluent_support/before_ticket_create', $data, $customer);
+        $ticket = Ticket::create($data);
 
-        $createdTicket = Ticket::create($data);
-        $ticket = Ticket::find($createdTicket->id);
+        if ($attachments = Arr::get($data, 'attachments')) {
+            Attachment::where('ticket_id', NULL)
+                ->whereIn('file_hash', $attachments)
+                ->whereNull('ticket_id')
+                ->update([
+                    'ticket_id' => $ticket->id,
+                    'person_id' => $customer->id
+                ]);
+            $ticket->load('attachments');
+        }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
 
@@ -108,7 +117,8 @@ class CustomerPortalController extends Controller
                 }, 'agent' => function ($query) {
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title']);
                 },
-                'product'
+                'product',
+                'attachments'
             ])
             ->first();
 

@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Request\Request;
@@ -19,7 +20,11 @@ class UploaderController extends Controller
         ]);
 
 
-        $ticketId=  $request->get('ticket_id');
+        $ticketId = $request->get('ticket_id');
+
+        if ($ticketId == 'undefined') {
+            $ticketId = NULL;
+        }
 
         $person = Helper::getAgentByUserId(get_current_user_id());
 

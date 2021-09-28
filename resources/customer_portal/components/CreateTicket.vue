@@ -20,6 +20,8 @@
                     <error :error="errors.get('content')"/>
                 </el-form-item>
 
+                <attachment-form :ticket="ticket" :attachments="attachments" />
+
                 <div class="fs_tk_actions">
                     <div v-if="products.length" class="fs_tk_left">
                         <el-form-item label="Related Product/Service">
@@ -52,13 +54,15 @@
 import WpEditor from '../../admin/Pieces/_wp_editor';
 import Error from '../../admin/Pieces/Error';
 import Errors from '../../admin/Bits/Errors';
+import AttachmentForm from "../../admin/Modules/Tickets/_AttachmentForm";
 
 
 export default {
     name: 'CreateTicket',
     components: {
         WpEditor,
-        Error
+        Error,
+        AttachmentForm
     },
     data() {
         return {
@@ -68,10 +72,11 @@ export default {
                 title: '',
                 content: '',
                 product_id: '',
-                client_priority: 'normal'
+                client_priority: 'normal',
             },
+            attachments: [],
             products: this.appVars.support_products,
-            priorities: this.appVars.customer_ticket_priorities
+            priorities: this.appVars.customer_ticket_priorities,
         }
     },
     methods: {
@@ -79,7 +84,8 @@ export default {
             this.errors.clear();
             this.creating = false;
             this.$post('tickets', {
-                ...this.ticket
+                ...this.ticket,
+                attachments: this.attachments
             })
             .then(response => {
                 this.$router.push({ name: 'view_ticket', params: { ticket_id: response.ticket.id } });
