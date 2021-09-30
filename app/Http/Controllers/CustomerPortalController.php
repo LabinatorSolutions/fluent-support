@@ -299,46 +299,46 @@ class CustomerPortalController extends Controller
         ];
     }
 
-    public function uploadTicketFiles(Request $request)
-    {
-        $files = $this->validate($this->request->files(), [
-            'file' => 'mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
-        ], ['file.mimetypes' => 'Only image and documents are allowed']);
-
-
-        $ticketId = $request->get('ticket_id');
-        $ticket = Ticket::findOrFail($ticketId);
-
-        $person = $this->resolveCustomer($request);
-
-        if (!$person) {
-            return $this->sendError([
-                'message' => __('Sorry! No customer found', 'fluent-support')
-            ]);
-        }
-
-        $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
-
-        $attachments = [];
-        foreach ($uploadedFiles as $file) {
-            $fileData = [
-                'ticket_id' => $ticketId,
-                'person_id' => $person->id,
-                'file_type' => $file['type'],
-                'file_path' => $file['file_path'],
-                'full_url'  => $file['url'],
-                'title'     => $file['name'],
-                'driver'    => 'local'
-            ];
-
-            $attachment = Attachment::create($fileData);
-            $attachments[] = $attachment->file_hash;
-        }
-
-        return [
-            'attachments' => $attachments
-        ];
-    }
+//    public function uploadTicketFiles(Request $request)
+//    {
+//        $files = $this->validate($this->request->files(), [
+//            'file' => 'mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
+//        ], ['file.mimetypes' => 'Only image and documents are allowed']);
+//
+//
+//        $ticketId = $request->get('ticket_id');
+//        $ticket = Ticket::findOrFail($ticketId);
+//
+//        $person = $this->resolveCustomer($request);
+//
+//        if (!$person) {
+//            return $this->sendError([
+//                'message' => __('Sorry! No customer found', 'fluent-support')
+//            ]);
+//        }
+//
+//        $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
+//
+//        $attachments = [];
+//        foreach ($uploadedFiles as $file) {
+//            $fileData = [
+//                'ticket_id' => $ticketId,
+//                'person_id' => $person->id,
+//                'file_type' => $file['type'],
+//                'file_path' => $file['file_path'],
+//                'full_url'  => $file['url'],
+//                'title'     => $file['name'],
+//                'driver'    => 'local'
+//            ];
+//
+//            $attachment = Attachment::create($fileData);
+//            $attachments[] = $attachment->file_hash;
+//        }
+//
+//        return [
+//            'attachments' => $attachments
+//        ];
+//    }
 
     private function resolveMailboxId($request)
     {
