@@ -36620,6 +36620,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       },
       error_message: '',
       dialogImageUrl: '',
+      dailogImageTitle: '',
       dialogVisible: false
     };
   },
@@ -36629,6 +36630,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
     },
     handlePreview: function handlePreview(file) {
+      this.dailogImageTitle = file.name;
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
@@ -37292,6 +37294,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.error_message), 1
   /* TEXT */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dialog, {
+    title: $data.dailogImageTitle,
     modelValue: $data.dialogVisible,
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
       return $data.dialogVisible = $event;
@@ -37310,7 +37313,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["modelValue"])]);
+  , ["title", "modelValue"])]);
 }
 
 /***/ }),
@@ -38599,7 +38602,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.el-dialog__body img[data-v-0f76028e]{\n  width: 50%;\n  margin-left: 12em;\n}\n", "",{"version":3,"sources":["webpack://./../../../../_AttachmentForm.vue"],"names":[],"mappings":";AAgFA;EACE,UAAU;EACV,iBAAiB;AACnB","sourcesContent":["<template>\n    <div class=\"fs_attachments_form\">\n        <el-upload\n            class=\"upload-demo\"\n            :action=\"upload_url\"\n            :on-preview=\"handlePreview\"\n            :on-remove=\"handleRemove\"\n            :on-success=\"handleUploadSuccess\"\n            :with-credentials=\"true\"\n            :on-error=\"handleError\"\n            multiple\n            :headers=\"requestHeaders\"\n            :data=\"upload_data\"\n            :limit=\"3\"\n            :on-exceed=\"handleExceed\"\n            :file-list=\"file_lists\"\n            list-type=\"picture\"\n        >\n            <el-button size=\"small\" type=\"primary\">Click to upload</el-button>\n            <template #tip>\n                <div class=\"el-upload__tip\">Files with a size less than 2MB. Supported Types: images, text, pdf, zip</div>\n            </template>\n        </el-upload>\n        <p style=\"color: red;\" v-if=\"error_message\" @click=\"error_message = ''\">{{ error_message }}</p>\n\n        <el-dialog v-model=\"dialogVisible\">\n          <img :src=\"dialogImageUrl\" alt=\"\" />\n        </el-dialog>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nexport default {\n    name: 'AttachmentForm',\n    props: ['ticket', 'attachments'],\n    data() {\n        return {\n            upload_url: this.appVars.rest.url+'/ticket_file_upload',\n            upload_data: {\n                ticket_id: this.ticket.id\n            },\n            file_lists: [],\n            requestHeaders: {\n                'X-WP-Nonce': this.appVars.rest.nonce\n            },\n            error_message: '',\n            dialogImageUrl: '',\n            dialogVisible: false,\n        }\n    },\n    methods: {\n        handleRemove(file, fileList) {\n            this.error_message = '';\n            this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);\n        },\n        handlePreview(file) {\n            this.dialogImageUrl = file.url\n            this.dialogVisible = true\n        },\n        handleExceed(files,fileList) {\n            this.error_message = `You can upload maximum ${fileList.length} files`;\n        },\n        handleError(err, file, fileList) {\n            let message = this.convertToText(JSON.parse(err.message));\n            if(!message) {\n                message = 'File failed to upload';\n            }\n\n            message = file.name + ': ' + message;\n            this.error_message = message;\n        },\n        handleUploadSuccess(response, file, fileList) {\n            this.error_message = '';\n            this.attachments.push(...response.attachments);\n        }\n    }\n}\n</script>\n\n<style scoped>\n.el-dialog__body img{\n  width: 50%;\n  margin-left: 12em;\n}\n</style>\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.el-dialog__body img[data-v-0f76028e]{\n  width: 50%;\n  margin-left: 12em;\n}\n", "",{"version":3,"sources":["webpack://./resources/admin/Modules/Tickets/_AttachmentForm.vue"],"names":[],"mappings":";AAkFA;EACE,UAAU;EACV,iBAAiB;AACnB","sourcesContent":["<template>\n    <div class=\"fs_attachments_form\">\n        <el-upload\n            class=\"upload-demo\"\n            :action=\"upload_url\"\n            :on-preview=\"handlePreview\"\n            :on-remove=\"handleRemove\"\n            :on-success=\"handleUploadSuccess\"\n            :with-credentials=\"true\"\n            :on-error=\"handleError\"\n            multiple\n            :headers=\"requestHeaders\"\n            :data=\"upload_data\"\n            :limit=\"3\"\n            :on-exceed=\"handleExceed\"\n            :file-list=\"file_lists\"\n            list-type=\"picture\"\n        >\n            <el-button size=\"small\" type=\"primary\">Click to upload</el-button>\n            <template #tip>\n                <div class=\"el-upload__tip\">Files with a size less than 2MB. Supported Types: images, text, pdf, zip</div>\n            </template>\n        </el-upload>\n        <p style=\"color: red;\" v-if=\"error_message\" @click=\"error_message = ''\">{{ error_message }}</p>\n\n        <el-dialog :title=\"dailogImageTitle\" v-model=\"dialogVisible\">\n          <img :src=\"dialogImageUrl\" alt=\"\" />\n        </el-dialog>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nexport default {\n    name: 'AttachmentForm',\n    props: ['ticket', 'attachments'],\n    data() {\n        return {\n            upload_url: this.appVars.rest.url+'/ticket_file_upload',\n            upload_data: {\n                ticket_id: this.ticket.id\n            },\n            file_lists: [],\n            requestHeaders: {\n                'X-WP-Nonce': this.appVars.rest.nonce\n            },\n            error_message: '',\n            dialogImageUrl: '',\n            dailogImageTitle: '',\n            dialogVisible: false,\n        }\n    },\n    methods: {\n        handleRemove(file, fileList) {\n            this.error_message = '';\n            this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);\n        },\n        handlePreview(file) {\n            this.dailogImageTitle = file.name\n            this.dialogImageUrl = file.url\n            this.dialogVisible = true\n        },\n        handleExceed(files,fileList) {\n            this.error_message = `You can upload maximum ${fileList.length} files`;\n        },\n        handleError(err, file, fileList) {\n            let message = this.convertToText(JSON.parse(err.message));\n            if(!message) {\n                message = 'File failed to upload';\n            }\n\n            message = file.name + ': ' + message;\n            this.error_message = message;\n        },\n        handleUploadSuccess(response, file, fileList) {\n            this.error_message = '';\n            this.attachments.push(...response.attachments);\n        }\n    }\n}\n</script>\n\n<style scoped>\n.el-dialog__body img{\n  width: 50%;\n  margin-left: 12em;\n}\n</style>\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

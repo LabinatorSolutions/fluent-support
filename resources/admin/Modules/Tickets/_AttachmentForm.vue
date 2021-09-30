@@ -23,7 +23,7 @@
         </el-upload>
         <p style="color: red;" v-if="error_message" @click="error_message = ''">{{ error_message }}</p>
 
-        <el-dialog v-model="dialogVisible">
+        <el-dialog :title="dailogImageTitle" v-model="dialogVisible">
           <img :src="dialogImageUrl" alt="" />
         </el-dialog>
     </div>
@@ -45,6 +45,7 @@ export default {
             },
             error_message: '',
             dialogImageUrl: '',
+            dailogImageTitle: '',
             dialogVisible: false,
         }
     },
@@ -54,6 +55,7 @@ export default {
             this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
         },
         handlePreview(file) {
+            this.dailogImageTitle = file.name
             this.dialogImageUrl = file.url
             this.dialogVisible = true
         },

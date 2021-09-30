@@ -68,9 +68,8 @@ export default {
             });
         },
         insertTemplate(content) {
-            console.log(content);
             this.editor_ready = false;
-            this.response_body = content;
+            this.response_body = this.response_body + content;
             this.$nextTick(() => {
                 this.editor_ready = true;
             });
