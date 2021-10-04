@@ -121,7 +121,12 @@ export default {
         },
         maybeChangeWaitingReply() {
             if (this.filters.waiting_for_reply == 'yes') {
-                this.filters.status_type = 'open';
+                if (this.filters.status_type == 'new' || this.filters.status_type == 'active') {
+                    this.filters.status_type;
+                }
+                else{
+                    this.filters.status_type = 'open';
+                }
             }
             this.fetchTickets();
         }
