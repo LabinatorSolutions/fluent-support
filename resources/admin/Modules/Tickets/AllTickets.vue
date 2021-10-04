@@ -118,42 +118,64 @@
                 <div class="fs_row">
                     <div class="fs_half fs_padded_20">
                         <div v-if="ticket_selections.length">
-                            <el-popconfirm
-                                @confirm="deleteSelected()"
-                                title="Are you sure to delete the selected Tickets?"
-                            >
-                                <template #reference>
-                                    <el-button
-                                        v-loading="doing_bulk"
-                                        :disabled="doing_bulk"
-                                        type="danger"
-                                        size="mini">
-                                        Delete Selected Tickets ({{ ticket_selections.length }})
-                                    </el-button>
-                                </template>
-                            </el-popconfirm>
+                            <el-dropdown trigger="click">
+                                <el-button type="primary" size="mini">
+                                    Actions<i class="el-icon-arrow-down el-icon--right"></i>
+                                </el-button>
+                                <template #dropdown>
+                                    <el-dropdown-menu class="ticket-action-buttons">
 
-                            <el-popconfirm
-                                @confirm="closeSelected()"
-                                title="Are you sure to close the selected Tickets?"
-                            >
-                                <template #reference>
-                                    <el-button
-                                        v-loading="doing_bulk"
-                                        :disabled="doing_bulk"
-                                        type="info"
-                                        size="mini">Close Selected Tickets ({{ ticket_selections.length }})
-                                    </el-button>
+                                        <el-dropdown-item>
+                                            <el-popconfirm
+                                            @confirm="deleteSelected()"
+                                            title="Are you sure to delete the selected Tickets?"
+                                        >
+                                                <template #reference>
+                                                    <el-button
+                                                        v-loading="doing_bulk"
+                                                        :disabled="doing_bulk"
+                                                        type="text"
+                                                        size="small"
+                                                        style="color: #F56C6C;">
+                                                        Delete Selected Tickets ({{ ticket_selections.length }})
+                                                    </el-button>
+                                                </template>
+                                            </el-popconfirm>
+                                        </el-dropdown-item>
+
+                                        <el-dropdown-item>
+                                            <el-popconfirm
+                                                @confirm="closeSelected()"
+                                                title="Are you sure to close the selected Tickets?"
+                                            >
+                                                <template #reference>
+                                                    <el-button
+                                                        v-loading="doing_bulk"
+                                                        :disabled="doing_bulk"
+                                                        type="text"
+                                                        size="small"
+                                                        style="color: #303133;">
+                                                        Close Selected Tickets ({{ ticket_selections.length }})
+                                                    </el-button>
+                                                </template>
+                                            </el-popconfirm>
+                                        </el-dropdown-item>
+
+                                        <el-dropdown-item>
+                                            <el-button
+                                                v-loading="doing_bulk"
+                                                :disabled="doing_bulk"
+                                                @click="add_response_modal = true"
+                                                type="text"
+                                                size="small"
+                                                style="color: #67C23A;">
+                                                Reply Selected Tickets ({{ ticket_selections.length }})
+                                            </el-button>
+                                        </el-dropdown-item>
+
+                                    </el-dropdown-menu>
                                 </template>
-                            </el-popconfirm>
-                            <el-button
-                                v-loading="doing_bulk"
-                                :disabled="doing_bulk"
-                                @click="add_response_modal = true"
-                                size="mini"
-                                type="primary">
-                                Reply ({{ ticket_selections.length }}) Tickets
-                            </el-button>
+                            </el-dropdown>
                         </div>
                     </div>
                     <div class="fs_half">
@@ -434,3 +456,23 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.ticket-action-buttons.el-dropdown-menu__item {
+    &:focus {
+        background: #EEEEEE;
+    }
+}
+.el-dropdown-menu__item {
+    &:not(.is-disabled) {
+        &:hover {
+            background: #EEEEEE;
+        }
+    }
+}
+.ticket-action-buttons {
+    li.el-dropdown-menu__item {
+        margin: 10px 0px;
+    }
+}
+</style>
