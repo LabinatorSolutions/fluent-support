@@ -25,11 +25,11 @@ class TicketController extends Controller
         $user = wp_get_current_user();
 
         return [
-            'user_id'     => $user->id,
-            'email'       => $user->user_email,
-            'person'      => Helper::getAgentByUserId($user->ID),
+            'user_id' => $user->id,
+            'email' => $user->user_email,
+            'person' => Helper::getAgentByUserId($user->ID),
             'permissions' => PermissionManager::currentUserPermissions(),
-            'request'     => $request->all()
+            'request' => $request->all()
         ];
     }
 
@@ -78,13 +78,13 @@ class TicketController extends Controller
         $perPage = $request->get('per_page');
 
         foreach ($tickets as $ticket) {
-	        if($perPage < 15) {
-	            if($ticket->status != 'closed') {
-	                $ticket->live_activity = TicketHelper::getActivity($ticket->id);
-	            } else {
-	                $ticket->live_activity = [];
-	            }
-        	}
+            if ($perPage < 15) {
+                if ($ticket->status != 'closed') {
+                    $ticket->live_activity = TicketHelper::getActivity($ticket->id);
+                } else {
+                    $ticket->live_activity = [];
+                }
+            }
         }
 
         return [
@@ -103,14 +103,14 @@ class TicketController extends Controller
 
         $customer = Customer::findOrFail($ticketData['customer_id']);
 
-        if(empty($ticketData['mailbox_id'])) {
+        if (empty($ticketData['mailbox_id'])) {
             $mailbox = Helper::getDefaultMailBox();
             $ticketData['mailbox_id'] = $mailbox->id;
         } else {
             $mailbox = MailBox::findOrFail($ticketData['mailbox_id']); // just for validation
         }
 
-        if(!empty($ticketData['product_id'])) {
+        if (!empty($ticketData['product_id'])) {
             $data['product_source'] = 'local';
         }
 
@@ -131,7 +131,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Ticket has been created successfully', 'fluent-support'),
-            'ticket'  => $createdTicket
+            'ticket' => $createdTicket
         ];
 
     }
@@ -174,8 +174,8 @@ class TicketController extends Controller
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
         return [
-            'ticket'        => $ticket,
-            'responses'     => $responses,
+            'ticket' => $ticket,
+            'responses' => $responses,
             'agent_id' => $agent->id
         ];
     }
@@ -209,9 +209,9 @@ class TicketController extends Controller
         $responseData['response']->content = make_clickable(wpautop($responseData['response']->content, false));
 
         return [
-            'message'     => __('Response has been added'),
-            'response'    => $responseData['response'],
-            'ticket'      => $responseData['ticket'],
+            'message' => __('Response has been added'),
+            'response' => $responseData['response'],
+            'ticket' => $responseData['ticket'],
             'update_data' => $responseData['update_data']
         ];
     }
@@ -273,7 +273,7 @@ class TicketController extends Controller
         }
 
         return [
-            'message'     => $propName . ' has been updated',
+            'message' => $propName . ' has been updated',
             'update_data' => $updateData
         ];
     }
@@ -292,7 +292,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close($ticket, $agent)
+            'ticket' => (new TicketService())->close($ticket, $agent)
         ];
     }
 
@@ -310,7 +310,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket'  => (new TicketService())->reopen($ticket, $agent)
+            'ticket' => (new TicketService())->reopen($ticket, $agent)
         ];
     }
 
@@ -346,6 +346,74 @@ class TicketController extends Controller
         $this->sendError([
             'message' => 'Sorry no action found as available'
         ]);
+    }
+
+    public function doBulkReplies(Request $request)
+    {
+        $data = $request->all();
+        $this->validate($data, [
+            'content' => 'required',
+            'ticket_ids' => 'required|array'
+        ]);
+
+        $ticketIds = $request->get('ticket_ids');
+        $ticketIds = array_filter($ticketIds, 'absint');
+
+        $agent = Helper::getAgentByUserId();
+
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+
+        $query = Ticket::whereIn('id', $ticketIds)->where('status', '!=', 'closed');
+
+        if (!$hasAllPermission) {
+            $query->where('agent_id', $agent->id);
+        }
+
+        $tickets = $query->get();
+
+        if (!count($tickets)) {
+            $this->sendError([
+                'message' => __('Sorry no tickets found based on your filter and bulk actions', 'fluent-support')
+            ]);
+        }
+
+        $responseData = [
+            'content' => $request->get('content'),
+            'conversation_type' => $request->get('conversation_type', 'response'),
+            'close_ticket' => $request->get('close_ticket', 'no')
+        ];
+
+        $attachments = $request->get('attachments', []);
+
+        if ($attachments) {
+            $attachments = Attachment::whereNull('ticket_id')
+                ->orderBy('id', 'asc')
+                ->whereIn('file_hash', $attachments)
+                ->get();
+        }
+
+
+        $responseService = new ResponseService();
+
+        foreach ($tickets as $ticket) {
+            if ($attachments) {
+                $responseData['attachments'] = [];
+                foreach ($attachments as $attachment) {
+                    $attachedFile = $attachment->replicate();
+                    $attachedFile->ticket_id = $ticket->id;
+                    $attachedFile->save();
+                    $responseData['attachments'][] = $attachedFile->file_hash;
+                }
+            }
+
+            $responseService->createResponse($responseData, $agent, $ticket);
+        }
+
+
+        return [
+            'message' => __('Response has been added to the selected tickets', 'fluent-support')
+        ];
+
     }
 
     public function deleteBulk(Request $request)
@@ -421,7 +489,7 @@ class TicketController extends Controller
         $response->save();
 
         return [
-            'message'  => 'Selected response has been updated',
+            'message' => 'Selected response has been updated',
             'response' => $response
         ];
     }
@@ -451,7 +519,7 @@ class TicketController extends Controller
 
         $tagId = intval($request->get('tag_id'));
 
-        if(!$ticket->hasTag($tagId)) {
+        if (!$ticket->hasTag($tagId)) {
             $ticket->tags()->attach($tagId, ['source_type' => 'ticket_tag']);
         }
 

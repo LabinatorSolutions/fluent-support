@@ -39345,7 +39345,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _AddTicket__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_AddTicket */ "./resources/admin/Modules/Tickets/_AddTicket.vue");
 /* harmony import */ var _parts_Tags__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./parts/_Tags */ "./resources/admin/Modules/Tickets/parts/_Tags.vue");
 /* harmony import */ var _admin_Modules_Tickets_parts_TicketFilters__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/admin/Modules/Tickets/parts/TicketFilters */ "./resources/admin/Modules/Tickets/parts/TicketFilters.vue");
+/* harmony import */ var _CreateResponse__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./_CreateResponse */ "./resources/admin/Modules/Tickets/_CreateResponse.vue");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 
 
 
@@ -39358,7 +39360,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
     Pagination: _Pieces_Pagination__WEBPACK_IMPORTED_MODULE_0__["default"],
     AddTicket: _AddTicket__WEBPACK_IMPORTED_MODULE_2__["default"],
     TicketTags: _parts_Tags__WEBPACK_IMPORTED_MODULE_3__["default"],
-    TicketFilters: _admin_Modules_Tickets_parts_TicketFilters__WEBPACK_IMPORTED_MODULE_4__["default"]
+    TicketFilters: _admin_Modules_Tickets_parts_TicketFilters__WEBPACK_IMPORTED_MODULE_4__["default"],
+    CreateResponse: _CreateResponse__WEBPACK_IMPORTED_MODULE_5__["default"]
   },
   data: function data() {
     return {
@@ -39397,7 +39400,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       doing_bulk: false,
       app_ready: false,
       add_ticket_modal: false,
-      appReady: false
+      appReady: false,
+      add_response_modal: false
     };
   },
   watch: {
@@ -39416,6 +39420,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
         return false;
       }
 
+      this.ticket_selections = [];
       this.loading = true;
       this.$get('tickets', {
         page: this.pagination.current_page,
@@ -40046,8 +40051,7 @@ __webpack_require__.r(__webpack_exports__);
       creating: false,
       close_ticket: 'no',
       attachments: [],
-      editor_ready: true,
-      typing: ''
+      editor_ready: true
     };
   },
   methods: {
@@ -40055,13 +40059,22 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       var closed = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'no';
-      this.creating = true;
-      this.$post("tickets/".concat(this.ticket.id, "/responses"), {
+      var data = {
         content: this.response_body,
         conversation_type: this.type,
         close_ticket: closed,
         attachments: this.attachments
-      }).then(function (response) {
+      };
+      var action = "tickets/".concat(this.ticket.id, "/responses");
+
+      if (Array.isArray(this.ticket)) {
+        data.ticket_ids = this.ticket;
+        data.bulk_action = 'reply_tickets';
+        action = 'tickets/bulk-reply';
+      }
+
+      this.creating = true;
+      this.$post(action, data).then(function (response) {
         _this.$notify.success(response.message);
 
         _this.response_body = '';
@@ -45067,6 +45080,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_el_dialog = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dialog");
 
+  var _component_create_response = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("create-response");
+
   var _directive_loading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("loading");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)(((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.pagination.total), 1
@@ -45362,8 +45377,26 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
     /* STABLE */
 
-  })])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pagination, {
-    onFetch: _cache[8] || (_cache[8] = function ($event) {
+  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+    disabled: $data.doing_bulk,
+    onClick: _cache[8] || (_cache[8] = function ($event) {
+      return $data.add_response_modal = true;
+    }),
+    size: "mini",
+    type: "primary"
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Reply (" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ticket_selections.length) + ") Tickets ", 1
+      /* TEXT */
+      )];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["disabled"]), [[_directive_loading, $data.doing_bulk]])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pagination, {
+    onFetch: _cache[9] || (_cache[9] = function ($event) {
       return $options.fetchTickets();
     }),
     pagination: $data.pagination
@@ -45372,7 +45405,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   , ["pagination"])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dialog, {
     title: "Create a Ticket",
     modelValue: $data.add_ticket_modal,
-    "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+    "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
       return $data.add_ticket_modal = $event;
     }),
     modelModifiers: {
@@ -45384,6 +45417,33 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [$data.add_ticket_modal ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_add_ticket, {
         key: 0
       })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dialog, {
+    title: "Reply To Selected Tickets",
+    modelValue: $data.add_response_modal,
+    "onUpdate:modelValue": _cache[12] || (_cache[12] = function ($event) {
+      return $data.add_response_modal = $event;
+    }),
+    modelModifiers: {
+      sync: true
+    },
+    width: "60%"
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [$data.add_response_modal ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_create_response, {
+        key: 0,
+        onCreated: _cache[11] || (_cache[11] = function ($event) {
+          return $options.fetchTickets();
+        }),
+        ticket: $data.ticket_selections
+      }, null, 8
+      /* PROPS */
+      , ["ticket"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
     }),
     _: 1
     /* STABLE */
