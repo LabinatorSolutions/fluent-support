@@ -42,30 +42,39 @@ export default {
             close_ticket: 'no',
             attachments: [],
             editor_ready: true,
-            typing: ''
         }
     },
     methods: {
         create(closed = 'no') {
-            this.creating = true;
-            this.$post(`tickets/${this.ticket.id}/responses`, {
+
+            const data = {
                 content: this.response_body,
                 conversation_type: this.type,
                 close_ticket: closed,
                 attachments: this.attachments
-            })
-            .then(response => {
-                this.$notify.success(response.message);
-                this.response_body = '';
-                this.$emit('created', response.response, response);
-                this.attachments = [];
-            })
-            .catch((errors) => {
-                this.$handleError(errors);
-            })
-            .always(() => {
-                this.creating = false;
-            });
+            };
+
+            let action = `tickets/${this.ticket.id}/responses`;
+            if(Array.isArray(this.ticket)){
+                data.ticket_ids = this.ticket;
+                data.bulk_action = 'reply_tickets';
+                action = 'tickets/bulk-reply';
+            }
+
+            this.creating = true;
+            this.$post(action, data)
+                .then(response => {
+                    this.$notify.success(response.message);
+                    this.response_body = '';
+                    this.$emit('created', response.response, response);
+                    this.attachments = [];
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.creating = false;
+                });
         },
         insertTemplate(content) {
             this.editor_ready = false;

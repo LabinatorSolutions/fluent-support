@@ -146,6 +146,14 @@
                                     </el-button>
                                 </template>
                             </el-popconfirm>
+                            <el-button
+                                v-loading="doing_bulk"
+                                :disabled="doing_bulk"
+                                @click="add_response_modal = true"
+                                size="mini"
+                                type="primary">
+                                Reply ({{ ticket_selections.length }}) Tickets
+                            </el-button>
                         </div>
                     </div>
                     <div class="fs_half">
@@ -162,6 +170,13 @@
             width="60%">
             <add-ticket v-if="add_ticket_modal"></add-ticket>
         </el-dialog>
+
+        <el-dialog
+            title="Reply To Selected Tickets"
+            v-model.sync="add_response_modal"
+            width="60%">
+            <create-response @created="fetchTickets()" v-if="add_response_modal" :ticket="ticket_selections" />
+        </el-dialog>
     </div>
 </template>
 
@@ -171,6 +186,7 @@ import each from 'lodash/each';
 import AddTicket from './_AddTicket';
 import TicketTags from './parts/_Tags';
 import TicketFilters from '@/admin/Modules/Tickets/parts/TicketFilters';
+import CreateResponse from "./_CreateResponse";
 
 export default {
     name: 'AllTickets',
@@ -178,7 +194,8 @@ export default {
         Pagination,
         AddTicket,
         TicketTags,
-        TicketFilters
+        TicketFilters,
+        CreateResponse
     },
     data() {
         return {
@@ -217,7 +234,8 @@ export default {
             doing_bulk: false,
             app_ready: false,
             add_ticket_modal: false,
-            appReady: false
+            appReady: false,
+            add_response_modal: false,
         }
     },
     watch: {
@@ -233,6 +251,7 @@ export default {
             if(!this.app_ready) {
                 return false;
             }
+            this.ticket_selections = [];
             this.loading = true;
             this.$get('tickets', {
                 page: this.pagination.current_page,

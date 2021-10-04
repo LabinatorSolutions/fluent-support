@@ -53,6 +53,7 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->post('bulk', 'TicketController@doBulkActions');
     $router->delete('bulk', 'TicketController@deleteBulk');
+    $router->post('bulk-reply', 'TicketController@doBulkReplies');
 
 });
 
