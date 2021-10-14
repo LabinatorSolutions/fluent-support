@@ -20,6 +20,11 @@ class IntegrationInit
             (new WooCommerce())->boot();
         }
 
+        // LearnDash
+        if (defined('LEARNDASH_VERSION')) {
+            (new LearnDash())->boot();
+        }
+
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }
