@@ -25,7 +25,7 @@
             <el-skeleton :rows="1" animated />
         </div>
 
-        <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key" :class="'fs_tk_widget' + widget_key" class="fs_tk_card fs_tk_extra_card">
+        <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key" :class="'fs_tk_widget_' + widget_key" class="fs_tk_card fs_tk_extra_card">
             <div class="fs_tk_card_header">
                 <h3 v-html="widget.header"></h3>
             </div>

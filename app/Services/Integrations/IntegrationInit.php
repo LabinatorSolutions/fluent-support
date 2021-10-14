@@ -15,6 +15,11 @@ class IntegrationInit
             (new Edd())->boot();
         }
 
+        // WooCommerce
+        if(defined('WC_PLUGIN_FILE')) {
+            (new WooCommerce())->boot();
+        }
+
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }
