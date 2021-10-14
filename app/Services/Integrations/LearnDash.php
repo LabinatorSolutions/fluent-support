@@ -18,7 +18,7 @@ class LearnDash {
             'posts_per_page' => 100,
             'post__in'       => $courses,
         ]);
-        
+
         $courseData = [];
         foreach ($enrolledCourses as $course) {
             $completedAt = get_user_meta($customer->id, 'course_completed_' . $course->ID, true);
@@ -32,6 +32,10 @@ class LearnDash {
                 'started_at'   => esc_html(($startAt) ? gmdate('Y-m-d H:i', $startAt) : ''),
                 'price'        => learndash_get_course_price($course->ID, $customer->id, false)
             ];
+        }
+
+        if(!$courses || !$enrolledCourses || !$courseData){
+            return $widgets;
         }
 
         ob_start();
