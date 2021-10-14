@@ -42,7 +42,7 @@ class Settings
     {
         $defaults = [
             'portal_page_id' => '',
-            'login_message'  => '<p>Please login to access the Customer Support Portal</p> [fluent_support_login]'
+            'login_message'  => __('<p>Please login to access the Customer Support Portal</p> [fluent_support_login]', 'fluent-support')
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
@@ -61,14 +61,14 @@ class Settings
                 'type'        => 'input-options',
                 'label'       => 'Portal Page',
                 'show_id'     => true,
-                'placeholder' => 'Select Portal Page',
+                'placeholder' => __('Select Portal Page', 'fluent-support'),
                 'options'     => Helper::getWPPages(),
-                'inline_help' => 'Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page'
+                'inline_help' => __('Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page','fluent-support')
             ],
             'login_message'  => [
                 'type'        => 'wp-editor',
-                'label'       => 'Message for non logged in users',
-                'inline_help' => 'Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form'
+                'label'       => __('Message for non logged in users', 'fluent-support'),
+                'inline_help' => __('Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form', 'fluent-support')
             ]
         ];
     }

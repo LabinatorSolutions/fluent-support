@@ -95,3 +95,7 @@
 ul.el-upload-list.el-upload-list--picture {
     display: flex;
 }
+
+.el-icon-success:before{
+    color:var(--el-color-success)
+}

@@ -1,11 +1,11 @@
 <template>
-    <div class="fs_saved_replies">
+    <div class="fs_agents_report">
         <div class="fs_box_wrapper">
             <el-row :gutter="30">
                 <el-col :sm="24" :md="16" :lg="18">
                     <div class="fs_box">
                         <div class="fs_box_header">
-                            <div class="fluentcrm_header_title">
+                            <div class="fs_header_title">
                                 <el-dropdown style="display: inline-block; cursor: pointer; line-height: 100%;" @command="handleComponentChange" trigger="hover">
                                     <span class="el-dropdown-link">
                                         {{ chartMaps[currently_showing] }}
@@ -23,18 +23,31 @@
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
+                                <el-date-picker
+                                    size="small"
+                                    v-model="date_range"
+                                    type="daterange"
+                                    range-separator="To"
+                                    start-placeholder="Start date"
+                                    end-placeholder="End date"
+                                    :unlink-panels=true
+                                    @change="filterReport"
+                                    value-format="YYYY-MM-DD"
+                                    style="float: right;"
+                                >
+                                </el-date-picker>
                             </div>
                         </div>
                         <div class="fs_box_body">
-                            <component v-if="showing_charts" :is="currently_showing" :date_range="date_range"></component>
+                            <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'reports'"></component>
                         </div>
                     </div>
-                    <agent-reports />
+                    <agent-reports :url="'reports/agents-summary'"/>
                 </el-col>
                 <el-col :sm="24" :md="8" :lg="6">
                     <div class="fs_box">
                         <div class="fs_box_header">
-                            <div class="fluentcrm_header_title">
+                            <div class="fs_header_title">
                                 Quick Stats
                             </div>
                         </div>
@@ -80,7 +93,7 @@ export default {
             chartMaps: {
                 'tickets-chart': 'Ticket Stats',
                 'resolve-chart': 'Resolve Stats',
-                'response-chart': 'Response Stats'
+                'response-chart': 'Response Stats',
             }
         }
     },
@@ -101,6 +114,16 @@ export default {
         handleComponentChange(item) {
             this.currently_showing = item;
         },
+        filterReport() {
+            const current = this.currently_showing;
+            this.currently_showing = {
+                render: () => {
+                }
+            };
+            this.$nextTick(() => {
+                this.currently_showing = current;
+            });
+        }
     },
     mounted() {
         this.fetchReports();

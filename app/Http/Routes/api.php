@@ -74,6 +74,15 @@ $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->delete('/{product_id}', 'ProductController@delete');
 });
 
+$router->prefix('ticket-types')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
+    $router->get('/', 'TicketTypeController@index');
+    $router->post('/', 'TicketTypeController@create');
+    $router->get('/{ticket_type_id}', 'TicketTypeController@get');
+    $router->post('/{ticket_type_id}', 'TicketTypeController@create');
+    $router->put('/{ticket_type_id}', 'TicketTypeController@update');
+    $router->delete('/{ticket_type_id}', 'TicketTypeController@delete');
+});
+
 $router->prefix('ticket-tags')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'TicketTagsController@index');
     $router->post('/', 'TicketTagsController@create');
@@ -104,12 +113,19 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->delete('/{agent_id}', 'AgentController@deleteAgent');
 });
 
-$router->prefix('reports')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
+$router->prefix('reports')->withPolicy('PortalPolicy')->group(function ($router) {
     $router->get('/', 'ReportingController@getOverallReports');
     $router->get('/tickets-growth', 'ReportingController@getTicketsChart');
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
     $router->get('/response-growth', 'ReportingController@getResponseChart');
     $router->get('/agents-summary', 'ReportingController@getAgentsSummary');
+});
+
+$router->prefix('my-reports')->withPolicy('PortalPolicy')->group(function ($router) {
+    $router->get('/', 'ReportingController@getAgentOverallReports');
+    $router->get('/tickets-resolve-growth', 'ReportingController@getAgentResolveChart');
+    $router->get('/response-growth', 'ReportingController@getAgentResponseChart');
+    $router->get('/my-summary', 'ReportingController@getPersonalSummary');
 });
 
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {

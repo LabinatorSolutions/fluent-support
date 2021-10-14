@@ -7,6 +7,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\TicketTag;
+use FluentSupport\App\Models\TicketType;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 
@@ -55,6 +56,11 @@ class Menu
                 'key'       => 'tickets',
                 'label'     => __('Tickets', 'fluent-support'),
                 'permalink' => $baseUrl . 'tickets',
+            ],
+            [
+                'key'       => 'reports',
+                'label'     => __('Reports', 'fluent-support'),
+                'permalink' => $baseUrl . 'reports'
             ]
         ];
 
@@ -64,11 +70,6 @@ class Menu
                 'key'       => 'customers',
                 'label'     => __('Customers', 'fluent-support'),
                 'permalink' => $baseUrl . 'customers'
-            ];
-            $menuItems[] = [
-                'key'       => 'reports',
-                'label'     => __('Reports', 'fluent-support'),
-                'permalink' => $baseUrl . 'reports',
             ];
         }
 
@@ -176,6 +177,7 @@ class Menu
             'support_products'  => Product::select(['id', 'title'])->get(),
             'client_priorities' => Helper::customerTicketPriorities(),
             'admin_priorities'  => Helper::adminTicketPriorities(),
+            'ticket_types'      => TicketType::select(['id', 'title'])->get(),
             'mailboxes'         => MailBox::select(['id', 'name', 'settings'])->get(),
             'me'                => $me,
             'pref'              => [

@@ -55,7 +55,7 @@ class TicketService
             'conversation_type' => 'internal_info',
             'content' => $ticket->agent->full_name !== $person->full_name ?
                          __($person->full_name .' assign '. $ticket->agent->full_name .' in this ticket' , 'fluent-support') :
-                         __($person->full_name. ' assing this ticket to self', 'fluent-support')
+                         __($person->full_name. ' assign this ticket to self', 'fluent-support')
         ]);
 
         return $person;
