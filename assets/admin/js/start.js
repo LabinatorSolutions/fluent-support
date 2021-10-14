@@ -37353,8 +37353,7 @@ __webpack_require__.r(__webpack_exports__);
       stats: {},
       suggested_tickets: [],
       overall_stats: false,
-      individual_stat: false,
-      my_overall_stats: {}
+      individual_stat: false
     };
   },
   computed: {
@@ -37390,13 +37389,12 @@ __webpack_require__.r(__webpack_exports__);
 
       this.loading = true;
       this.$get('tickets/my_stats', {
-        "with": ['suggested_tickets', 'overall_stats', 'individual_stat', 'my_overall_stats']
+        "with": ['suggested_tickets', 'overall_stats', 'individual_stat']
       }).then(function (response) {
         _this.stats = response.stats;
         _this.suggested_tickets = response.suggested_tickets;
         _this.overall_stats = response.overall_stats;
         _this.individual_stat = response.individual_stat;
-        _this.my_overall_stats = response.my_overall_stats;
       })["catch"](function (errors) {
         _this.$handleError(errors);
       }).always(function () {
@@ -38065,6 +38063,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'AgentReports',
+  props: ['url'],
   data: function data() {
     return {
       reports: [],
@@ -38164,6 +38163,13 @@ __webpack_require__.r(__webpack_exports__);
         summary.closed += parseInt(report.stats.closed);
       });
       return summary;
+    },
+    showOrHideSummaries: function showOrHideSummaries() {
+      if (this.url == 'my-reports/my-summary') {
+        return false;
+      }
+
+      return true;
     }
   },
   methods: {
@@ -38171,7 +38177,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.loading = true;
-      this.$get('reports/agents-summary', {
+      this.$get(this.url, {
         from: this.date_range ? dayjs__WEBPACK_IMPORTED_MODULE_0___default()(this.date_range[0]).format('YYYY-MM-DD') : '',
         to: this.date_range ? dayjs__WEBPACK_IMPORTED_MODULE_0___default()(this.date_range[1]).format('YYYY-MM-DD') : ''
       }).then(function (response) {
@@ -38265,6 +38271,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'ResolveGrowth',
+  props: ['date_range', 'url'],
   components: {
     BarChartBase: _BarChartBase__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
@@ -38323,7 +38330,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.fetching = true;
-      this.$get('reports/tickets-resolve-growth').then(function (response) {
+      this.$get(this.url + '/tickets-resolve-growth', {
+        date_range: this.date_range
+      }).then(function (response) {
         _this.setupChartItems(response.stats);
       });
     },
@@ -38371,6 +38380,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'ResponseGrowth',
+  props: ['date_range', 'url'],
   components: {
     BarChartBase: _BarChartBase__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
@@ -38429,7 +38439,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.fetching = true;
-      this.$get('reports/response-growth').then(function (response) {
+      this.$get(this.url + '/response-growth', {
+        date_range: this.date_range
+      }).then(function (response) {
         _this.setupChartItems(response.stats);
       });
     },
@@ -38477,6 +38489,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'TicketsGrowthChart',
+  props: ['date_range'],
   components: {
     BarChartBase: _BarChartBase__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
@@ -38535,7 +38548,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.fetching = true;
-      this.$get('reports/tickets-growth').then(function (response) {
+      this.$get('reports/tickets-growth', {
+        date_range: this.date_range
+      }).then(function (response) {
         _this.setupChartItems(response.stats);
       });
     },
@@ -38559,6 +38574,113 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.fetchReport();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=script&lang=js":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=script&lang=js ***!
+  \*****************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Charts_ResponseGrowth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Charts/ResponseGrowth */ "./resources/admin/Modules/Reports/Charts/ResponseGrowth.vue");
+/* harmony import */ var _Charts_ResolveGrowth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Charts/ResolveGrowth */ "./resources/admin/Modules/Reports/Charts/ResolveGrowth.vue");
+/* harmony import */ var _AgentReports__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./AgentReports */ "./resources/admin/Modules/Reports/AgentReports.vue");
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "PersonalReports",
+  props: ['url'],
+  components: {
+    ResponseChart: _Charts_ResponseGrowth__WEBPACK_IMPORTED_MODULE_0__["default"],
+    ResolveChart: _Charts_ResolveGrowth__WEBPACK_IMPORTED_MODULE_1__["default"],
+    AgentReports: _AgentReports__WEBPACK_IMPORTED_MODULE_2__["default"]
+  },
+  data: function data() {
+    return {
+      loading: false,
+      stat_loading: false,
+      overall_reports: {},
+      currently_showing: 'resolve-chart',
+      date_range: ['', ''],
+      showing_charts: true,
+      chartMaps: {
+        'resolve-chart': 'Resolve Stats',
+        'response-chart': 'Response Stats'
+      },
+      me: this.appVars.me
+    };
+  },
+  methods: {
+    fetchReports: function fetchReports() {
+      var _this = this;
+
+      this.loading = true;
+      this.$get(this.url).then(function (response) {
+        _this.overall_reports = response.overall_reports;
+      })["catch"](function (errors) {
+        _this.$handleError(errors);
+      }).always(function () {
+        _this.loading = false;
+      });
+    },
+    handleComponentChange: function handleComponentChange(item) {
+      this.currently_showing = item;
+    },
+    filterReport: function filterReport() {
+      var _this2 = this;
+
+      var current = this.currently_showing;
+      this.currently_showing = {
+        render: function render() {}
+      };
+      this.$nextTick(function () {
+        _this2.currently_showing = current;
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.fetchReports();
+    this.$setTitle('Personal Reports');
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Report.vue?vue&type=script&lang=js":
+/*!********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Report.vue?vue&type=script&lang=js ***!
+  \********************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Reports__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Reports */ "./resources/admin/Modules/Reports/Reports.vue");
+/* harmony import */ var _PersonalReports__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PersonalReports */ "./resources/admin/Modules/Reports/PersonalReports.vue");
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'Report',
+  components: {
+    Reports: _Reports__WEBPACK_IMPORTED_MODULE_0__["default"],
+    PersonalReports: _PersonalReports__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  data: function data() {
+    return {
+      activeName: 'my-reports',
+      me: this.appVars.me
+    };
   }
 });
 
@@ -38621,6 +38743,17 @@ __webpack_require__.r(__webpack_exports__);
     },
     handleComponentChange: function handleComponentChange(item) {
       this.currently_showing = item;
+    },
+    filterReport: function filterReport() {
+      var _this2 = this;
+
+      var current = this.currently_showing;
+      this.currently_showing = {
+        render: function render() {}
+      };
+      this.$nextTick(function () {
+        _this2.currently_showing = current;
+      });
     }
   },
   mounted: function mounted() {
@@ -39055,6 +39188,10 @@ __webpack_require__.r(__webpack_exports__);
         route_name: 'products',
         route_query: {}
       }, {
+        title: 'Ticket Types',
+        route_name: 'ticket-type',
+        route_query: {}
+      }, {
         title: 'Support Staffs',
         route_name: 'support-staffs',
         route_query: {}
@@ -39328,6 +39465,128 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketType.vue?vue&type=script&lang=js":
+/*!*************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketType.vue?vue&type=script&lang=js ***!
+  \*************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Pieces_Pagination__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Pieces/Pagination */ "./resources/admin/Pieces/Pagination.vue");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'TicketType',
+  components: {
+    Pagination: _Pieces_Pagination__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      fetching: false,
+      ticketTypes: [],
+      pagination: {
+        current_page: 1,
+        per_page: 10,
+        total: 0
+      },
+      saving: false,
+      ticket_modal: false,
+      editing_ticket_type: false
+    };
+  },
+  methods: {
+    getTicketTypes: function getTicketTypes() {
+      var _this = this;
+
+      this.fetching = true;
+      this.$get('ticket-types', {
+        per_page: this.pagination.per_page,
+        page: this.pagination.current_page
+      }).then(function (response) {
+        _this.ticketTypes = response.ticket_type.data;
+        _this.pagination.total = response.ticket_type.total;
+      })["catch"](function (errors) {
+        _this.$handleError(errors);
+      }).always(function () {
+        _this.fetching = false;
+      });
+    },
+    createOrUpdateTicketType: function createOrUpdateTicketType() {
+      var _this2 = this;
+
+      this.saving = true;
+      var method = this.$post;
+      var route = 'ticket-types';
+
+      if (this.editing_ticket_type.id) {
+        method = this.$put;
+        route = "ticket-types/".concat(this.editing_ticket_type.id);
+      }
+
+      method(route, _objectSpread({}, this.editing_ticket_type)).then(function (response) {
+        _this2.$notify({
+          message: response.message,
+          type: 'success',
+          position: 'bottom-right'
+        });
+
+        _this2.getTicketTypes();
+
+        _this2.ticket_modal = false;
+      })["catch"](function (errors) {
+        _this2.$handleError(errors);
+      }).always(function () {
+        _this2.saving = false;
+      });
+    },
+    editTicketTypeModal: function editTicketTypeModal(ticket_type) {
+      this.editing_ticket_type = JSON.parse(JSON.stringify(ticket_type));
+      this.ticket_modal = true;
+    },
+    createTicketModal: function createTicketModal() {
+      this.editing_ticket_type = {
+        title: '',
+        description: ''
+      };
+      this.ticket_modal = true;
+    },
+    deleteTicketType: function deleteTicketType(ticket_type) {
+      var _this3 = this;
+
+      var r = confirm("Are you sure, You want to delete this?");
+
+      if (!r) {
+        return;
+      }
+
+      this.$del("ticket-types/".concat(ticket_type.id)).then(function (response) {
+        _this3.$notify({
+          message: response.message,
+          type: 'success',
+          position: 'bottom-right'
+        });
+
+        _this3.getTicketTypes();
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.getTicketTypes();
+    this.$setTitle('Ticket Type Settings');
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/AllTickets.vue?vue&type=script&lang=js":
 /*!************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/AllTickets.vue?vue&type=script&lang=js ***!
@@ -39401,7 +39660,8 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       app_ready: false,
       add_ticket_modal: false,
       appReady: false,
-      add_response_modal: false
+      add_response_modal: false,
+      ticket_types: this.appVars.ticket_types
     };
   },
   watch: {
@@ -39685,6 +39945,7 @@ __webpack_require__.r(__webpack_exports__);
       agents: this.appVars.support_agents,
       admin_priorities: this.appVars.admin_priorities,
       client_priorities: this.appVars.client_priorities,
+      ticket_types: this.appVars.ticket_types,
       updating: false,
       active_agents: [],
       edit_response_modal: false,
@@ -40380,10 +40641,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     has_active_filter: function has_active_filter() {
-      var _f$ticket_tags;
+      var _f$ticket_tags, _f$ticket_types;
 
       var f = this.filters;
-      return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || ((_f$ticket_tags = f.ticket_tags) === null || _f$ticket_tags === void 0 ? void 0 : _f$ticket_tags.length);
+      return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || ((_f$ticket_tags = f.ticket_tags) === null || _f$ticket_tags === void 0 ? void 0 : _f$ticket_tags.length) || ((_f$ticket_types = f.ticket_types) === null || _f$ticket_types === void 0 ? void 0 : _f$ticket_types.length);
     }
   },
   methods: {
@@ -41166,27 +41427,6 @@ var _hoisted_27 = {
   key: 1,
   "class": "fs_padded_20"
 };
-var _hoisted_28 = {
-  key: 0,
-  "class": "fs_box fs_dashboard_box"
-};
-
-var _hoisted_29 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "fs_box_header",
-  style: {
-    "padding": "20px 15px",
-    "font-size": "16px"
-  }
-}, " Your Overall Stats ", -1
-/* HOISTED */
-);
-
-var _hoisted_30 = {
-  "class": "fs_box_body"
-};
-var _hoisted_31 = {
-  "class": "fs_card_list"
-};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_router_link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-link");
 
@@ -41275,21 +41515,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
     rows: 3,
     animated: ""
-  })]))])]), $data.my_overall_stats ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_28, [_hoisted_29, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_30, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_31, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.my_overall_stats, function (overallstat, overallstatkey) {
-    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
-      style: {
-        "padding": "15px",
-        "list-style-type": "none"
-      },
-      key: overallstatkey
-    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("b", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(overallstat.title) + ": ", 1
-    /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(overallstat.count), 1
-    /* TEXT */
-    )]);
-  }), 128
-  /* KEYED_FRAGMENT */
-  ))])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+  })]))])])]);
 }
 
 /***/ }),
@@ -43080,7 +43306,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     data: $options.sortedReports,
     stripe: "",
     "summary-method": $options.getSummaries,
-    "show-summary": "",
+    "show-summary": $options.showOrHideSummaries,
     onSortChange: $options.handleSorting,
     style: {
       "width": "100%"
@@ -43174,7 +43400,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["data", "summary-method", "onSortChange"]), [[_directive_loading, $data.loading]])])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+  , ["data", "summary-method", "show-summary", "onSortChange"]), [[_directive_loading, $data.loading]])])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
     rows: 5,
     animated: ""
   })]))]);
@@ -43281,10 +43507,10 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Reports.vue?vue&type=template&id=b243d882":
-/*!*************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Reports.vue?vue&type=template&id=b243d882 ***!
-  \*************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=template&id=7731c55f":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=template&id=7731c55f ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -43295,7 +43521,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "fs_saved_replies"
+  "class": "fs_personal_report"
 };
 var _hoisted_2 = {
   "class": "fs_box_wrapper"
@@ -43307,7 +43533,7 @@ var _hoisted_4 = {
   "class": "fs_box_header"
 };
 var _hoisted_5 = {
-  "class": "fluentcrm_header_title"
+  "class": "fs_header_title"
 };
 var _hoisted_6 = {
   "class": "el-dropdown-link"
@@ -43329,8 +43555,8 @@ var _hoisted_9 = {
 var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "fs_box_header"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "fluentcrm_header_title"
-}, " Quick Stats ")], -1
+  "class": "fs_header_title"
+}, " Your Overall Stats ")], -1
 /* HOISTED */
 );
 
@@ -43351,6 +43577,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_el_dropdown_menu = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dropdown-menu");
 
   var _component_el_dropdown = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dropdown");
+
+  var _component_el_date_picker = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-date-picker");
 
   var _component_agent_reports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("agent-reports");
 
@@ -43417,12 +43645,305 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
           }, 8
           /* PROPS */
-          , ["onCommand"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$data.showing_charts ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)((0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDynamicComponent)($data.currently_showing), {
-            key: 0,
-            date_range: $data.date_range
+          , ["onCommand"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_date_picker, {
+            size: "small",
+            modelValue: $data.date_range,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+              return $data.date_range = $event;
+            }),
+            type: "daterange",
+            "range-separator": "To",
+            "start-placeholder": "Start date",
+            "end-placeholder": "End date",
+            "unlink-panels": true,
+            onChange: $options.filterReport,
+            "value-format": "YYYY-MM-DD",
+            style: {
+              "float": "right"
+            }
           }, null, 8
           /* PROPS */
-          , ["date_range"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_agent_reports)];
+          , ["modelValue", "onChange"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$data.showing_charts ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)((0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDynamicComponent)($data.currently_showing), {
+            key: 0,
+            date_range: $data.date_range,
+            url: 'my-reports'
+          }, null, 8
+          /* PROPS */
+          , ["date_range"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_agent_reports, {
+            url: 'my-reports/my-summary'
+          })];
+        }),
+        _: 1
+        /* STABLE */
+
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_col, {
+        sm: 24,
+        md: 8,
+        lg: 6
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [_hoisted_10, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [!$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("ul", _hoisted_12, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.overall_reports, function (stat, stat_type) {
+            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
+              style: {
+                "padding": "15px"
+              },
+              key: stat_type
+            }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("b", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(stat.title) + ":", 1
+            /* TEXT */
+            ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(stat.count), 1
+            /* TEXT */
+            )]);
+          }), 128
+          /* KEYED_FRAGMENT */
+          ))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+            rows: 3,
+            animated: ""
+          })]))])])];
+        }),
+        _: 1
+        /* STABLE */
+
+      })];
+    }),
+    _: 1
+    /* STABLE */
+
+  })])]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Report.vue?vue&type=template&id=dcb26c38":
+/*!************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Report.vue?vue&type=template&id=dcb26c38 ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_personal_reports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("personal-reports");
+
+  var _component_el_tab_pane = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-tab-pane");
+
+  var _component_reports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("reports");
+
+  var _component_el_tabs = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-tabs");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_tabs, {
+    modelValue: $data.activeName,
+    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+      return $data.activeName = $event;
+    })
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_tab_pane, {
+        label: "Personal Reports",
+        name: "my-reports",
+        lazy: true
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_personal_reports, {
+            url: 'my-reports'
+          })];
+        }),
+        _: 1
+        /* STABLE */
+
+      }), $data.me.permissions.includes('fst_sensitive_data') ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_tab_pane, {
+        key: 0,
+        label: "Agents Reports",
+        name: "reports",
+        lazy: true
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_reports)];
+        }),
+        _: 1
+        /* STABLE */
+
+      })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["modelValue"]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Reports.vue?vue&type=template&id=b243d882":
+/*!*************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Reports.vue?vue&type=template&id=b243d882 ***!
+  \*************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = {
+  "class": "fs_agents_report"
+};
+var _hoisted_2 = {
+  "class": "fs_box_wrapper"
+};
+var _hoisted_3 = {
+  "class": "fs_box"
+};
+var _hoisted_4 = {
+  "class": "fs_box_header"
+};
+var _hoisted_5 = {
+  "class": "fs_header_title"
+};
+var _hoisted_6 = {
+  "class": "el-dropdown-link"
+};
+
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("i", {
+  "class": "el-icon-arrow-down el-icon--right"
+}, null, -1
+/* HOISTED */
+);
+
+var _hoisted_8 = {
+  "class": "fs_box_body"
+};
+var _hoisted_9 = {
+  "class": "fs_box"
+};
+
+var _hoisted_10 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "fs_box_header"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "fs_header_title"
+}, " Quick Stats ")], -1
+/* HOISTED */
+);
+
+var _hoisted_11 = {
+  "class": "fs_box_body"
+};
+var _hoisted_12 = {
+  key: 0,
+  "class": "fs_card_list"
+};
+var _hoisted_13 = {
+  key: 1,
+  "class": "fs_padded_20"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_el_dropdown_item = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dropdown-item");
+
+  var _component_el_dropdown_menu = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dropdown-menu");
+
+  var _component_el_dropdown = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dropdown");
+
+  var _component_el_date_picker = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-date-picker");
+
+  var _component_agent_reports = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("agent-reports");
+
+  var _component_el_col = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-col");
+
+  var _component_el_skeleton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-skeleton");
+
+  var _component_el_row = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-row");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_row, {
+    gutter: 30
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_col, {
+        sm: 24,
+        md: 16,
+        lg: 18
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dropdown, {
+            style: {
+              "display": "inline-block",
+              "cursor": "pointer",
+              "line-height": "100%"
+            },
+            onCommand: $options.handleComponentChange,
+            trigger: "hover"
+          }, {
+            dropdown: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_dropdown_menu, null, {
+                "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                  return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.chartMaps, function (mapName, mapKey) {
+                    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_dropdown_item, {
+                      key: mapKey,
+                      command: mapKey
+                    }, {
+                      "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                        return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(mapName), 1
+                        /* TEXT */
+                        )];
+                      }),
+                      _: 2
+                      /* DYNAMIC */
+
+                    }, 1032
+                    /* PROPS, DYNAMIC_SLOTS */
+                    , ["command"]);
+                  }), 128
+                  /* KEYED_FRAGMENT */
+                  ))];
+                }),
+                _: 1
+                /* STABLE */
+
+              })];
+            }),
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.chartMaps[$data.currently_showing]) + " ", 1
+              /* TEXT */
+              ), _hoisted_7])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["onCommand"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_date_picker, {
+            size: "small",
+            modelValue: $data.date_range,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+              return $data.date_range = $event;
+            }),
+            type: "daterange",
+            "range-separator": "To",
+            "start-placeholder": "Start date",
+            "end-placeholder": "End date",
+            "unlink-panels": true,
+            onChange: $options.filterReport,
+            "value-format": "YYYY-MM-DD",
+            style: {
+              "float": "right"
+            }
+          }, null, 8
+          /* PROPS */
+          , ["modelValue", "onChange"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [$data.showing_charts ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)((0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDynamicComponent)($data.currently_showing), {
+            key: 0,
+            date_range: $data.date_range,
+            url: 'reports'
+          }, null, 8
+          /* PROPS */
+          , ["date_range"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_agent_reports, {
+            url: 'reports/agents-summary'
+          })];
         }),
         _: 1
         /* STABLE */
@@ -44925,6 +45446,251 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketType.vue?vue&type=template&id=75ff6ae2":
+/*!*****************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketType.vue?vue&type=template&id=75ff6ae2 ***!
+  \*****************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = {
+  "class": "fs_ticket_types"
+};
+var _hoisted_2 = {
+  "class": "fs_box_wrapper"
+};
+var _hoisted_3 = {
+  "class": "fs_box_header"
+};
+
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "fs_box_head"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, "Ticket Types"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  style: {
+    "color": "#f56c6b",
+    "font-weight": "500"
+  }
+}, "It will help your agents to understand the ticket type like feature suggestion, bug report etc")], -1
+/* HOISTED */
+);
+
+var _hoisted_5 = {
+  "class": "fs_box_actions"
+};
+
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Create New ");
+
+var _hoisted_7 = {
+  key: 0,
+  "class": "fs_box_body"
+};
+var _hoisted_8 = {
+  "class": "fframe_pagination_wrapper"
+};
+var _hoisted_9 = {
+  key: 1,
+  style: {
+    "padding": "20px",
+    "background": "white"
+  },
+  "class": "fs_box_body"
+};
+var _hoisted_10 = {
+  "class": "dialog-footer"
+};
+
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Save");
+
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
+
+  var _component_el_table_column = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-table-column");
+
+  var _component_el_table = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-table");
+
+  var _component_pagination = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("pagination");
+
+  var _component_el_skeleton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-skeleton");
+
+  var _component_el_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-input");
+
+  var _component_el_form_item = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-form-item");
+
+  var _component_el_form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-form");
+
+  var _component_el_dialog = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dialog");
+
+  var _directive_loading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("loading");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [_hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+    onClick: _cache[0] || (_cache[0] = function ($event) {
+      return $options.createTicketModal();
+    }),
+    type: "primary",
+    icon: "el-icon-plus",
+    size: "small"
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [_hoisted_6];
+    }),
+    _: 1
+    /* STABLE */
+
+  })])]), !$data.fetching ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table, {
+    stripe: "",
+    data: $data.ticketTypes
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        width: "80",
+        prop: "id",
+        label: "ID"
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        prop: "title",
+        label: "Title"
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        prop: "description",
+        label: "Description"
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        width: "120",
+        label: "Action"
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function (scope) {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+            onClick: function onClick($event) {
+              return $options.editTicketTypeModal(scope.row);
+            },
+            size: "mini",
+            type: "success",
+            icon: "el-icon-edit"
+          }, null, 8
+          /* PROPS */
+          , ["onClick"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+            onClick: function onClick($event) {
+              return $options.deleteTicketType(scope.row);
+            },
+            size: "mini",
+            type: "danger",
+            icon: "el-icon-delete"
+          }, null, 8
+          /* PROPS */
+          , ["onClick"])];
+        }),
+        _: 1
+        /* STABLE */
+
+      })];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["data"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pagination, {
+    onFetch: _cache[1] || (_cache[1] = function ($event) {
+      return $options.getTicketTypes();
+    }),
+    pagination: $data.pagination
+  }, null, 8
+  /* PROPS */
+  , ["pagination"])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+    rows: 5,
+    animated: ""
+  })]))]), $data.editing_ticket_type ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_dialog, {
+    key: 0,
+    "append-to-body": true,
+    title: $data.editing_ticket_type && $data.editing_ticket_type.id ? 'Update Type' : 'Create New Ticket Type',
+    modelValue: $data.ticket_modal,
+    "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+      return $data.ticket_modal = $event;
+    }),
+    width: "60%"
+  }, {
+    footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+        disabled: $data.saving,
+        type: "primary",
+        onClick: _cache[4] || (_cache[4] = function ($event) {
+          return $options.createOrUpdateTicketType();
+        })
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [_hoisted_11];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["disabled"]), [[_directive_loading, $data.saving]])])];
+    }),
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form, {
+        "label-position": "top",
+        data: $data.editing_ticket_type
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+            label: "Title"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
+                type: "text",
+                placeholder: "Ticket Type Title",
+                modelValue: $data.editing_ticket_type.title,
+                "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+                  return $data.editing_ticket_type.title = $event;
+                })
+              }, null, 8
+              /* PROPS */
+              , ["modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+            label: "Description"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
+                type: "textarea",
+                placeholder: "Ticket Type Description",
+                modelValue: $data.editing_ticket_type.description,
+                "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+                  return $data.editing_ticket_type.description = $event;
+                })
+              }, null, 8
+              /* PROPS */
+              , ["modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          })];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["data"])];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["title", "modelValue"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+}
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/AllTickets.vue?vue&type=template&id=3626838e&scoped=true":
 /*!****************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Tickets/AllTickets.vue?vue&type=template&id=3626838e&scoped=true ***!
@@ -44995,7 +45761,7 @@ var _hoisted_15 = {
 };
 var _hoisted_16 = ["title", "src"];
 var _hoisted_17 = {
-  key: 1
+  key: 2
 };
 
 var _hoisted_18 = /*#__PURE__*/_withScopeId(function () {
@@ -45258,7 +46024,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 "class": "fs_badge fs_badge_new"
               }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getWaitingStatus(scope.row)), 513
               /* TEXT, NEED_PATCH */
-              ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $options.getWaitingStatus(scope.row)]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" #" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(scope.row.id) + " ", 1
+              ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $options.getWaitingStatus(scope.row)]]), scope.row.ticket_type ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", {
+                key: 1,
+                "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["fs_badge", 'fs_badge_' + scope.row.ticket_type.title]),
+                style: {
+                  "background": "#3f9eff"
+                }
+              }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(scope.row.ticket_type.title), 3
+              /* TEXT, CLASS */
+              )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" #" + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(scope.row.id) + " ", 1
               /* TEXT */
               ), scope.row.live_activity && scope.row.live_activity.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(scope.row.live_activity, function (activity) {
                 return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("img", {
@@ -45984,6 +46758,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_4, [$data.ticket.status != 'closed' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
     key: 0
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", {
+    title: 'Add Reply',
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($data.show_response_box == 'response' ? 'fs_action_active' : ''),
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return $data.show_response_box = 'response';
@@ -45991,6 +46766,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, _hoisted_6, 2
   /* CLASS */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("li", {
+    title: 'Add Internal Note',
     "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)($data.show_response_box == 'note' ? 'fs_action_active' : ''),
     onClick: _cache[1] || (_cache[1] = function ($event) {
       return $data.show_response_box = 'note';
@@ -46163,7 +46939,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         tags: $data.ticket.tags
       }, null, 8
       /* PROPS */
-      , ["ticket_id", "tags"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_popover, {
+      , ["ticket_id", "tags"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [$data.ticket.ticket_type ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("span", {
+        key: 0,
+        "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["fs_badge", 'fs_badge_' + $data.ticket.ticket_type.title]),
+        style: {
+          "background": "#3f9eff"
+        }
+      }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.ticket.ticket_type.title), 3
+      /* TEXT, CLASS */
+      )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_popover, {
         placement: "bottom",
         width: 400,
         trigger: "click"
@@ -47403,10 +48187,11 @@ var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElement
 );
 
 var _hoisted_19 = {
+  key: 1,
   "class": "fs_tk_filter"
 };
 
-var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Waiting for Reply", -1
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Ticket Type", -1
 /* HOISTED */
 );
 
@@ -47422,7 +48207,15 @@ var _hoisted_23 = {
   "class": "fs_tk_filter"
 };
 
-var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Reset Filters ");
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", null, "Waiting for Reply", -1
+/* HOISTED */
+);
+
+var _hoisted_25 = {
+  "class": "fs_tk_filter"
+};
+
+var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Reset Filters ");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_el_radio_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-radio-button");
@@ -47433,11 +48226,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_el_select = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-select");
 
-  var _component_el_switch = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-switch");
-
   var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
 
   var _component_el_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-input");
+
+  var _component_el_switch = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-switch");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_radio_group, {
     size: "small",
@@ -47659,19 +48452,39 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["modelValue"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_switch, {
+  , ["modelValue"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.appVars.ticket_types.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_select, {
     onChange: _cache[12] || (_cache[12] = function ($event) {
-      return $options.maybeChangeWaitingReply();
+      return $options.fetchTickets();
     }),
-    "active-value": "yes",
-    "inactive-value": false,
-    modelValue: $props.filters.waiting_for_reply,
+    modelValue: $props.filters.ticket_types,
     "onUpdate:modelValue": _cache[13] || (_cache[13] = function ($event) {
-      return $props.filters.waiting_for_reply = $event;
-    })
-  }, null, 8
+      return $props.filters.ticket_types = $event;
+    }),
+    placeholder: "Filter By Ticket Type",
+    multiple: "",
+    "popper-append-to-body": "true",
+    size: "small",
+    "collapse-tags": ""
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.appVars.ticket_types, function (ticketType) {
+        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
+          key: ticketType.id,
+          label: ticketType.title,
+          value: ticketType.id
+        }, null, 8
+        /* PROPS */
+        , ["label", "value"]);
+      }), 128
+      /* KEYED_FRAGMENT */
+      ))];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
   /* PROPS */
-  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [_hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
+  , ["modelValue"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [_hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
     onKeyup: _cache[15] || (_cache[15] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)(function ($event) {
       return $options.fetchTickets();
     }, ["enter"])),
@@ -47699,15 +48512,27 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [_hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_switch, {
+    onChange: _cache[18] || (_cache[18] = function ($event) {
+      return $options.maybeChangeWaitingReply();
+    }),
+    "active-value": "yes",
+    "inactive-value": false,
+    modelValue: $props.filters.waiting_for_reply,
+    "onUpdate:modelValue": _cache[19] || (_cache[19] = function ($event) {
+      return $props.filters.waiting_for_reply = $event;
+    })
+  }, null, 8
+  /* PROPS */
+  , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
     type: $options.has_active_filter ? 'danger' : 'default',
-    onClick: _cache[18] || (_cache[18] = function ($event) {
+    onClick: _cache[20] || (_cache[20] = function ($event) {
       return $props.resetFilters();
     }),
     size: "small"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [_hoisted_24];
+      return [_hoisted_26];
     }),
     _: 1
     /* STABLE */
@@ -48987,13 +49812,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Modules_Settings_TicketTags__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./Modules/Settings/TicketTags */ "./resources/admin/Modules/Settings/TicketTags.vue");
 /* harmony import */ var _Modules_Settings_SupportStaffs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Modules/Settings/SupportStaffs */ "./resources/admin/Modules/Settings/SupportStaffs.vue");
 /* harmony import */ var _Modules_Settings_IntegrationView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Modules/Settings/IntegrationView */ "./resources/admin/Modules/Settings/IntegrationView.vue");
-/* harmony import */ var _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./Modules/Customers/Customers */ "./resources/admin/Modules/Customers/Customers.vue");
-/* harmony import */ var _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Modules/SavedReplies/Replies */ "./resources/admin/Modules/SavedReplies/Replies.vue");
-/* harmony import */ var _Modules_Reports_Reports__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Modules/Reports/Reports */ "./resources/admin/Modules/Reports/Reports.vue");
+/* harmony import */ var _Modules_Settings_TicketType__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./Modules/Settings/TicketType */ "./resources/admin/Modules/Settings/TicketType.vue");
+/* harmony import */ var _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Modules/Customers/Customers */ "./resources/admin/Modules/Customers/Customers.vue");
+/* harmony import */ var _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Modules/SavedReplies/Replies */ "./resources/admin/Modules/SavedReplies/Replies.vue");
 /* harmony import */ var _Modules_MailBoxes_MailBoxRoot__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Modules/MailBoxes/MailBoxRoot */ "./resources/admin/Modules/MailBoxes/MailBoxRoot.vue");
 /* harmony import */ var _Modules_MailBoxes_ChooseMailBox__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Modules/MailBoxes/ChooseMailBox */ "./resources/admin/Modules/MailBoxes/ChooseMailBox.vue");
 /* harmony import */ var _Modules_MailBoxes_MailBoxSettings__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Modules/MailBoxes/MailBoxSettings */ "./resources/admin/Modules/MailBoxes/MailBoxSettings.vue");
 /* harmony import */ var _Modules_MailBoxes_BoxEmailSettings__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Modules/MailBoxes/BoxEmailSettings */ "./resources/admin/Modules/MailBoxes/BoxEmailSettings.vue");
+/* harmony import */ var _Modules_Reports_Report__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Modules/Reports/Report */ "./resources/admin/Modules/Reports/Report.vue");
+
 
 
 
@@ -49068,6 +49895,10 @@ __webpack_require__.r(__webpack_exports__);
     path: 'integration',
     name: 'integration',
     component: _Modules_Settings_IntegrationView__WEBPACK_IMPORTED_MODULE_10__["default"]
+  }, {
+    path: 'ticket-types',
+    name: 'ticket-type',
+    component: _Modules_Settings_TicketType__WEBPACK_IMPORTED_MODULE_11__["default"]
   }]
 }, {
   path: '/mailboxes',
@@ -49097,21 +49928,21 @@ __webpack_require__.r(__webpack_exports__);
 }, {
   path: '/customers',
   name: 'Customers',
-  component: _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_11__["default"],
+  component: _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_12__["default"],
   meta: {
     active: 'customers'
   }
 }, {
   path: '/saved-replies',
   name: 'saved_replies',
-  component: _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_12__["default"],
+  component: _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_13__["default"],
   meta: {
     active: 'saved_replies'
   }
 }, {
   path: '/reports',
   name: 'reports',
-  component: _Modules_Reports_Reports__WEBPACK_IMPORTED_MODULE_13__["default"],
+  component: _Modules_Reports_Report__WEBPACK_IMPORTED_MODULE_18__["default"],
   meta: {
     active: 'reports'
   }
@@ -49171,7 +50002,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_1___default()((_node_modules_css_loader_dist_runtime_cssWithMappingToString_js__WEBPACK_IMPORTED_MODULE_0___default()));
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.agent_title[data-v-6b9d9a19]{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent[data-v-6b9d9a19]{\n    border-left: 4px solid #5d6cc3;\n}\n.fs_conv_type_note[data-v-6b9d9a19]{\n    border-left: 4px solid #e6a23c;\n}\n", "",{"version":3,"sources":["webpack://./resources/admin/Modules/Tickets/ViewTicket.vue"],"names":[],"mappings":";AAgdA;IACI,WAAW;IACX,kBAAkB;IAClB,OAAO;IACP,MAAM;IACN,mBAAmB;IACnB,WAAW;IACX,iBAAiB;IACjB,eAAe;AACnB;AACA;IACI,8BAA8B;AAClC;AACA;IACI,8BAA8B;AAClC","sourcesContent":["<template>\n    <div class=\"fs_view_ticket\">\n        <template v-if=\"ticket && ticket.id\">\n            <div class=\"fs_ticket_body\">\n                <div class=\"fs_ticket_actions\">\n                    <ul class=\"fs_tk_actions\">\n                        <template v-if=\"ticket.status != 'closed'\">\n                            <li :class=\"(show_response_box == 'response') ? 'fs_action_active' : ''\"\n                                @click=\"show_response_box = 'response'\">\n                                <i class=\"el-icon-chat-line-square\"/>\n                            </li>\n                            <li :class=\"(show_response_box == 'note') ? 'fs_action_active' : ''\"\n                                @click=\"show_response_box = 'note'\">\n                                <i class=\"el-icon-notebook-1\"/>\n                            </li>\n                        </template>\n                        <li :title=\"'Assigned Agent ' + ticket.agent?.full_name\">\n                            <el-popover\n                                placement=\"bottom\"\n                                :width=\"400\"\n                                trigger=\"click\"\n                            >\n                                <template #reference>\n                                <span class=\"fs_agent_photo_icon\" v-if=\"ticket.agent\">\n                                    <img :alt=\"ticket.agent?.full_name\" :src=\"ticket.agent?.photo\"/>\n                                </span>\n                                    <i v-else class=\"el-icon-user\"/>\n                                </template>\n\n                                <el-select filterable @change=\"updateTicketAttr('agent_id')\" v-model=\"ticket.agent_id\">\n                                    <el-option\n                                        v-for=\"agent in agents\"\n                                        :key=\"agent.id\"\n                                        :value=\"agent.id\"\n                                        :label=\"agent.full_name\"></el-option>\n                                </el-select>\n                            </el-popover>\n                        </li>\n                        <template v-if=\"false\">\n                            <li>\n                                <i class=\"el-icon-price-tag\"/>\n                            </li>\n                            <li>\n                                <i class=\"el-icon-position\"/>\n                            </li>\n                        </template>\n                    </ul>\n                    <div class=\"fs_product\">\n                        <el-button v-loading=\"loading\" @click=\"fetchTicket()\" icon=\"el-icon-refresh\"\n                                   size=\"small\"></el-button>\n                        <el-button v-loading=\"updating\" :disabled=\"updating\" @click=\"closeTicket()\"\n                                   v-if=\"ticket.status != 'closed'\" class=\"fs_close_btn\" type=\"info\" size=\"small\">Close\n                        </el-button>\n                        <el-popover\n                            placement=\"bottom\"\n                            :width=\"400\"\n                            trigger=\"click\"\n                        >\n                            <template #reference>\n                                <span style=\"margin-right: 10px;\"><i class=\"el-icon-goods\"></i> {{\n                                        ticket.product?.title\n                                    }}</span>\n                            </template>\n\n                            <el-select @change=\"updateTicketAttr('product_id')\" v-model=\"ticket.product_id\">\n                                <el-option\n                                    v-for=\"product in products\"\n                                    :key=\"product.id\"\n                                    :value=\"product.id\"\n                                    :label=\"product.title\"></el-option>\n                            </el-select>\n\n                        </el-popover>\n                        <span><i\n                            class=\"el-icon-office-building\"></i> {{ ticket.mailbox?.name }}</span>\n                    </div>\n                </div>\n                <div class=\"fs_th_header\">\n                    <hgroup>\n                        <div class=\"fs_tk_subject\">\n                            <h2 title=\"Click to Edit Subject\">\n                                <span class=\"fs_ticket_id\">#{{ ticket.id }} </span>\n                                <el-popover\n                                    placement=\"bottom\"\n                                    :width=\"400\"\n                                    trigger=\"click\"\n                                >\n                                    <template #reference>\n                                        <span> {{ ticket?.title }}</span>\n                                    </template>\n\n                                    <el-input @keyup.enter=\"updateTicketAttr('title')\"\n                                              v-model=\"ticket.title\"></el-input>\n                                    <p>Press enter to save</p>\n                                </el-popover>\n                            </h2>\n                            <ticket-tags :creatable=\"true\" :ticket_id=\"ticket.id\" :tags.sync=\"ticket.tags\" />\n                        </div>\n                        <div class=\"fs_tk_badges\">\n                            <el-popover\n                                placement=\"bottom\"\n                                :width=\"400\"\n                                trigger=\"click\"\n                            >\n                                <template #reference>\n                                    <span :class=\"'fs_badge_priority_'+ticket.client_priority\" class=\"fs_badge\"><i\n                                        class=\"el-icon-s-flag\"></i> {{ ticket.client_priority }}</span>\n                                </template>\n\n                                <el-select @change=\"updateTicketAttr('client_priority')\" v-model=\"ticket.client_priority\"\n                                           size=\"small\">\n                                    <el-option\n\n                                        v-for=\"(priorityLabel, priority) in client_priorities\"\n                                        :key=\"priority\" :value=\"priority\"\n                                        :label=\"priorityLabel\"></el-option>\n                                </el-select>\n                            </el-popover>\n                            <span class=\"fs_badge\" :class=\"'fs_badge_' + ticket.status\">{{ ticket.status }}</span>\n                        </div>\n                    </hgroup>\n                </div>\n                <create-response\n                    v-if=\"show_response_box && ticket.status != 'closed'\"\n                    @created=\"recordNewResponse\"\n                    :ticket=\"ticket\"\n                    @close=\"show_response_box = ''\"\n                    :type=\"show_response_box\"\n                />\n                <div class=\"fs_create_response text-align-center\" v-if=\"ticket.status == 'closed'\">\n                    <p>This ticket has been closed at {{ ticket.resolved_at }}\n                        <span v-if=\"ticket.closed_by_person\">\n                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>\n                        </span></p>\n                    <el-button v-loading=\"updating\" :disabled=\"updating\" @click=\"reOpen()\" type=\"info\" size=\"small\">\n                        Reopen This ticket\n                    </el-button>\n                </div>\n                <div v-if=\"ticket && ticket.id\" class=\"fs_threads_container\">\n                    <article v-for=\"conversation in conversations\"\n                             :key=\"conversation.id\"\n                             class=\"fs_thread\"\n                             :class=\"(conversation.person.title!='' && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) \">\n\n                        <span class=\"agent_title\" v-if=\"conversation.person.title\"> {{conversation.person.title}} </span>\n\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img v-if=\"conversation.person\" :src=\"conversation.person?.photo\"\n                                     :alt=\"conversation.person.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong v-if=\"conversation.person\">\n                                                {{ getHumanName(conversation.person) }}</strong>\n                                            <span v-if=\"conversation.conversation_type == 'response'\"> replied</span>\n                                            <span v-else-if=\"conversation.conversation_type == 'note'\"> added a note</span>\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            <span style=\"margin-right: 5px\" v-if=\"conversation.source == 'email'\"\n                                                  title=\"Added By Email\"><i class=\"el-icon-message\"></i></span>\n                                            <span :title=\"conversation.created_at\">{{\n                                                    $timeDiff(conversation.created_at)\n                                                }}</span>\n                                            <el-dropdown @command=\"handleResponseActionCommand\" trigger=\"click\">\n                                                <span class=\"el-dropdown-link\">\n                                                    <i class=\"el-icon-arrow-down el-icon--right\"></i>\n                                                </span>\n                                                <template #dropdown>\n                                                    <el-dropdown-menu>\n                                                        <el-dropdown-item\n                                                            :command=\"{ type: 'edit', conversation: conversation }\"\n                                                            icon=\"el-icon-edit\"> Edit\n                                                        </el-dropdown-item>\n                                                        <el-dropdown-item\n                                                            :command=\"{ type: 'delete', conversation: conversation }\"\n                                                            icon=\"el-icon-delete\"> Delete\n                                                        </el-dropdown-item>\n                                                    </el-dropdown-menu>\n                                                </template>\n                                            </el-dropdown>\n                                        </div>\n                                    </div>\n                                    <div v-html=\"santizeContent(conversation.content)\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"conversation.attachments?.length\">\n                                        <hr/>\n                                        <ul>\n                                            <li\n                                                v-for=\"attachment in conversation.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                    <article class=\"fs_thread conversion_starter\">\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img :src=\"ticket.customer?.photo\" :alt=\"ticket.customer?.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong>{{ ticket.customer?.full_name }}</strong> started the conversation\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            <span style=\"margin-right: 5px\" v-if=\"ticket.source == 'email'\"\n                                                  title=\"Added By Email\"><i class=\"el-icon-message\"></i></span>\n                                            <span :title=\"ticket.created_at\">{{ $timeDiff(ticket.created_at) }}</span>\n                                        </div>\n                                    </div>\n                                    <div v-html=\"santizeContent(ticket.content)\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"ticket.attachments && ticket.attachments.length\">\n                                        <ul>\n                                            <li v-if=\"ticket.attachments.length\"\n                                                v-for=\"attachment in ticket.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                </div>\n            </div>\n            <div class=\"fs_ticket_sidebar\">\n                <ticket-sidebar :ticket_id=\"ticket_id\" :ticket=\"ticket\"/>\n            </div>\n        </template>\n        <div style=\"padding: 20px;\" class=\"fs_ticket_body\" v-else>\n            <el-skeleton :rows=\"10\" animated/>\n        </div>\n        <el-dialog\n            title=\"Edit Response\"\n            v-model=\"edit_response_modal\"\n            width=\"60%\">\n            <edit-response @updated=\"edit_response_modal = false; editing_response = false\" v-if=\"editing_response\"\n                           :response=\"editing_response\"/>\n        </el-dialog>\n        <active-agents :ticket=\"ticket\" v-if=\"ticket && ticket.id\"/>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nimport CreateResponse from './_CreateResponse';\nimport EditResponse from './_EditResponse';\nimport TicketSidebar from './_TicketSidebar';\nimport each from 'lodash/each';\nimport ActiveAgents from './_active_agents';\nimport TicketTags from './parts/_Tags';\n\nexport default {\n    name: 'ViewTicket',\n    props: ['ticket_id'],\n    components: {\n        CreateResponse,\n        TicketSidebar,\n        EditResponse,\n        ActiveAgents,\n        TicketTags\n    },\n    data() {\n        return {\n            loading: false,\n            ticket: false,\n            conversations: [],\n            show_response_box: '',\n            products: this.appVars.support_products,\n            agents: this.appVars.support_agents,\n            admin_priorities: this.appVars.admin_priorities,\n            client_priorities: this.appVars.client_priorities,\n            updating: false,\n            active_agents: [],\n            edit_response_modal: false,\n            editing_response: false\n        }\n    },\n    watch: {\n        '$route.params.ticket_id'(ticketId) {\n            if (ticketId) {\n                this.doAction('ticket_view_exit', this.ticket.id);\n                this.ticket = false;\n                this.$nextTick(() => {\n                    this.doAction('ticket_view_entered', ticketId);\n                    this.fetchTicket();\n                });\n            }\n        }\n    },\n    methods: {\n        fetchTicket() {\n            this.loading = true;\n            this.$get(`tickets/${this.ticket_id}`)\n                .then(response => {\n                    this.ticket = response.ticket;\n                    this.$setTitle(response.ticket.title);\n                    this.conversations = response.responses;\n                })\n                .catch((errors) => {\n                    this.$handleError(errors);\n                })\n                .always(() => {\n                    this.loading = false;\n                });\n        },\n        getTicketClasses(conversation) {\n            const classes = [\n                'fs_thread'\n            ];\n\n            if (conversation.person) {\n                classes.push('fs_person_' + conversation.person.person_type);\n            }\n\n            classes.push('fs_conv_type_' + conversation.conversation_type);\n            return classes;\n        },\n        recordNewResponse(response, data) {\n            this.conversations.unshift(response);\n            this.ticket.status = data.ticket.status;\n            this.show_response_box = false;\n\n            each(data.update_data, (data, key) => {\n                this.ticket[key] = data;\n            });\n\n            if (this.appVars.pref.go_back_after_reply == 'yes') {\n                if (window.history.state.back) {\n                    this.$router.go(-1);\n                }\n            }\n        },\n        updateTicketAttr(propName) {\n            this.$put(`tickets/${this.ticket.id}/property`, {\n                prop_name: propName,\n                prop_value: this.ticket[propName]\n            })\n                .then(response => {\n                    this.$notify.success(response.message);\n\n                    each(response.update_data, (data, key) => {\n                        this.ticket[key] = data;\n                    });\n\n                })\n                .catch((errors) => {\n                    this.$handleError(errors);\n                });\n        },\n        getHumanName(person) {\n            if (this.appVars.me?.id == person.id) {\n                return 'You';\n            }\n\n            return person.full_name;\n        },\n        closeTicket() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket.id}/close`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                    this.$notify.success(response.message);\n                    if (window.history.state.back) {\n                        this.$router.go(-1);\n                    }\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        reOpen() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket.id}/re-open`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        onActivityChange(items) {\n            const personIds = [];\n            items.forEach((item) => {\n                personIds.push(item.val());\n            });\n            this.active_agents = personIds;\n        },\n        onTicketDataChange(item) {\n            let data = item.val();\n            this.ticket[data.type] = data.data;\n        },\n        handleResponseActionCommand(data) {\n            const actionType = data.type;\n            const conversation = data.conversation;\n\n            if (actionType == 'delete') {\n                this.$confirm('This will permanently delete response. Continue?', 'Warning', {\n                    confirmButtonText: 'Delete Response',\n                    cancelButtonText: 'Cancel',\n                    type: 'warning'\n                }).then(() => {\n                    this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)\n                        .then(response => {\n                            this.$notify.success({\n                                message: response.message,\n                                position: 'bottom-right',\n                                type: 'success'\n                            });\n                            this.fetchTicket();\n                        })\n                });\n            } else if (actionType == 'edit') {\n                if (this.ticket.status == 'closed') {\n                    this.$notify({\n                        type: 'error',\n                        message: 'You can not edit responses when it is in close state',\n                        position: 'bottom-right'\n                    });\n                    return false;\n                }\n                this.editing_response = conversation;\n                this.edit_response_modal = true;\n            }\n\n            console.log(data);\n        },\n        santizeContent(content) {\n            if (!content) {\n               return content;\n            }\n            return content.replace(/\\n\\s*\\n/g, '\\n').replace(/\\n\\s*\\n/g, '\\n');\n        }\n    },\n    mounted() {\n        this.fetchTicket();\n        this.doAction('ticket_view_entered', this.ticket_id, this);\n    },\n    beforeUnmount() {\n        this.doAction('ticket_view_exit', this.ticket_id);\n    }\n}\n</script>\n\n<style scoped>\n.agent_title{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent{\n    border-left: 4px solid #5d6cc3;\n}\n.fs_conv_type_note{\n    border-left: 4px solid #e6a23c;\n}\n</style>\n"],"sourceRoot":""}]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.agent_title[data-v-6b9d9a19]{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent[data-v-6b9d9a19]{\n    border-left: 4px solid #5d6cc3;\n}\n.fs_conv_type_note[data-v-6b9d9a19]{\n    border-left: 4px solid #e6a23c;\n}\n", "",{"version":3,"sources":["webpack://./resources/admin/Modules/Tickets/ViewTicket.vue"],"names":[],"mappings":";AAsdA;IACI,WAAW;IACX,kBAAkB;IAClB,OAAO;IACP,MAAM;IACN,mBAAmB;IACnB,WAAW;IACX,iBAAiB;IACjB,eAAe;AACnB;AACA;IACI,8BAA8B;AAClC;AACA;IACI,8BAA8B;AAClC","sourcesContent":["<template>\n    <div class=\"fs_view_ticket\">\n        <template v-if=\"ticket && ticket.id\">\n            <div class=\"fs_ticket_body\">\n                <div class=\"fs_ticket_actions\">\n                    <ul class=\"fs_tk_actions\">\n                        <template v-if=\"ticket.status != 'closed'\">\n                            <li :title=\"'Add Reply'\"\n                                :class=\"(show_response_box == 'response') ? 'fs_action_active' : ''\"\n                                @click=\"show_response_box = 'response'\">\n                                <i class=\"el-icon-chat-line-square\"/>\n                            </li>\n                            <li :title=\"'Add Internal Note'\"\n                                :class=\"(show_response_box == 'note') ? 'fs_action_active' : ''\"\n                                @click=\"show_response_box = 'note'\">\n                                <i class=\"el-icon-notebook-1\"/>\n                            </li>\n                        </template>\n                        <li :title=\"'Assigned Agent ' + ticket.agent?.full_name\">\n                            <el-popover\n                                placement=\"bottom\"\n                                :width=\"400\"\n                                trigger=\"click\"\n                            >\n                                <template #reference>\n                                <span class=\"fs_agent_photo_icon\" v-if=\"ticket.agent\">\n                                    <img :alt=\"ticket.agent?.full_name\" :src=\"ticket.agent?.photo\"/>\n                                </span>\n                                    <i v-else class=\"el-icon-user\"/>\n                                </template>\n\n                                <el-select filterable @change=\"updateTicketAttr('agent_id')\" v-model=\"ticket.agent_id\">\n                                    <el-option\n                                        v-for=\"agent in agents\"\n                                        :key=\"agent.id\"\n                                        :value=\"agent.id\"\n                                        :label=\"agent.full_name\"></el-option>\n                                </el-select>\n                            </el-popover>\n                        </li>\n                        <template v-if=\"false\">\n                            <li>\n                                <i class=\"el-icon-price-tag\"/>\n                            </li>\n                            <li>\n                                <i class=\"el-icon-position\"/>\n                            </li>\n                        </template>\n                    </ul>\n                    <div class=\"fs_product\">\n                        <el-button v-loading=\"loading\" @click=\"fetchTicket()\" icon=\"el-icon-refresh\"\n                                   size=\"small\"></el-button>\n                        <el-button v-loading=\"updating\" :disabled=\"updating\" @click=\"closeTicket()\"\n                                   v-if=\"ticket.status != 'closed'\" class=\"fs_close_btn\" type=\"info\" size=\"small\">Close\n                        </el-button>\n                        <el-popover\n                            placement=\"bottom\"\n                            :width=\"400\"\n                            trigger=\"click\"\n                        >\n                            <template #reference>\n                                <span style=\"margin-right: 10px;\"><i class=\"el-icon-goods\"></i> {{\n                                        ticket.product?.title\n                                    }}</span>\n                            </template>\n\n                            <el-select @change=\"updateTicketAttr('product_id')\" v-model=\"ticket.product_id\">\n                                <el-option\n                                    v-for=\"product in products\"\n                                    :key=\"product.id\"\n                                    :value=\"product.id\"\n                                    :label=\"product.title\"></el-option>\n                            </el-select>\n\n                        </el-popover>\n                        <span><i\n                            class=\"el-icon-office-building\"></i> {{ ticket.mailbox?.name }}</span>\n                    </div>\n                </div>\n                <div class=\"fs_th_header\">\n                    <hgroup>\n                        <div class=\"fs_tk_subject\">\n                            <h2 title=\"Click to Edit Subject\">\n                                <span class=\"fs_ticket_id\">#{{ ticket.id }} </span>\n                                <el-popover\n                                    placement=\"bottom\"\n                                    :width=\"400\"\n                                    trigger=\"click\"\n                                >\n                                    <template #reference>\n                                        <span> {{ ticket?.title }}</span>\n                                    </template>\n\n                                    <el-input @keyup.enter=\"updateTicketAttr('title')\"\n                                              v-model=\"ticket.title\"></el-input>\n                                    <p>Press enter to save</p>\n                                </el-popover>\n                            </h2>\n                            <ticket-tags :creatable=\"true\" :ticket_id=\"ticket.id\" :tags.sync=\"ticket.tags\" />\n                        </div>\n                        <div class=\"fs_tk_badges\">\n                            <span v-if=\"ticket.ticket_type\" class=\"fs_badge\" :class=\"'fs_badge_' + ticket.ticket_type.title\" style=\"background: #3f9eff\">\n                                {{ticket.ticket_type.title}}\n                            </span>\n                            <el-popover\n                                placement=\"bottom\"\n                                :width=\"400\"\n                                trigger=\"click\"\n                            >\n                                <template #reference>\n                                    <span :class=\"'fs_badge_priority_'+ticket.client_priority\" class=\"fs_badge\"><i\n                                        class=\"el-icon-s-flag\"></i> {{ ticket.client_priority }}</span>\n                                </template>\n\n                                <el-select @change=\"updateTicketAttr('client_priority')\" v-model=\"ticket.client_priority\"\n                                           size=\"small\">\n                                    <el-option\n\n                                        v-for=\"(priorityLabel, priority) in client_priorities\"\n                                        :key=\"priority\" :value=\"priority\"\n                                        :label=\"priorityLabel\"></el-option>\n                                </el-select>\n                            </el-popover>\n                            <span class=\"fs_badge\" :class=\"'fs_badge_' + ticket.status\">{{ ticket.status }}</span>\n                        </div>\n                    </hgroup>\n                </div>\n                <create-response\n                    v-if=\"show_response_box && ticket.status != 'closed'\"\n                    @created=\"recordNewResponse\"\n                    :ticket=\"ticket\"\n                    @close=\"show_response_box = ''\"\n                    :type=\"show_response_box\"\n                />\n                <div class=\"fs_create_response text-align-center\" v-if=\"ticket.status == 'closed'\">\n                    <p>This ticket has been closed at {{ ticket.resolved_at }}\n                        <span v-if=\"ticket.closed_by_person\">\n                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>\n                        </span></p>\n                    <el-button v-loading=\"updating\" :disabled=\"updating\" @click=\"reOpen()\" type=\"info\" size=\"small\">\n                        Reopen This ticket\n                    </el-button>\n                </div>\n                <div v-if=\"ticket && ticket.id\" class=\"fs_threads_container\">\n                    <article v-for=\"conversation in conversations\"\n                             :key=\"conversation.id\"\n                             class=\"fs_thread\"\n                             :class=\"(conversation.person.title!='' && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) \">\n\n                        <span class=\"agent_title\" v-if=\"conversation.person.title\"> {{conversation.person.title}} </span>\n\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img v-if=\"conversation.person\" :src=\"conversation.person?.photo\"\n                                     :alt=\"conversation.person.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong v-if=\"conversation.person\">\n                                                {{ getHumanName(conversation.person) }}</strong>\n                                            <span v-if=\"conversation.conversation_type == 'response'\"> replied</span>\n                                            <span v-else-if=\"conversation.conversation_type == 'note'\"> added a note</span>\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            <span style=\"margin-right: 5px\" v-if=\"conversation.source == 'email'\"\n                                                  title=\"Added By Email\"><i class=\"el-icon-message\"></i></span>\n                                            <span :title=\"conversation.created_at\">{{\n                                                    $timeDiff(conversation.created_at)\n                                                }}</span>\n                                            <el-dropdown @command=\"handleResponseActionCommand\" trigger=\"click\">\n                                                <span class=\"el-dropdown-link\">\n                                                    <i class=\"el-icon-arrow-down el-icon--right\"></i>\n                                                </span>\n                                                <template #dropdown>\n                                                    <el-dropdown-menu>\n                                                        <el-dropdown-item\n                                                            :command=\"{ type: 'edit', conversation: conversation }\"\n                                                            icon=\"el-icon-edit\"> Edit\n                                                        </el-dropdown-item>\n                                                        <el-dropdown-item\n                                                            :command=\"{ type: 'delete', conversation: conversation }\"\n                                                            icon=\"el-icon-delete\"> Delete\n                                                        </el-dropdown-item>\n                                                    </el-dropdown-menu>\n                                                </template>\n                                            </el-dropdown>\n                                        </div>\n                                    </div>\n                                    <div v-html=\"santizeContent(conversation.content)\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"conversation.attachments?.length\">\n                                        <hr/>\n                                        <ul>\n                                            <li\n                                                v-for=\"attachment in conversation.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                    <article class=\"fs_thread conversion_starter\">\n                        <div class=\"fs_thread_content\">\n                            <section class=\"fs_avatar\">\n                                <img :src=\"ticket.customer?.photo\" :alt=\"ticket.customer?.full_name\"/>\n                            </section>\n                            <section class=\"fs_thread_wrap\">\n                                <section class=\"fs_thread_message\">\n                                    <div class=\"fs_thread_head\">\n                                        <div class=\"fs_thread_title\">\n                                            <strong>{{ ticket.customer?.full_name }}</strong> started the conversation\n                                        </div>\n                                        <div class=\"fs_thread_actions\">\n                                            <span style=\"margin-right: 5px\" v-if=\"ticket.source == 'email'\"\n                                                  title=\"Added By Email\"><i class=\"el-icon-message\"></i></span>\n                                            <span :title=\"ticket.created_at\">{{ $timeDiff(ticket.created_at) }}</span>\n                                        </div>\n                                    </div>\n                                    <div v-html=\"santizeContent(ticket.content)\" class=\"fs_thread_body\"></div>\n\n                                    <div class=\"fst_file_lists\" v-if=\"ticket.attachments && ticket.attachments.length\">\n                                        <ul>\n                                            <li v-if=\"ticket.attachments.length\"\n                                                v-for=\"attachment in ticket.attachments\"\n                                                :key=\"attachment.file_hash\"\n                                            >\n                                                <i class=\"el-icon-paperclip\"></i> <a target=\"_blank\" rel=\"noopener\"\n                                                                                     :href=\"attachment.secureUrl\">{{ attachment.title }}</a>\n                                            </li>\n                                        </ul>\n                                    </div>\n                                </section>\n                            </section>\n                        </div>\n                    </article>\n                </div>\n            </div>\n            <div class=\"fs_ticket_sidebar\">\n                <ticket-sidebar :ticket_id=\"ticket_id\" :ticket=\"ticket\"/>\n            </div>\n        </template>\n        <div style=\"padding: 20px;\" class=\"fs_ticket_body\" v-else>\n            <el-skeleton :rows=\"10\" animated/>\n        </div>\n        <el-dialog\n            title=\"Edit Response\"\n            v-model=\"edit_response_modal\"\n            width=\"60%\">\n            <edit-response @updated=\"edit_response_modal = false; editing_response = false\" v-if=\"editing_response\"\n                           :response=\"editing_response\"/>\n        </el-dialog>\n        <active-agents :ticket=\"ticket\" v-if=\"ticket && ticket.id\"/>\n    </div>\n</template>\n\n<script type=\"text/babel\">\nimport CreateResponse from './_CreateResponse';\nimport EditResponse from './_EditResponse';\nimport TicketSidebar from './_TicketSidebar';\nimport each from 'lodash/each';\nimport ActiveAgents from './_active_agents';\nimport TicketTags from './parts/_Tags';\n\nexport default {\n    name: 'ViewTicket',\n    props: ['ticket_id'],\n    components: {\n        CreateResponse,\n        TicketSidebar,\n        EditResponse,\n        ActiveAgents,\n        TicketTags\n    },\n    data() {\n        return {\n            loading: false,\n            ticket: false,\n            conversations: [],\n            show_response_box: '',\n            products: this.appVars.support_products,\n            agents: this.appVars.support_agents,\n            admin_priorities: this.appVars.admin_priorities,\n            client_priorities: this.appVars.client_priorities,\n            ticket_types: this.appVars.ticket_types,\n            updating: false,\n            active_agents: [],\n            edit_response_modal: false,\n            editing_response: false\n        }\n    },\n    watch: {\n        '$route.params.ticket_id'(ticketId) {\n            if (ticketId) {\n                this.doAction('ticket_view_exit', this.ticket.id);\n                this.ticket = false;\n                this.$nextTick(() => {\n                    this.doAction('ticket_view_entered', ticketId);\n                    this.fetchTicket();\n                });\n            }\n        }\n    },\n    methods: {\n        fetchTicket() {\n            this.loading = true;\n            this.$get(`tickets/${this.ticket_id}`)\n                .then(response => {\n                    this.ticket = response.ticket;\n                    this.$setTitle(response.ticket.title);\n                    this.conversations = response.responses;\n                })\n                .catch((errors) => {\n                    this.$handleError(errors);\n                })\n                .always(() => {\n                    this.loading = false;\n                });\n        },\n        getTicketClasses(conversation) {\n            const classes = [\n                'fs_thread'\n            ];\n\n            if (conversation.person) {\n                classes.push('fs_person_' + conversation.person.person_type);\n            }\n\n            classes.push('fs_conv_type_' + conversation.conversation_type);\n            return classes;\n        },\n        recordNewResponse(response, data) {\n            this.conversations.unshift(response);\n            this.ticket.status = data.ticket.status;\n            this.show_response_box = false;\n\n            each(data.update_data, (data, key) => {\n                this.ticket[key] = data;\n            });\n\n            if (this.appVars.pref.go_back_after_reply == 'yes') {\n                if (window.history.state.back) {\n                    this.$router.go(-1);\n                }\n            }\n        },\n        updateTicketAttr(propName) {\n            this.$put(`tickets/${this.ticket.id}/property`, {\n                prop_name: propName,\n                prop_value: this.ticket[propName]\n            })\n                .then(response => {\n                    this.$notify.success(response.message);\n\n                    each(response.update_data, (data, key) => {\n                        this.ticket[key] = data;\n                    });\n\n                })\n                .catch((errors) => {\n                    this.$handleError(errors);\n                });\n        },\n        getHumanName(person) {\n            if (this.appVars.me?.id == person.id) {\n                return 'You';\n            }\n\n            return person.full_name;\n        },\n        closeTicket() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket.id}/close`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                    this.$notify.success(response.message);\n                    if (window.history.state.back) {\n                        this.$router.go(-1);\n                    }\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        reOpen() {\n            this.updating = true;\n            this.$post(`tickets/${this.ticket.id}/re-open`)\n                .then(response => {\n                    this.ticket.status = response.ticket.status;\n                })\n                .catch((errors) => {\n                    console.log(errors);\n                })\n                .always(() => {\n                    this.updating = false;\n                });\n        },\n        onActivityChange(items) {\n            const personIds = [];\n            items.forEach((item) => {\n                personIds.push(item.val());\n            });\n            this.active_agents = personIds;\n        },\n        onTicketDataChange(item) {\n            let data = item.val();\n            this.ticket[data.type] = data.data;\n        },\n        handleResponseActionCommand(data) {\n            const actionType = data.type;\n            const conversation = data.conversation;\n\n            if (actionType == 'delete') {\n                this.$confirm('This will permanently delete response. Continue?', 'Warning', {\n                    confirmButtonText: 'Delete Response',\n                    cancelButtonText: 'Cancel',\n                    type: 'warning'\n                }).then(() => {\n                    this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)\n                        .then(response => {\n                            this.$notify.success({\n                                message: response.message,\n                                position: 'bottom-right',\n                                type: 'success'\n                            });\n                            this.fetchTicket();\n                        })\n                });\n            } else if (actionType == 'edit') {\n                if (this.ticket.status == 'closed') {\n                    this.$notify({\n                        type: 'error',\n                        message: 'You can not edit responses when it is in close state',\n                        position: 'bottom-right'\n                    });\n                    return false;\n                }\n                this.editing_response = conversation;\n                this.edit_response_modal = true;\n            }\n\n            console.log(data);\n        },\n        santizeContent(content) {\n            if (!content) {\n               return content;\n            }\n            return content.replace(/\\n\\s*\\n/g, '\\n').replace(/\\n\\s*\\n/g, '\\n');\n        }\n    },\n    mounted() {\n        this.fetchTicket();\n        this.doAction('ticket_view_entered', this.ticket_id, this);\n    },\n    beforeUnmount() {\n        this.doAction('ticket_view_exit', this.ticket_id);\n    }\n}\n</script>\n\n<style scoped>\n.agent_title{\n    content: '';\n    position: relative;\n    left: 0;\n    top: 0;\n    background: #5d6cc3;\n    color: #fff;\n    padding: 5px 10px;\n    font-size: 11px;\n}\n.fs_agent{\n    border-left: 4px solid #5d6cc3;\n}\n.fs_conv_type_note{\n    border-left: 4px solid #e6a23c;\n}\n</style>\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -119872,6 +120703,58 @@ if (false) {}
 
 /***/ }),
 
+/***/ "./resources/admin/Modules/Reports/PersonalReports.vue":
+/*!*************************************************************!*\
+  !*** ./resources/admin/Modules/Reports/PersonalReports.vue ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _PersonalReports_vue_vue_type_template_id_7731c55f__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PersonalReports.vue?vue&type=template&id=7731c55f */ "./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=template&id=7731c55f");
+/* harmony import */ var _PersonalReports_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PersonalReports.vue?vue&type=script&lang=js */ "./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=script&lang=js");
+/* harmony import */ var _Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+/* hot reload */
+if (false) {}
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/*#__PURE__*/(0,_Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_PersonalReports_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_PersonalReports_vue_vue_type_template_id_7731c55f__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/admin/Modules/Reports/PersonalReports.vue"]]));
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Reports/Report.vue":
+/*!****************************************************!*\
+  !*** ./resources/admin/Modules/Reports/Report.vue ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Report_vue_vue_type_template_id_dcb26c38__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Report.vue?vue&type=template&id=dcb26c38 */ "./resources/admin/Modules/Reports/Report.vue?vue&type=template&id=dcb26c38");
+/* harmony import */ var _Report_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Report.vue?vue&type=script&lang=js */ "./resources/admin/Modules/Reports/Report.vue?vue&type=script&lang=js");
+/* harmony import */ var _Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+/* hot reload */
+if (false) {}
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/*#__PURE__*/(0,_Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Report_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Report_vue_vue_type_template_id_dcb26c38__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/admin/Modules/Reports/Report.vue"]]));
+
+/***/ }),
+
 /***/ "./resources/admin/Modules/Reports/Reports.vue":
 /*!*****************************************************!*\
   !*** ./resources/admin/Modules/Reports/Reports.vue ***!
@@ -120077,6 +120960,32 @@ if (false) {}
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/*#__PURE__*/(0,_Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TicketTags_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TicketTags_vue_vue_type_template_id_71d38841__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/admin/Modules/Settings/TicketTags.vue"]]));
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Settings/TicketType.vue":
+/*!*********************************************************!*\
+  !*** ./resources/admin/Modules/Settings/TicketType.vue ***!
+  \*********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _TicketType_vue_vue_type_template_id_75ff6ae2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TicketType.vue?vue&type=template&id=75ff6ae2 */ "./resources/admin/Modules/Settings/TicketType.vue?vue&type=template&id=75ff6ae2");
+/* harmony import */ var _TicketType_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TicketType.vue?vue&type=script&lang=js */ "./resources/admin/Modules/Settings/TicketType.vue?vue&type=script&lang=js");
+/* harmony import */ var _Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+/* hot reload */
+if (false) {}
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/*#__PURE__*/(0,_Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_TicketType_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_TicketType_vue_vue_type_template_id_75ff6ae2__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/admin/Modules/Settings/TicketType.vue"]]));
 
 /***/ }),
 
@@ -120950,6 +121859,38 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=script&lang=js":
+/*!*************************************************************************************!*\
+  !*** ./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=script&lang=js ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_PersonalReports_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_PersonalReports_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./PersonalReports.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Reports/Report.vue?vue&type=script&lang=js":
+/*!****************************************************************************!*\
+  !*** ./resources/admin/Modules/Reports/Report.vue?vue&type=script&lang=js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Report_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Report_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Report.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Report.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/admin/Modules/Reports/Reports.vue?vue&type=script&lang=js":
 /*!*****************************************************************************!*\
   !*** ./resources/admin/Modules/Reports/Reports.vue?vue&type=script&lang=js ***!
@@ -121074,6 +122015,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketTags_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketTags_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./TicketTags.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketTags.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Settings/TicketType.vue?vue&type=script&lang=js":
+/*!*********************************************************************************!*\
+  !*** ./resources/admin/Modules/Settings/TicketType.vue?vue&type=script&lang=js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketType_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketType_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./TicketType.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketType.vue?vue&type=script&lang=js");
  
 
 /***/ }),
@@ -121670,6 +122627,38 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=template&id=7731c55f":
+/*!*******************************************************************************************!*\
+  !*** ./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=template&id=7731c55f ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_PersonalReports_vue_vue_type_template_id_7731c55f__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_PersonalReports_vue_vue_type_template_id_7731c55f__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./PersonalReports.vue?vue&type=template&id=7731c55f */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/PersonalReports.vue?vue&type=template&id=7731c55f");
+
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Reports/Report.vue?vue&type=template&id=dcb26c38":
+/*!**********************************************************************************!*\
+  !*** ./resources/admin/Modules/Reports/Report.vue?vue&type=template&id=dcb26c38 ***!
+  \**********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Report_vue_vue_type_template_id_dcb26c38__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Report_vue_vue_type_template_id_dcb26c38__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Report.vue?vue&type=template&id=dcb26c38 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Reports/Report.vue?vue&type=template&id=dcb26c38");
+
+
+/***/ }),
+
 /***/ "./resources/admin/Modules/Reports/Reports.vue?vue&type=template&id=b243d882":
 /*!***********************************************************************************!*\
   !*** ./resources/admin/Modules/Reports/Reports.vue?vue&type=template&id=b243d882 ***!
@@ -121794,6 +122783,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketTags_vue_vue_type_template_id_71d38841__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketTags_vue_vue_type_template_id_71d38841__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./TicketTags.vue?vue&type=template&id=71d38841 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketTags.vue?vue&type=template&id=71d38841");
+
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Settings/TicketType.vue?vue&type=template&id=75ff6ae2":
+/*!***************************************************************************************!*\
+  !*** ./resources/admin/Modules/Settings/TicketType.vue?vue&type=template&id=75ff6ae2 ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketType_vue_vue_type_template_id_75ff6ae2__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_TicketType_vue_vue_type_template_id_75ff6ae2__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./TicketType.vue?vue&type=template&id=75ff6ae2 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/TicketType.vue?vue&type=template&id=75ff6ae2");
 
 
 /***/ }),

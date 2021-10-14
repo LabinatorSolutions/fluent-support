@@ -37,6 +37,7 @@ class StatModule
             ->count();
 
         $interactions = Conversation::where('person_id', $agentId)
+            ->where('conversation_type', 'response')
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('ticket_id')
             ->get()
@@ -100,10 +101,18 @@ class StatModule
         ];
     }
 
-    public static function getAgentOverallStats($agentId){
+    public static function getAgentOverallStats($agentId)
+    {
         $replies_count = Conversation::where('person_id', $agentId)->count();
-        $interactions_count = Conversation::where('person_id', $agentId)->groupBy('ticket_id')->count();
+
+        $interactions_count = Conversation::where('person_id', $agentId)
+                                ->where('conversation_type', 'response')
+                                ->groupBy('ticket_id')
+                                ->get()
+                                ->count();
+
         $total_closed = Ticket::where('agent_id', $agentId)->where('status', 'closed')->count();
+
         return [
             'replies_count' =>  [
                 'title' => 'Total Replies',

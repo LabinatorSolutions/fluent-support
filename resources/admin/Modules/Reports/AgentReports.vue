@@ -25,7 +25,7 @@
                         :data="sortedReports"
                         stripe
                         :summary-method="getSummaries"
-                        show-summary
+                        :show-summary="showOrHideSummaries"
                         @sort-change="handleSorting"
                         v-loading="loading"
                         style="width: 100%">
@@ -83,6 +83,7 @@ import each from 'lodash/each';
 
 export default {
     name: 'AgentReports',
+    props:['url'],
     data() {
         return {
             reports: [],
@@ -182,14 +183,20 @@ export default {
                 summary.closed += parseInt(report.stats.closed);
             });
             return summary;
+        },
+        showOrHideSummaries(){
+          if(this.url=='my-reports/my-summary'){
+            return false;
+          }
+          return true;
         }
     },
     methods: {
         getReport() {
             this.loading = true;
-            this.$get('reports/agents-summary', {
+            this.$get(this.url, {
                 from: (this.date_range) ? dayjs(this.date_range[0]).format('YYYY-MM-DD') : '',
-                to: (this.date_range) ? dayjs(this.date_range[1]).format('YYYY-MM-DD') : ''
+                to: (this.date_range) ? dayjs(this.date_range[1]).format('YYYY-MM-DD') : '',
             })
                 .then(response => {
                     this.reports = response.summary

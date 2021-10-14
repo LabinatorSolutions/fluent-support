@@ -57,19 +57,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="fs_box fs_dashboard_box" v-if="my_overall_stats">
-            <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                Your Overall Stats
-            </div>
-            <div class="fs_box_body">
-                <ul class="fs_card_list">
-                    <li style="padding: 15px; list-style-type: none;" v-for="(overallstat,overallstatkey) in my_overall_stats" :key="overallstatkey">
-                        <b>{{overallstat.title}}: </b> {{overallstat.count}}
-                    </li>
-                </ul>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -84,9 +71,7 @@ export default {
             stats: {},
             suggested_tickets: [],
             overall_stats: false,
-            individual_stat: false,
-            my_overall_stats: {}
-
+            individual_stat: false
         }
     },
     computed: {
@@ -117,14 +102,13 @@ export default {
         fetchStat() {
             this.loading = true;
             this.$get('tickets/my_stats', {
-                with: ['suggested_tickets', 'overall_stats', 'individual_stat', 'my_overall_stats']
+                with: ['suggested_tickets', 'overall_stats', 'individual_stat']
             })
                 .then(response => {
                     this.stats = response.stats;
                     this.suggested_tickets = response.suggested_tickets;
                     this.overall_stats = response.overall_stats;
                     this.individual_stat = response.individual_stat;
-                    this.my_overall_stats = response.my_overall_stats;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

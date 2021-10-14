@@ -36,6 +36,11 @@ export default {
                     route_query: {}
                 },
                 {
+                    title: 'Ticket Types',
+                    route_name: 'ticket-type',
+                    route_query: {}
+                },
+                {
                     title: 'Support Staffs',
                     route_name: 'support-staffs',
                     route_query: {}

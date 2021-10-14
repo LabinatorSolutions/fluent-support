@@ -13,6 +13,7 @@ import each from 'lodash/each'
 import BarChartBase from "./BarChartBase";
 export default {
     name: 'ResponseGrowth',
+    props:['date_range', 'url'],
     components: {
         BarChartBase
     },
@@ -73,7 +74,7 @@ export default {
     methods: {
         fetchReport() {
             this.fetching = true;
-            this.$get('reports/response-growth')
+            this.$get(this.url + '/response-growth',{ date_range: this.date_range})
                 .then(response => {
                     this.setupChartItems(response.stats);
                 });

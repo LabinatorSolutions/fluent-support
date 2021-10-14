@@ -96,7 +96,7 @@ class Reporting
             ->orderBy($orderBy, 'ASC');
 
         if ($filters) {
-            if (!empty($filters['agent_id'])) {
+            if (!empty($filters['person_id'])) {
                 $query->where('person_id', $filters['person_id']);
             }
         }
@@ -106,8 +106,7 @@ class Reporting
         return $this->getResult($period, $items);
     }
 
-
-    public function agentSummary($from = false, $to = false)
+    public function agentSummary($from = false, $to = false, $agent = false)
     {
         if(!$from) {
             $from = current_time('mysql');
@@ -163,6 +162,7 @@ class Reporting
 
         foreach ($responses as $response) {
             $reports[$response->agent_id]['interactions'] = Conversation::where('person_id', $response->agent_id)
+                ->where('conversation_type', 'response')
                 ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
                 ->groupBy('ticket_id')
                 ->get()
@@ -170,6 +170,10 @@ class Reporting
         }
 
         $agentIds = array_keys($reports);
+
+        if ($agent) {
+            $agentIds = array_map('intval', explode(',', $agent));
+        }
 
         $agents = Agent::select(['id', 'first_name', 'last_name'])
             ->whereIn('id', $agentIds)

@@ -67,6 +67,9 @@
                                       v-show="getWaitingStatus(scope.row)">
                                     {{ getWaitingStatus(scope.row) }}
                                 </span>
+                                <span v-if="scope.row.ticket_type" class="fs_badge" :class="'fs_badge_' + scope.row.ticket_type.title" style="background: #3f9eff">
+                                    {{scope.row.ticket_type.title}}
+                                </span>
                                 <span class="fs_tk_number">
                                     #{{ scope.row.id }}
                                      <span v-if="scope.row.live_activity && scope.row.live_activity.length" class="fs_inline_avatars avatars_small">
@@ -258,6 +261,7 @@ export default {
             add_ticket_modal: false,
             appReady: false,
             add_response_modal: false,
+            ticket_types: this.appVars.ticket_types
         }
     },
     watch: {

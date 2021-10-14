@@ -5,11 +5,13 @@
                 <div class="fs_ticket_actions">
                     <ul class="fs_tk_actions">
                         <template v-if="ticket.status != 'closed'">
-                            <li :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
+                            <li :title="'Add Reply'"
+                                :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
                                 @click="show_response_box = 'response'">
                                 <i class="el-icon-chat-line-square"/>
                             </li>
-                            <li :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
+                            <li :title="'Add Internal Note'"
+                                :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
                                 @click="show_response_box = 'note'">
                                 <i class="el-icon-notebook-1"/>
                             </li>
@@ -97,6 +99,9 @@
                             <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags" />
                         </div>
                         <div class="fs_tk_badges">
+                            <span v-if="ticket.ticket_type" class="fs_badge" :class="'fs_badge_' + ticket.ticket_type.title" style="background: #3f9eff">
+                                {{ticket.ticket_type.title}}
+                            </span>
                             <el-popover
                                 placement="bottom"
                                 :width="400"
@@ -283,6 +288,7 @@ export default {
             agents: this.appVars.support_agents,
             admin_priorities: this.appVars.admin_priorities,
             client_priorities: this.appVars.client_priorities,
+            ticket_types: this.appVars.ticket_types,
             updating: false,
             active_agents: [],
             edit_response_modal: false,

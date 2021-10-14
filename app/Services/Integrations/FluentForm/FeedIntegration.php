@@ -5,6 +5,7 @@ namespace FluentSupport\App\Services\Integrations\FluentForm;
 use FluentForm\App\Services\Integrations\IntegrationManager;
 use FluentForm\Framework\Foundation\Application;
 use FluentSupport\App\App;
+use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
@@ -67,6 +68,7 @@ class FeedIntegration extends IntegrationManager
             'list_id'                   => '', // this is the business ID
             'ticket_title'              => '',
             'ticket_body'               => '',
+            'attachments'               => '',
             'product_id'                => '',
             'product_id_selection_type' => 'simple',
             'product_routers'           => [],
@@ -120,16 +122,24 @@ class FeedIntegration extends IntegrationManager
                 [
                     'key'          => 'ticket_title',
                     'require_list' => false,
-                    'label'        => 'Ticket Title',
-                    'placeholder'  => 'Ticket Title',
+                    'label'        => __('Ticket Title', 'fluent-support'),
+                    'placeholder'  => __('Ticket Title', 'fluent-support'),
                     'component'    => 'value_text'
                 ],
                 [
                     'key'          => 'ticket_content',
                     'require_list' => false,
-                    'label'        => 'Ticket Content',
-                    'placeholder'  => 'Ticket Content',
+                    'label'        => __('Ticket Content', 'fluent-support'),
+                    'placeholder'  => __('Ticket Content', 'fluent-support'),
                     'component'    => 'value_textarea'
+                ],
+                [
+                    'key'            => 'ticket_attachments',
+                    'require_list'   => false,
+                    'label'          => __('Ticket Attachments', 'fluent-support'),
+                    'Placeholder'    => __('Ticket Attachments', 'fluent-support'),
+                    'tips'           => __('Please input your file upload or image upload field shortcode here', 'fluent-support'),
+                    'component'      => 'value_text'
                 ],
                 [
                     'component' => 'html_info',
@@ -195,6 +205,7 @@ class FeedIntegration extends IntegrationManager
     {
         $data = $feed['processedValues'];
 
+
         if (!empty($data['email']) && !is_email($data['email'])) {
             $data['email'] = Arr::get($formData, $data['email']);
         }
@@ -204,6 +215,7 @@ class FeedIntegration extends IntegrationManager
             'mailbox_id' => Arr::get($data, 'list_id'),
             'title' => sanitize_text_field(wp_unslash(Arr::get($data, 'ticket_title'))),
             'content' => wp_unslash(wp_kses_post(Arr::get($data, 'ticket_content'))),
+            'attachments' => sanitize_text_field(Arr::get($data, 'ticket_attachments')),
             'source' => 'web'
         ];
 
@@ -249,8 +261,26 @@ class FeedIntegration extends IntegrationManager
         $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
         do_action('fluent_support/before_ticket_create', $ticketData, $customer);
 
-        $createdTicket = Ticket::create($ticketData);
-        $ticket = Ticket::find($createdTicket->id);
+        $ticket = Ticket::create($ticketData);
+
+        if($ticketData['attachments']) {
+            $attachments = explode(',', $ticketData['attachments']);
+
+            foreach ($attachments as $attachment){
+                $fileName = explode('/', $attachment);
+                $fileName = end($fileName);
+                Attachment::create(
+                    [
+                        'ticket_id' => $ticket->id,
+                        'file_path' => esc_url($attachment),
+                        'full_url'  => esc_url($attachment),
+                        'title'     => $fileName,
+                        'person_id' => $customer->id
+                    ]
+                );
+            }
+            $ticket->load($attachments);
+        }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
 

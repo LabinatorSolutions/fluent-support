@@ -21,14 +21,14 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayableInterfa
      *
      * @var int
      */
-    protected $total;
+    public $total;
 
     /**
      * The last available page.
      *
      * @var int
      */
-    protected $lastPage;
+    public $lastPage;
 
     /**
      * Create a new paginator instance.

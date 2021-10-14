@@ -36886,11 +36886,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         title: '',
         content: '',
         product_id: '',
-        client_priority: 'normal'
+        client_priority: 'normal',
+        ticket_type_id: ''
       },
       attachments: [],
       products: this.appVars.support_products,
-      priorities: this.appVars.customer_ticket_priorities
+      priorities: this.appVars.customer_ticket_priorities,
+      ticket_types: this.appVars.ticket_types
     };
   },
   methods: {
@@ -36902,6 +36904,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$post('tickets', _objectSpread(_objectSpread({}, this.ticket), {}, {
         attachments: this.attachments
       })).then(function (response) {
+        console.log(_this.appVars);
+
         _this.$router.push({
           name: 'view_ticket',
           params: {
@@ -37492,10 +37496,14 @@ var _hoisted_9 = {
   "class": "fs_tk_left"
 };
 var _hoisted_10 = {
+  key: 1,
+  "class": "fs_tk_left"
+};
+var _hoisted_11 = {
   "class": "fs_tk_left"
 };
 
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Create Ticket");
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Create Ticket");
 
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
@@ -37625,13 +37633,51 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         error: $data.errors.get('product_id')
       }, null, 8
       /* PROPS */
-      , ["error"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+      , ["error"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $data.ticket_types.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+        label: "Select Your Ticket Type"
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_select, {
+            modelValue: $data.ticket.ticket_type_id,
+            "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+              return $data.ticket.ticket_type_id = $event;
+            }),
+            placeholder: "Select Your Ticket Type"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.ticket_types, function (ticket_type) {
+                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_option, {
+                  key: ticket_type.id,
+                  value: ticket_type.id,
+                  label: ticket_type.title
+                }, null, 8
+                /* PROPS */
+                , ["value", "label"]);
+              }), 128
+              /* KEYED_FRAGMENT */
+              ))];
+            }),
+            _: 1
+            /* STABLE */
+
+          }, 8
+          /* PROPS */
+          , ["modelValue"])];
+        }),
+        _: 1
+        /* STABLE */
+
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_error, {
+        error: $data.errors.get('ticket_type_id')
+      }, null, 8
+      /* PROPS */
+      , ["error"])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
         label: "Priority"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
           return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_select, {
             modelValue: $data.ticket.client_priority,
-            "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+            "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
               return $data.ticket.client_priority = $event;
             }),
             placeholder: "Select related Product/Service"
@@ -37666,14 +37712,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       , ["error"])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, null, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
           return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
-            onClick: _cache[5] || (_cache[5] = function ($event) {
+            onClick: _cache[6] || (_cache[6] = function ($event) {
               return $options.create();
             }),
             disabled: $data.creating,
             type: "primary"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-              return [_hoisted_11];
+              return [_hoisted_12];
             }),
             _: 1
             /* STABLE */

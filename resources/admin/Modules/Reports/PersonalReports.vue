@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_agents_report">
+    <div class="fs_personal_report">
         <div class="fs_box_wrapper">
             <el-row :gutter="30">
                 <el-col :sm="24" :md="16" :lg="18">
@@ -39,16 +39,16 @@
                             </div>
                         </div>
                         <div class="fs_box_body">
-                            <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'reports'"></component>
+                            <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'my-reports'"></component>
                         </div>
                     </div>
-                    <agent-reports :url="'reports/agents-summary'"/>
+                    <agent-reports :url="'my-reports/my-summary'" />
                 </el-col>
                 <el-col :sm="24" :md="8" :lg="6">
                     <div class="fs_box">
                         <div class="fs_box_header">
                             <div class="fs_header_title">
-                                Quick Stats
+                                Your Overall Stats
                             </div>
                         </div>
                         <div class="fs_box_body">
@@ -69,15 +69,14 @@
 </template>
 
 <script type="text/babel">
-import TicketsChart from "./Charts/TicketsGrowth";
 import ResponseChart from "./Charts/ResponseGrowth";
 import ResolveChart from "./Charts/ResolveGrowth";
 import AgentReports from "./AgentReports";
 
 export default {
-    name: 'Reports',
+    name: "PersonalReports",
+    props: ['url'],
     components: {
-        TicketsChart,
         ResponseChart,
         ResolveChart,
         AgentReports
@@ -87,20 +86,20 @@ export default {
             loading: false,
             stat_loading: false,
             overall_reports: {},
-            currently_showing: 'tickets-chart',
+            currently_showing: 'resolve-chart',
             date_range: ['', ''],
             showing_charts: true,
             chartMaps: {
-                'tickets-chart': 'Ticket Stats',
                 'resolve-chart': 'Resolve Stats',
-                'response-chart': 'Response Stats',
-            }
+                'response-chart': 'Response Stats'
+            },
+            me: this.appVars.me
         }
     },
     methods: {
         fetchReports() {
             this.loading = true;
-            this.$get('reports')
+            this.$get(this.url)
                 .then(response => {
                     this.overall_reports = response.overall_reports;
                 })
@@ -127,7 +126,7 @@ export default {
     },
     mounted() {
         this.fetchReports();
-        this.$setTitle('Reports');
+        this.$setTitle('Personal Reports');
     }
 }
 </script>

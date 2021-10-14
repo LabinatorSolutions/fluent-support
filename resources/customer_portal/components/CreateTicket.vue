@@ -31,6 +31,14 @@
                         </el-form-item>
                         <error :error="errors.get('product_id')"/>
                     </div>
+                    <div v-if="ticket_types.length" class="fs_tk_left">
+                        <el-form-item label="Select Your Ticket Type">
+                            <el-select v-model="ticket.ticket_type_id" placeholder="Select Your Ticket Type">
+                                <el-option v-for="ticket_type in ticket_types" :key="ticket_type.id" :value="ticket_type.id" :label="ticket_type.title"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <error :error="errors.get('ticket_type_id')"/>
+                    </div>
                     <div class="fs_tk_left">
                         <el-form-item label="Priority">
                             <el-select v-model="ticket.client_priority" placeholder="Select related Product/Service">
@@ -73,10 +81,12 @@ export default {
                 content: '',
                 product_id: '',
                 client_priority: 'normal',
+                ticket_type_id: ''
             },
             attachments: [],
             products: this.appVars.support_products,
             priorities: this.appVars.customer_ticket_priorities,
+            ticket_types: this.appVars.ticket_types
         }
     },
     methods: {
@@ -88,6 +98,7 @@ export default {
                 attachments: this.attachments
             })
             .then(response => {
+                console.log(this.appVars)
                 this.$router.push({ name: 'view_ticket', params: { ticket_id: response.ticket.id } });
             })
             .catch((errors) => {

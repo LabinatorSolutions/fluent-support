@@ -17,6 +17,7 @@ class Ticket extends Model
         'customer_id',
         'agent_id',
         'product_id',
+        'ticket_type_id',
         'mailbox_id',
         'product_source',
         'privacy',
@@ -160,6 +161,13 @@ class Ticket extends Model
                 $query->whereHas('tags', function ($q) use ($filterValue) {
                     $q->whereIn('tag_id', $filterValue);
                 });
+            } else if($filterKey == 'ticket_types') {
+                if(!$filterValue) {
+                    continue;
+                }
+                $query->whereHas('ticketType', function ($q) use ($filterValue) {
+                    $q->whereIn('ticket_type_id', $filterValue);
+                });
             }
         }
 
@@ -288,6 +296,15 @@ class Ticket extends Model
 
         return $this->belongsTo(
             $class, 'product_id', 'id'
+        );
+    }
+
+    public function ticketType()
+    {
+        $class = __NAMESPACE__ . '\TicketType';
+
+        return $this->belongsTo(
+            $class, 'ticket_type_id', 'id'
         );
     }
 
