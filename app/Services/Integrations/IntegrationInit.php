@@ -25,6 +25,16 @@ class IntegrationInit
             (new LearnDash())->boot();
         }
 
+        // LifterLMS
+        if (defined('LLMS_PLUGIN_FILE')) {
+            (new LifterLMS())->boot();
+        }
+
+        // TutorLMS
+        if(defined('TUTOR_VERSION')) {
+            (new TutorLMS)->boot();
+        }
+        
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }
