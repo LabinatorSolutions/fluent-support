@@ -53,6 +53,7 @@
 
     .fs_ticket_body {
         width: calc(100% - 200px);
+        height: fit-content;
         background: white;
 
         .fs_th_header {
