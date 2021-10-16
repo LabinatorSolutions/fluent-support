@@ -70,6 +70,7 @@ class WooCommerce
             foreach ($orderedProducts as $product){
                 $formattedOrders[] = [
                     'order'         => '#' . $order->get_order_number(),
+                    'order_id'      =>  $order->get_order_number(),
                     'date'          => esc_html(wc_format_datetime($order->get_date_created())),
                     'status'        => esc_html($order->get_status()),
                     'total'         => esc_html($order->total),
@@ -93,6 +94,7 @@ class WooCommerce
                         echo $orderValue['product_name'] . ' <code>' . $orderValue['status'] . '</code>';
                         ?>
                     - $<?php echo $orderValue['total']; ?>
+                    <a target="_blank" rel="nofollow" href="<?php echo admin_url('post.php?post='.$orderValue['order_id'].'&action=edit'); ?>"><i class="el-icon-view"></i></a>
                 </li>
             <?php endforeach; ?>
         </ul>
