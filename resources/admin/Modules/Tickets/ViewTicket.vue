@@ -482,6 +482,6 @@ export default {
     border-left: 4px solid #5d6cc3;
 }
 .fs_conv_type_note{
-    border-left: 4px solid #e6a23c;
+    border-left: 0px solid #e6a23c;
 }
 </style>
