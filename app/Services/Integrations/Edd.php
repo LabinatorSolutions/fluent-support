@@ -6,7 +6,7 @@ class Edd
 {
     public function boot()
     {
-        add_filter('fluent_support/customer_extra_widgets', array($this, 'getPurchaseWidgets'), 10, 2);
+        add_filter('fluent_support/customer_extra_widgets', array($this, 'getPurchaseWidgets'), 30, 2);
     }
 
     public function getPurchaseWidgets($widgets, $customer)
@@ -52,7 +52,7 @@ class Edd
         <?php
         $content = ob_get_clean();
         $widgets['edd_purchases'] = [
-            'header'    => __('Purchases', 'fluent-support'),
+            'header'    => __('EDD Purchases', 'fluent-support'),
             'body_html' => $content
         ];
         return $widgets;
