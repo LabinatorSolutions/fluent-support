@@ -263,6 +263,18 @@ class FeedIntegration extends IntegrationManager
 
         $ticket = Ticket::create($ticketData);
 
+        do_action('fluent_support/ticket_created', $ticket, $customer);
+
+        do_action('ff_log_data', [
+            'title'            => $feed['settings']['name'],
+            'status'           => 'success',
+            'description'      => 'Support ticket has been created at Fluent Support. Ticket ID: '.$ticket->id,
+            'parent_source_id' => $form->id,
+            'source_id'        => $entry->id,
+            'component'        => $this->integrationKey,
+            'source_type'      => 'submission_item'
+        ]);
+
         if($ticketData['attachments']) {
             $attachments = explode(',', $ticketData['attachments']);
 
@@ -281,18 +293,6 @@ class FeedIntegration extends IntegrationManager
             }
             $ticket->load($attachments);
         }
-
-        do_action('fluent_support/ticket_created', $ticket, $customer);
-
-        do_action('ff_log_data', [
-            'title'            => $feed['settings']['name'],
-            'status'           => 'success',
-            'description'      => 'Support ticket has been created at Fluent Support. Ticket ID: '.$ticket->id,
-            'parent_source_id' => $form->id,
-            'source_id'        => $entry->id,
-            'component'        => $this->integrationKey,
-            'source_type'      => 'submission_item'
-        ]);
 
         return true;
     }
