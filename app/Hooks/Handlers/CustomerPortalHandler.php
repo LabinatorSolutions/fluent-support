@@ -14,10 +14,10 @@ class CustomerPortalHandler
 {
     public function renderPortal()
     {
-        if(PermissionManager::currentUserPermissions()) {
-            $customerPortalUrl = Helper::getPortalAdminBaseUrl();
-            return '<div style="text-align: center;"><h3>Customer Portal is only accessible by Customers. Looks like you are a support staff</h3><a href="'.$customerPortalUrl.'">Go to Support Admin Page</a></div>';
-        } else if(get_current_user_id()) {
+        if (PermissionManager::currentUserPermissions()) {
+            $adminPortalUrl = Helper::getPortalAdminBaseUrl();
+            return '<div style="text-align: center;"><h3>Customer Portal is only accessible by Customers. Looks like you are a support staff</h3><a href="' . $adminPortalUrl . '">Go to Support Admin Page</a></div>';
+        } else if ($this->hasCustomerPortalAccess()) {
             $this->enqueueScripts();
             return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">Loading Customer Portal. Please wait...</h3></div>';
         } else {
@@ -36,7 +36,7 @@ class CustomerPortalHandler
 
         $restInfo = [
             'base_url'  => esc_url_raw(rest_url()),
-            'url'       => rest_url($ns . '/' . $v.'/customer-portal'),
+            'url'       => rest_url($ns . '/' . $v . '/customer-portal'),
             'nonce'     => wp_create_nonce('wp_rest'),
             'namespace' => $ns,
             'version'   => $v,
@@ -44,19 +44,47 @@ class CustomerPortalHandler
 
         $assets = $app['url.assets'];
 
-        wp_enqueue_script('fs_tk_customer_portal', $assets.'portal/js/app.js', ['jquery']);
-        wp_enqueue_style('fs_tk_customer_portal', $assets.'portal/css/app.css');
+        wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery']);
+        wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css');
 
-        add_filter('user_can_richedit', '__return_true');
+        $data = [
+            'rest'                       => $restInfo,
+            'nonce'                      => wp_create_nonce($slug),
+            'support_products'           => Product::select(['id', 'title'])->get(),
+            'customer_ticket_priorities' => Helper::customerTicketPriorities(),
+            'ticket_types'               => TicketType::select(['id', 'title'])->get(),
+            'view_tickets_url' => Helper::getPortalBaseUrl().'/#'
+        ];
+
+        if($this->isSignedTicketView()) {
+            $data['intended_ticket_hash'] = sanitize_text_field($_REQUEST['support_hash']);
+        } else {
+            add_filter('user_can_richedit', '__return_true');
+        }
+
         wp_tinymce_inline_scripts();
         wp_enqueue_editor();
 
-        wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', [
-            'rest' => $restInfo,
-            'nonce' => wp_create_nonce($slug),
-            'support_products' => Product::select(['id', 'title'])->get(),
-            'customer_ticket_priorities' => Helper::customerTicketPriorities(),
-            'ticket_types' => TicketType::select(['id', 'title'])->get()
-        ]);
+        wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', $data);
+    }
+
+    public function hasCustomerPortalAccess()
+    {
+        $userId = get_current_user_id();
+
+        if ($userId) {
+            return true;
+        }
+
+        return $this->isSignedTicketView();
+    }
+
+    protected function isSignedTicketView()
+    {
+        if(!Helper::isPublicSignedTicketEnabled()) {
+            return false;
+        }
+
+        return isset($_REQUEST['fs_view']) && $_REQUEST['fs_view'] == 'ticket' && isset($_REQUEST['support_hash']) && isset($_REQUEST['ticket_id']);
     }
 }

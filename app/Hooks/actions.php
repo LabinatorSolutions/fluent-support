@@ -92,6 +92,10 @@ $app->addAction('fluent_support/ticket_closed_by_agent', 'EmailNotificationHandl
 // Cleanup
 $app->addAction('fluent_support_hourly_tasks', 'CleanupHandler@initHourlyTasks');
 
+if(isset($_GET['fs_view'])) {
+    $app->addAction('init', 'ExternalPages@route');
+}
+
 if (isset($_GET['fst_file'])) {
     add_action('init', function () {
         (new \FluentSupport\App\Hooks\Handlers\ExternalPages())->view_attachment();
@@ -102,3 +106,12 @@ if (isset($_GET['fst_file'])) {
 if ( defined( 'WP_CLI' ) && WP_CLI ) {
     \WP_CLI::add_command( 'fluent_support', '\FluentSupport\App\Hooks\CLI\FluentCli' );
 }
+
+
+add_action('init', function () {
+    if(isset($_REQUEST['ticket_test'])) {
+        $ticket = \FluentSupport\App\Models\Ticket::first();
+        $url = \FluentSupport\App\Services\Helper::getTicketViewSignedUrl($ticket);
+        dd($url);
+    }
+});

@@ -95,7 +95,7 @@ class ShortcodeParser
 
         if (count($valueKeys) == 1) {
             if($valueKey == 'public_url') {
-                return Helper::getTicketViewUrl($ticket);
+                return Helper::getTicketViewSignedUrl($ticket);
             }
 
             if($valueKey == 'admin_url') {

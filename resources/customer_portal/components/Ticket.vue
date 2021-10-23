@@ -17,7 +17,7 @@
                         <div class="fs_tk_actions">
                             <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
                                        size="small"></el-button>
-                            <el-button @click="$router.push({ name: 'dashboard' })" size="small">All</el-button>
+                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">All</a>
                             <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
                                        @click="closeTicket()" size="small"
                                        type="danger">Close Ticket
@@ -45,7 +45,8 @@
                              class="fs_thread"
                              :class="(conversation.person.title!=='' && conversation.person.person_type !== 'customer') ? 'fs_agent' : getTicketClasses(conversation)">
 
-                        <span class="agent_title" v-if="conversation.person.title"> {{conversation.person.title}} </span>
+                        <span class="agent_title"
+                              v-if="conversation.person.title"> {{ conversation.person.title }} </span>
 
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
@@ -66,14 +67,17 @@
                                     </div>
                                     <div v-html="conversation.content" class="fs_thread_body"></div>
 
-                                    <div class="fst_file_lists" v-if="conversation.attachments && conversation.attachments.length">
+                                    <div class="fst_file_lists"
+                                         v-if="conversation.attachments && conversation.attachments.length">
                                         <ul>
                                             <li v-if="conversation.attachments.length"
                                                 v-for="attachment in conversation.attachments"
                                                 :key="attachment.file_hash"
                                             >
                                                 <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
-                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
+                                                                                     :href="attachment.secureUrl">{{
+                                                    attachment.title
+                                                }}</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -106,7 +110,9 @@
                                                 :key="attachment.file_hash"
                                             >
                                                 <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
-                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
+                                                                                     :href="attachment.secureUrl">{{
+                                                    attachment.title
+                                                }}</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -123,13 +129,15 @@
         </div>
         <div style="padding: 20px; text-align: center;" class="fs_tk_body" v-else-if="error_message">
             <p v-html="error_message"></p>
-            <el-button type="primary" @click="$router.push({ name: 'dashboard' })" size="small">View Your Tickets</el-button>
+            <el-button type="primary" @click="$router.push({ name: 'dashboard' })" size="small">View Your Tickets
+            </el-button>
         </div>
     </div>
 </template>
 
 <script type="text/babel">
 import InlineReply from "./InlineReply";
+
 export default {
     name: 'ticket',
     props: ['ticket_id'],
@@ -149,7 +157,9 @@ export default {
     methods: {
         fetchTicket() {
             this.fetching = true;
-            this.$get(`tickets/${this.ticket_id}`)
+            this.$get(`tickets/${this.ticket_id}`, {
+                intended_ticket_hash: this.appVars.intended_ticket_hash
+            })
                 .then(response => {
                     this.ticket = response.ticket;
                     this.conversations = response.responses;
@@ -157,9 +167,9 @@ export default {
                 })
                 .catch((errors) => {
                     let message = 'Uknown error. Please reload this page';
-                    if(errors.responseJSON?.errors?.message) {
+                    if (errors.responseJSON?.errors?.message) {
                         message = errors.responseJSON?.errors?.message;
-                    } else if(errors.responseJSON?.message) {
+                    } else if (errors.responseJSON?.message) {
                         message = errors.responseJSON?.message;
                     }
                     this.error_message = message;
@@ -198,7 +208,9 @@ export default {
         },
         closeTicket() {
             this.updating = true;
-            this.$post(`tickets/${this.ticket_id}/close`)
+            this.$post(`tickets/${this.ticket_id}/close`, {
+                intended_ticket_hash: this.appVars.intended_ticket_hash
+            })
                 .then(response => {
                     this.ticket.status = response.ticket.status;
                 })
@@ -211,7 +223,9 @@ export default {
         },
         reOpen() {
             this.updating = true;
-            this.$post(`tickets/${this.ticket_id}/re-open`)
+            this.$post(`tickets/${this.ticket_id}/re-open`, {
+                intended_ticket_hash: this.appVars.intended_ticket_hash
+            })
                 .then(response => {
                     this.ticket.status = response.ticket.status;
                 })
@@ -229,7 +243,7 @@ export default {
 }
 </script>
 <style scoped>
-.agent_title{
+.agent_title {
     content: '';
     position: relative;
     left: 0;
@@ -239,7 +253,8 @@ export default {
     padding: 5px 10px;
     font-size: 11px;
 }
-.fs_agent{
+
+.fs_agent {
     border-left: 4px solid #5d6cc3;
 }
 </style>

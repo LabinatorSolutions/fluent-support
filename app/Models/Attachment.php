@@ -24,7 +24,8 @@ class Attachment extends Model
         'full_url',
         'title',
         'driver',
-        'file_size'
+        'file_size',
+        'status'
     ];
 
     public static function boot()

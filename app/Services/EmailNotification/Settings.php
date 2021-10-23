@@ -42,7 +42,8 @@ class Settings
     {
         $defaults = [
             'portal_page_id' => '',
-            'login_message'  => __('<p>Please login to access the Customer Support Portal</p> [fluent_support_login]', 'fluent-support')
+            'login_message'  => __('<p>Please login to access the Customer Support Portal</p> [fluent_support_login]', 'fluent-support'),
+            'disable_public_ticket' => 'no'
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
@@ -69,6 +70,13 @@ class Settings
                 'type'        => 'wp-editor',
                 'label'       => __('Message for non logged in users', 'fluent-support'),
                 'inline_help' => __('Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form', 'fluent-support')
+            ],
+            'disable_public_ticket' => [
+                'type' => 'inline-checkbox',
+                'true_label' => 'yes',
+                'false-label' => 'no',
+                'checkbox_label' => 'Disable Public Ticket interaction',
+                'inline_help' => 'If you enable this then only logged in user can reply the tickets. Otherwise, url will be signed and intended user can reply without logging in'
             ]
         ];
     }
