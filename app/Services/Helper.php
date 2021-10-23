@@ -128,7 +128,32 @@ class Helper
     public static function getTicketViewUrl($ticket)
     {
         $baseUrl = self::getPortalBaseUrl();
+
         return $baseUrl . '/#/ticket/' . $ticket->id . '/view';
+    }
+
+    public static function getTicketViewSignedUrl($ticket)
+    {
+
+        if(self::isPublicSignedTicketEnabled()) {
+            return self::getTicketViewUrl();
+        }
+
+        $baseUrl = self::getPortalBaseUrl();
+
+        $baseUrl = add_query_arg([
+            'fs_view'      => 'ticket',
+            'support_hash' => $ticket->hash,
+            'ticket_id'    => $ticket->id
+        ], $baseUrl);
+
+        return $baseUrl . '#/ticket/' . $ticket->id . '/view';
+    }
+
+    public static function isPublicSignedTicketEnabled()
+    {
+        $businessSettings = self::getBusinessSettings();
+        return !Arr::get($businessSettings, 'disable_public_ticket') == 'yes';
     }
 
     public static function getTicketAdminUrl($ticket)
@@ -214,7 +239,7 @@ class Helper
         $formattedPages = [];
         foreach ($pages as $page) {
             $formattedPages[] = [
-                'id' => (string) $page->ID,
+                'id'    => (string)$page->ID,
                 'title' => $page->post_title
             ];
         }
@@ -225,7 +250,7 @@ class Helper
     {
         $mailbox = MailBox::where('is_default', 'yes')->first();
 
-        if($mailbox) {
+        if ($mailbox) {
             return $mailbox;
         }
 

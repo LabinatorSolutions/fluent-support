@@ -37,7 +37,8 @@ export default {
         return {
             upload_url: this.appVars.rest.url+'/ticket_file_upload',
             upload_data: {
-                ticket_id: this.ticket.id
+                ticket_id: this.ticket.id,
+                intended_ticket_hash: this.appVars.intended_ticket_hash
             },
             file_lists: [],
             requestHeaders: {

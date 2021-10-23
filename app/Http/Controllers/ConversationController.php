@@ -13,6 +13,5 @@ class ConversationController extends Controller
     public function createCustomerReply(Request $request, $ticketId)
     {
 
-
     }
 }

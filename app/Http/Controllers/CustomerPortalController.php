@@ -95,7 +95,8 @@ class CustomerPortalController extends Controller
                 ->whereNull('ticket_id')
                 ->update([
                     'ticket_id' => $ticket->id,
-                    'person_id' => $customer->id
+                    'person_id' => $customer->id,
+                    'status'    => 'active'
                 ]);
             $ticket->load('attachments');
         }
@@ -122,7 +123,11 @@ class CustomerPortalController extends Controller
             ])
             ->first();
 
-        $customer = $this->resolveCustomer($request);
+        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+            $customer = $ticket->customer;
+        } else {
+            $customer = $this->resolveCustomer($request);
+        }
 
         if (!$customer) {
             return $this->sendError([
@@ -176,7 +181,7 @@ class CustomerPortalController extends Controller
         return [
             'ticket'     => $ticket,
             'responses'  => $responses,
-            'sign_on_id' => $customer->id
+            'sign_on_id' => $ticket->customer_id
         ];
     }
 
@@ -189,15 +194,20 @@ class CustomerPortalController extends Controller
 
         $data['content'] = wp_unslash(wp_kses_post($data['content']));
 
-        $customer = $this->resolveCustomer($request);
+
+        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
+
+        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+            $customer = $ticket->customer;
+        } else {
+            $customer = $this->resolveCustomer($request);
+        }
 
         if (!$customer) {
             return $this->sendError([
                 'message' => __('Sorry! No customer found', 'fluent-support')
             ]);
         }
-
-        $ticket = Ticket::findOrFail($ticketId);
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
@@ -217,15 +227,19 @@ class CustomerPortalController extends Controller
 
     public function closeTicket(Request $request, $ticketId)
     {
-        $customer = $this->resolveCustomer($request);
+        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
+
+        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+            $customer = $ticket->customer;
+        } else {
+            $customer = $this->resolveCustomer($request);
+        }
 
         if (!$customer) {
             return $this->sendError([
                 'message' => __('Sorry! No customer found', 'fluent-support')
             ]);
         }
-
-        $ticket = Ticket::findOrFail($ticketId);
 
         if ($customer->id != $ticket->customer_id) {
             return $this->sendError([
@@ -241,15 +255,20 @@ class CustomerPortalController extends Controller
 
     public function reOpenTicket(Request $request, $ticketId)
     {
-        $customer = $this->resolveCustomer($request);
+        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
+
+        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+            $customer = $ticket->customer;
+        } else {
+            $customer = $this->resolveCustomer($request);
+        }
+
 
         if (!$customer) {
             return $this->sendError([
                 'message' => __('Sorry! No customer found', 'fluent-support')
             ]);
         }
-
-        $ticket = Ticket::findOrFail($ticketId);
 
         if ($customer->id != $ticket->customer_id) {
             return $this->sendError([
@@ -299,59 +318,18 @@ class CustomerPortalController extends Controller
         ];
     }
 
-//    public function uploadTicketFiles(Request $request)
-//    {
-//        $files = $this->validate($this->request->files(), [
-//            'file' => 'mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
-//        ], ['file.mimetypes' => 'Only image and documents are allowed']);
-//
-//
-//        $ticketId = $request->get('ticket_id');
-//        $ticket = Ticket::findOrFail($ticketId);
-//
-//        $person = $this->resolveCustomer($request);
-//
-//        if (!$person) {
-//            return $this->sendError([
-//                'message' => __('Sorry! No customer found', 'fluent-support')
-//            ]);
-//        }
-//
-//        $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
-//
-//        $attachments = [];
-//        foreach ($uploadedFiles as $file) {
-//            $fileData = [
-//                'ticket_id' => $ticketId,
-//                'person_id' => $person->id,
-//                'file_type' => $file['type'],
-//                'file_path' => $file['file_path'],
-//                'full_url'  => $file['url'],
-//                'title'     => $file['name'],
-//                'driver'    => 'local'
-//            ];
-//
-//            $attachment = Attachment::create($fileData);
-//            $attachments[] = $attachment->file_hash;
-//        }
-//
-//        return [
-//            'attachments' => $attachments
-//        ];
-//    }
-
     private function resolveMailboxId($request)
     {
-        if($mailboxId = $request->get('mailbox_id')) {
+        if ($mailboxId = $request->get('mailbox_id')) {
             $mailbox = MailBox::find($mailboxId);
-            if($mailbox) {
+            if ($mailbox) {
                 return $mailbox->id;
             }
         }
 
         $mailbox = Helper::getDefaultMailBox();
 
-        if($mailbox) {
+        if ($mailbox) {
             return $mailbox->id;
         }
         return null;

@@ -26,12 +26,18 @@ class UploaderController extends Controller
             $ticketId = NULL;
         }
 
-        $person = Helper::getAgentByUserId(get_current_user_id());
+        if($ticketId && $request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+            $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
+            $person = $ticket->customer;
+        } else {
+            $person = Helper::getAgentByUserId(get_current_user_id());
+        }
 
         $uploadedFiles = FileSystem::setSubDir('ticket_'.$ticketId)->put($files);
 
         $attachments = [];
         foreach ($uploadedFiles as $file) {
+
             $fileData = [
                 'ticket_id' => $ticketId,
                 'person_id' => $person->id,
@@ -39,7 +45,8 @@ class UploaderController extends Controller
                 'file_path' => $file['file_path'],
                 'full_url' => $file['url'],
                 'title' => $file['name'],
-                'driver' => 'local'
+                'driver' => 'local',
+                'status' => 'in-active'
             ];
 
             $attachment = Attachment::create($fileData);

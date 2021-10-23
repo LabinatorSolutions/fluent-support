@@ -21,6 +21,8 @@
                 </div>
             </div>
 
+            <error :error="errors.get('permission_error')"/>
+
             <p style="text-align: center;" v-if="ticket.privacy == 'private'">This ticket is <b>Private</b>. Only you and official support agents can view this conversations</p>
             <p style="text-align: center;" v-else>This ticket is <b>Public</b>. Please do not share any private information.</p>
         </div>
@@ -59,7 +61,8 @@ export default {
                 content: this.response_body,
                 conversation_type: this.type,
                 close_ticket: this.close_ticket,
-                attachments: this.attachments
+                attachments: this.attachments,
+                intended_ticket_hash: this.appVars.intended_ticket_hash
             })
                 .then(response => {
                   //  this.$notify.success(response.message);
@@ -69,8 +72,13 @@ export default {
                     this.$emit('created', response.response, response.ticket);
                 })
                 .catch((errors) => {
+                    if (errors.responseJSON && errors.responseJSON.message) {
+                        errors.responseJSON.permission_error = [errors.responseJSON.message];
+                    }
+
                     this.errors.record(errors);
-                    console.log(errors);
+
+                    console.log(errors.responseJSON);
                 })
                 .always(() => {
                     this.creating = false;

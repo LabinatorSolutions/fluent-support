@@ -29,7 +29,8 @@ class ResponseService
             Attachment::where('ticket_id', $ticket->id)
                 ->whereIn('file_hash', $attachments)
                 ->update([
-                    'conversation_id' => $createdResponse->id
+                    'conversation_id' => $createdResponse->id,
+                    'status' => 'active'
                 ]);
             $createdResponse->load('attachments');
         }

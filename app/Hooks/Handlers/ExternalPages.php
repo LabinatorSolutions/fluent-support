@@ -4,9 +4,63 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 
 use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Support\Arr;
 
 class ExternalPages
 {
+
+    public function route()
+    {
+        $route = sanitize_text_field($_REQUEST['fs_view']);
+
+        $methodMaps = [
+            'ticket' => 'handleTicketView'
+        ];
+
+        if(isset($methodMaps[$route])) {
+            $this->{$methodMaps[$route]}();
+        }
+
+    }
+
+    public function handleTicketView()
+    {
+        if(!Helper::isPublicSignedTicketEnabled()) {
+            $ticketId = absint(Arr::get($_REQUEST, 'ticket_id'));
+            $ticket = Ticket::where('id', $ticketId)->first();
+
+            if(!$ticket) {
+                // Sorry no ticket found;
+                echo '<h3 style="text-align: center; margin: 50px 0;">Invalid Support Portal URL</h3>';
+                die();
+            }
+
+            $redirectUrl = Helper::getTicketViewUrl($ticket);
+            wp_redirect($redirectUrl, 307);
+            exit();
+        }
+
+        $ticketHash = sanitize_text_field(Arr::get($_REQUEST, 'support_hash'));
+        $ticketId = absint(Arr::get($_REQUEST, 'ticket_id'));
+        $ticket = Ticket::where('hash', $ticketHash)->where('id', $ticketId)->first();
+
+        if(!$ticket) {
+            // Sorry no ticket found;
+            echo '<h3 style="text-align: center; margin: 50px 0;">Invalid Support Portal URL</h3>';
+            die();
+        }
+
+        if(get_current_user_id()) {
+            // We have to re-route the URL
+            $redirectUrl = Helper::getTicketViewUrl($ticket);
+            wp_redirect($redirectUrl, 307);
+            exit();
+        }
+
+    }
+
     /**
      * Display the attachment.
      *
