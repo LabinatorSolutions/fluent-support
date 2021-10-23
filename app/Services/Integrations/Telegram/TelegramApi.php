@@ -2,6 +2,8 @@
 
 namespace FluentSupport\App\Services\Integrations\Telegram;
 
+use FluentSupport\App\Services\Helper;
+
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
@@ -16,6 +18,10 @@ class TelegramApi
 
     public function __construct($token = '', $chatId = '')
     {
+        if($token) {
+            $token = TelegramHelper::getBotToken();
+        }
+
         $this->token = $token;
         $this->chatId = $chatId;
     }
@@ -83,6 +89,7 @@ class TelegramApi
         if(!$this->token) {
             return new \WP_Error(300, 'Token is required', []);
         }
+
         $url = add_query_arg($args, $this->getBaseUrl() . $endPont);
 
         $ch = curl_init();
@@ -103,6 +110,71 @@ class TelegramApi
         }
 
         return new \WP_Error(300, 'Unknown API error from Telegram', $result);
+    }
+
+    public function setBotWebhook()
+    {
+        $botToken = TelegramHelper::getBotToken();
+
+        if(!$botToken) {
+            return new \WP_Error('not_found', 'Bot Token could not be found');
+        }
+
+        $app = Helper::FluentSupport();
+
+        $ns = $app->config->get('app.rest_namespace');
+        $v = $app->config->get('app.rest_version');
+
+        $restUrl = rest_url($ns . '/' . $v.'/public/telegram_bot_response/'.TelegramHelper::getWebhookToken());
+
+        $fullUrl = "https://api.telegram.org/bot{$botToken}/setWebhook?url=".rawurlencode($restUrl);
+
+
+        $response = wp_remote_get($fullUrl);
+
+        if(is_wp_error($response)) {
+            return new \WP_Error($response->get_error_code(), $response->get_error_message());
+        }
+
+        return json_decode(wp_remote_retrieve_body($response));
+    }
+
+    public function deleteBotWebhook()
+    {
+        $botToken = TelegramHelper::getBotToken();
+
+        if(!$botToken) {
+            return new \WP_Error('not_found', 'Bot Token could not be found');
+        }
+
+        $fullUrl = "https://api.telegram.org/bot{$botToken}/deleteWebhook?drop_pending_updates=true";
+
+        $response = wp_remote_get($fullUrl);
+
+        if(is_wp_error($response)) {
+            return new \WP_Error($response->get_error_code(), $response->get_error_message());
+        }
+
+        return json_decode(wp_remote_retrieve_body($response));
+    }
+
+    public function getBotWebhookInfo()
+    {
+        $botToken = TelegramHelper::getBotToken();
+
+        if(!$botToken) {
+            return new \WP_Error('not_found', 'Bot Token could not be found');
+        }
+
+        $fullUrl = "https://api.telegram.org/bot{$botToken}/getwebhookinfo";
+
+        $response = wp_remote_get($fullUrl);
+
+        if(is_wp_error($response)) {
+            return new \WP_Error($response->get_error_code(), $response->get_error_message());
+        }
+
+        return json_decode(wp_remote_retrieve_body($response), true);
     }
 
 }

@@ -125,6 +125,42 @@ class Helper
         ]);
     }
 
+    public static function getIntegrationOption($key, $default = '')
+    {
+        $data = Meta::where('object_type', 'integration_settings')
+            ->where('key', $key)
+            ->first();
+
+        if ($data) {
+            $value = maybe_unserialize($data->value);
+            if ($value) {
+                return $value;
+            }
+        }
+
+        return $default;
+    }
+
+    public static function updateIntegrationOption($key, $value)
+    {
+        $data = Meta::where('object_type', 'integration_settings')
+            ->where('key', $key)
+            ->first();
+
+        if ($data) {
+            return Meta::where('id', $data->id)
+                ->update([
+                    'value' => maybe_serialize($value)
+                ]);
+        }
+
+        return Meta::insert([
+            'object_type' => 'integration_settings',
+            'key'         => $key,
+            'value'       => maybe_serialize($value)
+        ]);
+    }
+
     public static function getTicketViewUrl($ticket)
     {
         $baseUrl = self::getPortalBaseUrl();
@@ -153,7 +189,8 @@ class Helper
     public static function isPublicSignedTicketEnabled()
     {
         $businessSettings = self::getBusinessSettings();
-        return !Arr::get($businessSettings, 'disable_public_ticket') == 'yes';
+
+        return  !(Arr::get($businessSettings, 'disable_public_ticket') == 'yes');
     }
 
     public static function getTicketAdminUrl($ticket)

@@ -59,18 +59,8 @@ class TelegramNotification extends NotificationIntegrationBase
 
     public function getSettings($withFields = false)
     {
-        $defaults = [
-            'bot_token'           => '',
-            'chat_id'             => '',
-            'notification_events' => [],
-            'test_message'        => '',
-            'status'              => 'no'
-        ];
-
-        $settings = $this->get();
-
         $data = [
-            'settings' => wp_parse_args($settings, $defaults)
+            'settings' => TelegramHelper::getSettings()
         ];
 
         if ($withFields) {
