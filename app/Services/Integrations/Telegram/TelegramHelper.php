@@ -102,16 +102,17 @@ class TelegramHelper
             $agent_id = $personMeta->object_id;
         }
 
-
-        preg_match('/#(.?[0-9]*)\\n/', $replyToText, $matches);
+        preg_match('/#(.?[0-9)]*)\\n/', $replyToText, $matches);
 
         $ticketId = false;
         if(count($matches) >=2) {
             $ticketId = $matches[1];
+            $ticketId = str_replace(')', '', $ticketId);
+            $ticketId = absint($ticketId);
         }
 
         if(!$ticketId) {
-            return new \WP_Error('no_ticket_id', 'No Ticket ID found from Payload');
+            return new \WP_Error('no_ticket_id', 'No Ticket ID found from Payload. '.$ticketId);
         }
 
         $responseText = Arr::get($payload, 'message.text');
