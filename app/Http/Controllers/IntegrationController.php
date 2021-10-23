@@ -22,9 +22,9 @@ class IntegrationController extends Controller
         $settings = IntegrationSettingsModule::saveSettings($settingsKey, $settings);
 
         if(!$settings || is_wp_error($settings)) {
+            $errorMessage = (is_wp_error($settings)) ? $settings->get_error_message() : 'Settings failed to save';
             return $this->sendError([
-                'message' => 'Settings failed to save',
-                'errors' => (is_wp_error($settings)) ? $settings->get_error_message() : ''
+                'message' => $errorMessage
             ]);
         }
 

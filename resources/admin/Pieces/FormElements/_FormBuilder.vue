@@ -1,9 +1,11 @@
 <template>
     <div class="fc_global_form_builder">
         <el-form @submit.prevent.native="nativeSave" :data="formData" :label-position="label_position">
-            <with-label v-for="(field,fieldIndex) in fields" :key="fieldIndex" :field="field">
-                <component :is="field.type" v-model="formData[fieldIndex]" :field="field"/>
-            </with-label>
+            <template v-for="(field,fieldIndex) in fields" :key="fieldIndex">
+                <with-label v-if="dependancyPass(field)" :field="field">
+                    <component :is="field.type" v-model="formData[fieldIndex]" :field="field"/>
+                </with-label>
+            </template>
         </el-form>
     </div>
 </template>
@@ -18,6 +20,7 @@ import InputOptions from './_InputOptions'
 import InlineCheckbox from './_InlineCheckbox'
 import VerifiedEmailInput from './_VerifiedEmailInput'
 import CheckboxGroup from './_InputCheckboxes'
+import HtmlViewer from './_HtmlViewer'
 
 export default {
     name: 'global_form_builder',
@@ -30,7 +33,8 @@ export default {
         InputOptions,
         InlineCheckbox,
         VerifiedEmailInput,
-        CheckboxGroup
+        CheckboxGroup,
+        HtmlViewer
     },
     props: {
         formData: {
@@ -75,9 +79,7 @@ export default {
          * @return {boolean}
          */
         dependancyPass(listItem) {
-            return true;
-            console.log(listItem);
-            if (listItem.dependency) {
+            if (listItem && listItem.dependency) {
                 const optionPaths = listItem.dependency.depends_on.split('/');
 
                 const dependencyVal = optionPaths.reduce((obj, prop) => {

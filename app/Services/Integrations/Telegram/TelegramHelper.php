@@ -2,8 +2,10 @@
 
 namespace FluentSupport\App\Services\Integrations\Telegram;
 
+use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Parser\Parsedown;
 use FluentSupport\Framework\Support\Arr;
 
 class TelegramHelper
@@ -36,7 +38,9 @@ class TelegramHelper
             'chat_id'             => '',
             'notification_events' => [],
             'test_message'        => '',
-            'status'              => 'no'
+            'reply_from_telegram' => 'no',
+            'status'              => 'no',
+            'webhook_activated' => 'no'
         ];
 
 
@@ -77,10 +81,27 @@ class TelegramHelper
             ->first();
 
         if(!$personMeta) {
-            return new \WP_Error('no_agent', 'No Matched Agent found on database telegram settings');
+
+            // let's try with first name and last name
+            $firstName = sanitize_text_field(Arr::get($payload, 'message.from.first_name'));
+            $lastName = sanitize_text_field(Arr::get($payload, 'message.from.last_name'));
+
+            $agent = Agent::where('first_name', $firstName)->where('last_name', $lastName)->orderBy('id', 'ASC')->first();
+
+            if(!$agent) {
+                $agent = Agent::where('first_name', $firstName)->orWhere('last_name', $lastName)->orderBy('id', 'ASC')->first();
+            }
+
+            if($agent) {
+                $agent_id = $agent->id;
+            } else {
+                return new \WP_Error('no_agent', 'No Matched Agent found on database telegram settings');
+            }
+
+        } else {
+            $agent_id = $personMeta->object_id;
         }
 
-        $agent_id = $personMeta->object_id;
 
         preg_match('/#(.?[0-9]*)\\n/', $replyToText, $matches);
 
@@ -93,9 +114,16 @@ class TelegramHelper
             return new \WP_Error('no_ticket_id', 'No Ticket ID found from Payload');
         }
 
+        $responseText = Arr::get($payload, 'message.text');
+        $responseText = str_replace('\n', PHP_EOL, $responseText);
+
+        if($parseText = (new Parsedown)->text($responseText)) {
+            $responseText = $parseText;
+        }
+
         return [
             'ticket_id' => $ticketId,
-            'response_text' => wpautop(Arr::get($payload, 'message.text')),
+            'response_text' => wpautop($responseText),
             'agent_id' => $agent_id
         ];
 

@@ -60,7 +60,8 @@ class ChatMessageParserController extends Controller
 
         return $this->sendSuccess([
             'message' => 'Response has been successfully recorded',
-            'status' => true
+            'status' => true,
+            'data' => $data
         ]);
 
     }
