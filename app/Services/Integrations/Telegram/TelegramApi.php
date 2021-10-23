@@ -112,20 +112,23 @@ class TelegramApi
         return new \WP_Error(300, 'Unknown API error from Telegram', $result);
     }
 
-    public function setBotWebhook()
+    public function setBotWebhook($botToken = '')
     {
-        $botToken = TelegramHelper::getBotToken();
+        if(!$botToken) {
+            $botToken = TelegramHelper::getBotToken();
+        }
 
         if(!$botToken) {
             return new \WP_Error('not_found', 'Bot Token could not be found');
         }
 
         $app = Helper::FluentSupport();
-
         $ns = $app->config->get('app.rest_namespace');
         $v = $app->config->get('app.rest_version');
-
         $restUrl = rest_url($ns . '/' . $v.'/public/telegram_bot_response/'.TelegramHelper::getWebhookToken());
+
+      //  $restUrl = 'https://09df-27-147-234-208.ngrok.io/wp-json/fluent-support/v2/public/telegram_bot_response/bc940802-3cf';
+
 
         $fullUrl = "https://api.telegram.org/bot{$botToken}/setWebhook?url=".rawurlencode($restUrl);
 
@@ -136,12 +139,21 @@ class TelegramApi
             return new \WP_Error($response->get_error_code(), $response->get_error_message());
         }
 
-        return json_decode(wp_remote_retrieve_body($response));
+        $returnData = json_decode(wp_remote_retrieve_body($response), true);
+
+        if(empty($returnData['ok'])) {
+            return new \WP_Error($returnData['error_code'], $returnData['description']);
+        }
+
+        return $returnData;
+
     }
 
-    public function deleteBotWebhook()
+    public function deleteBotWebhook($botToken = '')
     {
-        $botToken = TelegramHelper::getBotToken();
+        if(!$botToken) {
+            $botToken = TelegramHelper::getBotToken();
+        }
 
         if(!$botToken) {
             return new \WP_Error('not_found', 'Bot Token could not be found');

@@ -75,21 +75,21 @@ class TelegramNotification extends NotificationIntegrationBase
         return [
             'title'       => 'Telegram Notification Settings',
             'fields'      => [
-                'bot_token'           => [
+                'bot_token'            => [
                     'type'        => 'input-text',
                     'data_type'   => 'password',
                     'label'       => 'Bot Token',
                     'placeholder' => 'Bot Token',
                     'help'        => 'Enter your Telegram Bot Token'
                 ],
-                'chat_id'             => [
+                'chat_id'              => [
                     'type'        => 'input-text',
                     'data_type'   => 'text',
                     'placeholder' => 'Chat ID',
                     'label'       => 'Default Channel/Group Chat ID',
                     'help'        => 'Enter your Telegram API channel user ID, You can also use message id. Please check documentation for more details.'
                 ],
-                'notification_events' => [
+                'notification_events'  => [
                     'type'    => 'checkbox-group',
                     'label'   => 'Notification Events',
                     'options' => [
@@ -99,19 +99,50 @@ class TelegramNotification extends NotificationIntegrationBase
                         'response_added_by_customer' => 'Replied By Customer'
                     ]
                 ],
-                'test_message'        => [
+                'test_message'         => [
                     'placeholder' => 'Test Message to send right now',
                     'type'        => 'input-text',
                     'data_type'   => 'textarea',
                     'label'       => 'Test Message (Optional)',
                     'help'        => 'Enter message to send now as test'
                 ],
-                'status'              => [
+                'status'               => [
                     'type'           => 'inline-checkbox',
                     'true_label'     => 'yes',
                     'false_label'    => 'no',
                     'label'          => '',
                     'checkbox_label' => 'Enable Telegram Notifications'
+                ],
+                'reply_from_telegram'  => [
+                    'type'           => 'inline-checkbox',
+                    'true_label'     => 'yes',
+                    'false_label'    => 'no',
+                    'label'          => '',
+                    'checkbox_label' => 'Enable Reply From Telegram (Agent can directly reply from telegram)',
+                    'dependency'     => [
+                        'depends_on' => 'status',
+                        'operator'   => '=',
+                        'value'      => 'yes'
+                    ]
+                ],
+                'reply_from_html'      => [
+                    'type'          => 'html-viewer',
+                    'wrapper_class' => 'fs_highlight',
+                    'html'          => 'Your support agents can easily reply from telegram by replying to telegram. </br>Please make sure support agent has telegram id set to the profile. <a href="https://fluentsupport.com/docs/telegram-integration" target="_blank">Learn More about this feature</a>',
+                    'dependency'    => [
+                        'depends_on' => 'reply_from_telegram',
+                        'operator'   => '=',
+                        'value'      => 'yes'
+                    ]
+                ],
+                'reply_webhook_statys' => [
+                    'type'       => 'html-viewer',
+                    'html'       => 'Webhook is currently activated',
+                    'dependency' => [
+                        'depends_on' => 'webhook_activated',
+                        'operator'   => '=',
+                        'value'      => 'yes'
+                    ]
                 ]
             ],
             'button_text' => 'Save Telegram Settings'
@@ -120,10 +151,20 @@ class TelegramNotification extends NotificationIntegrationBase
 
     public function saveSettings($settings)
     {
+        $prevSettings = TelegramHelper::getSettings();
+
         if (empty($settings['chat_id']) || empty($settings['bot_token'])) {
             $settings['status'] = 'no';
+            $this->maybeRemoveWebhook($prevSettings);
+            $settings['webhook_activated'] = 'no';
             return $this->save($settings);
         }
+
+        if ($prevSettings['bot_token'] != $settings['bot_token'] || $settings['status'] == 'no' || $settings['reply_from_telegram'] == 'no') { // bot token changed
+            $this->maybeRemoveWebhook($prevSettings);
+            $settings['webhook_activated'] = 'no';
+        }
+
 
         $apiSettings = $settings;
 
@@ -147,12 +188,23 @@ class TelegramNotification extends NotificationIntegrationBase
                 }
             }
 
+            if ($settings['webhook_activated'] == 'no' && $settings['bot_token'] && $settings['reply_from_telegram'] == 'yes') {
+                $response = $this->maybeSetWebhook($settings);
+                if (is_wp_error($response)) {
+                    $apiSettings['webhook_activated'] = 'no';
+                    throw new \Exception($response->get_error_message());
+                } else {
+                    $apiSettings['webhook_activated'] = 'yes';
+                }
+            }
+
             $apiSettings['test_message'] = '';
 
             return $this->save($apiSettings);
 
         } catch (\Exception $exception) {
             $apiSettings['status'] = 'no';
+            $settings['webhook_activated'] = 'no';
             $this->save($apiSettings);
             return new \WP_Error($exception->getMessage());
         }
@@ -164,9 +216,9 @@ class TelegramNotification extends NotificationIntegrationBase
             $settings = $this->get();
         }
 
-        if($ticket) {
+        if ($ticket) {
             $agent = $ticket->agent;
-            if($agent && $chatId = $agent->getMeta('telegram_chat_id')) {
+            if ($agent && $chatId = $agent->getMeta('telegram_chat_id')) {
                 $settings['chat_id'] = $chatId;
             }
         }
@@ -242,5 +294,21 @@ class TelegramNotification extends NotificationIntegrationBase
     {
         $adminUrl = Helper::getPortalAdminBaseUrl();
         return $adminUrl . 'tickets/' . $ticket->id . '/view';
+    }
+
+    protected function maybeRemoveWebhook($settings)
+    {
+        if (Arr::get($settings, 'webhook_activated') == 'yes' && Arr::get($settings, 'bot_token')) {
+            return (new TelegramApi())->deleteBotWebhook(Arr::get($settings, 'bot_token'));
+        }
+    }
+
+    protected function maybeSetWebhook($settings)
+    {
+        if (Arr::get($settings, 'webhook_activated') != 'yes' && Arr::get($settings, 'bot_token')) {
+            return (new TelegramApi())->setBotWebhook(Arr::get($settings, 'bot_token'));
+        }
+
+        return false;
     }
 }
