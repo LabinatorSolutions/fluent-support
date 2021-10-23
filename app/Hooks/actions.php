@@ -107,11 +107,3 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     \WP_CLI::add_command( 'fluent_support', '\FluentSupport\App\Hooks\CLI\FluentCli' );
 }
 
-
-add_action('init', function () {
-    if(isset($_REQUEST['ticket_test'])) {
-        $ticket = \FluentSupport\App\Models\Ticket::first();
-        $url = \FluentSupport\App\Services\Helper::getTicketViewSignedUrl($ticket);
-        dd($url);
-    }
-});

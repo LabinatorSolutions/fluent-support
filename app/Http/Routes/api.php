@@ -16,7 +16,6 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
 
 });
 
-
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
 
     $router->get('my_stats', 'AgentController@myStats');
@@ -68,28 +67,28 @@ $router->prefix('saved-replies')->withPolicy('AgentTicketPolicy')->group(functio
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'ProductController@index');
     $router->post('/', 'ProductController@create');
-    $router->get('/{product_id}', 'ProductController@get');
-    $router->post('/{product_id}', 'ProductController@create');
-    $router->put('/{product_id}', 'ProductController@update');
-    $router->delete('/{product_id}', 'ProductController@delete');
+    $router->get('/{product_id}', 'ProductController@get')->int('product_id');
+    $router->post('/{product_id}', 'ProductController@create')->int('product_id');
+    $router->put('/{product_id}', 'ProductController@update')->int('product_id');
+    $router->delete('/{product_id}', 'ProductController@delete')->int('product_id');
 });
 
 $router->prefix('ticket-types')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'TicketTypeController@index');
     $router->post('/', 'TicketTypeController@create');
-    $router->get('/{ticket_type_id}', 'TicketTypeController@get');
-    $router->post('/{ticket_type_id}', 'TicketTypeController@create');
-    $router->put('/{ticket_type_id}', 'TicketTypeController@update');
-    $router->delete('/{ticket_type_id}', 'TicketTypeController@delete');
+    $router->get('/{ticket_type_id}', 'TicketTypeController@get')->int('ticket_type_id');
+    $router->post('/{ticket_type_id}', 'TicketTypeController@create')->int('ticket_type_id');
+    $router->put('/{ticket_type_id}', 'TicketTypeController@update')->int('ticket_type_id');
+    $router->delete('/{ticket_type_id}', 'TicketTypeController@delete')->int('ticket_type_id');
 });
 
 $router->prefix('ticket-tags')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'TicketTagsController@index');
     $router->post('/', 'TicketTagsController@create');
-    $router->get('/{tag_id}', 'TicketTagsController@get');
-    $router->post('/{tag_id}', 'TicketTagsController@create');
-    $router->put('/{tag_id}', 'TicketTagsController@update');
-    $router->delete('/{tag_id}', 'TicketTagsController@delete');
+    $router->get('/{tag_id}', 'TicketTagsController@get')->int('tag_id');
+    $router->post('/{tag_id}', 'TicketTagsController@create')->int('tag_id');
+    $router->put('/{tag_id}', 'TicketTagsController@update')->int('tag_id');
+    $router->delete('/{tag_id}', 'TicketTagsController@delete')->int('tag_id');
 });
 
 $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
@@ -109,8 +108,8 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'AgentController@index');
     $router->post('/', 'AgentController@addAgent');
-    $router->put('/{agent_id}', 'AgentController@updateAgent');
-    $router->delete('/{agent_id}', 'AgentController@deleteAgent');
+    $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
+    $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
 });
 
 $router->prefix('reports')->withPolicy('PortalPolicy')->group(function ($router) {
@@ -135,7 +134,6 @@ $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function
     $router->delete('/{customer_id}', 'CustomerController@delete');
 });
 
-
 $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function ($router) {
 
     $router->get('public_options', 'CustomerPortalController@getPublicOptions');
@@ -153,4 +151,8 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
 
     $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
 
+});
+
+$router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
+    $router->post('telegram_bot_response/{token}', 'ChatMessageParserController@handleTelegramWebhook')->alphaNumDash('token');
 });
