@@ -35,7 +35,7 @@ class IntegrationInit
             (new TutorLMS)->boot();
         }
 
-        //BuddyBoss
+        // BuddyBoss
         if(defined('BP_PLUGIN_DIR')) {
             (new BuddyBoss)->boot();
         }
@@ -43,6 +43,11 @@ class IntegrationInit
         // PaidMembership Pro
         if(defined('PMPRO_VERSION')) {
             (new PMPro)->boot();
+        }
+
+        // Restrict Content Pro
+        if(class_exists( '\Restrict_Content_Pro' )) {
+            (new RCPro)->boot();
         }
 
         if(defined('FLUENTCRM')) {
