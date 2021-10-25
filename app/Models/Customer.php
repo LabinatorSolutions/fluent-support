@@ -75,36 +75,6 @@ class Customer extends Person
         return $customer;
     }
 
-    /**
-     * Local scope to filter subscribers by search/query string
-     * @param \WPManageNinja\WPOrm\QueryBuilder $query
-     * @param string $search
-     * @return \WPManageNinja\WPOrm\QueryBuilder
-     */
-    public function scopeSearchBy($query, $search)
-    {
-        if ($search) {
-            $fields = $this->searchable;
-            $query->where(function ($query) use ($fields, $search) {
-                $query->where(array_shift($fields), 'LIKE', "%$search%");
-
-                $nameArray = explode(' ', $search);
-                if(count($nameArray) >= 2) {
-                    $query->orWhere(function ($q) use ($nameArray) {
-                        $fname = array_shift($nameArray);
-                        $lastName = implode(' ', $nameArray);
-                        $q->where('first_name', 'LIKE', "%$fname%");
-                        $q->where('last_name', 'LIKE', "%$lastName%");
-                    });
-                }
-                foreach ($fields as $field) {
-                    $query->orWhere($field, 'LIKE', "%$search%");
-                }
-            });
-        }
-
-        return $query;
-    }
 
     /**
      * One2Many: Customer has to many Click Tickets
