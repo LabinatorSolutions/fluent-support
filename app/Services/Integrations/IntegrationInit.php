@@ -34,7 +34,12 @@ class IntegrationInit
         if(defined('TUTOR_VERSION')) {
             (new TutorLMS)->boot();
         }
-        
+
+        //BuddyBoss
+        if(defined('BP_PLUGIN_DIR')) {
+            (new BuddyBoss)->boot();
+        }
+
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }

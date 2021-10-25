@@ -10,7 +10,7 @@ class TutorLMS {
 
     public function getTutorLMSCoursePurchaseWidgets($widgets, $customer)
     {
-        $userId = $customer->id;
+        $userId = $customer->user_id;
 
         if (!$userId) {
             return $widgets;

@@ -10,7 +10,7 @@ class LearnDash {
 
     public function getLDashCoursePurchaseWidgets($widgets, $customer)
     {
-        $courses = learndash_user_get_enrolled_courses($customer->id);
+        $courses = learndash_user_get_enrolled_courses($customer->user_id);
 
         $enrolledCourses = get_posts([
             'post_status'    => 'publish',
@@ -21,8 +21,8 @@ class LearnDash {
 
         $courseData = [];
         foreach ($enrolledCourses as $course) {
-            $completedAt = get_user_meta($customer->id, 'course_completed_' . $course->ID, true);
-            $startAt = get_user_meta($customer->id, 'course_' . $course->ID . '_access_from', true);
+            $completedAt = get_user_meta($customer->user_id, 'course_completed_' . $course->ID, true);
+            $startAt = get_user_meta($customer->user_id, 'course_' . $course->ID . '_access_from', true);
 
             $courseData[] = [
                 'id'           => esc_html($course->ID),
