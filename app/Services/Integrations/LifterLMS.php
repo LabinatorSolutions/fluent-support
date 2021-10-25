@@ -10,7 +10,7 @@ class LifterLMS {
 
     public function getLLMSCoursePurchaseWidgets($widgets, $customer)
     {
-        $student = llms_get_student($customer->id);
+        $student = llms_get_student($customer->user_id);
 
         if(!$student){
             return $widgets;
