@@ -50,6 +50,11 @@ class IntegrationInit
             (new RCPro)->boot();
         }
 
+        // WishListMember
+        if(defined('WLM3_PLUGIN_VERSION')) {
+            (new WishListMember)->boot();
+        }
+
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }
