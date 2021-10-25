@@ -36,7 +36,6 @@ class BuddyBoss
                     <?php
                     echo '<code>Name: </code>' . $group['name'] . '<br>';
                     echo '<code>Member From:  </code>'. $group['member_from'];
-                    echo bp_get_group_name($group);
                     ?>
                 </li>
             <?php endforeach; ?>
