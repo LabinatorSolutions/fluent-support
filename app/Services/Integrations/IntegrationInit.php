@@ -40,6 +40,11 @@ class IntegrationInit
             (new BuddyBoss)->boot();
         }
 
+        // PaidMembership Pro
+        if(defined('PMPRO_VERSION')) {
+            (new PMPro)->boot();
+        }
+
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }
