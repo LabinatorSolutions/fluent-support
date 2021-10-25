@@ -21,16 +21,9 @@ class LearnDash {
 
         $courseData = [];
         foreach ($enrolledCourses as $course) {
-            $completedAt = get_user_meta($customer->user_id, 'course_completed_' . $course->ID, true);
-            $startAt = get_user_meta($customer->user_id, 'course_' . $course->ID . '_access_from', true);
-
             $courseData[] = [
-                'id'           => esc_html($course->ID),
                 'title'        => esc_html($course->post_title),
-                'status'       => esc_html(learndash_course_status($course->ID, $customer->id, false)),
-                'completed_at' => esc_html(($completedAt) ? gmdate('Y-m-d H:i', $completedAt) : ''),
-                'started_at'   => esc_html(($startAt) ? gmdate('Y-m-d H:i', $startAt) : ''),
-                'price'        => learndash_get_course_price($course->ID, $customer->id, false)
+                'status'       => esc_html(learndash_course_status($course->ID, $customer->id, false))
             ];
         }
 
@@ -45,17 +38,8 @@ class LearnDash {
             <?php foreach ($courseData as $data):?>
                 <li title="Purchase Date: <?php echo $data['started_at'] ?>">
                     <?php
-                    echo $data['title'] . ' <code>' . $data['status'] . '</code>';
-                    echo '<br>';
-                    echo'<code> Type: '. $data['price']['type'] . '</code>';
-                    echo '<br>';
-                    if ($data['price']['frequency']){
-                        echo '<code> Frequency: '. $data['price']['frequency'] . '</code>';
-                        echo '<br>';
-                        echo '<code> Interval: '. $data['price']['interval'] . '</code>';
-                        echo '<br>';
-                        echo '<code> Cost: $'. $data['price']['price'] . '</code>';
-                    }
+                    echo '<code>Courese Name:</code> '. $data['title'] . '<br>';
+                    echo '<code>Status:</code> '. $data['status'] . '<br>';
                     ?>
                 </li>
             <?php endforeach; ?>

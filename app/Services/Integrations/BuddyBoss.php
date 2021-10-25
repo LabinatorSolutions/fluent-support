@@ -34,8 +34,8 @@ class BuddyBoss
             <?php foreach ($groupInfos as $group):?>
                 <li title="<?php $group['name']?>">
                     <?php
-                    echo '<code>Name: </code>' . $group['name'] . '<br>';
-                    echo '<code>Member From:  </code>'. $group['member_from'];
+                    echo '<code>Name:</code> ' . $group['name'] . '<br>';
+                    echo '<code>Member From:</code> '. $group['member_from'];
                     ?>
                 </li>
             <?php endforeach; ?>

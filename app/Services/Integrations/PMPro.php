@@ -35,7 +35,7 @@ class PMPro
             <?php foreach ($membershipInfo as $info):?>
                 <li title="<?php $info['name']?>">
                     <?php
-                    echo '<code>Name:</code> ' . $info['name'] . '<br>';
+                    echo '<code>Level:</code> ' . $info['name'] . '<br>';
                     echo '<code>Membership Start:</code> '. $info['startdate'] . '<br>';
                     if($info['enddate']){
                         echo '<code>Membership End:</code> '. $info['enddate'];

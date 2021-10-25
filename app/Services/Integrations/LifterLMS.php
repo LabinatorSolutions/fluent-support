@@ -31,14 +31,8 @@ class LifterLMS {
         $courseData = [];
         foreach ($enrolledCourses as $course) {
             $courseData[] = [
-                'id'              => esc_html($course->ID),
                 'title'           => esc_html($course->post_title),
-                'enrollment_date' => esc_html($student->get_enrollment_date($course->ID, 'enrolled')),
-                'status'          => esc_html(llms_get_enrollment_status_name($student->get_enrollment_status($course->ID))),
-                'grade'           => esc_html($student->get_grade($course->ID)),
-                'progress'        => esc_html($student->get_progress($course->ID, 'course') . '%'),
-                'price'           => esc_html(llms_price_raw($course->ID)),
-                'completed_at'    => esc_html($student->get_completion_date($course->ID))
+                'status'          => esc_html(llms_get_enrollment_status_name($student->get_enrollment_status($course->ID)))
             ];
         }
 
@@ -49,18 +43,8 @@ class LifterLMS {
             <?php foreach ($courseData as $data):?>
                 <li title="Purchase Date: <?php echo $data['enrollment_date'] ?>">
                     <?php
-                    echo $data['title'] . ' <code>' . $data['status'] . '</code>';
-                    echo '<br>';
-                    echo '<code> Cost:'. $data['price'] .'</code>';
-                    echo '<br>';
-                    echo '<code> Course Progress:'. $data['progress'] .'</code>';
-                    echo '<br>';
-                    if ($data['completed_at']){
-                        echo '<code> Completed At: '. $data['completed_at'] . '</code>';
-                        echo '<br>';
-                        echo '<code> Grade: '. $data['grade'] . '</code>';
-                        echo '<br>';
-                    }
+                    echo '<code>Course Name:</code> '. $data['title']. '<br>';
+                    echo '<code>Status:</code> '. $data['status']. '';
                     ?>
                 </li>
             <?php endforeach; ?>
