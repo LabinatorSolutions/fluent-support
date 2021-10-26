@@ -34,7 +34,7 @@ class IntegrationInit
         if(defined('TUTOR_VERSION')) {
             (new TutorLMS)->boot();
         }
-        
+
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }
@@ -48,6 +48,6 @@ class IntegrationInit
 
     private function addNotificationIntegrations()
     {
-        IntegrationSettingsModule::addIntegration(new TelegramNotification());
+        IntegrationSettingsModule::addIntegration('telegram_settings', TelegramNotification::class);
     }
 }

@@ -13,7 +13,6 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
 
     $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
     $router->put('/{id}/email_settings', 'MailBoxController@saveEmailSettings')->int('id');
-
 });
 
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
@@ -56,14 +55,6 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
 });
 
-$router->prefix('saved-replies')->withPolicy('AgentTicketPolicy')->group(function ($router) {
-    $router->get('/', 'SavedRepliesController@index');
-    $router->post('/', 'SavedRepliesController@create');
-    $router->get('/{id}', 'SavedRepliesController@get');
-    $router->put('/{id}', 'SavedRepliesController@update');
-    $router->delete('/{id}', 'SavedRepliesController@delete');
-});
-
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'ProductController@index');
     $router->post('/', 'ProductController@create');
@@ -80,15 +71,6 @@ $router->prefix('ticket-types')->withPolicy('AdminSettingsPolicy')->group(functi
     $router->post('/{ticket_type_id}', 'TicketTypeController@create')->int('ticket_type_id');
     $router->put('/{ticket_type_id}', 'TicketTypeController@update')->int('ticket_type_id');
     $router->delete('/{ticket_type_id}', 'TicketTypeController@delete')->int('ticket_type_id');
-});
-
-$router->prefix('ticket-tags')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
-    $router->get('/', 'TicketTagsController@index');
-    $router->post('/', 'TicketTagsController@create');
-    $router->get('/{tag_id}', 'TicketTagsController@get')->int('tag_id');
-    $router->post('/{tag_id}', 'TicketTagsController@create')->int('tag_id');
-    $router->put('/{tag_id}', 'TicketTagsController@update')->int('tag_id');
-    $router->delete('/{tag_id}', 'TicketTagsController@delete')->int('tag_id');
 });
 
 $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');

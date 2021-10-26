@@ -261,7 +261,7 @@ class TelegramNotification extends NotificationIntegrationBase
     {
         $message = '<b>New Ticket Submitted by ' . $person->full_name . ' (#' . $ticket->id . ')</b>' . "\n";
         $message .= '<code>' . esc_html(\mb_substr($ticket->title, 0, 30)) . '</code>' . "\n";
-        $message .= $this->clearText(\mb_substr($ticket->content, 0, 500)) . '...' . "\n";
+        $message .= $this->clearText($ticket->content) . "\n";
         if ($ticket->product) {
             $message .= '<i>#' . preg_replace('~[^\pL\d]+~u', '_', $ticket->product->title) . '</i>' . "\n";
         }
@@ -271,8 +271,8 @@ class TelegramNotification extends NotificationIntegrationBase
 
     private function replyMessage($ticket, $response)
     {
-        $message = '<b>Reply: ' . $ticket->title . ' #' . $ticket->id . '</b>' . "\n";
-        $message .= $this->clearText(\mb_substr($response->content, 0, 500)) . "\n";
+        $message = '<b>Reply: ' . esc_html(\mb_substr($ticket->title, 0, 30)) . ' #' . $ticket->id . '</b>' . "\n";
+        $message .= $this->clearText($response->content) . "\n";
         $message .= '<u><a href="' . $this->getTicketEditLink($ticket) . '">View Reply</a></u>';
         return $message;
     }

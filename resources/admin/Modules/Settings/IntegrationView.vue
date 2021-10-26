@@ -1,5 +1,11 @@
 <template>
     <div class="fs_integration">
+        <div class="fs_settings_sub_menu">
+            <ul>
+                <li v-for="driver in drivers" :key="driver.key">{{driver.title}}</li>
+            </ul>
+        </div>
+        <pre>{{drivers}}</pre>
         <div v-if="!loading" class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
@@ -37,7 +43,8 @@ export default {
             loading: true,
             settings: false,
             fields: false,
-            saving: false
+            saving: false,
+            drivers: this.appVars.notification_integrations
         }
     },
     methods: {
@@ -77,11 +84,19 @@ export default {
             })
             .always(() => {
                 this.saving = false;
-            })
+            });
         }
     },
     mounted() {
-        this.fetchSettings();
+        if(this.integration_key) {
+            this.fetchSettings();
+        } else {
+            if (this.drivers && this.drivers.length) {
+                this.integration_key = this.drivers[0].key;
+                this.$router.push({ name: 'integration', query: { integration_key: this.drivers[0].key } });
+                this.fetchSettings();
+            }
+        }
     }
 }
 </script>
