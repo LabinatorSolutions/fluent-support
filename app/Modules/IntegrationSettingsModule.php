@@ -16,7 +16,9 @@ class IntegrationSettingsModule
             return false;
         }
 
-        return $class->getSettings($withFields);
+        $instance = new $class();
+
+        return $instance->getSettings($withFields);
     }
 
     public static function saveSettings($integrationKey, $settings)
@@ -29,12 +31,14 @@ class IntegrationSettingsModule
             return false;
         }
 
-        return $class->saveSettings($settings);
+        $instance = new $class();
+
+        return $instance->saveSettings($settings);
     }
 
-    public static function addIntegration($class)
+    public static function addIntegration($key, $className)
     {
-        self::$integrations[$class->getKey()] = $class;
+        self::$integrations[$key] = $className;
     }
 
 }

@@ -24,7 +24,7 @@
 
                 <div class="fs_tk_actions">
                     <div v-if="products.length" class="fs_tk_left">
-                        <el-form-item label="Related Product/Service">
+                        <el-form-item class="fs_ticket_product" label="Related Product/Service">
                             <el-select v-model="ticket.product_id" placeholder="Select related Product/Service">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
                             </el-select>
@@ -40,7 +40,7 @@
                         <error :error="errors.get('ticket_type_id')"/>
                     </div>
                     <div class="fs_tk_left">
-                        <el-form-item label="Priority">
+                        <el-form-item class="fs_ticket_priority" label="Priority">
                             <el-select v-model="ticket.client_priority" placeholder="Select related Product/Service">
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
                             </el-select>
@@ -98,7 +98,6 @@ export default {
                 attachments: this.attachments
             })
             .then(response => {
-                console.log(this.appVars)
                 this.$router.push({ name: 'view_ticket', params: { ticket_id: response.ticket.id } });
             })
             .catch((errors) => {
