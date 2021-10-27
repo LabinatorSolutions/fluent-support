@@ -59,7 +59,7 @@ class TransStrings
             'Email Subject'    => __('Email Subject', 'fluent-support'),
             'Email Body'    => __('Email Body', 'fluent-support'),
             'enable_email'    => __('Enable This Email Notification', 'fluent-support'),
-            'can_not_edit_subject'    => __('You can not edit subject for this email. This subject patern is required for email reply parsing', 'fluent-support'),
+            'can_not_edit_subject'    => __('You can not edit subject for this email. This subject pattern is required for email reply parsing', 'fluent-support'),
             'Save Settings'    => __('Save Settings', 'fluent-support'),
             'Available Smartcodes'    => __('Available Smartcodes', 'fluent-support'),
             'Customer First Name'    => __('Customer First Name', 'fluent-support'),
