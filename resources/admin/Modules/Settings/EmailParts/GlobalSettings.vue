@@ -2,14 +2,14 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>Global Email Settings</h3>
+                <h3>{{$t('Global Email Settings')}}</h3>
             </div>
             <div class="fs_box_actions">
             </div>
         </div>
         <div style="padding: 20px" class="fs_box_body">
             <form-builder v-if="app_ready" :fields="fields" :form-data="settings" label_position="top" />
-            <el-button size="small" type="success" @click="saveSettings()">Save Settings</el-button>
+            <el-button size="small" type="success" @click="saveSettings()">{{$t('Save Settings')}}</el-button>
         </div>
     </div>
 </template>

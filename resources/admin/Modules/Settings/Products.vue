@@ -3,19 +3,19 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Products</h3>
+                    <h3>{{$t('Products')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button @click="createTicketModal()" type="primary" icon="el-icon-plus" size="small">Create New
+                    <el-button @click="createTicketModal()" type="primary" icon="el-icon-plus" size="small">{{$t('Create New')}}
                     </el-button>
                 </div>
             </div>
             <div v-if="!fetching" class="fs_box_body">
                 <el-table stripe :data="products">
-                    <el-table-column width="80" prop="id" label="ID"></el-table-column>
-                    <el-table-column prop="title" label="Title"></el-table-column>
-                    <el-table-column prop="description" label="Description"></el-table-column>
-                    <el-table-column width="120" label="Action">
+                    <el-table-column width="80" prop="id" :label="$t('ID')"></el-table-column>
+                    <el-table-column prop="title" :label="$t('Title')"></el-table-column>
+                    <el-table-column prop="description" :label="$t('Description')"></el-table-column>
+                    <el-table-column width="120" :label="$t('Action')">
                         <template #default="scope">
                             <el-button @click="editProductModal(scope.row)" size="mini" type="success"
                                        icon="el-icon-edit"></el-button>
@@ -34,23 +34,23 @@
 
         <el-dialog
             :append-to-body="true"
-            :title="(editing_product && editing_product.id) ? 'Edit Product' : 'Create New Supported Product'"
+            :title="(editing_product && editing_product.id) ? $t('Edit Product') : $t('Create New Supported Product')"
             v-model="ticket_modal"
             v-if="editing_product"
             width="60%">
 
             <el-form label-position="top" :data="editing_product">
-                <el-form-item label="Title">
-                    <el-input type="text" placeholder="Product Title" v-model="editing_product.title"/>
+                <el-form-item :label="$t('Title')">
+                    <el-input type="text" :placeholder="$t('Product Title')" v-model="editing_product.title"/>
                 </el-form-item>
-                <el-form-item label="Description">
-                    <el-input type="textarea" placeholder="Product Description" v-model="editing_product.description"/>
+                <el-form-item :label="$t('Description')">
+                    <el-input type="textarea" :placeholder="$t('Product Description')" v-model="editing_product.description"/>
                 </el-form-item>
             </el-form>
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateProduct()">Update</el-button>
+                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateProduct()">{{$t('Update')}}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -139,7 +139,7 @@ export default {
             this.ticket_modal = true;
         },
         deleteProduct(product) {
-            const r = confirm("Are you sure, You want to delete this?");
+            const r = confirm(this.$t("Are you sure, You want to delete this?"));
 
             if (!r) {
                 return ;

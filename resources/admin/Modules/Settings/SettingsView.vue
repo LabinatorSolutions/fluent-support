@@ -22,31 +22,31 @@ export default {
         return {
             settings_items: [
                 {
-                    title: 'Global Settings',
+                    title: this.$t('Global Settings'),
                     route_name: 'global_settings'
                 },
                 {
-                    title: 'Tags',
+                    title: this.$t('Tags'),
                     route_name: 'tags',
                     route_query: {}
                 },
                 {
-                    title: 'Products',
+                    title: this.$t('Products'),
                     route_name: 'products',
                     route_query: {}
                 },
                 {
-                    title: 'Ticket Types',
+                    title: this.$t('Ticket Types'),
                     route_name: 'ticket-type',
                     route_query: {}
                 },
                 {
-                    title: 'Support Staffs',
+                    title: this.$t('Support Staffs'),
                     route_name: 'support-staffs',
                     route_query: {}
                 },
                 {
-                    title: 'Notification Integrations',
+                    title: this.$t('Notification Integrations'),
                     route_name: 'integration'
                 }
             ]

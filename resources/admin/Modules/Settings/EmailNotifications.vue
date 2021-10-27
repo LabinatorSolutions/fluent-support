@@ -3,25 +3,25 @@
         <div class="fs_box_wrapper">
             <div v-loading="loading" class="fs_box_body">
                 <el-tabs v-model="active_tab" tab-position="left">
-                    <el-tab-pane name="global-settings" label="Global Settings">
+                    <el-tab-pane name="global-settings" :label="$t('Global Settings')">
                         <global-settings @saveSettings="saveSettings" v-if="active_tab == 'global-settings'" />
                     </el-tab-pane>
-                    <el-tab-pane name="ticket-submitted" label="Ticket Submitted">
+                    <el-tab-pane name="ticket-submitted" :label="$t('Ticket Submitted')">
                         <ticket-submitted v-if="active_tab == 'ticket-submitted'" />
                     </el-tab-pane>
-                    <el-tab-pane name="ticket-assigned" label="Ticket Assigned">
+                    <el-tab-pane name="ticket-assigned" :label="$t('Ticket Assigned')">
                         <ticket-assigned v-if="active_tab == 'ticket-assigned'" />
                     </el-tab-pane>
-                    <el-tab-pane name="replied-by-customer" label="Replied By Customer">
+                    <el-tab-pane name="replied-by-customer" :label="$t('Replied By Customer')">
                         <replied-by-customer v-if="active_tab == 'replied-by-customer'" />
                     </el-tab-pane>
-                    <el-tab-pane name="replied-by-agent" label="Replied By Agent">
+                    <el-tab-pane name="replied-by-agent" :label="$t('Replied By Agent')">
                         <replied-by-agent v-if="active_tab == 'replied-by-agent'" />
                     </el-tab-pane>
-                    <el-tab-pane name="closed-by-customer" label="Closed by Customer">
+                    <el-tab-pane name="closed-by-customer" :label="$t('Closed by Customer')">
                         <closed-by-customer v-if="active_tab == 'closed-by-customer'" />
                     </el-tab-pane>
-                    <el-tab-pane name="closed-by-agent" label="Closed by Agent">
+                    <el-tab-pane name="closed-by-agent" :label="$t('Closed by Agent')">
                         <closed-by-agent v-if="active_tab == 'closed-by-agent'" />
                     </el-tab-pane>
                 </el-tabs>
