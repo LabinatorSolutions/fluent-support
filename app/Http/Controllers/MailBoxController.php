@@ -134,6 +134,23 @@ class MailBoxController extends Controller
         ];
     }
 
+    public function getEmailsSetups(Request $request, Settings $settings, $boxId)
+    {
+        $box = MailBox::findOrFail($boxId);
+
+        $types = $settings->getEmailSettingsKeys();
+
+        $req = [];
+        foreach($types as $type) {
+            $req[] = $settings->getBoxEmailSettings($box, $type);
+        }
+
+        return [
+            'email_configs' => $req,
+            'email_keys'    => $types
+        ];
+    }
+
     public function saveEmailSettings(Request $request, Settings $settings, $boxId)
     {
         $data = wp_unslash($request->get('email_settings'));
