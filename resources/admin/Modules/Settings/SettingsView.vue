@@ -4,7 +4,7 @@
             <ul>
                 <li v-for="(settings_menu, settings_index) in settings_items">
                     <router-link :to="{ name: settings_menu.route_name, query: settings_menu.route_query }">
-                        {{settings_menu.title}}
+                        {{ settings_menu.title }}
                     </router-link>
                 </li>
             </ul>
@@ -46,23 +46,8 @@ export default {
                     route_query: {}
                 },
                 {
-<<<<<<< HEAD
-                    title: 'Telegram Integration',
-                    route_name: 'integration',
-                    route_query: {
-                        item_key: 'telegram_settings'
-                    }
-                },
-                {
-                    title: 'Slack Integration',
-                    route_name: 'slack-integration',
-                    route_query: {
-                        item_key: 'slack_settings'
-                    }
-=======
                     title: 'Notification Integrations',
                     route_name: 'integration'
->>>>>>> 789d83ffe5329d1b5f8f4a837646efc349464191
                 }
             ]
         }
