@@ -1,1 +1,0 @@
-{"version":3,"file":"/admin/js/firebase_notify.js","mappings":";;;;;AAAA;AAEAA,OAAO,CAACC,GAAR,CAAY,uBAAZ,E","sources":["webpack://fluentsupport/./resources/admin/firebase_notify.js"],"sourcesContent":["// import TicketActivityService from './Bits/TicketActivityService';\n\nconsole.log('TicketActivityService');\n"],"names":["console","log"],"sourceRoot":""}
