@@ -4,7 +4,7 @@
             <div class="fs_box">
                 <div class="fs_box_header">
                     <div class="fs_box_head">
-                        Individual Performance
+                        {{$t('Individual Performance')}}
                     </div>
                     <div class="fs_box_actions">
                         <el-date-picker
@@ -12,10 +12,10 @@
                             v-model="date_range"
                             type="daterange"
                             size="mini"
-                            range-separator="To"
+                            :range-separator="$t('To')"
                             :disabledDate="onlyPastDates"
-                            start-placeholder="Start"
-                            end-placeholder="End"
+                            :start-placeholder="$t('Start')"
+                            :end-placeholder="$t('End')"
                             :shortcuts="dateShortcuts"
                         />
                     </div>
@@ -29,40 +29,40 @@
                         @sort-change="handleSorting"
                         v-loading="loading"
                         style="width: 100%">
-                        <el-table-column min-width="200px" label="Agent">
+                        <el-table-column min-width="200px" :label="$t('Agent')">
                             <template #default="scope">
                                 {{ scope.row.full_name }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="responses" label="Responses">
+                        <el-table-column sortable="custom" prop="responses" :label="$t('Responses')">
                             <template #default="scope">
                                 {{ scope.row.stats.responses }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="interactions" label="Interactions">
+                        <el-table-column sortable="custom" prop="interactions" :label="$t('Interactions')">
                             <template #default="scope">
                                 {{ scope.row.stats.interactions }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="opens" label="Open Tickets">
+                        <el-table-column sortable="custom" prop="opens" :label="$t('Open Tickets')">
                             <template #default="scope">
                                 {{ scope.row.stats.opens }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column sortable="custom" prop="closed" label="Closed">
+                        <el-table-column sortable="custom" prop="closed" :label="$t('Closed')">
                             <template #default="scope">
                                 {{ scope.row.stats.closed }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column min-width="150px" label="Current Overall">
+                        <el-table-column min-width="150px" :label="$t('Current Overall')">
                             <template #default="scope">
                                 <template v-if="scope.row.active_stat">
                                     <ul style="margin: 0; padding: 0; list-style: none;">
-                                        <li>Waiting Tickets: {{scope.row.active_stat.waiting_tickets}}</li>
-                                        <li>Average Waiting: {{scope.row.active_stat.average_waiting}}</li>
-                                        <li>Max Waiting: {{scope.row.active_stat.max_waiting}}</li>
+                                        <li>{{$t('Waiting Tickets')}}: {{scope.row.active_stat.waiting_tickets}}</li>
+                                        <li>{{$t('Average Waiting')}}: {{scope.row.active_stat.average_waiting}}</li>
+                                        <li>{{$t('Max Waiting')}}: {{scope.row.active_stat.max_waiting}}</li>
                                     </ul>
                                 </template>
                             </template>
@@ -97,7 +97,7 @@ export default {
             date_range: [new Date(), new Date()],
             dateShortcuts: [
                 {
-                    text: 'Today',
+                    text: this.$t('Today'),
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -105,7 +105,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Yesterday',
+                    text: this.$t('Yesterday'),
                     value: (() => {
                         const start = new Date()
                         start.setTime(start.getTime() - 3600 * 1000 * 24);
@@ -113,7 +113,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last Week',
+                    text: this.$t('Last Week'),
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -122,7 +122,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last Month',
+                    text: this.$t('Last Month'),
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -131,7 +131,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last 3 Months',
+                    text: this.$t('Last 3 Months'),
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -140,7 +140,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last 6 Months',
+                    text: this.$t('Last 6 Months'),
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -149,7 +149,7 @@ export default {
                     })(),
                 },
                 {
-                    text: 'Last 1 Year',
+                    text: this.$t('Last 1 Year'),
                     value: (() => {
                         const end = new Date()
                         const start = new Date()
@@ -220,7 +220,7 @@ export default {
             const sums = [];
             columns.forEach((column, index) => {
                 if (index === 0) {
-                    sums[index] = "Total Summaries";
+                    sums[index] = this.$t("Total Summaries");
                     return;
                 }
                 sums[index] = this.totals[column.property];
