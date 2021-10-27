@@ -3,10 +3,10 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Business Inboxes</h3>
+                    <h3>{{$t('Business Inboxes')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button size="small" @click="showNewBusinessModal()" type="primary">Add New Business Inbox</el-button>
+                    <el-button size="small" @click="showNewBusinessModal()" type="primary">{{$t('Add New Business Inbox')}}</el-button>
                 </div>
             </div>
             <div class="">
@@ -22,7 +22,7 @@
                                     <template #dropdown>
                                         <el-dropdown-menu>
                                             <el-dropdown-item :command="{ type: 'delete', box_id: box.id }"
-                                                              icon="el-icon-delete">Delete
+                                                              icon="el-icon-delete">{{$t('Delete')}}
                                             </el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>
@@ -33,7 +33,7 @@
                                 <p>Type: {{ box.box_type }}</p>
                                 <p>Tickets Counts: {{ box.tickets_count }}</p>
                                 <router-link class="el-button el-button--success el-button--small"
-                                             :to="{name: 'box_settings', params: { box_id: box.id }}">View Settings
+                                             :to="{name: 'box_settings', params: { box_id: box.id }}">{{$t('View Settings')}}
                                 </router-link>
                             </div>
                         </div>
@@ -43,54 +43,54 @@
         </div>
 
         <el-dialog
-            title="Add a New Business Inbox"
+            :title="$t('Add a New Business Inbox')"
             v-model.sync="create_modal"
             width="60%">
             <el-form :data="new_business" label-position="top">
-                <el-form-item label="Inbox Name">
+                <el-form-item :label="$t('Inbox Name')">
                     <el-input type="text" v-model="new_business.name"></el-input>
                 </el-form-item>
-                <el-form-item label="Business Email">
+                <el-form-item :label="$t('Business Email')">
                     <el-input type="email" v-model="new_business.email"></el-input>
-                    <p>Please make sure your website can send emails from this email address</p>
+                    <p>{{$('email_can_be_send')}}</p>
                 </el-form-item>
-                <el-form-item label="Support Channel">
+                <el-form-item :label="$t('Support Channel')">
                     <el-radio-group v-model="new_business.box_type">
-                        <el-radio label="web">Web Based</el-radio>
-                        <el-radio :disabled="!appVars.has_email_parser" label="email">Email Based (MailBox)</el-radio>
+                        <el-radio label="web">{{$t('Web Based')}}</el-radio>
+                        <el-radio :disabled="!appVars.has_email_parser" :label="$t('email')">{{$t('Email Based (MailBox)')}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item v-if="new_business.box_type == 'email'" label="Mapped Email">
+                <el-form-item v-if="new_business.box_type == 'email'" :label="$t('Mapped Email')">
                     <el-input type="email" v-model="new_business.mapped_email"></el-input>
-                    <p>Please provide mapped webhook email from where you will send emails as webhook</p>
+                    <p>{{$t('mapped_webhook_email')}}</p>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button @click="create_modal = false">Cancel</el-button>
-                  <el-button type="primary" @click="createMailBox()">Add Business Inbox</el-button>
+                  <el-button @click="create_modal = false">{{$t('Cancel')}}</el-button>
+                  <el-button type="primary" @click="createMailBox()">{{$t('Add Business Inbox')}}</el-button>
                 </span>
             </template>
         </el-dialog>
 
         <el-dialog
-            title="Are You Sure? You can not undo this action."
+            :title="$t('Are You Sure? You can not undo this action.')"
             v-model.sync="deleting_box.show_modal"
             width="60%">
             <el-form :data="deleting_box" label-position="top">
-                <el-form-item label="Fallback Business">
-                    <el-select v-model="deleting_box.fallback_box" placeholder="Select related Product/Service">
+                <el-form-item :label="$t('Fallback Business')">
+                    <el-select v-model="deleting_box.fallback_box" :placeholder="$t('Select related Product/Service')">
                         <el-option :disabled="mailbox.id == deleting_box.box_id" v-for="mailbox in mailboxes"
                                    :key="mailbox.id" :value="mailbox.id"
                                    :label="mailbox.name"></el-option>
                     </el-select>
-                    <p>Please select the fallback business in where the existing tickets will be transferred</p>
+                    <p>{{$t('select_fallback_business')}}</p>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button @click="deleting_box.show_modal = false">Cancel</el-button>
-                  <el-button v-loading="deleteing" :disabled="deleteing" type="danger" @click="deleteMailBox()">Confirm Delete This Business</el-button>
+                  <el-button @click="deleting_box.show_modal = false">{{$t('Cancel')}}</el-button>
+                  <el-button v-loading="deleteing" :disabled="deleteing" type="danger" @click="deleteMailBox()">{{$t('Confirm Delete This Business')}}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -175,7 +175,7 @@ export default {
         },
         deleteMailBox() {
             if (!this.deleting_box.fallback_box || !this.deleting_box.box_id) {
-                alert('Please provide fallback box');
+                alert(this.$t('Please provide fallback box'));
                 return false;
             }
 

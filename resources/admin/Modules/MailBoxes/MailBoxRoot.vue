@@ -3,7 +3,7 @@
         <div v-if="mailbox" class="fs_box_wrapper">
             <div style="margin-bottom: 20px;" class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Settings: {{ mailbox.name }}</h3>
+                    <h3>{{$t('Settings')}}: {{ mailbox.name }}</h3>
                 </div>
                 <div class="fs_box_actions">
 
@@ -14,12 +14,12 @@
                     <ul>
                         <li>
                             <router-link :to="{ name: 'box_settings', params: { box_id: mailbox.id } }">
-                                Inbox Settings
+                                {{$t('Inbox Settings')}}
                             </router-link>
                         </li>
                         <li>
                             <router-link :to="{ name: 'email_settings', params: { box_id: mailbox.id } }">
-                                Email Settings
+                                {{$t('Email Settings')}}
                             </router-link>
                         </li>
                     </ul>
