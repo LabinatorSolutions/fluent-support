@@ -5,7 +5,7 @@
             <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
                 Good {{greetingTime}} {{me.full_name}},
                 <span style="font-weight: normal;">
-                    Here are a few tickets you may want to take a look at
+                    {{$t('dashboard_sub_heading')}}
                 </span>
             </div>
             <div class="fs_box_body">
@@ -20,7 +20,7 @@
                         </li>
                     </ul>
 
-                    <p class="fs_padded_20" v-else>Looks like you have caught up everything for now. <b>Good Job, {{me.full_name}}!</b></p>
+                    <p class="fs_padded_20" v-else>{{$t('dashboard_all_catch_up')}} <b>Good Job, {{me.full_name}}!</b></p>
 
                     <p class="fs_padded_20" v-if="overall_stats">
                         <span class="fs_highlight">{{overall_stats.waiting_tickets}} tickets</span> are waiting for reply with
@@ -37,7 +37,7 @@
 
         <div class="fs_box fs_dashboard_box">
             <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                Your Overview for Today
+                {{$t('Your Overview for Today')}}
             </div>
             <div class="fs_box_body">
                 <template v-if="!loading">

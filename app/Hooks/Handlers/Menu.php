@@ -10,6 +10,7 @@ use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Models\TicketType;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\TransStrings;
 
 class Menu
 {
@@ -209,6 +210,7 @@ class Menu
             'server_time'       => current_time('mysql'),
             'has_email_parser'  => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH'),
             'ticket_tags'       => TicketTag::select(['id', 'title'])->get(),
+            'i18n' => TransStrings::getTransStrings()
         ));
 
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
