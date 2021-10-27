@@ -59,6 +59,9 @@ export default class FluentFramework {
                 convertToText: self.convertToText,
                 $setTitle(title) {
                     document.title = title;
+                },
+                $t(string) {
+                    return window.window.fluentSupportAdmin.i18n[string] || string;
                 }
             }
         });
