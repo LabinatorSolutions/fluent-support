@@ -143,6 +143,7 @@ class TransStrings
             'Content'    => __('Content', 'fluent-support'),
             'Prefered Product'    => __('Prefered Product', 'fluent-support'),
             'Update'    => __('Update', 'fluent-support'),
+            'Upgrade To Pro'    => __('Upgrade To Pro', 'fluent-support'),
             'Are you sure, You want to delete this?'    => __('Are you sure, You want to delete this?', 'fluent-support'),
         ];
     }

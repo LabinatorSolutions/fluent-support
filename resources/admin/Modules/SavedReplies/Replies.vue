@@ -50,7 +50,7 @@
             <div class="fs_narrow_promo" style="background: white;" v-else>
                 <h3>{{$t('create_reply_template')}}</h3>
                 <p>{{$t('pro_promo')}}</p>
-                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
             </div>
         </div>
 
