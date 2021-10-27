@@ -2,16 +2,16 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>Support Staffs</h3>
+                <h3>{{$t('Support Staffs')}}</h3>
             </div>
             <div class="fs_box_actions">
                 <el-button @click="createStaffModal()" type="primary" icon="el-icon-plus" size="small">
-                    Add New
+                    {{$t('Add New')}}
                 </el-button>
             </div>
             <div class="fs_box_actions fs_ticket_orders">
                 <el-input @keyup.enter="fetchAgents" clearable @clear="fetchAgents" size="mini"
-                          placeholder="Search Agents" v-model="search">
+                          :placeholder="$t('Search Agents')" v-model="search">
                     <template #append>
                         <el-button @click="fetchAgents" icon="el-icon-search"></el-button>
                     </template>
@@ -20,26 +20,26 @@
         </div>
         <div v-if="!loading" class="fs_box_body">
             <el-table stripe :data="agents">
-                <el-table-column label="ID" prop="id" width="90"/>
-                <el-table-column label="Name" width="160">
+                <el-table-column :label="$t('ID')" prop="id" width="90"/>
+                <el-table-column :label="$t('Name')" width="160">
                     <template #default="scope">
                         <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                     </template>
                 </el-table-column>
-                <el-table-column label="Permissions">
+                <el-table-column :label="$t('Permissions')">
                     <template #default="scope">
                         <span class="fs_badge"
                               v-for="permission in scope.row.permissions">{{ readable(permission) }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="Replies" prop="replies_count" width="140"/>
-                <el-table-column label="Interactions" prop="interactions_count" width="140"/>
-                <el-table-column label="Title">
+                <el-table-column :label="$t('Replies')" prop="replies_count" width="140"/>
+                <el-table-column :label="$t('Interactions')" prop="interactions_count" width="140"/>
+                <el-table-column :label="$t('Title')">
                     <template #default="scope">
                         <span  style="font-size: 14px; color: #56c288;">{{scope.row.title}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="Actions" width="100">
+                <el-table-column :label="$t('Actions')" width="100">
                     <template #default="scope">
                         <el-button @click="initEdit(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
                         <el-button @click="deleteAgent(scope.row.id)" size="mini" type="danger" icon="el-icon-delete" />
@@ -57,34 +57,34 @@
 
         <el-dialog
             :append-to-body="true"
-            :title="(editing_agent && editing_agent.id) ? 'Edit Staff' : 'Add new Support Staff'"
+            :title="(editing_agent && editing_agent.id) ? $t('Edit Staff') : $t('Add New Support Staff')"
             v-model="agent_modal"
             v-if="editing_agent"
             width="60%">
 
             <el-form label-position="top" :data="editing_agent">
-                <el-form-item label="Email">
-                    <el-input :disabled="editing_agent.id" type="email" placeholder="Agent Email" v-model="editing_agent.email"/>
+                <el-form-item :label="$t('Email')">
+                    <el-input :disabled="editing_agent.id" type="email" :placeholder="$t('Agent Email')" v-model="editing_agent.email"/>
                 </el-form-item>
-                <el-form-item label="First Name">
-                    <el-input type="text" placeholder="First Name" v-model="editing_agent.first_name"/>
+                <el-form-item :label="$t('First Name')">
+                    <el-input type="text" :placeholder="$t('First Name')" v-model="editing_agent.first_name"/>
                 </el-form-item>
-                <el-form-item label="Last Name">
-                    <el-input type="text" placeholder="Last Name" v-model="editing_agent.last_name"/>
+                <el-form-item :label="$t('Last Name')">
+                    <el-input type="text" :placeholder="$t('Last Name')" v-model="editing_agent.last_name"/>
                 </el-form-item>
-                <el-form-item label="Title">
-                    <el-input type="text" placeholder="Agent Job Title( ex: Developer, Support Staff )" v-model="editing_agent.title"/>
+                <el-form-item :label="$t('Title')">
+                    <el-input type="text" :placeholder="$t('agent_title')" v-model="editing_agent.title"/>
                 </el-form-item>
 
-                <el-form-item label="Permissions">
+                <el-form-item :label="$t('Permissions')">
                     <el-checkbox-group v-model="editing_agent.permissions">
                         <el-checkbox v-for="permission in permissions" :label="permission" :key="permission">{{readable(permission)}}</el-checkbox>
                     </el-checkbox-group>
                 </el-form-item>
 
-                <h3>Telegram Integration</h3>
-                <el-form-item label="Telegram Chat ID">
-                    <el-input type="text" placeholder="Telegram Chat ID" v-model="editing_agent.telegram_chat_id"/>
+                <h3>{{$t('Telegram Integration')}}</h3>
+                <el-form-item :label="$t('Telegram Chat ID')">
+                    <el-input type="text" :placeholder="$t('Telegram Chat ID')" v-model="editing_agent.telegram_chat_id"/>
                 </el-form-item>
 
             </el-form>
@@ -92,8 +92,8 @@
             <template #footer>
                 <span class="dialog-footer">
                   <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateAgent()">
-                      <span v-if="editing_agent.id">Update</span>
-                      <span v-else>Create</span>
+                      <span v-if="editing_agent.id">{{$t('Update')}}</span>
+                      <span v-else>{{$t('Create')}}</span>
                   </el-button>
                 </span>
             </template>
@@ -193,10 +193,10 @@ export default {
                 .replaceAll('_', ' ');
         },
         deleteAgent(agentId) {
-            this.$prompt('Please provide Fallback Agent ID', 'Fallback Agent ID', {
-                confirmButtonText: 'Confirm Delete',
-                cancelButtonText: 'Cancel',
-                inputErrorMessage: 'Invalid ID'
+            this.$prompt( this.$t('Please Provide Fallback Agent ID'), this.$t('Fallback Agent ID'), {
+                confirmButtonText: this.$t('Confirm Delete'),
+                cancelButtonText: this.$t('Cancel'),
+                inputErrorMessage: this.$t('Invalid ID')
             }).then(({ value }) => {
                 this.confirmDeleteAgent(agentId, value);
             }).catch(() => {

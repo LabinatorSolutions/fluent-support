@@ -14,7 +14,7 @@
                 <el-button @click="saveSettings()" v-loading="saving" :disabled="saving" type="success">{{fields.button_text}}</el-button>
             </div>
             <div class="fs_box_body fs_padded_20" v-else>
-                <h3>Settings could not be found!</h3>
+                <h3>{{$t('Settings could not be found')}}!</h3>
             </div>
         </div>
         <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
