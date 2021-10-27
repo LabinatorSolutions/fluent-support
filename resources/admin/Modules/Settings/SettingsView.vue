@@ -51,6 +51,13 @@ export default {
                     route_query: {
                         item_key: 'telegram_settings'
                     }
+                },
+                {
+                    title: 'Slack Integration',
+                    route_name: 'slack-integration',
+                    route_query: {
+                        item_key: 'slack_settings'
+                    }
                 }
             ]
         }

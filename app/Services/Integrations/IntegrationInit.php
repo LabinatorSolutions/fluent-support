@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services\Integrations;
 
 
 use FluentSupport\App\Modules\IntegrationSettingsModule;
+use FluentSupport\App\Services\Integrations\Slack\SlackNotification;
 use FluentSupport\App\Services\Integrations\Telegram\TelegramNotification;
 
 class IntegrationInit
@@ -69,5 +70,6 @@ class IntegrationInit
     private function addNotificationIntegrations()
     {
         IntegrationSettingsModule::addIntegration(new TelegramNotification());
+        IntegrationSettingsModule::addIntegration(new SlackNotification());
     }
 }
