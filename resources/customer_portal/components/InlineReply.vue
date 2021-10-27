@@ -1,6 +1,6 @@
 <template>
     <div class="fst_reply_box" :class=" (is_focused) ? 'fst_reply_box_focused' : '' ">
-        <textarea @click="is_focused = true" v-if="!is_focused" class="fs_reply_text" placeholder="Click Here to Write a reply"></textarea>
+        <textarea @click="is_focused = true" v-if="!is_focused" class="fs_reply_text" :placeholder="$t('Click Here to Write a reply')"></textarea>
 
         <div v-else class="fs_reply_wrap">
             <h3>{{$t('Write a reply')}}</h3>
