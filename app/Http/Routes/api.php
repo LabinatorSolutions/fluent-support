@@ -84,6 +84,8 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->post('/', 'SettingsController@saveSettings');
     $router->get('/integration', 'IntegrationController@getSettings');
     $router->post('/integration', 'IntegrationController@saveSettings');
+    $router->get('/slack-integration', 'SlackController@getSettings');
+    $router->post('/slack-integration', 'SlackController@saveSettings');
     $router->get('/pages', 'SettingsController@getPages');
     $router->post('/setup', 'SettingsController@setupPortal');
 });
