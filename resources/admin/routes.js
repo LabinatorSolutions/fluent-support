@@ -11,6 +11,7 @@ import TicketTags from './Modules/Settings/TicketTags';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 import TicketType from "./Modules/Settings/TicketType";
+import SlackIntegration from "./Modules/Settings/SlackIntegration";
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -95,7 +96,12 @@ export default [
                 path: 'ticket-types',
                 name: 'ticket-type',
                 component: TicketType
-            }
+            },
+            {
+                path: 'slack-integration',
+                name: 'slack-integration',
+                component: SlackIntegration
+            },
         ]
     },
     {
