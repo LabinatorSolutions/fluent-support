@@ -6,44 +6,51 @@
                     <h3>Saved Replies</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button @click="createModal()" type="primary" icon="el-icon-plus" size="small">
+                    <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="el-icon-plus" size="small">
                         Create New
                     </el-button>
                 </div>
             </div>
-            <div v-if="!loading" class="fs_box_body">
-                <el-table stripe :data="replies">
-                    <el-table-column width="80" prop="id" label="ID"></el-table-column>
-                    <el-table-column prop="title" label="Title"></el-table-column>
-                    <el-table-column width="180" label="Product">
-                        <template #default="scope">
-                            {{scope.row.product?.title}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column width="180" label="Created By">
-                        <template #default="scope">
-                            {{scope.row.person?.full_name}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column width="180" label="Created On">
-                        <template #default="scope">
-                            {{$timeDiff(scope.row.created_at)}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column width="120" label="Action">
-                        <template #default="scope">
-                            <el-button @click="editModal(scope.row)" size="mini" type="success"
-                                       icon="el-icon-edit"></el-button>
-                            <el-button @click="deleteReply(scope.row)" size="mini" type="danger" icon="el-icon-delete"></el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <div class="fframe_pagination_wrapper">
-                    <pagination @fetch="fetch()" :pagination="pagination"/>
+            <template v-if="has_pro">
+                <div v-if="!loading" class="fs_box_body">
+                    <el-table stripe :data="replies">
+                        <el-table-column width="80" prop="id" label="ID"></el-table-column>
+                        <el-table-column prop="title" label="Title"></el-table-column>
+                        <el-table-column width="180" label="Product">
+                            <template #default="scope">
+                                {{scope.row.product?.title}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="180" label="Created By">
+                            <template #default="scope">
+                                {{scope.row.person?.full_name}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="180" label="Created On">
+                            <template #default="scope">
+                                {{$timeDiff(scope.row.created_at)}}
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="120" label="Action">
+                            <template #default="scope">
+                                <el-button @click="editModal(scope.row)" size="mini" type="success"
+                                           icon="el-icon-edit"></el-button>
+                                <el-button @click="deleteReply(scope.row)" size="mini" type="danger" icon="el-icon-delete"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="fframe_pagination_wrapper">
+                        <pagination @fetch="fetch()" :pagination="pagination"/>
+                    </div>
                 </div>
-            </div>
-            <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
-                <el-skeleton :rows="5" animated/>
+                <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                    <el-skeleton :rows="5" animated/>
+                </div>
+            </template>
+            <div class="fs_narrow_promo" style="background: white;" v-else>
+                <h3>Create reply templates and quickly send responses to the tickets.</h3>
+                <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
             </div>
         </div>
 
@@ -182,7 +189,9 @@ export default {
         }
     },
     mounted() {
-        this.fetch();
+        if(this.has_pro) {
+            this.fetch();
+        }
         this.$setTitle('Saved Replies');
     }
 }

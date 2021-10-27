@@ -15,6 +15,8 @@ return function($file) {
     });
 
     add_action('plugins_loaded', function() use ($file) {
-        do_action('fluent_support_loaded', new Application($file));
+        $application = new Application($file);
+        do_action('fluent_support_loaded', $application);
+        do_action('fluent_support_addons_loaded', $application);
     });
 };

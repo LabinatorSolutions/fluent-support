@@ -6,9 +6,7 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\Tag;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
@@ -16,7 +14,6 @@ use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
-use FluentSupport\Framework\Support\Arr;
 
 class TicketController extends Controller
 {

@@ -123,7 +123,7 @@ class Menu
             ->get()->toArray();
 
         foreach ($agents as $index => $agent) {
-            $agents[$index]['id'] = strval( $agent['id'] );
+            $agents[$index]['id'] = strval($agent['id']);
         }
 
         $me = Helper::getAgentByUserId(get_current_user_id());
@@ -165,7 +165,29 @@ class Menu
             true
         );
 
-        wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', array(
+        $integrationDrivers = [];
+        if(!defined('FLUENTSUPPORTPRO')) {
+            $integrationDrivers = [
+                [
+                    'key' => 'telegram_settings',
+                    'title' => 'Telegram',
+                    'description' => 'Send Telegram notifications to Group, Channel or individual person inbox and reply from Telegram inbox',
+                    'promo_heading' => 'Get activity notification to Telegram Messenger and reply directly from Telegram inbox',
+                    'require_pro' => true
+                ],
+                [
+                    'key' => 'slack_settings',
+                    'title' => 'Slack',
+                    'description' => 'Send ticket activity notifications to slack ',
+                    'promo_heading' => 'Get activity notification to Slack Channel and keep your support team super engaged',
+                    'require_pro' => true
+                ]
+            ];
+        }
+
+        $integrationDrivers = apply_filters('fluent_support_integration_drivers', $integrationDrivers);
+
+        $appVars = apply_filters('fluent_support_app_vars', array(
             'slug'              => $slug = $app->config->get('app.slug'),
             'nonce'             => wp_create_nonce($slug),
             'rest'              => $this->getRestInfo($app),
@@ -183,13 +205,17 @@ class Menu
             'pref'              => [
                 'go_back_after_reply' => 'yes'
             ],
+            'notification_integrations' => $integrationDrivers,
             'server_time'       => current_time('mysql'),
-            'has_email_parser' => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH'),
-            'ticket_tags' => TicketTag::select(['id', 'title'])->get()
+            'has_email_parser'  => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH'),
+            'ticket_tags'       => TicketTag::select(['id', 'title'])->get(),
         ));
 
-        do_action('fluent_support_admin_app_loaded', $app);
+        $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
 
+        wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', $appVars);
+
+        do_action('fluent_support_admin_app_loaded', $app);
 
     }
 
