@@ -2,21 +2,21 @@
     <div class="dashboard fs_box_wrapper">
         <div class="fs_box fs_dashboard_box">
             <div v-if="step == 'mailbox'" class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                Good {{ greetingTime }} {{ me.full_name }}, Please setup your support portal first
+                {{$t('Good')}} {{ greetingTime }} {{ me.full_name }}, {{$t('Please setup your support portal first')}}
             </div>
             <div class="fs_box_body fs_padded_20">
                 <template v-if="step == 'mailbox'">
-                    <h3>Your Business Details</h3>
+                    <h3>{{ $t('Your Business Details') }}</h3>
                     <el-form :data="mailbox" label-position="top">
-                        <el-form-item label="Business Name">
-                            <el-input placeholder="eg: Awesome Business Inc" type="text"
+                        <el-form-item :label="$t('Business Name')">
+                            <el-input :placeholder="$t('eg: Awesome Business Inc')" type="text"
                                       v-model="mailbox.name"></el-input>
                         </el-form-item>
-                        <el-form-item label="Business Email">
-                            <el-input placeholder="From Email Address" type="email" v-model="mailbox.email"></el-input>
-                            <p>Please make sure your website can send emails from this email address</p>
+                        <el-form-item :label="$t('Business Email')">
+                            <el-input :placeholder="$t('From Email Address')" type="email" v-model="mailbox.email"></el-input>
+                            <p>{{$t('email_can_be_send')}}</p>
                         </el-form-item>
-                        <el-form-item label="Support Portal Page (For Customers)">
+                        <el-form-item :label="$t('Support Portal Page (For Customers)')">
                             <el-select :disabled="global_settings.create_portal_page == 'yes'" clearable
                                        v-loading="loading_pages" filterable placeholder="Select a Page"
                                        v-model="global_settings.portal_page_id">
@@ -29,15 +29,14 @@
                                     <span style="float: right; color: #8492a6; font-size: 13px">{{ item.id }}</span>
                                 </el-option>
                             </el-select>
-                            <p>Use shortcode <code>[fluent_support_portal]</code> in the selected page.</p>
+                            <p>{{$t('Use shortcode')}} <code>[fluent_support_portal]</code> {{$t('in the selected page')}}.</p>
                             <el-checkbox v-if="!global_settings.portal_page_id" true-label="yes" false-label="no"
-                                         v-model="global_settings.create_portal_page">Create a page automatically with
-                                the shortcode
+                                         v-model="global_settings.create_portal_page">{{$t('shortcode_auto_page_creation')}}
                             </el-checkbox>
                         </el-form-item>
                         <el-form-item style="text-align: right">
                             <el-button v-loading="saving" :disabled="saving" type="success" @click="completeSetup()">
-                                Complete Setup
+                                {{$t('Complete Setup')}}
                             </el-button>
                         </el-form-item>
                     </el-form>
@@ -45,27 +44,27 @@
                 <div v-else>
                     <div class="text-align-center">
                         <h1 style="font-size: 45px; color: #7757e6;"><i class="el-icon-circle-check"></i></h1>
-                        <h2>Awesome! Your support portal is ready to go!</h2>
+                        <h2>{{$t('support_portal_ready')}}</h2>
                     </div>
                     <hr/>
                     <ul class="fs_listed">
                         <li>
                             <router-link :to="{ name: 'email_settings', params: { box_id: created_box.id } }">View
-                                Ticket Email Settings
+                                {{$t('Ticket Email Settings')}}
                             </router-link>
                         </li>
                         <li>
-                            <router-link :to="{ name: 'products' }">Setup Associate Product/Services for Tickets
+                            <router-link :to="{ name: 'products' }">{{$t('Setup Associate Product/Services for Tickets')}}
                             </router-link>
                         </li>
                         <li>
-                            <router-link :to="{ name: 'support-staffs' }">Manage Support Staff</router-link>
+                            <router-link :to="{ name: 'support-staffs' }">{{$t('Manage Support Staff')}}</router-link>
                         </li>
                         <li>
-                            <router-link :to="{ name: 'global_settings' }">Global Settings</router-link>
+                            <router-link :to="{ name: 'global_settings' }">{{$t('Global Settings')}}</router-link>
                         </li>
                         <li>
-                            <router-link :to="{ name: 'dashboard' }">Go to Dashboard</router-link>
+                            <router-link :to="{ name: 'dashboard' }">{{$t('Go to Dashboard')}}</router-link>
                         </li>
                     </ul>
                 </div>
@@ -111,11 +110,11 @@ export default {
             const currentHour = parseFloat(m.format("HH"));
 
             if (currentHour >= split_afternoon && currentHour <= split_evening) {
-                g = "afternoon";
+                g = this.$t("afternoon");
             } else if (currentHour >= split_evening) {
-                g = "evening";
+                g = this.$t("evening");
             } else {
-                g = "morning";
+                g = this.$t("morning");
             }
 
             return g;

@@ -3,7 +3,7 @@
 
         <div class="fs_box fs_dashboard_box">
             <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                Good {{greetingTime}} {{me.full_name}},
+                {{$t('Good')}} {{greetingTime}} {{me.full_name}},
                 <span style="font-weight: normal;">
                     {{$t('dashboard_sub_heading')}}
                 </span>
@@ -20,11 +20,11 @@
                         </li>
                     </ul>
 
-                    <p class="fs_padded_20" v-else>{{$t('dashboard_all_catch_up')}} <b>Good Job, {{me.full_name}}!</b></p>
+                    <p class="fs_padded_20" v-else>{{$t('dashboard_all_catch_up')}} <b>{{$t('Good Job')}}, {{me.full_name}}!</b></p>
 
                     <p class="fs_padded_20" v-if="overall_stats">
-                        <span class="fs_highlight">{{overall_stats.waiting_tickets}} tickets</span> are waiting for reply with
-                        <span class="fs_highlight"> average {{overall_stats.average_waiting}} wait time</span> & max wait time
+                        <span class="fs_highlight">{{overall_stats.waiting_tickets}} {{$t('tickets')}}</span> {{$t('are waiting for reply with')}}
+                        <span class="fs_highlight"> average {{overall_stats.average_waiting}} {{$t('wait time')}}</span> & {{$t('max wait time')}}
                         <span class="fs_highlight">{{overall_stats.max_waiting}}</span>
                     </p>
 
@@ -47,8 +47,8 @@
                         </li>
                     </ul>
                     <p class="fs_padded_20" v-if="individual_stat">
-                        <span class="fs_highlight">{{individual_stat.waiting_tickets}} tickets</span> are waiting for your reply with
-                        <span class="fs_highlight"> average {{individual_stat.average_waiting}} wait time</span> & max wait time
+                        <span class="fs_highlight">{{individual_stat.waiting_tickets}} {{$t('tickets')}}</span> {{$t('are waiting for reply with')}}
+                        <span class="fs_highlight"> average {{individual_stat.average_waiting}} {{$t('wait time')}}</span> & {{$t('max wait time')}}
                         <span class="fs_highlight">{{individual_stat.max_waiting}}</span>
                     </p>
                 </template>
@@ -88,11 +88,11 @@ export default {
             const currentHour = parseFloat(m.format("HH"));
 
             if (currentHour >= split_afternoon && currentHour <= split_evening) {
-                g = "afternoon";
+                g = this.$t("afternoon");
             } else if (currentHour >= split_evening) {
-                g = "evening";
+                g = this.$t("evening");
             } else {
-                g = "morning";
+                g = this.$t("morning");
             }
 
             return g;
