@@ -129,6 +129,21 @@ class TransStrings
             'Agents Reports'    => __('Agents Reports', 'fluent-support'),
             'Personal Reports'    => __('Personal Reports', 'fluent-support'),
             'Quick Stats'    => __('Quick Stats', 'fluent-support'),
+            'Saved Replies'    => __('Saved Replies', 'fluent-support'),
+            'Create New'    => __('Create New', 'fluent-support'),
+            'Product'    => __('Product', 'fluent-support'),
+            'Created By'    => __('Created By', 'fluent-support'),
+            'Created On'    => __('Created On', 'fluent-support'),
+            'Action'    => __('Action', 'fluent-support'),
+            'create_reply_template'    => __('Create reply templates and quickly send responses to the tickets.', 'fluent-support'),
+            'pro_promo'    => __('This is a pro feature. Please upgrade to Fluent Support Pro to use this feature', 'fluent-support'),
+            'Edit Reply'    => __('Edit Reply', 'fluent-support'),
+            'Create New Reply'    => __('Create New Reply', 'fluent-support'),
+            'Reply Title'    => __('Reply Title', 'fluent-support'),
+            'Content'    => __('Content', 'fluent-support'),
+            'Prefered Product'    => __('Prefered Product', 'fluent-support'),
+            'Update'    => __('Update', 'fluent-support'),
+            'Are you sure, You want to delete this?'    => __('Are you sure, You want to delete this?', 'fluent-support'),
         ];
     }
 }
