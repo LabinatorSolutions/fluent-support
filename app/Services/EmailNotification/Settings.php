@@ -9,13 +9,14 @@ class Settings
 
     public function getEmailSettingsKeys()
     {
-        return [
+        $key = apply_filters('fluent_support_email_setting_keys',[
             'ticket_created_email_to_customer',
             'ticket_replied_by_agent_email_to_customer',
             'ticket_closed_by_agent_email_to_customer',
             'ticket_created_email_to_admin',
             'ticket_replied_by_customer_email_to_admin'
-        ];
+        ]);
+        return $key;
     }
 
     public function get($settingsKey)
@@ -100,22 +101,37 @@ class Settings
 
         $settingsDefaults = [
             'ticket_created_email_to_customer'          => [
+                'key'            => 'ticket_created_email_to_customer',
+                'title'          => __('Ticket Created (To Customer)', 'fluent-support'),
+                'description'    =>__('This email will be sent when a customer submit a support ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'no'
             ],
             'ticket_replied_by_agent_email_to_customer' => [
+                'key'            => 'ticket_replied_by_agent_email_to_customer',
+                'title'          => __('Replied by Agent (To Customer)', 'fluent-support'),
+                'description'    =>__('This email will be sent when an agent reply to a ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_closed_by_agent_email_to_customer'  => [
+                'key'            => 'ticket_closed_by_agent_email_to_customer',
+                'title'          => __('Ticket Closed by Agent (To Customer)', 'fluent-support'),
+                'description'    =>__('This email will be sent when an agent close a ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_created_email_to_admin'             => [
+                'key'            => 'ticket_created_email_to_admin',
+                'title'          => __('Ticket Created (To Admin)', 'fluent-support'),
+                'description'    =>__('This email will be sent when the business when a new ticket has been submitted', 'fluent-support'),
                 'email_subject'  => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_replied_by_customer_email_to_admin' => [
+                'key'            => 'ticket_replied_by_customer_email_to_admin',
+                'title'          => __('Replied by Customer (To Agent/Admin)', 'fluent-support'),
+                'description'    => __('This email will be sent to Assigned Agent or Admin when a customer reply to a ticket', 'fluent-support'),
                 'email_subject'  => 'New Response: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ]
@@ -127,14 +143,20 @@ class Settings
 
         $savedSettings = (array)$box->getMeta('_email_' . $emailKey, []);
 
+
         if (!$savedSettings) {
             return [
+                'title'            => $settingsDefaults[$emailKey]['title'],
                 'email_subject'    => $settingsDefaults[$emailKey]['email_subject'],
                 'email_body'       => $this->getDefaultEmailBody($emailKey, $box->box_type),
                 'status'           => $settingsDefaults[$emailKey]['default_status'],
                 'can_edit_subject' => (in_array($emailKey, $strictSubjectKeys) && $box->box_type == 'email') ? 'no' : 'yes'
             ];
         }
+
+        $savedSettings['key'] = $settingsDefaults[$emailKey]['key'];
+        $savedSettings['title'] = $settingsDefaults[$emailKey]['title'];
+        $savedSettings['description']   = $settingsDefaults[$emailKey]['description'];
 
         if ($box->box_type == 'email' && in_array($emailKey, $strictSubjectKeys)) {
             $savedSettings['email_subject'] = $settingsDefaults[$emailKey]['email_subject'];

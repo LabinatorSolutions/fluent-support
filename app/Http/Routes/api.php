@@ -12,6 +12,7 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
     $router->delete('/{id}', 'MailBoxController@delete')->int('id');
 
     $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
+    $router->get('/{id}/email_configs', 'MailBoxController@getEmailsSetups');
     $router->put('/{id}/email_settings', 'MailBoxController@saveEmailSettings')->int('id');
 
 });

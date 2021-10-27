@@ -37702,37 +37702,18 @@ __webpack_require__.r(__webpack_exports__);
   props: ['box_id'],
   data: function data() {
     return {
-      active_tab: 'ticket_created_email_to_customer',
-      tab_items: [{
-        settings_key: 'ticket_created_email_to_customer',
-        title: 'Ticket Created (To Customer)',
-        description: 'This email will be sent when a customer submit a support ticket'
-      }, {
-        settings_key: 'ticket_replied_by_agent_email_to_customer',
-        title: 'Replied by Agent (To Customer)',
-        description: 'This email will be sent when an agent reply to a ticket'
-      }, {
-        settings_key: 'ticket_closed_by_agent_email_to_customer',
-        title: 'Ticket Closed by Agent (To Customer)',
-        description: 'This email will be sent when an agent close a ticket'
-      }, {
-        settings_key: 'ticket_created_email_to_admin',
-        title: 'Ticket Created (To Admin)',
-        description: 'This email will be sent when the business when a new ticket has been submitted'
-      }, {
-        settings_key: 'ticket_replied_by_customer_email_to_admin',
-        title: 'Replied by Customer (To Agent/Admin)',
-        description: 'This email will be sent to Assigned Agent or Admin when a customer reply to a ticket'
-      }],
-      active_tab_fields: false,
-      active_tab_settings: false,
+      active_email: '',
+      email_types: [],
+      active_email_settings: false,
+      configs: [],
+      edit_modal: false,
       loading: false,
       saving: false
     };
   },
   computed: {
     currentSmartCodes: function currentSmartCodes() {
-      if (this.active_tab == 'ticket_created_email_to_customer' || this.active_tab == 'ticket_created_email_to_admin') {
+      if (this.active_email == 'ticket_created_email_to_customer' || this.active_email == 'ticket_created_email_to_admin') {
         return {
           '{{customer.first_name}}': 'Customer First Name',
           '{{customer.last_name}}': 'Customer Last Name',
@@ -37768,44 +37749,62 @@ __webpack_require__.r(__webpack_exports__);
 
       this.loading = true;
       this.$get("mailboxes/".concat(this.box_id, "/email_settings"), {
-        email_type: this.active_tab
+        email_type: this.active_email
       }).then(function (response) {
-        _this.active_tab_settings = response.email_settings;
+        _this.active_email_settings = response.email_settings;
       })["catch"](function (errors) {
         _this.$handleError(errors);
       }).always(function () {
         _this.loading = false;
       });
     },
-    saveSettings: function saveSettings() {
+    getConfigs: function getConfigs() {
       var _this2 = this;
 
-      this.saving = true;
-      this.$put("mailboxes/".concat(this.box_id, "/email_settings"), {
-        email_type: this.active_tab,
-        email_settings: this.active_tab_settings
-      }).then(function (response) {
-        _this2.$notify({
-          message: response.message,
-          type: 'success',
-          position: 'bottom-right'
-        });
+      this.loading = true;
+      this.$get("mailboxes/".concat(this.box_id, "/email_configs")).then(function (response) {
+        _this2.configs = response.email_configs;
+        _this2.email_types = response.email_keys;
       })["catch"](function (errors) {
         _this2.handleError(errors);
       }).always(function () {
         _this2.saving = false;
       });
     },
-    switchTab: function switchTab(tab) {
-      this.active_tab_settings = false;
-      this.active_tab = tab.settings_key;
-      this.active_tab_fields = tab;
+    editEmail: function editEmail(email) {
+      this.edit_modal = true;
+      this.active_email_settings = false;
+      this.active_email = email.key;
       this.getSetting();
+    },
+    saveSettings: function saveSettings() {
+      var _this3 = this;
+
+      this.saving = true;
+      this.$put("mailboxes/".concat(this.box_id, "/email_settings"), {
+        email_type: this.active_email_settings.key,
+        email_settings: this.active_email_settings
+      }).then(function (response) {
+        _this3.$notify({
+          message: response.message,
+          type: 'success',
+          position: 'bottom-right'
+        });
+
+        _this3.edit_modal = false;
+
+        _this3.getConfigs();
+
+        _this3.getSetting();
+      })["catch"](function (errors) {
+        _this3.handleError(errors);
+      }).always(function () {
+        _this3.saving = false;
+      });
     }
   },
   mounted: function mounted() {
-    this.active_tab_fields = this.tab_items[0];
-    this.getSetting();
+    this.getConfigs();
   }
 });
 
@@ -39201,8 +39200,88 @@ __webpack_require__.r(__webpack_exports__);
         route_query: {
           item_key: 'telegram_settings'
         }
+      }, {
+        title: 'Slack Integration',
+        route_name: 'slack-integration',
+        route_query: {
+          item_key: 'slack_settings'
+        }
       }]
     };
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=script&lang=js":
+/*!*******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=script&lang=js ***!
+  \*******************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Pieces_FormElements_FormBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Pieces/FormElements/_FormBuilder */ "./resources/admin/Pieces/FormElements/_FormBuilder.vue");
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'SlackIntegration',
+  components: {
+    FormBuilder: _Pieces_FormElements_FormBuilder__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      integration_key: this.$route.query.item_key,
+      loading: true,
+      settings: false,
+      fields: false,
+      saving: false
+    };
+  },
+  methods: {
+    fetchSettings: function fetchSettings() {
+      var _this = this;
+
+      this.loading = true;
+      this.$get('settings/slack-integration', {
+        integration_key: this.integration_key
+      }).then(function (response) {
+        _this.settings = response.settings;
+        _this.fields = response.fields;
+
+        _this.$setTitle(response.fields.title);
+      })["catch"](function (errors) {
+        _this.$handleError(errors);
+      }).always(function () {
+        _this.loading = false;
+      });
+    },
+    saveSettings: function saveSettings() {
+      var _this2 = this;
+
+      this.saving = true;
+      this.$post('settings/slack-integration', {
+        integration_key: this.integration_key,
+        settings: this.settings
+      }).then(function (response) {
+        _this2.settings = response.settings;
+
+        _this2.$notify({
+          message: response.message,
+          type: 'success',
+          position: 'bottom-right'
+        });
+      })["catch"](function (errors) {
+        _this2.$handleError(errors);
+      }).always(function () {
+        _this2.saving = false;
+      });
+    }
+  },
+  mounted: function mounted() {
+    this.fetchSettings();
   }
 });
 
@@ -42214,29 +42293,45 @@ var _hoisted_1 = {
   "class": "fc_box_email_settings"
 };
 var _hoisted_2 = {
-  "class": "fs_inner_menu_items"
-};
-var _hoisted_3 = ["onClick"];
-var _hoisted_4 = {
   key: 0,
-  "class": "fc_settings_items_body"
+  style: {
+    "font-size": "20px",
+    "color": "#67c23a"
+  },
+  "class": "el-icon-circle-check"
 };
-var _hoisted_5 = {
+var _hoisted_3 = {
+  key: 1,
+  style: {
+    "font-size": "20px",
+    "color": "#f56c6c"
+  },
+  "class": "el-icon-circle-close"
+};
+var _hoisted_4 = {
   key: 0
 };
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Enable This Email Notification ");
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Enable This Email Notification ");
 
-var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Save Settings");
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("Save Settings");
 
-var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, "Available Smartcodes", -1
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, "Available Smartcodes", -1
 /* HOISTED */
 );
 
-var _hoisted_9 = {
+var _hoisted_8 = {
   "class": "fs_listed"
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_el_table_column = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-table-column");
+
+  var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
+
+  var _component_el_table = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-table");
+
+  var _component_el_skeleton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-skeleton");
+
   var _component_el_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-input");
 
   var _component_el_form_item = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-form-item");
@@ -42245,145 +42340,49 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_el_checkbox = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-checkbox");
 
-  var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
-
   var _component_el_col = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-col");
 
   var _component_el_row = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-row");
 
   var _component_el_form = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-form");
 
-  var _component_el_skeleton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-skeleton");
+  var _component_el_dialog = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-dialog");
 
   var _directive_loading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("loading");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_2, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.tab_items, function (tab) {
-    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
-      key: tab.settings_key,
-      "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(tab.settings_key == $data.active_tab ? 'fs_active_item' : ''),
-      onClick: function onClick($event) {
-        return $options.switchTab(tab);
-      }
-    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(tab.title), 11
-    /* TEXT, CLASS, PROPS */
-    , _hoisted_3);
-  }), 128
-  /* KEYED_FRAGMENT */
-  ))]), $data.active_tab_settings ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.active_tab_fields.description), 1
-  /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form, {
-    data: $data.active_tab_settings,
-    "label-position": "top"
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [$data.configs ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_table, {
+    key: 0,
+    data: $data.configs,
+    stripe: ""
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
-        label: "Email Subject"
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        label: "Title",
+        prop: "title",
+        width: "400"
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        label: "Status"
       }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
-            disabled: $data.active_tab_settings.can_edit_subject == 'no',
-            modelValue: $data.active_tab_settings.email_subject,
-            "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
-              return $data.active_tab_settings.email_subject = $event;
-            }),
-            placeholder: "Email Subject"
-          }, null, 8
-          /* PROPS */
-          , ["disabled", "modelValue"]), $data.active_tab_settings.can_edit_subject == 'no' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_5, "You can not edit subject for this email. This subject patern is required for email reply parsing")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function (scope) {
+          return [scope.row.status == 'yes' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("i", _hoisted_2)) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("i", _hoisted_3))];
         }),
         _: 1
         /* STABLE */
 
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
-        label: "Email Body"
+      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table_column, {
+        label: "Manage"
       }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_wp_editor, {
-            editor_id: $data.active_tab,
-            modelValue: $data.active_tab_settings.email_body,
-            "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-              return $data.active_tab_settings.email_body = $event;
-            })
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function (scope) {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+            onClick: function onClick($event) {
+              return $options.editEmail(scope.row);
+            },
+            size: "mini",
+            type: "primary",
+            icon: "el-icon-edit"
           }, null, 8
           /* PROPS */
-          , ["editor_id", "modelValue"])];
-        }),
-        _: 1
-        /* STABLE */
-
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_row, {
-        gutter: 20
-      }, {
-        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_col, {
-            sm: 24,
-            md: 12
-          }, {
-            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, null, {
-                "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-                  return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_checkbox, {
-                    "true-label": "yes",
-                    "false-label": "no",
-                    modelValue: $data.active_tab_settings.status,
-                    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
-                      return $data.active_tab_settings.status = $event;
-                    })
-                  }, {
-                    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-                      return [_hoisted_6];
-                    }),
-                    _: 1
-                    /* STABLE */
-
-                  }, 8
-                  /* PROPS */
-                  , ["modelValue"])];
-                }),
-                _: 1
-                /* STABLE */
-
-              }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
-                onClick: _cache[3] || (_cache[3] = function ($event) {
-                  return $options.saveSettings();
-                }),
-                disabled: $data.saving,
-                type: "success"
-              }, {
-                "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-                  return [_hoisted_7];
-                }),
-                _: 1
-                /* STABLE */
-
-              }, 8
-              /* PROPS */
-              , ["disabled"]), [[_directive_loading, $data.saving]])];
-            }),
-            _: 1
-            /* STABLE */
-
-          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_col, {
-            sm: 24,
-            md: 12
-          }, {
-            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-              return [_hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_9, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.currentSmartCodes, function (codeName, code) {
-                return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
-                  key: code
-                }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("b", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(codeName) + ":", 1
-                /* TEXT */
-                ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(code), 1
-                /* TEXT */
-                )]);
-              }), 128
-              /* KEYED_FRAGMENT */
-              ))])];
-            }),
-            _: 1
-            /* STABLE */
-
-          })];
+          , ["onClick"])];
         }),
         _: 1
         /* STABLE */
@@ -42395,11 +42394,155 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["data"])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_skeleton, {
+  , ["data"])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_skeleton, {
     key: 1,
     rows: 5,
     animated: ""
-  }))]);
+  }))]), $data.active_email_settings ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_dialog, {
+    key: 0,
+    "append-to-body": true,
+    width: "60%",
+    title: $data.active_email_settings.title,
+    modelValue: $data.edit_modal,
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+      return $data.edit_modal = $event;
+    })
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.active_email_settings.description), 1
+      /* TEXT */
+      ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form, {
+        data: $data.active_email_settings,
+        "label-position": "top"
+      }, {
+        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+            label: "Email Subject"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
+                disabled: $data.active_email_settings.can_edit_subject == 'no',
+                modelValue: $data.active_email_settings.email_subject,
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+                  return $data.active_email_settings.email_subject = $event;
+                }),
+                placeholder: "Email Subject"
+              }, null, 8
+              /* PROPS */
+              , ["disabled", "modelValue"]), $data.active_email_settings.can_edit_subject == 'no' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("p", _hoisted_4, "You can not edit subject for this email. This subject patern is required for email reply parsing")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+            label: "Email Body"
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_wp_editor, {
+                editor_id: $data.active_email_settings.key,
+                modelValue: $data.active_email_settings.email_body,
+                "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+                  return $data.active_email_settings.email_body = $event;
+                })
+              }, null, 8
+              /* PROPS */
+              , ["editor_id", "modelValue"])];
+            }),
+            _: 1
+            /* STABLE */
+
+          }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_row, {
+            gutter: 20
+          }, {
+            "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+              return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_col, {
+                sm: 24,
+                md: 12
+              }, {
+                "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                  return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, null, {
+                    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_checkbox, {
+                        "true-label": "yes",
+                        "false-label": "no",
+                        modelValue: $data.active_email_settings.status,
+                        "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+                          return $data.active_email_settings.status = $event;
+                        })
+                      }, {
+                        "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                          return [_hoisted_5];
+                        }),
+                        _: 1
+                        /* STABLE */
+
+                      }, 8
+                      /* PROPS */
+                      , ["modelValue"])];
+                    }),
+                    _: 1
+                    /* STABLE */
+
+                  }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+                    onClick: $options.saveSettings,
+                    disabled: $data.saving,
+                    type: "success"
+                  }, {
+                    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                      return [_hoisted_6];
+                    }),
+                    _: 1
+                    /* STABLE */
+
+                  }, 8
+                  /* PROPS */
+                  , ["onClick", "disabled"]), [[_directive_loading, $data.saving]])];
+                }),
+                _: 1
+                /* STABLE */
+
+              }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_col, {
+                sm: 24,
+                md: 12
+              }, {
+                "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+                  return [_hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("ul", _hoisted_8, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.currentSmartCodes, function (codeName, code) {
+                    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("li", {
+                      key: code
+                    }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("b", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(codeName) + ":", 1
+                    /* TEXT */
+                    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" " + (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(code), 1
+                    /* TEXT */
+                    )]);
+                  }), 128
+                  /* KEYED_FRAGMENT */
+                  ))])];
+                }),
+                _: 1
+                /* STABLE */
+
+              })];
+            }),
+            _: 1
+            /* STABLE */
+
+          })];
+        }),
+        _: 1
+        /* STABLE */
+
+      }, 8
+      /* PROPS */
+      , ["data"])];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["title", "modelValue"])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 64
+  /* STABLE_FRAGMENT */
+  );
 }
 
 /***/ }),
@@ -44797,6 +44940,102 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   ))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_view, {
     key: "products_view"
   })])]);
+}
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=template&id=6d4d3ca0":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=template&id=6d4d3ca0 ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+var _hoisted_1 = {
+  "class": "fs_integration"
+};
+var _hoisted_2 = {
+  key: 0,
+  "class": "fs_box_wrapper"
+};
+var _hoisted_3 = {
+  "class": "fs_box_header"
+};
+var _hoisted_4 = {
+  "class": "fs_box_head"
+};
+
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "fs_box_actions"
+}, null, -1
+/* HOISTED */
+);
+
+var _hoisted_6 = {
+  key: 0,
+  "class": "fs_box_body fs_padded_20"
+};
+var _hoisted_7 = {
+  key: 1,
+  "class": "fs_box_body fs_padded_20"
+};
+
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, "Settings could not be found!", -1
+/* HOISTED */
+);
+
+var _hoisted_9 = [_hoisted_8];
+var _hoisted_10 = {
+  key: 1,
+  style: {
+    "padding": "20px",
+    "background": "white"
+  },
+  "class": "fs_box_body"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_form_builder = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("form-builder");
+
+  var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
+
+  var _component_el_skeleton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-skeleton");
+
+  var _directive_loading = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveDirective)("loading");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [!$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.fields.title), 1
+  /* TEXT */
+  )]), _hoisted_5]), $data.fields ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_form_builder, {
+    fields: $data.fields.fields,
+    formData: $data.settings
+  }, null, 8
+  /* PROPS */
+  , ["fields", "formData"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+    onClick: _cache[0] || (_cache[0] = function ($event) {
+      return $options.saveSettings();
+    }),
+    disabled: $data.saving,
+    type: "success"
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)((0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.fields.button_text), 1
+      /* TEXT */
+      )];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["disabled"]), [[_directive_loading, $data.saving]])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_7, _hoisted_9))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+    rows: 5,
+    animated: ""
+  })]))]);
 }
 
 /***/ }),
@@ -49893,13 +50132,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Modules_Settings_SupportStaffs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./Modules/Settings/SupportStaffs */ "./resources/admin/Modules/Settings/SupportStaffs.vue");
 /* harmony import */ var _Modules_Settings_IntegrationView__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./Modules/Settings/IntegrationView */ "./resources/admin/Modules/Settings/IntegrationView.vue");
 /* harmony import */ var _Modules_Settings_TicketType__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./Modules/Settings/TicketType */ "./resources/admin/Modules/Settings/TicketType.vue");
-/* harmony import */ var _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Modules/Customers/Customers */ "./resources/admin/Modules/Customers/Customers.vue");
-/* harmony import */ var _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Modules/SavedReplies/Replies */ "./resources/admin/Modules/SavedReplies/Replies.vue");
-/* harmony import */ var _Modules_MailBoxes_MailBoxRoot__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Modules/MailBoxes/MailBoxRoot */ "./resources/admin/Modules/MailBoxes/MailBoxRoot.vue");
-/* harmony import */ var _Modules_MailBoxes_ChooseMailBox__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Modules/MailBoxes/ChooseMailBox */ "./resources/admin/Modules/MailBoxes/ChooseMailBox.vue");
-/* harmony import */ var _Modules_MailBoxes_MailBoxSettings__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Modules/MailBoxes/MailBoxSettings */ "./resources/admin/Modules/MailBoxes/MailBoxSettings.vue");
-/* harmony import */ var _Modules_MailBoxes_BoxEmailSettings__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Modules/MailBoxes/BoxEmailSettings */ "./resources/admin/Modules/MailBoxes/BoxEmailSettings.vue");
-/* harmony import */ var _Modules_Reports_Report__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Modules/Reports/Report */ "./resources/admin/Modules/Reports/Report.vue");
+/* harmony import */ var _Modules_Settings_SlackIntegration__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./Modules/Settings/SlackIntegration */ "./resources/admin/Modules/Settings/SlackIntegration.vue");
+/* harmony import */ var _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./Modules/Customers/Customers */ "./resources/admin/Modules/Customers/Customers.vue");
+/* harmony import */ var _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./Modules/SavedReplies/Replies */ "./resources/admin/Modules/SavedReplies/Replies.vue");
+/* harmony import */ var _Modules_MailBoxes_MailBoxRoot__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./Modules/MailBoxes/MailBoxRoot */ "./resources/admin/Modules/MailBoxes/MailBoxRoot.vue");
+/* harmony import */ var _Modules_MailBoxes_ChooseMailBox__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./Modules/MailBoxes/ChooseMailBox */ "./resources/admin/Modules/MailBoxes/ChooseMailBox.vue");
+/* harmony import */ var _Modules_MailBoxes_MailBoxSettings__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./Modules/MailBoxes/MailBoxSettings */ "./resources/admin/Modules/MailBoxes/MailBoxSettings.vue");
+/* harmony import */ var _Modules_MailBoxes_BoxEmailSettings__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./Modules/MailBoxes/BoxEmailSettings */ "./resources/admin/Modules/MailBoxes/BoxEmailSettings.vue");
+/* harmony import */ var _Modules_Reports_Report__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./Modules/Reports/Report */ "./resources/admin/Modules/Reports/Report.vue");
+
 
 
 
@@ -49979,17 +50220,21 @@ __webpack_require__.r(__webpack_exports__);
     path: 'ticket-types',
     name: 'ticket-type',
     component: _Modules_Settings_TicketType__WEBPACK_IMPORTED_MODULE_11__["default"]
+  }, {
+    path: 'slack-integration',
+    name: 'slack-integration',
+    component: _Modules_Settings_SlackIntegration__WEBPACK_IMPORTED_MODULE_12__["default"]
   }]
 }, {
   path: '/mailboxes',
-  component: _Modules_MailBoxes_ChooseMailBox__WEBPACK_IMPORTED_MODULE_15__["default"],
+  component: _Modules_MailBoxes_ChooseMailBox__WEBPACK_IMPORTED_MODULE_16__["default"],
   name: 'mailboxes',
   meta: {
     active: 'mailboxes'
   }
 }, {
   path: '/mailboxes/:box_id',
-  component: _Modules_MailBoxes_MailBoxRoot__WEBPACK_IMPORTED_MODULE_14__["default"],
+  component: _Modules_MailBoxes_MailBoxRoot__WEBPACK_IMPORTED_MODULE_15__["default"],
   props: true,
   meta: {
     active: 'mailboxes'
@@ -49998,31 +50243,31 @@ __webpack_require__.r(__webpack_exports__);
     props: true,
     path: 'settings',
     name: 'box_settings',
-    component: _Modules_MailBoxes_MailBoxSettings__WEBPACK_IMPORTED_MODULE_16__["default"]
+    component: _Modules_MailBoxes_MailBoxSettings__WEBPACK_IMPORTED_MODULE_17__["default"]
   }, {
     props: true,
     path: 'email_settings',
     name: 'email_settings',
-    component: _Modules_MailBoxes_BoxEmailSettings__WEBPACK_IMPORTED_MODULE_17__["default"]
+    component: _Modules_MailBoxes_BoxEmailSettings__WEBPACK_IMPORTED_MODULE_18__["default"]
   }]
 }, {
   path: '/customers',
   name: 'Customers',
-  component: _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_12__["default"],
+  component: _Modules_Customers_Customers__WEBPACK_IMPORTED_MODULE_13__["default"],
   meta: {
     active: 'customers'
   }
 }, {
   path: '/saved-replies',
   name: 'saved_replies',
-  component: _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_13__["default"],
+  component: _Modules_SavedReplies_Replies__WEBPACK_IMPORTED_MODULE_14__["default"],
   meta: {
     active: 'saved_replies'
   }
 }, {
   path: '/reports',
   name: 'reports',
-  component: _Modules_Reports_Report__WEBPACK_IMPORTED_MODULE_18__["default"],
+  component: _Modules_Reports_Report__WEBPACK_IMPORTED_MODULE_19__["default"],
   meta: {
     active: 'reports'
   }
@@ -120991,6 +121236,32 @@ if (false) {}
 
 /***/ }),
 
+/***/ "./resources/admin/Modules/Settings/SlackIntegration.vue":
+/*!***************************************************************!*\
+  !*** ./resources/admin/Modules/Settings/SlackIntegration.vue ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SlackIntegration_vue_vue_type_template_id_6d4d3ca0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SlackIntegration.vue?vue&type=template&id=6d4d3ca0 */ "./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=template&id=6d4d3ca0");
+/* harmony import */ var _SlackIntegration_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SlackIntegration.vue?vue&type=script&lang=js */ "./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=script&lang=js");
+/* harmony import */ var _Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+/* hot reload */
+if (false) {}
+
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (/*#__PURE__*/(0,_Users_rafiahmed_Projects_fs_wp_content_plugins_fluent_support_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_SlackIntegration_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_SlackIntegration_vue_vue_type_template_id_6d4d3ca0__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"resources/admin/Modules/Settings/SlackIntegration.vue"]]));
+
+/***/ }),
+
 /***/ "./resources/admin/Modules/Settings/SupportStaffs.vue":
 /*!************************************************************!*\
   !*** ./resources/admin/Modules/Settings/SupportStaffs.vue ***!
@@ -122093,6 +122364,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=script&lang=js":
+/*!***************************************************************************************!*\
+  !*** ./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=script&lang=js ***!
+  \***************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SlackIntegration_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SlackIntegration_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SlackIntegration.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/admin/Modules/Settings/SupportStaffs.vue?vue&type=script&lang=js":
 /*!************************************************************************************!*\
   !*** ./resources/admin/Modules/Settings/SupportStaffs.vue?vue&type=script&lang=js ***!
@@ -122873,6 +123160,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SettingsView_vue_vue_type_template_id_0a26ec38__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SettingsView_vue_vue_type_template_id_0a26ec38__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SettingsView.vue?vue&type=template&id=0a26ec38 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/SettingsView.vue?vue&type=template&id=0a26ec38");
+
+
+/***/ }),
+
+/***/ "./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=template&id=6d4d3ca0":
+/*!*********************************************************************************************!*\
+  !*** ./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=template&id=6d4d3ca0 ***!
+  \*********************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SlackIntegration_vue_vue_type_template_id_6d4d3ca0__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SlackIntegration_vue_vue_type_template_id_6d4d3ca0__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SlackIntegration.vue?vue&type=template&id=6d4d3ca0 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/admin/Modules/Settings/SlackIntegration.vue?vue&type=template&id=6d4d3ca0");
 
 
 /***/ }),

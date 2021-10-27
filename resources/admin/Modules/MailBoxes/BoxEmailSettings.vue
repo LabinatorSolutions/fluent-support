@@ -1,50 +1,60 @@
 <template>
     <div class="fc_box_email_settings">
-        <ul class="fs_inner_menu_items">
-            <li
-                v-for="tab in tab_items"
-                :key="tab.settings_key"
-                :class="(tab.settings_key == active_tab) ? 'fs_active_item' : ''"
-                @click="switchTab(tab)"
-            >
-                {{ tab.title }}
-            </li>
-        </ul>
-        <div v-if="active_tab_settings" class="fc_settings_items_body">
-            <h3>{{active_tab_fields.description}}</h3>
-            <el-form :data="active_tab_settings" label-position="top">
-                <el-form-item label="Email Subject">
-                    <el-input :disabled="active_tab_settings.can_edit_subject == 'no'"
-                              v-model="active_tab_settings.email_subject" placeholder="Email Subject"/>
-                    <p v-if="active_tab_settings.can_edit_subject == 'no'">You can not edit subject for this email. This
-                        subject patern is required for email reply parsing</p>
-                </el-form-item>
-                <el-form-item label="Email Body">
-                    <wp-editor :editor_id="active_tab" v-model="active_tab_settings.email_body"/>
-                </el-form-item>
-                <el-row :gutter="20">
-                    <el-col :sm="24" :md="12">
-                        <el-form-item>
-                            <el-checkbox true-label="yes" false-label="no" v-model="active_tab_settings.status">Enable
-                                This Email Notification
-                            </el-checkbox>
-                        </el-form-item>
-                        <el-button @click="saveSettings()" :disabled="saving" v-loading="saving" type="success">Save Settings</el-button>
-                    </el-col>
-                    <el-col :sm="24" :md="12">
-                        <h3>Available Smartcodes</h3>
-                        <ul class="fs_listed">
-                            <li v-for="(codeName, code) in currentSmartCodes" :key="code"><b>{{codeName}}:</b> {{code}}
-                            </li>
-                        </ul>
-                    </el-col>
-                </el-row>
-            </el-form>
+        <el-table v-if="configs" :data="configs" stripe>
+            <el-table-column label="Title" prop="title" width="400" />
+            <el-table-column label="Status">
+                <template #default="scope">
+                    <i v-if="scope.row.status == 'yes'" style="font-size: 20px; color: #67c23a;" class="el-icon-circle-check"></i>
+                    <i v-else style="font-size: 20px; color: #f56c6c;" class="el-icon-circle-close"></i>
+                </template>
+            </el-table-column>
+            <el-table-column label="Manage">
+                <template #default="scope">
+                    <el-button @click="editEmail(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
+                </template>
+            </el-table-column>
 
-        </div>
+        </el-table>
         <el-skeleton v-else :rows="5" animated/>
-
     </div>
+
+    <el-dialog v-if="active_email_settings"
+               :append-to-body="true"
+               width="60%"
+               :title="active_email_settings.title"
+               v-model="edit_modal"
+    >
+        <h3>{{active_email_settings.description}}</h3>
+        <el-form :data="active_email_settings" label-position="top">
+            <el-form-item label="Email Subject">
+                <el-input :disabled="active_email_settings.can_edit_subject == 'no'"
+                          v-model="active_email_settings.email_subject" placeholder="Email Subject"/>
+                <p v-if="active_email_settings.can_edit_subject == 'no'">You can not edit subject for this email. This
+                    subject patern is required for email reply parsing</p>
+            </el-form-item>
+            <el-form-item label="Email Body">
+                <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body"/>
+            </el-form-item>
+            <el-row :gutter="20">
+                <el-col :sm="24" :md="12">
+                    <el-form-item>
+                        <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">Enable
+                            This Email Notification
+                        </el-checkbox>
+                    </el-form-item>
+                    <el-button @click="saveSettings" :disabled="saving" v-loading="saving" type="success">Save Settings</el-button>
+                </el-col>
+                <el-col :sm="24" :md="12">
+                    <h3>Available Smartcodes</h3>
+                    <ul class="fs_listed">
+                        <li v-for="(codeName, code) in currentSmartCodes" :key="code"><b>{{codeName}}:</b> {{code}}
+                        </li>
+                    </ul>
+                </el-col>
+            </el-row>
+        </el-form>
+    </el-dialog>
+
 </template>
 
 <script type="text/babel">
@@ -58,36 +68,11 @@ export default {
     props: ['box_id'],
     data() {
         return {
-            active_tab: 'ticket_created_email_to_customer',
-            tab_items: [
-                {
-                    settings_key: 'ticket_created_email_to_customer',
-                    title: 'Ticket Created (To Customer)',
-                    description: 'This email will be sent when a customer submit a support ticket'
-                },
-                {
-                    settings_key: 'ticket_replied_by_agent_email_to_customer',
-                    title: 'Replied by Agent (To Customer)',
-                    description: 'This email will be sent when an agent reply to a ticket'
-                },
-                {
-                    settings_key: 'ticket_closed_by_agent_email_to_customer',
-                    title: 'Ticket Closed by Agent (To Customer)',
-                    description: 'This email will be sent when an agent close a ticket'
-                },
-                {
-                    settings_key: 'ticket_created_email_to_admin',
-                    title: 'Ticket Created (To Admin)',
-                    description: 'This email will be sent when the business when a new ticket has been submitted'
-                },
-                {
-                    settings_key: 'ticket_replied_by_customer_email_to_admin',
-                    title: 'Replied by Customer (To Agent/Admin)',
-                    description: 'This email will be sent to Assigned Agent or Admin when a customer reply to a ticket',
-                }
-            ],
-            active_tab_fields: false,
-            active_tab_settings: false,
+            active_email: '',
+            email_types: [],
+            active_email_settings: false,
+            configs: [],
+            edit_modal:false,
             loading: false,
             saving: false
         }
@@ -95,8 +80,8 @@ export default {
     computed: {
         currentSmartCodes() {
             if (
-                this.active_tab == 'ticket_created_email_to_customer' ||
-                this.active_tab == 'ticket_created_email_to_admin'
+                this.active_email == 'ticket_created_email_to_customer' ||
+                this.active_email == 'ticket_created_email_to_admin'
             ) {
                 return {
                     '{{customer.first_name}}': 'Customer First Name',
@@ -131,10 +116,10 @@ export default {
         getSetting() {
             this.loading = true;
             this.$get(`mailboxes/${this.box_id}/email_settings`, {
-                email_type: this.active_tab
+                email_type: this.active_email
             })
                 .then(response => {
-                    this.active_tab_settings = response.email_settings;
+                    this.active_email_settings = response.email_settings;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -143,18 +128,12 @@ export default {
                     this.loading = false;
                 });
         },
-        saveSettings() {
-            this.saving = true;
-            this.$put(`mailboxes/${this.box_id}/email_settings`, {
-                email_type: this.active_tab,
-                email_settings: this.active_tab_settings
-            })
+        getConfigs() {
+            this.loading = true;
+            this.$get(`mailboxes/${this.box_id}/email_configs`)
                 .then((response) => {
-                    this.$notify({
-                        message: response.message,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
+                    this.configs = response.email_configs;
+                    this.email_types = response.email_keys;
                 })
                 .catch((errors) => {
                     this.handleError(errors);
@@ -163,16 +142,38 @@ export default {
                     this.saving = false;
                 });
         },
-        switchTab(tab) {
-            this.active_tab_settings = false;
-            this.active_tab = tab.settings_key;
-            this.active_tab_fields = tab;
+        editEmail(email) {
+            this.edit_modal = true;
+            this.active_email_settings = false;
+            this.active_email = email.key;
             this.getSetting();
-        }
+        },
+        saveSettings() {
+            this.saving = true;
+            this.$put(`mailboxes/${this.box_id}/email_settings`, {
+                email_type: this.active_email_settings.key,
+                email_settings: this.active_email_settings
+            })
+                .then((response) => {
+                    this.$notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                    this.edit_modal=false;
+                    this.getConfigs();
+                    this.getSetting();
+                })
+                .catch((errors) => {
+                    this.handleError(errors);
+                })
+                .always(() => {
+                    this.saving = false;
+                });
+        },
     },
     mounted() {
-        this.active_tab_fields = this.tab_items[0];
-        this.getSetting();
+        this.getConfigs();
     }
 }
 </script>

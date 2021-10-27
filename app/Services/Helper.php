@@ -172,7 +172,7 @@ class Helper
     {
 
         if(self::isPublicSignedTicketEnabled()) {
-            return self::getTicketViewUrl();
+            return self::getTicketViewUrl($ticket);
         }
 
         $baseUrl = self::getPortalBaseUrl();
