@@ -20,7 +20,6 @@ abstract class NotificationIntegrationBase
         return $this->save($settings);
     }
 
-
     public function save($settings)
     {
         $exist = Meta::where('object_type', 'integration_settings')
