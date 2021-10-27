@@ -23098,6 +23098,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _Pieces_FormElements_FormBuilder__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Pieces/FormElements/_FormBuilder */ "./resources/admin/Pieces/FormElements/_FormBuilder.vue");
+/* harmony import */ var lodash_each__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lodash/each */ "./node_modules/lodash/each.js");
+/* harmony import */ var lodash_each__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash_each__WEBPACK_IMPORTED_MODULE_1__);
+
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'IntegrationView',
@@ -23106,68 +23109,91 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      integration_key: this.$route.query.item_key,
-      loading: true,
+      integration_key: this.$route.query.integration_key,
+      loading: false,
       settings: false,
       fields: false,
       saving: false,
       drivers: this.appVars.notification_integrations
     };
   },
+  computed: {
+    current_integration: function current_integration() {
+      var _this = this;
+
+      return this.drivers.find(function (driver) {
+        return driver.key == _this.integration_key;
+      });
+    }
+  },
   methods: {
     fetchSettings: function fetchSettings() {
-      var _this = this;
+      var _this2 = this;
+
+      if (!this.current_integration || this.current_integration.require_pro) {
+        return;
+      }
 
       this.loading = true;
       this.$get('settings/integration', {
         integration_key: this.integration_key
       }).then(function (response) {
-        _this.settings = response.settings;
-        _this.fields = response.fields;
+        _this2.settings = response.settings;
+        _this2.fields = response.fields;
 
-        _this.$setTitle(response.fields.title);
+        if (response.fields) {
+          _this2.$setTitle(response.fields.title);
+        }
       })["catch"](function (errors) {
-        _this.$handleError(errors);
+        _this2.$handleError(errors);
       }).always(function () {
-        _this.loading = false;
+        _this2.loading = false;
       });
     },
     saveSettings: function saveSettings() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.saving = true;
       this.$post('settings/integration', {
         integration_key: this.integration_key,
         settings: this.settings
       }).then(function (response) {
-        _this2.settings = response.settings;
+        _this3.settings = response.settings;
 
-        _this2.$notify({
+        _this3.$notify({
           message: response.message,
           type: 'success',
           position: 'bottom-right'
         });
       })["catch"](function (errors) {
-        _this2.$handleError(errors);
+        _this3.$handleError(errors);
       }).always(function () {
-        _this2.saving = false;
+        _this3.saving = false;
       });
+    },
+    switchIntegration: function switchIntegration(integrationKey) {
+      this.$router.push({
+        name: 'integration',
+        query: {
+          integration_key: integrationKey
+        }
+      });
+      this.integration_key = integrationKey;
+      this.fetchSettings();
     }
   },
   mounted: function mounted() {
     if (this.integration_key) {
       this.fetchSettings();
-    } else {
-      if (this.drivers && this.drivers.length) {
-        this.integration_key = this.drivers[0].key;
-        this.$router.push({
-          name: 'integration',
-          query: {
-            integration_key: this.drivers[0].key
-          }
-        });
-        this.fetchSettings();
-      }
+    } else if (this.drivers && this.drivers.length) {
+      this.integration_key = this.drivers[0].key;
+      this.$router.push({
+        name: 'integration',
+        query: {
+          integration_key: this.drivers[0].key
+        }
+      });
+      this.fetchSettings();
     }
   }
 });
@@ -23331,11 +23357,8 @@ __webpack_require__.r(__webpack_exports__);
         route_name: 'support-staffs',
         route_query: {}
       }, {
-        title: 'Telegram Integration',
-        route_name: 'integration',
-        route_query: {
-          item_key: 'telegram_settings'
-        }
+        title: 'Notification Integrations',
+        route_name: 'integration'
       }]
     };
   }
@@ -28557,35 +28580,48 @@ var _hoisted_2 = {
 };
 var _hoisted_3 = {
   key: 0,
-  "class": "fs_box_wrapper"
+  "class": "fs_box_wrapper fs_padded_20"
 };
 var _hoisted_4 = {
-  "class": "fs_box_header"
-};
-var _hoisted_5 = {
-  "class": "fs_box_head"
+  key: 0
 };
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
-  "class": "fs_box_actions"
-}, null, -1
+var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("hr", null, null, -1
 /* HOISTED */
 );
 
-var _hoisted_7 = {
-  key: 0,
-  "class": "fs_box_body fs_padded_20"
-};
-var _hoisted_8 = {
+var _hoisted_6 = {
   key: 1,
-  "class": "fs_box_body fs_padded_20"
+  "class": "fs_narrow_promo"
 };
 
-var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Settings could not be found!", -1
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", null, "This is a pro feature. Please upgrade to Fluent Support Pro to use this feature", -1
 /* HOISTED */
 );
 
+var _hoisted_8 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("a", {
+  target: "_blank",
+  rel: "noopener",
+  href: "https://fluentsupport.com",
+  "class": "el-button el-button--success"
+}, "Upgrade To Pro", -1
+/* HOISTED */
+);
+
+var _hoisted_9 = {
+  key: 2,
+  "class": "fs_box_body"
+};
 var _hoisted_10 = {
+  key: 3,
+  "class": "fs_box_body"
+};
+
+var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Settings could not be found!", -1
+/* HOISTED */
+);
+
+var _hoisted_12 = {
   key: 1,
   style: {
     "padding": "20px",
@@ -28604,17 +28640,25 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("ul", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.drivers, function (driver) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("li", {
-      key: driver.key
-    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(driver.title), 1
-    /* TEXT */
-    );
+      key: driver.key,
+      onClick: function onClick($event) {
+        return $options.switchIntegration(driver.key);
+      },
+      "class": {
+        fs_sub_active: driver.key == $data.integration_key
+      }
+    }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(driver.title), 11
+    /* TEXT, CLASS, PROPS */
+    , ["onClick"]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("pre", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.drivers), 1
+  ))])]), !$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_3, [$options.current_integration ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.current_integration.title) + " Integration Settings", 1
   /* TEXT */
-  ), !$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.fields.title), 1
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("p", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.current_integration.description), 1
   /* TEXT */
-  )]), _hoisted_6]), $data.fields ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_form_builder, {
+  ), _hoisted_5])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.current_integration && $options.current_integration.require_pro ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.current_integration.promo_heading), 1
+  /* TEXT */
+  ), _hoisted_7, _hoisted_8])) : $data.fields ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_form_builder, {
     fields: $data.fields.fields,
     formData: $data.settings
   }, null, 8
@@ -28636,7 +28680,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["disabled"]), [[_directive_loading, $data.saving]])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_8, [_hoisted_9]))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+  , ["disabled"]), [[_directive_loading, $data.saving]])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_10, [_hoisted_11]))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
     rows: 5,
     animated: ""
   })]))]);

@@ -90,12 +90,15 @@
 
 .fs_box_wrapper {
     box-sizing: border-box;
+
     * {
         box-sizing: border-box;
     }
+
     display: block;
     width: 100%;
     overflow: hidden;
+
     .fs_box_header {
         display: block;
         width: auto;
@@ -107,8 +110,10 @@
         background-color: #f7fafc;
         font-weight: 700;
         color: #697386;
+
         .fs_box_head {
             float: left;
+
             h3 {
                 display: inline-block;
                 margin: 8px 20px 8px 0;
@@ -116,10 +121,12 @@
                 font-size: 20px;
             }
         }
+
         .fs_box_actions {
             float: right;
         }
     }
+
     .fs_box_body {
         background: #fff;
         display: block;
@@ -129,12 +136,14 @@
 
 .el-dialog {
     border-radius: 5px;
+
     .el-dialog__header {
         background: #f1f2f5;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
         border-bottom: 1px solid #c5c4c4;
     }
+
     .el-dialog__footer {
         background: #f1f2f5;
         border-bottom-left-radius: 5px;
@@ -147,6 +156,7 @@
 .fs_row {
     display: block;
     overflow: hidden;
+
     .fs_half {
         width: 50%;
         float: left;
@@ -172,10 +182,12 @@ ul.fs_card_list {
     padding: 0;
     margin: 0;
     list-style: none;
+
     li {
         margin: 0;
         padding: 8px 15px;
         border-bottom: 1px solid #e3e8ed;
+
         &:last-child {
             border: 0;
         }
@@ -190,6 +202,7 @@ ul.fs_card_list {
     border-radius: 3px;
     border: 1px solid rgb(226, 228, 231);
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
+
     ul.fs_card_list li {
         span {
             line-height: 120%;
@@ -197,9 +210,11 @@ ul.fs_card_list {
             vertical-align: top;
             font-size: 16px;
         }
+
         &:hover {
             background: #f1f1f1;
         }
+
         a {
             color: #4f3d8e;
             display: flex;
@@ -222,11 +237,13 @@ ul.fs_inner_menu_items {
     list-style: none;
     background: #f1f2f5;
     margin: -20px -20px 20px;
+
     li {
         display: inline-block;
         padding: 15px 15px 12px;
         margin: 0;
         cursor: pointer;
+
         &.fs_active_item {
             background: white;
             border-top-left-radius: 5px;
@@ -240,6 +257,7 @@ ul.fs_inner_menu_items {
 .fs_listed {
     list-style: disc;
     padding: 0px 0px 0px 20px;
+
     li {
         display: list-item;
     }
@@ -255,4 +273,16 @@ span.fs_ticket_id {
 .fs_tags {
     display: inline-block;
     margin-left: 10px;
+}
+a.el-button {
+    text-decoration: none;
+}
+
+.fs_narrow_promo {
+    text-align: center;
+    padding: 30px;
+    max-width: 800px;
+    margin: 20px auto;
+    background: #f7fafc;
+    border-radius: 5px;
 }

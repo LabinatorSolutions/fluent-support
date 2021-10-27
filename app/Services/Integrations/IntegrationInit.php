@@ -3,58 +3,10 @@
 namespace FluentSupport\App\Services\Integrations;
 
 
-use FluentSupport\App\Modules\IntegrationSettingsModule;
-use FluentSupport\App\Services\Integrations\Telegram\TelegramNotification;
-
 class IntegrationInit
 {
     public function init()
     {
-        // Easy Digital Downloads
-        if (class_exists('\Easy_Digital_Downloads')) {
-            (new Edd())->boot();
-        }
-
-        // WooCommerce
-        if(defined('WC_PLUGIN_FILE')) {
-            (new WooCommerce())->boot();
-        }
-
-        // LearnDash
-        if (defined('LEARNDASH_VERSION')) {
-            (new LearnDash())->boot();
-        }
-
-        // LifterLMS
-        if (defined('LLMS_PLUGIN_FILE')) {
-            (new LifterLMS())->boot();
-        }
-
-        // TutorLMS
-        if(defined('TUTOR_VERSION')) {
-            (new TutorLMS)->boot();
-        }
-
-        // BuddyBoss
-        if(defined('BP_PLUGIN_DIR')) {
-            (new BuddyBoss)->boot();
-        }
-
-        // PaidMembership Pro
-        if(defined('PMPRO_VERSION')) {
-            (new PMPro)->boot();
-        }
-
-        // Restrict Content Pro
-        if(class_exists( '\Restrict_Content_Pro' )) {
-            (new RCPro)->boot();
-        }
-
-        // WishListMember
-        if(defined('WLM3_PLUGIN_VERSION')) {
-            (new WishListMember)->boot();
-        }
-
         if(defined('FLUENTCRM')) {
             (new FluentCRM())->boot();
         }
@@ -62,12 +14,5 @@ class IntegrationInit
         if(defined('FLUENTFORM')) {
             new \FluentSupport\App\Services\Integrations\FluentForm\FeedIntegration(wpFluentForm());
         }
-
-        $this->addNotificationIntegrations();
-    }
-
-    private function addNotificationIntegrations()
-    {
-        IntegrationSettingsModule::addIntegration('telegram_settings', TelegramNotification::class);
     }
 }

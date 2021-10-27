@@ -46,11 +46,8 @@ export default {
                     route_query: {}
                 },
                 {
-                    title: 'Telegram Integration',
-                    route_name: 'integration',
-                    route_query: {
-                        item_key: 'telegram_settings'
-                    }
+                    title: 'Notification Integrations',
+                    route_name: 'integration'
                 }
             ]
         }

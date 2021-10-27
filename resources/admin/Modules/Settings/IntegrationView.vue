@@ -2,24 +2,31 @@
     <div class="fs_integration">
         <div class="fs_settings_sub_menu">
             <ul>
-                <li v-for="driver in drivers" :key="driver.key">{{driver.title}}</li>
+                <li v-for="driver in drivers" :key="driver.key" @click="switchIntegration(driver.key)"
+                    :class="{fs_sub_active: driver.key == integration_key}">{{ driver.title }}
+                </li>
             </ul>
         </div>
-        <pre>{{drivers}}</pre>
-        <div v-if="!loading" class="fs_box_wrapper">
-            <div class="fs_box_header">
-                <div class="fs_box_head">
-                    <h3>{{ fields.title }}</h3>
-                </div>
-                <div class="fs_box_actions">
+        <div v-if="!loading" class="fs_box_wrapper fs_padded_20">
+            <div v-if="current_integration">
+                <h3>{{ current_integration.title }} Integration Settings</h3>
+                <p>{{ current_integration.description }}</p>
+                <hr/>
+            </div>
 
-                </div>
+            <div class="fs_narrow_promo" v-if="current_integration && current_integration.require_pro">
+                <h3>{{ current_integration.promo_heading }}</h3>
+                <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
             </div>
-            <div v-if="fields" class="fs_box_body fs_padded_20">
-                <form-builder :fields="fields.fields" :formData="settings" />
-                <el-button @click="saveSettings()" v-loading="saving" :disabled="saving" type="success">{{fields.button_text}}</el-button>
+
+            <div v-else-if="fields" class="fs_box_body">
+                <form-builder :fields="fields.fields" :formData="settings"/>
+                <el-button @click="saveSettings()" v-loading="saving" :disabled="saving" type="success">
+                    {{ fields.button_text }}
+                </el-button>
             </div>
-            <div class="fs_box_body fs_padded_20" v-else>
+            <div class="fs_box_body" v-else>
                 <h3>Settings could not be found!</h3>
             </div>
         </div>
@@ -31,6 +38,7 @@
 
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
+import each from 'lodash/each';
 
 export default {
     name: 'IntegrationView',
@@ -39,31 +47,43 @@ export default {
     },
     data() {
         return {
-            integration_key: this.$route.query.item_key,
-            loading: true,
+            integration_key: this.$route.query.integration_key,
+            loading: false,
             settings: false,
             fields: false,
             saving: false,
             drivers: this.appVars.notification_integrations
         }
     },
+    computed: {
+        current_integration() {
+            return this.drivers.find((driver) => {
+                return driver.key == this.integration_key;
+            });
+        }
+    },
     methods: {
         fetchSettings() {
+            if (!this.current_integration || this.current_integration.require_pro) {
+                return;
+            }
             this.loading = true;
             this.$get('settings/integration', {
                 integration_key: this.integration_key
             })
-            .then(response => {
-                this.settings = response.settings;
-                this.fields = response.fields;
-                this.$setTitle(response.fields.title);
-            })
-            .catch((errors) => {
-                this.$handleError(errors)
-            })
-            .always(() => {
-                this.loading = false;
-            });
+                .then(response => {
+                    this.settings = response.settings;
+                    this.fields = response.fields;
+                    if (response.fields) {
+                        this.$setTitle(response.fields.title);
+                    }
+                })
+                .catch((errors) => {
+                    this.$handleError(errors)
+                })
+                .always(() => {
+                    this.loading = false;
+                });
         },
         saveSettings() {
             this.saving = true;
@@ -71,31 +91,34 @@ export default {
                 integration_key: this.integration_key,
                 settings: this.settings
             })
-            .then(response => {
-                this.settings = response.settings;
-                this.$notify({
-                    message: response.message,
-                    type: 'success',
-                    position: 'bottom-right'
+                .then(response => {
+                    this.settings = response.settings;
+                    this.$notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.saving = false;
                 });
-            })
-            .catch((errors) => {
-                this.$handleError(errors);
-            })
-            .always(() => {
-                this.saving = false;
-            });
+        },
+        switchIntegration(integrationKey) {
+            this.$router.push({name: 'integration', query: {integration_key: integrationKey}});
+            this.integration_key = integrationKey;
+            this.fetchSettings();
         }
     },
     mounted() {
-        if(this.integration_key) {
+        if (this.integration_key) {
             this.fetchSettings();
-        } else {
-            if (this.drivers && this.drivers.length) {
-                this.integration_key = this.drivers[0].key;
-                this.$router.push({ name: 'integration', query: { integration_key: this.drivers[0].key } });
-                this.fetchSettings();
-            }
+        } else if (this.drivers && this.drivers.length) {
+            this.integration_key = this.drivers[0].key;
+            this.$router.push({name: 'integration', query: {integration_key: this.drivers[0].key}});
+            this.fetchSettings();
         }
     }
 }
