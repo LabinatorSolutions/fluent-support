@@ -18,14 +18,14 @@
                 <el-button class="fs_add_tag_icon" size="mini" icon="el-icon-plus"></el-button>
             </template>
             <div class="fs_tags_add_wrapper">
-                <h3>Add Tags</h3>
+                <h3>{{$t('Add Tags')}}</h3>
                 <ul v-loading="adding_tag" v-if="available_tags.length">
                     <li v-for="tag in available_tags" :key="tag.id" @click="attachTag(tag)">
                         <span class="el-icon el-icon-plus"></span>
                         {{tag.title}}
                     </li>
                 </ul>
-                <p v-else>No available tags found</p>
+                <p v-else>{{$t('No available tags found')}}</p>
             </div>
         </el-popover>
     </div>

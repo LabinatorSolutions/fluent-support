@@ -2,7 +2,7 @@
     <div class="fs_edit_response">
         <wp-editor v-model="response.content" />
         <hr />
-        <el-button size="small" type="success" @click="editResponse()">Update Response</el-button>
+        <el-button size="small" type="success" @click="editResponse()">{{$t('Update Response')}}</el-button>
     </div>
 </template>
 

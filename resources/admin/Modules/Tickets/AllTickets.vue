@@ -3,11 +3,11 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Tickets <span class="fs_badge">{{ pagination.total }}</span></h3>
+                    <h3>{{$t('Tickets')}} <span class="fs_badge">{{ pagination.total }}</span></h3>
                     <el-button
                         @click="add_ticket_modal = true"
                         size="mini"
-                        icon="el-icon-plus">Add Ticket</el-button>
+                        icon="el-icon-plus">{{$t('Add Ticket')}}</el-button>
                     <el-button v-loading="loading"
                                @click="fetchTickets()"
                                icon="el-icon-refresh"
@@ -54,7 +54,7 @@
                                  class="tk_customer_avatar" :src="scope.row.customer.photo"/>
                         </template>
                     </el-table-column>
-                    <el-table-column min-width="300" label="Title">
+                    <el-table-column min-width="300" :label="$t('Title')">
                         <template #default="scope">
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
@@ -90,14 +90,14 @@
                             <span class="fs_thread_count">{{ scope.row.response_count }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column width="100" label="Manager">
+                    <el-table-column width="100" :label="$t('Manager')">
                         <template #default="scope">
                             <span :title="scope.row.agent.full_name"
                                   v-if="scope.row.agent">{{ scope.row.agent.first_name }}</span>
                             <span v-else>n/a</span>
                         </template>
                     </el-table-column>
-                    <el-table-column width="120" label="Status">
+                    <el-table-column width="120" :label="$t('Status')">
                         <template #default="scope">
                             <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
                             <span class="fs_badge" :class="'fs_badge_priority_'+scope.row.client_priority">
@@ -106,13 +106,13 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                        label="Date"
+                        :label="$t('Date')"
                         width="180">
                         <template #default="scope">
-                            <span style="opacity: 0.4;" :title="'Ticket created at ' + scope.row.created_at">
+                            <span style="opacity: 0.4;" :title="$t('Ticket created at ') + scope.row.created_at">
                                 <i class="el-icon-chat-line-square"></i> {{ $timeDiff(scope.row.created_at) }}
                             </span>
-                            <span style="display: block;" title="Waiting Time">
+                            <span style="display: block;" :title="$t('Waiting Time')">
                                 <i class="el-icon-stopwatch"></i> {{ $timeDiff(scope.row.waiting_since) }}
                             </span>
                         </template>
@@ -123,7 +123,7 @@
                         <div v-if="ticket_selections.length">
                             <el-dropdown trigger="click">
                                 <el-button type="primary" size="mini">
-                                    Actions<i class="el-icon-arrow-down el-icon--right"></i>
+                                    {{$t('Actions')}}<i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <template #dropdown>
                                     <el-dropdown-menu class="ticket-action-buttons">
@@ -131,7 +131,7 @@
                                         <el-dropdown-item>
                                             <el-popconfirm
                                             @confirm="deleteSelected()"
-                                            title="Are you sure to delete the selected Tickets?"
+                                            :title="$t('ticket_delete_warning')"
                                         >
                                                 <template #reference>
                                                     <el-button
@@ -140,7 +140,7 @@
                                                         type="text"
                                                         size="small"
                                                         style="color: #F56C6C;">
-                                                        Delete Selected Tickets ({{ ticket_selections.length }})
+                                                        {{$t('Delete Selected Tickets')}} ({{ ticket_selections.length }})
                                                     </el-button>
                                                 </template>
                                             </el-popconfirm>
@@ -149,7 +149,7 @@
                                         <el-dropdown-item>
                                             <el-popconfirm
                                                 @confirm="closeSelected()"
-                                                title="Are you sure to close the selected Tickets?"
+                                                :title="$t('bulk_ticket_close_warning')"
                                             >
                                                 <template #reference>
                                                     <el-button
@@ -158,7 +158,7 @@
                                                         type="text"
                                                         size="small"
                                                         style="color: #303133;">
-                                                        Close Selected Tickets ({{ ticket_selections.length }})
+                                                        {{$t('Close Selected Tickets')}} ({{ ticket_selections.length }})
                                                     </el-button>
                                                 </template>
                                             </el-popconfirm>
@@ -172,7 +172,7 @@
                                                 type="text"
                                                 size="small"
                                                 style="color: #67C23A;">
-                                                Reply Selected Tickets ({{ ticket_selections.length }})
+                                                {{$t('Reply To Selected Tickets')}} ({{ ticket_selections.length }})
                                             </el-button>
                                         </el-dropdown-item>
 
@@ -190,14 +190,14 @@
             </div>
         </div>
         <el-dialog
-            title="Create a Ticket"
+            :title="$t('Create a Ticket')"
             v-model.sync="add_ticket_modal"
             width="60%">
             <add-ticket v-if="add_ticket_modal"></add-ticket>
         </el-dialog>
 
         <el-dialog
-            title="Reply To Selected Tickets"
+            :title="$t('Reply To Selected Tickets')"
             v-model.sync="add_response_modal"
             width="60%">
             <create-response @created="fetchTickets()" v-if="add_response_modal" :ticket="ticket_selections" />
@@ -244,16 +244,16 @@ export default {
             order_by: 'last_customer_response',
             order_type: 'ASC',
             filterColumns: {
-                id: 'Ticket ID',
-                product_id: 'Product ID',
-                priority: 'Priority',
-                client_priority: 'Client Priority',
-                title: 'Title',
-                last_agent_response: 'Last Agent Response',
-                last_customer_response: 'Last Customer Response',
-                waiting_since: 'Waiting Time',
-                response_count: 'Response Count',
-                created_at: 'Created At'
+                id: this.$t('Ticket ID'),
+                product_id: this.$t('Product ID'),
+                priority: this.$t('Priority'),
+                client_priority: this.$t('Client Priority'),
+                title: this.$t('Title'),
+                last_agent_response: this.$t('Last Agent Response'),
+                last_customer_response: this.$t('Last Customer Response'),
+                waiting_since: this.$t('Waiting Time'),
+                response_count: this.$t('Response Count'),
+                created_at: this.$t('Created At')
             },
             ticket_selections: [],
             doing_bulk: false,

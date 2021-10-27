@@ -1,7 +1,7 @@
 <template>
     <div v-if="ticket.live_activity && ticket.live_activity.length > 1" class="fs_active_agents">
         <ul>
-            <li @click="activityOn()" v-loading="loading" class="fs_active_agent_title">Currently Viewing</li>
+            <li @click="activityOn()" v-loading="loading" class="fs_active_agent_title">{{$t('Currently Viewing')}}</li>
             <li v-for="activity in ticket.live_activity" :key="activity.id">
                 <span class="fs_agent_photo_icon"><img :src="activity.photo"/></span>
             </li>
