@@ -9,6 +9,14 @@
                     Add New
                 </el-button>
             </div>
+            <div class="fs_box_actions fs_ticket_orders">
+                <el-input @keyup.enter="fetchAgents" clearable @clear="fetchAgents" size="mini"
+                          placeholder="Search Agents" v-model="search">
+                    <template #append>
+                        <el-button @click="fetchAgents" icon="el-icon-search"></el-button>
+                    </template>
+                </el-input>
+            </div>
         </div>
         <div v-if="!loading" class="fs_box_body">
             <el-table stripe :data="agents">
@@ -114,7 +122,8 @@ export default {
             loading: false,
             editing_agent: false,
             agent_modal: false,
-            saving: false
+            saving: false,
+            search:''
         }
     },
     methods: {
@@ -122,7 +131,8 @@ export default {
             this.loading = true;
             this.$get('agents', {
                 per_page: this.pagination.per_page,
-                page: this.pagination.current_page
+                page: this.pagination.current_page,
+                search: this.search
             })
                 .then(response => {
                     this.agents = response.agents.data;

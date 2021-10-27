@@ -7,6 +7,15 @@ class Agent extends Person
 {
     protected static $type = 'agent';
 
+    protected $searchable = [
+        'id',
+        'first_name',
+        'last_name',
+        'email',
+        'address_line_1',
+        'address_line_2',
+        'country'
+    ];
 
     public static function boot()
     {
@@ -19,6 +28,7 @@ class Agent extends Person
             $builder->where('person_type', 'agent');
         });
     }
+
 
     /**
      * One2Many: Customer has to many Click Tickets

@@ -23379,7 +23379,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       loading: false,
       editing_agent: false,
       agent_modal: false,
-      saving: false
+      saving: false,
+      search: ''
     };
   },
   methods: {
@@ -23389,7 +23390,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.loading = true;
       this.$get('agents', {
         per_page: this.pagination.per_page,
-        page: this.pagination.current_page
+        page: this.pagination.current_page,
+        search: this.search
       }).then(function (response) {
         _this.agents = response.agents.data;
         _this.pagination.total = response.agents.total;
@@ -28973,22 +28975,25 @@ var _hoisted_4 = {
 var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Add New ");
 
 var _hoisted_6 = {
+  "class": "fs_box_actions fs_ticket_orders"
+};
+var _hoisted_7 = {
   key: 0,
   "class": "fs_box_body"
 };
-var _hoisted_7 = {
+var _hoisted_8 = {
   "class": "fs_badge"
 };
-var _hoisted_8 = {
+var _hoisted_9 = {
   style: {
     "font-size": "14px",
     "color": "#56c288"
   }
 };
-var _hoisted_9 = {
+var _hoisted_10 = {
   "class": "fframe_pagination_wrapper"
 };
-var _hoisted_10 = {
+var _hoisted_11 = {
   key: 1,
   style: {
     "padding": "20px",
@@ -28997,21 +29002,23 @@ var _hoisted_10 = {
   "class": "fs_box_body"
 };
 
-var _hoisted_11 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Telegram Integration", -1
+var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h3", null, "Telegram Integration", -1
 /* HOISTED */
 );
 
-var _hoisted_12 = {
+var _hoisted_13 = {
   "class": "dialog-footer"
 };
-var _hoisted_13 = {
+var _hoisted_14 = {
   key: 0
 };
-var _hoisted_14 = {
+var _hoisted_15 = {
   key: 1
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_el_button = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-button");
+
+  var _component_el_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-input");
 
   var _component_el_table_column = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-table-column");
 
@@ -29020,8 +29027,6 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_pagination = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("pagination");
 
   var _component_el_skeleton = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-skeleton");
-
-  var _component_el_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-input");
 
   var _component_el_form_item = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("el-form-item");
 
@@ -29049,7 +29054,31 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     _: 1
     /* STABLE */
 
-  })])]), !$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table, {
+  })]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_input, {
+    onKeyup: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withKeys)($options.fetchAgents, ["enter"]),
+    clearable: "",
+    onClear: $options.fetchAgents,
+    size: "mini",
+    placeholder: "Search Agents",
+    modelValue: $data.search,
+    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+      return $data.search = $event;
+    })
+  }, {
+    append: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+        onClick: $options.fetchAgents,
+        icon: "el-icon-search"
+      }, null, 8
+      /* PROPS */
+      , ["onClick"])];
+    }),
+    _: 1
+    /* STABLE */
+
+  }, 8
+  /* PROPS */
+  , ["onKeyup", "onClear", "modelValue"])])]), !$data.loading ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_table, {
     stripe: "",
     data: $data.agents
   }, {
@@ -29077,7 +29106,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function (scope) {
           return [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(scope.row.permissions, function (permission) {
-            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_7, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.readable(permission)), 1
+            return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.readable(permission)), 1
             /* TEXT */
             );
           }), 256
@@ -29099,7 +29128,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         label: "Title"
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function (scope) {
-          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(scope.row.title), 1
+          return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(scope.row.title), 1
           /* TEXT */
           )];
         }),
@@ -29141,14 +29170,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   }, 8
   /* PROPS */
-  , ["data"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pagination, {
-    onFetch: _cache[2] || (_cache[2] = function ($event) {
+  , ["data"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_pagination, {
+    onFetch: _cache[3] || (_cache[3] = function ($event) {
       return $options.fetchAgents();
     }),
     pagination: $data.pagination
   }, null, 8
   /* PROPS */
-  , ["pagination"])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
+  , ["pagination"])])])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_skeleton, {
     rows: 5,
     animated: ""
   })])), $data.editing_agent ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_el_dialog, {
@@ -29156,21 +29185,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "append-to-body": true,
     title: $data.editing_agent && $data.editing_agent.id ? 'Edit Staff' : 'Add new Support Staff',
     modelValue: $data.agent_modal,
-    "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
+    "onUpdate:modelValue": _cache[11] || (_cache[11] = function ($event) {
       return $data.agent_modal = $event;
     }),
     width: "60%"
   }, {
     footer: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_button, {
         disabled: $data.saving,
         type: "primary",
-        onClick: _cache[9] || (_cache[9] = function ($event) {
+        onClick: _cache[10] || (_cache[10] = function ($event) {
           return $options.createOrUpdateAgent();
         })
       }, {
         "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-          return [$data.editing_agent.id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_13, "Update")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_14, "Create"))];
+          return [$data.editing_agent.id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_14, "Update")) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("span", _hoisted_15, "Create"))];
         }),
         _: 1
         /* STABLE */
@@ -29194,7 +29223,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 type: "email",
                 placeholder: "Agent Email",
                 modelValue: $data.editing_agent.email,
-                "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+                "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
                   return $data.editing_agent.email = $event;
                 })
               }, null, 8
@@ -29212,7 +29241,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 type: "text",
                 placeholder: "First Name",
                 modelValue: $data.editing_agent.first_name,
-                "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+                "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
                   return $data.editing_agent.first_name = $event;
                 })
               }, null, 8
@@ -29230,7 +29259,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 type: "text",
                 placeholder: "Last Name",
                 modelValue: $data.editing_agent.last_name,
-                "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+                "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
                   return $data.editing_agent.last_name = $event;
                 })
               }, null, 8
@@ -29248,7 +29277,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 type: "text",
                 placeholder: "Agent Job Title( ex: Developer, Support Staff )",
                 modelValue: $data.editing_agent.title,
-                "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+                "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
                   return $data.editing_agent.title = $event;
                 })
               }, null, 8
@@ -29264,7 +29293,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
               return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_checkbox_group, {
                 modelValue: $data.editing_agent.permissions,
-                "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
+                "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
                   return $data.editing_agent.permissions = $event;
                 })
               }, {
@@ -29299,7 +29328,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             _: 1
             /* STABLE */
 
-          }), _hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
+          }), _hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_el_form_item, {
             label: "Telegram Chat ID"
           }, {
             "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -29307,7 +29336,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
                 type: "text",
                 placeholder: "Telegram Chat ID",
                 modelValue: $data.editing_agent.telegram_chat_id,
-                "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
+                "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
                   return $data.editing_agent.telegram_chat_id = $event;
                 })
               }, null, 8

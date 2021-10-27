@@ -22,6 +22,7 @@ class AgentController extends Controller
     {
         $agents = Agent::orderBy('id', 'DESC')
             //->whereNotNull('user_id')
+            ->searchBy($request->get('search'))
             ->paginate();
 
         foreach ($agents as $agent) {
