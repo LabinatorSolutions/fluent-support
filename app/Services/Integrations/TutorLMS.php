@@ -10,7 +10,7 @@ class TutorLMS {
 
     public function getTutorLMSCoursePurchaseWidgets($widgets, $customer)
     {
-        $userId = $customer->id;
+        $userId = $customer->user_id;
 
         if (!$userId) {
             return $widgets;
@@ -37,13 +37,9 @@ class TutorLMS {
                 ->where('post_type', 'tutor_enrolled')
                 ->first();
 
-            $completed_count = tutor_utils()->get_course_completed_percent($course->ID, $userId);
-
             $courseData[] = [
                 'id'         => esc_html($course->ID),
                 'title'      => esc_html($course->post_title),
-                'progress'   => esc_html($completed_count . '%'),
-                'started_at' => esc_html(date_i18n(get_option('date_format'), strtotime($enrolled->post_date)))
             ];
         }
         ob_start();
@@ -53,8 +49,8 @@ class TutorLMS {
             <?php foreach ($courseData as $data):?>
                 <li title="Purchase Date: <?php echo $data['started_at'] ?>">
                     <?php
-                    echo $data['title'];
-                    echo ' <code>Progress:'. $data['progress'] .'</code>';
+                    echo '<code>Course Name:</code> '. $data['title']. '<br>';
+                    echo ' <code>Status:</code> Enrolled';
                     ?>
                 </li>
             <?php endforeach; ?>
