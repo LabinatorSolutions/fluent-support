@@ -5,36 +5,43 @@
                 <div class="fs_box_head">
                     <h3>Ticket Tags</h3>
                 </div>
-                <div class="fs_box_actions">
+                <div v-if="has_pro" class="fs_box_actions">
                     <el-button @click="createTagModal()" type="primary" icon="el-icon-plus" size="small">
                         Add New
                     </el-button>
                 </div>
             </div>
-            <div v-if="!fetching" class="fs_box_body">
-                <el-table stripe :data="tags">
-                    <el-table-column width="80" prop="id" label="ID"></el-table-column>
-                    <el-table-column prop="title" label="Title"></el-table-column>
-                    <el-table-column prop="description" label="Description"></el-table-column>
-                    <el-table-column label="Tickets">
-                        <template #default="scope">
-                            <router-link :to="{name: 'tickets', query: {tags: [scope.row.id]}}">{{scope.row.count}}</router-link>
-                        </template>
-                    </el-table-column>
-                    <el-table-column width="120" label="Action">
-                        <template #default="scope">
-                            <el-button @click="editTagModal(scope.row)" size="mini" type="success"
-                                       icon="el-icon-edit"></el-button>
-                            <el-button @click="deleteTag(scope.row)" size="mini" type="danger" icon="el-icon-delete"></el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <div class="fframe_pagination_wrapper">
-                    <pagination @fetch="fetchTags()" :pagination="pagination"/>
+            <template v-if="has_pro">
+                <div v-if="!fetching" class="fs_box_body">
+                    <el-table stripe :data="tags">
+                        <el-table-column width="80" prop="id" label="ID"></el-table-column>
+                        <el-table-column prop="title" label="Title"></el-table-column>
+                        <el-table-column prop="description" label="Description"></el-table-column>
+                        <el-table-column label="Tickets">
+                            <template #default="scope">
+                                <router-link :to="{name: 'tickets', query: {tags: [scope.row.id]}}">{{scope.row.count}}</router-link>
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="120" label="Action">
+                            <template #default="scope">
+                                <el-button @click="editTagModal(scope.row)" size="mini" type="success"
+                                           icon="el-icon-edit"></el-button>
+                                <el-button @click="deleteTag(scope.row)" size="mini" type="danger" icon="el-icon-delete"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="fframe_pagination_wrapper">
+                        <pagination @fetch="fetchTags()" :pagination="pagination"/>
+                    </div>
                 </div>
-            </div>
-            <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
-                <el-skeleton :rows="5" animated/>
+                <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                    <el-skeleton :rows="5" animated/>
+                </div>
+            </template>
+            <div class="fs_narrow_promo" v-else>
+                <h3>Add Tags and segment your tickets by tags filter then you can also do bulk actions</h3>
+                <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
             </div>
         </div>
 
@@ -158,7 +165,9 @@ export default {
         }
     },
     mounted() {
-        this.fetchTags();
+        if( this.has_pro ) {
+            this.fetchTags();
+        }
     }
 }
 </script>
