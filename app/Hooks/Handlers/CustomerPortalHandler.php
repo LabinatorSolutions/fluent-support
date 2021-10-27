@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\TicketType;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\TransStrings;
 use FluentSupport\Framework\Support\Arr;
 
 class CustomerPortalHandler
@@ -53,7 +54,8 @@ class CustomerPortalHandler
             'support_products'           => Product::select(['id', 'title'])->get(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
             'ticket_types'               => TicketType::select(['id', 'title'])->get(),
-            'view_tickets_url' => Helper::getPortalBaseUrl().'/#'
+            'view_tickets_url' => Helper::getPortalBaseUrl().'/#',
+            'i18n' => TransStrings::getTransStrings()
         ];
 
         if($this->isSignedTicketView()) {
