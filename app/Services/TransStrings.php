@@ -284,6 +284,7 @@ class TransStrings
             'You'    => __('You', 'fluent-support'),
             'Create a New Ticket'    => __('Create a New Ticket', 'fluent-support'),
             'Conversation'    => __('Conversation', 'fluent-support'),
+            'Click Here to Write a reply'    => __('Click Here to Write a reply', 'fluent-support'),
         ];
     }
 }
