@@ -16,6 +16,7 @@ class IntegrationSettingsModule
             return false;
         }
 
+
         return $class->getSettings($withFields);
     }
 

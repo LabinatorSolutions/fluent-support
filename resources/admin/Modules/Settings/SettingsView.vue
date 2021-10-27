@@ -46,6 +46,7 @@ export default {
                     route_query: {}
                 },
                 {
+<<<<<<< HEAD
                     title: 'Telegram Integration',
                     route_name: 'integration',
                     route_query: {
@@ -58,6 +59,10 @@ export default {
                     route_query: {
                         item_key: 'slack_settings'
                     }
+=======
+                    title: 'Notification Integrations',
+                    route_name: 'integration'
+>>>>>>> 789d83ffe5329d1b5f8f4a837646efc349464191
                 }
             ]
         }
