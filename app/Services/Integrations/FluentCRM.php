@@ -52,12 +52,12 @@ class FluentCRM
         $formattedTickets = [];
         foreach ($tickets as $ticket) {
             $ticketUrl = Helper::getPortalAdminBaseUrl().'tickets/'.$ticket->id.'/view';
-            $actionHTML = '<a target="_blank" href="'.$ticketUrl.'">View Ticket</a>';
+            $actionHTML = '<a target="_blank" href="'.$ticketUrl.'">'.__('View Ticket', 'fluent-crm').'</a>';
             $formattedTickets[] = [
                 'id' => '#'.$ticket->id,
                 'title' => $ticket->title,
-                'status' => '<span class="el-tag">'.$ticket->status.'</span>',
-                'Submitted at' => human_time_diff(strtotime($ticket->created_at), current_time('timestamp')).' ago',
+                'status' => '<span class="el-tag">'.__($ticket->status, 'fluent-crm').'</span>',
+                'Submitted at' => human_time_diff(strtotime($ticket->created_at), current_time('timestamp')).__(' ago', 'fluent-crm'),
                 'action' => $actionHTML
             ];
         }
