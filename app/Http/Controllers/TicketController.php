@@ -171,6 +171,10 @@ class TicketController extends Controller
 
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
+        if(defined('FLUENTSUPPORTPRO')) {
+            $ticket->custom_fields = $ticket->getCustomFields();
+        }
+
         return [
             'ticket' => $ticket,
             'responses' => $responses,

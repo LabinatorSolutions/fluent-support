@@ -356,4 +356,39 @@ class Ticket extends Model
         $class = __NAMESPACE__ . '\Attachment';
         return $this->hasMany($class, 'ticket_id', 'id')->where('conversation_id', NULL);
     }
+
+    public function getCustomFields()
+    {
+        $fields = apply_filters('fluent_support_ticket_custom_fields', []);
+
+        if(!$fields) {
+            return [];
+        }
+
+        $keys = array_keys($fields);
+
+        $customRows = Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)
+            ->whereIn('key', $keys)
+            ->get();
+
+        if(!$customRows) {
+            return [];
+        }
+
+        $formattedData = [];
+
+        foreach ($customRows as $row) {
+            $dataKey = $row->key;
+
+            $value = $row->value;
+
+            if($value && $fields[$dataKey]['type'] == 'checkbox') {
+                $value = array_filter(explode('|', $value));
+            }
+
+            $formattedData[$dataKey] = $value;
+        }
+
+        return $formattedData;
+    }
 }
