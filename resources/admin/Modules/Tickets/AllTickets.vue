@@ -100,7 +100,7 @@
                     <el-table-column width="120" :label="$t('Status')">
                         <template #default="scope">
                             <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
-                            <span class="fs_badge" :class="'fs_badge_priority_'+scope.row.client_priority">
+                            <span class="fs_badge" :title="$t('Client Priority: ') + scope.row.client_priority " :class="'fs_badge_priority_'+scope.row.client_priority">
                                 <i class="el-icon-s-flag"></i>  {{ scope.row.client_priority }}
                             </span>
                         </template>

@@ -116,7 +116,7 @@ class TicketController extends Controller
 
         $ticketData['content'] = wp_unslash(wp_kses_post($ticketData['content']));
 
-        $ticketData['priority'] = sanitize_text_field($ticketData['client_priority']);
+        $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
 
         $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
 
@@ -271,7 +271,7 @@ class TicketController extends Controller
         }
 
         return [
-            'message' => __($propName . ' has been updated', 'fluent-support'),
+            'message' => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
             'update_data' => $updateData
         ];
     }

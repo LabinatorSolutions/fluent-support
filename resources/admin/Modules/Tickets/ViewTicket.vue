@@ -108,7 +108,7 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge"><i
+                                    <span :title="$t('Client Priority: ') + ticket.client_priority " :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge"><i
                                         class="el-icon-s-flag"></i> {{ ticket.client_priority }}</span>
                                 </template>
 
@@ -117,6 +117,25 @@
                                     <el-option
 
                                         v-for="(priorityLabel, priority) in client_priorities"
+                                        :key="priority" :value="priority"
+                                        :label="priorityLabel"></el-option>
+                                </el-select>
+                            </el-popover>
+                            <el-popover
+                                placement="bottom"
+                                :width="400"
+                                trigger="click"
+                            >
+                                <template #reference>
+                                    <span :title="$t('Admin Priority:') + ticket.priority " :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i
+                                        class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
+                                </template>
+
+                                <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority"
+                                           size="small">
+                                    <el-option
+
+                                        v-for="(priorityLabel, priority) in admin_priorities"
                                         :key="priority" :value="priority"
                                         :label="priorityLabel"></el-option>
                                 </el-select>
