@@ -65,15 +65,6 @@ $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->delete('/{product_id}', 'ProductController@delete')->int('product_id');
 });
 
-$router->prefix('ticket-types')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
-    $router->get('/', 'TicketTypeController@index');
-    $router->post('/', 'TicketTypeController@create');
-    $router->get('/{ticket_type_id}', 'TicketTypeController@get')->int('ticket_type_id');
-    $router->post('/{ticket_type_id}', 'TicketTypeController@create')->int('ticket_type_id');
-    $router->put('/{ticket_type_id}', 'TicketTypeController@update')->int('ticket_type_id');
-    $router->delete('/{ticket_type_id}', 'TicketTypeController@delete')->int('ticket_type_id');
-});
-
 $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
 
 $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles')

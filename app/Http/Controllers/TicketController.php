@@ -39,8 +39,7 @@ class TicketController extends Controller
                 $query->select(['first_name', 'last_name', 'id']);
             },
             'product',
-            'tags',
-            'ticketType'
+            'tags'
         ]);
 
         // apply filters by access level
@@ -137,7 +136,7 @@ class TicketController extends Controller
     public function getTicket(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments','ticketType']);
+        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments']);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
 
         $ticket = Ticket::with($ticketWith)

@@ -60,23 +60,6 @@
                            :value="tag.id"></el-option>
             </el-select>
         </div>
-        <div v-if="appVars.ticket_types.length" class="fs_tk_filter">
-            <label>{{$t('Ticket Type')}}</label>
-            <el-select
-                @change="fetchTickets()"
-                v-model="filters.ticket_types"
-                :placeholder="$t('Filter By Ticket Type')"
-                multiple
-                popper-append-to-body="true"
-                size="small"
-                collapse-tags
-            >
-                <el-option v-for="ticketType in appVars.ticket_types"
-                           :key="ticketType.id"
-                           :label="ticketType.title"
-                           :value="ticketType.id"></el-option>
-            </el-select>
-        </div>
         <div class="fs_tk_filter">
             <label>{{$t('Search')}}</label>
             <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="mini"
@@ -129,7 +112,7 @@ export default {
     computed: {
         has_active_filter() {
             const f = this.filters;
-            return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length || f.ticket_types?.length;
+            return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length;
         }
     },
     methods: {

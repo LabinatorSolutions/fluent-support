@@ -53,7 +53,6 @@ class CustomerPortalHandler
             'nonce'                      => wp_create_nonce($slug),
             'support_products'           => Product::select(['id', 'title'])->get(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
-            'ticket_types'               => TicketType::select(['id', 'title'])->get(),
             'view_tickets_url' => Helper::getPortalBaseUrl().'/#',
             'i18n' => TransStrings::getTransStrings()
         ];

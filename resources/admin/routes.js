@@ -10,7 +10,6 @@ import Products from './Modules/Settings/Products';
 import TicketTags from './Modules/Settings/TicketTags';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
-import TicketType from "./Modules/Settings/TicketType";
 import SlackIntegration from "./Modules/Settings/SlackIntegration";
 import CustomFields from "./Modules/Settings/CustomFields";
 
@@ -97,11 +96,6 @@ export default [
                 path: 'integration',
                 name: 'integration',
                 component: IntegrationView
-            },
-            {
-                path: 'ticket-types',
-                name: 'ticket-type',
-                component: TicketType
             },
             {
                 path: 'slack-integration',
