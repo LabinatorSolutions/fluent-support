@@ -73,7 +73,7 @@ class CustomerController extends Controller
                 'message' => __('Another Customer has same email address', 'fluent-support'),
                 'errors' => [
                     'email' => [
-                        'unique' => 'Email address has been assigned to other customer'
+                        'unique' => __('Email address has been assigned to other customer', 'fluent-support')
                     ]
                 ]
             ], 423);

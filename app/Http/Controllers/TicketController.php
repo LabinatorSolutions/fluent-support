@@ -190,7 +190,7 @@ class TicketController extends Controller
 
         if (!$agent) {
             return $this->sendError([
-                'message' => 'Sorry, You do not have permission. Please add yourself as support agent first'
+                'message' => __('Sorry, You do not have permission. Please add yourself as support agent first', 'fluent-support')
             ]);
         }
 
@@ -271,7 +271,7 @@ class TicketController extends Controller
         }
 
         return [
-            'message' => $propName . ' has been updated',
+            'message' => __($propName . ' has been updated', 'fluent-support'),
             'update_data' => $updateData
         ];
     }
@@ -337,12 +337,12 @@ class TicketController extends Controller
             }
 
             return [
-                'message' => count($tickets) . ' tickets have been closed'
+                'message' => __(count($tickets) . ' tickets have been closed', 'fluent-support')
             ];
         }
 
         $this->sendError([
-            'message' => 'Sorry no action found as available'
+            'message' => __('Sorry no action found as available', 'fluent-support')
         ]);
     }
 
@@ -433,7 +433,7 @@ class TicketController extends Controller
         }
 
         return [
-            'message' => count($tickets) . ' has been deleted successfully'
+            'message' => __(count($tickets) . ' has been deleted successfully', 'fluent-support')
         ];
     }
 
@@ -448,7 +448,7 @@ class TicketController extends Controller
         if (!$hasAllPermission) {
             if ($ticket->agent_id != $agent->id) {
                 return $this->sendError([
-                    'message' => 'Sorry, You do not have permission to delete this response'
+                    'message' => __('Sorry, You do not have permission to delete this response', 'fluent-support')
                 ]);
             }
         }
@@ -456,7 +456,7 @@ class TicketController extends Controller
         Conversation::where('id', $response->id)->delete();
 
         return [
-            'message' => 'Selected response has been deleted'
+            'message' => __('Selected response has been deleted', 'fluent-support')
         ];
 
     }
@@ -478,7 +478,7 @@ class TicketController extends Controller
         if (!$hasAllPermission) {
             if ($ticket->agent_id != $agent->id) {
                 return $this->sendError([
-                    'message' => 'Sorry, You do not have permission to delete this response'
+                    'message' => __('Sorry, You do not have permission to delete this response', 'fluent-support')
                 ]);
             }
         }
@@ -487,7 +487,7 @@ class TicketController extends Controller
         $response->save();
 
         return [
-            'message' => 'Selected response has been updated',
+            'message' => __('Selected response has been updated', 'fluent-support'),
             'response' => $response
         ];
     }
