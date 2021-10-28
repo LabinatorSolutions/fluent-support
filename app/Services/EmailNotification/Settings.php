@@ -61,7 +61,7 @@ class Settings
         return [
             'portal_page_id' => [
                 'type'        => 'input-options',
-                'label'       => 'Portal Page',
+                'label'       => __('Portal Page', 'fluent-support'),
                 'show_id'     => true,
                 'placeholder' => __('Select Portal Page', 'fluent-support'),
                 'options'     => Helper::getWPPages(),
@@ -76,8 +76,8 @@ class Settings
                 'type' => 'inline-checkbox',
                 'true_label' => 'yes',
                 'false-label' => 'no',
-                'checkbox_label' => 'Disable Public Ticket interaction',
-                'inline_help' => 'If you enable this then only logged in user can reply the tickets. Otherwise, url will be signed and intended user can reply without logging in'
+                'checkbox_label' => __('Disable Public Ticket interaction', 'fluent-support'),
+                'inline_help' => __('If you enable this then only logged in user can reply the tickets. Otherwise, url will be signed and intended user can reply without logging in', 'fluent-support')
             ]
         ];
     }
@@ -103,28 +103,28 @@ class Settings
             'ticket_created_email_to_customer'          => [
                 'key'            => 'ticket_created_email_to_customer',
                 'title'          => __('Ticket Created (To Customer)', 'fluent-support'),
-                'description'    =>__('This email will be sent when a customer submit a support ticket', 'fluent-support'),
+                'description'    => __('This email will be sent when a customer submit a support ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'no'
             ],
             'ticket_replied_by_agent_email_to_customer' => [
                 'key'            => 'ticket_replied_by_agent_email_to_customer',
                 'title'          => __('Replied by Agent (To Customer)', 'fluent-support'),
-                'description'    =>__('This email will be sent when an agent reply to a ticket', 'fluent-support'),
+                'description'    => __('This email will be sent when an agent reply to a ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_closed_by_agent_email_to_customer'  => [
                 'key'            => 'ticket_closed_by_agent_email_to_customer',
                 'title'          => __('Ticket Closed by Agent (To Customer)', 'fluent-support'),
-                'description'    =>__('This email will be sent when an agent close a ticket', 'fluent-support'),
+                'description'    => __('This email will be sent when an agent close a ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
             'ticket_created_email_to_admin'             => [
                 'key'            => 'ticket_created_email_to_admin',
                 'title'          => __('Ticket Created (To Admin)', 'fluent-support'),
-                'description'    =>__('This email will be sent when the business when a new ticket has been submitted', 'fluent-support'),
+                'description'    => __('This email will be sent when the business when a new ticket has been submitted', 'fluent-support'),
                 'email_subject'  => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ],
