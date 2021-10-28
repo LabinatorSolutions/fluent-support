@@ -12,6 +12,7 @@ import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 import TicketType from "./Modules/Settings/TicketType";
 import SlackIntegration from "./Modules/Settings/SlackIntegration";
+import CustomFields from "./Modules/Settings/CustomFields";
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -71,6 +72,11 @@ export default [
                 name: 'global_settings',
                 path: '',
                 component: BusinessSettings
+            },
+            {
+                name: 'custom_fields',
+                path: 'custom-fields',
+                component: CustomFields
             },
             {
                 name: 'tags',

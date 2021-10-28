@@ -31,6 +31,11 @@ export default {
                     route_query: {}
                 },
                 {
+                    title: 'Custom Fields',
+                    route_name: 'custom_fields',
+                    route_query: {}
+                },
+                {
                     title: 'Products',
                     route_name: 'products',
                     route_query: {}
