@@ -3,35 +3,35 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Saved Replies</h3>
+                    <h3>{{$t('Saved Replies')}}</h3>
                 </div>
                 <div class="fs_box_actions">
                     <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="el-icon-plus" size="small">
-                        Create New
+                        {{$t('Create New')}}
                     </el-button>
                 </div>
             </div>
             <template v-if="has_pro">
                 <div v-if="!loading" class="fs_box_body">
                     <el-table stripe :data="replies">
-                        <el-table-column width="80" prop="id" label="ID"></el-table-column>
-                        <el-table-column prop="title" label="Title"></el-table-column>
-                        <el-table-column width="180" label="Product">
+                        <el-table-column width="80" prop="id" :label="$t('ID')"></el-table-column>
+                        <el-table-column prop="title" :label="$t('Title')"></el-table-column>
+                        <el-table-column width="180" :label="$t('Product')">
                             <template #default="scope">
                                 {{scope.row.product?.title}}
                             </template>
                         </el-table-column>
-                        <el-table-column width="180" label="Created By">
+                        <el-table-column width="180" :label="$t('Created By')">
                             <template #default="scope">
                                 {{scope.row.person?.full_name}}
                             </template>
                         </el-table-column>
-                        <el-table-column width="180" label="Created On">
+                        <el-table-column width="180" :label="$t('Created On')">
                             <template #default="scope">
                                 {{$timeDiff(scope.row.created_at)}}
                             </template>
                         </el-table-column>
-                        <el-table-column width="120" label="Action">
+                        <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
                                 <el-button @click="editModal(scope.row)" size="mini" type="success"
                                            icon="el-icon-edit"></el-button>
@@ -48,28 +48,28 @@
                 </div>
             </template>
             <div class="fs_narrow_promo" style="background: white;" v-else>
-                <h3>Create reply templates and quickly send responses to the tickets.</h3>
-                <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>
-                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
+                <h3>{{$t('create_reply_template')}}</h3>
+                <p>{{$t('pro_promo')}}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
             </div>
         </div>
 
         <el-dialog
             :append-to-body="true"
-            :title="(editing_reply && editing_reply.id) ? 'Edit Reply' : 'Create new Reply'"
+            :title="(editing_reply && editing_reply.id) ? $t('Edit Reply') : $t('Create New Reply')"
             v-model="edit_modal"
             v-if="edit_modal"
             width="60%">
 
             <el-form label-position="top" :data="editing_reply">
-                <el-form-item label="Title">
-                    <el-input type="text" placeholder="Reply Title" v-model="editing_reply.title"/>
+                <el-form-item :label="$t('Title')">
+                    <el-input type="text" :placeholder="$t('Reply Title')" v-model="editing_reply.title"/>
                 </el-form-item>
-                <el-form-item label="Content">
+                <el-form-item :label="$t('Content')">
                     <wp-editor v-model="editing_reply.content" />
                 </el-form-item>
-                <el-form-item label="Prefered Product">
-                    <el-select placeholder="Select Product" v-model="editing_reply.product_id" clearable size="small">
+                <el-form-item :label="$t('Prefered Product')">
+                    <el-select :placeholder="$t('Select Product')" v-model="editing_reply.product_id" clearable size="small">
                         <el-option v-for="product in products" :key="product.id" :label="product.title" :value="product.id"></el-option>
                     </el-select>
                 </el-form-item>
@@ -77,7 +77,7 @@
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdate()">Update</el-button>
+                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdate()">{{$t('Update')}}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -170,7 +170,7 @@ export default {
             this.edit_modal = true;
         },
         deleteReply(reply) {
-            const r = confirm("Are you sure, You want to delete this?");
+            const r = confirm(this.$t("Are you sure, You want to delete this?"));
 
             if (!r) {
                 return ;

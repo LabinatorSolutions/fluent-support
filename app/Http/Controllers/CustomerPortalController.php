@@ -23,7 +23,7 @@ class CustomerPortalController extends Controller
 
         if (!$customer) {
             return $this->sendError([
-                'message'    => 'No Customer Found',
+                'message'    => __('No Customer Found', 'fluent-support'),
                 'error_type' => 'no_customer'
             ]);
         }
@@ -74,7 +74,7 @@ class CustomerPortalController extends Controller
 
         if (!$customer) {
             return $this->sendError([
-                'message'    => 'No Customer Found',
+                'message'    => __('No Customer Found', 'fluent-support'),
                 'error_type' => 'no_customer'
             ]);
         }
@@ -131,14 +131,14 @@ class CustomerPortalController extends Controller
 
         if (!$customer) {
             return $this->sendError([
-                'message'    => 'Sorry, You do not have permission to this support ticket',
+                'message'    => __('Sorry, You do not have permission to this support ticket', 'fluent-support'),
                 'error_type' => 'no_customer'
             ]);
         }
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
-                'message'    => 'You do not have permission to view this support ticket',
+                'message'    => __('You do not have permission to view this support ticket', 'fluent-support'),
                 'error_type' => 'permission_error'
             ]);
         }

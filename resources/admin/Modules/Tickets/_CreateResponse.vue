@@ -8,11 +8,11 @@
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
                     <el-button v-loading="creating" @click="create('no')" size="large" type="success">
-                        <span v-if="type== 'note'">Add Internal Note</span>
-                        <span v-else>Add Reply</span>
+                        <span v-if="type== 'note'">{{$t('Add Internal Note')}}</span>
+                        <span v-else>{{$t('Add Reply')}}</span>
                     </el-button>
-                    <el-button v-if="type != 'note'" @click="create('yes')" size="large" type="danger">Reply and Close</el-button>
-                    <p v-if="type== 'note'">You are adding internal Note. Only support staff can see this note</p>
+                    <el-button v-if="type != 'note'" @click="create('yes')" size="large" type="danger">{{$t('Reply and Close')}}</el-button>
+                    <p v-if="type== 'note'">{{$t('internal_note_warning')}}</p>
                 </div>
             </div>
             <div class="fs_half">

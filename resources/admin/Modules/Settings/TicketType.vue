@@ -3,20 +3,20 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Ticket Types</h3>
-                    <p style="color: #f56c6b; font-weight: 500;">It will help your agents to understand the ticket type like feature suggestion, bug report etc</p>
+                    <h3>{{$t('Ticket Types')}}</h3>
+                    <p style="color: #f56c6b; font-weight: 500;">{{$t('ticket_type_help_text')}}</p>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button @click="createTicketModal()" type="primary" icon="el-icon-plus" size="small">Create New
+                    <el-button @click="createTicketModal()" type="primary" icon="el-icon-plus" size="small">{{$t('Create New')}}
                     </el-button>
                 </div>
             </div>
             <div v-if="!fetching" class="fs_box_body">
                 <el-table stripe :data="ticketTypes">
-                    <el-table-column width="80" prop="id" label="ID"></el-table-column>
-                    <el-table-column prop="title" label="Title"></el-table-column>
-                    <el-table-column prop="description" label="Description"></el-table-column>
-                    <el-table-column width="120" label="Action">
+                    <el-table-column width="80" prop="id" :label="$t('ID')"></el-table-column>
+                    <el-table-column prop="title" :label="$t('Title')"></el-table-column>
+                    <el-table-column prop="description" :label="$t('Description')"></el-table-column>
+                    <el-table-column width="120" :label="$t('Action')">
                         <template #default="scope">
                             <el-button @click="editTicketTypeModal(scope.row)" size="mini" type="success"
                                        icon="el-icon-edit"></el-button>
@@ -35,23 +35,23 @@
 
         <el-dialog
             :append-to-body="true"
-            :title="(editing_ticket_type && editing_ticket_type.id) ? 'Update Type' : 'Create New Ticket Type'"
+            :title="(editing_ticket_type && editing_ticket_type.id) ? $t('Update Type') : $t('Create New Ticket Type')"
             v-model="ticket_modal"
             v-if="editing_ticket_type"
             width="60%">
 
             <el-form label-position="top" :data="editing_ticket_type">
-                <el-form-item label="Title">
-                    <el-input type="text" placeholder="Ticket Type Title" v-model="editing_ticket_type.title"/>
+                <el-form-item :label="$t('Title')">
+                    <el-input type="text" :placeholder="$t('Ticket Type Title')" v-model="editing_ticket_type.title"/>
                 </el-form-item>
-                <el-form-item label="Description">
-                    <el-input type="textarea" placeholder="Ticket Type Description" v-model="editing_ticket_type.description"/>
+                <el-form-item :label="$t('Description')">
+                    <el-input type="textarea" :placeholder="$t('Ticket Type Description')" v-model="editing_ticket_type.description"/>
                 </el-form-item>
             </el-form>
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateTicketType()">Save</el-button>
+                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateTicketType()">{{$t('Save')}}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -140,7 +140,7 @@ export default {
             this.ticket_modal = true;
         },
         deleteTicketType(ticket_type) {
-            const r = confirm("Are you sure, You want to delete this?");
+            const r = confirm(this.$t("Are you sure, You want to delete this?"));
 
             if (!r) {
                 return ;

@@ -24,7 +24,7 @@ class IntegrationController extends Controller
         if(!$settings || is_wp_error($settings)) {
             $errorMessage = (is_wp_error($settings)) ? $settings->get_error_message() : 'Settings failed to save';
             return $this->sendError([
-                'message' => $errorMessage
+                'message' => __($errorMessage, 'fluent-support')
             ]);
         }
 

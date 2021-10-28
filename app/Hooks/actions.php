@@ -44,7 +44,7 @@ add_shortcode('fluent_support_admin_portal', function () {
     $assets = $app['url.assets'];
     wp_enqueue_style('fluent_support_login_style', $assets.'admin/css/all_public.css');
     if (!get_current_user_id()) {
-        $return = '<div class="fst_login"><h3>Please Login</h3>';
+        $return = '<div class="fst_login"><h3>'.__('Please Login', 'fluent-support').'</h3>';
         $return .= do_shortcode('[fluent_support_login]');
         $return .= '</div>';
         return $return;
@@ -52,7 +52,7 @@ add_shortcode('fluent_support_admin_portal', function () {
 
     $currentUserPermissions = \FluentSupport\App\Modules\PermissionManager::currentUserPermissions();
     if (!$currentUserPermissions) {
-        return 'Sorry, You do not have permission to this page';
+        return __('Sorry, You do not have permission to this page', 'fluent-support');
     }
 
     add_filter('fluent_support_base_url', function ($url) {

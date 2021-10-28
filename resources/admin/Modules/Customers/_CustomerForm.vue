@@ -1,8 +1,8 @@
 <template>
     <div v-loading="loading" class="ffc_customer_form">
         <form-builder :fields="fields" :form-data="customer" />
-        <el-button @click="updateCustomer()" type="success" v-if="customer.id">Update Customer</el-button>
-        <el-button @click="createCustomer()" type="success" v-else>Create Customer</el-button>
+        <el-button @click="updateCustomer()" type="success" v-if="customer.id">{{$t('Update Customer')}}</el-button>
+        <el-button @click="createCustomer()" type="success" v-else>{{$t('Create Customer')}}</el-button>
     </div>
 </template>
 <script type="text/babel">
@@ -18,21 +18,21 @@ export default {
         return {
             fields: {
                 first_name: {
-                    label: 'First Name',
+                    label: this.$t('First Name'),
                     data_type: 'text',
-                    placeholder: 'First Name',
+                    placeholder: this.$t('First Name'),
                     type: 'input-text'
                 },
                 last_name: {
-                    label: 'Last Name',
+                    label: this.$t('Last Name'),
                     data_type: 'text',
-                    placeholder: 'Last Name',
+                    placeholder: this.$t('Last Name'),
                     type: 'input-text'
                 },
                 email: {
-                    label: 'Email',
+                    label: this.$t('Email'),
                     data_type: 'email',
-                    placeholder: 'Email',
+                    placeholder: this.$t('Email'),
                     type: 'input-text'
                 }
             },

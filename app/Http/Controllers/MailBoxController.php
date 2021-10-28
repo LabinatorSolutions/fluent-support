@@ -44,7 +44,7 @@ class MailBoxController extends Controller
         if ($data['box_type'] == 'email') {
             if (empty($data['mapped_email'])) {
                 return $this->sendError([
-                    'message' => 'Mapped Email Address is required'
+                    'message' => __('Mapped Email Address is required', 'fluent-support')
                 ]);
             }
         }
@@ -60,7 +60,7 @@ class MailBoxController extends Controller
         $mailbox = MailBox::create($data);
 
         return [
-            'message' => 'Mailbox has been created successfully',
+            'message' => __('Mailbox has been created successfully', 'fluent-support'),
             'mailbox' => $mailbox
         ];
     }
@@ -79,7 +79,7 @@ class MailBoxController extends Controller
 
         if ($data['box_type'] == 'email' && empty($data['mapped_email'])) {
             return $this->sendError([
-                'message' => 'Mapped Email Address is required'
+                'message' => __('Mapped Email Address is required', 'fluent-support')
             ]);
         }
 
@@ -87,7 +87,7 @@ class MailBoxController extends Controller
         $mailbox->save();
 
         return [
-            'message' => 'Mailbox has been saved',
+            'message' => __('Mailbox has been saved', 'fluent-support'),
             'mailbox' => $mailbox
         ];
     }
@@ -98,7 +98,7 @@ class MailBoxController extends Controller
 
         if($fallbackId == $mailBoxId) {
             return $this->sendError([
-                'message' => 'Fallback Box can not be the same as MailBox ID'
+                'message' => __('Fallback Box can not be the same as MailBox ID', 'fluent-support')
             ]);
         }
 

@@ -6,17 +6,17 @@
         v-model:visible="visible"
     >
         <template #reference>
-            <el-button @click="initModal()" size="mini" type="default">Templates</el-button>
+            <el-button @click="initModal()" size="mini" type="default">{{$t('Templates')}}</el-button>
         </template>
         <div class="fs_template_inserter">
             <div class="fs_row">
                 <div class="fs_half">
-                    <el-select @change="searchTemplates()" clearable v-model="selected_product" placeholder="All">
+                    <el-select @change="searchTemplates()" clearable v-model="selected_product" :placeholder="$t('All')">
                         <el-option v-for="product in products" :label="product.title" :value="product.id" :key="product.id"></el-option>
                     </el-select>
                 </div>
                 <div class="fs_half">
-                    <el-input @keyup.enter="searchTemplates()" placeholder="Search Replies" v-model="search" class="input-with-select">
+                    <el-input @keyup.enter="searchTemplates()" :placeholder="$t('Search Replies')" v-model="search" class="input-with-select">
                         <template #append>
                             <el-button @click="searchTemplates()" icon="el-icon-search"></el-button>
                         </template>

@@ -5,18 +5,18 @@
                 <div class="fs_ticket_actions">
                     <ul class="fs_tk_actions">
                         <template v-if="ticket.status != 'closed'">
-                            <li :title="'Add Reply'"
+                            <li :title="$t('Add Reply')"
                                 :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
                                 @click="show_response_box = 'response'">
                                 <i class="el-icon-chat-line-square"/>
                             </li>
-                            <li :title="'Add Internal Note'"
+                            <li :title="$t('Add Internal Note')"
                                 :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
                                 @click="show_response_box = 'note'">
                                 <i class="el-icon-notebook-1"/>
                             </li>
                         </template>
-                        <li :title="'Assigned Agent ' + ticket.agent?.full_name">
+                        <li :title="$t('Assigned Agent ') + ticket.agent?.full_name">
                             <el-popover
                                 placement="bottom"
                                 :width="400"
@@ -51,7 +51,7 @@
                         <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
                                    size="small"></el-button>
                         <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
-                                   v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">Close
+                                   v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">{{$t('Close')}}
                         </el-button>
                         <el-popover
                             placement="bottom"
@@ -80,7 +80,7 @@
                 <div class="fs_th_header">
                     <hgroup>
                         <div class="fs_tk_subject">
-                            <h2 title="Click to Edit Subject">
+                            <h2 :title="$t('Click to Edit Subject')">
                                 <span class="fs_ticket_id">#{{ ticket.id }} </span>
                                 <el-popover
                                     placement="bottom"
@@ -93,7 +93,7 @@
 
                                     <el-input @keyup.enter="updateTicketAttr('title')"
                                               v-model="ticket.title"></el-input>
-                                    <p>Press enter to save</p>
+                                    <p>{{$t('Press enter to save')}}</p>
                                 </el-popover>
                             </h2>
                             <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags" />
@@ -108,7 +108,7 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge"><i
+                                    <span :title="$t('Client Priority: ') + ticket.client_priority " :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge"><i
                                         class="el-icon-s-flag"></i> {{ ticket.client_priority }}</span>
                                 </template>
 
@@ -117,6 +117,25 @@
                                     <el-option
 
                                         v-for="(priorityLabel, priority) in client_priorities"
+                                        :key="priority" :value="priority"
+                                        :label="priorityLabel"></el-option>
+                                </el-select>
+                            </el-popover>
+                            <el-popover
+                                placement="bottom"
+                                :width="400"
+                                trigger="click"
+                            >
+                                <template #reference>
+                                    <span :title="$t('Admin Priority:') + ticket.priority " :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i
+                                        class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
+                                </template>
+
+                                <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority"
+                                           size="small">
+                                    <el-option
+
+                                        v-for="(priorityLabel, priority) in admin_priorities"
                                         :key="priority" :value="priority"
                                         :label="priorityLabel"></el-option>
                                 </el-select>
@@ -133,12 +152,12 @@
                     :type="show_response_box"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
-                    <p>This ticket has been closed at {{ ticket.resolved_at }}
+                    <p>{{$t('ticket_closed')}} {{ ticket.resolved_at }}
                         <span v-if="ticket.closed_by_person">
                             by <b>{{ getHumanName(ticket.closed_by_person) }}</b>
                         </span></p>
                     <el-button v-loading="updating" :disabled="updating" @click="reOpen()" type="info" size="small">
-                        Reopen This ticket
+                        {{$t('Reopen This ticket')}}
                     </el-button>
                 </div>
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
@@ -160,12 +179,12 @@
                                         <div class="fs_thread_title">
                                             <strong v-if="conversation.person">
                                                 {{ getHumanName(conversation.person) }}</strong>
-                                            <span v-if="conversation.conversation_type == 'response'"> replied</span>
-                                            <span v-else-if="conversation.conversation_type == 'note'"> added a note</span>
+                                            <span v-if="conversation.conversation_type == 'response'"> {{$t('replied')}}</span>
+                                            <span v-else-if="conversation.conversation_type == 'note'"> {{$t('added a note')}}</span>
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="conversation.source == 'email'"
-                                                  title="Added By Email"><i class="el-icon-message"></i></span>
+                                                  :title="$t('Added By Email')"><i class="el-icon-message"></i></span>
                                             <span :title="conversation.created_at">{{
                                                     $timeDiff(conversation.created_at)
                                                 }}</span>
@@ -219,7 +238,7 @@
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="ticket.source == 'email'"
-                                                  title="Added By Email"><i class="el-icon-message"></i></span>
+                                                  :title="$t('Added By Email')"><i class="el-icon-message"></i></span>
                                             <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
                                         </div>
                                     </div>
@@ -250,7 +269,7 @@
             <el-skeleton :rows="10" animated/>
         </div>
         <el-dialog
-            title="Edit Response"
+            :title="$t('Edit Response')"
             v-model="edit_response_modal"
             width="60%">
             <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response"
@@ -420,9 +439,9 @@ export default {
             const conversation = data.conversation;
 
             if (actionType == 'delete') {
-                this.$confirm('This will permanently delete response. Continue?', 'Warning', {
-                    confirmButtonText: 'Delete Response',
-                    cancelButtonText: 'Cancel',
+                this.$confirm(this.$t('response_delete_warning'), 'Warning', {
+                    confirmButtonText: this.$t('Delete Response'),
+                    cancelButtonText: this.$t('Cancel'),
                     type: 'warning'
                 }).then(() => {
                     this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)
@@ -439,7 +458,7 @@ export default {
                 if (this.ticket.status == 'closed') {
                     this.$notify({
                         type: 'error',
-                        message: 'You can not edit responses when it is in close state',
+                        message: this.$t('error_msg_on_closed_ticket_edit'),
                         position: 'bottom-right'
                     });
                     return false;

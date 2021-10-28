@@ -1,14 +1,14 @@
 <template>
     <div class="fc_box_email_settings">
         <el-table v-if="configs" :data="configs" stripe>
-            <el-table-column label="Title" prop="title" width="400" />
-            <el-table-column label="Status">
+            <el-table-column :label="$t('Title')" prop="title" width="400" />
+            <el-table-column :label="$t('Status')">
                 <template #default="scope">
                     <i v-if="scope.row.status == 'yes'" style="font-size: 20px; color: #67c23a;" class="el-icon-circle-check"></i>
                     <i v-else style="font-size: 20px; color: #f56c6c;" class="el-icon-circle-close"></i>
                 </template>
             </el-table-column>
-            <el-table-column label="Manage">
+            <el-table-column :label="$t('Manage')">
                 <template #default="scope">
                     <el-button @click="editEmail(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
                 </template>
@@ -26,26 +26,25 @@
     >
         <h3>{{active_email_settings.description}}</h3>
         <el-form :data="active_email_settings" label-position="top">
-            <el-form-item label="Email Subject">
+            <el-form-item :label="$t('Email Subject')">
                 <el-input :disabled="active_email_settings.can_edit_subject == 'no'"
-                          v-model="active_email_settings.email_subject" placeholder="Email Subject"/>
-                <p v-if="active_email_settings.can_edit_subject == 'no'">You can not edit subject for this email. This
-                    subject patern is required for email reply parsing</p>
+                          v-model="active_email_settings.email_subject" :placeholder="$t('Email Subject')"/>
+                <p v-if="active_email_settings.can_edit_subject == 'no'">{{$t('can_not_edit_subject')}}</p>
             </el-form-item>
-            <el-form-item label="Email Body">
+            <el-form-item :label="$t('Email Body')">
                 <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body"/>
             </el-form-item>
             <el-row :gutter="20">
                 <el-col :sm="24" :md="12">
                     <el-form-item>
-                        <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">Enable
-                            This Email Notification
+                        <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">
+                            {{$t('enable_email')}}
                         </el-checkbox>
                     </el-form-item>
-                    <el-button @click="saveSettings" :disabled="saving" v-loading="saving" type="success">Save Settings</el-button>
+                    <el-button @click="saveSettings" :disabled="saving" v-loading="saving" type="success">{{$t('Save Settings')}}</el-button>
                 </el-col>
                 <el-col :sm="24" :md="12">
-                    <h3>Available Smartcodes</h3>
+                    <h3>{{$t('Available Smartcodes')}}</h3>
                     <ul class="fs_listed">
                         <li v-for="(codeName, code) in currentSmartCodes" :key="code"><b>{{codeName}}:</b> {{code}}
                         </li>
@@ -84,30 +83,30 @@ export default {
                 this.active_email == 'ticket_created_email_to_admin'
             ) {
                 return {
-                    '{{customer.first_name}}': 'Customer First Name',
-                    '{{customer.last_name}}': 'Customer Last Name',
-                    '{{customer.full_name}}': 'Customer Full Name',
-                    '{{customer.email}}': 'Customer Email',
-                    '{{ticket.id}}': 'Ticket ID',
-                    '{{ticket.title}}': 'Ticket Title',
-                    '{{ticket.content}}': 'Ticket Content',
-                    '{{business.name}}': 'Business Name'
+                    '{{customer.first_name}}': this.$t('Customer First Name'),
+                    '{{customer.last_name}}': this.$t('Customer Last Name'),
+                    '{{customer.full_name}}': this.$t('Customer Full Name'),
+                    '{{customer.email}}': this.$t('Customer Email'),
+                    '{{ticket.id}}': this.$t('Ticket ID'),
+                    '{{ticket.title}}': this.$t('Ticket Title'),
+                    '{{ticket.content}}': this.$t('Ticket Content'),
+                    '{{business.name}}': this.$t('Business Name')
                 }
             } else {
                 return {
-                    '{{customer.first_name}}': 'Customer First Name',
-                    '{{customer.last_name}}': 'Customer Last Name',
-                    '{{customer.full_name}}': 'Customer Full Name',
-                    '{{customer.email}}': 'Customer Email',
-                    '{{ticket.id}}': 'Ticket ID',
-                    '{{ticket.title}}': 'Ticket Title',
-                    '{{ticket.content}}': 'Ticket Content',
-                    '{{business.name}}': 'Business Name',
-                    '{{agent.first_name}}': 'Agent First Name',
-                    '{{agent.last_name}}': 'Agent Last Name',
-                    '{{agent.full_name}}': 'Agent Full Name',
-                    '{{response.title}}': 'Response Title',
-                    '{{response.content}}': 'Response Content'
+                    '{{customer.first_name}}':  this.$t('Customer First Name'),
+                    '{{customer.last_name}}': this.$t('Customer Last Name'),
+                    '{{customer.full_name}}': this.$t('Customer Full Name'),
+                    '{{customer.email}}': this.$t('Customer Email'),
+                    '{{ticket.id}}': this.$t('Ticket ID'),
+                    '{{ticket.title}}': this.$t('Ticket Title'),
+                    '{{ticket.content}}': this.$t('Ticket Content'),
+                    '{{business.name}}': this.$t('Business Name'),
+                    '{{agent.first_name}}': this.$t('Agent First Name'),
+                    '{{agent.last_name}}': this.$t('Agent Last Name'),
+                    '{{agent.full_name}}': this.$t('Agent Full Name'),
+                    '{{response.title}}': this.$t('Response Title'),
+                    '{{response.content}}': this.$t('Response Content')
                 }
             }
         }

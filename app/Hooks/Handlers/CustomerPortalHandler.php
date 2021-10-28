@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\TicketType;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\TransStrings;
 use FluentSupport\Framework\Support\Arr;
 
 class CustomerPortalHandler
@@ -16,10 +17,10 @@ class CustomerPortalHandler
     {
         if (PermissionManager::currentUserPermissions()) {
             $adminPortalUrl = Helper::getPortalAdminBaseUrl();
-            return '<div style="text-align: center;"><h3>Customer Portal is only accessible by Customers. Looks like you are a support staff</h3><a href="' . $adminPortalUrl . '">Go to Support Admin Page</a></div>';
+            return '<div style="text-align: center;"><h3>'.__('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support').'</h3><a href="' . $adminPortalUrl . '">'. __('Go to Support Admin Page', 'fluent-support'). '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
             $this->enqueueScripts();
-            return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">Loading Customer Portal. Please wait...</h3></div>';
+            return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">'. __('Loading Customer Portal. Please wait...', 'fluent-support') .'</h3></div>';
         } else {
             $businessSettings = Helper::getBusinessSettings();
             return do_shortcode(Arr::get($businessSettings, 'login_message', ''));
@@ -53,7 +54,8 @@ class CustomerPortalHandler
             'support_products'           => Product::select(['id', 'title'])->get(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
             'ticket_types'               => TicketType::select(['id', 'title'])->get(),
-            'view_tickets_url' => Helper::getPortalBaseUrl().'/#'
+            'view_tickets_url' => Helper::getPortalBaseUrl().'/#',
+            'i18n' => TransStrings::getTransStrings()
         ];
 
         if($this->isSignedTicketView()) {
