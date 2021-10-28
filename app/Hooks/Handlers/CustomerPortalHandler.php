@@ -5,7 +5,6 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\TicketType;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TransStrings;
