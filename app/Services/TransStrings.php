@@ -285,6 +285,8 @@ class TransStrings
             'Create a New Ticket'    => __('Create a New Ticket', 'fluent-support'),
             'Conversation'    => __('Conversation', 'fluent-support'),
             'Click Here to Write a reply'    => __('Click Here to Write a reply', 'fluent-support'),
+            'Admin Priority'    => __('Admin Priority', 'fluent-support'),
+            'Client Priority'    => __('Client Priority', 'fluent-support'),
         ];
     }
 }
