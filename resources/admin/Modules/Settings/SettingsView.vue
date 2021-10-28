@@ -41,11 +41,6 @@ export default {
                     route_query: {}
                 },
                 {
-                    title: this.$t('Ticket Types'),
-                    route_name: 'ticket-type',
-                    route_query: {}
-                },
-                {
                     title: this.$t('Support Staffs'),
                     route_name: 'support-staffs',
                     route_query: {}

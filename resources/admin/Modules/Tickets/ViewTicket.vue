@@ -99,9 +99,6 @@
                             <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags" />
                         </div>
                         <div class="fs_tk_badges">
-                            <span v-if="ticket.ticket_type" class="fs_badge" :class="'fs_badge_' + ticket.ticket_type.title" style="background: #3f9eff">
-                                {{ticket.ticket_type.title}}
-                            </span>
                             <el-popover
                                 placement="bottom"
                                 :width="400"
@@ -307,7 +304,6 @@ export default {
             agents: this.appVars.support_agents,
             admin_priorities: this.appVars.admin_priorities,
             client_priorities: this.appVars.client_priorities,
-            ticket_types: this.appVars.ticket_types,
             updating: false,
             active_agents: [],
             edit_response_modal: false,

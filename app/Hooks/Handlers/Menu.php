@@ -200,7 +200,6 @@ class Menu
             'support_products'  => Product::select(['id', 'title'])->get(),
             'client_priorities' => Helper::customerTicketPriorities(),
             'admin_priorities'  => Helper::adminTicketPriorities(),
-            'ticket_types'      => TicketType::select(['id', 'title'])->get(),
             'mailboxes'         => MailBox::select(['id', 'name', 'settings'])->get(),
             'me'                => $me,
             'pref'              => [
