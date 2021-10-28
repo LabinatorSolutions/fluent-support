@@ -1,7 +1,7 @@
 <template>
     <div class="fs_create_ticket">
         <el-form :data="ticket" label-position="top">
-            <el-form-item label="Select Customer">
+            <el-form-item :label="$t('Select Customer')">
                 <remote-selector
                     v-model="ticket.customer_id"
                     response_key="customers"
@@ -12,27 +12,27 @@
                 />
                 <error :error="errors.get('customer_id')"/>
             </el-form-item>
-            <el-form-item v-if="mailboxes.length > 1" label="Select Business">
-                <el-select v-model="ticket.mailbox_id" placeholder="Select related Product/Service">
+            <el-form-item v-if="mailboxes.length > 1" :label="$t('Select Business')">
+                <el-select v-model="ticket.mailbox_id" :placeholder="$t('Select related Product/Service')">
                     <el-option v-for="mailbox in mailboxes" :key="mailbox.id" :value="mailbox.id"
                                :label="mailbox.name"></el-option>
                 </el-select>
                 <error :error="errors.get('mailbox_id')"/>
             </el-form-item>
 
-            <el-form-item label="Subject">
-                <el-input placeholder="What's about this support ticket" type="text" v-model="ticket.title"></el-input>
+            <el-form-item :label="$t('Subject')">
+                <el-input :placeholder="$t('What\'s about this support ticket')" type="text" v-model="ticket.title"></el-input>
                 <error :error="errors.get('title')"/>
             </el-form-item>
-            <el-form-item label="Ticket Details">
+            <el-form-item :label="$t('Ticket Details')">
                 <wp-editor :height="150" :media-buttons="false" v-model="ticket.content"/>
                 <error :error="errors.get('content')"/>
             </el-form-item>
 
             <div class="fs_tk_actions">
                 <div v-if="products.length" class="fs_tk_left">
-                    <el-form-item label="Related Product/Service">
-                        <el-select v-model="ticket.product_id" placeholder="Select related Product/Service">
+                    <el-form-item :label="$t('Related Product/Service')">
+                        <el-select v-model="ticket.product_id" :placeholder="$t('Select related Product/Service')">
                             <el-option v-for="product in products" :key="product.id" :value="product.id"
                                        :label="product.title"></el-option>
                         </el-select>
@@ -40,8 +40,8 @@
                     </el-form-item>
                 </div>
                 <div class="fs_tk_left">
-                    <el-form-item label="Priority">
-                        <el-select v-model="ticket.client_priority" placeholder="Select related Product/Service">
+                    <el-form-item :label="$t('Priority')">
+                        <el-select v-model="ticket.client_priority" :placeholder="$t('Select Priority')">
                             <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey"
                                        :value="priorityKey" :label="priority"></el-option>
                         </el-select>
@@ -52,7 +52,7 @@
 
             <el-form-item>
                 <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">
-                    Create Ticket
+                    {{$t('Create Ticket')}}
                 </el-button>
             </el-form-item>
 

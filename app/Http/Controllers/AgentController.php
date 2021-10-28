@@ -138,7 +138,7 @@ class AgentController extends Controller
 
         if ($fallBackAgentId == $agentId) {
             return $this->sendError([
-                'message' => 'Old Agent and New agent is same person'
+                'message' => __('Old Agent and New agent is same person', 'fluent-support')
             ]);
         }
 
@@ -187,7 +187,7 @@ class AgentController extends Controller
 
         if (PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
             $stats['unassigned_tickets'] = [
-                'title' => 'Unassigned Tickets',
+                'title' => __('Unassigned Tickets', 'fluent-support'),
                 'count' => Ticket::whereNull('agent_id')->where('status', '!=', 'closed')->count()
             ];
         }

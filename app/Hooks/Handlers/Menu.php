@@ -30,7 +30,7 @@ class Menu
 
         add_menu_page(
             __('Fluent Support', 'fluent-support'),
-            __('Fluent Support'),
+            __('Fluent Support', 'fluent-support'),
             $permission,
             'fluent-support',
             array($this, 'renderApp'),
@@ -171,16 +171,16 @@ class Menu
             $integrationDrivers = [
                 [
                     'key' => 'telegram_settings',
-                    'title' => 'Telegram',
-                    'description' => 'Send Telegram notifications to Group, Channel or individual person inbox and reply from Telegram inbox',
-                    'promo_heading' => 'Get activity notification to Telegram Messenger and reply directly from Telegram inbox',
+                    'title' => __('Telegram', 'fluent-support'),
+                    'description' => __('Send Telegram notifications to Group, Channel or individual person inbox and reply from Telegram inbox', 'fluent-support'),
+                    'promo_heading' => __('Get activity notification to Telegram Messenger and reply directly from Telegram inbox', 'fluent-support'),
                     'require_pro' => true
                 ],
                 [
                     'key' => 'slack_settings',
-                    'title' => 'Slack',
-                    'description' => 'Send ticket activity notifications to slack ',
-                    'promo_heading' => 'Get activity notification to Slack Channel and keep your support team super engaged',
+                    'title' => __('Slack', 'fluent-support'),
+                    'description' => __('Send ticket activity notifications to slack', 'fluent-support'),
+                    'promo_heading' => __('Get activity notification to Slack Channel and keep your support team super engaged', 'fluent-support'),
                     'require_pro' => true
                 ]
             ];

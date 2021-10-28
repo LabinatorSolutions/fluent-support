@@ -3,15 +3,15 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>All Customers</h3>
+                    <h3>{{$t('All Customers')}}</h3>
                     <el-button
                         @click="showEditCustomerModal({})"
                         size="mini"
-                        icon="el-icon-plus">Add Customer</el-button>
+                        icon="el-icon-plus">{{$t('Add Customer')}}</el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="mini"
-                              placeholder="Search Customers" v-model="search">
+                              :placeholder="$t('Search Customers')" v-model="search">
                         <template #append>
                             <el-button @click="fetchCustomers()" icon="el-icon-search"></el-button>
                         </template>
@@ -20,24 +20,24 @@
             </div>
             <div class="fs_box_body fs_padded_20">
                 <el-table stripe :data="customers">
-                    <el-table-column prop="id" label="ID" width="100"></el-table-column>
-                    <el-table-column label="Name" width="160">
+                    <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
+                    <el-table-column :label="$t('Name')" width="160">
                         <template #default="scope">
                             <a v-if="scope.row.user_profile" :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                             <span v-else>{{scope.row.full_name}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="Email">
+                    <el-table-column :label="$t('Email')">
                         <template #default="scope">
                             {{ scope.row.email }}
                         </template>
                     </el-table-column>
-                    <el-table-column label="Last Activity" width="160">
+                    <el-table-column :label="$t('Last Activity')" width="160">
                         <template #default="scope">
                             {{$timeDiff(scope.row.last_response_at)}}
                         </template>
                     </el-table-column>
-                    <el-table-column label="Stats" width="180">
+                    <el-table-column :label="$t('Stats')" width="180">
                         <template #default="scope">
                             <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
                                 <span class="fs_badge"><i class="el-icon-folder"></i> {{scope.row.total_tickets}}</span>
@@ -55,7 +55,7 @@
         </div>
         <el-dialog
             :append-to-body="true"
-            :title="(editing_customer.id) ? 'Update customer' : 'Add new customer'"
+            :title="(editing_customer.id) ? $t('Update customer') : $t('Add new customer')"
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%">

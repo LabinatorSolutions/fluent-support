@@ -9,7 +9,7 @@
                 </el-radio-group>
             </div>
             <div class="fs_tk_right">
-                <el-button size="small" @click="$router.push({ name: 'create_ticket' })" type="success">Create a New Ticket</el-button>
+                <el-button size="small" @click="$router.push({ name: 'create_ticket' })" type="success">{{$t('Create a New Ticket')}}</el-button>
             </div>
         </div>
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">
@@ -22,7 +22,7 @@
                 @row-click="gotToTicket"
                 v-loading="fetching"
                 style="width: 100%">
-                <el-table-column min-width="200px" label="Conversation">
+                <el-table-column min-width="200px" :label="$t('Conversation')">
                     <template #default="scope">
                         <router-link class="fs_tk_preview"
                                      :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
@@ -38,14 +38,14 @@
                         <span class="fs_thread_count">{{ scope.row.response_count }}</span>
                     </template>
                 </el-table-column>
-                <el-table-column width="100" label="Status">
+                <el-table-column width="100" :label="$t('Status')">
                     <template #default="scope">
                         <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
                     prop="created_at"
-                    label="Date"
+                    :label="$t('Date')"
                     width="180">
                 </el-table-column>
             </el-table>

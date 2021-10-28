@@ -3,11 +3,11 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Ticket Tags</h3>
+                    <h3>{{$t('Ticket Tags')}}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
                     <el-button @click="createTagModal()" type="primary" icon="el-icon-plus" size="small">
-                        Add New
+                        {{$t('Add New')}}
                     </el-button>
                 </div>
             </div>
@@ -39,31 +39,31 @@
                 </div>
             </template>
             <div class="fs_narrow_promo" v-else>
-                <h3>Add Tags and segment your tickets by tags filter then you can also do bulk actions</h3>
-                <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>
-                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
+                <h3>{{$t('segment_ticket_by_tags')}}</h3>
+                <p>{{$t('pro_promo')}}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
             </div>
         </div>
 
         <el-dialog
             :append-to-body="true"
-            :title="(editing_tag && editing_tag.id) ? 'Edit Tag' : 'Create New Ticket Tag'"
+            :title="(editing_tag && editing_tag.id) ? $t('Edit Tag') : $t('Create New Ticket Tag')"
             v-model="tag_modal"
             v-if="editing_tag"
             width="60%">
 
             <el-form label-position="top" :data="editing_tag">
-                <el-form-item label="Title">
-                    <el-input type="text" placeholder="Tag Title" v-model="editing_tag.title"/>
+                <el-form-item :label="$t('Title')">
+                    <el-input type="text" :placeholder="$t('Tag Title')" v-model="editing_tag.title"/>
                 </el-form-item>
-                <el-form-item label="Description">
-                    <el-input type="textarea" placeholder="Tag Description" v-model="editing_tag.description"/>
+                <el-form-item :label="$t('Description')">
+                    <el-input type="textarea" :placeholder="$t('Tag Description')" v-model="editing_tag.description"/>
                 </el-form-item>
             </el-form>
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateTag()">Save</el-button>
+                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateTag()">{{$t('Save')}}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -147,7 +147,7 @@ export default {
             this.tag_modal = true;
         },
         deleteTag(tag) {
-            const r = confirm("Are you sure, You want to delete this?");
+            const r = confirm(this.$t("Are you sure, You want to delete this?"));
 
             if (!r) {
                 return ;

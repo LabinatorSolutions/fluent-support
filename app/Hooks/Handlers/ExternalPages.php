@@ -33,7 +33,7 @@ class ExternalPages
 
             if(!$ticket) {
                 // Sorry no ticket found;
-                echo '<h3 style="text-align: center; margin: 50px 0;">Invalid Support Portal URL</h3>';
+                echo '<h3 style="text-align: center; margin: 50px 0;">'.__('Invalid Support Portal URL', 'fluent-support').'</h3>';
                 die();
             }
 
@@ -48,7 +48,7 @@ class ExternalPages
 
         if(!$ticket) {
             // Sorry no ticket found;
-            echo '<h3 style="text-align: center; margin: 50px 0;">Invalid Support Portal URL</h3>';
+            echo '<h3 style="text-align: center; margin: 50px 0;">'.__('Invalid Support Portal URL', 'fluent-support').'</h3>';
             die();
         }
 
@@ -103,7 +103,8 @@ class ExternalPages
             // check signature hash
             $sign = md5($attachment->id . date('YmdH'));
             if($sign != $_REQUEST['secure_sign']) {
-                die('Sorry, Your secure sign is invalid, Please reload the previous page and get new signed url');
+                $dieMessage = __('Sorry, Your secure sign is invalid, Please reload the previous page and get new signed url', 'fluent-support');
+                die($dieMessage);
             }
 
             ob_clean();

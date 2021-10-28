@@ -51,7 +51,7 @@ class SettingsController extends Controller
 
         if (!$createPage && empty($settings['portal_page_id'])) {
             return $this->sendError([
-                'message' => 'Please select a page or enable create page'
+                'message' => __('Please select a page or enable create page', 'fluent-support')
             ]);
         }
 
@@ -62,7 +62,7 @@ class SettingsController extends Controller
                     'comment_status' => 'close',
                     'ping_status'    => 'close',
                     'post_author'    => get_current_user_id(),
-                    'post_title'     => __('Support Portal'),
+                    'post_title'     => __('Support Portal', 'fluent-support'),
                     'post_status'    => 'publish',
                     'post_content'   => '[fluent_support_portal]',
                     'post_type'      => 'page'

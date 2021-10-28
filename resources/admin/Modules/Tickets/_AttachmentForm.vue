@@ -16,14 +16,14 @@
             :file-list="file_lists"
             list-type="picture"
         >
-            <el-button size="small" type="primary">Click to upload</el-button>
+            <el-button size="small" type="primary">{{$t('Click to upload')}}</el-button>
             <template #tip>
-                <div class="el-upload__tip">Files with a size less than 2MB. Supported Types: images, text, pdf, zip</div>
+                <div class="el-upload__tip">{{$t('allowed_files_and_size')}}</div>
             </template>
         </el-upload>
         <p style="color: red;" v-if="error_message" @click="error_message = ''">{{ error_message }}</p>
 
-        <el-dialog :title="dailogImageTitle" v-model="dialogVisible">
+        <el-dialog :title="dialogImageTitle" v-model="dialogVisible">
           <img :src="dialogImageUrl" alt="" />
         </el-dialog>
     </div>
@@ -46,7 +46,7 @@ export default {
             },
             error_message: '',
             dialogImageUrl: '',
-            dailogImageTitle: '',
+            dialogImageTitle: '',
             dialogVisible: false,
         }
     },
@@ -56,7 +56,7 @@ export default {
             this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
         },
         handlePreview(file) {
-            this.dailogImageTitle = file.name
+            this.dialogImageTitle = file.name
             this.dialogImageUrl = file.url
             this.dialogVisible = true
         },
@@ -66,7 +66,7 @@ export default {
         handleError(err, file, fileList) {
             let message = this.convertToText(JSON.parse(err.message));
             if(!message) {
-                message = 'File failed to upload';
+                message = this.$t('File failed to upload');
             }
 
             message = file.name + ': ' + message;

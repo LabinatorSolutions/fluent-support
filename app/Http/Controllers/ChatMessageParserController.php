@@ -15,7 +15,7 @@ class ChatMessageParserController extends Controller
         // Validate Token
         if(TelegramHelper::getWebhookToken() != $token) {
             return $this->sendSuccess([
-                'message' => 'Bot Token could not be verified',
+                'message' => __('Bot Token could not be verified', 'fluent-support'),
                 'status' => false
             ]);
         }
@@ -42,7 +42,7 @@ class ChatMessageParserController extends Controller
 
         if(!$ticket) {
             return $this->sendSuccess([
-                'message' => 'No ticket found',
+                'message' => __('No ticket found', 'fluent-support'),
                 'status' => false
             ]);
         }
@@ -51,7 +51,7 @@ class ChatMessageParserController extends Controller
 
         if(!$agent) {
             return $this->sendSuccess([
-                'message' => 'No Agent found',
+                'message' => __('No Agent found', 'fluent-support'),
                 'status' => false
             ]);
         }
@@ -59,7 +59,7 @@ class ChatMessageParserController extends Controller
         (new ResponseService)->createResponse($data, $agent, $ticket);
 
         return $this->sendSuccess([
-            'message' => 'Response has been successfully recorded',
+            'message' => __('Response has been successfully recorded', 'fluent-support'),
             'status' => true,
             'data' => $data
         ]);

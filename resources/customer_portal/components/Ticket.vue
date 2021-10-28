@@ -15,12 +15,12 @@
                             </div>
                         </div>
                         <div class="fs_tk_actions">
-                            <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
+                            <el-button v-loading="fetching" @click="fetchTicket()" icon="el-icon-refresh"
                                        size="small"></el-button>
                             <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">All</a>
                             <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
                                        @click="closeTicket()" size="small"
-                                       type="danger">Close Ticket
+                                       type="danger">{{$t('Close Ticket')}}
                             </el-button>
                         </div>
                     </hgroup>
@@ -28,13 +28,13 @@
             </div>
             <div class="fs_tk_body">
                 <div style="text-align: center;" class="fst_reply_box" v-if="ticket.status == 'closed'">
-                    <p>This ticket has been closed at {{ ticket.resolved_at }}
+                    <p>{{$t('ticket_closed')}} {{ ticket.resolved_at }}
                         <span v-if="ticket.closed_by_person">
-                            by <b>{{ getHumanName(ticket.closed_by_person) }}</b>
+                            {{$t('by')}} <b>{{ getHumanName(ticket.closed_by_person) }}</b>
                         </span>
-                        <br/>If you still have related issues. Please reopen this ticket and reply</p>
+                        <br/>{{$t('reopen_ticket_instruction')}}</p>
                     <el-button :disabled="updating" v-loading="updating" @click="reOpen()" type="info" size="small">
-                        Reopen This ticket
+                        {{$t('Reopen This ticket')}}
                     </el-button>
                 </div>
                 <inline-reply v-else @created="recordNewResponse" :ticket="ticket"/>
@@ -59,7 +59,7 @@
                                         <div class="fs_thread_title">
                                             <strong v-if="conversation.person">{{
                                                     getHumanName(conversation.person)
-                                                }}</strong> replied
+                                                }}</strong> {{$t('replied')}}
                                         </div>
                                         <div class="fs_thread_actions">
                                             {{ conversation.created_at }}
@@ -94,8 +94,7 @@
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong>{{ getHumanName(ticket.customer) }}</strong> started the
-                                            conversation
+                                            <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('started the conversation')}}
                                         </div>
                                         <div class="fs_thread_actions">
                                             {{ ticket.created_at }}
@@ -129,7 +128,7 @@
         </div>
         <div style="padding: 20px; text-align: center;" class="fs_tk_body" v-else-if="error_message">
             <p v-html="error_message"></p>
-            <el-button type="primary" @click="$router.push({ name: 'dashboard' })" size="small">View Your Tickets
+            <el-button type="primary" @click="$router.push({ name: 'dashboard' })" size="small">{{$t('View Your Tickets')}}
             </el-button>
         </div>
     </div>
@@ -166,7 +165,7 @@ export default {
                     this.signon_id = response.sign_on_id;
                 })
                 .catch((errors) => {
-                    let message = 'Uknown error. Please reload this page';
+                    let message = this.$t('Unknown error. Please reload this page');
                     if (errors.responseJSON?.errors?.message) {
                         message = errors.responseJSON?.errors?.message;
                     } else if (errors.responseJSON?.message) {
@@ -197,7 +196,7 @@ export default {
         },
         getHumanName(person) {
             if (this.signon_id == person.id) {
-                return 'You';
+                return this.$t('You');
             }
 
             return person.full_name;

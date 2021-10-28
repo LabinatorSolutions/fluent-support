@@ -27,9 +27,9 @@
                                     size="small"
                                     v-model="date_range"
                                     type="daterange"
-                                    range-separator="To"
-                                    start-placeholder="Start date"
-                                    end-placeholder="End date"
+                                    :range-separator="$t('To')"
+                                    :start-placeholder="$t('Start')"
+                                    :end-placeholder="$t('End')"
                                     :unlink-panels=true
                                     @change="filterReport"
                                     value-format="YYYY-MM-DD"
@@ -48,7 +48,7 @@
                     <div class="fs_box">
                         <div class="fs_box_header">
                             <div class="fs_header_title">
-                                Quick Stats
+                                {{$t('Quick Stats')}}
                             </div>
                         </div>
                         <div class="fs_box_body">

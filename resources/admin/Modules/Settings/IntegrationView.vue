@@ -9,15 +9,15 @@
         </div>
         <div v-if="!loading" class="fs_box_wrapper fs_padded_20">
             <div v-if="current_integration">
-                <h3>{{ current_integration.title }} Integration Settings</h3>
+                <h3>{{ current_integration.title }} {{$t('Integration Settings')}}</h3>
                 <p>{{ current_integration.description }}</p>
                 <hr/>
             </div>
 
             <div class="fs_narrow_promo" v-if="current_integration && current_integration.require_pro">
                 <h3>{{ current_integration.promo_heading }}</h3>
-                <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>
-                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
+                <p>{{$t('pro_promo')}}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
             </div>
 
             <div v-else-if="fields" class="fs_box_body">
@@ -27,7 +27,7 @@
                 </el-button>
             </div>
             <div class="fs_box_body" v-else>
-                <h3>Settings could not be found!</h3>
+                <h3>{{$t('Settings could not be found')}}!</h3>
             </div>
         </div>
         <div style="padding: 20px; background: white;" class="fs_box_body" v-else>

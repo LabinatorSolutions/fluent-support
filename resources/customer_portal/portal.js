@@ -104,6 +104,9 @@ app.mixin({
                 string.push(obj)
             }
             return string.join('<br />')
+        },
+        $t(string) {
+            return window.window.fs_customer_portal.i18n[string] || string;
         }
     }
 });
