@@ -163,14 +163,18 @@
 
             &.fs_conv_type_internal_info {
                 background: #fbfaf9;
+
                 .fs_avatar {
                     display: none;
                 }
+
                 .fs_thread_wrap {
                     margin: 0;
                     padding: 10px 20px;
+
                     .fs_thread_head {
                         min-height: auto;
+
                         .fs_thread_title {
                             margin-bottom: 0;
                         }
@@ -213,6 +217,7 @@
                 color: #a5b2bd;
                 text-align: right;
                 font-size: 12px;
+
                 .el-dropdown {
                     float: right;
                     color: black;
@@ -296,6 +301,7 @@
             overflow: auto;
             padding: 1.5em;
             white-space: pre-wrap;
+
             code {
                 padding: 0;
                 margin: 0;
@@ -534,6 +540,7 @@ span.fs_agent_photo_icon img {
     h3 {
         margin: 0 0 10px;
     }
+
     ul {
         display: block;
         list-style: none;
@@ -542,10 +549,12 @@ span.fs_agent_photo_icon img {
         border-left: 1px solid transparent;
         max-height: 200px;
         overflow: auto;
+
         li {
             display: block;
             cursor: pointer;
             padding: 5px;
+
             &:hover {
                 color: #5d6cc3;
                 border-left: 1px solid #5d6cc3;
@@ -562,4 +571,26 @@ span.fs_agent_photo_icon img {
     margin-left: 5px;
     color: #48a1ff;
     border-color: #b3d8fe;
+}
+
+.fc_custom_data_wrap {
+    padding: 0 30px 20px;
+    border-top: 1px solid #e5e9ec;
+    background: #fffff4;
+    > ul {
+        display: block;
+        margin: 0;
+        padding: 0;
+        li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+    }
+
+    span.fs_custom_check_value {
+        border: 1px solid #e5e9ec;
+        border-radius: 3px;
+        padding: 0 7px;
+        margin-right: 10px;
+    }
 }

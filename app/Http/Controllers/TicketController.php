@@ -115,7 +115,9 @@ class TicketController extends Controller
 
         $ticketData['content'] = wp_unslash(wp_kses_post($ticketData['content']));
 
-        $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
+        if(!empty($ticketData['priority'])) {
+            $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
+        }
 
         $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
 
@@ -123,6 +125,11 @@ class TicketController extends Controller
         do_action('fluent_support/before_ticket_create', $ticketData, $customer);
 
         $createdTicket = Ticket::create($ticketData);
+
+        if(defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
+            $createdTicket->syncCustomFields($ticketData['custom_fields']);
+            $createdTicket->custom_fields = $ticketData->getCustomFields();
+        }
 
         do_action('fluent_support/ticket_created', $createdTicket, $customer);
 
