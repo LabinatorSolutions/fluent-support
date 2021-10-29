@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Models;
 
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Support\Arr;
 
 class Ticket extends Model
 {
@@ -374,5 +375,52 @@ class Ticket extends Model
         }
 
         return $formattedData;
+    }
+
+    public function syncCustomFields($data)
+    {
+        $fields = apply_filters('fluent_support_ticket_custom_fields', []);
+
+        if(!$fields) {
+            return false;
+        }
+
+        $keys = array_keys($fields);
+
+        $validData = Arr::only($data, $keys);
+
+        foreach ($validData as $dataKey => $validDatum) {
+            if($fields[$dataKey]['type'] == 'checkbox') {
+                $validDatum = implode('|', $validData);
+                $validDatum = '|'.$validDatum.'|';
+            }
+
+            $exist = Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)
+                ->where('key', $dataKey)
+                ->first();
+
+            if($exist) {
+                $exist->value = $validDatum;
+                $exist->save();
+            } else {
+                Meta::insert([
+                    'object_type' => 'ticket_meta',
+                    'object_id' => $this->id,
+                    'key' => $dataKey,
+                    'value' => $validDatum
+                ]);
+            }
+        }
+
+        // maybe delete data
+        $deletedSlugs = array_diff($keys, array_keys($validData));
+
+        if($deletedSlugs) {
+            Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)
+                ->whereIn('key', $deletedSlugs)
+                ->delete();
+        }
+
+        return true;
     }
 }
