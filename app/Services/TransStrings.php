@@ -287,6 +287,7 @@ class TransStrings
             'Click Here to Write a reply'    => __('Click Here to Write a reply', 'fluent-support'),
             'Admin Priority'    => __('Admin Priority', 'fluent-support'),
             'Client Priority'    => __('Client Priority', 'fluent-support'),
+            'Updating Custom Field Data'    => __('Updating Custom Field Data', 'fluent-support'),
         ];
     }
 }
