@@ -256,7 +256,7 @@
                             </section>
                             <div v-if="has_pro && !isEmpty(appVars.custom_fields)" class="fc_custom_data_wrap">
                                 <h3>{{$t('Additional Data')}} <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text" icon="el-icon-edit" size="mini"></el-button></h3>
-                                <ul>
+                                <ul v-if="!isEmpty(ticket.custom_fields)">
                                     <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
                                         <b>{{appVars.custom_fields[fieldName].label}}</b> :
                                         <span v-if="appVars.custom_fields[fieldName].type == 'checkbox'">
@@ -265,6 +265,7 @@
                                         <span v-else>{{fieldValue}}</span>
                                     </li>
                                 </ul>
+                                <p v-else>No additional data found</p>
                             </div>
                         </div>
                     </article>
