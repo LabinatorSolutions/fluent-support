@@ -21,7 +21,8 @@
             </el-form-item>
 
             <el-form-item :label="$t('Subject')">
-                <el-input :placeholder="$t('What\'s about this support ticket')" type="text" v-model="ticket.title"></el-input>
+                <el-input :placeholder="$t('What\'s about this support ticket')" type="text"
+                          v-model="ticket.title"></el-input>
                 <error :error="errors.get('title')"/>
             </el-form-item>
             <el-form-item :label="$t('Ticket Details')">
@@ -29,8 +30,8 @@
                 <error :error="errors.get('content')"/>
             </el-form-item>
 
-            <div class="fs_tk_actions">
-                <div v-if="products.length" class="fs_tk_left">
+            <el-row :gutter="30">
+                <el-col v-if="products.length" :md="12" :xs="24">
                     <el-form-item :label="$t('Related Product/Service')">
                         <el-select v-model="ticket.product_id" :placeholder="$t('Select related Product/Service')">
                             <el-option v-for="product in products" :key="product.id" :value="product.id"
@@ -38,21 +39,23 @@
                         </el-select>
                         <error :error="errors.get('product_id')"/>
                     </el-form-item>
-                </div>
-                <div class="fs_tk_left">
-                    <el-form-item :label="$t('Priority')">
+                </el-col>
+                <el-col :md="12" :xs="24">
+                    <el-form-item :label="$t('Priority (Customer)')">
                         <el-select v-model="ticket.client_priority" :placeholder="$t('Select Priority')">
                             <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey"
                                        :value="priorityKey" :label="priority"></el-option>
                         </el-select>
                         <error :error="errors.get('client_priority')"/>
                     </el-form-item>
-                </div>
-            </div>
+                </el-col>
+            </el-row>
+
+            <custom-fields-form :custom_data="ticket.custom_fields" v-if="has_pro" />
 
             <el-form-item>
                 <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">
-                    {{$t('Create Ticket')}}
+                    {{ $t('Create Ticket') }}
                 </el-button>
             </el-form-item>
 
@@ -65,13 +68,15 @@ import WpEditor from '../../Pieces/_wp_editor';
 import RemoteSelector from '../../Pieces/RemoteSelector';
 import Error from '../../../admin/Pieces/Error';
 import Errors from '../../../admin/Bits/Errors';
+import CustomFieldsForm from './parts/_CustomFieldForm';
 
 export default {
     name: 'CreateTicketForm',
     components: {
         WpEditor,
         RemoteSelector,
-        Error
+        Error,
+        CustomFieldsForm
     },
     data() {
         return {
@@ -86,7 +91,8 @@ export default {
                 title: '',
                 content: '',
                 product_id: '',
-                client_priority: ''
+                client_priority: '',
+                custom_fields: {}
             }
         }
     },

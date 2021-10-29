@@ -254,6 +254,18 @@
                                     </div>
                                 </section>
                             </section>
+                            <div v-if="has_pro && !isEmpty(appVars.custom_fields)" class="fc_custom_data_wrap">
+                                <h3>{{$t('Additional Data')}} <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text" icon="el-icon-edit" size="mini"></el-button></h3>
+                                <ul>
+                                    <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
+                                        <b>{{appVars.custom_fields[fieldName].label}}</b> :
+                                        <span v-if="appVars.custom_fields[fieldName].type == 'checkbox'">
+                                            <span class="fs_custom_check_value" v-for="value in fieldValue" :key="value">{{value}}</span>
+                                        </span>
+                                        <span v-else>{{fieldValue}}</span>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </article>
                 </div>
@@ -281,6 +293,8 @@ import CreateResponse from './_CreateResponse';
 import EditResponse from './_EditResponse';
 import TicketSidebar from './_TicketSidebar';
 import each from 'lodash/each';
+import isEmpty from 'lodash/isEmpty';
+import isArray from 'lodash/isArray';
 import ActiveAgents from './_active_agents';
 import TicketTags from './parts/_Tags';
 
@@ -307,7 +321,8 @@ export default {
             updating: false,
             active_agents: [],
             edit_response_modal: false,
-            editing_response: false
+            editing_response: false,
+            showCustomDataEditForm: false
         }
     },
     watch: {
@@ -470,7 +485,9 @@ export default {
                return content;
             }
             return content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
-        }
+        },
+        isEmpty,
+        isArray
     },
     mounted() {
         this.fetchTicket();

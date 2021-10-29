@@ -391,7 +391,7 @@ class Ticket extends Model
 
         foreach ($validData as $dataKey => $validDatum) {
             if($fields[$dataKey]['type'] == 'checkbox') {
-                $validDatum = implode('|', $validData);
+                $validDatum = implode('|', $validDatum);
                 $validDatum = '|'.$validDatum.'|';
             }
 
