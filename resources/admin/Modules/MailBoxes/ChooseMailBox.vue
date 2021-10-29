@@ -6,7 +6,7 @@
                     <h3>{{$t('Business Inboxes')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button size="small" @click="showNewBusinessModal()" type="primary">{{$t('Add New Business Inbox')}}</el-button>
+                    <el-button size="small" @click="showNewBusinessModal()" type="primary">{{ $t('Add New Business Inbox') }}</el-button>
                 </div>
             </div>
             <div class="">
@@ -52,7 +52,7 @@
                 </el-form-item>
                 <el-form-item :label="$t('Business Email')">
                     <el-input type="email" v-model="new_business.email"></el-input>
-                    <p>{{$('email_can_be_send')}}</p>
+                    <p>{{$t('email_can_be_send')}}</p>
                 </el-form-item>
                 <el-form-item :label="$t('Support Channel')">
                     <el-radio-group v-model="new_business.box_type">
