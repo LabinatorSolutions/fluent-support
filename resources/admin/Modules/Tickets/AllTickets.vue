@@ -235,7 +235,8 @@ export default {
                 priority: '',
                 client_priority: '',
                 waiting_for_reply: '',
-                ticket_tags: []
+                ticket_tags: [],
+                mailbox_id: ''
             },
             search: '',
             order_by: 'last_customer_response',

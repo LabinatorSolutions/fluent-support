@@ -10,6 +10,14 @@
                 <el-radio-button label="all">{{$t('All')}}</el-radio-button>
             </el-radio-group>
         </div>
+        <div v-if="appVars.mailboxes.length" class="fs_tk_filter">
+            <label>{{$t('Inbox')}}</label>
+            <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.mailbox_id"
+                       :placeholder="$t('All Inbox')">
+                <el-option v-for="mailbox in appVars.mailboxes" :key="mailbox.id" :value="mailbox.id"
+                           :label="mailbox.name"></el-option>
+            </el-select>
+        </div>
         <div class="fs_tk_filter">
             <label>{{$t('Product')}}</label>
             <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.product_id"
@@ -112,7 +120,7 @@ export default {
     computed: {
         has_active_filter() {
             const f = this.filters;
-            return f.status_type != 'open' || f.product_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length;
+            return f.status_type != 'open' || f.product_id || f.mailbox_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length;
         }
     },
     methods: {
