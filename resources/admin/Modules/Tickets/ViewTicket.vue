@@ -268,6 +268,13 @@
                                 <p v-else>No additional data found</p>
                             </div>
                         </div>
+                        <el-dialog :title="$t('Updating Custom Field Data')" v-model="showCustomDataEditForm">
+                            <custom-field-form :custom_data="ticket.custom_fields"/>
+                            <el-button @click="saveEditedCustomFieldData(ticket.custom_fields)" type="primary">
+                                {{$t('Save')}}
+                            </el-button>
+                        </el-dialog>
+
                     </article>
                 </div>
             </div>
@@ -298,6 +305,7 @@ import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import ActiveAgents from './_active_agents';
 import TicketTags from './parts/_Tags';
+import CustomFieldForm from './parts/_CustomFieldForm';
 
 export default {
     name: 'ViewTicket',
@@ -307,7 +315,8 @@ export default {
         TicketSidebar,
         EditResponse,
         ActiveAgents,
-        TicketTags
+        TicketTags,
+        CustomFieldForm
     },
     data() {
         return {
@@ -480,6 +489,31 @@ export default {
             }
 
             console.log(data);
+        },
+        saveEditedCustomFieldData(data) {
+            let customFieldData = data;
+           if(Array.isArray(data)){
+               const arrayToString = JSON.stringify(Object.assign({}, data));
+               customFieldData = JSON.parse(arrayToString);
+           }
+            this.$post(`ticket-custom-fields/${this.ticket.id}/sync`, {
+                custom_fields:  customFieldData,
+            })
+                .then(response => {
+                    this.$notify({
+                        type: 'success',
+                        message: response.message,
+                        position: 'bottom-right'
+                    })
+                    this.showCustomDataEditForm = !this.showCustomDataEditForm;
+                    this.fetchTicket()
+                 })
+                .catch((errors) => {
+                    console.log(errors);
+                })
+                .always(() => {
+
+                });
         },
         santizeContent(content) {
             if (!content) {
