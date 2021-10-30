@@ -268,7 +268,10 @@
                                 <p v-else>No additional data found</p>
                             </div>
                         </div>
-                        <el-dialog :title="$t('Updating Custom Field Data')" v-model="showCustomDataEditForm">
+                        <el-dialog
+                            :title="$t('Updating Custom Field Data')"
+                            v-model="showCustomDataEditForm"
+                            width="70%">
                             <custom-field-form :custom_data="ticket.custom_fields"/>
                             <el-button @click="saveEditedCustomFieldData(ticket.custom_fields)" type="primary">
                                 {{$t('Save')}}
