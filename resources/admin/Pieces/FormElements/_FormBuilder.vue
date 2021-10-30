@@ -21,6 +21,8 @@ import InlineCheckbox from './_InlineCheckbox'
 import VerifiedEmailInput from './_VerifiedEmailInput'
 import CheckboxGroup from './_InputCheckboxes'
 import HtmlViewer from './_HtmlViewer'
+import AgentSelectors from './_AgentSelectors'
+import TagSelectors from './_TagSelectors'
 
 export default {
     name: 'global_form_builder',
@@ -34,7 +36,9 @@ export default {
         InlineCheckbox,
         VerifiedEmailInput,
         CheckboxGroup,
-        HtmlViewer
+        HtmlViewer,
+        AgentSelectors,
+        TagSelectors
     },
     props: {
         formData: {

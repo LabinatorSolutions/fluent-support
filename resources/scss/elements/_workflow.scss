@@ -1,0 +1,95 @@
+.fs_workflow_type_info {
+    border-radius: 4px;
+    word-break: break-word;
+
+    .fs_workflow_info_header {
+        padding: 15px 20px;
+        border: 1px solid #addbff;
+        background-color: #d6edff;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+
+    .fs_workflow_info_body {
+        padding: 15px 20px;
+        border: 1px solid #addcfe;
+        border-top: 0;
+    }
+}
+
+
+.fs_workflow_edit_wrap {
+    margin: 0 auto;
+    max-width: 1100px;
+
+    .fs_workflow_trigger_box {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 4px;
+    }
+}
+
+
+.fcon_trigger_view {
+    margin: 0 -20px 10px;
+    border-bottom: 1px solid #e3e8ed;
+    padding: 0px 20px 10px;
+
+    .fcon_provider_info {
+        display: flex;
+        align-content: center;
+        align-items: center;
+        cursor: pointer;
+
+        .fc_trigger_logo {
+            margin-right: 20px;
+
+            img {
+                width: 32px;
+            }
+        }
+
+        .fc_trigger_titles {
+            flex-grow: 1;
+            font-size: 17px;
+
+            span.fc_item_open {
+                float: right;
+            }
+        }
+    }
+
+    .fcon_trigger_editor {
+        overflow: hidden;
+        padding: 15px 20px;
+        background: #f7fafc;
+        margin-bottom: 20px;
+    }
+}
+
+span.fs_trigger_sub {
+    padding-left: 15px;
+    font-size: 90%;
+    color: gray;
+}
+
+.fs_condition_line {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 15px 10px;
+    background: #f1f2f5;
+    margin-bottom: 10px;
+    .fs_cond_block {
+        padding-right: 20px;
+        flex-basis: 30%;
+        &.fs_cond_action {
+            text-align: right;
+            flex-basis: 5%;
+        }
+    }
+    .fc_cond_value {
+        flex-basis: 50%;
+    }
+}

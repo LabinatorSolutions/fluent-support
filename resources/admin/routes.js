@@ -23,6 +23,9 @@ import MailBoxEmailSettings from './Modules/MailBoxes/BoxEmailSettings';
 
 import Report from './Modules/Reports/Report';
 
+import Workflows from './Modules/Workflows/AllWorkflows';
+import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
+
 export default [
     {
         path: '/',
@@ -157,7 +160,24 @@ export default [
         meta: {
             active: 'reports'
         }
-    }
+    },
+    {
+        path: '/workflows',
+        name: 'workflows',
+        component: Workflows,
+        meta: {
+            active: 'workflows'
+        }
+    },
+    {
+        path: '/workflows/:workflow_id/edit',
+        name: 'edit-workflow',
+        component: EditWorkFlow,
+        props: true,
+        meta: {
+            active: 'workflows'
+        }
+    },
 
 ];
 

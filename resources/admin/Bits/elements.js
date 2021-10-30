@@ -47,6 +47,8 @@ import {
     ElDropdown,
     ElDropdownMenu,
     ElDropdownItem,
+    ElBreadcrumb,
+    ElBreadcrumbItem,
 
     ElTag,
 
@@ -60,6 +62,8 @@ const app = createApp({});
 
 const components = [
     ElMenu,
+    ElBreadcrumb,
+    ElBreadcrumbItem,
     ElMenuItem,
     ElMain,
     ElRow,

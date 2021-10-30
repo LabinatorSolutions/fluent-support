@@ -293,4 +293,10 @@ class Helper
 
         return MailBox::orderBy('id', 'ASC')->first();
     }
+
+    public static function getCurrentAgent()
+    {
+        return Agent::where('user_id', get_current_user_id())->first();
+    }
+
 }
