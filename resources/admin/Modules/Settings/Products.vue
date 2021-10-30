@@ -9,6 +9,14 @@
                     <el-button @click="createTicketModal()" type="primary" icon="el-icon-plus" size="small">{{$t('Create New')}}
                     </el-button>
                 </div>
+                <div class="fs_box_actions fs_ticket_orders">
+                    <el-input @keyup.enter="getProducts" clearable @clear="getProducts" size="mini"
+                              :placeholder="$t('Search Products')" v-model="search">
+                        <template #append>
+                            <el-button @click="getProducts" icon="el-icon-search"></el-button>
+                        </template>
+                    </el-input>
+                </div>
             </div>
             <div v-if="!fetching" class="fs_box_body">
                 <el-table stripe :data="products">
@@ -77,7 +85,8 @@ export default {
             },
             saving: false,
             ticket_modal: false,
-            editing_product: false
+            editing_product: false,
+            search: ''
         }
     },
     methods: {
@@ -85,7 +94,8 @@ export default {
             this.fetching = true;
             this.$get('products', {
                 per_page: this.pagination.per_page,
-                page: this.pagination.current_page
+                page: this.pagination.current_page,
+                search: this.search
             })
                 .then(response => {
                     this.products = response.products.data;

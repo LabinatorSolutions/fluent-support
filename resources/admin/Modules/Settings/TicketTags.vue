@@ -10,6 +10,14 @@
                         {{$t('Add New')}}
                     </el-button>
                 </div>
+                <div class="fs_box_actions fs_ticket_orders">
+                    <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="mini"
+                              :placeholder="$t('Search Tags')" v-model="search">
+                        <template #append>
+                            <el-button @click="fetchTags" :disabled="!has_pro" icon="el-icon-search"></el-button>
+                        </template>
+                    </el-input>
+                </div>
             </div>
             <template v-if="has_pro">
                 <div v-if="!fetching" class="fs_box_body">
@@ -87,7 +95,8 @@ export default {
             fetching: true,
             saving: false,
             tag_modal: false,
-            editing_tag: false
+            editing_tag: false,
+            search: ''
         }
     },
     methods: {
@@ -95,7 +104,8 @@ export default {
             this.fetching = true;
             this.$get('ticket-tags', {
                 per_page: this.pagination.per_page,
-                page: this.pagination.current_page
+                page: this.pagination.current_page,
+                search: this.search
             })
                 .then(response => {
                     this.tags = response.tags.data;
