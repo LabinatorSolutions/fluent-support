@@ -34,7 +34,7 @@
                     </div>
                     <div class="fs_box_body fs_padded_20">
                         <el-form label-position="top" :data="workflow">
-                            <trigger-mappers :workflow="workflow" :trigger_fields="trigger_fields" />
+                            <trigger-mappers :workflow_conditions="workflow_conditions" :workflow="workflow" :trigger_fields="trigger_fields" />
                         </el-form>
                     </div>
                 </div>
@@ -92,6 +92,7 @@ export default {
     data() {
         return {
             workflow: false,
+            workflow_conditions: [[]],
             actions: [],
             action_fields: {},
             trigger_fields: {},
@@ -106,6 +107,7 @@ export default {
                 with: ['action_fields', 'trigger_fields']
             })
                 .then((response) => {
+                    this.workflow_conditions = response.workflow.settings.conditions;
                     this.workflow = response.workflow;
                     this.actions = response.actions;
                     this.trigger_fields = response.trigger_fields;
@@ -120,12 +122,15 @@ export default {
         },
         updateWorkFlow() {
             this.saving = true;
+            const workFlow = JSON.parse(JSON.stringify(this.workflow));
+            workFlow.settings.conditions = this.workflow_conditions;
             this.$post('workflows/' + this.workflow_id, {
                 actions: this.actions,
-                workflow: this.workflow
+                workflow: workFlow
             })
                 .then((response) => {
                     this.$notify.success(response.message);
+                    this.workflow_conditions = response.workflow.settings.conditions;
                     this.workflow = response.workflow;
                     this.actions = response.actions;
                 })
