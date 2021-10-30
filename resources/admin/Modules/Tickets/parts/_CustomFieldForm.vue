@@ -2,7 +2,7 @@
     <div v-if="appReady" class="fs_custom_fields">
         <el-row :gutter="30">
             <el-col v-for="(field, fieldName) in fields" :key="fieldName" :xs="24" :md="12">
-                <el-form>
+                <el-form :label-position="labelPosition">
                     <el-form-item :label="field.label">
                         <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'" :type="field.type" v-model="custom_data[field.slug]" />
                         <el-select v-else-if="field.type == 'select-one'" v-model="custom_data[field.slug]">
@@ -35,7 +35,8 @@ export default {
     data() {
         return {
             appReady: false,
-            fields: this.appVars.custom_fields
+            fields: this.appVars.custom_fields,
+            labelPosition: 'top'
         }
     },
     mounted() {

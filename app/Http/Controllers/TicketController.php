@@ -128,7 +128,7 @@ class TicketController extends Controller
 
         if(defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
             $createdTicket->syncCustomFields($ticketData['custom_fields']);
-            $createdTicket->custom_fields = $ticketData->getCustomFields();
+            $createdTicket->custom_fields = $createdTicket->getCustomFields();
         }
 
         do_action('fluent_support/ticket_created', $createdTicket, $customer);

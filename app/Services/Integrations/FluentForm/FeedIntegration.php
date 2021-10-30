@@ -11,6 +11,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\Framework\Support\Arr;
+use FluentSupportPro\App\Services\CustomFieldsService;
 
 class FeedIntegration extends IntegrationManager
 {
@@ -142,13 +143,23 @@ class FeedIntegration extends IntegrationManager
                     'component'      => 'value_text'
                 ],
                 [
+                    'key'                => 'TicketCustomFields',
+                    'require_list'       => false,
+                    'label'              => __('Ticket Customer Fields', 'fluentform'),
+                    'tips'               => __('Please Map Your Ticket Custom Field Data for this form.', 'fluentform'),
+                    'component'          => 'map_fields',
+                    'field_label_remote' => __('Support Customer Field', 'fluentform'),
+                    'field_label_local'  => __('Form Field', 'fluentform'),
+                    'primary_fileds'     => $this->getCustomField()
+                ],
+                [
                     'component' => 'html_info',
                     'html_info' => __('<h4>Please provide the ticket provider info. If user is logged in then it will use that info. For Public users you can set your customer info</h4>', 'fluentform')
                 ],
                 [
                     'key'                => 'CustomFields',
                     'require_list'       => false,
-                    'label'              => __('Customer Data', 'fluent-support'),
+                    'label'              => __('Customer Data', 'fluentform'),
                     'tips'               => __('Please Map Your Customer Data for this form. If your customer already logged in you can leave this', 'fluentform'),
                     'component'          => 'map_fields',
                     'field_label_remote' => __('Support Customer Field', 'fluentform'),
@@ -196,6 +207,21 @@ class FeedIntegration extends IntegrationManager
         return $formattedProducts;
     }
 
+    private function getCustomField()
+    {
+        $customFields = CustomFieldsService::getCustomFields();
+        $fields = [];
+        foreach ($customFields as $customFieldKey=>$customFieldValue) {
+
+            $fields[] = [
+                'key'      => $customFieldValue['slug'],
+                'label'    => __($customFieldValue['label'], 'fluentform')
+            ];
+        }
+
+        return $fields;
+    }
+
     public function getMergeFields($list, $listId, $formId)
     {
         return [];
@@ -210,12 +236,25 @@ class FeedIntegration extends IntegrationManager
             $data['email'] = Arr::get($formData, $data['email']);
         }
 
+        $ticketCustomField = array_filter($data, function($key) {
+            return strpos($key, 'cf_') === 0;
+        }, ARRAY_FILTER_USE_KEY);
+
+
+        foreach(CustomFieldsService::getCustomFields() as $key=>$value){
+            $type = [$key=>$value][$key]['type'];
+            $slug = [$key=>$value][$key]['slug'];
+            $type=='checkbox' &&  array_key_exists($slug, $ticketCustomField) ?
+                $ticketCustomField[$slug] = explode(',', Arr::get($ticketCustomField, $slug)) : $ticketCustomField;
+        }
+
         $ticketData = [
             'product_source' => 'local',
             'mailbox_id' => Arr::get($data, 'list_id'),
             'title' => sanitize_text_field(wp_unslash(Arr::get($data, 'ticket_title'))),
             'content' => wp_unslash(wp_kses_post(Arr::get($data, 'ticket_content'))),
             'attachments' => sanitize_text_field(Arr::get($data, 'ticket_attachments')),
+            'custom_fields' => $ticketCustomField,
             'source' => 'web'
         ];
 
@@ -262,6 +301,11 @@ class FeedIntegration extends IntegrationManager
         do_action('fluent_support/before_ticket_create', $ticketData, $customer);
 
         $ticket = Ticket::create($ticketData);
+
+        if(defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
+            $ticket->syncCustomFields($ticketData['custom_fields']);
+            $ticket->custom_fields = $ticket->getCustomFields();
+        }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
 
