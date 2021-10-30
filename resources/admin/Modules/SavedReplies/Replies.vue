@@ -10,6 +10,14 @@
                         {{$t('Create New')}}
                     </el-button>
                 </div>
+                <div class="fs_box_actions fs_ticket_orders">
+                    <el-input @keyup.enter="fetch" clearable @clear="fetch" :disabled="!has_pro" size="mini"
+                              :placeholder="$t('Search Replies')" v-model="search">
+                        <template #append>
+                            <el-button @click="fetch" :disabled="!has_pro" icon="el-icon-search"></el-button>
+                        </template>
+                    </el-input>
+                </div>
             </div>
             <template v-if="has_pro">
                 <div v-if="!loading" class="fs_box_body">
@@ -108,6 +116,7 @@ export default {
             editing_reply: false,
             edit_modal: false,
             products: this.appVars.support_products,
+            search: ''
         }
     },
     methods: {
@@ -115,7 +124,8 @@ export default {
             this.loading = true;
             this.$get('saved-replies', {
                 page: this.pagination.current_page,
-                per_page: this.pagination.per_page
+                per_page: this.pagination.per_page,
+                search: this.search
             })
                 .then(response => {
                     this.replies = response.replies.data;
@@ -141,12 +151,12 @@ export default {
                 ...this.editing_reply
             })
                 .then(response => {
+                    this.fetch();
                     this.$notify({
                         message: response.message,
                         type: 'success',
                         position: 'bottom-right'
                     });
-                    this.fetch();
                     this.edit_modal = false;
                 })
                 .catch((errors) => {

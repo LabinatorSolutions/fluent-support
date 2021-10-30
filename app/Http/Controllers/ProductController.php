@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $products = Product::paginate();
+        $products = Product::orderBy('id', 'DESC')->searchBy($request->get('search'))->paginate();
 
         return [
             'products' => $products
