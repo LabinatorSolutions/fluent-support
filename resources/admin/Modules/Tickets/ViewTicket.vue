@@ -78,7 +78,7 @@
                     </div>
                 </div>
                 <div class="fs_th_header">
-                    <hgroup>
+                    <div class="fs_header_group">
                         <div class="fs_tk_subject">
                             <h2 :title="$t('Click to Edit Subject')">
                                 <span class="fs_ticket_id">#{{ ticket.id }} </span>
@@ -139,7 +139,7 @@
                             </el-popover>
                             <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
                         </div>
-                    </hgroup>
+                    </div>
                 </div>
                 <create-response
                     v-if="show_response_box && ticket.status != 'closed'"

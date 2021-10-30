@@ -188,14 +188,14 @@
         </div>
         <el-dialog
             :title="$t('Create a Ticket')"
-            v-model.sync="add_ticket_modal"
+            v-model="add_ticket_modal"
             width="60%">
             <add-ticket v-if="add_ticket_modal"></add-ticket>
         </el-dialog>
 
         <el-dialog
             :title="$t('Reply To Selected Tickets')"
-            v-model.sync="add_response_modal"
+            v-model="add_response_modal"
             width="60%">
             <create-response @created="fetchTickets()" v-if="add_response_modal" :ticket="ticket_selections" />
         </el-dialog>

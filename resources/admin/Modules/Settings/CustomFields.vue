@@ -47,7 +47,7 @@
         <el-dialog
             :title="$t('Add New Custom Field')"
             v-model="addFieldVisible"
-            :append-to-body="true"
+            :append-to-body=true
             width="60%">
             <custom-field-form form_type="new" :field_types="field_types" :item="new_item"></custom-field-form>
             <div slot="footer" class="dialog-footer">
@@ -58,7 +58,7 @@
         <el-dialog
             :title="$t('Update Custom Field')"
             v-model="updateFieldVisible"
-            :append-to-body="true"
+            :append-to-body=true
             width="60%">
             <custom-field-form form_type="update" :field_types="field_types" :item="update_field"></custom-field-form>
             <div slot="footer" class="dialog-footer">

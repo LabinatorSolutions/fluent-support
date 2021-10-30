@@ -55,7 +55,7 @@
         </div>
 
         <el-dialog
-            :append-to-body="true"
+            :append-to-body=true
             :title="(editing_reply && editing_reply.id) ? $t('Edit Reply') : $t('Create New Reply')"
             v-model="edit_modal"
             v-if="edit_modal"
