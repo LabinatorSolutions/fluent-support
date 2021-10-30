@@ -1,6 +1,7 @@
 <template>
     <div class="fc_box_email_settings">
-        <el-table v-if="configs" :data="configs" stripe>
+        <el-skeleton v-if="!configs.length" :rows="5" animated/>
+        <el-table v-else :data="configs" stripe>
             <el-table-column :label="$t('Title')" prop="title" width="400" />
             <el-table-column :label="$t('Status')">
                 <template #default="scope">
@@ -13,11 +14,8 @@
                     <el-button @click="editEmail(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
                 </template>
             </el-table-column>
-
         </el-table>
-        <el-skeleton v-else :rows="5" animated/>
     </div>
-
     <el-dialog v-if="active_email_settings"
                :append-to-body=true
                width="60%"
@@ -59,12 +57,13 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 
+
 export default {
     name: 'BoxEmailSettings',
     components: {
         WpEditor
     },
-    props: ['box_id'],
+    props: ['box_id','mailbox'],
     data() {
         return {
             active_email: '',
@@ -142,10 +141,10 @@ export default {
                 });
         },
         editEmail(email) {
-            this.edit_modal = true;
             this.active_email_settings = false;
             this.active_email = email.key;
             this.getSetting();
+            this.edit_modal = !this.edit_modal;
         },
         saveSettings() {
             this.saving = true;

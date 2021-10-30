@@ -44,7 +44,7 @@
 
         <el-dialog
             :title="$t('Add a New Business Inbox')"
-            v-model.sync="create_modal"
+            v-model="create_modal"
             width="60%">
             <el-form :data="new_business" label-position="top">
                 <el-form-item :label="$t('Inbox Name')">
@@ -75,7 +75,7 @@
 
         <el-dialog
             :title="$t('Are You Sure? You can not undo this action.')"
-            v-model.sync="deleting_box.show_modal"
+            v-model="deleting_box.show_modal"
             width="60%">
             <el-form :data="deleting_box" label-position="top">
                 <el-form-item :label="$t('Fallback Business')">
