@@ -79,17 +79,51 @@ span.fs_trigger_sub {
     justify-content: flex-start;
     width: 100%;
     padding: 15px 10px;
-    background: #f1f2f5;
     margin-bottom: 10px;
+
     .fs_cond_block {
         padding-right: 20px;
         flex-basis: 30%;
+
         &.fs_cond_action {
             text-align: right;
             flex-basis: 5%;
         }
     }
+
     .fc_cond_value {
         flex-basis: 50%;
     }
+}
+
+p.fs_cond_or {
+    text-align: center;
+    color: gray;
+    margin: 0 0 5px;
+    padding: 0;
+}
+
+.fs_cond_and {
+    text-align: center;
+    color: gray;
+    margin: 0 0 35px;
+    padding: 0;
+    border-bottom: 1px dashed #d5dce1;
+
+    em {
+        background: #fff;
+        font-size: 1.2em;
+        font-style: normal;
+        margin: 0 10px;
+        padding: 0 10px;
+        position: relative;
+        top: 9px;
+    }
+}
+
+.fs_conditional_group {
+    background: #f9fafa;
+    border: 1px solid #d5dce1;
+    border-radius: 3px;
+    margin-bottom: 20px;
 }
