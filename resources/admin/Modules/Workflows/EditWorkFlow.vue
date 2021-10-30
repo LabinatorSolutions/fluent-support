@@ -73,7 +73,6 @@
                 </div>
             </div>
 
-
         </div>
     </div>
 </template>
@@ -92,7 +91,7 @@ export default {
     data() {
         return {
             workflow: false,
-            workflow_conditions: [[]],
+            workflow_conditions: [],
             actions: [],
             action_fields: {},
             trigger_fields: {},
@@ -107,7 +106,9 @@ export default {
                 with: ['action_fields', 'trigger_fields']
             })
                 .then((response) => {
-                    this.workflow_conditions = response.workflow.settings.conditions;
+                    if(response.workflow.trigger_type == 'automatic') {
+                        this.workflow_conditions = response.workflow.settings.conditions;
+                    }
                     this.workflow = response.workflow;
                     this.actions = response.actions;
                     this.trigger_fields = response.trigger_fields;
@@ -123,14 +124,18 @@ export default {
         updateWorkFlow() {
             this.saving = true;
             const workFlow = JSON.parse(JSON.stringify(this.workflow));
-            workFlow.settings.conditions = this.workflow_conditions;
+            if(workFlow.trigger_type == 'automatic') {
+                workFlow.settings.conditions = this.workflow_conditions;
+            }
             this.$post('workflows/' + this.workflow_id, {
                 actions: this.actions,
                 workflow: workFlow
             })
                 .then((response) => {
                     this.$notify.success(response.message);
-                    this.workflow_conditions = response.workflow.settings.conditions;
+                    if(response.workflow.trigger_type == 'automatic') {
+                        this.workflow_conditions = response.workflow.settings.conditions;
+                    }
                     this.workflow = response.workflow;
                     this.actions = response.actions;
                 })
