@@ -111,21 +111,6 @@ export default {
         }
     },
     methods: {
-        getSetting() {
-            this.loading = true;
-            this.$get(`mailboxes/${this.box_id}/email_settings`, {
-                email_type: this.active_email
-            })
-                .then(response => {
-                    this.active_email_settings = response.email_settings;
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                });
-        },
         getConfigs() {
             this.loading = true;
             this.$get(`mailboxes/${this.box_id}/email_configs`)
@@ -141,10 +126,20 @@ export default {
                 });
         },
         editEmail(email) {
-            this.active_email_settings = false;
+            this.$get(`mailboxes/${this.box_id}/email_settings?email_type=${email.key}`)
+                .then(response => {
+                    this.active_email_settings = response.email_settings;
+                    this.edit_modal = !this.edit_modal;
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+
             this.active_email = email.key;
-            this.getSetting();
-            this.edit_modal = !this.edit_modal;
+            this.active_email_settings = false;
         },
         saveSettings() {
             this.saving = true;
@@ -159,8 +154,8 @@ export default {
                         position: 'bottom-right'
                     });
                     this.edit_modal=false;
+                    this.loading = true;
                     this.getConfigs();
-                    this.getSetting();
                 })
                 .catch((errors) => {
                     this.handleError(errors);
