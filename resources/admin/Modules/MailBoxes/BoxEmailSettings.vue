@@ -19,7 +19,7 @@
     </div>
 
     <el-dialog v-if="active_email_settings"
-               :append-to-body="true"
+               :append-to-body=true
                width="60%"
                :title="active_email_settings.title"
                v-model="edit_modal"

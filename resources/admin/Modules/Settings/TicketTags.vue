@@ -46,7 +46,7 @@
         </div>
 
         <el-dialog
-            :append-to-body="true"
+            :append-to-body=true
             :title="(editing_tag && editing_tag.id) ? $t('Edit Tag') : $t('Create New Ticket Tag')"
             v-model="tag_modal"
             v-if="editing_tag"
@@ -72,8 +72,10 @@
 </template>
 
 <script type="text/babel">
+import Pagination from "../../Pieces/Pagination";
 export default {
     name: 'TicketTags',
+    components:{Pagination},
     data() {
         return {
             tags: [],

@@ -50,7 +50,7 @@
                 v-model="filters.ticket_tags"
                 :placeholder="$t('Filter By Tags')"
                 multiple
-                popper-append-to-body="true"
+                :popper-append-to-body=true
                 size="small"
                 collapse-tags
             >
