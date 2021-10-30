@@ -146,6 +146,7 @@ class Settings
 
         if (!$savedSettings) {
             return [
+                'key'              => $settingsDefaults[$emailKey]['key'],
                 'title'            => $settingsDefaults[$emailKey]['title'],
                 'email_subject'    => $settingsDefaults[$emailKey]['email_subject'],
                 'email_body'       => $this->getDefaultEmailBody($emailKey, $box->box_type),

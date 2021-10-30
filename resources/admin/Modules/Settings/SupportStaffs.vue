@@ -56,7 +56,7 @@
         </div>
 
         <el-dialog
-            :append-to-body="true"
+            :append-to-body=true
             :title="(editing_agent && editing_agent.id) ? $t('Edit Staff') : $t('Add New Support Staff')"
             v-model="agent_modal"
             v-if="editing_agent"

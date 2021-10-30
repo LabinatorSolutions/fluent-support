@@ -1,6 +1,7 @@
 <template>
     <div class="fc_box_email_settings">
-        <el-table v-if="configs" :data="configs" stripe>
+        <el-skeleton v-if="!configs.length" :rows="5" animated/>
+        <el-table v-else :data="configs" stripe>
             <el-table-column :label="$t('Title')" prop="title" width="400" />
             <el-table-column :label="$t('Status')">
                 <template #default="scope">
@@ -13,13 +14,10 @@
                     <el-button @click="editEmail(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
                 </template>
             </el-table-column>
-
         </el-table>
-        <el-skeleton v-else :rows="5" animated/>
     </div>
-
     <el-dialog v-if="active_email_settings"
-               :append-to-body="true"
+               :append-to-body=true
                width="60%"
                :title="active_email_settings.title"
                v-model="edit_modal"
@@ -59,12 +57,13 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 
+
 export default {
     name: 'BoxEmailSettings',
     components: {
         WpEditor
     },
-    props: ['box_id'],
+    props: ['box_id','mailbox'],
     data() {
         return {
             active_email: '',
@@ -112,21 +111,6 @@ export default {
         }
     },
     methods: {
-        getSetting() {
-            this.loading = true;
-            this.$get(`mailboxes/${this.box_id}/email_settings`, {
-                email_type: this.active_email
-            })
-                .then(response => {
-                    this.active_email_settings = response.email_settings;
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                });
-        },
         getConfigs() {
             this.loading = true;
             this.$get(`mailboxes/${this.box_id}/email_configs`)
@@ -142,10 +126,20 @@ export default {
                 });
         },
         editEmail(email) {
-            this.edit_modal = true;
-            this.active_email_settings = false;
+            this.$get(`mailboxes/${this.box_id}/email_settings?email_type=${email.key}`)
+                .then(response => {
+                    this.active_email_settings = response.email_settings;
+                    this.edit_modal = !this.edit_modal;
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+
             this.active_email = email.key;
-            this.getSetting();
+            this.active_email_settings = false;
         },
         saveSettings() {
             this.saving = true;
@@ -160,8 +154,8 @@ export default {
                         position: 'bottom-right'
                     });
                     this.edit_modal=false;
+                    this.loading = true;
                     this.getConfigs();
-                    this.getSetting();
                 })
                 .catch((errors) => {
                     this.handleError(errors);

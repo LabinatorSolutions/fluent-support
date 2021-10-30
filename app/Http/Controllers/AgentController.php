@@ -31,7 +31,7 @@ class AgentController extends Controller
                 $agent->user_profile = admin_url('user-edit.php?user_id=' . $agent->user_id);
             }
             $agent->replies_count = Conversation::where('person_id', $agent->id)->count();
-            $agent->interactions_count = Conversation::where('person_id', $agent->id)->groupBy('ticket_id')->count();
+            $agent->interactions_count = Conversation::where('person_id', $agent->id)->groupBy('ticket_id')->get()->count();
             $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
         }
 
