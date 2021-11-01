@@ -11,7 +11,6 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\Framework\Support\Arr;
-use FluentSupportPro\App\Services\CustomFieldsService;
 
 class FeedIntegration extends IntegrationManager
 {
@@ -200,12 +199,12 @@ class FeedIntegration extends IntegrationManager
 
     private function getCustomField()
     {
-        $customFields = CustomFieldsService::getCustomFields();
+        $customFields = apply_filters('fluent_support_ticket_custom_fields', []);
 
         if(empty($customFields)){
             return[
                 'component' => 'html_info',
-                'html_info' => __('<h4>No Custom Field Available in Fluent Support</h4>', 'fluentform')
+                'html_info' => __('', 'fluentform')
             ];
         }
 
