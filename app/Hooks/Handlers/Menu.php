@@ -44,7 +44,7 @@ class Menu
 
         $assets = $app['url.assets'];
 
-        $baseUrl = apply_filters('fluent_support_base_url', admin_url('admin.php?page=fluent-support#/'));
+        $baseUrl = apply_filters('fluent_support/base_url', admin_url('admin.php?page=fluent-support#/'));
 
         $menuItems = [
             [
@@ -191,7 +191,7 @@ class Menu
             ];
         }
 
-        $integrationDrivers = apply_filters('fluent_support_integration_drivers', $integrationDrivers);
+        $integrationDrivers = apply_filters('fluent_support/integration_drivers', $integrationDrivers);
 
         $tags = TicketTag::select(['id', 'title'])->get()->toArray();
 
@@ -229,7 +229,7 @@ class Menu
 
         wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', $appVars);
 
-        do_action('fluent_support_admin_app_loaded', $app);
+        do_action('fluent_support/admin_app_loaded', $app);
 
     }
 
