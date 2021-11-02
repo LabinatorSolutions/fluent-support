@@ -33,6 +33,7 @@ class AgentController extends Controller
             $agent->replies_count = Conversation::where('person_id', $agent->id)->count();
             $agent->interactions_count = Conversation::where('person_id', $agent->id)->groupBy('ticket_id')->get()->count();
             $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
+            $agent->slack_user_id = $agent->getMeta('slack_user_id');
         }
 
         return [
@@ -84,6 +85,12 @@ class AgentController extends Controller
             $agent->telegram_chat_id = $chatId;
         }
 
+        if(!empty($data['slack_user_id'])) {
+            $chatId = sanitize_text_field($data['slack_user_id']);
+            $agent->updateMeta('slack_user_id', $chatId);
+            $agent->slack_user_id = $chatId;
+        }
+
         return [
             'message' => __('Support Staff has been added', 'fluent-support'),
             'agent'   => $agent
@@ -124,6 +131,12 @@ class AgentController extends Controller
             $chatId = sanitize_text_field($data['telegram_chat_id']);
             $agent->updateMeta('telegram_chat_id', $chatId);
             $agent->telegram_chat_id = $chatId;
+        }
+
+        if(isset($data['slack_user_id'])) {
+            $chatId = sanitize_text_field($data['slack_user_id']);
+            $agent->updateMeta('slack_user_id', $chatId);
+            $agent->slack_user_id = $chatId;
         }
 
         return [

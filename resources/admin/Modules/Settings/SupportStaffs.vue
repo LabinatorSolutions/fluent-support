@@ -87,6 +87,11 @@
                     <el-input type="text" :placeholder="$t('Telegram Chat ID')" v-model="editing_agent.telegram_chat_id"/>
                 </el-form-item>
 
+                <h3>{{$t('Slack Integration')}}</h3>
+                <el-form-item :label="$t('Slack User ID')">
+                    <el-input type="text" :placeholder="$t('Slack User ID')" v-model="editing_agent.slack_user_id"/>
+                </el-form-item>
+
             </el-form>
 
             <template #footer>
