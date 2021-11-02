@@ -344,7 +344,7 @@ class Ticket extends Model
 
     public function getCustomFields()
     {
-        $fields = apply_filters('fluent_support_ticket_custom_fields', []);
+        $fields = apply_filters('fluent_support/ticket_custom_fields', []);
 
         if (!$fields) {
             return [];
@@ -379,7 +379,7 @@ class Ticket extends Model
 
     public function syncCustomFields($data)
     {
-        $fields = apply_filters('fluent_support_ticket_custom_fields', []);
+        $fields = apply_filters('fluent_support/ticket_custom_fields', []);
 
         if (!$fields) {
             return false;
