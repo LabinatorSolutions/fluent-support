@@ -55,7 +55,7 @@ add_shortcode('fluent_support_admin_portal', function () {
         return __('Sorry, You do not have permission to this page', 'fluent-support');
     }
 
-    add_filter('fluent_support_base_url', function ($url) {
+    add_filter('fluent_support/base_url', function ($url) {
         global $wp;
         return home_url(add_query_arg(array(), $wp->request)) . '/#/';
     });
@@ -90,7 +90,7 @@ $app->addAction('fluent_support/response_added_by_customer', 'EmailNotificationH
 $app->addAction('fluent_support/ticket_closed_by_agent', 'EmailNotificationHandler@closedByAgent', 10, 2);
 
 // Cleanup
-$app->addAction('fluent_support_hourly_tasks', 'CleanupHandler@initHourlyTasks');
+$app->addAction('fluent_support/hourly_tasks', 'CleanupHandler@initHourlyTasks');
 
 if(isset($_GET['fs_view'])) {
     $app->addAction('init', 'ExternalPages@route');

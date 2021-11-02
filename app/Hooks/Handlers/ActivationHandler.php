@@ -10,8 +10,8 @@ class ActivationHandler
     {
         DBMigrator::run($network_wide);
 
-        if (! wp_next_scheduled ( 'fluent_support_hourly_tasks' )) {
-            wp_schedule_event( time(), 'hourly', 'fluent_support_hourly_tasks' );
+        if (! wp_next_scheduled ( 'fluent_support/hourly_tasks' )) {
+            wp_schedule_event( time(), 'hourly', 'fluent_support/hourly_tasks' );
         }
     }
 }
