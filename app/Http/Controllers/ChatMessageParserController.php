@@ -98,7 +98,7 @@ class ChatMessageParserController extends Controller
                     'source' => 'slack'
                 ];
 
-                return (new ResponseService)->createResponse(array_filter($data), $agent, $ticket);
+                return (new ResponseService)->createResponse($data, $agent, $ticket);
             }
         }
     }
