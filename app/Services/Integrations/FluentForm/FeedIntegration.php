@@ -247,8 +247,9 @@ class FeedIntegration extends IntegrationManager
             return strpos($key, 'cf_') === 0;
         }, ARRAY_FILTER_USE_KEY);
 
+        $customFields = apply_filters('fluent_support/ticket_custom_fields', []);
 
-        foreach(CustomFieldsService::getCustomFields() as $key=>$value){
+        foreach($customFields as $key=>$value){
             $type = [$key=>$value][$key]['type'];
             $slug = [$key=>$value][$key]['slug'];
             $type=='checkbox' &&  array_key_exists($slug, $ticketCustomField) ?
