@@ -23,9 +23,13 @@
                     <div class="fs_cond_block fc_cond_operator">
                         <el-select @change="maybeValueReset(setting, 'operator')" placeholder="Operator"
                                    v-model="setting.data_operator">
-                            <template v-if="all_conditions[setting.data_key].data_type == 'string' || all_conditions[setting.data_key].data_type == 'single_dropdown'">
+                            <template v-if="all_conditions[setting.data_key].data_type == 'string'">
                                 <el-option value="contains" label="Contains"></el-option>
                                 <el-option value="not_contains" label="Not contains"></el-option>
+                            </template>
+                            <template v-if="all_conditions[setting.data_key].data_type == 'single_dropdown'">
+                                <el-option value="equal" label="Equal"></el-option>
+                                <el-option value="not_equal" label="Not Equal"></el-option>
                             </template>
                             <template
                                 v-else-if="all_conditions[setting.data_key].data_type == 'yes_no'">
