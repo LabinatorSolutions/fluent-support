@@ -11,7 +11,6 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\Framework\Support\Arr;
-use FluentSupportPro\App\Services\CustomFieldsService;
 
 class FeedIntegration extends IntegrationManager
 {
@@ -142,16 +141,7 @@ class FeedIntegration extends IntegrationManager
                     'tips'           => __('Please input your file upload or image upload field shortcode here', 'fluentform'),
                     'component'      => 'value_text'
                 ],
-                [
-                    'key'                => 'TicketCustomFields',
-                    'require_list'       => false,
-                    'label'              => __('Ticket Customer Fields', 'fluentform'),
-                    'tips'               => __('Please Map Your Ticket Custom Field Data for this form.', 'fluentform'),
-                    'component'          => 'map_fields',
-                    'field_label_remote' => __('Support Customer Field', 'fluentform'),
-                    'field_label_local'  => __('Form Field', 'fluentform'),
-                    'primary_fileds'     => $this->getCustomField()
-                ],
+                $this->getCustomField(), //Getting Fluent Support Custom Field To Map
                 [
                     'component' => 'html_info',
                     'html_info' => __('<h4>Please provide the ticket provider info. If user is logged in then it will use that info. For Public users you can set your customer info</h4>', 'fluentform')
@@ -209,7 +199,15 @@ class FeedIntegration extends IntegrationManager
 
     private function getCustomField()
     {
-        $customFields = CustomFieldsService::getCustomFields();
+        $customFields = apply_filters('fluent_support_ticket_custom_fields', []);
+
+        if(empty($customFields)){
+            return[
+                'component' => 'html_info',
+                'html_info' => __('', 'fluentform')
+            ];
+        }
+
         $fields = [];
         foreach ($customFields as $customFieldKey=>$customFieldValue) {
 
@@ -219,7 +217,16 @@ class FeedIntegration extends IntegrationManager
             ];
         }
 
-        return $fields;
+        return  $customFieldsMapping = [
+            'key'                => 'TicketCustomFields',
+            'require_list'       => false,
+            'label'              => __('Ticket Customer Fields', 'fluentform'),
+            'tips'               => __('Please Map Your Ticket Custom Field Data for this form.', 'fluentform'),
+            'component'          => 'map_fields',
+            'field_label_remote' => __('Fluent Support Custom Field', 'fluentform'),
+            'field_label_local'  => __('Form Field', 'fluentform'),
+            'primary_fileds'     => $fields
+        ];
     }
 
     public function getMergeFields($list, $listId, $formId)

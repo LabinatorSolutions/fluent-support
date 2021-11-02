@@ -286,8 +286,10 @@ class TransStrings
             'Conversation'    => __('Conversation', 'fluent-support'),
             'Click Here to Write a reply'    => __('Click Here to Write a reply', 'fluent-support'),
             'Admin Priority'    => __('Admin Priority', 'fluent-support'),
-            'Client Priority'    => __('Client Priority', 'fluent-support'),
             'Updating Custom Field Data'    => __('Updating Custom Field Data', 'fluent-support'),
+            'Search Tags'    => __('Search Tags', 'fluent-support'),
+            'Search Products'    => __('Search Products', 'fluent-support'),
+            'Search Custom Fields'    => __('Search Custom Fields', 'fluent-support'),
         ];
     }
 }
