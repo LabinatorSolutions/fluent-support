@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
@@ -22,11 +23,11 @@ class TicketController extends Controller
         $user = wp_get_current_user();
 
         return [
-            'user_id' => $user->id,
-            'email' => $user->user_email,
-            'person' => Helper::getAgentByUserId($user->ID),
+            'user_id'     => $user->id,
+            'email'       => $user->user_email,
+            'person'      => Helper::getAgentByUserId($user->ID),
             'permissions' => PermissionManager::currentUserPermissions(),
-            'request' => $request->all()
+            'request'     => $request->all()
         ];
     }
 
@@ -94,8 +95,8 @@ class TicketController extends Controller
         $ticketData = $request->get('ticket', []);
         $this->validate($ticketData, [
             'customer_id' => 'required',
-            'title' => 'required',
-            'content' => 'required'
+            'title'       => 'required',
+            'content'     => 'required'
         ]);
 
         $customer = Customer::findOrFail($ticketData['customer_id']);
@@ -115,7 +116,7 @@ class TicketController extends Controller
 
         $ticketData['content'] = wp_unslash(wp_kses_post($ticketData['content']));
 
-        if(!empty($ticketData['priority'])) {
+        if (!empty($ticketData['priority'])) {
             $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
         }
 
@@ -126,7 +127,7 @@ class TicketController extends Controller
 
         $createdTicket = Ticket::create($ticketData);
 
-        if(defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
+        if (defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
             $createdTicket->syncCustomFields($ticketData['custom_fields']);
             $createdTicket->custom_fields = $createdTicket->getCustomFields();
         }
@@ -135,7 +136,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Ticket has been created successfully', 'fluent-support'),
-            'ticket' => $createdTicket
+            'ticket'  => $createdTicket
         ];
 
     }
@@ -177,14 +178,14 @@ class TicketController extends Controller
 
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
-        if(defined('FLUENTSUPPORTPRO')) {
+        if (defined('FLUENTSUPPORTPRO')) {
             $ticket->custom_fields = $ticket->getCustomFields();
         }
 
         return [
-            'ticket' => $ticket,
+            'ticket'    => $ticket,
             'responses' => $responses,
-            'agent_id' => $agent->id
+            'agent_id'  => $agent->id
         ];
     }
 
@@ -217,9 +218,9 @@ class TicketController extends Controller
         $responseData['response']->content = make_clickable(wpautop($responseData['response']->content, false));
 
         return [
-            'message' => __('Response has been added'),
-            'response' => $responseData['response'],
-            'ticket' => $responseData['ticket'],
+            'message'     => __('Response has been added'),
+            'response'    => $responseData['response'],
+            'ticket'      => $responseData['ticket'],
             'update_data' => $responseData['update_data']
         ];
     }
@@ -281,7 +282,7 @@ class TicketController extends Controller
         }
 
         return [
-            'message' => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
+            'message'     => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
             'update_data' => $updateData
         ];
     }
@@ -300,7 +301,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket' => (new TicketService())->close($ticket, $agent)
+            'ticket'  => (new TicketService())->close($ticket, $agent)
         ];
     }
 
@@ -318,7 +319,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket' => (new TicketService())->reopen($ticket, $agent)
+            'ticket'  => (new TicketService())->reopen($ticket, $agent)
         ];
     }
 
@@ -336,12 +337,7 @@ class TicketController extends Controller
 
         if ($action == 'close_tickets') {
             $query->where('status', '!=', 'closed');
-        }
-
-        $tickets = $query->get();
-
-        if ($action == 'close_tickets') {
-
+            $tickets = $query->get();
             foreach ($tickets as $ticket) {
                 (new TicketService())->close($ticket, $agent);
             }
@@ -349,6 +345,61 @@ class TicketController extends Controller
             return [
                 'message' => __(count($tickets) . ' tickets have been closed', 'fluent-support')
             ];
+        } else if ($action == 'delete_tickets') {
+            $tickets = $query->get();
+
+            foreach ($tickets as $ticket) {
+                $ticket->deleteTicket();
+            }
+
+            return [
+                'message' => __(count($tickets) . ' tickets have been deleted', 'fluent-support')
+            ];
+        } else if ($action == 'assign_agent') {
+            $agentId = absint($request->get('agent_id'));
+            if (!$agentId) {
+                $this->sendError([
+                    'message' => __('agent_id param is required', 'fluent-support')
+                ]);
+            }
+
+            $agent = Agent::findOrFail($agentId);
+
+            $query->where(function ($q) use ($agent) {
+                $q->where('agent_id', '!=', $agent->id)
+                    ->orWhereNull('agent_id');
+            });
+
+            $tickets = $query->get();
+
+            foreach ($tickets as $ticket) {
+                $ticket->agent_id = $agent->id;
+                $ticket->save();
+                do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket);
+            }
+
+            return [
+                'message' => __(count($tickets) . ' tickets has been assigned to', 'fluent-support') . ' ' . $agent->full_name
+            ];
+        } else if ($action == 'assign_tags') {
+
+            $tags = array_filter(array_map('absint', $request->get('tag_ids', [])));
+            if (!$tags) {
+                $this->sendError([
+                    'message' => __('tag_ids param is required', 'fluent-support')
+                ]);
+            }
+
+            $tickets = $query->get();
+
+            foreach ($tickets as $ticket) {
+                $ticket->applyTags($tags);
+            }
+
+            return [
+                'message' => __('Selected tags has been added to tickets', 'fluent-support')
+            ];
+
         }
 
         $this->sendError([
@@ -360,7 +411,7 @@ class TicketController extends Controller
     {
         $data = $request->all();
         $this->validate($data, [
-            'content' => 'required',
+            'content'    => 'required',
             'ticket_ids' => 'required|array'
         ]);
 
@@ -379,16 +430,16 @@ class TicketController extends Controller
 
         $tickets = $query->get();
 
-        if (!count($tickets)) {
+        if ($tickets->isEmpty()) {
             $this->sendError([
                 'message' => __('Sorry no tickets found based on your filter and bulk actions', 'fluent-support')
             ]);
         }
 
         $responseData = [
-            'content' => $request->get('content'),
+            'content'           => $request->get('content'),
             'conversation_type' => $request->get('conversation_type', 'response'),
-            'close_ticket' => $request->get('close_ticket', 'no')
+            'close_ticket'      => $request->get('close_ticket', 'no')
         ];
 
         $attachments = $request->get('attachments', []);
@@ -424,28 +475,6 @@ class TicketController extends Controller
 
     }
 
-    public function deleteBulk(Request $request)
-    {
-        $ticketIds = $request->get('ticket_ids', []);
-
-        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
-        $agent = Helper::getAgentByUserId();
-        $query = Ticket::whereIn('id', $ticketIds);
-
-        if (!$hasAllPermission) {
-            $query->where('agent_id', $agent->id);
-        }
-
-        $tickets = $query->get();
-
-        foreach ($tickets as $ticket) {
-            $ticket->deleteTicket();
-        }
-
-        return [
-            'message' => __(count($tickets) . ' has been deleted successfully', 'fluent-support')
-        ];
-    }
 
     public function deleteResponse(Request $request, $ticketId, $responseId)
     {
@@ -497,7 +526,7 @@ class TicketController extends Controller
         $response->save();
 
         return [
-            'message' => __('Selected response has been updated', 'fluent-support'),
+            'message'  => __('Selected response has been updated', 'fluent-support'),
             'response' => $response
         ];
     }
@@ -516,7 +545,7 @@ class TicketController extends Controller
         $agent = Helper::getAgentByUserId();
 
         return [
-            'result' => TicketHelper::removeFromActivities($ticketId, $agent->id),
+            'result'   => TicketHelper::removeFromActivities($ticketId, $agent->id),
             'agent_id' => $agent->id
         ];
     }
@@ -533,7 +562,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Tag has been added to this ticket', 'fluent-support'),
-            'tags' => $ticket->tags
+            'tags'    => $ticket->tags
         ];
     }
 
@@ -544,7 +573,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Tag has been removed from this ticket', 'fluent-support'),
-            'tags' => $ticket->tags
+            'tags'    => $ticket->tags
         ];
     }
 }
