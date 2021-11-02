@@ -131,4 +131,5 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
     $router->post('telegram_bot_response/{token}', 'ChatMessageParserController@handleTelegramWebhook')->alphaNumDash('token');
+    $router->post('slack_response', 'ChatMessageParserController@handleSlackEvent');
 });
