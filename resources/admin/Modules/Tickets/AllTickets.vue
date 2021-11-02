@@ -3,11 +3,12 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{$t('Tickets')}} <span class="fs_badge">{{ pagination.total }}</span></h3>
+                    <h3>{{ $t('Tickets') }} <span class="fs_badge">{{ pagination.total }}</span></h3>
                     <el-button
                         @click="add_ticket_modal = true"
                         size="mini"
-                        icon="el-icon-plus">{{$t('Add Ticket')}}</el-button>
+                        icon="el-icon-plus">{{ $t('Add Ticket') }}
+                    </el-button>
                     <el-button v-loading="loading"
                                @click="fetchTickets()"
                                icon="el-icon-refresh"
@@ -35,7 +36,7 @@
                     :filters="filters"
                     :search="search"
                     @searchChange="(s) => { search = s; }"
-                    :reset-filters="resetFilters" />
+                    :reset-filters="resetFilters"/>
                 <el-table
                     v-if="app_ready"
                     :data="tickets"
@@ -69,9 +70,11 @@
                                 </span>
                                 <span class="fs_tk_number">
                                     #{{ scope.row.id }}
-                                     <span v-if="scope.row.live_activity && scope.row.live_activity.length" class="fs_inline_avatars avatars_small">
+                                     <span v-if="scope.row.live_activity && scope.row.live_activity.length"
+                                           class="fs_inline_avatars avatars_small">
                                         <span>
-                                            <img v-for="activity in scope.row.live_activity" :title="activity.full_name" :src="activity.photo" />
+                                            <img v-for="activity in scope.row.live_activity" :title="activity.full_name"
+                                                 :src="activity.photo"/>
                                         </span>
                                     </span>
                                 </span>
@@ -97,7 +100,8 @@
                     <el-table-column width="120" :label="$t('Status')">
                         <template #default="scope">
                             <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
-                            <span class="fs_badge" :title="$t('Client Priority: ') + scope.row.client_priority " :class="'fs_badge_priority_'+scope.row.client_priority">
+                            <span class="fs_badge" :title="$t('Client Priority: ') + scope.row.client_priority "
+                                  :class="'fs_badge_priority_'+scope.row.client_priority">
                                 <i class="el-icon-s-flag"></i>  {{ scope.row.client_priority }}
                             </span>
                         </template>
@@ -115,74 +119,9 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <div class="fs_row">
-                    <div class="fs_half fs_padded_20">
-                        <div v-if="ticket_selections.length">
-                            <el-dropdown trigger="click">
-                                <el-button type="primary" size="mini">
-                                    {{$t('Actions')}}<i class="el-icon-arrow-down el-icon--right"></i>
-                                </el-button>
-                                <template #dropdown>
-                                    <el-dropdown-menu class="ticket-action-buttons">
 
-                                        <el-dropdown-item>
-                                            <el-popconfirm
-                                            @confirm="deleteSelected()"
-                                            :title="$t('ticket_delete_warning')"
-                                        >
-                                                <template #reference>
-                                                    <el-button
-                                                        v-loading="doing_bulk"
-                                                        :disabled="doing_bulk"
-                                                        type="text"
-                                                        size="small"
-                                                        style="color: #F56C6C;">
-                                                        {{$t('Delete Selected Tickets')}} ({{ ticket_selections.length }})
-                                                    </el-button>
-                                                </template>
-                                            </el-popconfirm>
-                                        </el-dropdown-item>
-
-                                        <el-dropdown-item>
-                                            <el-popconfirm
-                                                @confirm="closeSelected()"
-                                                :title="$t('bulk_ticket_close_warning')"
-                                            >
-                                                <template #reference>
-                                                    <el-button
-                                                        v-loading="doing_bulk"
-                                                        :disabled="doing_bulk"
-                                                        type="text"
-                                                        size="small"
-                                                        style="color: #303133;">
-                                                        {{$t('Close Selected Tickets')}} ({{ ticket_selections.length }})
-                                                    </el-button>
-                                                </template>
-                                            </el-popconfirm>
-                                        </el-dropdown-item>
-
-                                        <el-dropdown-item>
-                                            <el-button
-                                                v-loading="doing_bulk"
-                                                :disabled="doing_bulk"
-                                                @click="add_response_modal = true"
-                                                type="text"
-                                                size="small"
-                                                style="color: #67C23A;">
-                                                {{$t('Reply To Selected Tickets')}} ({{ ticket_selections.length }})
-                                            </el-button>
-                                        </el-dropdown-item>
-
-                                    </el-dropdown-menu>
-                                </template>
-                            </el-dropdown>
-                        </div>
-                    </div>
-                    <div class="fs_half">
-                        <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
-                            <pagination @fetch="fetchTickets()" :pagination="pagination"/>
-                        </div>
-                    </div>
+                <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                    <pagination @fetch="fetchTickets()" :pagination="pagination"/>
                 </div>
             </div>
         </div>
@@ -193,12 +132,8 @@
             <add-ticket v-if="add_ticket_modal"></add-ticket>
         </el-dialog>
 
-        <el-dialog
-            :title="$t('Reply To Selected Tickets')"
-            v-model="add_response_modal"
-            width="60%">
-            <create-response @created="fetchTickets()" v-if="add_response_modal" :ticket="ticket_selections" />
-        </el-dialog>
+        <ticket-bulk-actions v-if="appReady" @fetchTickets="fetchTickets()" :ticket_selections="ticket_selections" />
+
     </div>
 </template>
 
@@ -208,7 +143,7 @@ import each from 'lodash/each';
 import AddTicket from './_AddTicket';
 import TicketTags from './parts/_Tags';
 import TicketFilters from '@/admin/Modules/Tickets/parts/TicketFilters';
-import CreateResponse from "./_CreateResponse";
+import TicketBulkActions from './_BulkActions';
 
 export default {
     name: 'AllTickets',
@@ -217,7 +152,7 @@ export default {
         AddTicket,
         TicketTags,
         TicketFilters,
-        CreateResponse
+        TicketBulkActions
     },
     data() {
         return {
@@ -271,7 +206,7 @@ export default {
     },
     methods: {
         fetchTickets() {
-            if(!this.app_ready) {
+            if (!this.app_ready) {
                 return false;
             }
             this.ticket_selections = [];
@@ -408,7 +343,7 @@ export default {
         },
         getExcerpt(row) {
             let text = row.content;
-            if(!text) {
+            if (!text) {
                 return '';
             }
             return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
@@ -433,9 +368,9 @@ export default {
             this.filters.agent_id = this.$route.query.agent_id;
         }
 
-        if(this.$route.query.tags) {
+        if (this.$route.query.tags) {
             const tagIds = this.$route.query.tags;
-            if(typeof tagIds == 'object') {
+            if (typeof tagIds == 'object') {
                 this.filters.ticket_tags = tagIds.map(tagId => {
                     return parseInt(tagId);
                 });
@@ -464,6 +399,7 @@ export default {
         background: #EEEEEE;
     }
 }
+
 .el-dropdown-menu__item {
     &:not(.is-disabled) {
         &:hover {
@@ -471,6 +407,7 @@ export default {
         }
     }
 }
+
 .ticket-action-buttons {
     li.el-dropdown-menu__item {
         margin: 10px 0px;
