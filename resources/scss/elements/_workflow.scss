@@ -127,3 +127,61 @@ p.fs_cond_or {
     border-radius: 3px;
     margin-bottom: 20px;
 }
+
+
+ul.fs_workflows_list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 250px;
+    overflow-y: auto;
+
+    li {
+        display: block;
+        padding: 8px 10px;
+        margin: 0;
+        cursor: pointer;
+
+        &:hover {
+            background: #f1f2f5;
+        }
+    }
+}
+
+.fs_workflow_desc {
+    margin-bottom: 30px;
+
+    h3 {
+        font-weight: normal;
+    }
+}
+
+ul.fs_workflow_items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: #314351;
+    border: 1px solid #c5ced6;
+    background: #fff;
+
+    li {
+        font-size: 15px;
+        padding: 10px 15px;
+        margin: 0;
+        border-bottom: 1px solid #F0F0F0;
+
+        span {
+            display: inline-block;
+            line-height: 17px;
+            font-size: 11px;
+            font-weight: 700;
+            -webkit-font-smoothing: antialiased;
+            color: #fff;
+            text-transform: uppercase;
+            background: #95979B;
+            border-radius: 3px;
+            padding: 0 3px;
+            margin: 0 4px;
+        }
+    }
+}

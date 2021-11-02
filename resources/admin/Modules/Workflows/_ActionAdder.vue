@@ -28,6 +28,7 @@ export default {
     data() {
         return {
             action: {
+                title: '',
                 action_name: '',
                 settings: {}
             }
@@ -39,6 +40,7 @@ export default {
                 this.action.is_open = true;
                 this.$emit('success', this.action);
                 this.action = {
+                    title: '',
                     action_name: '',
                     settings: {}
                 };

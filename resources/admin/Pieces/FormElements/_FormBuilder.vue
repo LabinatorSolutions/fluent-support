@@ -6,6 +6,7 @@
                     <component :is="field.type" v-model="formData[fieldIndex]" :field="field"/>
                 </with-label>
             </template>
+            <slot name="form_end"></slot>
         </el-form>
     </div>
 </template>

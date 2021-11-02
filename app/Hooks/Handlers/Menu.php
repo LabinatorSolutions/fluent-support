@@ -89,6 +89,12 @@ class Menu
             ];
 
             $secondayItems[] = [
+                'key'       => 'workflows',
+                'label'     => __('Workflows', 'fluent-support'),
+                'permalink' => $baseUrl . 'workflows'
+            ];
+
+            $secondayItems[] = [
                 'key'       => 'settings',
                 'label'     => __('Global Settings', 'fluent-support'),
                 'permalink' => $baseUrl . 'settings'
@@ -187,6 +193,13 @@ class Menu
 
         $integrationDrivers = apply_filters('fluent_support_integration_drivers', $integrationDrivers);
 
+        $tags = TicketTag::select(['id', 'title'])->get()->toArray();
+
+        $tags = array_map(function ($tag) {
+            $tag['id'] = strval($tag['id']);
+            return $tag;
+        }, $tags);
+
         $appVars = apply_filters('fluent_support_app_vars', array(
             'slug'              => $slug = $app->config->get('app.slug'),
             'nonce'             => wp_create_nonce($slug),
@@ -207,7 +220,7 @@ class Menu
             'notification_integrations' => $integrationDrivers,
             'server_time'       => current_time('mysql'),
             'has_email_parser'  => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH'),
-            'ticket_tags'       => TicketTag::select(['id', 'title'])->get(),
+            'ticket_tags'       => $tags,
             'i18n' => TransStrings::getTransStrings(),
             'custom_fields' => apply_filters('fluent_support_ticket_custom_fields', [])
         ));
