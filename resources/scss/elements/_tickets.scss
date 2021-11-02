@@ -259,30 +259,6 @@
             display: block;
             overflow: hidden;
 
-            ul.fs_tk_actions {
-                list-style: none;
-                margin: 0;
-                padding: 0;
-                float: left;
-
-                li {
-                    cursor: pointer;
-                    padding: 10px 20px;
-                    display: inline-block;
-                    margin: 0;
-
-                    i {
-                        font-size: 24px;
-                        line-height: 30px;
-                    }
-
-                    &.fs_action_active {
-                        background: #5d6cc3;
-                        color: white;
-                    }
-                }
-            }
-
             .fs_product {
                 float: right;
                 padding: 10px 15px 0 0;
@@ -577,10 +553,12 @@ span.fs_agent_photo_icon img {
     padding: 0 30px 20px;
     border-top: 1px solid #e5e9ec;
     background: #fffff4;
+
     > ul {
         display: block;
         margin: 0;
         padding: 0;
+
         li {
             list-style: none;
             margin-bottom: 10px;
@@ -594,3 +572,49 @@ span.fs_agent_photo_icon img {
         margin-right: 10px;
     }
 }
+
+
+ul.fs_tk_actions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    float: left;
+
+    li {
+        cursor: pointer;
+        padding: 10px 20px;
+        display: inline-block;
+        margin: 0;
+
+        i {
+            font-size: 24px;
+            line-height: 30px;
+        }
+
+        &.fs_action_active {
+            background: #5d6cc3;
+            color: white;
+        }
+    }
+}
+
+.fs_bulk_actions_bar {
+    position: fixed;
+    top: 100px;
+    background: #322828;
+    color: white;
+    border-radius: 6px;
+    left: 45%;
+
+    ul {
+        li {
+            padding: 0;
+
+            > i, > .fs_workflow_pop > i {
+                border-right: 1px solid white;
+                padding: 10px 20px;
+            }
+        }
+    }
+}
+
