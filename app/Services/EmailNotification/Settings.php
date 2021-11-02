@@ -9,7 +9,7 @@ class Settings
 
     public function getEmailSettingsKeys()
     {
-        $key = apply_filters('fluent_support_email_setting_keys',[
+        $key = apply_filters('fluent_support/email_setting_keys',[
             'ticket_created_email_to_customer',
             'ticket_replied_by_agent_email_to_customer',
             'ticket_closed_by_agent_email_to_customer',
@@ -93,7 +93,7 @@ class Settings
             return false;
         }
 
-        $strictSubjectKeys = apply_filters('fluent_support_strict_subjects', [
+        $strictSubjectKeys = apply_filters('fluent_support/strict_subjects', [
             'ticket_replied_by_agent_email_to_customer',
             'ticket_closed_by_agent_email_to_customer',
             'ticket_closed_by_agent_email_to_customer'
