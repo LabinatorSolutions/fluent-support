@@ -38,20 +38,17 @@
                                 </el-select>
                             </el-popover>
                         </li>
-                        <template v-if="false">
-                            <li>
-                                <i class="el-icon-price-tag"/>
-                            </li>
-                            <li>
-                                <i class="el-icon-position"/>
-                            </li>
-                        </template>
+
+                        <li title="Run Workflow">
+                            <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]" />
+                        </li>
                     </ul>
                     <div class="fs_product">
                         <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
                                    size="small"></el-button>
                         <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
-                                   v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">{{$t('Close')}}
+                                   v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">
+                            {{ $t('Close') }}
                         </el-button>
                         <el-popover
                             placement="bottom"
@@ -93,10 +90,10 @@
 
                                     <el-input @keyup.enter="updateTicketAttr('title')"
                                               v-model="ticket.title"></el-input>
-                                    <p>{{$t('Press enter to save')}}</p>
+                                    <p>{{ $t('Press enter to save') }}</p>
                                 </el-popover>
                             </h2>
-                            <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags" />
+                            <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags"/>
                         </div>
                         <div class="fs_tk_badges">
                             <el-popover
@@ -105,11 +102,13 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :title="$t('Client Priority: ') + ticket.client_priority " :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge"><i
+                                    <span :title="$t('Client Priority: ') + ticket.client_priority "
+                                          :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge"><i
                                         class="el-icon-s-flag"></i> {{ ticket.client_priority }}</span>
                                 </template>
 
-                                <el-select @change="updateTicketAttr('client_priority')" v-model="ticket.client_priority"
+                                <el-select @change="updateTicketAttr('client_priority')"
+                                           v-model="ticket.client_priority"
                                            size="small">
                                     <el-option
 
@@ -124,7 +123,8 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :title="$t('Admin Priority:') + ticket.priority " :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i
+                                    <span :title="$t('Admin Priority:') + ticket.priority "
+                                          :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"><i
                                         class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
                                 </template>
 
@@ -149,12 +149,12 @@
                     :type="show_response_box"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
-                    <p>{{$t('ticket_closed')}} {{ ticket.resolved_at }}
+                    <p>{{ $t('ticket_closed') }} {{ ticket.resolved_at }}
                         <span v-if="ticket.closed_by_person">
                             by <b>{{ getHumanName(ticket.closed_by_person) }}</b>
                         </span></p>
                     <el-button v-loading="updating" :disabled="updating" @click="reOpen()" type="info" size="small">
-                        {{$t('Reopen This ticket')}}
+                        {{ $t('Reopen This ticket') }}
                     </el-button>
                 </div>
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
@@ -163,7 +163,8 @@
                              class="fs_thread"
                              :class="(conversation.person.title!='' && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) ">
 
-                        <span class="agent_title" v-if="conversation.person.title"> {{conversation.person.title}} </span>
+                        <span class="agent_title"
+                              v-if="conversation.person.title"> {{ conversation.person.title }} </span>
 
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
@@ -174,10 +175,9 @@
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong v-if="conversation.person">
-                                                {{ getHumanName(conversation.person) }}</strong>
-                                            <span v-if="conversation.conversation_type == 'response'"> {{$t('replied')}}</span>
-                                            <span v-else-if="conversation.conversation_type == 'note'"> {{$t('added a note')}}</span>
+                                            <strong v-if="conversation.person">{{ getHumanName(conversation.person) }}</strong>&nbsp;
+                                            <span v-if="conversation.conversation_type == 'response'"> {{ $t('replied') }}</span>
+                                            <span v-else-if="conversation.conversation_type == 'note'"> {{ $t('added a note') }}</span>
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="conversation.source == 'email'"
@@ -214,7 +214,9 @@
                                                 :key="attachment.file_hash"
                                             >
                                                 <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
-                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
+                                                                                     :href="attachment.secureUrl">{{
+                                                    attachment.title
+                                                }}</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -248,21 +250,27 @@
                                                 :key="attachment.file_hash"
                                             >
                                                 <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
-                                                                                     :href="attachment.secureUrl">{{ attachment.title }}</a>
+                                                                                     :href="attachment.secureUrl">{{
+                                                    attachment.title
+                                                }}</a>
                                             </li>
                                         </ul>
                                     </div>
                                 </section>
                             </section>
                             <div v-if="has_pro && !isEmpty(appVars.custom_fields)" class="fc_custom_data_wrap">
-                                <h3>{{$t('Additional Data')}} <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text" icon="el-icon-edit" size="mini"></el-button></h3>
+                                <h3>{{ $t('Additional Data') }}
+                                    <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text"
+                                               icon="el-icon-edit" size="mini"></el-button>
+                                </h3>
                                 <ul v-if="!isEmpty(ticket.custom_fields)">
                                     <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
-                                        <b>{{appVars.custom_fields[fieldName].label}}</b> :
+                                        <b>{{ appVars.custom_fields[fieldName].label }}</b> :
                                         <span v-if="appVars.custom_fields[fieldName].type == 'checkbox'">
-                                            <span class="fs_custom_check_value" v-for="value in fieldValue" :key="value">{{value}}</span>
+                                            <span class="fs_custom_check_value" v-for="value in fieldValue"
+                                                  :key="value">{{ value }}</span>
                                         </span>
-                                        <span v-else>{{fieldValue}}</span>
+                                        <span v-else>{{ fieldValue }}</span>
                                     </li>
                                 </ul>
                                 <p v-else>No additional data found</p>
@@ -274,7 +282,7 @@
                             width="70%">
                             <custom-field-form :custom_data="ticket.custom_fields"/>
                             <el-button @click="saveEditedCustomFieldData(ticket.custom_fields)" type="primary">
-                                {{$t('Save')}}
+                                {{ $t('Save') }}
                             </el-button>
                         </el-dialog>
 
@@ -309,6 +317,7 @@ import isArray from 'lodash/isArray';
 import ActiveAgents from './_active_agents';
 import TicketTags from './parts/_Tags';
 import CustomFieldForm from './parts/_CustomFieldForm';
+import WorkFlowSelector from './parts/_WorkFlowSelector';
 
 export default {
     name: 'ViewTicket',
@@ -319,7 +328,8 @@ export default {
         EditResponse,
         ActiveAgents,
         TicketTags,
-        CustomFieldForm
+        CustomFieldForm,
+        WorkFlowSelector
     },
     data() {
         return {
@@ -495,12 +505,12 @@ export default {
         },
         saveEditedCustomFieldData(data) {
             let customFieldData = data;
-           if(Array.isArray(data)){
-               const arrayToString = JSON.stringify(Object.assign({}, data));
-               customFieldData = JSON.parse(arrayToString);
-           }
+            if (Array.isArray(data)) {
+                const arrayToString = JSON.stringify(Object.assign({}, data));
+                customFieldData = JSON.parse(arrayToString);
+            }
             this.$post(`ticket-custom-fields/${this.ticket.id}/sync`, {
-                custom_fields:  customFieldData,
+                custom_fields: customFieldData,
             })
                 .then(response => {
                     this.$notify({
@@ -510,7 +520,7 @@ export default {
                     })
                     this.showCustomDataEditForm = !this.showCustomDataEditForm;
                     this.fetchTicket()
-                 })
+                })
                 .catch((errors) => {
                     console.log(errors);
                 })
@@ -520,7 +530,7 @@ export default {
         },
         santizeContent(content) {
             if (!content) {
-               return content;
+                return content;
             }
             return content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
         },
@@ -538,7 +548,7 @@ export default {
 </script>
 
 <style scoped>
-.agent_title{
+.agent_title {
     content: '';
     position: relative;
     left: 0;
@@ -548,10 +558,12 @@ export default {
     padding: 5px 10px;
     font-size: 11px;
 }
-.fs_agent{
+
+.fs_agent {
     border-left: 4px solid #5d6cc3;
 }
-.fs_conv_type_note{
+
+.fs_conv_type_note {
     border-left: 0px solid #e6a23c;
 }
 </style>

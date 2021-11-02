@@ -148,14 +148,14 @@ class Ticket extends Model
                     continue;
                 }
                 $query = $this->scopeWaitingOnly($query);
-            } else if($filterKey == 'agent_id') {
-                if($filterValue == 'unassigned') {
+            } else if ($filterKey == 'agent_id') {
+                if ($filterValue == 'unassigned') {
                     $query->whereNull($filterKey);
                 } else {
                     $query->where($filterKey, $filterValue);
                 }
-            } else if($filterKey == 'ticket_tags') {
-                if(!$filterValue) {
+            } else if ($filterKey == 'ticket_tags') {
+                if (!$filterValue) {
                     continue;
                 }
                 $query->whereHas('tags', function ($q) use ($filterValue) {
@@ -248,6 +248,7 @@ class Ticket extends Model
         )->wherePivot('source_type', 'ticket_tag');
     }
 
+
     /**
      * One2one: Customer has to many Click Tickets
      * @return Model Collection
@@ -292,7 +293,6 @@ class Ticket extends Model
         );
     }
 
-
     public function mailbox()
     {
         $class = __NAMESPACE__ . '\MailBox';
@@ -328,7 +328,7 @@ class Ticket extends Model
     {
         $tags = $this->tags;
         foreach ($tags as $tag) {
-            if($tag->id == $tagId) {
+            if ($tag->id == $tagId) {
                 return true;
             }
         }
@@ -346,7 +346,7 @@ class Ticket extends Model
     {
         $fields = apply_filters('fluent_support_ticket_custom_fields', []);
 
-        if(!$fields) {
+        if (!$fields) {
             return [];
         }
 
@@ -356,7 +356,7 @@ class Ticket extends Model
             ->whereIn('key', $keys)
             ->get();
 
-        if(!$customRows) {
+        if (!$customRows) {
             return [];
         }
 
@@ -367,7 +367,7 @@ class Ticket extends Model
 
             $value = $row->value;
 
-            if($value && $fields[$dataKey]['type'] == 'checkbox') {
+            if ($value && $fields[$dataKey]['type'] == 'checkbox') {
                 $value = array_filter(explode('|', $value));
             }
 
@@ -381,7 +381,7 @@ class Ticket extends Model
     {
         $fields = apply_filters('fluent_support_ticket_custom_fields', []);
 
-        if(!$fields) {
+        if (!$fields) {
             return false;
         }
 
@@ -390,24 +390,24 @@ class Ticket extends Model
         $validData = Arr::only($data, $keys);
 
         foreach ($validData as $dataKey => $validDatum) {
-            if($fields[$dataKey]['type'] == 'checkbox') {
+            if ($fields[$dataKey]['type'] == 'checkbox') {
                 $validDatum = implode('|', $validDatum);
-                $validDatum = '|'.$validDatum.'|';
+                $validDatum = '|' . $validDatum . '|';
             }
 
             $exist = Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)
                 ->where('key', $dataKey)
                 ->first();
 
-            if($exist) {
+            if ($exist) {
                 $exist->value = $validDatum;
                 $exist->save();
             } else {
                 Meta::insert([
                     'object_type' => 'ticket_meta',
-                    'object_id' => $this->id,
-                    'key' => $dataKey,
-                    'value' => $validDatum
+                    'object_id'   => $this->id,
+                    'key'         => $dataKey,
+                    'value'       => $validDatum
                 ]);
             }
         }
@@ -415,12 +415,57 @@ class Ticket extends Model
         // maybe delete data
         $deletedSlugs = array_diff($keys, array_keys($validData));
 
-        if($deletedSlugs) {
+        if ($deletedSlugs) {
             Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)
                 ->whereIn('key', $deletedSlugs)
                 ->delete();
         }
 
         return true;
+    }
+
+    public function getLastAgentResponse()
+    {
+        return wpFluent()->table('fs_conversations')
+            ->select(['fs_conversations.*'])
+            ->where('fs_conversations.conversation_type', 'response')
+            ->where('fs_conversations.ticket_id', $this->id)
+            ->join('fs_persons', 'fs_persons.person_type', '=', 'agent')
+            ->orderBy('fs_conversations.id', 'DESC')
+            ->first();
+    }
+
+    public function getLastResponse()
+    {
+        return wpFluent()->table('fs_conversations')
+            ->where('ticket_id', $this->id)
+            ->orderBy('id', 'DESC')
+            ->first();
+    }
+
+    public function applyTags($tagIds)
+    {
+        $result = false;
+        foreach ($tagIds as $tagId) {
+            if (!$this->hasTag($tagId)) {
+                $this->tags()->attach($tagId, ['source_type' => 'ticket_tag']);
+                $result = true;
+                do_action('fluent_support/ticket_tag_added', $tagId, $this);
+            }
+        }
+        return $result;
+    }
+
+    public function detachTags($tagIds)
+    {
+        $result = false;
+        foreach ($tagIds as $tagId) {
+            if ($this->hasTag($tagId)) {
+                $this->tags()->detach($tagId);
+                do_action('fluent_support/ticket_tag_removed', $tagId, $this);
+                $result = true;
+            }
+        }
+        return $result;
     }
 }

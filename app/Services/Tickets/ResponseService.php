@@ -10,6 +10,10 @@ class ResponseService
 {
     public function createResponse($data, $person, $ticket)
     {
+        if(empty($data['content'])) {
+            return false;
+        }
+
         $convoType = Arr::get($data, 'conversation_type', 'response');
 
         $response = [
@@ -25,7 +29,7 @@ class ResponseService
         $createdResponse = \FluentSupport\App\Models\Conversation::create($response);
         $createdResponse->load('person');
 
-        if ($attachments = Arr::get($data, 'attachments')) {
+        if ($attachments = Arr::get($data, 'attachments', [])) {
             Attachment::where('ticket_id', $ticket->id)
                 ->whereIn('file_hash', $attachments)
                 ->update([
