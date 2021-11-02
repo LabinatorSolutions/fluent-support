@@ -3,7 +3,9 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Ticket;
+use FluentSupportPro\App\Services\Integrations\Slack\SlackHelper;
 use FluentSupportPro\App\Services\Integrations\Telegram\TelegramHelper;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\Framework\Request\Request;
@@ -65,4 +67,40 @@ class ChatMessageParserController extends Controller
         ]);
 
     }
+
+    public function handleSlackEvent(Request $request)
+    {
+        $slackSettings = SlackHelper::getSettings();
+
+        if ($slackSettings['reply_from_slack'] == 'yes'){
+
+            $eventSubType = $request->get('event.subtype');
+            $channelId = $request->get('event.channel');
+
+            if($request->get('type') == 'url_verification') {
+                return $request->get('challenge');
+            }
+
+            if($slackSettings['channel_id'] == $channelId &&  $eventSubType== 'message_changed') {
+                $user = $request->get('event.message.user');
+                $message = $request->get('event.message');
+                $ticketId = explode('#', $message['root']['attachments'][0]['title']);
+                $ticket = Ticket::find(intval($ticketId[1]));
+
+                $userSlackObject = Meta::where('key','slack_user_id')->where('value', $user)->first();
+                $agent = Agent::where('id', $userSlackObject->object_id)->first();
+
+                $data = [
+                    'person_id' => $agent->user_id,
+                    'ticket_id' => $ticket->id,
+                    'conversation_type' => 'response',
+                    'content' => $message['text'],
+                    'source' => 'slack'
+                ];
+
+                return (new ResponseService)->createResponse(array_filter($data), $agent, $ticket);
+            }
+        }
+    }
+
 }
