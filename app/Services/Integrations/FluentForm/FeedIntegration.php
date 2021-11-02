@@ -199,7 +199,7 @@ class FeedIntegration extends IntegrationManager
 
     private function getCustomField()
     {
-        $customFields = apply_filters('fluent_support_ticket_custom_fields', []);
+        $customFields = apply_filters('fluent_support/ticket_custom_fields', []);
 
         if(empty($customFields)){
             return[
