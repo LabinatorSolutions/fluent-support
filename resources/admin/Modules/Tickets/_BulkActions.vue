@@ -10,23 +10,27 @@
                     <el-popover
                         placement="bottom"
                         :width="400"
-                        trigger="click"
+                        trigger="manual"
+                        v-model:visible="assignAgentPop"
                     >
                         <template #reference>
-                            <i class="el-icon-user"/>
+                            <i :class="{fs_pop_active: assignAgentPop}" @click="togglePop('assignAgentPop')" class="el-icon-user"/>
                         </template>
 
-                        <el-select filterable v-model="agent_id">
-                            <el-option
-                                v-for="agent in appVars.support_agents"
-                                :key="agent.id"
-                                :value="agent.id"
-                                :label="agent.full_name"></el-option>
-                        </el-select>
-                        <el-button @click="assignAgent()" style="margin-top: 20px;" v-if="agent_id" size="small"
-                                   type="danger">
-                            Assign Agent
-                        </el-button>
+                        <div class="fs_extended_pop">
+                            <el-select filterable v-model="agent_id">
+                                <el-option
+                                    v-for="agent in appVars.support_agents"
+                                    :key="agent.id"
+                                    :value="agent.id"
+                                    :label="agent.full_name"></el-option>
+                            </el-select>
+                            <el-button  @click="assignAgent()" style="margin-top: 20px;" :disabled="!agent_id" size="small"
+                                       type="danger">
+                                Assign Agent
+                            </el-button>
+                            <el-button @click="assignAgentPop = false" size="small" type="default">Close</el-button>
+                        </div>
                     </el-popover>
                 </li>
                 <li title="Run Workflow">
@@ -36,22 +40,25 @@
                     <el-popover
                         placement="bottom"
                         :width="400"
-                        trigger="click"
+                        trigger="manual"
+                        v-model:visible="addTagPop"
                     >
                         <template #reference>
-                            <i class="el-icon-price-tag"/>
+                            <i @click="togglePop('addTagPop')" :class="{fs_pop_active: assignAgentPop}" class="el-icon-price-tag"/>
                         </template>
-
-                        <el-select :multiple="true" filterable v-model="tag_ids">
-                            <el-option
-                                v-for="agent in appVars.ticket_tags"
-                                :key="agent.id"
-                                :value="agent.id"
-                                :label="agent.title"></el-option>
-                        </el-select>
-                        <el-button style="margin-top: 20px;" size="small" type="success"
-                                   @click="assignTags()">Apply Tags
-                        </el-button>
+                        <div class="fs_extended_pop">
+                            <el-select :multiple="true" filterable v-model="tag_ids">
+                                <el-option
+                                    v-for="agent in appVars.ticket_tags"
+                                    :key="agent.id"
+                                    :value="agent.id"
+                                    :label="agent.title"></el-option>
+                            </el-select>
+                            <el-button style="margin-top: 20px;" size="small" type="success"
+                                       @click="assignTags()">Apply Tags
+                            </el-button>
+                            <el-button @click="addTagPop = false" size="small" type="default">Close</el-button>
+                        </div>
                     </el-popover>
                 </li>
                 <li title="Close Tickets">
@@ -61,7 +68,7 @@
                         trigger="click"
                     >
                         <template #reference>
-                            <i class="el-icon-finished"/>
+                            <i @click="togglePop()" class="el-icon-finished"/>
                         </template>
                         <p>Are you sure, you want to close selected tickets?</p>
                         <el-button style="margin-top: 20px;" size="small" type="success"
@@ -76,7 +83,7 @@
                         trigger="click"
                     >
                         <template #reference>
-                            <i class="el-icon-delete"/>
+                            <i  @click="togglePop()" class="el-icon-delete"/>
                         </template>
                         <p>Are you sure, you want to delete selected tickets?</p>
                         <el-button style="margin-top: 20px;" size="small" type="danger"
@@ -112,17 +119,18 @@ export default {
             tag_ids: [],
             workflow_id: '',
             add_response_modal: false,
-            working: false
+            working: false,
+            assignAgentPop: false,
+            addTagPop: false
         }
     },
     methods: {
-        updateTicketAttr(col) {
-
-        },
         fetchTickets() {
             this.agent_id = '';
             this.tag_ids = '';
             this.workflow_id = '';
+            this.addTagPop = false;
+            this.assignAgentPop = false;
             this.add_response_modal = false;
             this.$emit('fetchTickets');
         },
@@ -172,6 +180,17 @@ export default {
             this.doBulkActions({
                 bulk_action: 'delete_tickets'
             });
+        },
+        togglePop(pop) {
+            if(pop && this[pop]) {
+                this[pop] = false;
+                return;
+            }
+            this.assignAgentPop = false;
+            this.addTagPop = false;
+            if(pop) {
+                this[pop] = true;
+            }
         }
     }
 }
