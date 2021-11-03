@@ -37,7 +37,7 @@ class CustomerController extends Controller
 
         $email = $data['email'];
 
-        $data = Arr::only($data, ['first_name', 'last_name', 'email']);
+        $data = Arr::only($data, ['first_name', 'last_name', 'email', 'status']);
 
         $user = get_user_by('email', $email);
 
@@ -79,7 +79,7 @@ class CustomerController extends Controller
             ], 423);
         }
 
-        $updateData = Arr::only($data, ['first_name', 'last_name', 'email']);
+        $updateData = Arr::only($data, ['first_name', 'last_name', 'email', 'status']);
 
         $user = get_user_by('email', $data['email']);
 
