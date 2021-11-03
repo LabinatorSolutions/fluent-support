@@ -50,8 +50,7 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->post('/{ticket_id}/close', 'TicketController@closeTicket')->int('ticket_id');
     $router->post('/{ticket_id}/re-open', 'TicketController@reOpenTicket')->int('ticket_id');
 
-    $router->post('bulk', 'TicketController@doBulkActions');
-    $router->delete('bulk', 'TicketController@deleteBulk');
+    $router->post('bulk-actions', 'TicketController@doBulkActions'); // close_tickets | delete_tickets | assign_agent | assign_tags
     $router->post('bulk-reply', 'TicketController@doBulkReplies');
 
 });
@@ -131,4 +130,5 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
     $router->post('telegram_bot_response/{token}', 'ChatMessageParserController@handleTelegramWebhook')->alphaNumDash('token');
+    $router->post('slack_response', 'ChatMessageParserController@handleSlackEvent');
 });
