@@ -97,6 +97,16 @@ class Conversation extends Model
         );
     }
 
+    /**
+     * A Conversation belongs to a Customer.
+     *
+     * @return \FluentSupport\App\Models\Model
+     */
+    public function customer()
+    {
+        return $this->person();
+    }
+
     public function attachments()
     {
         $class = __NAMESPACE__ . '\Attachment';

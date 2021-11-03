@@ -48,7 +48,6 @@ class ComposerStaticInit07610baee18b6edf78acc43e07718257
         'FluentSupport\\Database\\Migrations\\MetaMigrator' => __DIR__ . '/../..' . '/database/Migrations/MetaMigrator.php',
         'FluentSupport\\Database\\Migrations\\PersonsMigrator' => __DIR__ . '/../..' . '/database/Migrations/PersonsMigrator.php',
         'FluentSupport\\Database\\Migrations\\ProductsMigrator' => __DIR__ . '/../..' . '/database/Migrations/ProductsMigrator.php',
-        'FluentSupport\\Database\\Migrations\\SavedRepliesMigrator' => __DIR__ . '/../..' . '/database/Migrations/SavedRepliesMigrator.php',
         'FluentSupport\\Database\\Migrations\\TagRelationsMigrator' => __DIR__ . '/../..' . '/database/Migrations/TagRelationsMigrator.php',
         'FluentSupport\\Database\\Migrations\\TaggablesMigrator' => __DIR__ . '/../..' . '/database/Migrations/TaggablesMigrator.php',
         'FluentSupport\\Database\\Migrations\\TicketsMigrator' => __DIR__ . '/../..' . '/database/Migrations/TicketsMigrator.php',
