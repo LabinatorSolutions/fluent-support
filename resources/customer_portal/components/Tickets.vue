@@ -2,55 +2,64 @@
     <div class="fs_all_tickets">
         <div class="fs_tk_actions fs_tk_header">
             <div class="fs_tk_left">
-                <el-radio-group v-model="filter_type">
-                    <el-radio-button label="all">All</el-radio-button>
-                    <el-radio-button label="open">Open</el-radio-button>
-                    <el-radio-button label="closed">Closed</el-radio-button>
-                </el-radio-group>
+                <div class="fs_button_groups">
+                    <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'all' }"
+                            @click="filter_type = 'all'">All
+                    </button>
+                    <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'open' }"
+                            @click="filter_type = 'open'">Open
+                    </button>
+                    <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'closed' }"
+                            @click="filter_type = 'closed'">Closed
+                    </button>
+                </div>
             </div>
             <div class="fs_tk_right">
-                <el-button size="small" @click="$router.push({ name: 'create_ticket' })" type="success">{{$t('Create a New Ticket')}}</el-button>
+                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">{{ $t('Create a New Ticket') }}</button>
             </div>
         </div>
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">
             <el-skeleton :rows="5" animated/>
         </div>
         <div v-else class="fs_tk_body">
-            <el-table
-                :data="tickets"
-                stripe
-                @row-click="gotToTicket"
-                v-loading="fetching"
-                style="width: 100%">
-                <el-table-column min-width="200px" :label="$t('Conversation')">
-                    <template #default="scope">
+            <table class="fs_table fs_stripe">
+                <thead>
+                <tr>
+                    <th>{{ $t('Conversation') }}</th>
+                    <th></th>
+                    <th>{{ $t('Status') }}</th>
+                    <th>{{ $t('Date') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="ticket in tickets" :key="ticket.id">
+                    <td>
                         <router-link class="fs_tk_preview"
-                                     :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
-                            <strong>{{ scope.row.title }}</strong>
+                                     :to="{name: 'view_ticket', params: { ticket_id: ticket.id }}">
+                            <strong>{{ ticket.title }}</strong>
                             <div class="prev_text_parent">
-                                <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
+                                <p class="fs_tk_preview_text">{{ getExcerpt(ticket) }}</p>
                             </div>
                         </router-link>
-                    </template>
-                </el-table-column>
-                <el-table-column min-width="15">
-                    <template #default="scope">
-                        <span class="fs_thread_count">{{ scope.row.response_count }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column width="100" :label="$t('Status')">
-                    <template #default="scope">
-                        <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    prop="created_at"
-                    :label="$t('Date')"
-                    width="180">
-                </el-table-column>
-            </el-table>
+                    </td>
+                    <td>
+                        <span class="fs_thread_count">{{ ticket.response_count }}</span>
+                    </td>
+                    <td>
+                        <span class="fs_badge" :class="'fs_badge_'+ticket.status">{{ ticket.status }}</span>
+                    </td>
+                    <td>
+                        <span class="fs_tk_date">{{ ticket.created_at }}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
             <div class="fst_pagi_wrapper">
-                <pagination @fetch="fetchTickets()" :pagination="pagination"/>
+                <div v-if="hasNextPage || hasPrevPage" class="fs_button_groups fs_pagi">
+                    <button :disabled="!hasPrevPage" @click="pagiAction(-1)" class="fs_btn">&laquo; Prev</button>
+                    <button :disabled="!hasNextPage" @click="pagiAction(1)" class="fs_btn">Next &raquo;</button>
+                </div>
             </div>
         </div>
     </div>
@@ -70,11 +79,19 @@ export default {
             filter_type: 'all',
             pagination: {
                 per_page: 10,
-                current_page: 0,
+                current_page: 1,
                 total: 0
             },
             fetching: false,
             first_loading: true
+        }
+    },
+    computed: {
+        hasNextPage() {
+            return this.pagination.total && this.pagination.total > (this.pagination.per_page * this.pagination.current_page);
+        },
+        hasPrevPage() {
+            return this.pagination.total && this.pagination.current_page > 1;
         }
     },
     watch: {
@@ -113,10 +130,14 @@ export default {
         },
         getExcerpt(row) {
             let text = row.content;
-            if(!text) {
+            if (!text) {
                 return '';
             }
             return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+        },
+        pagiAction(number) {
+            this.pagination.current_page += number;
+            this.fetchTickets();
         }
     },
     mounted() {

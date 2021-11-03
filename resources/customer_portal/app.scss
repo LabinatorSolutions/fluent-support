@@ -1,20 +1,15 @@
-@import "~element-plus/lib/theme-chalk/el-table.css";
-@import "~element-plus/lib/theme-chalk/el-table-column.css";
+@import "~element-plus/lib/theme-chalk/el-upload.css";
 @import "~element-plus/lib/theme-chalk/el-loading.css";
-@import "~element-plus/lib/theme-chalk/el-pagination.css";
-@import "~element-plus/lib/theme-chalk/el-icon.css";
+@import "~element-plus/lib/theme-chalk/el-skeleton.css";
+@import "~element-plus/lib/theme-chalk/el-upload.css";
 @import "~element-plus/lib/theme-chalk/el-button.css";
 @import "~element-plus/lib/theme-chalk/el-checkbox.css";
-@import "~element-plus/lib/theme-chalk/el-radio-button.css";
-@import "~element-plus/lib/theme-chalk/el-radio-group.css";
 @import "~element-plus/lib/theme-chalk/el-form.css";
 @import "~element-plus/lib/theme-chalk/el-form-item.css";
+@import "~element-plus/lib/theme-chalk/el-input.css";
 @import "~element-plus/lib/theme-chalk/el-select.css";
 @import "~element-plus/lib/theme-chalk/el-option.css";
-@import "~element-plus/lib/theme-chalk/el-input.css";
-@import "~element-plus/lib/theme-chalk/el-upload.css";
-@import "~element-plus/lib/theme-chalk/el-skeleton.css";
-@import "~element-plus/lib/theme-chalk/index.css";
+@import "~element-plus/lib/theme-chalk/el-icon.css";
 
 .fst_client_portal {
     .fs_tk_preview {
@@ -27,12 +22,13 @@
             margin: 0;
             text-overflow: ellipsis;
             width: 100%;
-            height: 16px;
+            height: 23px;
             white-space: pre-wrap;
             overflow: hidden;
             font-size: 14px;
-            line-height: 16px;
+            line-height: 23px;
         }
+
         strong {
             word-break: break-word;
         }
@@ -66,17 +62,21 @@
         margin: 0 4px 0 0;
         //margin: 0 10% 0 20%;
         top: 6px;
+
         &.fs_badge_new {
             background: #f56c6c;
         }
+
         &.fs_badge_active {
             background: #56c288;
         }
     }
+
     ul {
         margin: 0;
         padding: 0;
     }
+
     .fst_pagi_wrapper {
         margin-top: 20px;
         text-align: right;
@@ -90,19 +90,23 @@
         border-left: 0;
         border-right: 0;
         position: relative;
-        >hgroup {
+
+        > hgroup {
             color: #111;
             position: relative;
         }
+
         span.fs_ticket_id {
             margin-right: 10px;
             font-size: 20px;
             color: #93a1b0;
         }
+
         .fs_tk_subject {
             zoom: 1;
             word-break: break-word;
             padding-right: 215px;
+
             h2 {
                 color: #314351;
                 font-weight: 400;
@@ -110,15 +114,18 @@
                 word-wrap: break-word;
                 font-size: 20px;
                 display: inline-block;
-                margin:0;
+                margin: 0;
             }
+
             .fs_tk_tags {
                 padding-left: 20px;
                 display: inline-block;
+
                 span {
                 }
             }
         }
+
         .fs_tk_actions {
             margin: 0;
             position: absolute;
@@ -135,6 +142,7 @@
         position: relative;
         width: 100%;
         border-top: 1px solid #e5e9ec;
+
         .fs_avatar {
             background: #f1f3f5;
             border-radius: 50%;
@@ -144,12 +152,14 @@
             width: 46px;
             float: left;
             margin: 25px 20px 25px 25px;
+
             img {
                 border-radius: 50%;
                 max-width: 46px;
                 max-height: 46px;
             }
         }
+
         &.fs_person_agent:after {
             content: "";
             width: 4px;
@@ -159,6 +169,7 @@
             top: 0;
             background: #606dbe;
         }
+
         &.fs_person_agent:before {
             content: "Support Staff";
             position: relative;
@@ -174,15 +185,18 @@
     .fs_thread_wrap {
         margin: 0 25px 0 72px;
         padding: 25px;
+
         .fs_thread_message {
             width: 100%;
             overflow: auto;
             line-height: 150%;
         }
+
         .fs_thread_head {
             zoom: 1;
             min-height: 40px;
         }
+
         .fs_thread_title {
             color: #8494a5;
             font-weight: 400;
@@ -190,34 +204,42 @@
             line-height: 1.2em;
             margin-bottom: 12px;
             display: inline-block;
+
             strong {
                 font-weight: 500;
                 color: #253642;
             }
         }
+
         .fs_thread_actions {
             float: right;
             color: #a5b2bd;
             text-align: right;
             font-size: 12px;
         }
+
         .fs_thread_body {
             color: #253642;
             font-size: 14px;
             line-height: 1.45em;
             overflow-y: hidden;
+
             h1, h2, h3, h4, h5, h6 {
                 margin: 10px 0px;
             }
+
             h1 {
                 font-size: 20px;
             }
+
             h2 {
                 font-size: 18px;
             }
+
             h3 {
                 font-size: 16px;
             }
+
             h4, h5, h6 {
                 font-size: 15px;
                 font-weight: 500;
@@ -226,16 +248,19 @@
             img, iframe, * {
                 max-width: 100%;
             }
+
             ul {
                 list-style: disc;
                 padding: 0;
                 margin: 15px 0 0;
+
                 li {
                     font-size: 14px;
                     margin-left: 30px;
                     padding-left: 7px;
                 }
             }
+
             pre, code {
                 background: #e1ebee;
                 font-family: "Courier 10 Pitch", Courier, monospace;
@@ -245,10 +270,12 @@
                 overflow: auto;
                 padding: 1.5em;
                 white-space: pre-wrap;
+
                 code {
                     padding: 0;
                 }
             }
+
             p, ul {
                 code {
                     padding: 2px 5px;
@@ -264,11 +291,13 @@
         background: #e5e9ec;
         padding: 15px 20px;
     }
+
     .fst_reply_box_focused {
         padding: 20px;
         background: #f1f2f5;
         border: 1px solid #e5e9ec;
     }
+
     .fs_response_actions {
         padding-top: 10px;
         display: block;
@@ -283,10 +312,12 @@
         overflow: hidden;
         display: block;
         width: 100%;
+
         .fs_tk_left, .fs_tk_right {
             width: 50%;
             float: left;
         }
+
         .fs_tk_right {
             text-align: right;
         }
@@ -300,6 +331,7 @@
         padding: 10px 20px;
         border-top-right-radius: 5px;
         border-top-left-radius: 5px;
+
         h3 {
             color: #314351;
             font-weight: 400;
@@ -309,27 +341,32 @@
             margin: 0;
         }
     }
+
     .fs_tk_body {
         border: 1px solid #ebeef3;
         background: #ebeef3;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
     }
+
     .fs_ticket {
         .fs_tk_header {
             padding: 20px 20px;
         }
     }
+
     .fst_reply_box {
         background: white;
         padding: 15px 20px;
     }
+
     code, kbd {
         padding: 3px 5px 2px;
         margin: 0 1px;
         background: rgba(0, 0, 0, 0.07);
         font-size: 13px;
     }
+
     pre {
         background: #e1ebee;
         font-family: "Courier 10 Pitch", Courier, monospace;
@@ -345,12 +382,159 @@
         margin-top: 20px;
         border-top: 1px solid #bbb;
         padding-top: 10px;
+
         ul {
             margin: 0;
             padding: 0;
             list-style: none;
+
             li {
                 margin-bottom: 10px;
+            }
+        }
+    }
+
+    .fs_table {
+        border-collapse: collapse;
+        color: #606266;
+        width: 100%;
+
+        thead {
+            background-color: white;
+            border-bottom: 2px solid #dddddd;
+            color: #646568;
+
+            tr {
+                text-align: left;
+
+                th {
+                    padding: 15px 15px;
+                    font-weight: 500;
+                }
+            }
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+
+            strong {
+                font-weight: 500;
+            }
+        }
+
+        tbody {
+            tr {
+                background-color: white;
+                border-bottom: 1px solid #dddddd;
+
+                &:last-of-type {
+                    border-bottom: 2px solid #dddddd;
+                }
+            }
+
+            tr:nth-of-type(even) {
+                background-color: #FAFAFA;
+            }
+        }
+    }
+
+    .fs_btn {
+        line-height: 1;
+        white-space: nowrap;
+        vertical-align: middle;
+        background: #fff;
+        border: 1px solid #dcdfe6;
+        font-weight: 500;
+        color: #606266;
+        -webkit-appearance: none;
+        text-align: center;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        margin: 0;
+        cursor: pointer;
+        -webkit-transition: all .3s cubic-bezier(.645, .045, .355, 1);
+        transition: all .3s cubic-bezier(.645, .045, .355, 1);
+        padding: 12px 20px;
+        font-size: 14px;
+        border-radius: 3px;
+
+        &.fs_btn_success {
+            color: #fff;
+            background-color: #67c23a;
+            border-color: #67c23a;
+        }
+    }
+
+    .fs_button_groups {
+        display: inline-block;
+        line-height: 1;
+        vertical-align: middle;
+
+        button {
+            border-left: 0;
+            border-radius: 0;
+
+            &:first-child {
+                border-left: 1px solid #dcdfe6;
+                border-radius: 4px 0 0 4px;
+            }
+
+            &:last-child {
+                border-radius: 0 4px 4px 0;
+            }
+
+            &.fs_btn_active {
+                color: #fff;
+                background-color: #409eff;
+                border-color: #409eff;
+                -webkit-box-shadow: -1px 0 0 0 #409eff;
+                box-shadow: -1px 0 0 0 #409eff;
+            }
+
+            &:disabled {
+                color: #C0C4CC;
+                background-color: #FFF;
+                cursor: not-allowed;
+            }
+        }
+    }
+
+    .fst_pagi_wrapper {
+        padding: 10px 20px 20px;
+
+        button {
+            padding: 10px 15px;
+        }
+    }
+
+    .el-form--label-top .el-form-item__label {
+        line-height: 100%;
+        font-weight: 500;
+    }
+
+    p.fs_tk_help {
+        line-height: 120%;
+        margin: 0;
+        padding: 0;
+        font-size: 90%;
+        font-weight: normal;
+    }
+
+    .el-form {
+        .fs_tk_actions {
+            .el-select {
+                width: 100%;
+            }
+
+            margin-top: 15px;
+            .fs_tk_left {
+                padding-right: 10px;
+
+                &:last-child {
+                    padding-left: 10px;
+                    padding-right: 0px;
+                }
             }
         }
     }
@@ -364,10 +548,12 @@
                 display: flex;
                 flex-direction: column-reverse;
             }
+
             .fs_tk_subject {
                 width: 100%;
                 padding-right: 0;
             }
+
             .fs_tk_actions {
                 position: relative;
                 width: 100%;
@@ -379,9 +565,11 @@
             .fs_avatar {
                 margin: 10px 10px 5px 20px;
             }
+
             .fs_thread_wrap {
                 width: 100%;
                 margin: 0;
+
                 .fs_thread_head {
                     width: 100%;
                 }
@@ -392,6 +580,7 @@
             .el-radio-button__inner {
                 padding: 6px 10px;
             }
+
             .el-button--small {
                 min-height: 28px;
                 padding: 5px 10px;
@@ -406,6 +595,7 @@
 .fs_row {
     display: block;
     overflow: hidden;
+
     .fs_half {
         width: 50%;
         float: left;
@@ -426,12 +616,14 @@
             line-height: 2.4em;
         }
     }
+
     .el-upload-list__item-thumbnail {
         width: 24%;
         height: 2.6em;
         margin: 0;
         border-radius: 4%;
     }
+
     .el-upload-list__item {
         height: 4em;
         width: 14.8em;
@@ -439,7 +631,9 @@
         margin: .3em;
     }
 }
+
 ul.el-upload-list.el-upload-list--picture {
     display: -webkit-inline-box;
     display: -webkit-box;
 }
+

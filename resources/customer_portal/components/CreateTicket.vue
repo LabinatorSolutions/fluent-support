@@ -16,7 +16,7 @@
                 </el-form-item>
                 <el-form-item :label="$t('Ticket Details')">
                     <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" />
-                    <p>{{$t('Please provide details about your problem')}}</p>
+                    <p class="fs_tk_help">{{$t('Please provide details about your problem')}}</p>
                     <error :error="errors.get('content')"/>
                 </el-form-item>
 
@@ -40,9 +40,9 @@
                         <error :error="errors.get('client_priority')"/>
                     </div>
                 </div>
-
+                
                 <el-form-item>
-                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">{{$t('Create Ticket')}}</el-button>
+                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('Create Ticket')}}</el-button>
                 </el-form-item>
 
             </el-form>

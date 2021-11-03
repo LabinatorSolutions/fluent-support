@@ -3,7 +3,6 @@
         <el-upload
             class="upload-demo"
             :action="upload_url"
-            :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-success="handleUploadSuccess"
             :with-credentials="true"
@@ -23,9 +22,6 @@
         </el-upload>
         <p style="color: red;" v-if="error_message" @click="error_message = ''">{{ error_message }}</p>
 
-        <el-dialog :title="dialogImageTitle" v-model="dialogVisible">
-          <img :src="dialogImageUrl" alt="" />
-        </el-dialog>
     </div>
 </template>
 
@@ -54,11 +50,6 @@ export default {
         handleRemove(file, fileList) {
             this.error_message = '';
             this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
-        },
-        handlePreview(file) {
-            this.dialogImageTitle = file.name
-            this.dialogImageUrl = file.url
-            this.dialogVisible = true
         },
         handleExceed(files,fileList) {
             this.error_message = `You can upload maximum ${fileList.length} files`;
