@@ -1,56 +1,37 @@
 import { createApp } from 'vue';
 import Application from './Application';
-const app = createApp(Application);
 import { createWebHashHistory, createRouter } from 'vue-router'
 import routes from "./routes";
 
-import {
-    ElTable,
-    ElTableColumn,
-    ElLoading,
-    ElPagination,
-    ElIcon,
-    ElButton,
-    ElCheckbox,
-    ElRadioGroup,
-    ElRadioButton,
-    ElInput,
-    ElSelect,
-    ElOption,
-    ElForm,
-    ElFormItem,
-    ElUpload,
-    ElSkeleton
-} from 'element-plus';
+import  ElUpload from "element-plus/lib/el-upload";
+import  ElLoading from "element-plus/lib/el-loading";
+import  ElSkeleton from "element-plus/lib/el-skeleton";
+import  ElButton from "element-plus/lib/el-button";
+import  ElCheckbox from "element-plus/lib/el-checkbox";
+import  ElForm from "element-plus/lib/el-form";
+import  ElFormItem from "element-plus/lib/el-form-item";
+import  ElInput from "element-plus/lib/el-input";
+import  ElSelect from "element-plus/lib/el-select";
+import  ElOption from "element-plus/lib/el-option";
 
-const components = [
-    ElTable,
-    ElTableColumn,
-    ElPagination,
-    ElIcon,
-    ElButton,
-    ElCheckbox,
-    ElRadioGroup,
-    ElRadioButton,
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElSelect,
-    ElOption,
-    ElUpload,
-    ElSkeleton
-];
-
-components.forEach(component => {
-    app.component(component.name, component)
-})
-
-app.use(ElLoading);
+const app = createApp(Application);
 
 const router = createRouter({
     history: createWebHashHistory(),
     routes
 });
+
+app.component(ElUpload.name, ElUpload)
+app.component(ElSkeleton.name, ElSkeleton)
+app.component(ElButton.name, ElButton)
+app.component(ElCheckbox.name, ElCheckbox)
+app.component(ElForm.name, ElForm)
+app.component(ElFormItem.name, ElFormItem)
+app.component(ElInput.name, ElInput)
+app.component(ElSelect.name, ElSelect)
+app.component(ElOption.name, ElOption)
+
+app.use(ElLoading);
 
 const request = function(method, route, data = {}) {
     const url = `${window.fs_customer_portal.rest.url}/${route}`;

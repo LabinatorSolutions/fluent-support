@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="fetching" class="fs_ticket">
+    <div class="fs_ticket">
         <template v-if="ticket">
             <div class="fs_tk_header">
                 <div class="fs_th_header">
@@ -16,8 +16,7 @@
                         </div>
                         <div class="fs_tk_actions">
                             <el-button v-loading="fetching" @click="fetchTicket()" icon="el-icon-refresh"
-                                       size="small"></el-button>
-                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">All</a>
+                                       size="small"></el-button>                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">All</a>
                             <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
                                        @click="closeTicket()" size="small"
                                        type="danger">{{$t('Close Ticket')}}

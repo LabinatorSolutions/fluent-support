@@ -62,10 +62,13 @@ class PortalPolicy extends Policy
     {
         if($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $ticketHash = sanitize_text_field($request->get('intended_ticket_hash'));
-            $ticketId = absint($request->get('ticket_id'));
-            return !! Ticket::where('hash', $ticketHash)->find($ticketId);
+            if($ticketHash != 'undefined') {
+                $ticketId = absint($request->get('ticket_id'));
+                return !! Ticket::where('hash', $ticketHash)->find($ticketId);
+            }
         }
 
         return $this->verifyRequest($request);
     }
+
 }
