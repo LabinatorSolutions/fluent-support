@@ -38,8 +38,8 @@
                             </template>
 
                             <template v-else-if="all_conditions[setting.data_key].data_type == 'date_range'">
-                                <el-option value=">" label="Is before"></el-option>
-                                <el-option value="<" label="Is after"></el-option>
+                                <el-option value="<" label="Is before"></el-option>
+                                <el-option value=">" label="Is after"></el-option>
                                 <el-option value="range" label="Is between"></el-option>
                             </template>
                             <template v-else-if="all_conditions[setting.data_key].data_type == 'time_range'">

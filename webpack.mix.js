@@ -15,4 +15,5 @@ mix
     .sass('resources/customer_portal/app.scss', 'assets/portal/css/app.css')
     .sass('resources/scss/alpha-admin.scss', 'assets/admin/css/alpha-admin.css')
     .sass('resources/scss/all_public.scss', 'assets/admin/css/all_public.css')
-    .copy('resources/images', 'assets/images');
+    .copy('resources/images', 'assets/images')
+    .copy('node_modules/element-plus/lib/theme-chalk/fonts', 'assets/admin/css/fonts');

@@ -16,7 +16,6 @@ return array(
     'FluentSupport\\Database\\Migrations\\MetaMigrator' => $baseDir . '/database/Migrations/MetaMigrator.php',
     'FluentSupport\\Database\\Migrations\\PersonsMigrator' => $baseDir . '/database/Migrations/PersonsMigrator.php',
     'FluentSupport\\Database\\Migrations\\ProductsMigrator' => $baseDir . '/database/Migrations/ProductsMigrator.php',
-    'FluentSupport\\Database\\Migrations\\SavedRepliesMigrator' => $baseDir . '/database/Migrations/SavedRepliesMigrator.php',
     'FluentSupport\\Database\\Migrations\\TagRelationsMigrator' => $baseDir . '/database/Migrations/TagRelationsMigrator.php',
     'FluentSupport\\Database\\Migrations\\TaggablesMigrator' => $baseDir . '/database/Migrations/TaggablesMigrator.php',
     'FluentSupport\\Database\\Migrations\\TicketsMigrator' => $baseDir . '/database/Migrations/TicketsMigrator.php',
