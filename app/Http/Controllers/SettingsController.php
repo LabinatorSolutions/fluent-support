@@ -4,6 +4,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 
 use FluentSupport\App\Models\MailBox;
+use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
@@ -15,6 +16,19 @@ class SettingsController extends Controller
         $settingsKey = $request->get('settings_key');
 
         return (new Settings)->get($settingsKey);
+    }
+
+    public function getIntegrationSettings(Request $request)
+    {
+        $settings = Meta::where('object_type', 'integration_settings')->get();
+        $integrationSettings = [];
+        foreach ($settings as $index => $setting) {
+            $data = unserialize($setting->value);
+            if($data['status'] == 'yes') {
+                $integrationSettings[] = $setting->key;
+            }
+        }
+        return $integrationSettings;
     }
 
     public function saveSettings(Request $request)

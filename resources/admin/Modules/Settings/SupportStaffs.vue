@@ -82,15 +82,19 @@
                     </el-checkbox-group>
                 </el-form-item>
 
-                <h3>{{$t('Telegram Integration')}}</h3>
-                <el-form-item :label="$t('Telegram Chat ID')">
-                    <el-input type="text" :placeholder="$t('Telegram Chat ID')" v-model="editing_agent.telegram_chat_id"/>
-                </el-form-item>
+                <div class="telegram_integration" v-if="integrationSettings.includes('telegram_settings')">
+                    <h3>{{$t('Telegram Integration')}}</h3>
+                    <el-form-item :label="$t('Telegram Chat ID')">
+                        <el-input type="text" :placeholder="$t('Telegram Chat ID')" v-model="editing_agent.telegram_chat_id"/>
+                    </el-form-item>
+                </div>
 
-                <h3>{{$t('Slack Integration')}}</h3>
-                <el-form-item :label="$t('Slack User ID')">
-                    <el-input type="text" :placeholder="$t('Slack User ID')" v-model="editing_agent.slack_user_id"/>
-                </el-form-item>
+                <div class="slack_integration" v-if="integrationSettings.includes('slack_settings')">
+                    <h3>{{$t('Slack Integration')}}</h3>
+                    <el-form-item :label="$t('Slack User ID')">
+                        <el-input type="text" :placeholder="$t('Slack User ID')" v-model="editing_agent.slack_user_id"/>
+                    </el-form-item>
+                </div>
 
             </el-form>
 
@@ -128,7 +132,8 @@ export default {
             editing_agent: false,
             agent_modal: false,
             saving: false,
-            search:''
+            search:'',
+            integrationSettings: []
         }
     },
     methods: {
@@ -143,6 +148,18 @@ export default {
                     this.agents = response.agents.data;
                     this.pagination.total = response.agents.total;
                     this.permissions = response.permissions;
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+        },
+        fetchSettings() {
+            this.$get('settings/integration-settings')
+                .then(response => {
+                    this.integrationSettings = response;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -227,6 +244,7 @@ export default {
     },
     mounted() {
         this.fetchAgents();
+        this.fetchSettings();
         this.$setTitle('Support Staffs');
     }
 }
