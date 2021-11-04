@@ -4,24 +4,23 @@
             <el-form-item :label="$t('Inbox Name')">
                 <el-input type="text" v-model="mailbox.name"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('Business Email')">
-                <el-input type="email" v-model="mailbox.email"></el-input>
+            <el-form-item :label="$t('Support Inbox Email')">
+                <el-input :disabled="mailbox.mapped_email" type="email" v-model="mailbox.email"></el-input>
                 <p>{{$t('email_can_be_send')}}</p>
             </el-form-item>
             <el-form-item :label="$t('Admin Email Address')">
                 <el-input type="email" v-model="mailbox.settings.admin_email_address"></el-input>
                 <p>{{$t('admin_get_email')}}</p>
             </el-form-item>
-            <el-form-item :label="$t('Support Channel')">
-                <el-radio-group v-model="mailbox.box_type">
-                    <el-radio :label="$t('web')">{{$t('Web Based')}}</el-radio>
-                    <el-radio :disabled="!appVars.has_email_parser" label="email">{{$t('Email Based (MailBox)')}}</el-radio>
-                </el-radio-group>
-            </el-form-item>
 
             <el-form-item v-if="mailbox.box_type == 'email'" :label="$t('Mapped Email')">
-                <el-input type="email" v-model="mailbox.mapped_email"></el-input>
-                <p>{{$t('mapped_webhook_email')}}</p>
+                <template v-if="mailbox.mapped_email">
+                    <el-input :disabled="true" type="email" v-model="mailbox.mapped_email"></el-input>
+                    <p>{{$t('mapped_webhook_email')}}</p>
+                </template>
+                <div v-else>
+                    <h4>Please configure <router-link :to="{name: 'email_piping', params: { box_id: mailbox.id }}">your email piping settings first</router-link></h4>
+                </div>
             </el-form-item>
 
             <el-form-item :label="$t('Email Footer For Customers')">
