@@ -3,10 +3,12 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{$t('Business Inboxes')}}</h3>
+                    <h3>{{ $t('Business Inboxes') }}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button size="small" @click="showNewBusinessModal()" type="primary">{{ $t('Add New Business Inbox') }}</el-button>
+                    <el-button size="small" @click="showNewBusinessModal()" type="primary">
+                        {{ $t('Add New Business Inbox') }}
+                    </el-button>
                 </div>
             </div>
             <div class="">
@@ -22,7 +24,7 @@
                                     <template #dropdown>
                                         <el-dropdown-menu>
                                             <el-dropdown-item :command="{ type: 'delete', box_id: box.id }"
-                                                              icon="el-icon-delete">{{$t('Delete')}}
+                                                              icon="el-icon-delete">{{ $t('Delete') }}
                                             </el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>
@@ -33,7 +35,8 @@
                                 <p>Type: {{ box.box_type }}</p>
                                 <p>Tickets Counts: {{ box.tickets_count }}</p>
                                 <router-link class="el-button el-button--success el-button--small"
-                                             :to="{name: 'box_settings', params: { box_id: box.id }}">{{$t('View Settings')}}
+                                             :to="{name: 'box_settings', params: { box_id: box.id }}">
+                                    {{ $t('View Settings') }}
                                 </router-link>
                             </div>
                         </div>
@@ -50,25 +53,23 @@
                 <el-form-item :label="$t('Inbox Name')">
                     <el-input type="text" v-model="new_business.name"></el-input>
                 </el-form-item>
-                <el-form-item :label="$t('Business Email')">
+                <el-form-item :label="$t('Support Inbox Email')">
                     <el-input type="email" v-model="new_business.email"></el-input>
-                    <p>{{$t('email_can_be_send')}}</p>
+                    <p>{{ $t('email_can_be_send') }}</p>
                 </el-form-item>
                 <el-form-item :label="$t('Support Channel')">
                     <el-radio-group v-model="new_business.box_type">
-                        <el-radio label="web">{{$t('Web Based')}}</el-radio>
-                        <el-radio :disabled="!appVars.has_email_parser" :label="$t('email')">{{$t('Email Based (MailBox)')}}</el-radio>
+                        <el-radio label="web">{{ $t('Web Based') }}</el-radio>
+                        <el-radio :disabled="!appVars.has_email_parser" :label="$t('email')">
+                            {{ $t('Email Based (MailBox)') }}
+                        </el-radio>
                     </el-radio-group>
-                </el-form-item>
-                <el-form-item v-if="new_business.box_type == 'email'" :label="$t('Mapped Email')">
-                    <el-input type="email" v-model="new_business.mapped_email"></el-input>
-                    <p>{{$t('mapped_webhook_email')}}</p>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button @click="create_modal = false">{{$t('Cancel')}}</el-button>
-                  <el-button type="primary" @click="createMailBox()">{{$t('Add Business Inbox')}}</el-button>
+                  <el-button @click="create_modal = false">{{ $t('Cancel') }}</el-button>
+                  <el-button type="primary" @click="createMailBox()">{{ $t('Add Business Inbox') }}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -84,13 +85,14 @@
                                    :key="mailbox.id" :value="mailbox.id"
                                    :label="mailbox.name"></el-option>
                     </el-select>
-                    <p>{{$t('select_fallback_business')}}</p>
+                    <p>{{ $t('select_fallback_business') }}</p>
                 </el-form-item>
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button @click="deleting_box.show_modal = false">{{$t('Cancel')}}</el-button>
-                  <el-button v-loading="deleteing" :disabled="deleteing" type="danger" @click="deleteMailBox()">{{$t('Confirm Delete This Business')}}</el-button>
+                  <el-button @click="deleting_box.show_modal = false">{{ $t('Cancel') }}</el-button>
+                  <el-button v-loading="deleteing" :disabled="deleteing" type="danger"
+                             @click="deleteMailBox()">{{ $t('Confirm Delete This Business') }}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -158,7 +160,12 @@ export default {
                         position: 'bottom-right'
                     });
 
-                    this.$router.push({name: 'box_settings', params: {box_id: response.mailbox.id}})
+                    if (response.mailbox.box_type == 'email') {
+                        this.$router.push({name: 'email_piping', params: {box_id: response.mailbox.id}})
+                    } else {
+                        this.$router.push({name: 'box_settings', params: {box_id: response.mailbox.id}})
+                    }
+
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

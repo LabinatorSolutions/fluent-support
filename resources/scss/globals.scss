@@ -274,6 +274,7 @@ span.fs_ticket_id {
     display: inline-block;
     margin-left: 10px;
 }
+
 a.el-button {
     text-decoration: none;
 }
@@ -293,10 +294,21 @@ table.fs_table {
     text-align: left;
     border-spacing: 0;
     border-collapse: collapse;
+
     th, td {
         padding: 10px;
     }
+
     tr {
         border: 1px solid #c7cfd7;
     }
+}
+
+.fs_pipe_box {
+    max-width: 800px;
+    padding: 30px 30px;
+    margin: 30px auto;
+    background: #f7fafc;
+    text-align: center;
+    border-radius: 5px;
 }
