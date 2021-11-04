@@ -160,7 +160,7 @@ class Settings
         $savedSettings['description']   = $settingsDefaults[$emailKey]['description'];
 
         if ($box->box_type == 'email' && in_array($emailKey, $strictSubjectKeys)) {
-            $savedSettings['email_subject'] = $settingsDefaults[$emailKey]['email_subject'];
+            $savedSettings['email_subject'] = 'Re: {{ticket.title}}';
             $savedSettings['can_edit_subject'] = 'no';
         }
 

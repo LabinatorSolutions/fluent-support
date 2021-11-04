@@ -79,6 +79,7 @@ class Helper
             'image/gif',
             'image/ief',
             'image/jpeg',
+            'image/webp',
             'image/pjpeg',
             'image/ktx',
             'image/png',

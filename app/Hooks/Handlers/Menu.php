@@ -219,7 +219,7 @@ class Menu
             ],
             'notification_integrations' => $integrationDrivers,
             'server_time'       => current_time('mysql'),
-            'has_email_parser'  => defined('FLUENT_SUPPORT_MAIL_PARSER_PATH'),
+            'has_email_parser'  => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
             'ticket_tags'       => $tags,
             'i18n' => TransStrings::getTransStrings(),
             'custom_fields' => apply_filters('fluent_support/ticket_custom_fields', [])
