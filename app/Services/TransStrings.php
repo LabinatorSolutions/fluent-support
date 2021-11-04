@@ -85,7 +85,7 @@ class TransStrings
             'email'    => __('email', 'fluent-support'),
             'Email Based (MailBox)'    => __('Email Based (MailBox)', 'fluent-support'),
             'Mapped Email'    => __('Mapped Email', 'fluent-support'),
-            'mapped_webhook_email'    => __('Please provide mapped webhook email from where you will send emails as webhook', 'fluent-support'),
+            'mapped_webhook_email'    => __('Please forward your emails from "Support Inbox Email" so it can auto-sync the tickets', 'fluent-support'),
             'Cancel'    => __('Cancel', 'fluent-support'),
             'Add Business Inbox'    => __('Add Business Inbox', 'fluent-support'),
             'Are You Sure? You can not undo this action.'    => __('Are You Sure? You can not undo this action.', 'fluent-support'),
