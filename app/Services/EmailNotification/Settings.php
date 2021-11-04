@@ -145,7 +145,7 @@ class Settings
 
 
         if (!$savedSettings) {
-            return [
+            $savedSettings = [
                 'key'              => $settingsDefaults[$emailKey]['key'],
                 'title'            => $settingsDefaults[$emailKey]['title'],
                 'email_subject'    => $settingsDefaults[$emailKey]['email_subject'],
@@ -153,6 +153,13 @@ class Settings
                 'status'           => $settingsDefaults[$emailKey]['default_status'],
                 'can_edit_subject' => (in_array($emailKey, $strictSubjectKeys) && $box->box_type == 'email') ? 'no' : 'yes'
             ];
+
+            if ($box->box_type == 'email' && in_array($emailKey, $strictSubjectKeys)) {
+                $savedSettings['email_subject'] = 'Re: {{ticket.title}}';
+                $savedSettings['can_edit_subject'] = 'no';
+            }
+
+            return $savedSettings;
         }
 
         $savedSettings['key'] = $settingsDefaults[$emailKey]['key'];
