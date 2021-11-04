@@ -106,8 +106,9 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-                $headers[] = 'Message-ID: ' . $ticket->message_id;
+                $headers[] = 'Message-ID: '. $ticket->message_id;
             }
+
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
     }

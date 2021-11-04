@@ -60,17 +60,17 @@ class MailBox extends Model
     public function getMailerHeader()
     {
         $headers = [];
-        $fromString = $this->name;
-        if($this->email) {
-            $fromString .= ' <'.$this->email.'>';
+        $fromString = $this->email; //$this->name;
+        if($this->name) {
+            $fromString = $this->name.' <'.$fromString.'>';
         }
 
         if ($fromString) {
-            $headers[] = "From: {$fromString}";
+            $headers[] = 'From: '. $fromString;
         }
 
         // Set Reply-To Header
-        $headers[] = "Reply-To: $this->email";
+        $headers[] = 'Reply-To: '. $fromString;
 
         return $headers;
     }
