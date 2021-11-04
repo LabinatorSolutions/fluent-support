@@ -292,6 +292,8 @@ class TransStrings
             'Search Custom Fields'    => __('Search Custom Fields', 'fluent-support'),
             'Slack Integration'    => __('Slack Integration', 'fluent-support'),
             'Slack User ID'    => __('Slack User ID', 'fluent-support'),
+            'Customer Management'    => __('Customer Management', 'fluent-support'),
+            'Change Customer'    => __('Change Customer', 'fluent-support'),
         ];
     }
 }

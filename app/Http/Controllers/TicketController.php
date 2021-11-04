@@ -576,4 +576,14 @@ class TicketController extends Controller
             'tags'    => $ticket->tags
         ];
     }
+
+    public function changeTicketCustomer(Request $request)
+    {
+        $updateCustomer = Ticket::where('id', $request->get('ticket_id'))
+            ->update(['customer_id' => $request->get('customer')]);
+        return [
+          'message' => __('Customer has been updated', 'fluent-support'),
+          'updatedCustomer' =>  $updateCustomer
+        ];
+    }
 }
