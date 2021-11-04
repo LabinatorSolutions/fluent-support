@@ -20,6 +20,7 @@ import MailBoxRoot from './Modules/MailBoxes/MailBoxRoot';
 import ChooseMailBox from './Modules/MailBoxes/ChooseMailBox';
 import MailBoxSettings from './Modules/MailBoxes/MailBoxSettings';
 import MailBoxEmailSettings from './Modules/MailBoxes/BoxEmailSettings';
+import MailBoxEmailPiping from './Modules/MailBoxes/MailBoxEmailPiping';
 
 import Report from './Modules/Reports/Report';
 
@@ -134,6 +135,12 @@ export default [
                 path: 'email_settings',
                 name: 'email_settings',
                 component: MailBoxEmailSettings
+            },
+            {
+                props: true,
+                path: 'email_piping',
+                name: 'email_piping',
+                component: MailBoxEmailPiping
             }
         ]
     },
@@ -155,7 +162,7 @@ export default [
     },
     {
         path: '/reports',
-        name : 'reports',
+        name: 'reports',
         component: Report,
         meta: {
             active: 'reports'

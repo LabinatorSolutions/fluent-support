@@ -41,14 +41,6 @@ class MailBoxController extends Controller
             'email' => 'required'
         ]);
 
-        if ($data['box_type'] == 'email') {
-            if (empty($data['mapped_email'])) {
-                return $this->sendError([
-                    'message' => __('Mapped Email Address is required', 'fluent-support')
-                ]);
-            }
-        }
-
         $data['settings'] = [
             'admin_email_address' => $data['email']
         ];
