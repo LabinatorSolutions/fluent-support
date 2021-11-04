@@ -4,6 +4,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
@@ -14,7 +15,9 @@ class CustomerPortalHandler
 {
     public function renderPortal()
     {
-        if (PermissionManager::currentUserPermissions()) {
+        if(static::customerStatus() && static::customerStatus()->status==='inactive'){
+            return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">'. __('You don’t have permission to view the tickets', 'fluent-support') .'</h3></div>';
+        }else if (PermissionManager::currentUserPermissions()) {
             $adminPortalUrl = Helper::getPortalAdminBaseUrl();
             return '<div style="text-align: center;"><h3>'.__('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support').'</h3><a href="' . $adminPortalUrl . '">'. __('Go to Support Admin Page', 'fluent-support'). '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
@@ -77,6 +80,12 @@ class CustomerPortalHandler
         }
 
         return $this->isSignedTicketView();
+    }
+
+    protected static function customerStatus()
+    {
+        $user = get_current_user_id();
+        return Customer::where('user_id', $user)->select(['status'])->first();
     }
 
     protected function isSignedTicketView()
