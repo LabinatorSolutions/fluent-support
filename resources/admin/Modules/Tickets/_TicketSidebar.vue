@@ -8,6 +8,7 @@
                     </a>
                     <img v-else :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
                 </div>
+                <i class="el-icon-more" style="float:right;" @click="customerManagement"></i>
             </div>
             <div class="fs_tk_card_body">
                 <div class="fs_tk_line">
@@ -52,19 +53,55 @@
                 </ul>
             </div>
         </div>
+        <el-dialog v-model="customerManagementModal" :title="$t('Customer Management')">
+            <el-tabs v-model="activeTabName" @tab-click="handleClick">
+                <el-tab-pane :label="$t('Update Customer')" name="update_customer_data">
+                    <customer-form @updated="closeModal" :customer="ticket.customer" />
+                </el-tab-pane>
 
+                <el-tab-pane :label="$t('Change Customer')" name="change_customer">
+                    <el-form :data="ticket" label-position="top">
+                        <el-form-item :label="$t('Select Customer')">
+                            <remote-selector
+                                v-model="ticket.customer_id"
+                                response_key="customers"
+                                api_path="customers"
+                                value_selector="id"
+                                label_joiner=" - "
+                                :label_selectors="['full_name','email']"
+                            />
+                        </el-form-item>
+                    </el-form>
+
+                    <el-form-item>
+                        <el-button @click="changeCustomer(ticket.customer_id)" :disabled="changing" v-loading="changing" type="primary" size="mini">
+                            {{ $t('Change Customer') }}
+                        </el-button>
+                    </el-form-item>
+                </el-tab-pane>
+            </el-tabs>
+        </el-dialog>
     </div>
 </template>
 
 <script type="text/babel">
+import CustomerForm from "../Customers/_CustomerForm";
+import RemoteSelector from "../../Pieces/RemoteSelector";
+
 export default {
     name: 'TicketSidebar',
+    components: {
+      CustomerForm, RemoteSelector
+    },
     props: ['ticket_id', 'ticket'],
     data() {
         return {
             loading: true,
             extra_widgets: false,
-            other_tickets: []
+            other_tickets: [],
+            customerManagementModal: false,
+            changing: false,
+            activeTabName: 'update_customer_data'
         }
     },
     methods: {
@@ -83,6 +120,31 @@ export default {
                 .always(() => {
                     this.loading = false;
                 })
+        },
+        customerManagement() {
+            this.customerManagementModal = !this.customerManagementModal;
+        },
+        changeCustomer(customer_id) {
+            this.$put(`tickets/${this.ticket_id}/change-customer`,{
+                customer: customer_id
+            })
+            .then((response) => {
+                this.$notify.success(response.message);
+                this.closeModal();
+            })
+            .catch((errors) => {
+                this.$handleError(errors)
+            })
+            .always(() => {
+                this.loading = false;
+            })
+        },
+        handleClick(tab, event) {
+            this.activeTabName = tab.props.name;
+        },
+        closeModal() {
+            this.customerManagementModal = false;
+            window.location.reload();
         }
     },
     mounted() {
