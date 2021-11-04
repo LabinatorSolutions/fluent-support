@@ -34,6 +34,15 @@ export default {
                     data_type: 'email',
                     placeholder: this.$t('Email'),
                     type: 'input-text'
+                },
+                status: {
+                    label: this.$t('Status'),
+                    data_type: 'text',
+                    type: 'input-radio',
+                    options:{
+                        'active': {'id':'active', 'label':'Active', 'value':'active'},
+                        'inactive': {'id':'inactive', 'label':'Inactive', 'value':'inactive'}
+                    }
                 }
             },
             loading: false
@@ -46,6 +55,7 @@ export default {
                 first_name: this.customer.first_name,
                 last_name: this.customer.last_name,
                 email: this.customer.email,
+                status: this.customer.status
             })
             .then(response => {
                 this.$notify.success(response.message);
@@ -64,6 +74,7 @@ export default {
                 first_name: this.customer.first_name,
                 last_name: this.customer.last_name,
                 email: this.customer.email,
+                status: this.customer.status
             })
                 .then(response => {
                     this.$notify.success(response.message);
