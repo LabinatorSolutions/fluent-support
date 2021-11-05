@@ -9,6 +9,7 @@ return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'FluentSupport\\Database\\DBMigrator' => $baseDir . '/database/DBMigrator.php',
     'FluentSupport\\Database\\DBSeeder' => $baseDir . '/database/DBSeeder.php',
+    'FluentSupport\\Database\\Migrations\\ActivityMigrator' => $baseDir . '/database/Migrations/ActivityMigrator.php',
     'FluentSupport\\Database\\Migrations\\AttachmentsMigrator' => $baseDir . '/database/Migrations/AttachmentsMigrator.php',
     'FluentSupport\\Database\\Migrations\\ConversationsMigrator' => $baseDir . '/database/Migrations/ConversationsMigrator.php',
     'FluentSupport\\Database\\Migrations\\DataMetrixMigrator' => $baseDir . '/database/Migrations/DataMetrixMigrator.php',

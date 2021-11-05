@@ -84,6 +84,7 @@ class CustomerPortalController extends Controller
         $data['mailbox_id'] = $this->resolveMailboxId($request);
         $data['priority'] = sanitize_text_field($data['client_priority']);
         $data['client_priority'] = sanitize_text_field($data['client_priority']);
+        $data['source'] = 'web';
 
         $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
         do_action('fluent_support/before_ticket_create', $data, $customer);

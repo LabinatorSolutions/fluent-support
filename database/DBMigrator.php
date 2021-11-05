@@ -4,6 +4,7 @@ namespace FluentSupport\Database;
 
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
+use FluentSupport\Database\Migrations\ActivityMigrator;
 use FluentSupport\Database\Migrations\MailBoxMigrator;
 use FluentSupport\Database\Migrations\MetaMigrator;
 use FluentSupport\Database\Migrations\PersonsMigrator;
@@ -27,7 +28,8 @@ class DBMigrator
         TagRelationsMigrator::class,
         DataMetrixMigrator::class,
         MetaMigrator::class,
-        MailBoxMigrator::class
+        MailBoxMigrator::class,
+        ActivityMigrator::class
     ];
 
     public static function run($network_wide = false)
