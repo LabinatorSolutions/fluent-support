@@ -350,7 +350,7 @@ class CustomerPortalController extends Controller
         if ($forceCreate) {
             return Customer::maybeCreateCustomer($onBehalf);
         }
-        
+
         return Customer::getCustomerFromData($onBehalf);
     }
 
