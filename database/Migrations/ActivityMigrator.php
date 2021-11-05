@@ -22,7 +22,7 @@ class ActivityMigrator
                 `event_type` VARCHAR(192) NULL,
                 `object_id` BIGINT(20) NULL,
                 `object_type` VARCHAR(192) NULL,
-                `description` LONGTEXT NULL,
+                `description` MEDIUMTEXT NULL,
                 `created_at` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL
             ) $charsetCollate;";

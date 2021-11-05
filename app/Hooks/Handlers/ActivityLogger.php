@@ -12,6 +12,9 @@ class ActivityLogger
         // Ticket Related activities
         add_action('fluent_support/ticket_created', function ($ticket, $customer) {
 
+            $customer->last_response_at = current_time('mysql');
+            $customer->save();
+
             $description = sprintf('%1$s created a %2$s via %3$s', $this->getPersonMarkup($customer), $this->getTicketMarkup($ticket), $ticket->source);
 
             $log = [
@@ -28,6 +31,10 @@ class ActivityLogger
         }, 20, 2);
 
         add_action('fluent_support/response_added_by_customer', function ($response, $ticket, $person) {
+
+            $person->last_response_at = current_time('mysql');
+            $person->save();
+
             $description = sprintf('Customer %1$s added a %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'), $response->source);
 
             $log = [
@@ -73,6 +80,12 @@ class ActivityLogger
         }, 20, 3);
 
         add_action('fluent_support/ticket_closed', function ($ticket, $person) {
+
+            if($person->person_type == 'customer') {
+                $person->last_response_at = current_time('mysql');
+                $person->save();
+            }
+
             $description = sprintf('%1$s closed a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
 
             $log = [
@@ -88,6 +101,12 @@ class ActivityLogger
         });
 
         add_action('fluent_support/ticket_reopen', function ($ticket, $person) {
+
+            if($person->person_type == 'customer') {
+                $person->last_response_at = current_time('mysql');
+                $person->save();
+            }
+
             $description = sprintf('%1$s reopened a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
 
             $log = [

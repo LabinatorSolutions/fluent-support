@@ -21,7 +21,7 @@
             <div class="fs_box_body fs_padded_20">
                 <el-table stripe :data="customers">
                     <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
-                    <el-table-column :label="$t('Name')" width="160">
+                    <el-table-column :label="$t('Name')" width="260">
                         <template #default="scope">
                             <a v-if="scope.row.user_profile" :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                             <span v-else>{{scope.row.full_name}}</span>
@@ -30,6 +30,11 @@
                     <el-table-column :label="$t('Email')">
                         <template #default="scope">
                             {{ scope.row.email }}
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="120" :label="$t('Status')">
+                        <template #default="scope">
+                            {{ scope.row.status }}
                         </template>
                     </el-table-column>
                     <el-table-column :label="$t('Last Activity')" width="160">
