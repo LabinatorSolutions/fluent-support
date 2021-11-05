@@ -80,6 +80,9 @@ add_shortcode('fluent_support_admin_portal', function () {
 // init integrations
 (new \FluentSupport\App\Services\Integrations\IntegrationInit())->init();
 
+// Activities
+(new \FluentSupport\App\Hooks\Handlers\ActivityLogger())->init();
+
 /*
  * Email Notification Hooks
  */

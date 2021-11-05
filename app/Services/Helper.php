@@ -277,7 +277,7 @@ class Helper
         $formattedPages = [];
         foreach ($pages as $page) {
             $formattedPages[] = [
-                'id'    => (string)$page->ID,
+                'id'    => strval($page->ID),
                 'title' => $page->post_title
             ];
         }

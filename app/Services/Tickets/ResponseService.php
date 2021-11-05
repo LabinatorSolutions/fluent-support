@@ -100,6 +100,7 @@ class ResponseService
 
         do_action('fluent_support/' . $convoType . '_added_by_'.$person->person_type, $createdResponse, $ticket, $person);
 
+
         if ($closed) {
             do_action('fluent_support/ticket_closed', $ticket, $person);
             do_action('fluent_support/ticket_closed_by_' . $person->person_type, $ticket, $person);
