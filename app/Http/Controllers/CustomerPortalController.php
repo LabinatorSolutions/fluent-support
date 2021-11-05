@@ -28,6 +28,13 @@ class CustomerPortalController extends Controller
             ]);
         }
 
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
         $statuses = Arr::get([
             'open'   => ['new', 'active', 'on-hold'],
             'all'    => [],
@@ -71,6 +78,13 @@ class CustomerPortalController extends Controller
         $data['content'] = wp_unslash(wp_kses_post($data['content']));
 
         $customer = $this->resolveCustomer($request, true);
+
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
 
         if (!$customer) {
             return $this->sendError([
@@ -136,6 +150,14 @@ class CustomerPortalController extends Controller
                 'error_type' => 'no_customer'
             ]);
         }
+
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
@@ -210,6 +232,14 @@ class CustomerPortalController extends Controller
             ]);
         }
 
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
+
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
                 'message' => __('Sorry! You can not reply to this ticket', 'fluent-support')
@@ -242,6 +272,14 @@ class CustomerPortalController extends Controller
             ]);
         }
 
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
+
         if ($customer->id != $ticket->customer_id) {
             return $this->sendError([
                 'message' => __('Sorry! You can not close this ticket', 'fluent-support')
@@ -262,6 +300,13 @@ class CustomerPortalController extends Controller
             $customer = $ticket->customer;
         } else {
             $customer = $this->resolveCustomer($request);
+        }
+
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
         }
 
 
@@ -305,7 +350,7 @@ class CustomerPortalController extends Controller
         if ($forceCreate) {
             return Customer::maybeCreateCustomer($onBehalf);
         }
-
+        
         return Customer::getCustomerFromData($onBehalf);
     }
 

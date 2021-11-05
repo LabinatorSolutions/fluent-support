@@ -43,6 +43,16 @@ export default {
                         'active': {'id':'active', 'label':'Active', 'value':'active'},
                         'inactive': {'id':'inactive', 'label':'Inactive', 'value':'inactive'}
                     }
+                },
+                status_html: {
+                    dependency: {
+                        depends_on: 'status',
+                        operator: '=',
+                        value: 'inactive'
+                    },
+                    type: 'html-viewer',
+                    wrapper_class: 'fs_warn',
+                    html: 'If you select <b>Inactive</b> status then this customer can not submit a ticket or any response'
                 }
             },
             loading: false
