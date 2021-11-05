@@ -37,7 +37,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-                $headers[] = 'Message-ID: ' . $ticket->message_id;
+               // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
@@ -66,7 +66,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-                $headers[] = 'Message-ID: ' . $ticket->message_id;
+               // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
             Mailer::send($mailTo, $subject, $emailBody, $headers);
         }
@@ -106,7 +106,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-                $headers[] = 'Message-ID: '. $ticket->message_id;
+               // $headers[] = 'Message-ID: '. $ticket->message_id;
             }
 
             Mailer::send($customer->email, $subject, $emailBody, $headers);
@@ -144,7 +144,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-                $headers[] = 'Message-ID: ' . $ticket->message_id;
+                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
@@ -192,7 +192,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-                $headers[] = 'Message-ID: ' . $ticket->message_id;
+               // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
             Mailer::send($emailTo, $subject, $emailBody, $headers);
