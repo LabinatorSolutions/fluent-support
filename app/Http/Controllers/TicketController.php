@@ -40,7 +40,10 @@ class TicketController extends Controller
                 $query->select(['first_name', 'last_name', 'id']);
             },
             'product',
-            'tags'
+            'tags',
+            'preview_response' => function($query) {
+                $query->orderBy('id', 'desc');
+            }
         ]);
 
         // apply filters by access level

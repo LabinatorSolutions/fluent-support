@@ -239,6 +239,15 @@ class Ticket extends Model
         );
     }
 
+    public function preview_response()
+    {
+        $class = __NAMESPACE__ . '\Conversation';
+
+        return $this->hasOne(
+            $class, 'ticket_id', 'id'
+        );
+    }
+
     public function tags()
     {
         $class = __NAMESPACE__ . '\TicketTag';

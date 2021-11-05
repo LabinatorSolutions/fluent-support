@@ -23,8 +23,8 @@ class SettingsController extends Controller
         $settings = Meta::where('object_type', 'integration_settings')->get();
         $integrationSettings = [];
         foreach ($settings as $index => $setting) {
-            $data = unserialize($setting->value);
-            if($data['status'] == 'yes') {
+            $data = maybe_unserialize($setting->value);
+            if(!empty($data['status']) && $data && $data['status'] == 'yes') {
                 $integrationSettings[] = $setting->key;
             }
         }

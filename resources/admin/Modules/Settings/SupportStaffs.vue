@@ -165,7 +165,6 @@ export default {
                     this.$handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
                 });
         },
         createStaffModal() {

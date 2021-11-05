@@ -59,7 +59,7 @@
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%">
-            <customer-form @updated="closeModal()" :customer="editing_customer" />
+            <customer-form v-if="editing_customer" @updated="closeModal()" :customer="editing_customer" />
         </el-dialog>
     </div>
 </template>

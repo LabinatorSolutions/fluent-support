@@ -342,7 +342,8 @@ export default {
                 });
         },
         getExcerpt(row) {
-            let text = row.content;
+            let text = (row.preview_response) ? row.preview_response.content : row.content;
+
             if (!text) {
                 return '';
             }
