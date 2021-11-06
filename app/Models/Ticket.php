@@ -351,9 +351,14 @@ class Ticket extends Model
         return $this->hasMany($class, 'ticket_id', 'id')->where('conversation_id', NULL);
     }
 
-    public function getCustomFields()
+    public function getCustomFields($scope = 'admin', $rendered = false)
     {
-        $fields = apply_filters('fluent_support/ticket_custom_fields', []);
+
+        if(!defined('FLUENTSUPPORTPRO')) {
+            return [];
+        }
+
+        $fields = \FluentSupportPro\App\Services\CustomFieldsService::getFieldLabels($scope);
 
         if (!$fields) {
             return [];
@@ -371,13 +376,21 @@ class Ticket extends Model
 
         $formattedData = [];
 
+        $customRenderers = \FluentSupportPro\App\Services\CustomFieldsService::getCustomerRenderers();
+
         foreach ($customRows as $row) {
             $dataKey = $row->key;
 
             $value = $row->value;
 
-            if ($value && $fields[$dataKey]['type'] == 'checkbox') {
-                $value = array_filter(explode('|', $value));
+            $fieldType = $fields[$dataKey]['type'];
+
+            if($value && $rendered) {
+                if(in_array($fieldType, $customRenderers)) {
+                    $value = apply_filters('fluent_support/custom_field_render_'.$fieldType, $value, $scope);
+                } else if ($fieldType == 'checkbox') {
+                    $value = array_values(array_filter(explode('|', $value)));
+                }
             }
 
             $formattedData[$dataKey] = $value;
@@ -388,6 +401,10 @@ class Ticket extends Model
 
     public function syncCustomFields($data)
     {
+        if (!is_array($data)) {
+            return false;
+        }
+
         $fields = apply_filters('fluent_support/ticket_custom_fields', []);
 
         if (!$fields) {
@@ -399,7 +416,7 @@ class Ticket extends Model
         $validData = Arr::only($data, $keys);
 
         foreach ($validData as $dataKey => $validDatum) {
-            if ($fields[$dataKey]['type'] == 'checkbox') {
+            if ($fields[$dataKey]['type'] == 'checkbox' || is_array($validDatum)) {
                 $validDatum = implode('|', $validDatum);
                 $validDatum = '|' . $validDatum . '|';
             }

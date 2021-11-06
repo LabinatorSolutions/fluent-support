@@ -35,6 +35,7 @@ class PersonsMigrator
                 `note` LONGTEXT NULL,
                 `hash` VARCHAR(192) NULL,
                 `user_id` BIGINT(20) UNSIGNED NULL,
+                `description` MEDIUMTEXT NULL,
                 `remote_uid` BIGINT(20) UNSIGNED NULL,
                 `last_response_at` TIMESTAMP NULL,
                 `created_at` TIMESTAMP NULL,
@@ -49,6 +50,12 @@ class PersonsMigrator
                 $query = 'ALTER TABLE '.$table.' ADD `title` VARCHAR(192) NULL AFTER `email`';
                 $wpdb->query($query);
             }
+
+            if(!in_array('description', $existing_columns)) {
+                $query = 'ALTER TABLE '.$table.' ADD `description`  MEDIUMTEXT NULL AFTER `user_id`';
+                $wpdb->query($query);
+            }
+
         }
     }
 }

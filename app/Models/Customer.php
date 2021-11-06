@@ -59,17 +59,12 @@ class Customer extends Person
             }
             // we have to create customer
             $customer = self::create($customerData);
-
-            $customer->newly_created = true;
-
         } else {
             if(!empty($customerData['user_id']) || !empty($customerData['remote_uid'])) {
                 $customerData = array_filter($customerData);
                 $customer->fill($customerData);
                 $customer->save();
             }
-
-            $customer->newly_created = false;
         }
 
         return $customer;

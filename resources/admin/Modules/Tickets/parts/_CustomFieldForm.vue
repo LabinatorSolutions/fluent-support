@@ -17,7 +17,7 @@
                             <el-checkbox v-for="option in field.options" :key="option"
                                       :value="option" :label="option"></el-checkbox>
                         </el-checkbox-group>
-                        <pre v-else>{{field}}</pre>
+                        <p v-else>Not editable</p>
                     </el-form-item>
                 </el-form>
             </el-col>
