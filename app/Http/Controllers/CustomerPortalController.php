@@ -28,6 +28,13 @@ class CustomerPortalController extends Controller
             ]);
         }
 
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
         $statuses = Arr::get([
             'open'   => ['new', 'active', 'on-hold'],
             'all'    => [],
@@ -72,6 +79,13 @@ class CustomerPortalController extends Controller
 
         $customer = $this->resolveCustomer($request, true);
 
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
         if (!$customer) {
             return $this->sendError([
                 'message'    => __('No Customer Found', 'fluent-support'),
@@ -91,7 +105,7 @@ class CustomerPortalController extends Controller
         $ticket = Ticket::create($data);
 
         if ($attachments = Arr::get($data, 'attachments')) {
-            Attachment::where('ticket_id', NULL)
+            Attachment::whereNull('ticket_id')
                 ->whereIn('file_hash', $attachments)
                 ->whereNull('ticket_id')
                 ->update([
@@ -100,6 +114,15 @@ class CustomerPortalController extends Controller
                     'status'    => 'active'
                 ]);
             $ticket->load('attachments');
+        }
+
+
+        if(defined('FLUENTSUPPORTPRO')) {
+            $customData = Arr::get($data, 'custom_data');
+            if($customData) {
+                $customData = wp_unslash($customData);
+                $ticket->syncCustomFields($customData);
+            }
         }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
@@ -136,6 +159,14 @@ class CustomerPortalController extends Controller
                 'error_type' => 'no_customer'
             ]);
         }
+
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
@@ -210,6 +241,14 @@ class CustomerPortalController extends Controller
             ]);
         }
 
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
+
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             return $this->sendError([
                 'message' => __('Sorry! You can not reply to this ticket', 'fluent-support')
@@ -242,6 +281,14 @@ class CustomerPortalController extends Controller
             ]);
         }
 
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
+        }
+
+
         if ($customer->id != $ticket->customer_id) {
             return $this->sendError([
                 'message' => __('Sorry! You can not close this ticket', 'fluent-support')
@@ -262,6 +309,13 @@ class CustomerPortalController extends Controller
             $customer = $ticket->customer;
         } else {
             $customer = $this->resolveCustomer($request);
+        }
+
+        if($customer->status == 'inactive') {
+            return $this->sendError([
+                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
+                'error_type' => 'inactive_customer'
+            ]);
         }
 
 
@@ -317,6 +371,20 @@ class CustomerPortalController extends Controller
             'support_products'           => $products,
             'customer_ticket_priorities' => Helper::customerTicketPriorities()
         ];
+    }
+
+    public function getCustomFieldsRender()
+    {
+        if(!defined('FLUENTSUPPORTPRO')) {
+            return [
+                'custom_fields_rendered' => []
+            ];
+        }
+
+        return [
+            'custom_fields_rendered' =>  \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields()
+        ];
+
     }
 
     private function resolveMailboxId($request)

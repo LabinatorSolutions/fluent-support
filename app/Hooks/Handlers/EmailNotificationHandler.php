@@ -20,7 +20,7 @@ class EmailNotificationHandler
 
         // Let's send welcome email to customer if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_customer');
-        if ($emailSettings && $emailSettings['status'] == 'yes') {
+        if ($customer->status != 'inactive' && $emailSettings && $emailSettings['status'] == 'yes') {
 
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
@@ -87,6 +87,10 @@ class EmailNotificationHandler
             $ticket->load('customer');
             $customer = $ticket->customer;
 
+            if($customer->status != 'inactive') {
+                return false;
+            }
+
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
                 'business' => $mailbox,
@@ -126,6 +130,11 @@ class EmailNotificationHandler
 
             $ticket->load('customer');
             $customer = $ticket->customer;
+
+            if($customer->status != 'inactive') {
+                return false;
+            }
+
 
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,

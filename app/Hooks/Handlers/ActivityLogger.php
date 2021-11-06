@@ -13,6 +13,9 @@ class ActivityLogger
         // Ticket Related activities
         add_action('fluent_support/ticket_created', function ($ticket, $customer) {
 
+            $customer->last_response_at = current_time('mysql');
+            $customer->save();
+
             $description = sprintf('%1$s created a %2$s via %3$s', $this->getPersonMarkup($customer), $this->getTicketMarkup($ticket), $ticket->source);
 
             $log = [
@@ -25,10 +28,13 @@ class ActivityLogger
             ];
 
             Activity::create($log);
-
         }, 20, 2);
 
         add_action('fluent_support/response_added_by_customer', function ($response, $ticket, $person) {
+
+            $person->last_response_at = current_time('mysql');
+            $person->save();
+
             $description = sprintf('Customer %1$s added a %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'), $response->source);
 
             $log = [
@@ -74,7 +80,13 @@ class ActivityLogger
         }, 20, 3);
 
         add_action('fluent_support/ticket_closed', function ($ticket, $person) {
-            $description = sprintf('%1$s closed a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'ticket'));
+
+            if ($person->person_type == 'customer') {
+                $person->last_response_at = current_time('mysql');
+                $person->save();
+            }
+
+            $description = sprintf('%1$s closed a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
 
             $log = [
                 'event_type' => 'fluent_support/ticket_closed',
@@ -89,6 +101,12 @@ class ActivityLogger
         }, 20, 2);
 
         add_action('fluent_support/ticket_reopen', function ($ticket, $person) {
+
+            if ($person->person_type == 'customer') {
+                $person->last_response_at = current_time('mysql');
+                $person->save();
+            }
+
             $description = sprintf('%1$s reopened a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
 
             $log = [
@@ -102,24 +120,23 @@ class ActivityLogger
 
             Activity::create($log);
         }, 20, 2);
-
     }
 
     public function getTicketMarkup($ticket, $ticketText = false)
     {
-        if(!$ticketText) {
+        if (!$ticketText) {
             $ticketText = sprintf(__('Ticket #%d', 'fluent-support'), $ticket->id);
         }
 
-        return '<a class="fs_link_trans fs_tk" href="#view_ticket">'.$ticketText.'</a>';
+        return '<a class="fs_link_trans fs_tk" href="#view_ticket">' . $ticketText . '</a>';
     }
 
     public function getPersonMarkup($person)
     {
         $route = 'view_agent';
-        if($person->person_type == 'customer') {
+        if ($person->person_type == 'customer') {
             $route = 'view_customer';
         }
-        return '<a class="fs_link_trans fs_pr" href="#'.$route.'">'.$person->full_name.'</a>';
+        return '<a class="fs_link_trans fs_pr" href="#' . $route . '">' . $person->full_name . '</a>';
     }
 }
