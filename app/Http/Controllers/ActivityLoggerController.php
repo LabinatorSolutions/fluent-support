@@ -10,7 +10,7 @@ class ActivityLoggerController
     {
         $activities = Activity::with([
             'person' => function ($query) {
-                $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title']);
+                $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
             }
         ])->orderBy('id', 'DESC')->get();
 
