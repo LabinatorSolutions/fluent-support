@@ -35,7 +35,7 @@
             </div>
         </div>
 
-        <div v-if="other_tickets.length" class="fs_tk_card fs_tk_other_tickets_card">
+        <div v-if="other_tickets && other_tickets.length" class="fs_tk_card fs_tk_other_tickets_card">
             <div class="fs_tk_card_header">
                 <h3>{{$t('Previous Conversations')}} ({{other_tickets.length}})</h3>
             </div>

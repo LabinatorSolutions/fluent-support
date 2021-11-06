@@ -40,7 +40,7 @@
                         </li>
 
                         <li title="Run Workflow">
-                            <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]" />
+                            <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]"/>
                         </li>
                     </ul>
                     <div class="fs_product">
@@ -175,9 +175,15 @@
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong v-if="conversation.person">{{ getHumanName(conversation.person) }}</strong>&nbsp;
-                                            <span v-if="conversation.conversation_type == 'response'"> {{ $t('replied') }}</span>
-                                            <span v-else-if="conversation.conversation_type == 'note'"> {{ $t('added a note') }}</span>
+                                            <strong v-if="conversation.person">{{
+                                                    getHumanName(conversation.person)
+                                                }}</strong>&nbsp;
+                                            <span v-if="conversation.conversation_type == 'response'"> {{
+                                                    $t('replied')
+                                                }}</span>
+                                            <span v-else-if="conversation.conversation_type == 'note'"> {{
+                                                    $t('added a note')
+                                                }}</span>
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="conversation.source == 'email'"
@@ -279,11 +285,9 @@
                         <el-dialog
                             :title="$t('Updating Custom Field Data')"
                             v-model="showCustomDataEditForm"
-                            width="70%">
-                            <custom-field-form :custom_data="ticket.custom_fields"/>
-                            <el-button @click="saveEditedCustomFieldData(ticket.custom_fields)" type="primary">
-                                {{ $t('Save') }}
-                            </el-button>
+                            v-if="showCustomDataEditForm"
+                            width="60%">
+                            <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id" :custom_data="ticket.custom_fields"/>
                         </el-dialog>
 
                     </article>
@@ -500,33 +504,6 @@ export default {
                 this.editing_response = conversation;
                 this.edit_response_modal = true;
             }
-
-            console.log(data);
-        },
-        saveEditedCustomFieldData(data) {
-            let customFieldData = data;
-            if (Array.isArray(data)) {
-                const arrayToString = JSON.stringify(Object.assign({}, data));
-                customFieldData = JSON.parse(arrayToString);
-            }
-            this.$post(`ticket-custom-fields/${this.ticket.id}/sync`, {
-                custom_fields: customFieldData,
-            })
-                .then(response => {
-                    this.$notify({
-                        type: 'success',
-                        message: response.message,
-                        position: 'bottom-right'
-                    })
-                    this.showCustomDataEditForm = !this.showCustomDataEditForm;
-                    this.fetchTicket()
-                })
-                .catch((errors) => {
-                    console.log(errors);
-                })
-                .always(() => {
-
-                });
         },
         santizeContent(content) {
             if (!content) {
@@ -535,7 +512,11 @@ export default {
             return content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
         },
         isEmpty,
-        isArray
+        isArray,
+        syncCustomData(data) {
+            this.ticket.custom_fields = data;
+            this.showCustomDataEditForm = false;
+        }
     },
     mounted() {
         this.fetchTicket();

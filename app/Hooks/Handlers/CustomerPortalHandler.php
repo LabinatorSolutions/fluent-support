@@ -55,12 +55,13 @@ class CustomerPortalHandler
             'nonce'                      => wp_create_nonce($slug),
             'support_products'           => Product::select(['id', 'title'])->get(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
-            'view_tickets_url'           => Helper::getPortalBaseUrl() . '/#',
+            'view_tickets_url'           => '#/',
             'i18n'                       => TransStrings::getTransStrings()
         ];
 
         if ($this->isSignedTicketView()) {
             $data['intended_ticket_hash'] = sanitize_text_field($_REQUEST['support_hash']);
+            $data['view_tickets_url'] = Helper::getPortalBaseUrl() . '/#';
         } else {
             add_filter('user_can_richedit', '__return_true');
         }

@@ -2,11 +2,8 @@
     <div class="activities fs_box_wrapper">
         <div v-if="!loading" class="fs_activity_header">
             {{$t('Good')}} {{greetingTime}} {{me.full_name}},
-            <span v-if="activities" style="font-weight: 300; color: #3C434A;">
-                  {{$t('Here are your activity logger')}}
-            </span>
-            <span v-else style="font-weight: 300; color: #3C434A;">
-                  {{$t('Currently no activities available')}}
+            <span style="font-weight: 300; color: #3C434A;">
+                     Check overall activities
             </span>
         </div>
         <div class="fs_box fs_activity_box" v-if="activities">
@@ -88,7 +85,7 @@ export default {
     },
     mounted() {
         this.fetchActivities();
-        this.$setTitle('Activity Logger');
+        this.$setTitle('Activities');
     }
 }
 </script>

@@ -85,7 +85,7 @@ class Menu
         if ($hasSensitiveAccess) {
             $secondayItems[] = [
                 'key'       => 'activity_logger',
-                'label'     => __('Activity Logger', 'fluent-support'),
+                'label'     => __('Activities', 'fluent-support'),
                 'permalink' => $baseUrl . 'activity-logger'
             ];
         }
