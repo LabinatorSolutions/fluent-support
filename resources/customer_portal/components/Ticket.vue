@@ -117,6 +117,19 @@
                                 </section>
                             </section>
                         </div>
+                        <div v-if="!isEmpty(ticket.custom_fields)" class="fc_custom_data_wrap">
+                            <h3>{{ $t('Additional info') }}</h3>
+                            <ul>
+                                <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
+                                    <b>{{ appVars.custom_fields[fieldName].label }}</b> :
+                                    <span v-if="isArray(fieldValue)">
+                                            <span class="fs_custom_check_value" v-for="value in fieldValue"
+                                                  :key="value">{{ value }}</span>
+                                        </span>
+                                    <span v-else v-html="fieldValue"></span>
+                                </li>
+                            </ul>
+                        </div>
                     </article>
                 </div>
             </div>
@@ -135,6 +148,8 @@
 
 <script type="text/babel">
 import InlineReply from "./InlineReply";
+const isEmpty = require('lodash/isEmpty');
+const isArray = require('lodash/isArray');
 
 export default {
     name: 'ticket',
@@ -233,7 +248,9 @@ export default {
                 .always(() => {
                     this.updating = false;
                 });
-        }
+        },
+        isArray,
+        isEmpty
     },
     mounted() {
         this.fetchTicket();

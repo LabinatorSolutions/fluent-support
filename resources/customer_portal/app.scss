@@ -655,3 +655,27 @@ ul.el-upload-list.el-upload-list--picture {
     display: -webkit-box;
 }
 
+
+.fc_custom_data_wrap {
+    padding: 0 30px 20px;
+    border-top: 1px solid #e5e9ec;
+    background: #fffff4;
+
+    > ul {
+        display: block;
+        margin: 0;
+        padding: 0;
+
+        li {
+            list-style: none;
+            margin-bottom: 10px;
+        }
+    }
+
+    span.fs_custom_check_value {
+        border: 1px solid #e5e9ec;
+        border-radius: 3px;
+        padding: 0 7px;
+        margin-right: 10px;
+    }
+}

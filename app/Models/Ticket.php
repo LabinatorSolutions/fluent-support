@@ -351,9 +351,8 @@ class Ticket extends Model
         return $this->hasMany($class, 'ticket_id', 'id')->where('conversation_id', NULL);
     }
 
-    public function getCustomFields($scope = 'admin', $rendered = false)
+    public function customData($scope = 'admin', $rendered = false)
     {
-
         if(!defined('FLUENTSUPPORTPRO')) {
             return [];
         }
@@ -385,8 +384,8 @@ class Ticket extends Model
 
             $fieldType = $fields[$dataKey]['type'];
 
-            if($value && $rendered) {
-                if(in_array($fieldType, $customRenderers)) {
+            if($value) {
+                if(in_array($fieldType, $customRenderers) && $rendered) {
                     $value = apply_filters('fluent_support/custom_field_render_'.$fieldType, $value, $scope);
                 } else if ($fieldType == 'checkbox') {
                     $value = array_values(array_filter(explode('|', $value)));

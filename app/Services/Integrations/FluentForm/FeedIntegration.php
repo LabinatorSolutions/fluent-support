@@ -312,7 +312,7 @@ class FeedIntegration extends IntegrationManager
 
         if(defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
             $ticket->syncCustomFields($ticketData['custom_fields']);
-            $ticket->custom_fields = $ticket->getCustomFields();
+            $ticket->custom_fields = $ticket->customData();
         }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
