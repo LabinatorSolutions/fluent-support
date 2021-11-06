@@ -65,6 +65,9 @@ export default {
         },
         handleUploadSuccess(response, file, fileList) {
             this.error_message = '';
+            if(!file.raw.type.includes('image')) {
+                file.url = this.appVars.asset_url+'images/file.png';
+            }
             this.attachments.push(...response.attachments);
         }
     }
