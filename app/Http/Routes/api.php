@@ -136,3 +136,7 @@ $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
     $router->post('telegram_bot_response/{token}', 'ChatMessageParserController@handleTelegramWebhook')->alphaNumDash('token');
     $router->post('slack_response', 'ChatMessageParserController@handleSlackEvent');
 });
+
+$router->prefix('activity-logger')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
+    $router->get('/', 'ActivityLoggerController@getActivities');
+});

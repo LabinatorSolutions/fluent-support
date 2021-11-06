@@ -27,6 +27,8 @@ import Report from './Modules/Reports/Report';
 import Workflows from './Modules/Workflows/AllWorkflows';
 import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
 
+import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
+
 export default [
     {
         path: '/',
@@ -183,6 +185,14 @@ export default [
         props: true,
         meta: {
             active: 'workflows'
+        }
+    },
+    {
+        path: '/activity-logger',
+        name: 'activity_logger',
+        component: ActivityLogger,
+        meta: {
+            active: 'activity_logger'
         }
     },
 

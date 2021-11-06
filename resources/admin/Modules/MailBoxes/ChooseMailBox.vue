@@ -1,6 +1,6 @@
 <template>
     <div class="fs_mailboxes">
-        <div class="fs_box_wrapper">
+        <div class="fs_box_wrapper" v-loading="fetching">
             <div class="fs_box_header">
                 <div class="fs_box_head">
                     <h3>{{ $t('Business Inboxes') }}</h3>
