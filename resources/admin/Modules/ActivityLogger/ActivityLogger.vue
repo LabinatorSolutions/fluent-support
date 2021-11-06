@@ -3,7 +3,7 @@
         <div v-if="!loading" class="fs_activity_header">
             {{$t('Good')}} {{greetingTime}} {{me.full_name}},
             <span style="font-weight: 300; color: #3C434A;">
-                     Here are your activity logger
+                     Check overall activities
             </span>
         </div>
         <div class="fs_box fs_activity_box" v-if="activities">
@@ -85,7 +85,7 @@ export default {
     },
     mounted() {
         this.fetchActivities();
-        this.$setTitle('Activity Logger');
+        this.$setTitle('Activities');
     }
 }
 </script>
