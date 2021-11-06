@@ -4,6 +4,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Activity;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Services\Helper;
 
 class ActivityLogger
 {
@@ -27,7 +28,6 @@ class ActivityLogger
             ];
 
             Activity::create($log);
-
         }, 20, 2);
 
         add_action('fluent_support/response_added_by_customer', function ($response, $ticket, $person) {
@@ -81,7 +81,7 @@ class ActivityLogger
 
         add_action('fluent_support/ticket_closed', function ($ticket, $person) {
 
-            if($person->person_type == 'customer') {
+            if ($person->person_type == 'customer') {
                 $person->last_response_at = current_time('mysql');
                 $person->save();
             }
@@ -98,11 +98,11 @@ class ActivityLogger
             ];
 
             Activity::create($log);
-        });
+        }, 20, 2);
 
         add_action('fluent_support/ticket_reopen', function ($ticket, $person) {
 
-            if($person->person_type == 'customer') {
+            if ($person->person_type == 'customer') {
                 $person->last_response_at = current_time('mysql');
                 $person->save();
             }
@@ -119,25 +119,24 @@ class ActivityLogger
             ];
 
             Activity::create($log);
-        });
-
+        }, 20, 2);
     }
 
     public function getTicketMarkup($ticket, $ticketText = false)
     {
-        if(!$ticketText) {
+        if (!$ticketText) {
             $ticketText = sprintf(__('Ticket #%d', 'fluent-support'), $ticket->id);
         }
 
-        return '<a class="fs_link_trans fs_tk" href="#view_ticket">'.$ticketText.'</a>';
+        return '<a class="fs_link_trans fs_tk" href="#view_ticket">' . $ticketText . '</a>';
     }
 
     public function getPersonMarkup($person)
     {
         $route = 'view_agent';
-        if($person->person_type == 'customer') {
+        if ($person->person_type == 'customer') {
             $route = 'view_customer';
         }
-        return '<a class="fs_link_trans fs_pr" href="#'.$route.'">'.$person->full_name.'</a>';
+        return '<a class="fs_link_trans fs_pr" href="#' . $route . '">' . $person->full_name . '</a>';
     }
 }
