@@ -72,11 +72,6 @@ class Menu
                 'permalink' => $baseUrl . 'customers'
             ];
 
-            $secondayItems[] = [
-                'key'       => 'activity_logger',
-                'label'     => __('Activity Logger', 'fluent-support'),
-                'permalink' => $baseUrl . 'activity-logger'
-            ];
         }
 
         $secondayItems = [
@@ -86,6 +81,14 @@ class Menu
                 'permalink' => $baseUrl . 'saved-replies'
             ]
         ];
+
+        if ($hasSensitiveAccess) {
+            $secondayItems[] = [
+                'key'       => 'activity_logger',
+                'label'     => __('Activity Logger', 'fluent-support'),
+                'permalink' => $baseUrl . 'activity-logger'
+            ];
+        }
 
         if (PermissionManager::currentUserCan('fst_manage_settings')) {
             $secondayItems[] = [
