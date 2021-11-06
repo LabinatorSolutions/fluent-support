@@ -210,6 +210,10 @@ class CustomerPortalController extends Controller
             }
         }
 
+        if(defined('FLUENTSUPPORTPRO')) {
+            $ticket->custom_fields = $ticket->customData('public', true);
+        }
+
         return [
             'ticket'     => $ticket,
             'responses'  => $responses,
