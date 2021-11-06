@@ -34,14 +34,14 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $ticketsQuery = Ticket::with([
-            'customer' => function ($query) {
+            'customer'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'email', 'id']);
-            }, 'agent' => function ($query) {
+            }, 'agent'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
             'product',
             'tags',
-            'preview_response' => function($query) {
+            'preview_response' => function ($query) {
                 $query->orderBy('id', 'desc');
             }
         ]);
@@ -132,7 +132,7 @@ class TicketController extends Controller
 
         if (defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
             $createdTicket->syncCustomFields($ticketData['custom_fields']);
-            $createdTicket->custom_fields = $createdTicket->getCustomFields();
+            $createdTicket->custom_fields = $createdTicket->customData();
         }
 
         do_action('fluent_support/ticket_created', $createdTicket, $customer);
@@ -147,7 +147,7 @@ class TicketController extends Controller
     public function getTicket(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function($q) {
+        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
             $q->where('status', 'active');
         }]);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
@@ -184,7 +184,7 @@ class TicketController extends Controller
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
         if (defined('FLUENTSUPPORTPRO')) {
-            $ticket->custom_fields = $ticket->getCustomFields('admin', true);
+            $ticket->custom_fields = $ticket->customData('admin', true);
         }
 
         return [
@@ -587,8 +587,25 @@ class TicketController extends Controller
         $updateCustomer = Ticket::where('id', $request->get('ticket_id'))
             ->update(['customer_id' => $request->get('customer')]);
         return [
-          'message' => __('Customer has been updated', 'fluent-support'),
-          'updatedCustomer' =>  $updateCustomer
+            'message'         => __('Customer has been updated', 'fluent-support'),
+            'updatedCustomer' => $updateCustomer
+        ];
+    }
+
+    public function getTicketCustomData(Request $request, $ticketId)
+    {
+        if (!defined('FLUENTSUPPORTPRO')) {
+            return [
+                'custom_data'     => [],
+                'rendered_fields' => []
+            ];
+        }
+
+        $ticket = Ticket::findOrFail($ticketId);
+
+        return [
+            'custom_data' =>  (object) $ticket->customData(),
+            'rendered_fields' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields($ticket->customer)
         ];
     }
 }

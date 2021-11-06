@@ -58,7 +58,7 @@ export default {
                     console.log(errors);
                 })
                 .always(() => {
-                    this.loading_remote = true;
+                    this.loading_remote = false;
                 });
         },
         initFields() {
