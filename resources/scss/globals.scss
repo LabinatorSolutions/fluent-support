@@ -312,3 +312,53 @@ table.fs_table {
     text-align: center;
     border-radius: 5px;
 }
+
+.activities.fs_box_wrapper {
+    padding: 0 27em;
+    @media all and (max-width: 767px){
+        padding: 0;
+        & .fs_activity_header {
+            line-height: 1.7em;
+        }
+    }
+    & .fs_activity_header {
+        line-height: 4;
+        font-size: 20px;
+        font-weight: bold;
+        color: rgb(23, 133, 235);
+        @media all and (max-width: 767px){
+            line-height: 1.7em;
+        }
+    }
+    & h3{
+        padding: 0px 0px 17px 0px;
+    }
+    & .fs_box.fs_activity_box ul li{
+        padding: 1em;
+    }
+    & a.fs_link_trans {
+        text-decoration: none;
+        color : #1785EB;
+        font-size: 16px;
+    }
+    & .fs_agent_activity {
+        border-left: 6px solid #1785EB;
+        height: 100%;
+        position: relative;
+        left: 0;
+        top: 0;
+        background: #FAFDFF;
+    }
+    & .fs_activity {
+        display: inline-flex;
+        align-items: center;
+        & img {
+            width: 40px;
+            margin-right: 1em;
+            border-radius: 50%;
+        }
+        & span {
+            font-size: 16px;
+        }
+    }
+}
