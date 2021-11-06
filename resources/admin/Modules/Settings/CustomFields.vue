@@ -11,33 +11,38 @@
                     </el-button>
                 </div>
             </div>
-            <div v-if="has_pro" class="fs_box_body">
-                <el-table :empty-text="$t('No Custom Fields Found')" border stripe :data="fields">
-                    <el-table-column :label="$t('Label')" prop="label"></el-table-column>
-                    <el-table-column :label="$t('Slug')" prop="slug"></el-table-column>
-                    <el-table-column :label="$t('Type')" prop="type"></el-table-column>
-                    <el-table-column width="160" :label="$t('Actions')">
-                        <template #default="scope">
-                            <el-button type="info" @click="updateFieldModal(scope.$index)" size="mini"
-                                       icon="el-icon-edit"></el-button>
-                            <el-popconfirm title="Are you sure to delete this field?"
-                                           @confirm="deleteField(scope.$index)">
-                                <template #reference>
-                                    <el-button type="danger" size="mini" icon="el-icon-delete"></el-button>
-                                </template>
-                            </el-popconfirm>
+            <template v-if="has_pro">
+                <div v-if="!loading" class="fs_box_body">
+                    <el-table :empty-text="$t('No Custom Fields Found')" border stripe :data="fields">
+                        <el-table-column :label="$t('Label')" prop="label"></el-table-column>
+                        <el-table-column :label="$t('Slug')" prop="slug"></el-table-column>
+                        <el-table-column :label="$t('Type')" prop="type"></el-table-column>
+                        <el-table-column width="160" :label="$t('Actions')">
+                            <template #default="scope">
+                                <el-button type="info" @click="updateFieldModal(scope.$index)" size="mini"
+                                           icon="el-icon-edit"></el-button>
+                                <el-popconfirm title="Are you sure to delete this field?"
+                                               @confirm="deleteField(scope.$index)">
+                                    <template #reference>
+                                        <el-button type="danger" size="mini" icon="el-icon-delete"></el-button>
+                                    </template>
+                                </el-popconfirm>
 
-                            <el-button-group>
-                                <el-button @click="movePosition(scope.$index, 'up')" :disabled="scope.$index == 0"
-                                           size="mini" icon="el-icon-arrow-up"></el-button>
-                                <el-button @click="movePosition(scope.$index, 'down')"
-                                           :disabled="scope.$index == (fields.length - 1)" size="mini"
-                                           icon="el-icon-arrow-down"></el-button>
-                            </el-button-group>
-                        </template>
-                    </el-table-column>
-                </el-table>
-            </div>
+                                <el-button-group>
+                                    <el-button @click="movePosition(scope.$index, 'up')" :disabled="scope.$index == 0"
+                                               size="mini" icon="el-icon-arrow-up"></el-button>
+                                    <el-button @click="movePosition(scope.$index, 'down')"
+                                               :disabled="scope.$index == (fields.length - 1)" size="mini"
+                                               icon="el-icon-arrow-down"></el-button>
+                                </el-button-group>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                    <el-skeleton :rows="5" animated/>
+                </div>
+            </template>
             <div class="fs_narrow_promo" v-else>
                 <h3>Add custom fields to your tickets and collect extra data from ticket open form.</h3>
                 <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>

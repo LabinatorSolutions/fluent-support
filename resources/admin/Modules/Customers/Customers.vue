@@ -9,7 +9,18 @@
                         size="mini"
                         icon="el-icon-plus">{{$t('Add Customer')}}</el-button>
                 </div>
-                <div class="fs_box_actions fs_ticket_orders">
+                <div class="fs_box_actions fs_customer_filters">
+                    <div class="fs_cs_status_filter">
+                        <label>{{$t('Status')}}</label>
+                        <el-select filterable @change="fetchCustomers()" v-model="filterStatus.status" size="mini" style="padding-right: 0.7em;">
+                            <el-option
+                                v-for="(statusKey, statusName) in statusFilters"
+                                :key="statusName"
+                                :value="statusName"
+                                :label="statusKey"
+                            ></el-option>
+                        </el-select>
+                    </div>
                     <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="mini"
                               :placeholder="$t('Search Customers')" v-model="search">
                         <template #append>
@@ -85,7 +96,15 @@ export default {
             search: '',
             loading: false,
             editing_customer: {},
-            showEditModal: false
+            showEditModal: false,
+            statusFilters: {
+                all: 'All',
+                active: 'Active',
+                inactive: 'Inactive'
+            },
+            filterStatus: {
+                status: 'all'
+            }
         }
     },
     methods: {
@@ -94,7 +113,8 @@ export default {
             this.$get('customers', {
                 per_page: this.pagination.per_page,
                 page: this.pagination.current_page,
-                search: this.search
+                search: this.search,
+                filter_by_status: this.filterStatus
             })
                 .then((response) => {
                     this.customers = response.customers.data;
@@ -123,3 +143,10 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .fs_box_actions.fs_customer_filters {
+        display: flex;
+        align-items: flex-end;
+    }
+</style>

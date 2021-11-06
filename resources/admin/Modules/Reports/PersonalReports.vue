@@ -1,6 +1,6 @@
 <template>
     <div class="fs_personal_report">
-        <div class="fs_box_wrapper">
+        <div class="fs_box_wrapper" v-loading="loading">
             <el-row :gutter="30">
                 <el-col :sm="24" :md="16" :lg="18">
                     <div class="fs_box">

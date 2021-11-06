@@ -4,6 +4,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Activity;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Services\Helper;
 
 class ActivityLogger
 {
@@ -73,7 +74,7 @@ class ActivityLogger
         }, 20, 3);
 
         add_action('fluent_support/ticket_closed', function ($ticket, $person) {
-            $description = sprintf('%1$s closed a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
+            $description = sprintf('%1$s closed a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'ticket'));
 
             $log = [
                 'event_type' => 'fluent_support/ticket_closed',
@@ -85,7 +86,7 @@ class ActivityLogger
             ];
 
             Activity::create($log);
-        });
+        }, 20, 2);
 
         add_action('fluent_support/ticket_reopen', function ($ticket, $person) {
             $description = sprintf('%1$s reopened a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
@@ -100,7 +101,7 @@ class ActivityLogger
             ];
 
             Activity::create($log);
-        });
+        }, 20, 2);
 
     }
 

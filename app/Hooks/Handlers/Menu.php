@@ -71,6 +71,12 @@ class Menu
                 'label'     => __('Customers', 'fluent-support'),
                 'permalink' => $baseUrl . 'customers'
             ];
+
+            $secondayItems[] = [
+                'key'       => 'activity_logger',
+                'label'     => __('Activity Logger', 'fluent-support'),
+                'permalink' => $baseUrl . 'activity-logger'
+            ];
         }
 
         $secondayItems = [
