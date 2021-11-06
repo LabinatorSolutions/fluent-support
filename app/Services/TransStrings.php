@@ -294,8 +294,7 @@ class TransStrings
             'Slack User ID'    => __('Slack User ID', 'fluent-support'),
             'Customer Management'    => __('Customer Management', 'fluent-support'),
             'Change Customer'    => __('Change Customer', 'fluent-support'),
-            'Here are your activity logger'    => __('Here are your activity logger', 'fluent-support'),
-            'Currently no activities available'    => __('Currently no activities available', 'fluent-support'),
+            'Check overall activities' => __('Check overall activities', 'fluent-support'),
         ];
     }
 }
