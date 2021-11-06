@@ -15,14 +15,14 @@ class CustomerPortalHandler
 {
     public function renderPortal()
     {
-        if(static::customerStatus() && static::customerStatus()->status==='inactive'){
-            return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">'. __('You don’t have permission to view the tickets', 'fluent-support') .'</h3></div>';
-        }else if (PermissionManager::currentUserPermissions()) {
+        if (static::customerStatus() && static::customerStatus()->status === 'inactive') {
+            return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . __('You don’t have permission to view the tickets', 'fluent-support') . '</h3></div>';
+        } else if (PermissionManager::currentUserPermissions()) {
             $adminPortalUrl = Helper::getPortalAdminBaseUrl();
-            return '<div style="text-align: center;"><h3>'.__('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support').'</h3><a href="' . $adminPortalUrl . '">'. __('Go to Support Admin Page', 'fluent-support'). '</a></div>';
+            return '<div style="text-align: center;"><h3>' . __('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support') . '</h3><a href="' . $adminPortalUrl . '">' . __('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
             $this->enqueueScripts();
-            return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">'. __('Loading Customer Portal. Please wait...', 'fluent-support') .'</h3></div>';
+            return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
         } else {
             $businessSettings = Helper::getBusinessSettings();
             return do_shortcode(Arr::get($businessSettings, 'login_message', ''));
@@ -55,11 +55,11 @@ class CustomerPortalHandler
             'nonce'                      => wp_create_nonce($slug),
             'support_products'           => Product::select(['id', 'title'])->get(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
-            'view_tickets_url' => Helper::getPortalBaseUrl().'/#',
-            'i18n' => TransStrings::getTransStrings()
+            'view_tickets_url'           => Helper::getPortalBaseUrl() . '/#',
+            'i18n'                       => TransStrings::getTransStrings()
         ];
 
-        if($this->isSignedTicketView()) {
+        if ($this->isSignedTicketView()) {
             $data['intended_ticket_hash'] = sanitize_text_field($_REQUEST['support_hash']);
         } else {
             add_filter('user_can_richedit', '__return_true');
@@ -67,6 +67,8 @@ class CustomerPortalHandler
 
         wp_tinymce_inline_scripts();
         wp_enqueue_editor();
+
+        $data = apply_filters('fluent_support/customer_portal_vars', $data);
 
         wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', $data);
     }
@@ -90,7 +92,7 @@ class CustomerPortalHandler
 
     protected function isSignedTicketView()
     {
-        if(!Helper::isPublicSignedTicketEnabled()) {
+        if (!Helper::isPublicSignedTicketEnabled()) {
             return false;
         }
 

@@ -48,6 +48,9 @@
                         + New Option
                     </el-button>
                 </el-form-item>
+                <el-form-item style="margin-top: 10px;">
+                    <el-checkbox true-label="yes" false-label="no" v-model="item.admin_only">This is a agent only field</el-checkbox>
+                </el-form-item>
             </template>
         </el-form-item>
     </el-form>

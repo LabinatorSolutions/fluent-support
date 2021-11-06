@@ -147,7 +147,9 @@ class TicketController extends Controller
     public function getTicket(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments']);
+        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function($q) {
+            $q->where('status', 'active');
+        }]);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
 
         $ticket = Ticket::with($ticketWith)
@@ -182,7 +184,7 @@ class TicketController extends Controller
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
         if (defined('FLUENTSUPPORTPRO')) {
-            $ticket->custom_fields = $ticket->getCustomFields();
+            $ticket->custom_fields = $ticket->getCustomFields('admin', true);
         }
 
         return [

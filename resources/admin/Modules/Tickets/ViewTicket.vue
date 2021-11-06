@@ -266,11 +266,11 @@
                                 <ul v-if="!isEmpty(ticket.custom_fields)">
                                     <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
                                         <b>{{ appVars.custom_fields[fieldName].label }}</b> :
-                                        <span v-if="appVars.custom_fields[fieldName].type == 'checkbox'">
+                                        <span v-if="isArray(fieldValue)">
                                             <span class="fs_custom_check_value" v-for="value in fieldValue"
                                                   :key="value">{{ value }}</span>
                                         </span>
-                                        <span v-else>{{ fieldValue }}</span>
+                                        <span v-else v-html="fieldValue"></span>
                                     </li>
                                 </ul>
                                 <p v-else>No additional data found</p>

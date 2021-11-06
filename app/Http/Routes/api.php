@@ -114,6 +114,7 @@ $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function
 $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function ($router) {
 
     $router->get('public_options', 'CustomerPortalController@getPublicOptions');
+    $router->get('custom-fields-rendered', 'CustomerPortalController@getCustomFieldsRender');
 
     $router->get('tickets', 'CustomerPortalController@getTickets');
     $router->post('tickets', 'CustomerPortalController@createTicket');

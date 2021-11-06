@@ -105,7 +105,7 @@ class CustomerPortalController extends Controller
         $ticket = Ticket::create($data);
 
         if ($attachments = Arr::get($data, 'attachments')) {
-            Attachment::where('ticket_id', NULL)
+            Attachment::whereNull('ticket_id')
                 ->whereIn('file_hash', $attachments)
                 ->whereNull('ticket_id')
                 ->update([
@@ -114,6 +114,15 @@ class CustomerPortalController extends Controller
                     'status'    => 'active'
                 ]);
             $ticket->load('attachments');
+        }
+
+
+        if(defined('FLUENTSUPPORTPRO')) {
+            $customData = Arr::get($data, 'custom_data');
+            if($customData) {
+                $customData = wp_unslash($customData);
+                $ticket->syncCustomFields($customData);
+            }
         }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
@@ -362,6 +371,20 @@ class CustomerPortalController extends Controller
             'support_products'           => $products,
             'customer_ticket_priorities' => Helper::customerTicketPriorities()
         ];
+    }
+
+    public function getCustomFieldsRender()
+    {
+        if(!defined('FLUENTSUPPORTPRO')) {
+            return [
+                'custom_fields_rendered' => []
+            ];
+        }
+
+        return [
+            'custom_fields_rendered' =>  \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields()
+        ];
+
     }
 
     private function resolveMailboxId($request)

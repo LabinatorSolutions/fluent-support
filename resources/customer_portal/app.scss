@@ -10,6 +10,8 @@
 @import "~element-plus/lib/theme-chalk/el-select.css";
 @import "~element-plus/lib/theme-chalk/el-option.css";
 @import "~element-plus/lib/theme-chalk/el-icon.css";
+@import "~element-plus/lib/theme-chalk/el-radio-group.css";
+@import "~element-plus/lib/theme-chalk/el-radio.css";
 
 .fst_client_portal {
     .fs_tk_preview {
@@ -519,22 +521,38 @@
         padding: 0;
         font-size: 90%;
         font-weight: normal;
+        color: #76777b;
     }
 
     .el-form {
-        .fs_tk_actions {
-            .el-select {
-                width: 100%;
-            }
+        .el-select {
+            width: 100%;
+        }
+        .fs_tk_row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            justify-content: flex-start;
 
-            margin-top: 15px;
-            .fs_tk_left {
-                padding-right: 10px;
+            .fs_tk_col {
+                flex: 1 1 50%;
+                padding-left: 15px;
+                padding-right: 15px;
 
-                &:last-child {
-                    padding-left: 10px;
-                    padding-right: 0px;
+                &:nth-child(even) {
+                    padding-right: 0;
                 }
+
+                &:nth-child(odd) {
+                    padding-left: 0;
+                }
+
+                @media all and (max-width: 768px) {
+                    flex: auto;
+                    width: 100%;
+                    padding: 0;
+                }
+
             }
         }
     }
@@ -603,7 +621,7 @@
 }
 
 .fs_attachments_form {
-    padding: 10px 0px;
+    padding: 10px 0 30px;
 }
 
 #fluent_support_client_app .el-table--fit.el-table table tr td {
