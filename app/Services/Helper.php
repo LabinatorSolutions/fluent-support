@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
@@ -298,6 +299,11 @@ class Helper
     public static function getCurrentAgent()
     {
         return Agent::where('user_id', get_current_user_id())->first();
+    }
+
+    public static function getCurrentCustomer()
+    {
+        return Customer::where('user_id', get_current_user_id())->first();
     }
 
 }

@@ -22,8 +22,8 @@
 
                 <attachment-form :ticket="ticket" :attachments="attachments" />
 
-                <div class="fs_tk_actions">
-                    <div v-if="products.length" class="fs_tk_left">
+                <div class="fs_tk_row">
+                    <div v-if="products.length" class="fs_tk_col">
                         <el-form-item class="fs_ticket_product" :label="$t('Related Product/Service')">
                             <el-select v-model="ticket.product_id" :placeholder="$t('Select related Product/Service')">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
@@ -31,7 +31,7 @@
                         </el-form-item>
                         <error :error="errors.get('product_id')"/>
                     </div>
-                    <div class="fs_tk_left">
+                    <div class="fs_tk_col">
                         <el-form-item class="fs_ticket_priority" :label="$t('Priority')">
                             <el-select v-model="ticket.client_priority" :placeholder="$t('Select Priority')">
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
@@ -40,7 +40,9 @@
                         <error :error="errors.get('client_priority')"/>
                     </div>
                 </div>
-                
+
+                <custom-fields-form :custom_data="custom_data" />
+
                 <el-form-item>
                     <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('Create Ticket')}}</el-button>
                 </el-form-item>
@@ -55,6 +57,7 @@ import WpEditor from '../../admin/Pieces/_wp_editor';
 import Error from '../../admin/Pieces/Error';
 import Errors from '../../admin/Bits/Errors';
 import AttachmentForm from "../../admin/Modules/Tickets/_AttachmentForm";
+import CustomFieldsForm from "./_CustomFieldForm";
 
 
 export default {
@@ -62,7 +65,8 @@ export default {
     components: {
         WpEditor,
         Error,
-        AttachmentForm
+        AttachmentForm,
+        CustomFieldsForm
     },
     data() {
         return {
@@ -72,9 +76,9 @@ export default {
                 title: '',
                 content: '',
                 product_id: '',
-                client_priority: 'normal',
-                ticket_type_id: ''
+                client_priority: 'normal'
             },
+            custom_data: {},
             attachments: [],
             products: this.appVars.support_products,
             priorities: this.appVars.customer_ticket_priorities,
@@ -86,7 +90,8 @@ export default {
             this.creating = false;
             this.$post('tickets', {
                 ...this.ticket,
-                attachments: this.attachments
+                attachments: this.attachments,
+                custom_data: this.custom_data
             })
             .then(response => {
                 this.$router.push({ name: 'view_ticket', params: { ticket_id: response.ticket.id } });
