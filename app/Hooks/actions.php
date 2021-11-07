@@ -93,7 +93,8 @@ $app->addAction('fluent_support/response_added_by_customer', 'EmailNotificationH
 $app->addAction('fluent_support/ticket_closed_by_agent', 'EmailNotificationHandler@closedByAgent', 10, 2);
 
 // Cleanup
-$app->addAction('fluent_support/hourly_tasks', 'CleanupHandler@initHourlyTasks');
+$app->addAction('fluent_support_hourly_tasks', 'CleanupHandler@initHourlyTasks');
+$app->addAction('fluent_support_daily_tasks', 'CleanupHandler@initDailyTasks');
 
 if(isset($_GET['fs_view'])) {
     $app->addAction('init', 'ExternalPages@route');

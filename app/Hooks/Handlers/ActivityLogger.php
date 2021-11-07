@@ -3,8 +3,6 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Activity;
-use FluentSupport\App\Models\Meta;
-use FluentSupport\App\Services\Helper;
 
 class ActivityLogger
 {
@@ -35,7 +33,7 @@ class ActivityLogger
             $person->last_response_at = current_time('mysql');
             $person->save();
 
-            $description = sprintf('Customer %1$s added a %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'), $response->source);
+            $description = sprintf('Customer %1$s added a response on %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket), $response->source);
 
             $log = [
                 'event_type' => 'fluent_support/response_added_by_customer',
@@ -50,7 +48,7 @@ class ActivityLogger
         }, 20, 3);
 
         add_action('fluent_support/response_added_by_agent', function ($response, $ticket, $person) {
-            $description = sprintf('%1$s added a %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'), $response->source);
+            $description = sprintf('%1$s added a response on %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket), $response->source);
 
             $log = [
                 'event_type' => 'fluent_support/response_added_by_agent',
@@ -65,7 +63,7 @@ class ActivityLogger
         }, 20, 3);
 
         add_action('fluent_support/note_added_by_agent', function ($response, $ticket, $person) {
-            $description = sprintf('%1$s added a %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'note'), $response->source);
+            $description = sprintf('%1$s added a note on %2$s via %3$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket), $response->source);
 
             $log = [
                 'event_type' => 'fluent_support/note_added_by_agent',
@@ -86,7 +84,7 @@ class ActivityLogger
                 $person->save();
             }
 
-            $description = sprintf('%1$s closed a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
+            $description = sprintf('%1$s closed %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket));
 
             $log = [
                 'event_type' => 'fluent_support/ticket_closed',
@@ -107,7 +105,7 @@ class ActivityLogger
                 $person->save();
             }
 
-            $description = sprintf('%1$s reopened a %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket, 'response'));
+            $description = sprintf('%1$s reopened on %2$s', $this->getPersonMarkup($person), $this->getTicketMarkup($ticket));
 
             $log = [
                 'event_type' => 'fluent_support/ticket_reopen',
@@ -125,7 +123,7 @@ class ActivityLogger
     public function getTicketMarkup($ticket, $ticketText = false)
     {
         if (!$ticketText) {
-            $ticketText = sprintf(__('Ticket #%d', 'fluent-support'), $ticket->id);
+            $ticketText = sprintf(__('Ticket: %s', 'fluent-support'), $ticket->title);
         }
 
         return '<a class="fs_link_trans fs_tk" href="#view_ticket">' . $ticketText . '</a>';

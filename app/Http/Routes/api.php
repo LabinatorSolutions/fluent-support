@@ -139,4 +139,6 @@ $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
 
 $router->prefix('activity-logger')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'ActivityLoggerController@getActivities');
+    $router->get('/settings', 'ActivityLoggerController@getSettings');
+    $router->post('/settings', 'ActivityLoggerController@updateSettings');
 });
