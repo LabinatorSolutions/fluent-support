@@ -51,7 +51,7 @@ class CustomerPortalHandler
         wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION);
         wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css', [], FLUENT_SUPPORT_VERSION);
 
-        $i18ns = TransStrings::getTransStrings();
+        $i18ns = [];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
 
