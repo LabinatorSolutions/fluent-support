@@ -1,6 +1,8 @@
 <template>
     <div class="dashboard fs_box_wrapper">
 
+        <div v-html="dashboard_notice"></div>
+
         <div class="fs_box fs_dashboard_box">
             <div class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
                 {{$t('Good')}} {{greetingTime}} {{me.full_name}},
@@ -71,7 +73,8 @@ export default {
             stats: {},
             suggested_tickets: [],
             overall_stats: false,
-            individual_stat: false
+            individual_stat: false,
+            dashboard_notice: ''
         }
     },
     computed: {
@@ -109,6 +112,7 @@ export default {
                     this.suggested_tickets = response.suggested_tickets;
                     this.overall_stats = response.overall_stats;
                     this.individual_stat = response.individual_stat;
+                    this.dashboard_notice = response.dashboard_notice;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

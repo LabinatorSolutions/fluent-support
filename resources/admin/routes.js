@@ -12,6 +12,7 @@ import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 import SlackIntegration from "./Modules/Settings/SlackIntegration";
 import CustomFields from "./Modules/Settings/CustomFields";
+import LicenseManagement from "./Modules/Settings/LicenseManagement";
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -108,6 +109,11 @@ export default [
                 name: 'slack-integration',
                 component: SlackIntegration
             },
+            {
+                path: 'license-management',
+                name: 'license',
+                component: LicenseManagement
+            }
         ]
     },
     {

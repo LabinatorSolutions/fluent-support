@@ -51,6 +51,14 @@ export default {
                 }
             ]
         }
+    },
+    mounted() {
+        if(this.has_pro) {
+            this.settings_items.push({
+                title: this.$t('License Management'),
+                route_name: 'license'
+            });
+        }
     }
 }
 </script>

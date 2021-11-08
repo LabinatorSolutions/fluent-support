@@ -190,7 +190,14 @@ class AgentController extends Controller
     public function myStats(Request $request)
     {
         $agent = Helper::getAgentByUserId();
-        return $this->getAgentStat($request, $agent->id);
+        $response = $this->getAgentStat($request, $agent->id);
+
+        if(defined('FLUENTSUPPORTPRO')) {
+            $response['dashboard_notice'] = apply_filters('fluent_support/dashboard_notice', '', $agent);
+        }
+
+        return $response;
+
     }
 
     public function getAgentStat(Request $request, $agentId)
