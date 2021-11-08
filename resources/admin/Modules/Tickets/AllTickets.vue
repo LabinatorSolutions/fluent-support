@@ -68,10 +68,6 @@
                                     {{ scope.row.product?.title }}
                                 </span>
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
-                                <span style="margin-left: 10px;" class="fs_badge fs_badge_new"
-                                      v-show="getWaitingStatus(scope.row)">
-                                    {{ getWaitingStatus(scope.row) }}
-                                </span>
                                 <span class="fs_tk_number">
                                     #{{ scope.row.id }}
                                      <span v-if="scope.row.live_activity && scope.row.live_activity.length"
@@ -103,7 +99,10 @@
                     </el-table-column>
                     <el-table-column width="120" :label="$t('Status')">
                         <template #default="scope">
-                            <span class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
+                            <span class="fs_badge fs_badge_new" v-if="getWaitingStatus(scope.row)">
+                                    {{ getWaitingStatus(scope.row) }}
+                                </span>
+                            <span v-else class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
                             <span class="fs_badge" :title="$t('Client Priority: ') + scope.row.client_priority "
                                   :class="'fs_badge_priority_'+scope.row.client_priority">
                                 <i class="el-icon-s-flag"></i>  {{ scope.row.client_priority }}
@@ -281,7 +280,7 @@ export default {
                 return '';
             }
             if (!ticket.last_agent_response) {
-                return 'require response';
+                return 'waiting';
             } else if (!ticket.last_customer_response) {
                 return '';
             }
@@ -289,7 +288,7 @@ export default {
                 return '';
             }
 
-            return 'require response';
+            return 'waiting';
         },
         getLastResponse(ticket) {
             if (this.moment(ticket.last_agent_response).isAfter(ticket.last_customer_response, 'seconds')) {

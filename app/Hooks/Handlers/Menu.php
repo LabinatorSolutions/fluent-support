@@ -123,6 +123,13 @@ class Menu
         ]);
     }
 
+    public function maybeEnqueueAssets()
+    {
+        if (isset($_GET['page']) && $_GET['page'] == 'fluent-support') {
+            $this->enqueueAssets();
+        }
+    }
+
     public function enqueueAssets()
     {
         $app = App::getInstance();
@@ -181,21 +188,21 @@ class Menu
         );
 
         $integrationDrivers = [];
-        if(!defined('FLUENTSUPPORTPRO')) {
+        if (!defined('FLUENTSUPPORTPRO')) {
             $integrationDrivers = [
                 [
-                    'key' => 'telegram_settings',
-                    'title' => __('Telegram', 'fluent-support'),
-                    'description' => __('Send Telegram notifications to Group, Channel or individual person inbox and reply from Telegram inbox', 'fluent-support'),
+                    'key'           => 'telegram_settings',
+                    'title'         => __('Telegram', 'fluent-support'),
+                    'description'   => __('Send Telegram notifications to Group, Channel or individual person inbox and reply from Telegram inbox', 'fluent-support'),
                     'promo_heading' => __('Get activity notification to Telegram Messenger and reply directly from Telegram inbox', 'fluent-support'),
-                    'require_pro' => true
+                    'require_pro'   => true
                 ],
                 [
-                    'key' => 'slack_settings',
-                    'title' => __('Slack', 'fluent-support'),
-                    'description' => __('Send ticket activity notifications to slack', 'fluent-support'),
+                    'key'           => 'slack_settings',
+                    'title'         => __('Slack', 'fluent-support'),
+                    'description'   => __('Send ticket activity notifications to slack', 'fluent-support'),
                     'promo_heading' => __('Get activity notification to Slack Channel and keep your support team super engaged', 'fluent-support'),
-                    'require_pro' => true
+                    'require_pro'   => true
                 ]
             ];
         }
@@ -210,28 +217,28 @@ class Menu
         }, $tags);
 
         $appVars = apply_filters('fluent_support_app_vars', array(
-            'slug'              => $slug = $app->config->get('app.slug'),
-            'nonce'             => wp_create_nonce($slug),
-            'rest'              => $this->getRestInfo($app),
-            'brand_logo'        => $this->getMenuIcon(),
-            'firstEntry'        => '',
-            'lastEntry'         => '',
-            'asset_url'         => $assets,
-            'support_agents'    => $agents,
-            'support_products'  => Product::select(['id', 'title'])->get(),
-            'client_priorities' => Helper::customerTicketPriorities(),
-            'admin_priorities'  => Helper::adminTicketPriorities(),
-            'mailboxes'         => MailBox::select(['id', 'name', 'settings'])->get(),
-            'me'                => $me,
-            'pref'              => [
+            'slug'                      => $slug = $app->config->get('app.slug'),
+            'nonce'                     => wp_create_nonce($slug),
+            'rest'                      => $this->getRestInfo($app),
+            'brand_logo'                => $this->getMenuIcon(),
+            'firstEntry'                => '',
+            'lastEntry'                 => '',
+            'asset_url'                 => $assets,
+            'support_agents'            => $agents,
+            'support_products'          => Product::select(['id', 'title'])->get(),
+            'client_priorities'         => Helper::customerTicketPriorities(),
+            'admin_priorities'          => Helper::adminTicketPriorities(),
+            'mailboxes'                 => MailBox::select(['id', 'name', 'settings'])->get(),
+            'me'                        => $me,
+            'pref'                      => [
                 'go_back_after_reply' => 'yes'
             ],
             'notification_integrations' => $integrationDrivers,
-            'server_time'       => current_time('mysql'),
-            'has_email_parser'  => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
-            'ticket_tags'       => $tags,
-            'i18n' => TransStrings::getTransStrings(),
-            'custom_fields' => apply_filters('fluent_support/ticket_custom_fields', [])
+            'server_time'               => current_time('mysql'),
+            'has_email_parser'          => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
+            'ticket_tags'               => $tags,
+            'i18n'                      => TransStrings::getTransStrings(),
+            'custom_fields'             => apply_filters('fluent_support/ticket_custom_fields', [])
         ));
 
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
