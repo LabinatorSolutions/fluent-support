@@ -39,7 +39,8 @@
                         @searchChange="(s) => { search = s; }"
                         :reset-filters="resetFilters"/>
                 </div>
-                <el-button  size="mini" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters</el-button>
+                <el-button size="mini" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
+                </el-button>
 
                 <el-table
                     v-if="app_ready"
@@ -64,7 +65,8 @@
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
-                                <span style="margin-left: 5px;" v-if="scope.row.product && !filters.product_id" class="fs_badge">
+                                <span style="margin-left: 5px;" v-if="scope.row.product && !filters.product_id"
+                                      class="fs_badge">
                                     {{ scope.row.product?.title }}
                                 </span>
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
@@ -102,7 +104,9 @@
                             <span class="fs_badge fs_badge_new" v-if="getWaitingStatus(scope.row)">
                                     {{ getWaitingStatus(scope.row) }}
                                 </span>
-                            <span v-else class="fs_badge" :class="'fs_badge_'+scope.row.status">{{ scope.row.status }}</span>
+                            <span v-else class="fs_badge" :class="'fs_badge_'+scope.row.status">{{
+                                    scope.row.status
+                                }}</span>
                             <span class="fs_badge" :title="$t('Client Priority: ') + scope.row.client_priority "
                                   :class="'fs_badge_priority_'+scope.row.client_priority">
                                 <i class="el-icon-s-flag"></i>  {{ scope.row.client_priority }}
@@ -135,7 +139,7 @@
             <add-ticket v-if="add_ticket_modal"></add-ticket>
         </el-dialog>
 
-        <ticket-bulk-actions v-if="appReady" @fetchTickets="fetchTickets()" :ticket_selections="ticket_selections" />
+        <ticket-bulk-actions v-if="appReady" @fetchTickets="fetchTickets()" :ticket_selections="ticket_selections"/>
 
     </div>
 </template>
