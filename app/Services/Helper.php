@@ -7,6 +7,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\Person;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
 
@@ -304,6 +305,11 @@ class Helper
     public static function getCurrentCustomer()
     {
         return Customer::where('user_id', get_current_user_id())->first();
+    }
+
+    public static function getCurrentPerson()
+    {
+        return Person::where('user_id', get_current_user_id())->first();
     }
 
 }
