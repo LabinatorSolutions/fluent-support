@@ -67,29 +67,53 @@ class Helper
 
     public static function ticketAcceptedFileMiles()
     {
-        return apply_filters('fluent_support/accepted_ticket_mimes', [
-            'text/csv',
-            'text/plain',
-            'application/csv',
-            'text/comma-separated-values',
-            'application/excel',
-            'application/vnd.ms-excel',
-            'application/vnd.msexcel',
-            'text/anytext',
-            'application/octet-stream',
-            'application/txt',
-            'image/gif',
-            'image/ief',
-            'image/jpeg',
-            'image/webp',
-            'image/pjpeg',
-            'image/ktx',
-            'image/png',
-            'application/pdf',
-            'application/zip',
-            'application/json',
-            'application/jsonml+json'
-        ]);
+        $groups = [
+            'images'    => [
+                'image/gif',
+                'image/ief',
+                'image/jpeg',
+                'image/webp',
+                'image/pjpeg',
+                'image/ktx',
+                'image/png',
+            ],
+            'csv'       => [
+                'application/csv',
+                'application/txt',
+                'text/csv',
+                'text/plain',
+                'text/comma-separated-values',
+                'text/anytext',
+            ],
+            'documents' => [
+                'application/excel',
+                'application/vnd.ms-excel',
+                'application/vnd.msexcel',
+                'application/octet-stream',
+                'application/pdf',
+            ],
+            'zip'       => [
+                'application/zip',
+            ],
+            'json'      => [
+                'application/json',
+                'application/jsonml+json'
+            ]
+        ];
+
+        $globalSettings = (new Settings())->globalBusinessSettings();
+
+        if(empty($globalSettings['accepted_file_types'])) {
+            return apply_filters('fluent_support/accepted_ticket_mimes', []);
+        }
+
+        $mimes = [];
+        $typesGroups = Arr::only($groups, $globalSettings['accepted_file_types']);
+        foreach ($typesGroups as $mimesGroup) {
+            $mimes = array_merge($mimes, $mimesGroup);
+        }
+
+        return apply_filters('fluent_support/accepted_ticket_mimes', $mimes);
     }
 
     public static function getOption($key, $default = '')

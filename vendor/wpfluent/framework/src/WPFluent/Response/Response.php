@@ -14,7 +14,7 @@ class Response
     public function json($data = null, $code = 200)
     {
         nocache_headers();
-        return wp_send_json($data, $code);
+        wp_send_json($data, $code);
     }
 
     public function send($data = null, $code = 200)

@@ -10,7 +10,7 @@
 
 <script type="text/babel">
 export default {
-    name: 'InputText',
+    name: 'CheckBoxGroup',
     props: ['field', 'value'],
     data() {
         return {
