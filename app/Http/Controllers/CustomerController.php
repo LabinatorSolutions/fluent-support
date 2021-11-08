@@ -17,8 +17,9 @@ class CustomerController extends Controller
             $customersQuery->searchBy($request->get('search'));
         }
 
-        if($request->get('filter_by_status')['status'] != 'all') {
-            $customersQuery->FilterByStatues($request->get('filter_by_status'));
+
+        if($request->get('filter_by_status') != 'all') {
+            $customersQuery->filterByStatues($request->get('filter_by_status'));
         }
 
         $customers = $customersQuery->paginate();

@@ -20,7 +20,7 @@ class EmailNotificationHandler
 
         // Let's send welcome email to customer if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_customer');
-        if ($customer->status != 'inactive' && $emailSettings && $emailSettings['status'] == 'yes') {
+        if ($customer->status == 'inactive' && $emailSettings && $emailSettings['status'] == 'yes') {
 
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
@@ -76,18 +76,22 @@ class EmailNotificationHandler
     public function agentReplied($response, $ticket, $agent)
     {
         $mailbox = $ticket->mailbox;
+
+
         if (!$mailbox) {
-            return;
+            return false;
         }
 
         // Let's send welcome email to customer if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_replied_by_agent_email_to_customer');
+
+
         if ($emailSettings && $emailSettings['status'] == 'yes') {
 
             $ticket->load('customer');
             $customer = $ticket->customer;
 
-            if($customer->status != 'inactive') {
+            if($customer->status == 'inactive') {
                 return false;
             }
 
@@ -108,10 +112,8 @@ class EmailNotificationHandler
                 'email_type' => 'ticket_replied_by_agent_email_to_customer'
             ]);
 
+
             $headers = $mailbox->getMailerHeader();
-            if ($ticket->message_id) {
-               // $headers[] = 'Message-ID: '. $ticket->message_id;
-            }
 
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
@@ -131,7 +133,7 @@ class EmailNotificationHandler
             $ticket->load('customer');
             $customer = $ticket->customer;
 
-            if($customer->status != 'inactive') {
+            if($customer->status == 'inactive') {
                 return false;
             }
 

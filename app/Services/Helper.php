@@ -242,8 +242,7 @@ class Helper
 
     public static function getTicketViewSignedUrl($ticket)
     {
-
-        if (self::isPublicSignedTicketEnabled()) {
+        if (!self::isPublicSignedTicketEnabled()) {
             return self::getTicketViewUrl($ticket);
         }
 
@@ -262,7 +261,7 @@ class Helper
     {
         $businessSettings = self::getBusinessSettings();
 
-        return !(Arr::get($businessSettings, 'disable_public_ticket') == 'yes');
+        return (Arr::get($businessSettings, 'disable_public_ticket') != 'yes');
     }
 
     public static function getTicketAdminUrl($ticket)
