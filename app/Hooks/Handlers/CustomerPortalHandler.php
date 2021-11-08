@@ -56,7 +56,8 @@ class CustomerPortalHandler
             'support_products'           => Product::select(['id', 'title'])->get(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
             'view_tickets_url'           => '#/',
-            'i18n'                       => TransStrings::getTransStrings()
+            'i18n'                       => TransStrings::getTransStrings(),
+            'fallback_image'             => $assets . 'images/file.png',
         ];
 
         if ($this->isSignedTicketView()) {
