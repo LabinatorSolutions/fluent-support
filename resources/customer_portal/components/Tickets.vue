@@ -42,13 +42,13 @@
                             </div>
                         </router-link>
                     </td>
-                    <td>
+                    <td class="fs_thread_count">
                         <span class="fs_thread_count">{{ ticket.response_count }}</span>
                     </td>
-                    <td>
+                    <td class="fs_tk_status">
                         <span class="fs_badge" :class="'fs_badge_'+ticket.status">{{ ticket.status }}</span>
                     </td>
-                    <td>
+                    <td class="fs_tk_date">
                         <span class="fs_tk_date">{{ ticket.created_at }}</span>
                     </td>
                 </tr>
@@ -83,7 +83,8 @@ export default {
                 total: 0
             },
             fetching: false,
-            first_loading: true
+            first_loading: true,
+            show_filters: true
         }
     },
     computed: {

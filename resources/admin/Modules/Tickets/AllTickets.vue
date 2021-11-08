@@ -30,13 +30,17 @@
                 </div>
             </div>
             <div class="fs_box_body">
-                <ticket-filters
-                    v-if="appReady"
-                    @fetchTickets="fetchTickets"
-                    :filters="filters"
-                    :search="search"
-                    @searchChange="(s) => { search = s; }"
-                    :reset-filters="resetFilters"/>
+                <div v-if="show_filters">
+                    <ticket-filters
+                        v-if="appReady"
+                        @fetchTickets="fetchTickets"
+                        :filters="filters"
+                        :search="search"
+                        @searchChange="(s) => { search = s; }"
+                        :reset-filters="resetFilters"/>
+                </div>
+                <el-button  size="mini" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters</el-button>
+
                 <el-table
                     v-if="app_ready"
                     :data="tickets"
@@ -194,6 +198,7 @@ export default {
             add_ticket_modal: false,
             appReady: false,
             add_response_modal: false,
+            show_filters: !this.is_mobile
         }
     },
     watch: {

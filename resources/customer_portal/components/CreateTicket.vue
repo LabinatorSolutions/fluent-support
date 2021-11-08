@@ -1,6 +1,6 @@
 <template>
     <div class="fs_all_tickets">
-        <div class="fs_tk_actions fs_tk_header">
+        <div class="fs_tk_actions fs_tk_header fs_tk_create_head">
             <div class="fs_tk_left">
                 <h3>{{$t('Submit a Support Ticket')}}</h3>
             </div>

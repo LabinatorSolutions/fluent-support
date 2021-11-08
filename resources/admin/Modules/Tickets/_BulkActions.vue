@@ -1,7 +1,7 @@
 <template>
     <div v-loading="working" class="fs_bulk_actions_wrap">
         <div v-if="ticket_selections.length" class="fs_bulk_actions_bar">
-            <ul class="fs_tk_actions">
+            <ul v-loading="working" class="fs_tk_actions">
                 <li :title="$t('Add Reply')"
                     @click="add_response_modal = true">
                     <i class="el-icon-chat-line-square"/>
@@ -14,7 +14,8 @@
                         v-model:visible="assignAgentPop"
                     >
                         <template #reference>
-                            <i :class="{fs_pop_active: assignAgentPop}" @click="togglePop('assignAgentPop')" class="el-icon-user"/>
+                            <i :class="{fs_pop_active: assignAgentPop}" @click="togglePop('assignAgentPop')"
+                               class="el-icon-user"/>
                         </template>
 
                         <div class="fs_extended_pop">
@@ -25,7 +26,8 @@
                                     :value="agent.id"
                                     :label="agent.full_name"></el-option>
                             </el-select>
-                            <el-button  @click="assignAgent()" style="margin-top: 20px;" :disabled="!agent_id" size="small"
+                            <el-button @click="assignAgent()" style="margin-top: 20px;" :disabled="!agent_id"
+                                       size="small"
                                        type="danger">
                                 Assign Agent
                             </el-button>
@@ -44,7 +46,8 @@
                         v-model:visible="addTagPop"
                     >
                         <template #reference>
-                            <i @click="togglePop('addTagPop')" :class="{fs_pop_active: assignAgentPop}" class="el-icon-price-tag"/>
+                            <i @click="togglePop('addTagPop')" :class="{fs_pop_active: assignAgentPop}"
+                               class="el-icon-price-tag"/>
                         </template>
                         <div class="fs_extended_pop">
                             <el-select :multiple="true" filterable v-model="tag_ids">
@@ -83,7 +86,7 @@
                         trigger="click"
                     >
                         <template #reference>
-                            <i  @click="togglePop()" class="el-icon-delete"/>
+                            <i @click="togglePop()" class="el-icon-delete"/>
                         </template>
                         <p>Are you sure, you want to delete selected tickets?</p>
                         <el-button style="margin-top: 20px;" size="small" type="danger"
@@ -182,13 +185,13 @@ export default {
             });
         },
         togglePop(pop) {
-            if(pop && this[pop]) {
+            if (pop && this[pop]) {
                 this[pop] = false;
                 return;
             }
             this.assignAgentPop = false;
             this.addTagPop = false;
-            if(pop) {
+            if (pop) {
                 this[pop] = true;
             }
         }
