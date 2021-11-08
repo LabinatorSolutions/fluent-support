@@ -7,6 +7,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TransStrings;
 use FluentSupport\Framework\Support\Arr;
@@ -47,8 +48,12 @@ class CustomerPortalHandler
 
         $assets = $app['url.assets'];
 
-        wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery']);
-        wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css');
+        wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION);
+        wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css', [], FLUENT_SUPPORT_VERSION);
+
+        $i18ns = TransStrings::getTransStrings();
+
+        $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
 
         $data = [
             'rest'                       => $restInfo,
@@ -56,7 +61,7 @@ class CustomerPortalHandler
             'support_products'           => Product::select(['id', 'title'])->get(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
             'view_tickets_url'           => '#/',
-            'i18n'                       => TransStrings::getTransStrings(),
+            'i18n'                       => $i18ns,
             'fallback_image'             => $assets . 'images/file.png',
             'has_file_upload'            => !!Helper::ticketAcceptedFileMiles()
         ];

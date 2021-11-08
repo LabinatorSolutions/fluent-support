@@ -36,33 +36,53 @@ class Settings
 
     public function save($settingsKey, $settings)
     {
-        if($settingsKey == 'global_business_settings' && empty($settings['accepted_file_types'])) {
+        if ($settingsKey == 'global_business_settings' && empty($settings['accepted_file_types'])) {
             $settings['accepted_file_types'] = [];
         }
 
         return Helper::updateOption($settingsKey, $settings);
     }
 
-    public function globalBusinessSettings()
+    public function globalBusinessSettings($cached = true)
     {
+        static $settings;
+
+        if($cached && $settings) {
+            return $settings;
+        }
+
         $defaults = [
             'portal_page_id'        => '',
             'login_message'         => __('<p>Please login to access the Customer Support Portal</p> [fluent_support_login]', 'fluent-support'),
             'disable_public_ticket' => 'no',
-            'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json']
+            'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
+            'max_file_size'         => 2
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
 
         if (!$existingSettings) {
-            return $defaults;
+            $settings = $defaults;
+            return $settings;
         }
 
-        return wp_parse_args($existingSettings, $defaults);
+        $settings = wp_parse_args($existingSettings, $defaults);
+
+        return $settings;
     }
 
     private function getGlobalBusinessSettingsFields()
     {
+
+        $mimeGroups = Helper::getMimeGroups();
+
+        $formattedMimeGroups = [];
+
+        foreach ($mimeGroups as $mimeGroup => $mime) {
+            $formattedMimeGroups[$mimeGroup] = $mime['title'];
+        }
+
+
         $fields = [
             'portal_page_id'        => [
                 'type'        => 'input-options',
@@ -85,15 +105,16 @@ class Settings
                 'inline_help'    => __('If you enable this then only logged in user can reply the tickets. Otherwise, url will be signed and intended user can reply without logging in', 'fluent-support')
             ],
             'accepted_file_types'   => [
+                'wrapper_class' => 'fs_half_field',
                 'type'    => 'checkbox-group',
                 'label'   => 'Accepted File Types',
-                'options' => [
-                    'images'    => 'Photos (jpeg, png, gif, webp)',
-                    'csv'       => 'CSV/Text (csv, txt)',
-                    'documents' => 'Documents (pdf, excel, doc)',
-                    'zip'       => 'Zip Files',
-                    'json'      => 'JSON File Formats'
-                ]
+                'options' => $formattedMimeGroups
+            ],
+            'max_file_size' => [
+                'wrapper_class' => 'fs_half_field',
+                'type'    => 'input-text',
+                'data_type' => 'number',
+                'label'   => 'Max File Size (in MegaByte)',
             ]
         ];
 

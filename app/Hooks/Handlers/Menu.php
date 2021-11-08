@@ -216,6 +216,9 @@ class Menu
             return $tag;
         }, $tags);
 
+        $i18ns = TransStrings::getTransStrings();
+        $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
+
         $appVars = apply_filters('fluent_support_app_vars', array(
             'slug'                      => $slug = $app->config->get('app.slug'),
             'nonce'                     => wp_create_nonce($slug),
@@ -237,9 +240,9 @@ class Menu
             'server_time'               => current_time('mysql'),
             'has_email_parser'          => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
             'ticket_tags'               => $tags,
-            'i18n'                      => TransStrings::getTransStrings(),
+            'i18n'                      => $i18ns,
             'custom_fields'             => apply_filters('fluent_support/ticket_custom_fields', []),
-            'has_file_upload'            => !!Helper::ticketAcceptedFileMiles()
+            'has_file_upload'           => !!Helper::ticketAcceptedFileMiles()
         ));
 
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');

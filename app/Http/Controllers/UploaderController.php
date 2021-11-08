@@ -4,6 +4,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Request\Request;
@@ -12,13 +13,18 @@ class UploaderController extends Controller
 {
     public function uploadTicketFiles(Request $request)
     {
-        $files = $this->validate($this->request->files(), [
-            'file' => 'max:2000|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
-        ], [
-            'file.mimetypes' => __('Only images, documents or zip files are allowed. Please upload as ZIP File', 'fluent-support'),
-            'file.max' => __('The file can not be more than 2MB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support')
-        ]);
+        $settings = (new Settings())->globalBusinessSettings();
+        $maxFileSize = absint($settings['max_file_size']);
+        $mimeHeadings = Helper::getAcceptedMimeHeadings();
 
+        $maxSizeBytes = $maxFileSize * 1024;
+
+        $files = $this->validate($this->request->files(), [
+            'file' => 'max:' . $maxSizeBytes . '|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
+        ], [
+            'file.mimetypes' => sprintf(__('Only %s files are allowed.', 'fluent-support'), implode(', ', $mimeHeadings)),
+            'file.max'       => sprintf(__('The file can not be more than %dMB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support'), $maxFileSize)
+        ]);
 
         $ticketId = $request->get('ticket_id');
 
@@ -26,14 +32,14 @@ class UploaderController extends Controller
             $ticketId = NULL;
         }
 
-        if($ticketId && $request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+        if ($ticketId && $request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
             $person = $ticket->customer;
         } else {
             $person = Helper::getCurrentPerson();
         }
-        
-        $uploadedFiles = FileSystem::setSubDir('ticket_'.$ticketId)->put($files);
+
+        $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
 
         $attachments = [];
         foreach ($uploadedFiles as $file) {
@@ -43,10 +49,10 @@ class UploaderController extends Controller
                 'person_id' => $person->id,
                 'file_type' => $file['type'],
                 'file_path' => $file['file_path'],
-                'full_url' => $file['url'],
-                'title' => $file['name'],
-                'driver' => 'local',
-                'status' => 'in-active'
+                'full_url'  => $file['url'],
+                'title'     => $file['name'],
+                'driver'    => 'local',
+                'status'    => 'in-active'
             ];
 
             $attachment = Attachment::create($fileData);

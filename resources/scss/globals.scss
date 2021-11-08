@@ -382,3 +382,22 @@ table.fs_table {
     padding: 8px 10px;
     line-height: 100%;
 }
+
+.fs_half_field {
+    width: 50%;
+    padding-right: 10px;
+    position: relative;
+    overflow: hidden;
+    display: inline-block !important;
+    vertical-align: top;
+    &:nth-child(2n+2) {
+        display: inline-block;
+        clear: both;
+        padding-right: 0;
+        padding-left: 10px;
+    }
+}
+
+.fs_field_label {
+    font-weight: 500;
+}

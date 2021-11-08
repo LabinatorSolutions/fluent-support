@@ -67,53 +67,98 @@ class Helper
 
     public static function ticketAcceptedFileMiles()
     {
-        $groups = [
-            'images'    => [
-                'image/gif',
-                'image/ief',
-                'image/jpeg',
-                'image/webp',
-                'image/pjpeg',
-                'image/ktx',
-                'image/png',
-            ],
-            'csv'       => [
-                'application/csv',
-                'application/txt',
-                'text/csv',
-                'text/plain',
-                'text/comma-separated-values',
-                'text/anytext',
-            ],
-            'documents' => [
-                'application/excel',
-                'application/vnd.ms-excel',
-                'application/vnd.msexcel',
-                'application/octet-stream',
-                'application/pdf',
-            ],
-            'zip'       => [
-                'application/zip',
-            ],
-            'json'      => [
-                'application/json',
-                'application/jsonml+json'
-            ]
-        ];
-
+        $groups = self::getMimeGroups();
         $globalSettings = (new Settings())->globalBusinessSettings();
 
-        if(empty($globalSettings['accepted_file_types'])) {
+        if (empty($globalSettings['accepted_file_types'])) {
             return apply_filters('fluent_support/accepted_ticket_mimes', []);
         }
 
         $mimes = [];
         $typesGroups = Arr::only($groups, $globalSettings['accepted_file_types']);
         foreach ($typesGroups as $mimesGroup) {
-            $mimes = array_merge($mimes, $mimesGroup);
+            $mimes = array_merge($mimes, $mimesGroup['mimes']);
         }
 
         return apply_filters('fluent_support/accepted_ticket_mimes', $mimes);
+    }
+
+    public static function getAcceptedMimeHeadings()
+    {
+        $groups = self::getMimeGroups();
+        $globalSettings = (new Settings())->globalBusinessSettings();
+
+        if (empty($globalSettings['accepted_file_types'])) {
+            return [];
+        }
+
+        $mimeNames = [];
+        $typesGroups = Arr::only($groups, $globalSettings['accepted_file_types']);
+        foreach ($typesGroups as $mimesGroup) {
+            $mimeNames[] = $mimesGroup['title'];
+        }
+
+        return $mimeNames;
+    }
+
+    public static function getFileUploadMessage() {
+        $mimeHeadings = self::getAcceptedMimeHeadings();
+        $settings = (new Settings())->globalBusinessSettings();
+        $maxFileSize = absint($settings['max_file_size']);
+
+        return sprintf(__('Supported Types: %s and max file size: %dMB', 'fluent-support'), implode(', ', $mimeHeadings), $maxFileSize);
+    }
+
+    public static function getMimeGroups()
+    {
+        return [
+            'images'    => [
+                'title' => __('Photos', 'fluent-support'),
+                'mimes' => [
+                    'image/gif',
+                    'image/ief',
+                    'image/jpeg',
+                    'image/webp',
+                    'image/pjpeg',
+                    'image/ktx',
+                    'image/png'
+                ]
+            ],
+            'csv'       => [
+                'title' => __('CSV', 'fluent-support'),
+                'mimes' => [
+                    'application/csv',
+                    'application/txt',
+                    'text/csv',
+                    'text/plain',
+                    'text/comma-separated-values',
+                    'text/anytext',
+                ]
+            ],
+            'documents' => [
+                'title' => __('PDF/Docs', 'fluent-support'),
+                'mimes' => [
+                    'application/excel',
+                    'application/vnd.ms-excel',
+                    'application/vnd.msexcel',
+                    'application/octet-stream',
+                    'application/pdf',
+                ]
+            ],
+            'zip'       => [
+                'title' => __('Zip', 'fluent-support'),
+                'mimes' => [
+                    'application/zip'
+                ]
+            ],
+            'json'      => [
+                'title' => __('JSON', 'fluent-support'),
+                'mimes' => [
+                    'application/json',
+                    'application/jsonml+json'
+                ]
+            ]
+        ];
     }
 
     public static function getOption($key, $default = '')
@@ -198,7 +243,7 @@ class Helper
     public static function getTicketViewSignedUrl($ticket)
     {
 
-        if(self::isPublicSignedTicketEnabled()) {
+        if (self::isPublicSignedTicketEnabled()) {
             return self::getTicketViewUrl($ticket);
         }
 
@@ -217,7 +262,7 @@ class Helper
     {
         $businessSettings = self::getBusinessSettings();
 
-        return  !(Arr::get($businessSettings, 'disable_public_ticket') == 'yes');
+        return !(Arr::get($businessSettings, 'disable_public_ticket') == 'yes');
     }
 
     public static function getTicketAdminUrl($ticket)
