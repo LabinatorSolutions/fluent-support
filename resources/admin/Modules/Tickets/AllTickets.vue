@@ -64,7 +64,7 @@
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
-                                <span style="margin-left: 5px;" v-if="scope.row.product" class="fs_badge">
+                                <span style="margin-left: 5px;" v-if="scope.row.product && !filters.product_id" class="fs_badge">
                                     {{ scope.row.product?.title }}
                                 </span>
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
