@@ -9,7 +9,7 @@ class Settings
 
     public function getEmailSettingsKeys()
     {
-        $key = apply_filters('fluent_support/email_setting_keys',[
+        $key = apply_filters('fluent_support/email_setting_keys', [
             'ticket_created_email_to_customer',
             'ticket_replied_by_agent_email_to_customer',
             'ticket_closed_by_agent_email_to_customer',
@@ -36,15 +36,20 @@ class Settings
 
     public function save($settingsKey, $settings)
     {
+        if($settingsKey == 'global_business_settings' && empty($settings['accepted_file_types'])) {
+            $settings['accepted_file_types'] = [];
+        }
+
         return Helper::updateOption($settingsKey, $settings);
     }
 
     public function globalBusinessSettings()
     {
         $defaults = [
-            'portal_page_id' => '',
-            'login_message'  => __('<p>Please login to access the Customer Support Portal</p> [fluent_support_login]', 'fluent-support'),
-            'disable_public_ticket' => 'no'
+            'portal_page_id'        => '',
+            'login_message'         => __('<p>Please login to access the Customer Support Portal</p> [fluent_support_login]', 'fluent-support'),
+            'disable_public_ticket' => 'no',
+            'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json']
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
@@ -58,28 +63,41 @@ class Settings
 
     private function getGlobalBusinessSettingsFields()
     {
-        return [
-            'portal_page_id' => [
+        $fields = [
+            'portal_page_id'        => [
                 'type'        => 'input-options',
                 'label'       => __('Portal Page', 'fluent-support'),
                 'show_id'     => true,
                 'placeholder' => __('Select Portal Page', 'fluent-support'),
                 'options'     => Helper::getWPPages(),
-                'inline_help' => __('Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page','fluent-support')
+                'inline_help' => __('Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page', 'fluent-support')
             ],
-            'login_message'  => [
+            'login_message'         => [
                 'type'        => 'wp-editor',
                 'label'       => __('Message for non logged in users', 'fluent-support'),
                 'inline_help' => __('Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form', 'fluent-support')
             ],
             'disable_public_ticket' => [
-                'type' => 'inline-checkbox',
-                'true_label' => 'yes',
-                'false-label' => 'no',
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
                 'checkbox_label' => __('Disable Public Ticket interaction', 'fluent-support'),
-                'inline_help' => __('If you enable this then only logged in user can reply the tickets. Otherwise, url will be signed and intended user can reply without logging in', 'fluent-support')
+                'inline_help'    => __('If you enable this then only logged in user can reply the tickets. Otherwise, url will be signed and intended user can reply without logging in', 'fluent-support')
+            ],
+            'accepted_file_types'   => [
+                'type'    => 'checkbox-group',
+                'label'   => 'Accepted File Types',
+                'options' => [
+                    'images'    => 'Photos (jpeg, png, gif, webp)',
+                    'csv'       => 'CSV/Text (csv, txt)',
+                    'documents' => 'Documents (pdf, excel, doc)',
+                    'zip'       => 'Zip Files',
+                    'json'      => 'JSON File Formats'
+                ]
             ]
         ];
+
+        return $fields;
     }
 
     public function saveBoxEmailSettings($box, $emailKey, $settings)
@@ -164,7 +182,7 @@ class Settings
 
         $savedSettings['key'] = $settingsDefaults[$emailKey]['key'];
         $savedSettings['title'] = $settingsDefaults[$emailKey]['title'];
-        $savedSettings['description']   = $settingsDefaults[$emailKey]['description'];
+        $savedSettings['description'] = $settingsDefaults[$emailKey]['description'];
 
         if ($box->box_type == 'email' && in_array($emailKey, $strictSubjectKeys)) {
             $savedSettings['email_subject'] = 'Re: {{ticket.title}}';
