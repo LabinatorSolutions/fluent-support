@@ -11,7 +11,8 @@
                                 <el-option v-for="option in field.options" :key="option"
                                            :value="option" :label="option"></el-option>
                             </el-select>
-                            <el-select v-else-if="field.type == 'select'" :filterable="field.filterable" :multiple="field.multiple"
+                            <el-select v-else-if="field.type == 'select'" :filterable="field.filterable"
+                                       :multiple="field.multiple"
                                        v-model="formData[field.slug]">
                                 <el-option v-for="option in field.options" :key="option.id"
                                            :value="option.id" :label="option.title"></el-option>
@@ -29,7 +30,8 @@
                     </el-form>
                 </el-col>
             </el-row>
-            <el-button v-if="ticket_id" v-loading="saving" :disabled="saving" @click="saveEditedCustomFieldData()" type="primary">
+            <el-button v-if="ticket_id" v-loading="saving" :disabled="saving" @click="saveEditedCustomFieldData()"
+                       type="primary">
                 {{ $t('Save') }}
             </el-button>
         </template>
@@ -79,11 +81,11 @@ export default {
                 return false;
             }
 
-            if(!this.ticket_id) {
+            if (!this.ticket_id) {
                 this.formData = this.custom_data;
             }
 
-            if(isEmpty(this.formData)) {
+            if (isEmpty(this.formData)) {
                 this.formData = {};
             }
 
@@ -91,7 +93,7 @@ export default {
                 if (field.type == 'checkbox') {
                     if (!this.formData[fieldName] || !isArray(this.formData[fieldName])) {
                         this.formData[fieldName] = [];
-                    } else if(!this.formData[fieldName]) {
+                    } else if (!this.formData[fieldName]) {
                         this.formData[fieldName] = '';
                     }
                 }
