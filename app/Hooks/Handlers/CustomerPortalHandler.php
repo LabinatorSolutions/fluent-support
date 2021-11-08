@@ -51,7 +51,22 @@ class CustomerPortalHandler
         wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION);
         wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css', [], FLUENT_SUPPORT_VERSION);
 
-        $i18ns = [];
+        $i18ns = [
+            'Create a New Ticket'    => __('Create a New Ticket', 'fluent-support'),
+            'Conversation'    => __('Conversation', 'fluent-support'),
+            'Click Here to Write a reply'    => __('Click Here to Write a reply', 'fluent-support'),
+            'All'    => __('All', 'fluent-support'),
+            'Open'    => __('Open', 'fluent-support'),
+            'Closed'    => __('Closed', 'fluent-support'),
+            'Date'    => __('Date', 'fluent-support'),
+            'Status'    => __('Status', 'fluent-support'),
+            'Next'    => __('Next', 'fluent-support'),
+            'Prev'    => __('Prev', 'fluent-support'),
+            'Subject'    => __('Subject', 'fluent-support'),
+            'Ticket Details'    => __('Ticket Details', 'fluent-support'),
+            'Priority'    => __('Priority', 'fluent-support'),
+            'Related Product/Service'    => __('Related Product/Service', 'fluent-support'),
+        ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
 
