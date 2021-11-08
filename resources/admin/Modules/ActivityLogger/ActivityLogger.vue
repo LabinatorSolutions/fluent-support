@@ -5,6 +5,10 @@
                 Overall Activities
             </div>
             <div class="fs_box_actions">
+                <el-button v-loading="loading"
+                           @click="fetchActivities()"
+                           icon="el-icon-refresh"
+                           size="mini"></el-button>
                 <el-button @click="showSettingsModal = true" size="small" type="default" icon="el-icon-setting"></el-button>
             </div>
         </div>
