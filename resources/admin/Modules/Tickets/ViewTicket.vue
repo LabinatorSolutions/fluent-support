@@ -70,8 +70,7 @@
                             </el-select>
 
                         </el-popover>
-                        <span><i
-                            class="el-icon-office-building"></i> {{ ticket.mailbox?.name }}</span>
+                        <span class="fs_business_name"><i class="el-icon-office-building"></i> {{ ticket.mailbox?.name }}</span>
                     </div>
                 </div>
                 <div class="fs_th_header">

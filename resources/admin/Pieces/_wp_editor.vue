@@ -87,6 +87,7 @@ export default {
                 }
             };
 
+
             if (this.autofocus) {
                 mceConfig.auto_focus = this.editor_id;
             }

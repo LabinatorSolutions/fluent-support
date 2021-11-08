@@ -314,49 +314,63 @@ table.fs_table {
 }
 
 .activities.fs_box_wrapper {
-    padding: 0 27em;
-    @media all and (max-width: 767px){
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    @media all and (max-width: 767px) {
         padding: 0;
         & .fs_activity_header {
             line-height: 1.7em;
         }
     }
+
     & .fs_activity_header {
         line-height: 4;
         font-size: 20px;
         font-weight: bold;
         color: rgb(23, 133, 235);
-        @media all and (max-width: 767px){
+        @media all and (max-width: 767px) {
             line-height: 1.7em;
         }
     }
-    & h3{
+
+    & h3 {
         padding: 0px 0px 17px 0px;
     }
-    & .fs_box.fs_activity_box ul li{
+
+    & .fs_box.fs_activity_box ul.fs_activities li {
         padding: 1em;
+        color: gray;
+
+        &:hover {
+            background: #FAFDFF;
+        }
     }
+
     & a.fs_link_trans {
         text-decoration: none;
-        color : #1785EB;
-        font-size: 16px;
+        color: #1273cb;
+        font-size: 14px;
     }
+
     & .fs_agent_activity {
-        border-left: 6px solid #1785EB;
+        border-left: 2px solid #1785EB;
         height: 100%;
         position: relative;
         left: 0;
         top: 0;
-        background: #FAFDFF;
     }
+
     & .fs_activity {
         display: inline-flex;
         align-items: center;
+
         & img {
             width: 40px;
             margin-right: 1em;
             border-radius: 50%;
         }
+
         & span {
             font-size: 16px;
         }

@@ -14,6 +14,10 @@
 @import "~element-plus/lib/theme-chalk/el-radio.css";
 
 .fst_client_portal {
+    a.el-button {
+        text-decoration: none;
+    }
+
     .fs_tk_preview {
         text-decoration: none;
         color: #314351;
@@ -528,6 +532,7 @@
         .el-select {
             width: 100%;
         }
+
         .fs_tk_row {
             display: flex;
             flex-wrap: wrap;
@@ -581,15 +586,47 @@
         }
         .fs_thread {
             .fs_avatar {
-                margin: 10px 10px 5px 20px;
+                position: absolute;
+                margin: 20px 0 0 15px;
+                background: transparent;
+                width: 30px;
+                height: 30px;
+
+                img {
+                    width: 24px;
+                    height: 24px;
+                }
             }
 
             .fs_thread_wrap {
                 width: 100%;
                 margin: 0;
+                padding: 20px 15px;
+
+                .fs_thread_title {
+                    padding-left: 15px;
+                    font-size: 15px;
+                }
 
                 .fs_thread_head {
                     width: 100%;
+                    padding-left: 16px;
+                }
+            }
+        }
+
+        .fc_custom_data_wrap {
+            padding-top: 10px;
+
+            h3 {
+                font-size: 16px;
+            }
+
+            li {
+                font-size: 14px;
+
+                b {
+                    font-weight: 500;
                 }
             }
         }
@@ -599,14 +636,78 @@
                 padding: 6px 10px;
             }
 
+            .fs_tk_subject {
+                h2 {
+                    span {
+                        font-size: 14px;
+                    }
+
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+
+                .fs_tk_tags {
+                    display: block;
+                    padding-left: 0;
+                }
+            }
+
             .el-button--small {
                 min-height: 28px;
-                padding: 5px 10px;
                 font-size: 12px;
                 border-radius: 3px;
             }
         }
+
+        .fs_table {
+            display: block;
+
+            thead {
+                display: none;
+            }
+
+            tbody tr, tbody td, tbody {
+                display: block;
+            }
+
+            tbody td {
+                padding: 0 15px;
+            }
+
+            tbody tr {
+                padding: 10px 0px;
+            }
+
+            tbody tr {
+                .fs_thread_count, .fs_tk_status, .fs_tk_date {
+                    display: inline-block;
+                    font-size: 12px;
+                }
+            }
+        }
+
+        .fs_tk_actions {
+            .fs_btn {
+                padding: 6px 9px;
+            }
+        }
+
+        .fs_tk_create_head {
+            .fs_tk_left {
+                width: 70%;
+            }
+
+            .fs_tk_right {
+                width: 30%;
+            }
+
+            h3 {
+                font-size: 16px;
+            }
+        }
+
     }
+
 }
 
 

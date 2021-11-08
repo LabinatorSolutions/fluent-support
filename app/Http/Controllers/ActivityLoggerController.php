@@ -13,7 +13,7 @@ class ActivityLoggerController extends Controller
             'person' => function ($query) {
                 $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
             }
-        ])->orderBy('id', 'DESC')->get();
+        ])->orderBy('id', 'DESC')->paginate();
 
         return [
             'activities' => $activities,

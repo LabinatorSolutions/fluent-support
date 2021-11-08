@@ -13,8 +13,9 @@ const framerwork = new FluentFramework();
 framerwork.app.config.globalProperties.appVars = window.fluentSupportAdmin;
 framerwork.app.config.globalProperties.has_pro = window.fluentSupportAdmin.has_pro;
 
-window.fluentSupportAppp = framerwork.app.use(router).mount('#alpha_app');
+framerwork.app.config.globalProperties.is_mobile = window.innerWidth < 769;
 
+window.fluentSupportAppp = framerwork.app.use(router).mount('#alpha_app');
 
 router.afterEach((to, from) => {
     jQuery('.fframe_menu_item').removeClass('fs_active');

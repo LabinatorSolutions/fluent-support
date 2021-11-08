@@ -3,8 +3,10 @@
         .fs_tickets_view {
             display: block;
         }
+
         .inner_sidebar {
             width: 100%;
+
             ul {
                 li {
                     display: inline-block;
@@ -13,6 +15,7 @@
                 }
             }
         }
+
         .inner_body {
             width: 100%;
         }
@@ -24,31 +27,110 @@
         .fs_view_ticket {
             display: block;
         }
+
         .fs_tickets_view {
             .fs_ticket_sidebar {
                 margin-top: 80px;
                 width: 100%;
             }
+
             .fs_ticket_body {
                 width: 100%;
+
                 .fs_th_header {
                     padding: 16px 10px 24px;
+
                     .fs_tk_subject {
                         width: 100%;
                         padding-right: 0;
                     }
+
                     .fs_tk_badges {
                         position: relative;
                     }
                 }
+
                 .fs_thread_wrap {
                     margin: 0;
-                    padding: 25px 10px;
+                    padding: 20px 10px;
                 }
+
                 .fs_thread_body {
                     width: 100%;
                 }
             }
         }
+
+        .fs_ticket_actions {
+            ul.fs_tk_actions li {
+                padding: 5px;
+            }
+
+            .fs_product {
+                float: none !important;
+                padding: 0 !important;
+                margin-top: 4px;
+            }
+        }
+
+        .el-button--small {
+            min-height: 27px;
+            font-size: 11px;
+            border-radius: 3px;
+            padding: 5px 10px;
+        }
+
+        .fs_ticket_body {
+            .fs_th_header .fs_tk_subject h2 {
+                font-size: 16px;
+                line-height: 21px;
+                font-weight: 500;
+                display: inline;
+            }
+
+            .fs_business_name {
+                display: none;
+            }
+
+            .fs_thread .fs_avatar {
+                position: absolute;
+                margin: 19px 0px 0px 10px;
+                width: 28px;
+                height: 28px;
+                background: transparent;
+
+                img {
+                    border-radius: 50%;
+                    max-width: 24px;
+                    max-height: 24px;
+                }
+            }
+
+            .fs_thread_head {
+                padding-left: 32px;
+
+                .fs_thread_title {
+                    font-size: 15px;
+                }
+            }
+
+            .fs_create_response {
+                .fs_row {
+                    display: flex;
+                    flex-direction: column-reverse;
+                    flex-wrap: nowrap;
+
+                    .fs_half {
+                        width: 100%;
+                    }
+                }
+
+                .el-button--large {
+                    padding: 10px 10px;
+                    min-height: auto;
+                }
+            }
+        }
+
     }
 }
