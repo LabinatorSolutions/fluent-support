@@ -238,7 +238,8 @@ class Menu
             'has_email_parser'          => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
             'ticket_tags'               => $tags,
             'i18n'                      => TransStrings::getTransStrings(),
-            'custom_fields'             => apply_filters('fluent_support/ticket_custom_fields', [])
+            'custom_fields'             => apply_filters('fluent_support/ticket_custom_fields', []),
+            'has_file_upload'            => !!Helper::ticketAcceptedFileMiles()
         ));
 
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');

@@ -58,6 +58,7 @@ class CustomerPortalHandler
             'view_tickets_url'           => '#/',
             'i18n'                       => TransStrings::getTransStrings(),
             'fallback_image'             => $assets . 'images/file.png',
+            'has_file_upload'            => !!Helper::ticketAcceptedFileMiles()
         ];
 
         if ($this->isSignedTicketView()) {

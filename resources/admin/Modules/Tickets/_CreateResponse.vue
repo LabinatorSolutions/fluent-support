@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class="fs_half">
-                <attachment-form :ticket="ticket" :attachments="attachments"/>
+                <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments"/>
             </div>
         </div>
     </div>

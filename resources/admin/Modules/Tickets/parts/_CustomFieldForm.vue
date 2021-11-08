@@ -29,7 +29,7 @@
                     </el-form>
                 </el-col>
             </el-row>
-            <el-button v-loading="saving" :disabled="saving" @click="saveEditedCustomFieldData()" type="primary">
+            <el-button v-if="ticket_id" v-loading="saving" :disabled="saving" @click="saveEditedCustomFieldData()" type="primary">
                 {{ $t('Save') }}
             </el-button>
         </template>
@@ -51,7 +51,7 @@ export default {
             appReady: false,
             fields: false,
             labelPosition: 'top',
-            formData: this.custom_data,
+            formData: {},
             saving: false,
             loading_remote: false
         }
@@ -79,10 +79,20 @@ export default {
                 return false;
             }
 
+            if(!this.ticket_id) {
+                this.formData = this.custom_data;
+            }
+
+            if(isEmpty(this.formData)) {
+                this.formData = {};
+            }
+
             each(this.fields, (field, fieldName) => {
                 if (field.type == 'checkbox') {
                     if (!this.formData[fieldName] || !isArray(this.formData[fieldName])) {
                         this.formData[fieldName] = [];
+                    } else if(!this.formData[fieldName]) {
+                        this.formData[fieldName] = '';
                     }
                 }
             });

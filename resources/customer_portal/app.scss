@@ -304,6 +304,10 @@
         border: 1px solid #e5e9ec;
     }
 
+    .fs_no_attachment {
+        width: 100% !important;
+    }
+
     .fs_response_actions {
         padding-top: 10px;
         display: block;
@@ -359,6 +363,12 @@
         .fs_tk_header {
             padding: 20px 20px;
         }
+    }
+
+    .fs_private_disc, .fs_public_disc {
+        text-align: center;
+        margin-top: 20px;
+        font-size: 90%;
     }
 
     .fst_reply_box {
