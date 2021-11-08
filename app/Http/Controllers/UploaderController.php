@@ -30,9 +30,9 @@ class UploaderController extends Controller
             $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
             $person = $ticket->customer;
         } else {
-            $person = Helper::getAgentByUserId(get_current_user_id());
+            $person = Helper::getCurrentPerson();
         }
-
+        
         $uploadedFiles = FileSystem::setSubDir('ticket_'.$ticketId)->put($files);
 
         $attachments = [];
