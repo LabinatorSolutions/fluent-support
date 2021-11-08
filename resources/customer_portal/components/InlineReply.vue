@@ -10,10 +10,10 @@
             </div>
 
             <div class="fs_row">
-                <div class="fs_half">
+                <div v-if="appVars.has_file_upload" class="fs_half">
                     <attachment-form :ticket="ticket" :attachments="attachments" />
                 </div>
-                <div class="fs_half">
+                <div :class="{fs_no_attachment: !appVars.has_file_upload}" class="fs_half">
                     <div class="fs_response_actions">
                         <el-checkbox class="fs_close_checkbox" v-model="close_ticket" true-label="yes" false-label="no">{{$t('Close Ticket')}}</el-checkbox>
                         <el-button @click="reply()" size="small" type="success">{{$t('Reply')}}</el-button>
@@ -23,8 +23,8 @@
 
             <error :error="errors.get('permission_error')"/>
 
-            <p style="text-align: center;" v-if="ticket.privacy == 'private'">{{$t('This ticket is')}} <b>{{$t('Private')}}</b>. {{$t('agent_and_officials_can_see')}}</p>
-            <p style="text-align: center;" v-else>This ticket is <b>{{$t('Public')}}</b>. {{$t('not_to_share_private_info')}}</p>
+            <p class="fs_private_disc" v-if="ticket.privacy == 'private'">{{$t('This ticket is')}} <b>{{$t('Private')}}</b>. {{$t('agent_and_officials_can_see')}}</p>
+            <p class="fs_public_disc" v-else>This ticket is <b>{{$t('Public')}}</b>. {{$t('not_to_share_private_info')}}</p>
         </div>
     </div>
 </template>

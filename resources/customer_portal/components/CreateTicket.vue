@@ -20,7 +20,7 @@
                     <error :error="errors.get('content')"/>
                 </el-form-item>
 
-                <attachment-form :ticket="ticket" :attachments="attachments" />
+                <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments" />
 
                 <div class="fs_tk_row">
                     <div v-if="products.length" class="fs_tk_col">
