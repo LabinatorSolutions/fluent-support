@@ -570,7 +570,17 @@
 
             }
         }
+
+        input.el-radio__original, input.el-checkbox__original {
+            display: none;
+        }
+
+        input.el-input__inner, textarea {
+            border: 1px solid #cbd5e0 !important;
+        }
     }
+
+
 
     @media all and (max-width: 768px) {
         .fs_thread_body {

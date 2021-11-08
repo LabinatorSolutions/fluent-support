@@ -1,6 +1,6 @@
 <template>
     <el-form-item :class="field.wrapper_class">
-        <div v-if="field.label" slot="label">
+        <div class="fs_field_label" v-if="field.label" slot="label">
         {{ field.label }}
             <el-tooltip v-if="field.help" popper-class="sidebar-popper" effect="dark" placement="top">
                 <template #content>
