@@ -27,6 +27,8 @@ class ExternalPages
 
     public function handleTicketView()
     {
+
+
         if(!Helper::isPublicSignedTicketEnabled()) {
             $ticketId = absint(Arr::get($_REQUEST, 'ticket_id'));
             $ticket = Ticket::where('id', $ticketId)->first();

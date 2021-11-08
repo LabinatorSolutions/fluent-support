@@ -235,7 +235,7 @@ class Settings
             }
         } else if ($emailKey == 'ticket_replied_by_agent_email_to_customer') {
             if ($type == 'web') {
-                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>An agent just replied to your ticket "<strong>{{ticket.title}}</strong>" (<a href="{{ticket.public_url}}">#{ticket.id}</a>). To view his reply or add additional comments, click the button below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>or follow this link: {{ticket.public_url}}</p><hr /><p>Regards,<br />{business.name}</p>';
+                return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>An agent just replied to your ticket "<strong>{{ticket.title}}</strong>" (<a href="{{ticket.public_url}}">#{{ticket.id}}</a>). To view his reply or add additional comments, click the button below:</p><h4><a href="{{ticket.public_url}}">View Ticket</a></h4><p>or follow this link: {{ticket.public_url}}</p><hr /><p>Regards,<br />{business.name}</p>';
             } else {
                 return '{{response.full_content}}<p>Regards,<br />{{agent.full_name}}</p>';
             }

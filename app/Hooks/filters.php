@@ -14,6 +14,6 @@
  */
 
 
-$app->addCustomFilter('parse_smartcode_data', function ($string, $data) {
+add_filter('fluent_support/parse_smartcode_data', function ($string, $data) {
     return (new \FluentSupport\App\Services\Parser\Parser())->parse($string, $data);
 }, 10, 2);
