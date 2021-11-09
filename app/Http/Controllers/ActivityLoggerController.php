@@ -15,8 +15,11 @@ class ActivityLoggerController extends Controller
             }
         ])->orderBy('id', 'DESC')->paginate();
 
+        $settings = $this->getSettings();
+
         return [
             'activities' => $activities,
+            'settings'   => $settings['activity_settings']
         ];
     }
 
@@ -25,7 +28,8 @@ class ActivityLoggerController extends Controller
         $settings = Helper::getOption('_activity_settings', []);
 
         $defaults = [
-            'delete_days' => 14
+            'delete_days'  => 14,
+            'disable_logs' => 'no'
         ];
 
         $settings = wp_parse_args($settings, $defaults);
@@ -40,7 +44,8 @@ class ActivityLoggerController extends Controller
     {
         $settings = $this->request->get('activity_settings', []);
         $defaults = [
-            'delete_days' => 14
+            'delete_days'  => 14,
+            'disable_logs' => 'no'
         ];
         $settings = wp_parse_args($settings, $defaults);
         $settings['delete_days'] = intval($settings['delete_days']);

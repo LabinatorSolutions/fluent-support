@@ -34,7 +34,7 @@ class Menu
             'fluent-support',
             array($this, 'renderApp'),
             $this->getMenuIcon(),
-            4
+            apply_filters('fluent-support/admin_menu_position', 4)
         );
     }
 
@@ -101,14 +101,6 @@ class Menu
             ];
         }
 
-        if ($canManageSettings) {
-            $secondayItems[] = [
-                'key'       => 'settings',
-                'label'     => __('Global Settings', 'fluent-support'),
-                'permalink' => $baseUrl . 'settings'
-            ];
-        }
-
         if (PermissionManager::currentUserCan('fst_manage_workflows')) {
             $secondayItems[] = [
                 'key'       => 'workflows',
@@ -117,6 +109,13 @@ class Menu
             ];
         }
 
+        if ($canManageSettings) {
+            $secondayItems[] = [
+                'key'       => 'settings',
+                'label'     => __('Global Settings', 'fluent-support'),
+                'permalink' => $baseUrl . 'settings'
+            ];
+        }
 
         $menuItems = apply_filters('fluent_support/primary_menu_items', $menuItems);
         $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems);
