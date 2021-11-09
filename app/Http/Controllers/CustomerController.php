@@ -2,7 +2,10 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Customer;
+use FluentSupport\App\Models\Ticket;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -18,7 +21,7 @@ class CustomerController extends Controller
         }
 
 
-        if($request->get('filter_by_status') != 'all') {
+        if($request->get('filter_by_status')['status'] != 'all') {
             $customersQuery->filterByStatues($request->get('filter_by_status'));
         }
 
@@ -37,6 +40,12 @@ class CustomerController extends Controller
         ];
     }
 
+    public function getCustomer(Request $request)
+    {
+        return Customer::where('user_id', $request->get('customer_user_id'))
+            ->orWhere('email', $request->get('customer_email'))->first();
+    }
+
     public function create(Request $request)
     {
         $data = $request->all();
@@ -46,7 +55,7 @@ class CustomerController extends Controller
 
         $email = $data['email'];
 
-        $data = Arr::only($data, ['first_name', 'last_name', 'email', 'status']);
+        $data = Arr::only($data, ['first_name', 'last_name', 'email', 'status', 'title', 'note']);
 
         $user = get_user_by('email', $email);
 
@@ -88,7 +97,7 @@ class CustomerController extends Controller
             ], 423);
         }
 
-        $updateData = Arr::only($data, ['first_name', 'last_name', 'email', 'status']);
+        $updateData = Arr::only($data, ['first_name', 'last_name', 'email', 'status', 'title', 'note']);
 
         $user = get_user_by('email', $data['email']);
 
@@ -107,6 +116,13 @@ class CustomerController extends Controller
 
     public function delete(Request $request, $customerId)
     {
-
+        $customer = Customer::findOrFail($customerId);
+        Ticket::where('customer_id', $customerId)->delete();
+        Attachment::where('person_id', $customerId)->delete();
+        Conversation::where('person_id', $customerId)->delete();
+        $customer->delete();
+        return [
+            'message' => __('Customer Deleted Successfully', 'fluent-support')
+        ];
     }
 }

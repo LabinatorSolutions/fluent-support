@@ -1,5 +1,5 @@
 <template>
-    <el-radio-group :class="field.wrapper_class" v-model="model">
+    <el-radio-group :class="field.wrapper_class" v-model="modelValue">
         <el-radio v-for="(item,itemIndex) in field.options" :key="itemIndex" :label="item.id">
             {{ item.label }}
         </el-radio>
@@ -9,15 +9,11 @@
 <script type="text/babel">
 export default {
     name: 'InputRadio',
-    props: ['field', 'value'],
-    data() {
-        return {
-            model: this.value
-        }
-    },
+    props: ['field', 'modelValue'],
+    emits: ['update:modelValue'],
     watch: {
-        model(value) {
-            this.$emit('input', value);
+        modelValue(value) {
+            this.$emit('update:modelValue', value);
         }
     }
 }

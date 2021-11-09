@@ -107,6 +107,7 @@ $router->prefix('my-reports')->withPolicy('PortalPolicy')->group(function ($rout
 
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'CustomerController@index');
+    $router->get('customer_page', 'CustomerController@getCustomer');
     $router->post('/', 'CustomerController@create');
     $router->put('/{customer_id}', 'CustomerController@update');
     $router->delete('/{customer_id}', 'CustomerController@delete');

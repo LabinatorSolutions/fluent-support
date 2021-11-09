@@ -106,3 +106,37 @@ ul.el-upload-list.el-upload-list--picture {
     background: #f1f2f5;
     border-radius: 4px;
 }
+
+.fs_customer_desc{
+    display:flex;
+    justify-content: space-between;
+    padding: 2em 3em;
+    background: #ffffff;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    & .ffc_customer_form{
+        flex: 1 100%;
+    }
+    & .fs_customer_tickets {
+        margin-left: 6em;
+        flex: 1 100%;
+        & li{
+            background: #f9f9fa;
+            border-radius: 2%;
+            padding: 0.2em 1em;
+        }
+    }
+}
+
+.fs_customer_page_header {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    background: #f9f9fa;
+    & .fs_customer_photo {
+        padding: 1.5em;
+        & img {
+            border-radius: 50%;
+            width: 5em;
+        }
+    }
+}
