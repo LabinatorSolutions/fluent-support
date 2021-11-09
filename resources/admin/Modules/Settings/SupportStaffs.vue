@@ -46,8 +46,8 @@
                 <el-table-column :label="$t('Interactions')" prop="interactions_count" width="140"/>
                 <el-table-column :label="$t('Actions')" width="100">
                     <template #default="scope">
-                        <el-button @click="initEdit(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
-                        <el-button @click="deleteAgent(scope.row.id)" size="mini" type="danger" icon="el-icon-delete" />
+                        <el-button @click="initEdit(scope.row)" size="medium" type="text" icon="el-icon-edit" />
+                        <el-button @click="deleteAgent(scope.row.id)" size="medium" type="text" icon="el-icon-delete" style="color:red;"/>
                     </template>
                 </el-table-column>
             </el-table>

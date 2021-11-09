@@ -32,9 +32,22 @@
                         </el-table-column>
                         <el-table-column width="120" label="Action">
                             <template #default="scope">
-                                <el-button @click="editTagModal(scope.row)" size="mini" type="success"
+                                <el-button @click="editTagModal(scope.row)" size="medium" type="text"
                                            icon="el-icon-edit"></el-button>
-                                <el-button @click="deleteTag(scope.row)" size="mini" type="danger" icon="el-icon-delete"></el-button>
+                                <el-popconfirm
+                                    confirm-button-text="Yes, Delete this"
+                                    cancel-button-text="No"
+                                    icon="el-icon-info"
+                                    icon-color="red"
+                                    title="Are you sure to delete this tag?"
+                                    @confirm="deleteTag(scope.row)"
+                                >
+                                    <template #reference>
+                                        <el-button v-loading="fetching" style="margin-left: 10px; color: red;" type="text"
+                                                   size="medium"
+                                                   icon="el-icon-delete"></el-button>
+                                    </template>
+                                </el-popconfirm>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -159,11 +172,11 @@ export default {
             this.tag_modal = true;
         },
         deleteTag(tag) {
-            const r = confirm(this.$t("Are you sure, You want to delete this?"));
-
-            if (!r) {
-                return ;
-            }
+            // const r = confirm(this.$t("Are you sure, You want to delete this?"));
+            //
+            // if (!r) {
+            //     return ;
+            // }
 
             this.$del(`ticket-tags/${tag.id}`)
                 .then(response => {

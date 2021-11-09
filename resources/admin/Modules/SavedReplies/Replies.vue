@@ -41,9 +41,22 @@
                         </el-table-column>
                         <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
-                                <el-button @click="editModal(scope.row)" size="mini" type="success"
-                                           icon="el-icon-edit"></el-button>
-                                <el-button @click="deleteReply(scope.row)" size="mini" type="danger" icon="el-icon-delete"></el-button>
+                                <el-button @click="editModal(scope.row)" size="medium"
+                                           icon="el-icon-edit" type="text" ></el-button>
+                              <el-popconfirm
+                                  confirm-button-text="Yes, Delete this"
+                                  cancel-button-text="No"
+                                  icon="el-icon-info"
+                                  icon-color="red"
+                                  title="Are you sure to delete this template?"
+                                  @confirm="deleteReply(scope.row)"
+                              >
+                                <template #reference>
+                                  <el-button v-loading="loading" style="margin-left: 10px; color: red;" type="text"
+                                             size="medium"
+                                             icon="el-icon-delete"></el-button>
+                                </template>
+                              </el-popconfirm>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -180,11 +193,11 @@ export default {
             this.edit_modal = true;
         },
         deleteReply(reply) {
-            const r = confirm(this.$t("Are you sure, You want to delete this?"));
-
-            if (!r) {
-                return ;
-            }
+            // const r = confirm(this.$t("Are you sure, You want to delete this?"));
+            //
+            // if (!r) {
+            //     return ;
+            // }
 
             this.$del(`saved-replies/${reply.id}`)
                 .then(response => {

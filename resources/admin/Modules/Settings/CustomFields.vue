@@ -19,12 +19,12 @@
                         <el-table-column :label="$t('Type')" prop="type"></el-table-column>
                         <el-table-column width="160" :label="$t('Actions')">
                             <template #default="scope">
-                                <el-button type="info" @click="updateFieldModal(scope.$index)" size="mini"
+                                <el-button type="text" @click="updateFieldModal(scope.$index)" size="medium"
                                            icon="el-icon-edit"></el-button>
                                 <el-popconfirm title="Are you sure to delete this field?"
                                                @confirm="deleteField(scope.$index)">
                                     <template #reference>
-                                        <el-button type="danger" size="mini" icon="el-icon-delete"></el-button>
+                                        <el-button type="text" size="medium" icon="el-icon-delete" style="color: red; margin-right: .3em;"></el-button>
                                     </template>
                                 </el-popconfirm>
 
