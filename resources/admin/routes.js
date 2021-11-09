@@ -16,6 +16,7 @@ import LicenseManagement from "./Modules/Settings/LicenseManagement";
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
+import CustomerPage from "./Modules/Customers/CustomerPage";
 
 import MailBoxRoot from './Modules/MailBoxes/MailBoxRoot';
 import ChooseMailBox from './Modules/MailBoxes/ChooseMailBox';
@@ -156,6 +157,16 @@ export default [
         path: '/customers',
         name: 'Customers',
         component: Customers,
+        meta: {
+            active: 'customers'
+        }
+    },
+    {
+        path: '/customers/customer_page',
+        name: 'customer_page',
+        component: CustomerPage,
+        props: (route) => ({ customer_id: route.query.customer_id,
+            customer_email: route.query.customer_email, customer_user_id: route.query.customer_user_id }),
         meta: {
             active: 'customers'
         }

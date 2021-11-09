@@ -34,8 +34,9 @@
                     <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
                     <el-table-column :label="$t('Name')" width="260">
                         <template #default="scope">
-                            <a v-if="scope.row.user_profile" :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
-                            <span v-else>{{scope.row.full_name}}</span>
+                            <router-link :to="{name: 'customer_page', query: {customer_user_id: parseInt(scope.row.user_id), customer_email: scope.row.email, customer_id: scope.row.id}}">
+                                {{scope.row.full_name}}
+                            </router-link>
                         </template>
                     </el-table-column>
                     <el-table-column :label="$t('Email')">
@@ -59,7 +60,6 @@
                                 <span class="fs_badge"><i class="el-icon-folder"></i> {{scope.row.total_tickets}}</span>
                             </router-link>
                             <span class="fs_badge"><i class="el-icon-chat-line-round"></i> {{scope.row.total_responses}}</span>
-                            <span @click="showEditCustomerModal(scope.row)" class="fs_badge"><i class="el-icon-edit"></i></span>
                         </template>
                     </el-table-column>
                 </el-table>

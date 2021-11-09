@@ -2,6 +2,7 @@
     <div v-loading="loading" class="ffc_customer_form">
         <form-builder :fields="fields" :form-data="customer" />
         <el-button @click="updateCustomer()" type="success" v-if="customer.id">{{$t('Update Customer')}}</el-button>
+        <el-button @click="deleteCustomer()" type="danger" v-if="customer.id">{{$t('Delete Customer')}}</el-button>
         <el-button @click="createCustomer()" type="success" v-else>{{$t('Create Customer')}}</el-button>
     </div>
 </template>
@@ -35,14 +36,26 @@ export default {
                     placeholder: this.$t('Email'),
                     type: 'input-text'
                 },
+                title: {
+                    label: this.$t('Job Title'),
+                    data_type: 'text',
+                    placeholder: this.$t('Job Title'),
+                    type: 'input-text'
+                },
+                note: {
+                    label: this.$t('Note'),
+                    data_type: 'textarea',
+                    placeholder: this.$t('Note'),
+                    type: 'input-text'
+                },
                 status: {
                     label: this.$t('Status'),
                     data_type: 'text',
                     type: 'input-radio',
                     options:{
-                        'active': {'id':'active', 'label':'Active', 'value':'active'},
-                        'inactive': {'id':'inactive', 'label':'Inactive', 'value':'inactive'}
-                    }
+                        'active': {'id':'active', 'value':'active', 'label':'Active'},
+                        'inactive': {'id':'inactive', 'value':'inactive', 'label':'Inactive'}
+                    },
                 },
                 status_html: {
                     dependency: {
@@ -59,14 +72,19 @@ export default {
         }
     },
     methods: {
-        updateCustomer() {
-            this.loading = true;
-            this.$put(`customers/${this.customer.id}`,  {
+        customersInformation() {
+            return {
                 first_name: this.customer.first_name,
                 last_name: this.customer.last_name,
                 email: this.customer.email,
-                status: this.customer.status
-            })
+                status: this.customer.status,
+                title: this.customer.title,
+                note: this.customer.note
+            }
+        },
+        updateCustomer() {
+            this.loading = true;
+            this.$put(`customers/${this.customer.id}`,  this.customersInformation())
             .then(response => {
                 this.$notify.success(response.message);
                 this.$emit('updated', response.customer);
@@ -80,12 +98,7 @@ export default {
         },
         createCustomer() {
             this.loading = true;
-            this.$post('customers',  {
-                first_name: this.customer.first_name,
-                last_name: this.customer.last_name,
-                email: this.customer.email,
-                status: this.customer.status
-            })
+            this.$post('customers',  this.customersInformation())
                 .then(response => {
                     this.$notify.success(response.message);
                     this.$emit('updated', response.customer);
@@ -96,6 +109,18 @@ export default {
                 .always(() => {
                     this.loading = false;
                 });
+        },
+        deleteCustomer() {
+            this.loading = !this.loading;
+            this.$del(`customers/${this.customer.id}`)
+            .then(response => {
+                this.$router.go(-1);
+                this.$notify.success(response.message)
+            })
+            .catch(errors => {
+                this.$handleError(errors)
+            })
+            .always()
         }
     }
 }
