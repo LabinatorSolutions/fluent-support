@@ -21,24 +21,29 @@
         <div v-if="!loading" class="fs_box_body">
             <el-table stripe :data="agents">
                 <el-table-column :label="$t('ID')" prop="id" width="90"/>
-                <el-table-column :label="$t('Name')" width="160">
+                <el-table-column :label="$t('Name')">
                     <template #default="scope">
                         <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('Permissions')">
-                    <template #default="scope">
-                        <span class="fs_badge"
-                              v-for="permission in scope.row.permissions">{{ readable(permission) }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="$t('Replies')" prop="replies_count" width="140"/>
-                <el-table-column :label="$t('Interactions')" prop="interactions_count" width="140"/>
                 <el-table-column :label="$t('Title')">
                     <template #default="scope">
                         <span  style="font-size: 14px; color: #56c288;">{{scope.row.title}}</span>
                     </template>
                 </el-table-column>
+                <el-table-column :label="$t('Permissions')">
+                    <template #default="scope">
+                        <el-tooltip placement="top">
+                            <template #content>
+                                <p>Assigned Permissions</p>
+                                <span style="display: block" v-for="permission in scope.row.permissions">{{ readable(permission) }}</span>
+                            </template>
+                            <el-button type="default" size="small">{{ scope.row.permissions.length }} permissions</el-button>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <el-table-column :label="$t('Replies')" prop="replies_count" width="140"/>
+                <el-table-column :label="$t('Interactions')" prop="interactions_count" width="140"/>
                 <el-table-column :label="$t('Actions')" width="100">
                     <template #default="scope">
                         <el-button @click="initEdit(scope.row)" size="mini" type="primary" icon="el-icon-edit" />
@@ -77,8 +82,11 @@
                 </el-form-item>
 
                 <el-form-item :label="$t('Permissions')">
-                    <el-checkbox-group v-model="editing_agent.permissions">
-                        <el-checkbox v-for="permission in permissions" :label="permission" :key="permission">{{readable(permission)}}</el-checkbox>
+                    <el-checkbox-group class="fs_permission_groups" v-model="editing_agent.permissions">
+                        <div  v-for="permissionSet in permissions" class="fs_each_permission_set">
+                            <h4 style="font-size: 15px;">{{permissionSet.title}}</h4>
+                            <el-checkbox v-for="(permissionLabel, permissionkey) in permissionSet.permissions" :label="permissionkey" :key="permissionkey">{{permissionLabel}}</el-checkbox>
+                        </div>
                     </el-checkbox-group>
                 </el-form-item>
 

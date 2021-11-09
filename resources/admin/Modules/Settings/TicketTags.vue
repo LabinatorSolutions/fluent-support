@@ -42,7 +42,7 @@
                         <pagination @fetch="fetchTags()" :pagination="pagination"/>
                     </div>
                 </div>
-                <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                <div class="fs_box_body" v-else>
                     <el-skeleton :rows="5" animated/>
                 </div>
             </template>

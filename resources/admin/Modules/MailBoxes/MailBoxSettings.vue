@@ -4,13 +4,14 @@
             <el-form-item :label="$t('Inbox Name')">
                 <el-input type="text" v-model="mailbox.name"></el-input>
             </el-form-item>
-            <el-form-item :label="$t('Support Inbox Email')">
-                <el-input :disabled="mailbox.mapped_email" type="email" v-model="mailbox.email"></el-input>
+            <el-form-item :label="$t('Support From Email')">
+                <el-input :disabled="mailbox.mapped_email && mailbox.box_type == 'email'" type="email" v-model="mailbox.email"></el-input>
                 <p>{{$t('email_can_be_send')}}</p>
             </el-form-item>
             <el-form-item :label="$t('Admin Email Address')">
                 <el-input type="email" v-model="mailbox.settings.admin_email_address"></el-input>
                 <p>{{$t('admin_get_email')}}</p>
+                <p v-if="mailbox.box_type == 'email' && mailbox.settings.admin_email_address == mailbox.email" style="color: red;">Your Admin Email Address and Support From Email should not be same. Please use a different email address.</p>
             </el-form-item>
 
             <el-form-item v-if="mailbox.box_type == 'email'" :label="$t('Mapped Email')">
@@ -78,6 +79,12 @@ export default {
     },
     methods: {
         saveSettings() {
+
+            if(this.mailbox.box_type == 'email' && this.mailbox.settings.admin_email_address == this.mailbox.email) {
+                this.$notify.error('Your Admin Email Address and Support From Email should not be same. Please use a different email address.');
+                return false;
+            }
+
             this.saving = true;
             this.$put(`mailboxes/${this.mailbox.id}`, {
                 business: this.mailbox

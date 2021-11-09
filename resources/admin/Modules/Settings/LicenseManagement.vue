@@ -16,7 +16,7 @@
             </div>
             <div v-if="!fetching" class="fs_box_body">
 
-                <div v-loading="verifying" class="fs_narrow_promo text-align-center" :class="'fc_license_'+licenseData.status">
+                <div style="background: white;" v-loading="verifying" class="fs_narrow_promo text-align-center" :class="'fc_license_'+licenseData.status">
                     <div v-if="licenseData.status == 'expired'">
                         <h3>Looks like your license has been expired {{licenseData.expires | nsHumanDiffTime}}</h3>
                         <a :href="licenseData.renew_url" target="_blank" class="el-button el-button--danger el-button--small">Click Here to Renew your License</a>

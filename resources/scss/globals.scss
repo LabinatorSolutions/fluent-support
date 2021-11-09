@@ -401,3 +401,14 @@ table.fs_table {
 .fs_field_label {
     font-weight: 500;
 }
+
+.fs_permission_groups {
+    padding: 15px;
+    background: #f1f2f5;
+    border-radius: 4px;
+    h4 {
+        margin: 0;
+        padding: 0;
+        font-size: 16px !important;
+    }
+}

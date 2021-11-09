@@ -12,8 +12,8 @@
                 />
                 <error :error="errors.get('customer_id')"/>
             </el-form-item>
-            <el-form-item v-if="mailboxes.length > 1" :label="$t('Select Business')">
-                <el-select v-model="ticket.mailbox_id" :placeholder="$t('Select related Product/Service')">
+            <el-form-item v-if="mailboxes.length > 1" :label="$t('Select Business Inbox')">
+                <el-select v-model="ticket.mailbox_id" :placeholder="$t('Select Business Inbox')">
                     <el-option v-for="mailbox in mailboxes" :key="mailbox.id" :value="mailbox.id"
                                :label="mailbox.name"></el-option>
                 </el-select>

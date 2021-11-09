@@ -138,7 +138,7 @@ $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
     $router->post('slack_response', 'ChatMessageParserController@handleSlackEvent');
 });
 
-$router->prefix('activity-logger')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
+$router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(function ($router) {
     $router->get('/', 'ActivityLoggerController@getActivities');
     $router->get('/settings', 'ActivityLoggerController@getSettings');
     $router->post('/settings', 'ActivityLoggerController@updateSettings');

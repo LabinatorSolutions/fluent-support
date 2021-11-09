@@ -13,7 +13,7 @@
             </div>
             <div class="">
                 <el-row :gutter="30">
-                    <el-col style="max-width: 30%;" v-for="box in mailboxes" :key="box.id" :sm="12" :md="6" :xl="6">
+                    <el-col v-for="box in mailboxes" :key="box.id" :sm="12" :md="6" :xl="6">
                         <div class="fs_mail_box">
                             <div class="fs_mail_title">
                                 <h3>{{ box.name }}</h3>

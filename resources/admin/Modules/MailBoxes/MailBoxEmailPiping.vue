@@ -36,7 +36,8 @@
                 <p>All the forwarded emails to this address will be synced with your tickets</p>
             </div>
             <div v-else class="fs_pipe_box">
-                <pre>{{email_pipe}}</pre>
+                <h3>{{error_message}}</h3>
+                <p>Please contact with <a href="https://wpmanageninja.com/support-tickets/#/" target="_blank">WPManageNinja Support</a></p>
             </div>
         </div>
         <div v-else>
@@ -57,17 +58,20 @@ export default {
             webhook_url: false,
             is_custom_supported: false,
             terms_agree: false,
-            issuing: false
+            issuing: false,
+            error_message: ''
         }
     },
     methods: {
         loadPipeStatus() {
             this.loading_pipe = true;
+            this.error_message = '';
             this.$get('email-box/' + this.mailbox.id + '/status')
                 .then(response => {
                     this.email_pipe = response.email_pipe;
                     this.webhook_url = response.rest_web_url;
                     this.is_custom_supported = response.is_custom_supported;
+                    this.error_message = response.error_message;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
