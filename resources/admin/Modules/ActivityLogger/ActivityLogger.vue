@@ -14,6 +14,10 @@
         </div>
         <div class="fs_box fs_activity_box" v-if="activities">
             <div class="fs_box_body">
+                <div v-if="settings.disable_logs == 'yes'">
+                    <h3 class="text-align-center">Activity Logs are currently disabled</h3>
+                </div>
+
                 <template v-if="!loading">
                     <ul class="fs_activities">
                         <li v-for="activity in activities" @click.prevent="handleClick(activity, $event)" :key="activity.id"
@@ -46,7 +50,7 @@
             width="60%"
             :append-to-body="true"
         >
-            <activity-settings @updated="showSettingsModal = false" />
+            <activity-settings @updated="showSettingsModal = false; fetchActivities()" />
         </el-dialog>
     </div>
 </template>
@@ -71,7 +75,8 @@ export default {
                 per_page: 10,
                 current_page: 1,
                 total: 0
-            }
+            },
+            settings: {}
         }
     },
     methods: {
@@ -84,6 +89,7 @@ export default {
                 .then(response => {
                     this.activities = response.activities.data;
                     this.pagination.total = response.activities.total;
+                    this.settings = response.settings;
                 })
                 .catch(error => {
                     this.$handleError(error)
