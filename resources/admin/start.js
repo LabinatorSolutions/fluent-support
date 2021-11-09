@@ -7,7 +7,6 @@ const router = createRouter({
     routes
 });
 
-
 const framerwork = new FluentFramework();
 
 framerwork.app.config.globalProperties.appVars = window.fluentSupportAdmin;

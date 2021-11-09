@@ -3,7 +3,7 @@
         <el-tab-pane :label="$t('Personal Reports')" name="my-reports" :lazy="true">
             <personal-reports :url="'my-reports'" />
         </el-tab-pane>
-        <el-tab-pane v-if="me.permissions.includes('fst_sensitive_data')" :label="$t('Agents Reports')" name="reports" :lazy="true">
+        <el-tab-pane v-if="me.permissions.indexOf('fst_sensitive_data') != -1" :label="$t('Agents Reports')" name="reports" :lazy="true">
             <reports/>
         </el-tab-pane>
     </el-tabs>

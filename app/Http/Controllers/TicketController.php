@@ -348,7 +348,7 @@ class TicketController extends Controller
             }
 
             return [
-                'message' => __(count($tickets) . ' tickets have been closed', 'fluent-support')
+                'message' => sprintf( __('%d tickets have been closed', 'fluent-support'), count($tickets))
             ];
         } else if ($action == 'delete_tickets') {
             $tickets = $query->get();

@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_workflow_pop">
+    <div v-if="workflows && workflows.length" class="fs_workflow_pop">
         <el-popover
             placement="bottom"
             :width="400"
