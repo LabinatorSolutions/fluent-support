@@ -151,6 +151,8 @@ export default {
         if (this.has_pro) {
             this.fetch();
         }
+
+        this.$setTitle('Edit Workflow');
     }
 }
 </script>
