@@ -12,7 +12,7 @@
                 <div class="fs_box_actions fs_customer_filters">
                     <div class="fs_cs_status_filter">
                         <label>{{$t('Status')}}</label>
-                        <el-select filterable @change="fetchCustomers()" v-model="filterStatus.status" size="mini" style="padding-right: 0.7em;">
+                        <el-select filterable @change="fetchCustomers()" v-model="status" size="mini" style="padding-right: 0.7em;">
                             <el-option
                                 v-for="(statusKey, statusName) in statusFilters"
                                 :key="statusName"
@@ -107,9 +107,7 @@ export default {
                 active: 'Active',
                 inactive: 'Inactive'
             },
-            filterStatus: {
-                status: 'all'
-            }
+            status: 'all'
         }
     },
     methods: {
@@ -119,7 +117,7 @@ export default {
                 per_page: this.pagination.per_page,
                 page: this.pagination.current_page,
                 search: this.search,
-                filter_by_status: this.filterStatus
+                status: this.status
             })
                 .then((response) => {
                     this.customers = response.customers.data;
