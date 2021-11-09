@@ -99,6 +99,19 @@
             }
         }
     }
+
+    .fs_tickets_view {
+        .inner_sidebar {
+            a.router-link-exact-active {
+                background: white;
+                &.router_not_exactly_matched {
+                    background: transparent;
+                    color: #909399;
+                }
+            }
+        }
+
+    }
 }
 
 

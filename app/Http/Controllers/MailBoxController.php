@@ -56,7 +56,7 @@ class MailBoxController extends Controller
         }
 
         $mailbox = MailBox::create($data);
-        
+
         return [
             'message' => __('Mailbox has been created successfully', 'fluent-support'),
             'mailbox' => $mailbox
