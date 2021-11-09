@@ -41,16 +41,22 @@ class MailBoxController extends Controller
             'email' => 'required'
         ]);
 
-        $data['settings'] = [
-            'admin_email_address' => $data['email']
-        ];
+        if($data['box_type'] == 'email') {
+            $data['settings'] = [
+                'admin_email_address' => ''
+            ];
+        } else {
+            $data['settings'] = [
+                'admin_email_address' => $data['email']
+            ];
+        }
 
         if (!MailBox::first()) {
             $data['is_default'] = 'yes';
         }
 
         $mailbox = MailBox::create($data);
-
+        
         return [
             'message' => __('Mailbox has been created successfully', 'fluent-support'),
             'mailbox' => $mailbox
