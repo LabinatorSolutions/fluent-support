@@ -38,7 +38,7 @@ class AgentController extends Controller
 
         return [
             'agents'      => $agents,
-            'permissions' => PermissionManager::pluginPermissions()
+            'permissions' => PermissionManager::getReadablePermissionGroups()
         ];
     }
 

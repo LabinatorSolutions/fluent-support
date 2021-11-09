@@ -14,16 +14,19 @@
                     <ul>
                         <li>
                             <router-link :to="{ name: 'box_settings', params: { box_id: mailbox.id } }">
+                                <i class="el-icon-box" />
                                 {{ $t('Inbox Settings') }}
                             </router-link>
                         </li>
                         <li>
                             <router-link :to="{ name: 'email_settings', params: { box_id: mailbox.id } }">
+                                <i class="el-icon-message" />
                                 {{ $t('Email Settings') }}
                             </router-link>
                         </li>
                         <li v-if="mailbox && mailbox.box_type == 'email'">
                             <router-link :to="{ name: 'email_piping', params: { box_id: mailbox.id } }">
+                                <i class="el-icon-connection" />
                                 {{ $t('Email Piping') }}
                             </router-link>
                         </li>

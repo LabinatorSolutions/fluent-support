@@ -34,7 +34,7 @@ class Menu
             'fluent-support',
             array($this, 'renderApp'),
             $this->getMenuIcon(),
-            4
+            apply_filters('fluent-support/admin_menu_position', 4)
         );
     }
 
@@ -71,18 +71,19 @@ class Menu
                 'label'     => __('Customers', 'fluent-support'),
                 'permalink' => $baseUrl . 'customers'
             ];
-
         }
 
-        $secondayItems = [
-            [
-                'key'       => 'saved_replies',
-                'label'     => __('Saved Replies', 'fluent-support'),
-                'permalink' => $baseUrl . 'saved-replies'
-            ]
-        ];
+        if (PermissionManager::currentUserCan('fst_manage_saved_replies')) {
+            $secondayItems = [
+                [
+                    'key'       => 'saved_replies',
+                    'label'     => __('Saved Replies', 'fluent-support'),
+                    'permalink' => $baseUrl . 'saved-replies'
+                ]
+            ];
+        }
 
-        if ($hasSensitiveAccess) {
+        if (PermissionManager::currentUserCan('fst_view_activity_logs')) {
             $secondayItems[] = [
                 'key'       => 'activity_logger',
                 'label'     => __('Activities', 'fluent-support'),
@@ -90,19 +91,25 @@ class Menu
             ];
         }
 
-        if (PermissionManager::currentUserCan('fst_manage_settings')) {
+        $canManageSettings = PermissionManager::currentUserCan('fst_manage_settings');
+
+        if ($canManageSettings) {
             $secondayItems[] = [
                 'key'       => 'mailboxes',
                 'label'     => __('Business Settings', 'fluent-support'),
                 'permalink' => $baseUrl . 'mailboxes'
             ];
+        }
 
+        if (PermissionManager::currentUserCan('fst_manage_workflows')) {
             $secondayItems[] = [
                 'key'       => 'workflows',
                 'label'     => __('Workflows', 'fluent-support'),
                 'permalink' => $baseUrl . 'workflows'
             ];
+        }
 
+        if ($canManageSettings) {
             $secondayItems[] = [
                 'key'       => 'settings',
                 'label'     => __('Global Settings', 'fluent-support'),

@@ -25,30 +25,42 @@
 
 .fframe_body {
     margin-right: 20px;
+
     .inner_sidebar {
-        padding: 0 15px 0 0;
+        padding: 0;
+
         ul {
             list-style: none;
             margin: 0;
             padding: 0;
+
             li {
-                margin-bottom: 10px;
+                margin-bottom: 0px;
+
                 a {
                     text-decoration: none;
-                    color: #1d0e5a;
-                    font-size: 12px;
+                    color: #303133;
+                    font-size: 14px;
                     display: block;
-                    padding: .6875rem .5rem .6875rem 1rem;
-                    border-radius: 3px;
+                    padding: 17px 20px;
+                    border-radius: 0;
+                    transition: border-color .3s, background-color .3s, color .3s;
+
                     &.router-link-exact-active {
                         border: 1px solid #e3e6ef;
                         box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
-                        background: white;
+                        background: #ecf5ff;
+                        color: #409eff;
                     }
+
                     &.router_not_exactly_matched {
                         border: 0;
                         box-shadow: none;
                         background: transparent;
+                    }
+
+                    i {
+                        margin-right: 8px;
                     }
                 }
             }
@@ -59,13 +71,46 @@
 .fframe_body {
     .fs_settings_view {
         .inner_sidebar {
-            width: 250px;
+            width: 330px;
+            border-right: 1px solid #e6e6e6;
+            background: white;
         }
+
         .inner_body {
             width: calc(100% - 250px);
-            border-radius: 3px;
             box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
+            background: #f7fafc;
+
+            .fs_box_body {
+                background: #f7fafc;
+                padding: 20px 25px;
+
+                .el-select {
+                    background: white;
+                }
+
+                div.el-table {
+                    border: 1px solid #ebeef4;
+                }
+            }
+
+            .fs_box_header {
+                padding: 10px 25px;
+            }
         }
+    }
+
+    .fs_tickets_view {
+        .inner_sidebar {
+            a.router-link-exact-active {
+                background: white;
+                &.router_not_exactly_matched {
+                    background: transparent;
+                    color: #909399;
+                }
+            }
+        }
+
     }
 }
 
@@ -80,12 +125,14 @@
             line-height: 2.4em;
         }
     }
+
     .el-upload-list__item-thumbnail {
         width: 24%;
         height: 2.6em;
         margin: 0;
         border-radius: 4%;
     }
+
     .el-upload-list__item {
         height: 4em;
         width: 14.8em;
@@ -93,12 +140,13 @@
         margin: .3em;
     }
 }
+
 ul.el-upload-list.el-upload-list--picture {
     display: flex;
 }
 
-.el-icon-success:before{
-    color:var(--el-color-success)
+.el-icon-success:before {
+    color: var(--el-color-success)
 }
 
 .fs_html_viewer.fs_highlight {

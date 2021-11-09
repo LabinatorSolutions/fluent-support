@@ -4,12 +4,13 @@
             <ul>
                 <li v-for="(settings_menu, settings_index) in settings_items">
                     <router-link :to="{ name: settings_menu.route_name, query: settings_menu.route_query }">
+                        <i :class="settings_menu.icon" />
                         {{ settings_menu.title }}
                     </router-link>
                 </li>
             </ul>
         </div>
-        <div style="padding-bottom: 20px; background: white;" class="inner_body">
+        <div style="padding-bottom: 20px;" class="inner_body">
             <router-view key="products_view"></router-view>
         </div>
     </div>
@@ -23,31 +24,37 @@ export default {
             settings_items: [
                 {
                     title: this.$t('Global Settings'),
-                    route_name: 'global_settings'
+                    route_name: 'global_settings',
+                    icon: 'el-icon-document'
                 },
                 {
                     title: this.$t('Tags'),
                     route_name: 'tags',
+                    icon: 'el-icon-collection-tag',
                     route_query: {}
                 },
                 {
                     title: this.$t('Custom Fields'),
                     route_name: 'custom_fields',
-                    route_query: {}
+                    route_query: {},
+                    icon: 'el-icon-tickets'
                 },
                 {
                     title: this.$t('Products'),
                     route_name: 'products',
-                    route_query: {}
+                    route_query: {},
+                    icon: 'el-icon-goods'
                 },
                 {
                     title: this.$t('Support Staffs'),
                     route_name: 'support-staffs',
-                    route_query: {}
+                    route_query: {},
+                    icon: 'el-icon-user'
                 },
                 {
                     title: this.$t('Notification Integrations'),
-                    route_name: 'integration'
+                    route_name: 'integration',
+                    icon: 'el-icon-alarm-clock'
                 }
             ]
         }
@@ -56,7 +63,8 @@ export default {
         if(this.has_pro) {
             this.settings_items.push({
                 title: this.$t('License Management'),
-                route_name: 'license'
+                route_name: 'license',
+                icon: 'el-icon-lock'
             });
         }
     }

@@ -20,7 +20,8 @@
                             <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
                                 {{ scope.row.title }}
                             </router-link>
-                            <span v-if="scope.row.trigger_human_name" class="fs_trigger_sub">{{scope.row.trigger_human_name}}</span>
+                            <span v-if="scope.row.trigger_human_name"
+                                  class="fs_trigger_sub">{{ scope.row.trigger_human_name }}</span>
                         </template>
                     </el-table-column>
                     <el-table-column prop="status" label="Status" width="120"/>
@@ -39,7 +40,8 @@
                                 @confirm="deleteWorkflow(scope.row.id)"
                             >
                                 <template #reference>
-                                    <el-button style="margin-left: 10px; color: red;" type="text" size="mini"
+                                    <el-button v-loading="deleting" style="margin-left: 10px; color: red;" type="text"
+                                               size="mini"
                                                icon="el-icon-delete"></el-button>
                                 </template>
                             </el-popconfirm>
@@ -129,7 +131,8 @@ export default {
                 title: '',
                 trigger_type: 'manual'
             },
-            creating: false
+            creating: false,
+            deleting: false
         }
     },
     methods: {
@@ -170,13 +173,26 @@ export default {
                 });
         },
         deleteWorkflow(workflowId) {
-
+            this.deleting = true;
+            this.$del('workflows/' + workflowId)
+                .then(response => {
+                    this.$notify.success(response.message);
+                    this.fetch();
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.deleting = false;
+                });
         }
     },
     mounted() {
         if (this.has_pro) {
             this.fetch();
         }
+
+        this.$setTitle('Workflows');
     }
 }
 </script>

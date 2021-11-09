@@ -4,6 +4,9 @@
             <el-form-item label="Automatically delete activity logs after days">
                 <el-input type="number" min="1" max="60" v-model="activity_settings.delete_days"/>
             </el-form-item>
+            <el-form-item>
+                <el-checkbox true-label="yes" false-label="no" v-model="activity_settings.disable_logs">Disable Activity Logs</el-checkbox>
+            </el-form-item>
         </el-form>
 
         <span class="dialog-footer">
