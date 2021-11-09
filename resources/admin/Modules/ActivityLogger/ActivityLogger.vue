@@ -9,7 +9,7 @@
                            @click="fetchActivities()"
                            icon="el-icon-refresh"
                            size="mini"></el-button>
-                <el-button @click="showSettingsModal = true" size="small" type="default" icon="el-icon-setting"></el-button>
+                <el-button v-if="me.permissions.indexOf('fst_manage_settings') != -1" @click="showSettingsModal = true" size="small" type="default" icon="el-icon-setting"></el-button>
             </div>
         </div>
         <div class="fs_box fs_activity_box" v-if="activities">

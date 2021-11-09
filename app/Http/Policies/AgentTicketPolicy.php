@@ -20,4 +20,15 @@ class AgentTicketPolicy extends Policy
 
         return !!array_intersect($permissions, $acceptedPermissions);
     }
+
+    public function doBulkActions(Request $request)
+    {
+        $action = $request->get('bulk_action');
+
+        if($action == 'delete_tickets') {
+            return PermissionManager::currentUserCan('fst_delete_tickets');
+        }
+
+        return $this->verifyRequest($request);
+    }
 }
