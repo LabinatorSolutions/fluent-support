@@ -1,5 +1,5 @@
 <template>
-    <el-input :type="field.data_type" :placeholder="field.placeholder" v-model="modelValue"></el-input>
+    <el-input :disabled="field.disabled" :type="field.data_type" :placeholder="field.placeholder" v-model="modelValue"></el-input>
 </template>
 
 <script type="text/babel">

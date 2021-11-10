@@ -3,16 +3,18 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{$t('All Customers')}}</h3>
+                    <h3>{{ $t('All Customers') }}</h3>
                     <el-button
                         @click="showEditCustomerModal({})"
                         size="mini"
-                        icon="el-icon-plus">{{$t('Add Customer')}}</el-button>
+                        icon="el-icon-plus">{{ $t('Add Customer') }}
+                    </el-button>
                 </div>
                 <div class="fs_box_actions fs_customer_filters">
                     <div class="fs_cs_status_filter">
-                        <label>{{$t('Status')}}</label>
-                        <el-select filterable @change="fetchCustomers()" v-model="status" size="mini" style="padding-right: 0.7em;">
+                        <label>{{ $t('Status') }}</label>
+                        <el-select filterable @change="fetchCustomers()" v-model="status" size="mini"
+                                   style="padding-right: 0.7em;">
                             <el-option
                                 v-for="(statusKey, statusName) in statusFilters"
                                 :key="statusName"
@@ -34,8 +36,8 @@
                     <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
                     <el-table-column :label="$t('Name')" width="260">
                         <template #default="scope">
-                            <router-link :to="{name: 'customer_page', query: {customer_user_id: parseInt(scope.row.user_id), customer_email: scope.row.email, customer_id: scope.row.id}}">
-                                {{scope.row.full_name}}
+                            <router-link :to="{name: 'view_customer', params: { customer_id: scope.row.id }}">
+                                {{ scope.row.full_name }}
                             </router-link>
                         </template>
                     </el-table-column>
@@ -51,15 +53,17 @@
                     </el-table-column>
                     <el-table-column :label="$t('Last Activity')" width="160">
                         <template #default="scope">
-                            {{$timeDiff(scope.row.last_response_at)}}
+                            {{ $timeDiff(scope.row.last_response_at) }}
                         </template>
                     </el-table-column>
                     <el-table-column :label="$t('Stats')" width="180">
                         <template #default="scope">
                             <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
-                                <span class="fs_badge"><i class="el-icon-folder"></i> {{scope.row.total_tickets}}</span>
+                                <span class="fs_badge"><i
+                                    class="el-icon-folder"></i> {{ scope.row.total_tickets }}</span>
                             </router-link>
-                            <span class="fs_badge"><i class="el-icon-chat-line-round"></i> {{scope.row.total_responses}}</span>
+                            <span class="fs_badge"><i
+                                class="el-icon-chat-line-round"></i> {{ scope.row.total_responses }}</span>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -75,7 +79,7 @@
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%">
-            <customer-form v-if="editing_customer" @updated="closeModal()" :customer="editing_customer" />
+            <customer-form v-if="editing_customer" @updated="closeModal()" :customer="editing_customer"/>
         </el-dialog>
     </div>
 </template>
@@ -148,8 +152,8 @@ export default {
 </script>
 
 <style scoped>
-    .fs_box_actions.fs_customer_filters {
-        display: flex;
-        align-items: flex-end;
-    }
+.fs_box_actions.fs_customer_filters {
+    display: flex;
+    align-items: flex-end;
+}
 </style>
