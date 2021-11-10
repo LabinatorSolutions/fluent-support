@@ -6,6 +6,7 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -16,13 +17,13 @@ class CustomerController extends Controller
         $customersQuery = Customer::orderBy('id', 'DESC')
             ->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
 
-        if($request->get('search')) {
+        if ($request->get('search')) {
             $customersQuery->searchBy($request->get('search'));
         }
 
 
         $status = $request->get('status');
-        if($status && $status != 'all') {
+        if ($status && $status != 'all') {
             $customersQuery->filterByStatues([$status]);
         }
 
@@ -31,8 +32,8 @@ class CustomerController extends Controller
         foreach ($customers as $customer) {
             $customer->total_tickets = $customer->getTicketCounts();
             $customer->total_responses = $customer->getResponseCounts();
-            if($customer->user_id) {
-                $customer->user_profile = admin_url('user-edit.php?user_id='.$customer->user_id);
+            if ($customer->user_id) {
+                $customer->user_profile = admin_url('user-edit.php?user_id=' . $customer->user_id);
             }
         }
 
@@ -41,10 +42,30 @@ class CustomerController extends Controller
         ];
     }
 
-    public function getCustomer(Request $request)
+    public function getCustomer(Request $request, $customerId)
     {
-        return Customer::where('user_id', $request->get('customer_user_id'))
-            ->orWhere('email', $request->get('customer_email'))->first();
+        $customer = Customer::findOrFail($customerId);
+
+        $data = [
+            'customer' => $customer
+        ];
+
+        $with = $request->get('with', []);
+
+        if (in_array('widgets', $with)) {
+            $data['widgets'] = ProfileInfoService::getProfileExtraWidgets($customer);
+        }
+
+        if (in_array('tickets', $with)) {
+            $data['tickets'] = Ticket::select(['id', 'title', 'status', 'customer_id', 'created_at'])
+                ->where('customer_id', $customer->id)
+                ->orderBy('id', 'DESC')
+                ->limit(20)
+                ->get();
+        }
+
+        return $data;
+
     }
 
     public function create(Request $request)
@@ -56,16 +77,16 @@ class CustomerController extends Controller
 
         $email = $data['email'];
 
-        $data = Arr::only($data, ['first_name', 'last_name', 'email', 'status', 'title', 'note']);
+        $data = Arr::only($data, (new Customer)->getFillable());
 
         $user = get_user_by('email', $email);
 
-        if($user) {
+        if ($user) {
             $data['user_id'] = $user->ID;
-            if(empty($data['first_name'])) {
+            if (empty($data['first_name'])) {
                 $data['first_name'] = $user->first_name;
             }
-            if(empty($data['last_name'])) {
+            if (empty($data['last_name'])) {
                 $data['last_name'] = $user->last_name;
             }
         }
@@ -73,7 +94,7 @@ class CustomerController extends Controller
         $customer = Customer::create($data);
 
         return [
-            'message' => __('Customer has been added', 'fluent-support'),
+            'message'  => __('Customer has been added', 'fluent-support'),
             'customer' => $customer
         ];
     }
@@ -83,14 +104,14 @@ class CustomerController extends Controller
         $customer = Customer::findOrFail($customerId);
         $data = $request->all();
         $this->validate($data, [
-            'email' => 'required|email',
+            'email'      => 'required|email',
             'first_name' => 'required'
         ]);
 
-        if($otherCustomer = Customer::where('id', '!=', $customerId)->where('email', $data['email'])->first()) {
+        if ($otherCustomer = Customer::where('id', '!=', $customerId)->where('email', $data['email'])->first()) {
             return $this->sendError([
                 'message' => __('Another Customer has same email address', 'fluent-support'),
-                'errors' => [
+                'errors'  => [
                     'email' => [
                         'unique' => __('Email address has been assigned to other customer', 'fluent-support')
                     ]
@@ -98,11 +119,15 @@ class CustomerController extends Controller
             ], 423);
         }
 
-        $updateData = Arr::only($data, ['first_name', 'last_name', 'email', 'status', 'title', 'note']);
+        $validKeys = (new Customer)->getFillable();
+        unset($validKeys['hash']);
+        unset($validKeys['user_id']);
+
+        $updateData = Arr::only($data, $validKeys);
 
         $user = get_user_by('email', $data['email']);
 
-        if($user) {
+        if ($user) {
             $updateData['user_id'] = $user->ID;
         }
 
@@ -110,7 +135,7 @@ class CustomerController extends Controller
             ->update($updateData);
 
         return [
-            'message' => __('Customer has been updated', 'fluent-support'),
+            'message'  => __('Customer has been updated', 'fluent-support'),
             'customer' => Customer::findOrFail($customerId)
         ];
     }

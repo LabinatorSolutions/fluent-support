@@ -162,11 +162,10 @@ export default [
         }
     },
     {
-        path: '/customers/customer_page',
-        name: 'customer_page',
+        path: '/customers/:customer_id',
+        name: 'view_customer',
         component: CustomerPage,
-        props: (route) => ({ customer_id: route.query.customer_id,
-            customer_email: route.query.customer_email, customer_user_id: route.query.customer_user_id }),
+        props: true,
         meta: {
             active: 'customers'
         }

@@ -34,6 +34,7 @@ class Person extends Model
         'state',
         'zip',
         'country',
+        'note'
     ];
 
 
@@ -61,7 +62,7 @@ class Person extends Model
                 $query->where(array_shift($fields), 'LIKE', "%$search%");
 
                 $nameArray = explode(' ', $search);
-                if(count($nameArray) >= 2) {
+                if (count($nameArray) >= 2) {
                     $query->orWhere(function ($q) use ($nameArray) {
                         $fname = array_shift($nameArray);
                         $lastName = implode(' ', $nameArray);
@@ -106,7 +107,7 @@ class Person extends Model
         }
 
         $email = '';
-        if(isset($this->attributes['email'])) {
+        if (isset($this->attributes['email'])) {
             $email = trim($this->attributes['email']);
         }
 
@@ -149,7 +150,7 @@ class Person extends Model
     public function getUserProfileEditUrl()
     {
         $userEditUrl = '';
-        if($this->user_id) {
+        if ($this->user_id) {
             $userEditUrl = get_edit_profile_url($this->user_id);
         }
         return apply_filters('fluent_support/person_user_edit_url', $userEditUrl, $this);
@@ -161,9 +162,9 @@ class Person extends Model
             ->where('object_type', 'person_meta')
             ->where('key', $metaKey)
             ->first();
-        if($meta) {
+        if ($meta) {
             $value = maybe_unserialize($meta->value);
-            if($value) {
+            if ($value) {
                 return $value;
             }
         }
@@ -177,16 +178,16 @@ class Person extends Model
             ->where('object_type', 'person_meta')
             ->where('key', $metaKey)
             ->first();
-        if($meta) {
+        if ($meta) {
             $meta->value = maybe_serialize($metaValue);
             $meta->save();
         }
 
         Meta::create([
             'object_type' => 'person_meta',
-            'object_id' => $this->id,
-            'key' => $metaKey,
-            'value' => maybe_serialize($metaValue)
+            'object_id'   => $this->id,
+            'key'         => $metaKey,
+            'value'       => maybe_serialize($metaValue)
         ]);
         return true;
     }

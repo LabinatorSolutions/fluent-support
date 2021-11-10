@@ -24,6 +24,7 @@ import CheckboxGroup from './_InputCheckboxes'
 import HtmlViewer from './_HtmlViewer'
 import AgentSelectors from './_AgentSelectors'
 import TagSelectors from './_TagSelectors'
+import CountrySelector from './_CountrySelector'
 
 export default {
     name: 'global_form_builder',
@@ -39,7 +40,8 @@ export default {
         CheckboxGroup,
         HtmlViewer,
         AgentSelectors,
-        TagSelectors
+        TagSelectors,
+        CountrySelector
     },
     props: {
         formData: {

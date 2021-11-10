@@ -67,6 +67,7 @@ $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function (
 });
 
 $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
+$router->get('options/countries', 'OptionsController@getCountries')->withPolicy('PortalPolicy');
 
 $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles')
     ->withPolicy('PortalPolicy');
@@ -107,10 +108,11 @@ $router->prefix('my-reports')->withPolicy('PortalPolicy')->group(function ($rout
 
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'CustomerController@index');
-    $router->get('customer_page', 'CustomerController@getCustomer');
     $router->post('/', 'CustomerController@create');
-    $router->put('/{customer_id}', 'CustomerController@update');
-    $router->delete('/{customer_id}', 'CustomerController@delete');
+
+    $router->get('/{customer_id}', 'CustomerController@getCustomer')->int('customer_id');
+    $router->put('/{customer_id}', 'CustomerController@update')->int('customer_id');
+    $router->delete('/{customer_id}', 'CustomerController@delete')->int('customer_id');
 });
 
 $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function ($router) {
