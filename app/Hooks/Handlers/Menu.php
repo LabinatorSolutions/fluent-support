@@ -28,7 +28,7 @@ class Menu
         }
 
         $menuPosition = 25;
-        if(defined('FLUENTCRM')) {
+        if (defined('FLUENTCRM')) {
             $menuPosition = 4;
         }
 
