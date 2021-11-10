@@ -25,11 +25,17 @@
 
 span.fs_highlight {
     font-weight: bold;
-    background: #ffff83;
+    background: #FFF3B5;
     padding: 0px 5px;
-    border: 1px dashed #ffd9d9;
     display: inline-block;
     margin: 3px 0;
 }
 
+.fs_stat_helper{
+    font-size: 14px;
+}
 
+.fs_suggested_ticket{
+    display: flex;
+    justify-content: space-between;
+}
