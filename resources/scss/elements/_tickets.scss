@@ -320,11 +320,15 @@ img.tk_customer_avatar {
     top: 6px;
 
     &.fs_badge_new, &.fs_badge_priority_critical {
-        background: #f56c6c;
+        text-transform: capitalize;
+        background: #fcd7d8;
+        color: #f06060;
     }
 
     &.fs_badge_active {
-        background: #56c288;
+        text-transform: capitalize;
+        color: #12B881;
+        background: #B8EAD9;
     }
 }
 
