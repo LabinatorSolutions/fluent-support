@@ -42,7 +42,11 @@
                                     </div>
                                     <div class="fs_tk_line">
                                         <div class="fs_tk_contact_details">
-                                            {{ customer.email }}
+                                            <a rel="noopener" target="_blank" v-if="customer.profile_edit_url"
+                                               :href="customer.profile_edit_url">
+                                                {{ customer.email }}
+                                            </a>
+                                            <span v-else> {{ customer.email }}</span>
                                         </div>
                                     </div>
                                 </div>
