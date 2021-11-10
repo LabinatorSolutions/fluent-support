@@ -27,6 +27,13 @@ class Menu
             $permission = 'manage_options';
         }
 
+        $menuPosition = 25;
+        if(defined('FLUENTCRM')) {
+            $menuPosition = 4;
+        }
+
+        $menuPosition = apply_filters('fluent-support/admin_menu_position', $menuPosition);
+
         add_menu_page(
             __('Fluent Support', 'fluent-support'),
             __('Fluent Support', 'fluent-support'),
@@ -34,7 +41,7 @@ class Menu
             'fluent-support',
             array($this, 'renderApp'),
             $this->getMenuIcon(),
-            apply_filters('fluent-support/admin_menu_position', 4)
+            $menuPosition
         );
     }
 
