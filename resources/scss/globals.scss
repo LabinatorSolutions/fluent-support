@@ -107,9 +107,9 @@
         overflow: hidden;
         margin: 0;
         padding: 10px 15px;
-        background-color: #f7fafc;
-        font-weight: 700;
-        color: #697386;
+        background-color: #f9f9f9;
+        font-weight: 500;
+        color: #3C434A;
 
         .fs_box_head {
             float: left;
@@ -131,6 +131,7 @@
         background: #fff;
         display: block;
         overflow: hidden;
+        border-radius: 0 0 5px 5px;
     }
 }
 
@@ -199,7 +200,7 @@ ul.fs_card_list {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 24px;
-    border-radius: 3px;
+    border-radius: 5px;
     border: 1px solid rgb(226, 228, 231);
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
 
@@ -224,10 +225,10 @@ ul.fs_card_list {
     }
 }
 
-.fs_inline_photo_32 {
+.fs_inline_photo_40 {
     display: inline-block;
-    margin-right: 5px;
-    width: 32px;
+    margin-right: 10px;
+    width: 40px;
     border-radius: 50%;
 }
 
