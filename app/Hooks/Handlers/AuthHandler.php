@@ -40,42 +40,7 @@ class AuthHandler
         $assets = $app['url.assets'];
         wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css');
 
-        $registrationFields = apply_filters('fluent_support/registration_form_fields', [
-            'first_name' => [
-                'required' => true,
-                'type' => 'text',
-                'label' => __('First mame', 'fluent-support'),
-                'id' => 'fst_first_name',
-                'placeholder' => __('First name', 'fluent-support')
-            ],
-            'last_name' => [
-                'type' => 'text',
-                'label' => __('Last Name', 'fluent-support'),
-                'id' => 'fst_last_name',
-                'placeholder' => __('Last name', 'fluent-support')
-            ],
-            'username' => [
-                'required' => true,
-                'type' => 'text',
-                'label' => __('Username', 'fluent-support'),
-                'id' => 'fst_username',
-                'placeholder' => __('Username', 'fluent-support')
-            ],
-            'email' => [
-                'required' => true,
-                'type' => 'email',
-                'label' => __('Email Address', 'fluent-support'),
-                'id' => 'fst_email',
-                'placeholder' => __('Your Email Address', 'fluent-support')
-            ],
-            'password' => [
-                'required' => true,
-                'type' => 'password',
-                'label' => __('Password', 'fluent-support'),
-                'id' => 'fst_password',
-                'placeholder' => __('Password', 'fluent-support')
-            ]
-        ]);
+        $registrationFields = $this->getSignupFields();
 
         $registrationForm = '<div class="fst_registration_wrapper"><form class="fs_registration_form" method="post" name="fs_registration_form">';
 
@@ -122,5 +87,44 @@ class AuthHandler
 
         return $html.'</div>';
     }
-    
+
+    public function getSignupFields()
+    {
+        return apply_filters('fluent_support/registration_form_fields', [
+            'first_name' => [
+                'required' => true,
+                'type' => 'text',
+                'label' => __('First mame', 'fluent-support'),
+                'id' => 'fst_first_name',
+                'placeholder' => __('First name', 'fluent-support')
+            ],
+            'last_name' => [
+                'type' => 'text',
+                'label' => __('Last Name', 'fluent-support'),
+                'id' => 'fst_last_name',
+                'placeholder' => __('Last name', 'fluent-support')
+            ],
+            'username' => [
+                'required' => true,
+                'type' => 'text',
+                'label' => __('Username', 'fluent-support'),
+                'id' => 'fst_username',
+                'placeholder' => __('Username', 'fluent-support')
+            ],
+            'email' => [
+                'required' => true,
+                'type' => 'email',
+                'label' => __('Email Address', 'fluent-support'),
+                'id' => 'fst_email',
+                'placeholder' => __('Your Email Address', 'fluent-support')
+            ],
+            'password' => [
+                'required' => true,
+                'type' => 'password',
+                'label' => __('Password', 'fluent-support'),
+                'id' => 'fst_password',
+                'placeholder' => __('Password', 'fluent-support')
+            ]
+        ]);
+    }
 }
