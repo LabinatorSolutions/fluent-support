@@ -17,6 +17,8 @@ use FluentSupport\App\App;
 
 require_once 'Handlers/AuthHandler.php';
 
+(new \FluentSupport\App\Hooks\Handlers\AuthHandler)->init();
+
 $app->addCustomAction('handle_exception', 'ExceptionHandler@handle');
 
 $app->addAction('admin_menu', 'Menu@add');
