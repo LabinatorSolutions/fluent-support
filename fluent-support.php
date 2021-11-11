@@ -12,7 +12,7 @@ Text Domain: fluent-support
 Domain Path: /language
 */
 
-define('FLUENT_SUPPORT_VERSION', '1.1.0');
+define('FLUENT_SUPPORT_VERSION', '1.1.1');
 define('FLUENT_SUPPORT_UPLOAD_DIR', 'fluent-support');
 
 require __DIR__.'/vendor/autoload.php';

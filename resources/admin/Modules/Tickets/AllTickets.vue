@@ -228,6 +228,13 @@ export default {
                 filters: this.filters
             })
                 .then(response => {
+
+                    if(response.tickets.total && (!response.tickets.from && this.pagination.current_page > 1)) {
+                        this.pagination.current_page = 1;
+                        this.fetchTickets();
+                        return false;
+                    }
+
                     this.tickets = response.tickets.data;
                     this.pagination.total = response.tickets.total;
                     this.saveFilters();
@@ -368,6 +375,7 @@ export default {
                 ticket_tags: []
             };
             this.search = '';
+            this.pagination.current_page = 1;
             this.fetchTickets();
         }
     },
