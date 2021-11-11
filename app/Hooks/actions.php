@@ -15,6 +15,8 @@
 
 use FluentSupport\App\App;
 
+require_once 'Handlers/AuthHandler.php';
+
 $app->addCustomAction('handle_exception', 'ExceptionHandler@handle');
 
 $app->addAction('admin_menu', 'Menu@add');
@@ -22,22 +24,6 @@ $app->addAction('admin_enqueue_scripts', 'Menu@maybeEnqueueAssets');
 
 add_shortcode('fluent_support_portal', function () {
     return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
-});
-
-add_shortcode('fluent_support_login', function () {
-    $app = App::getInstance();
-    $assets = $app['url.assets'];
-    wp_enqueue_style('fluent_support_login_style', $assets.'admin/css/all_public.css');
-    wp_enqueue_script('fluent_support_login_helper', $assets.'portal/js/login_helper.js');
-    $return = '<div class="fst_login_wrapper">';
-    $return .= wp_login_form([
-        'echo'           => false,
-        'redirect'       => get_permalink(get_the_ID()),
-        'remember'       => true,
-        'value_remember' => true
-    ]);
-    $return .= '</div>';
-    return $return;
 });
 
 add_shortcode('fluent_support_admin_portal', function () {
