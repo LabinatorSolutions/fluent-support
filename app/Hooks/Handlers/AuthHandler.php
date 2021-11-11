@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 
 class AuthHandler
@@ -24,7 +25,7 @@ class AuthHandler
 
         $loginArgs = apply_filters('fluent_support/login_form_args', [
             'echo'           => false,
-            'redirect'       => get_permalink(get_the_ID()),
+            'redirect'       => Helper::getPortalBaseUrl(),
             'remember'       => true,
             'value_remember' => true
         ]);
@@ -47,6 +48,8 @@ class AuthHandler
         foreach ($registrationFields as $fieldName => $registrationField) {
             $registrationForm .= $this->renderField($fieldName, $registrationField);
         }
+
+        $registrationForm .= '<input type="hidden" name="__redirect_to" value="'.Helper::getPortalBaseUrl().'">';
 
         $registrationForm .= '</form></div>';
 
@@ -78,6 +81,10 @@ class AuthHandler
 
             foreach ($inputAtts as $attKey => $att) {
                 $atts .= $attKey.'="'.$att.'" ';
+            }
+
+            if(Arr::get($field, 'required')) {
+                $atts .= 'required';
             }
 
             $html .= '<div class="fs_input_wrap"><input '.$atts.'/></div>';
