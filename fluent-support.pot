@@ -1,0 +1,1806 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Fluent Support\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-12 14:30+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.5.5; wp-5.8.2\n"
+"X-Domain: fluent-support"
+
+#: app/Services/Tickets/TicketService.php:62
+msgid " assign this ticket to self"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:290
+msgid " has been updated"
+msgstr ""
+
+#: app/Services/Tickets/TicketService.php:61
+msgid " in this ticket"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:387
+msgid " tickets has been assigned to"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:361
+msgid " tickets have been deleted"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:351
+#, php-format
+msgid "%d tickets have been closed"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:63
+#, php-format
+msgid "%s ago"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:56
+msgid ""
+"<p>Please login to access the Customer Support Portal</p> "
+"[fluent_support_login]"
+msgstr ""
+
+#: app/Services/TransStrings.php:138
+msgid "Action"
+msgstr ""
+
+#: app/Services/TransStrings.php:198
+msgid "Active"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:80 app/Hooks/Handlers/Menu.php:81
+#: app/Hooks/Handlers/Menu.php:155
+msgid "Activities"
+msgstr ""
+
+#: app/Http/Controllers/ActivityLoggerController.php:56
+msgid "Activity settings has been updated"
+msgstr ""
+
+#: app/Services/TransStrings.php:81
+msgid "Add a New Business Inbox"
+msgstr ""
+
+#: app/Services/TransStrings.php:90
+msgid "Add Business Inbox"
+msgstr ""
+
+#: app/Services/TransStrings.php:50
+msgid "Add Customer"
+msgstr ""
+
+#: app/Services/TransStrings.php:226
+msgid "Add Internal Note"
+msgstr ""
+
+#: app/Services/TransStrings.php:168
+msgid "Add New"
+msgstr ""
+
+#: app/Services/TransStrings.php:78
+msgid "Add New Business Inbox"
+msgstr ""
+
+#: app/Services/TransStrings.php:41
+msgid "Add new customer"
+msgstr ""
+
+#: app/Services/TransStrings.php:173
+msgid "Add New Support Staff"
+msgstr ""
+
+#: app/Services/TransStrings.php:227
+msgid "Add Reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:195
+msgid "Add Tags"
+msgstr ""
+
+#: app/Services/TransStrings.php:184
+msgid ""
+"Add Tags and segment your tickets by tags filter then you can also do bulk "
+"actions"
+msgstr ""
+
+#: app/Services/TransStrings.php:234
+msgid "Add Ticket"
+msgstr ""
+
+#: app/Services/TransStrings.php:252
+msgid "added a note"
+msgstr ""
+
+#: app/Services/TransStrings.php:254
+msgid "Added By Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:101
+msgid "Admin Email Address"
+msgstr ""
+
+#: app/Services/TransStrings.php:285
+msgid "Admin Priority"
+msgstr ""
+
+#: app/Services/TransStrings.php:45
+msgid "afternoon"
+msgstr ""
+
+#: app/Services/TransStrings.php:112
+msgid "Agent"
+msgstr ""
+
+#: app/Services/TransStrings.php:174
+msgid "Agent Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:72
+msgid "Agent First Name"
+msgstr ""
+
+#: app/Services/TransStrings.php:74
+msgid "Agent Full Name"
+msgstr ""
+
+#: app/Services/TransStrings.php:175
+msgid "Agent Job Title( ex: Developer, Support Staff )"
+msgstr ""
+
+#: app/Services/TransStrings.php:73
+msgid "Agent Last Name"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:367
+msgid "agent_id param is required"
+msgstr ""
+
+#: app/Services/TransStrings.php:130
+msgid "Agents Reports"
+msgstr ""
+
+#: app/Services/TransStrings.php:200
+#: app/Hooks/Handlers/CustomerPortalHandler.php:58
+msgid "All"
+msgstr ""
+
+#: app/Services/TransStrings.php:49
+msgid "All Customers"
+msgstr ""
+
+#: app/Services/TransStrings.php:201
+msgid "All Products"
+msgstr ""
+
+#: app/Services/TransStrings.php:203
+msgid "All Support Staff"
+msgstr ""
+
+#: app/Services/TransStrings.php:244
+msgid "All Tickets"
+msgstr ""
+
+#: app/Http/Controllers/CustomerController.php:113
+msgid "Another Customer has same email address"
+msgstr ""
+
+#: app/Services/Integrations/NotificationIntegrationBase.php:68
+msgid "API Request Error"
+msgstr ""
+
+#: app/Services/Integrations/NotificationIntegrationBase.php:77
+msgid "API Response Error"
+msgstr ""
+
+#: app/Services/TransStrings.php:24
+msgid "are waiting for reply with"
+msgstr ""
+
+#: app/Services/TransStrings.php:240
+msgid "Are you sure to close the selected Tickets?"
+msgstr ""
+
+#: app/Services/TransStrings.php:238
+msgid "Are you sure to delete the selected Tickets?"
+msgstr ""
+
+#: app/Services/TransStrings.php:148
+msgid "Are you sure, You want to delete this?"
+msgstr ""
+
+#: app/Services/TransStrings.php:91
+msgid "Are You Sure? You can not undo this action."
+msgstr ""
+
+#: app/Services/TransStrings.php:246
+msgid "Assigned Agent "
+msgstr ""
+
+#: app/Services/TransStrings.php:64
+msgid "Available Smartcodes"
+msgstr ""
+
+#: app/Services/TransStrings.php:119
+msgid "Average Waiting"
+msgstr ""
+
+#: app/Services/TransStrings.php:15
+msgid "Awesome! Your support portal is ready to go!"
+msgstr ""
+
+#: app/Http/Controllers/ChatMessageParserController.php:20
+msgid "Bot Token could not be verified"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:17
+msgid "Bug Report"
+msgstr ""
+
+#: app/Services/TransStrings.php:18
+msgid "Business Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:77
+msgid "Business Inboxes"
+msgstr ""
+
+#: app/Services/TransStrings.php:17
+msgid "Business Name"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:165
+msgid "Business Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:280
+msgid "by"
+msgstr ""
+
+#: app/Services/TransStrings.php:89
+msgid "Cancel"
+msgstr ""
+
+#: app/Services/TransStrings.php:293
+msgid "Change Customer"
+msgstr ""
+
+#: app/Services/TransStrings.php:294
+msgid "Check overall activities"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:57
+msgid "Click Here to Write a reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:248
+msgid "Click to Edit Subject"
+msgstr ""
+
+#: app/Services/TransStrings.php:104
+msgid "Click to see Available Dynamic Codes"
+msgstr ""
+
+#: app/Services/TransStrings.php:223
+msgid "Click to upload"
+msgstr ""
+
+#: app/Services/TransStrings.php:215
+msgid "Client Priority"
+msgstr ""
+
+#: app/Services/TransStrings.php:247
+msgid "Close"
+msgstr ""
+
+#: app/Services/TransStrings.php:241
+msgid "Close Selected Tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:272
+msgid "Close Ticket"
+msgstr ""
+
+#: app/Services/TransStrings.php:116
+#: app/Hooks/Handlers/CustomerPortalHandler.php:60
+msgid "Closed"
+msgstr ""
+
+#: app/Services/TransStrings.php:154 app/Services/TransStrings.php:155
+msgid "Closed by Customer"
+msgstr ""
+
+#: app/Services/TransStrings.php:28
+msgid "Complete Setup"
+msgstr ""
+
+#: app/Services/TransStrings.php:48
+msgid "completed"
+msgstr ""
+
+#: app/Services/TransStrings.php:179
+msgid "Confirm Delete"
+msgstr ""
+
+#: app/Services/TransStrings.php:95
+msgid "Confirm Delete This Business"
+msgstr ""
+
+#: app/Services/TransStrings.php:144
+msgid "Content"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:56
+msgid "Conversation"
+msgstr ""
+
+#: app/Services/TransStrings.php:178
+msgid "Create"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:55
+msgid "Create a New Ticket"
+msgstr ""
+
+#: app/Services/TransStrings.php:27
+msgid "Create a page automatically with the shortcode"
+msgstr ""
+
+#: app/Services/TransStrings.php:243
+msgid "Create a Ticket"
+msgstr ""
+
+#: app/Services/TransStrings.php:40
+msgid "Create Customer"
+msgstr ""
+
+#: app/Services/TransStrings.php:134
+msgid "Create New"
+msgstr ""
+
+#: app/Services/TransStrings.php:142
+msgid "Create New Reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:161
+msgid "Create New Supported Product"
+msgstr ""
+
+#: app/Services/TransStrings.php:186
+msgid "Create New Ticket Tag"
+msgstr ""
+
+#: app/Services/TransStrings.php:192
+msgid "Create New Ticket Type"
+msgstr ""
+
+#: app/Services/TransStrings.php:139
+msgid "Create reply templates and quickly send responses to the tickets."
+msgstr ""
+
+#: app/Services/TransStrings.php:266
+msgid "Create Ticket"
+msgstr ""
+
+#: app/Services/TransStrings.php:221
+msgid "Created At"
+msgstr ""
+
+#: app/Services/TransStrings.php:136
+msgid "Created By"
+msgstr ""
+
+#: app/Services/TransStrings.php:137
+msgid "Created On"
+msgstr ""
+
+#: app/Services/Helper.php:38 app/Services/Helper.php:47
+msgid "Critical"
+msgstr ""
+
+#: app/Services/Integrations/FluentCRM.php:23
+msgid "CRM Profile"
+msgstr ""
+
+#: app/Services/Helper.php:128
+msgid "CSV"
+msgstr ""
+
+#: app/Services/TransStrings.php:117
+msgid "Current Overall"
+msgstr ""
+
+#: app/Services/TransStrings.php:222
+msgid "Currently Viewing"
+msgstr ""
+
+#: app/Http/Controllers/CustomerController.php:151
+msgid "Customer Deleted Successfully"
+msgstr ""
+
+#: app/Services/TransStrings.php:68
+msgid "Customer Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:65
+msgid "Customer First Name"
+msgstr ""
+
+#: app/Services/TransStrings.php:67
+msgid "Customer Full Name"
+msgstr ""
+
+#: app/Http/Controllers/CustomerController.php:97
+msgid "Customer has been added"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:590
+#: app/Http/Controllers/CustomerController.php:138
+msgid "Customer has been updated"
+msgstr ""
+
+#: app/Services/TransStrings.php:66
+msgid "Customer Last Name"
+msgstr ""
+
+#: app/Services/TransStrings.php:292
+msgid "Customer Management"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:23
+msgid ""
+"Customer Portal is only accessible by Customers. Looks like you are a "
+"support staff"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:137
+msgid "Customers"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:53 app/Hooks/Handlers/Menu.php:54
+#: app/Hooks/Handlers/Menu.php:118
+msgid "Dashboard"
+msgstr ""
+
+#: app/Services/TransStrings.php:236
+#: app/Hooks/Handlers/CustomerPortalHandler.php:61
+msgid "Date"
+msgstr ""
+
+#: app/Services/TransStrings.php:79
+msgid "Delete"
+msgstr ""
+
+#: app/Services/TransStrings.php:256
+msgid "Delete Response"
+msgstr ""
+
+#: app/Services/TransStrings.php:239
+msgid "Delete Selected Tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:159
+msgid "Description"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:34
+#: app/Services/Tickets/CustomFieldsService.php:37
+msgid "Details about the issue"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:104
+msgid "Disable Public Ticket interaction"
+msgstr ""
+
+#: app/Services/TransStrings.php:160
+msgid "Edit Product"
+msgstr ""
+
+#: app/Services/TransStrings.php:141
+msgid "Edit Reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:255
+msgid "Edit Response"
+msgstr ""
+
+#: app/Services/TransStrings.php:172
+msgid "Edit Staff"
+msgstr ""
+
+#: app/Services/TransStrings.php:185
+msgid "Edit Tag"
+msgstr ""
+
+#: app/Services/TransStrings.php:37
+msgid "eg: Awesome Business Inc"
+msgstr ""
+
+#: app/Services/TransStrings.php:44
+msgid "Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:85
+msgid "email"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:150
+msgid "Email Address"
+msgstr ""
+
+#: app/Http/Controllers/CustomerController.php:116
+msgid "Email address has been assigned to other customer"
+msgstr ""
+
+#: app/Services/TransStrings.php:86
+msgid "Email Based (MailBox)"
+msgstr ""
+
+#: app/Services/TransStrings.php:60
+msgid "Email Body"
+msgstr ""
+
+#: app/Services/TransStrings.php:103
+msgid "Email Footer For Customers"
+msgstr ""
+
+#: app/Services/TransStrings.php:99
+msgid "Email Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:59
+msgid "Email Subject"
+msgstr ""
+
+#: app/Services/TransStrings.php:61
+msgid "Enable This Email Notification"
+msgstr ""
+
+#: app/Services/TransStrings.php:111
+msgid "End"
+msgstr ""
+
+#: app/Services/TransStrings.php:46
+msgid "evening"
+msgstr ""
+
+#: app/Services/TransStrings.php:182
+msgid "Fallback Agent ID"
+msgstr ""
+
+#: app/Http/Controllers/MailBoxController.php:99
+msgid "Fallback Box can not be the same as MailBox ID"
+msgstr ""
+
+#: app/Services/TransStrings.php:92
+msgid "Fallback Business"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:18
+msgid "Feature Request"
+msgstr ""
+
+#: app/Services/TransStrings.php:225
+msgid "File failed to upload"
+msgstr ""
+
+#: app/Services/TransStrings.php:224
+msgid ""
+"Files with a size less than 2MB. Supported Types: images, text, pdf, zip"
+msgstr ""
+
+#: app/Services/TransStrings.php:207
+msgid "Filter By Tags"
+msgstr ""
+
+#: app/Services/TransStrings.php:208
+msgid "Filter By Ticket Type"
+msgstr ""
+
+#: app/Services/TransStrings.php:42
+msgid "First Name"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:130
+#: app/Hooks/Handlers/AuthHandler.php:132
+msgid "First name"
+msgstr ""
+
+#. Name of the plugin
+#: app/Hooks/Handlers/Menu.php:41 app/Hooks/Handlers/Menu.php:42
+msgid "Fluent Support"
+msgstr ""
+
+#: app/Services/TransStrings.php:38
+msgid "From Email Address"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:277
+msgid ""
+"Get activity notification to Slack Channel and keep your support team super "
+"engaged"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:270
+msgid ""
+"Get activity notification to Telegram Messenger and reply directly from "
+"Telegram inbox"
+msgstr ""
+
+#: app/Services/TransStrings.php:149
+msgid "Global Email Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:31 app/Hooks/Handlers/Menu.php:181
+msgid "Global Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:32
+msgid "Go to Dashboard"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:23
+msgid "Go to Support Admin Page"
+msgstr ""
+
+#: app/Services/TransStrings.php:20
+msgid "Good"
+msgstr ""
+
+#: app/Services/TransStrings.php:21
+msgid "Good Job"
+msgstr ""
+
+#: app/Services/TransStrings.php:11
+msgid "Here are a few tickets you may want to take a look at"
+msgstr ""
+
+#. URI of the plugin
+msgid "https://fluentsupport.com"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://wpmanageninja.com"
+msgstr ""
+
+#: app/Services/TransStrings.php:52
+msgid "ID"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:105
+msgid ""
+"If you enable this then only logged in user can reply the tickets. Otherwise,"
+" url will be signed and intended user can reply without logging in"
+msgstr ""
+
+#: app/Services/TransStrings.php:279
+msgid "If you still have related issues. Please reopen this ticket and reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:34
+msgid "in the selected page"
+msgstr ""
+
+#: app/Services/TransStrings.php:82
+msgid "Inbox Name"
+msgstr ""
+
+#: app/Services/TransStrings.php:98
+msgid "Inbox Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:108
+msgid "Individual Performance"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:19
+msgid "Integration Issues"
+msgstr ""
+
+#: app/Services/TransStrings.php:156
+msgid "Integration Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:114
+msgid "Interactions"
+msgstr ""
+
+#: app/Services/TransStrings.php:180
+msgid "Invalid ID"
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:38
+#: app/Hooks/Handlers/ExternalPages.php:53
+msgid "Invalid Support Portal URL"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:25
+#: app/Services/Tickets/CustomFieldsService.php:28
+msgid "Invoice Number"
+msgstr ""
+
+#: app/Services/TransStrings.php:190
+msgid ""
+"It will help your agents to understand the ticket type like feature "
+"suggestion, bug report etc"
+msgstr ""
+
+#: app/Services/Helper.php:155
+msgid "JSON"
+msgstr ""
+
+#: app/Services/TransStrings.php:127
+msgid "Last 1 Year"
+msgstr ""
+
+#: app/Services/TransStrings.php:125
+msgid "Last 3 Months"
+msgstr ""
+
+#: app/Services/TransStrings.php:126
+msgid "Last 6 Months"
+msgstr ""
+
+#: app/Services/TransStrings.php:54
+msgid "Last Activity"
+msgstr ""
+
+#: app/Services/TransStrings.php:217
+msgid "Last Agent Response"
+msgstr ""
+
+#: app/Services/TransStrings.php:218
+msgid "Last Customer Response"
+msgstr ""
+
+#: app/Services/TransStrings.php:124
+msgid "Last Month"
+msgstr ""
+
+#: app/Services/TransStrings.php:43 app/Hooks/Handlers/AuthHandler.php:136
+msgid "Last Name"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:138
+msgid "Last name"
+msgstr ""
+
+#: app/Services/TransStrings.php:123
+msgid "Last Week"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:26
+msgid "Loading Customer Portal. Please wait..."
+msgstr ""
+
+#: app/Hooks/actions.php:56
+msgid "Logout"
+msgstr ""
+
+#: app/Services/TransStrings.php:12
+msgid "Looks like you have caught up everything for now."
+msgstr ""
+
+#: app/Http/Controllers/MailBoxController.php:61
+msgid "Mailbox has been created successfully"
+msgstr ""
+
+#: app/Http/Controllers/MailBoxController.php:88
+msgid "Mailbox has been saved"
+msgstr ""
+
+#: app/Services/TransStrings.php:58
+msgid "Manage"
+msgstr ""
+
+#: app/Services/TransStrings.php:30
+msgid "Manage Support Staff"
+msgstr ""
+
+#: app/Services/TransStrings.php:235
+msgid "Manager"
+msgstr ""
+
+#: app/Services/TransStrings.php:87
+msgid "Mapped Email"
+msgstr ""
+
+#: app/Http/Controllers/MailBoxController.php:80
+msgid "Mapped Email Address is required"
+msgstr ""
+
+#: app/Services/TransStrings.php:26
+msgid "max wait time"
+msgstr ""
+
+#: app/Services/TransStrings.php:120
+msgid "Max Waiting"
+msgstr ""
+
+#: app/Services/Helper.php:37 app/Services/Helper.php:46
+msgid "Medium"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:97
+msgid "Message for non logged in users"
+msgstr ""
+
+#: app/Services/TransStrings.php:47
+msgid "morning"
+msgstr ""
+
+#: app/Services/TransStrings.php:245
+msgid "My Tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:53
+msgid "Name"
+msgstr ""
+
+#: app/Services/TransStrings.php:199
+msgid "New"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:63
+msgid "Next"
+msgstr ""
+
+#: app/Http/Controllers/ChatMessageParserController.php:56
+msgid "No Agent found"
+msgstr ""
+
+#: app/Services/TransStrings.php:196
+msgid "No available tags found"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:26
+#: app/Http/Controllers/CustomerPortalController.php:96
+msgid "No Customer Found"
+msgstr ""
+
+#: app/Http/Controllers/ChatMessageParserController.php:47
+msgid "No ticket found"
+msgstr ""
+
+#: app/Services/Helper.php:36 app/Services/Helper.php:45
+msgid "Normal"
+msgstr ""
+
+#: app/Services/TransStrings.php:167
+msgid "Notification Integrations"
+msgstr ""
+
+#: app/Http/Controllers/AgentController.php:154
+msgid "Old Agent and New agent is same person"
+msgstr ""
+
+#: app/Http/Controllers/UploaderController.php:25
+#, php-format
+msgid "Only %s files are allowed."
+msgstr ""
+
+#: app/Services/TransStrings.php:277
+#: app/Hooks/Handlers/CustomerPortalHandler.php:69
+msgid "Only you and official support agents can view this conversations"
+msgstr ""
+
+#: app/Services/TransStrings.php:197
+#: app/Hooks/Handlers/CustomerPortalHandler.php:59
+msgid "Open"
+msgstr ""
+
+#: app/Services/TransStrings.php:115
+msgid "Open Tickets"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:157
+#: app/Hooks/Handlers/AuthHandler.php:159
+msgid "Password"
+msgstr ""
+
+#: app/Services/Helper.php:139
+msgid "PDF/Docs"
+msgstr ""
+
+#: app/Services/TransStrings.php:170
+msgid "Permissions"
+msgstr ""
+
+#: app/Services/TransStrings.php:131
+msgid "Personal Reports"
+msgstr ""
+
+#: app/Services/Helper.php:116
+msgid "Photos"
+msgstr ""
+
+#: app/Services/TransStrings.php:276
+msgid "Please do not share any private information."
+msgstr ""
+
+#: app/Services/TransStrings.php:88
+msgid ""
+"Please forward your emails from \"Support Inbox Email\" so it can auto-sync "
+"the tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:212
+msgid "Please input"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:13
+msgid "Please let us know about this support type"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:35
+msgid "Please let us know more details about this issue"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:26
+msgid "Please let us know your invoice number"
+msgstr ""
+
+#: app/Hooks/actions.php:36
+msgid "Please Login"
+msgstr ""
+
+#: app/Services/TransStrings.php:19
+msgid "Please make sure your website can send emails from this email address"
+msgstr ""
+
+#: app/Services/TransStrings.php:269
+msgid "Please provide details about your problem"
+msgstr ""
+
+#: app/Services/TransStrings.php:181
+msgid "Please Provide Fallback Agent ID"
+msgstr ""
+
+#: app/Services/TransStrings.php:96
+msgid "Please provide fallback box"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:98
+msgid ""
+"Please provide message for not logged in users. You can place login "
+"shortcode too Use shortcode <code>[fluent_support_login]</code> to show "
+"built-in login form. For the user registration use this shortcode <code>"
+"[fluent_support_signup]</code> in your page "
+msgstr ""
+
+#: app/Services/TransStrings.php:100
+msgid ""
+"Please provide the email address where admin will get email if enabled in "
+"email settings"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:93
+msgid ""
+"Please provide the page id where you want to show the tickets for your "
+"customers. Use shortcode <code>[fluent_support_portal]</code> in that page"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:68
+msgid "Please select a page or enable create page"
+msgstr ""
+
+#: app/Services/TransStrings.php:94
+msgid ""
+"Please select the fallback business in where the existing tickets will be "
+"transferred"
+msgstr ""
+
+#: app/Services/TransStrings.php:35
+msgid "Please setup your support portal first"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:89
+msgid "Portal Page"
+msgstr ""
+
+#: app/Services/TransStrings.php:145
+msgid "Prefered Product"
+msgstr ""
+
+#: app/Services/TransStrings.php:249
+msgid "Press enter to save"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:64
+msgid "Prev"
+msgstr ""
+
+#: app/Services/TransStrings.php:233
+msgid "Previous Conversations"
+msgstr ""
+
+#: app/Services/TransStrings.php:214
+#: app/Hooks/Handlers/CustomerPortalHandler.php:67
+msgid "Priority"
+msgstr ""
+
+#: app/Services/TransStrings.php:205
+msgid "Priority (Admin)"
+msgstr ""
+
+#: app/Services/TransStrings.php:206
+msgid "Priority (Customer)"
+msgstr ""
+
+#: app/Services/TransStrings.php:274
+msgid "Private"
+msgstr ""
+
+#: app/Services/TransStrings.php:135
+msgid "Product"
+msgstr ""
+
+#: app/Services/TransStrings.php:163
+msgid "Product Description"
+msgstr ""
+
+#: app/Http/Controllers/ProductController.php:70
+msgid "Product has been deleted"
+msgstr ""
+
+#: app/Http/Controllers/ProductController.php:42
+msgid "Product has been successfully created"
+msgstr ""
+
+#: app/Http/Controllers/ProductController.php:59
+msgid "Product has been updated"
+msgstr ""
+
+#: app/Services/TransStrings.php:216
+msgid "Product ID"
+msgstr ""
+
+#: app/Services/TransStrings.php:162
+msgid "Product Title"
+msgstr ""
+
+#: app/Services/TransStrings.php:158
+msgid "Products"
+msgstr ""
+
+#: app/Services/TransStrings.php:275
+msgid "Public"
+msgstr ""
+
+#: app/Services/TransStrings.php:132
+msgid "Quick Stats"
+msgstr ""
+
+#: app/Services/TransStrings.php:264
+#: app/Hooks/Handlers/CustomerPortalHandler.php:68
+msgid "Related Product/Service"
+msgstr ""
+
+#: app/Services/TransStrings.php:251
+msgid "Reopen This ticket"
+msgstr ""
+
+#: app/Services/TransStrings.php:253
+msgid "replied"
+msgstr ""
+
+#: app/Services/TransStrings.php:153
+msgid "Replied By Agent"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:151
+msgid "Replied by Agent (To Customer)"
+msgstr ""
+
+#: app/Services/TransStrings.php:152
+msgid "Replied By Customer"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:172
+msgid "Replied by Customer (To Agent/Admin)"
+msgstr ""
+
+#: app/Services/TransStrings.php:171
+msgid "Replies"
+msgstr ""
+
+#: app/Services/TransStrings.php:273
+msgid "Reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:228
+msgid "Reply and Close"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:271
+msgid "Reply has been added"
+msgstr ""
+
+#: app/Services/TransStrings.php:143
+msgid "Reply Title"
+msgstr ""
+
+#: app/Services/TransStrings.php:242
+msgid "Reply To Selected Tickets"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:98 app/Hooks/Handlers/Menu.php:99
+#: app/Hooks/Handlers/Menu.php:128
+msgid "Reports"
+msgstr ""
+
+#: app/Services/TransStrings.php:213
+msgid "Reset Filters"
+msgstr ""
+
+#: app/Services/TransStrings.php:76
+msgid "Response Content"
+msgstr ""
+
+#: app/Services/TransStrings.php:220
+msgid "Response Count"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:478
+msgid "Response has been added to the selected tickets"
+msgstr ""
+
+#: app/Http/Controllers/ChatMessageParserController.php:64
+msgid "Response has been successfully recorded"
+msgstr ""
+
+#: app/Services/TransStrings.php:75
+msgid "Response Title"
+msgstr ""
+
+#: app/Services/TransStrings.php:113
+msgid "Responses"
+msgstr ""
+
+#: app/Services/TransStrings.php:189
+msgid "Save"
+msgstr ""
+
+#: app/Services/TransStrings.php:63
+msgid "Save Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:133 app/Hooks/Handlers/Menu.php:146
+msgid "Saved Replies"
+msgstr ""
+
+#: app/Services/TransStrings.php:210
+msgid "Search"
+msgstr ""
+
+#: app/Services/TransStrings.php:169
+msgid "Search Agents"
+msgstr ""
+
+#: app/Services/TransStrings.php:289
+msgid "Search Custom Fields"
+msgstr ""
+
+#: app/Services/TransStrings.php:51
+msgid "Search Customers"
+msgstr ""
+
+#: app/Services/TransStrings.php:288
+msgid "Search Products"
+msgstr ""
+
+#: app/Services/TransStrings.php:232
+msgid "Search Replies"
+msgstr ""
+
+#: app/Services/TransStrings.php:287
+msgid "Search Tags"
+msgstr ""
+
+#: app/Services/TransStrings.php:260
+msgid "Select Business"
+msgstr ""
+
+#: app/Services/TransStrings.php:259
+msgid "Select Customer"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:91
+msgid "Select Portal Page"
+msgstr ""
+
+#: app/Services/TransStrings.php:265
+msgid "Select Priority"
+msgstr ""
+
+#: app/Services/TransStrings.php:93
+msgid "Select related Product/Service"
+msgstr ""
+
+#: app/Services/TransStrings.php:270
+msgid "Select Your Ticket Type"
+msgstr ""
+
+#: app/Http/Controllers/MailBoxController.php:120
+msgid "Selected Business has been deleted"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:503
+msgid "Selected response has been deleted"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:534
+msgid "Selected response has been updated"
+msgstr ""
+
+#: app/Http/Controllers/AgentController.php:185
+msgid "Selected support staff has been deleted"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:405
+msgid "Selected tags has been added to tickets"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:269
+msgid ""
+"Send Telegram notifications to Group, Channel or individual person inbox and "
+"reply from Telegram inbox"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:276
+msgid "Send ticket activity notifications to slack"
+msgstr ""
+
+#: app/Services/TransStrings.php:97 app/Hooks/Handlers/Menu.php:89
+#: app/Hooks/Handlers/Menu.php:90
+msgid "Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:157
+msgid "Settings could not be found"
+msgstr ""
+
+#: app/Http/Controllers/SlackController.php:32
+#: app/Http/Controllers/SettingsController.php:42
+#: app/Http/Controllers/MailBoxController.php:168
+#: app/Http/Controllers/IntegrationController.php:32
+msgid "Settings has been updated"
+msgstr ""
+
+#: app/Services/TransStrings.php:29
+msgid "Setup Associate Product/Services for Tickets"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:65
+msgid "Signup"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:275
+msgid "Slack"
+msgstr ""
+
+#: app/Services/TransStrings.php:290
+msgid "Slack Integration"
+msgstr ""
+
+#: app/Services/TransStrings.php:291
+msgid "Slack User ID"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:411
+msgid "Sorry no action found as available"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:440
+msgid "Sorry no tickets found based on your filter and bulk actions"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:249
+#: app/Http/Controllers/CustomerPortalController.php:289
+#: app/Http/Controllers/CustomerPortalController.php:333
+msgid "Sorry! No customer found"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:303
+#: app/Http/Controllers/CustomerPortalController.php:339
+msgid "Sorry! You can not close this ticket"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:263
+msgid "Sorry! You can not reply to this ticket"
+msgstr ""
+
+#: app/Http/Controllers/AgentController.php:74
+msgid ""
+"Sorry, Another agent/person exist with the same email address. Please use a "
+"different email address"
+msgstr ""
+
+#: app/Http/Controllers/AgentController.php:58
+#: app/Http/Controllers/AgentController.php:114
+msgid ""
+"Sorry, Connected user could not be found with the provided email address"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:33
+#: app/Http/Controllers/CustomerPortalController.php:89
+#: app/Http/Controllers/CustomerPortalController.php:170
+#: app/Http/Controllers/CustomerPortalController.php:255
+#: app/Http/Controllers/CustomerPortalController.php:295
+#: app/Http/Controllers/CustomerPortalController.php:325
+msgid "Sorry, You do not have access to customer portal"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:495
+#: app/Http/Controllers/TicketController.php:525
+msgid "Sorry, You do not have permission to delete this response"
+msgstr ""
+
+#: app/Hooks/actions.php:44
+msgid "Sorry, You do not have permission to this page"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:163
+msgid "Sorry, You do not have permission to this support ticket"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:164
+#: app/Http/Controllers/TicketController.php:217
+#: app/Http/Controllers/TicketController.php:239
+#: app/Http/Controllers/TicketController.php:265
+#: app/Http/Controllers/TicketController.php:303
+#: app/Http/Controllers/TicketController.php:321
+msgid "Sorry, You do not have permission to this ticket"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:209
+msgid ""
+"Sorry, You do not have permission. Please add yourself as support agent first"
+msgstr ""
+
+#: app/Hooks/Handlers/ExternalPages.php:108
+msgid ""
+"Sorry, Your secure sign is invalid, Please reload the previous page and get "
+"new signed url"
+msgstr ""
+
+#: app/Services/TransStrings.php:110
+msgid "Start"
+msgstr ""
+
+#: app/Services/TransStrings.php:281
+msgid "started the conversation"
+msgstr ""
+
+#: app/Services/TransStrings.php:55
+msgid "Stats"
+msgstr ""
+
+#: app/Services/TransStrings.php:57
+#: app/Hooks/Handlers/CustomerPortalHandler.php:62
+msgid "Status"
+msgstr ""
+
+#: app/Services/TransStrings.php:261
+#: app/Hooks/Handlers/CustomerPortalHandler.php:65
+msgid "Subject"
+msgstr ""
+
+#: app/Services/TransStrings.php:267
+msgid "Submit a Support Ticket"
+msgstr ""
+
+#: app/Http/Controllers/AuthController.php:46
+msgid "Successfully registered to the site."
+msgstr ""
+
+#: app/Services/TransStrings.php:83
+msgid "Support Channel"
+msgstr ""
+
+#: app/Http/Controllers/SettingsController.php:79
+msgid "Support Portal"
+msgstr ""
+
+#: app/Services/TransStrings.php:36
+msgid "Support Portal Page (For Customers)"
+msgstr ""
+
+#: app/Services/TransStrings.php:202
+msgid "Support Staff"
+msgstr ""
+
+#: app/Http/Controllers/AgentController.php:95
+msgid "Support Staff has been added"
+msgstr ""
+
+#: app/Http/Controllers/AgentController.php:143
+msgid "Support Staff has been updated"
+msgstr ""
+
+#: app/Services/TransStrings.php:166
+msgid "Support Staffs"
+msgstr ""
+
+#: app/Services/Tickets/CustomFieldsService.php:12
+#: app/Services/Tickets/CustomFieldsService.php:15
+msgid "Support Type"
+msgstr ""
+
+#: app/Services/Helper.php:109
+#, php-format
+msgid "Supported Types: %s and max file size: %dMB"
+msgstr ""
+
+#: app/Services/TransStrings.php:188
+msgid "Tag Description"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:569
+msgid "Tag has been added to this ticket"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:580
+msgid "Tag has been removed from this ticket"
+msgstr ""
+
+#: app/Services/TransStrings.php:187
+msgid "Tag Title"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:394
+msgid "tag_ids param is required"
+msgstr ""
+
+#: app/Services/TransStrings.php:164
+msgid "Tags"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:268
+msgid "Telegram"
+msgstr ""
+
+#: app/Services/TransStrings.php:177
+msgid "Telegram Chat ID"
+msgstr ""
+
+#: app/Services/TransStrings.php:176
+msgid "Telegram Integration"
+msgstr ""
+
+#: app/Services/TransStrings.php:231
+msgid "Templates"
+msgstr ""
+
+#: app/Http/Controllers/UploaderController.php:26
+#, php-format
+msgid ""
+"The file can not be more than %dMB. Please upload somewhere like "
+"dropbox/google drive and paste the link in the response"
+msgstr ""
+
+#. Description of the plugin
+msgid "The Ultimate Support Plugin For Your WordPress."
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:173
+msgid ""
+"This email will be sent to Assigned Agent or Admin when a customer reply to "
+"a ticket"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:145
+msgid "This email will be sent when a customer submit a support ticket"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:159
+msgid "This email will be sent when an agent close a ticket"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:152
+msgid "This email will be sent when an agent reply to a ticket"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:166
+msgid ""
+"This email will be sent when the business when a new ticket has been "
+"submitted"
+msgstr ""
+
+#: app/Services/TransStrings.php:140
+msgid ""
+"This is a pro feature. Please upgrade to Fluent Support Pro to use this "
+"feature"
+msgstr ""
+
+#: app/Services/TransStrings.php:250
+msgid "This ticket has been closed at"
+msgstr ""
+
+#: app/Services/TransStrings.php:278
+msgid "This ticket is"
+msgstr ""
+
+#: app/Services/TransStrings.php:257
+msgid "This will permanently delete response. Continue?"
+msgstr ""
+
+#: app/Services/TransStrings.php:151
+msgid "Ticket Assigned"
+msgstr ""
+
+#: app/Services/TransStrings.php:107
+msgid "Ticket Closed By Agent"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:158
+msgid "Ticket Closed by Agent (To Customer)"
+msgstr ""
+
+#: app/Services/TransStrings.php:71
+msgid "Ticket Content"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:165
+msgid "Ticket Created (To Admin)"
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:144
+msgid "Ticket Created (To Customer)"
+msgstr ""
+
+#: app/Services/TransStrings.php:237
+msgid "Ticket created at"
+msgstr ""
+
+#: app/Services/TransStrings.php:263
+#: app/Hooks/Handlers/CustomerPortalHandler.php:66
+msgid "Ticket Details"
+msgstr ""
+
+#: app/Services/TransStrings.php:16
+msgid "Ticket Email Settings"
+msgstr ""
+
+#: app/Services/Tickets/ResponseService.php:89
+#: app/Services/Tickets/TicketService.php:21
+msgid "Ticket has been closed"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:141
+#: app/Http/Controllers/CustomerPortalController.php:136
+msgid "Ticket has been created successfully"
+msgstr ""
+
+#: app/Services/Tickets/TicketService.php:48
+msgid "Ticket has been reopened"
+msgstr ""
+
+#: app/Services/TransStrings.php:69
+msgid "Ticket ID"
+msgstr ""
+
+#: app/Services/TransStrings.php:105
+msgid "Ticket Public URL"
+msgstr ""
+
+#: app/Services/TransStrings.php:106
+msgid "Ticket Received Welcome Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:150
+msgid "Ticket Submitted"
+msgstr ""
+
+#: app/Services/TransStrings.php:183
+msgid "Ticket Tags"
+msgstr ""
+
+#: app/Services/TransStrings.php:70
+msgid "Ticket Title"
+msgstr ""
+
+#: app/Services/TransStrings.php:209
+msgid "Ticket Type"
+msgstr ""
+
+#: app/Services/TransStrings.php:194
+msgid "Ticket Type Description"
+msgstr ""
+
+#: app/Services/TransStrings.php:193
+msgid "Ticket Type Title"
+msgstr ""
+
+#: app/Services/TransStrings.php:165
+msgid "Ticket Types"
+msgstr ""
+
+#: app/Hooks/Handlers/ActivityLogger.php:126
+#, php-format
+msgid "Ticket: %s"
+msgstr ""
+
+#: app/Services/TransStrings.php:23 app/Hooks/Handlers/Menu.php:62
+#: app/Hooks/Handlers/Menu.php:63 app/Hooks/Handlers/Menu.php:123
+msgid "Tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:22
+msgid "tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:56
+msgid "Title"
+msgstr ""
+
+#: app/Services/TransStrings.php:109
+msgid "To"
+msgstr ""
+
+#: app/Services/TransStrings.php:121
+msgid "Today"
+msgstr ""
+
+#: app/Services/TransStrings.php:128
+msgid "Total Summaries"
+msgstr ""
+
+#: app/Services/TransStrings.php:204
+msgid "Un-Assigned"
+msgstr ""
+
+#: app/Http/Controllers/AgentController.php:210
+msgid "Unassigned Tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:283
+msgid "Unknown error. Please reload this page"
+msgstr ""
+
+#: app/Services/TransStrings.php:146
+msgid "Update"
+msgstr ""
+
+#: app/Services/TransStrings.php:39
+msgid "Update Customer"
+msgstr ""
+
+#: app/Services/TransStrings.php:230
+msgid "Update Response"
+msgstr ""
+
+#: app/Services/TransStrings.php:191
+msgid "Update Type"
+msgstr ""
+
+#: app/Services/TransStrings.php:286
+msgid "Updating Custom Field Data"
+msgstr ""
+
+#: app/Services/TransStrings.php:147
+msgid "Upgrade To Pro"
+msgstr ""
+
+#: app/Services/TransStrings.php:33
+msgid "Use shortcode"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:143
+#: app/Hooks/Handlers/AuthHandler.php:145
+msgid "Username"
+msgstr ""
+
+#: app/Services/TransStrings.php:268
+msgid "View All"
+msgstr ""
+
+#: app/Services/TransStrings.php:80
+msgid "View Settings"
+msgstr ""
+
+#: app/Services/TransStrings.php:282
+msgid "View Your Tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:25
+msgid "wait time"
+msgstr ""
+
+#: app/Services/TransStrings.php:211
+msgid "Waiting for Reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:118
+msgid "Waiting Tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:219
+msgid "Waiting Time"
+msgstr ""
+
+#: app/Services/TransStrings.php:102
+msgid "web"
+msgstr ""
+
+#: app/Services/TransStrings.php:84
+msgid "Web Based"
+msgstr ""
+
+#: app/Services/TransStrings.php:262
+msgid "What's about this support ticket"
+msgstr ""
+
+#: app/Hooks/Handlers/Menu.php:71 app/Hooks/Handlers/Menu.php:72
+#: app/Hooks/Handlers/Menu.php:173
+msgid "Workflows"
+msgstr ""
+
+#. Author of the plugin
+msgid "WPManageNinja LLC"
+msgstr ""
+
+#: app/Services/TransStrings.php:271
+msgid "Write a reply"
+msgstr ""
+
+#: app/Services/TransStrings.php:122
+msgid "Yesterday"
+msgstr ""
+
+#: app/Services/TransStrings.php:284
+msgid "You"
+msgstr ""
+
+#: app/Services/TransStrings.php:229
+msgid "You are adding internal Note. Only support staff can see this note"
+msgstr ""
+
+#: app/Services/TransStrings.php:258
+msgid "You can not edit responses when it is in close state"
+msgstr ""
+
+#: app/Services/TransStrings.php:62
+msgid ""
+"You can not edit subject for this email. This subject pattern is required "
+"for email reply parsing"
+msgstr ""
+
+#: app/Http/Controllers/CustomerPortalController.php:178
+msgid "You do not have permission to view this support ticket"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:20
+msgid "You don’t have permission to view the tickets"
+msgstr ""
+
+#: app/Services/TransStrings.php:14
+msgid "Your Business Details"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:152
+msgid "Your Email Address"
+msgstr ""
+
+#: app/Services/TransStrings.php:129
+msgid "Your Overall Stats"
+msgstr ""
+
+#: app/Services/TransStrings.php:13
+msgid "Your Overview for Today"
+msgstr ""
+
+#: app/Services/Helper.php:149
+msgid "Zip"
+msgstr ""
