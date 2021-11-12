@@ -5,7 +5,15 @@ jQuery(document).ready(function ($) {
     });
     $('.fframe_menu_item a').on('click', function () {
         $handHeld.parent().find('.fframe_menu').removeClass('fframe_menu_open');
+
     });
 
     jQuery('.update-nag,.notice, #wpbody-content > .updated, #wpbody-content > .error').remove();
+
+
+    jQuery('.toplevel_page_fluent-support a').on('click', function () {
+        jQuery('.toplevel_page_fluent-support li').removeClass('current');
+        jQuery(this).parent().addClass('current');
+    });
+
 });

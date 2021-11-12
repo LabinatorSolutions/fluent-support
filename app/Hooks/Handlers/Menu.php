@@ -23,8 +23,11 @@ class Menu
 
         $permission = 'fst_view_dashboard';
 
+        $isAdmin = false;
+
         if (current_user_can('manage_options')) {
             $permission = 'manage_options';
+            $isAdmin = true;
         }
 
         $menuPosition = 25;
@@ -43,6 +46,62 @@ class Menu
             $this->getMenuIcon(),
             $menuPosition
         );
+
+
+        add_submenu_page(
+            'fluent-support',
+            __('Dashboard', 'fluent-support'),
+            __('Dashboard', 'fluent-support'),
+            $permission,
+            'fluent-support',
+            array($this, 'renderApp')
+        );
+
+        add_submenu_page(
+            'fluent-support',
+            __('Tickets', 'fluent-support'),
+            __('Tickets', 'fluent-support'),
+            ($isAdmin) ? 'manage_options' : 'fst_manage_own_tickets',
+            'fluent-support#/tickets',
+            array($this, 'renderApp')
+        );
+
+        add_submenu_page(
+            'fluent-support',
+            __('Workflows', 'fluent-support'),
+            __('Workflows', 'fluent-support'),
+            ($isAdmin) ? 'manage_options' : 'fst_manage_workflows',
+            'fluent-support#/workflows',
+            array($this, 'renderApp')
+        );
+
+        add_submenu_page(
+            'fluent-support',
+            __('Activities', 'fluent-support'),
+            __('Activities', 'fluent-support'),
+            ($isAdmin) ? 'manage_options' : 'fst_view_activity_logs',
+            'fluent-support#/activity-logger',
+            array($this, 'renderApp')
+        );
+
+        add_submenu_page(
+            'fluent-support',
+            __('Settings', 'fluent-support'),
+            __('Settings', 'fluent-support'),
+            ($isAdmin) ? 'manage_options' : 'fst_manage_settings',
+            'fluent-support#/settings',
+            array($this, 'renderApp')
+        );
+        
+        add_submenu_page(
+            'fluent-support',
+            __('Reports', 'fluent-support'),
+            __('Reports', 'fluent-support'),
+            ($isAdmin) ? 'manage_options' : 'fst_sensitive_data',
+            'fluent-support#/reports',
+            array($this, 'renderApp')
+        );
+
     }
 
     public function renderApp()

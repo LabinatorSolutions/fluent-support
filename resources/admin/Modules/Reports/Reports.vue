@@ -1,6 +1,6 @@
 <template>
     <div class="fs_agents_report">
-        <div class="fs_box_wrapper" v-loading="loading">
+        <div v-if="has_pro" class="fs_box_wrapper" v-loading="loading">
             <el-row :gutter="30">
                 <el-col :sm="24" :md="16" :lg="18">
                     <div class="fs_box">
@@ -64,6 +64,11 @@
                     </div>
                 </el-col>
             </el-row>
+        </div>
+        <div class="fs_narrow_promo" style="background: white;" v-else>
+            <h3>Get Overall reports of all the support agents and their performance</h3>
+            <p>{{$t('pro_promo')}}</p>
+            <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
         </div>
     </div>
 </template>
