@@ -21,7 +21,7 @@
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">
             <el-skeleton :rows="5" animated/>
         </div>
-        <div v-else class="fs_tk_body">
+        <div v-loading="fetching" v-else class="fs_tk_body">
             <table class="fs_table fs_stripe">
                 <thead>
                 <tr>
@@ -31,7 +31,7 @@
                     <th>{{ $t('Date') }}</th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody v-if="tickets.length">
                 <tr v-for="ticket in tickets" :key="ticket.id">
                     <td>
                         <router-link class="fs_tk_preview"
@@ -50,6 +50,14 @@
                     </td>
                     <td class="fs_tk_date">
                         <span class="fs_tk_date">{{ ticket.created_at }}</span>
+                    </td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td colspan="4">
+                        <p v-if="filter_type == 'all'" style="text-align: center;">Looks like you did not open any support tickets yet</p>
+                        <p v-else style="text-align: center;">No support tickets found for this filter</p>
                     </td>
                 </tr>
                 </tbody>

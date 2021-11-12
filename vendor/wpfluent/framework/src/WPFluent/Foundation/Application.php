@@ -36,7 +36,7 @@ class Application extends Container
     protected function pluginFilePath($file)
     {
         $file = $file ?: realpath(__DIR__ . '/../../../plugin.php');
-        
+
         return $file;
     }
 
@@ -49,7 +49,7 @@ class Application extends Container
         $this->handlerNamespace = $psr4['app/'] . 'Hooks\Handlers';
 
         $this->policyNamespace = $psr4['app/'] . 'Http\Policies';
-        
+
         $this->controllerNamespace = $psr4['app/'] . 'Http\Controllers';
     }
 
@@ -67,7 +67,7 @@ class Application extends Container
         $this->bindAppInstance();
         $this->bindPathsAndUrls();
         $this->loadConfigIfExists();
-        $this->loadTextdomain();
+       // $this->loadTextdomain();
         $this->bindComponents($this);
         $this->requireCommonFiles($this);
     }

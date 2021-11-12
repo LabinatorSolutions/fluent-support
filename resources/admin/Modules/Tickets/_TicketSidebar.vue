@@ -11,7 +11,10 @@
             </div>
             <div class="fs_tk_card_body">
                 <div class="fs_tk_line">
-                    <div class="fs_tk_profile_name">{{ ticket.customer.full_name }}</div>
+                    <div class="fs_tk_profile_name">
+                        {{ ticket.customer.full_name }}
+                        <span style="color: red;" v-if="ticket.customer.status == 'inactive'">(Blocked)</span>
+                    </div>
                 </div>
                 <div class="fs_tk_line">
                     <div class="fs_tk_contact_details">
