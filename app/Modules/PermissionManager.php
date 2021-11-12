@@ -132,7 +132,7 @@ class PermissionManager
                     'fst_view_dashboard'            => 'View Dashboard',
                     'fst_manage_own_tickets'        => 'Manage Own Tickets',
                     'fst_manage_unassigned_tickets' => 'Manage Unassigned Tickets',
-                    'fst_manage_other_tickets'      => 'Manage Unassigned Tickets',
+                    'fst_manage_other_tickets'      => 'Manage Others Tickets',
                     'fst_delete_tickets'            => 'Delete Tickets',
                 ]
             ],
