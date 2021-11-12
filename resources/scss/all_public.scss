@@ -41,7 +41,7 @@
 
         .fst_field_group {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
 
             .fst_field_label {
                 &.is-required {
@@ -63,7 +63,7 @@
         input {
             padding: 10px;
             width: 100%;
-            margin: 10px 0px;
+            margin-top: 10px;
         }
 
         #fst_submit {
@@ -111,4 +111,10 @@
             color: #f56c6c;
         }
     }
+}
+
+.fst_auth_wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
 }

@@ -13,6 +13,7 @@ class AuthHandler
     {
         add_shortcode('fluent_support_login', array($this, 'loginForm'));
         add_shortcode('fluent_support_signup', array($this, 'registrationForm'));
+        add_shortcode('fluent_support_auth', array($this, 'authForm'));
     }
 
     public function loginForm($attributes)
@@ -68,6 +69,17 @@ class AuthHandler
         return $registrationForm;
     }
 
+    public function authForm($attributes)
+    {
+        $authForm = '<div class="fst_auth_wrapper">';
+
+        $authForm .= do_shortcode('[fluent_support_login]');
+        $authForm .= do_shortcode('[fluent_support_signup]');
+
+        $authForm .= '</div>';
+
+        return $authForm;
+    }
 
     private function renderField($fieldName, $field)
     {
@@ -179,8 +191,8 @@ class AuthHandler
 
     protected function handleAlreadyLoggedIn($attributes)
     {
-        if (!wp_is_json_request() && is_singular()) {
-            if ($attributes['auto-redirect'] !== 'false') {
+        if (get_current_user_id() && !wp_is_json_request() && is_singular()) {
+            if ($attributes['auto-redirect'] === 'true') {
                 $redirect = $attributes['redirect-to'];
                 ?>
                 <script type="text/javascript">
