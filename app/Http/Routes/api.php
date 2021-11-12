@@ -145,3 +145,5 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
     $router->get('/settings', 'ActivityLoggerController@getSettings');
     $router->post('/settings', 'ActivityLoggerController@updateSettings');
 });
+
+$router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
