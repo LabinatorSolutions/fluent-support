@@ -58,7 +58,8 @@ export default {
             this.fetching = true;
             this.$get(`mailboxes/${this.box_id}`)
                 .then((response) => {
-                    this.mailbox = response.mailbox
+                    this.mailbox = response.mailbox;
+                    this.$setTitle(response.mailbox.name + ' Settings');
                 })
                 .catch((errors) => {
                     this.$handleError(errors)
@@ -70,6 +71,7 @@ export default {
     },
     mounted() {
         this.fetch();
+        this.$setTitle('Business Settings');
     }
 }
 </script>
