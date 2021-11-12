@@ -49,11 +49,11 @@
                         <span class="fs_badge" :class="'fs_badge_'+ticket.status">{{ ticket.status }}</span>
                     </td>
                     <td class="fs_tk_date">
-                        <span class="fs_tk_date">{{ ticket.created_at }}</span>
+                        <span class="fs_tk_date">{{ ticket.human_date }}</span>
                     </td>
                 </tr>
                 </tbody>
-                <tbody>
+                <tbody v-else>
                 <tr>
                     <td colspan="4">
                         <p v-if="filter_type == 'all'" style="text-align: center;">Looks like you did not open any support tickets yet</p>
@@ -105,6 +105,7 @@ export default {
     },
     watch: {
         filter_type() {
+            this.pagination.current_page = 1;
             this.fetchTickets();
         }
     },
@@ -138,7 +139,9 @@ export default {
             });
         },
         getExcerpt(row) {
-            let text = row.content;
+
+            let text = (row.preview_response) ? row.preview_response.content : row.content;
+
             if (!text) {
                 return '';
             }

@@ -59,6 +59,11 @@ class CustomerPortalController extends Controller
 
         $tickets = $ticketsQuery->paginate();
 
+        foreach ($tickets as $ticket) {
+            $ticket->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($ticket->created_at), current_time('timestamp')));
+            $ticket->preview_response = $ticket->getLastResponse();
+        }
+
         return [
             'tickets' => $tickets
         ];
