@@ -3,13 +3,13 @@
         <div class="inner_sidebar">
             <ul>
                 <li>
-                    <router-link :class="{router_not_exactly_matched: isMine || isUnassigned}" :to="{ name: 'tickets' }">{{$t('All Tickets')}}</router-link>
+                    <router-link :class="{router_not_exactly_matched: isMine || isUnassigned}" :to="{ name: 'tickets' }"><i class="el-icon-tickets"></i>{{$t('All Tickets')}}</router-link>
                 </li>
                 <li>
-                    <router-link :class="{router_not_exactly_matched: !isMine}" :to="{ name: 'tickets', query: { agent_id: appVars.me.id } }">{{$t('My Tickets')}}</router-link>
+                    <router-link :class="{router_not_exactly_matched: !isMine}" :to="{ name: 'tickets', query: { agent_id: appVars.me.id } }"><i class="el-icon-user"></i>{{$t('My Tickets')}}</router-link>
                 </li>
                 <li>
-                    <router-link :class="{router_not_exactly_matched: !isUnassigned }" :to="{ name: 'tickets', query: { agent_id: 'unassigned' } }">{{$t('Unassigned')}}</router-link>
+                    <router-link :class="{router_not_exactly_matched: !isUnassigned }" :to="{ name: 'tickets', query: { agent_id: 'unassigned' } }"><i class="el-icon-view"></i>{{$t('Unassigned')}}</router-link>
                 </li>
             </ul>
         </div>

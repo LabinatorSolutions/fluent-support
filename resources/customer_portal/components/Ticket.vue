@@ -263,13 +263,13 @@ export default {
     position: relative;
     left: 0;
     top: 0;
-    background: #5d6cc3;
+    background: #1785EB;
     color: #fff;
     padding: 5px 10px;
     font-size: 11px;
 }
 
 .fs_agent {
-    border-left: 4px solid #5d6cc3;
+    border-left: 4px solid #1785EB;
 }
 </style>

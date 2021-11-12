@@ -272,8 +272,8 @@ span.fs_ticket_id {
 }
 
 .fs_tags {
-    display: inline-block;
-    margin-left: 10px;
+    display: inherit;
+    margin: 1em 0 0 0;
 }
 
 a.el-button {
