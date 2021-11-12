@@ -67,6 +67,12 @@
                 color: #111;
                 position: relative;
                 display: flex;
+                @media all and (max-width: 767px) {
+                    flex-direction: column;
+                    .fs_tk_badges {
+                        margin-top: 15px !important;
+                    }
+                }
 
                 .fs_tk_subject {
                     zoom: 1;
