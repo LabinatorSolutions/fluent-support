@@ -13,10 +13,14 @@ class AuthHandler
     {
         add_shortcode('fluent_support_login', array($this, 'loginForm'));
         add_shortcode('fluent_support_signup', array($this, 'registrationForm'));
+        add_shortcode('fluent_support_auth', array($this, 'authForm'));
     }
 
-    public function loginForm()
+    public function loginForm($attributes)
     {
+        $attributes = $this->getShortcodes($attributes);
+        $this->handleAlreadyLoggedIn($attributes);
+
         $app = App::getInstance();
         $assets = $app['url.assets'];
         wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css');
@@ -35,37 +39,59 @@ class AuthHandler
         return $return;
     }
 
-    public function registrationForm()
+    public function registrationForm($attributes)
     {
+        $attributes = $this->getShortcodes($attributes);
+        $this->handleAlreadyLoggedIn($attributes);
+
         $app = App::getInstance();
         $assets = $app['url.assets'];
         wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css');
+        wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js');
 
-        $registrationFields = $this->getSignupFields();
+        wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
+            'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup'
+        ]);
 
-        $registrationForm = '<div class="fst_registration_wrapper"><form class="fs_registration_form" method="post" name="fs_registration_form">';
+        $registrationFields = static::getSignupFields();
+
+        $registrationForm = '<div class="fst_registration_wrapper"><form id="fstRegistrationForm" class="fs_registration_form" method="post" name="fs_registration_form">';
 
         foreach ($registrationFields as $fieldName => $registrationField) {
             $registrationForm .= $this->renderField($fieldName, $registrationField);
         }
 
-        $registrationForm .= '<input type="hidden" name="__redirect_to" value="'.Helper::getPortalBaseUrl().'">';
+        $registrationForm .= '<input type="hidden" name="__redirect_to" value="' . $attributes['redirect-to'] . '">';
+        $registrationForm .= '<button type="submit" id="fst_submit">' . $this->submitBtnLoadingSvg() . '<span>' .  __('Signup', 'fluent-support') . '</span></button>';
 
         $registrationForm .= '</form></div>';
 
         return $registrationForm;
     }
 
+    public function authForm($attributes)
+    {
+        $authForm = '<div class="fst_auth_wrapper">';
+
+        $authForm .= do_shortcode('[fluent_support_login]');
+        $authForm .= do_shortcode('[fluent_support_signup]');
+
+        $authForm .= '</div>';
+
+        return $authForm;
+    }
 
     private function renderField($fieldName, $field)
     {
         $fieldType = Arr::get($field, 'type');
+        $isRequired = Arr::get($field, 'required');
+        $isRequired = $isRequired ? 'is-required' : '';
 
         $textTypes = ['text', 'email', 'password'];
 
         $html = '<div class="fst_field_group fst_field_'.$fieldName.'">';
         if($label = Arr::get($field, 'label')) {
-            $html .= '<div class="fst_field_label"><label for="'.Arr::get($field, 'id').'">'.$label.'</label></div>';
+            $html .= '<div class="fst_field_label ' . $isRequired . '"><label for="'.Arr::get($field, 'id').'">'.$label.'</label></div>';
         }
 
         if(in_array($fieldType, $textTypes)) {
@@ -95,13 +121,13 @@ class AuthHandler
         return $html.'</div>';
     }
 
-    public function getSignupFields()
+    public static function getSignupFields()
     {
         return apply_filters('fluent_support/registration_form_fields', [
             'first_name' => [
                 'required' => true,
                 'type' => 'text',
-                'label' => __('First mame', 'fluent-support'),
+                'label' => __('First name', 'fluent-support'),
                 'id' => 'fst_first_name',
                 'placeholder' => __('First name', 'fluent-support')
             ],
@@ -133,5 +159,52 @@ class AuthHandler
                 'placeholder' => __('Password', 'fluent-support')
             ]
         ]);
+    }
+
+    protected function submitBtnLoadingSvg()
+    {
+        $loadingIcon = '<svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+           width="40px" height="20px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+        <path fill="#000" d="M43.935,25.145c0-10.318-8.364-18.683-18.683-18.683c-10.318,0-18.683,8.365-18.683,18.683h4.068c0-8.071,6.543-14.615,14.615-14.615c8.072,0,14.615,6.543,14.615,14.615H43.935z">
+          <animateTransform attributeType="xml"
+            attributeName="transform"
+            type="rotate"
+            from="0 25 25"
+            to="360 25 25"
+            dur="0.6s"
+            repeatCount="indefinite"/>
+          </path>
+        </svg>';
+
+        return apply_filters('fluent-support/signup_loading_icon', $loadingIcon);
+    }
+
+    protected function getShortcodes($attributes)
+    {
+        $shortCodeDefaults = apply_filters('fluent-support/auth_shortcode_defaults', [
+            'auto-redirect' => false,
+            'redirect-to'   => Helper::getPortalBaseUrl()
+        ]);
+
+        return shortcode_atts($shortCodeDefaults, $attributes);
+    }
+
+    protected function handleAlreadyLoggedIn($attributes)
+    {
+        if (get_current_user_id() && !wp_is_json_request() && is_singular()) {
+            if ($attributes['auto-redirect'] === 'true') {
+                $redirect = $attributes['redirect-to'];
+                ?>
+                <script type="text/javascript">
+                    document.addEventListener("DOMContentLoaded", function() {
+                        var redirect = "<?php echo $redirect; ?>";
+                        window.location.replace(redirect);
+                    });
+                </script>
+                <?php
+            }
+
+            die();
+        }
     }
 }
