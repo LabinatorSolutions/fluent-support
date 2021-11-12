@@ -19,7 +19,7 @@
                             </li>
                         </template>
 
-                        <li title="Run Workflow" class="fs_add_workflow" v-if="this.appVars.manual_workflows.length">
+                        <li title="Run Workflow" class="fs_add_workflow" v-if="appVars.manual_workflows && appVars.manual_workflows.length">
                             <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]"/>
                         </li>
 
@@ -48,7 +48,8 @@
 
                     </ul>
                     <div class="fs_product">
-                        <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh" class="fs_refresh_tk_page"
+                        <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
+                                   class="fs_refresh_tk_page"
                                    size="small"></el-button>
                         <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
                                    v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">
@@ -74,7 +75,9 @@
                             </el-select>
 
                         </el-popover>
-                        <span class="fs_business_name"><i class="el-icon-office-building"></i> {{ ticket.mailbox?.name }}</span>
+                        <span class="fs_business_name"><i class="el-icon-office-building"></i> {{
+                                ticket.mailbox?.name
+                            }}</span>
                     </div>
                 </div>
                 <div class="fs_th_header">
@@ -107,8 +110,7 @@
                                 <template #reference>
                                     <span :title="$t('Client Priority: ') + ticket.client_priority "
                                           :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge">
-                                        <i class="el-icon-user"></i> <i
-                                        class="el-icon-s-flag"></i>  {{ ticket.client_priority }}</span>
+                                        <i class="el-icon-user"></i> {{ ticket.client_priority }}</span>
                                 </template>
 
                                 <el-select @change="updateTicketAttr('client_priority')"
@@ -129,8 +131,7 @@
                                 <template #reference>
                                     <span :title="$t('Admin Priority:') + ticket.priority "
                                           :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"> <i
-                                        class="el-icon-service"></i> <i
-                                        class="el-icon-s-flag"></i> {{ ticket.priority }}</span>
+                                        class="el-icon-service"></i> {{ ticket.priority }}</span>
                                 </template>
 
                                 <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority"
@@ -292,7 +293,8 @@
                             v-model="showCustomDataEditForm"
                             v-if="showCustomDataEditForm"
                             width="60%">
-                            <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id" :custom_data="ticket.custom_fields"/>
+                            <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id"
+                                               :custom_data="ticket.custom_fields"/>
                         </el-dialog>
 
                     </article>
@@ -302,9 +304,19 @@
                 <ticket-sidebar :ticket_id="ticket_id" :ticket="ticket"/>
             </div>
         </template>
-        <div style="padding: 20px;" class="fs_ticket_body" v-else>
-            <el-skeleton :rows="10" animated/>
-        </div>
+        <template v-else>
+            <div class="fs_ticket_body">
+                <div style="padding: 15px;">
+                    <el-skeleton :rows="10" animated/>
+                </div>
+            </div>
+            <div style="margin-left: 20px;" class="fs_ticket_sidebar">
+                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;" :rows="3" animated/>
+                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;" :rows="3" animated/>
+                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;" :rows="3" animated/>
+            </div>
+        </template>
+
         <el-dialog
             :title="$t('Edit Response')"
             v-model="edit_response_modal"

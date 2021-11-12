@@ -12,7 +12,7 @@
                     </el-button>
                 </div>
             </div>
-            <div class="fs_box_body fs_padded_20">
+            <div v-if="has_pro" class="fs_box_body fs_padded_20">
                 <el-table :data="workflows" border stripe>
                     <el-table-column prop="id" label="ID" width="90"/>
                     <el-table-column label="Title">
@@ -56,6 +56,11 @@
                 <div v-if="loading">
                     <el-skeleton :rows="3" animated/>
                 </div>
+            </div>
+            <div class="fs_narrow_promo" style="background: white;" v-else>
+                <h3>Automate your tickets by applying manual or automated tasks</h3>
+                <p>{{$t('pro_promo')}}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
             </div>
         </div>
         <el-dialog
