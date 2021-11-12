@@ -16,7 +16,7 @@
                 <div :class="{fs_no_attachment: !appVars.has_file_upload}" class="fs_half">
                     <div class="fs_response_actions">
                         <el-checkbox class="fs_close_checkbox" v-model="close_ticket" true-label="yes" false-label="no">{{$t('Close Ticket')}}</el-checkbox>
-                        <el-button @click="reply()" size="small" type="success">{{$t('Reply')}}</el-button>
+                        <el-button v-loading="creating" :disabled="creating" @click="reply()" size="small" type="success">{{$t('Reply')}}</el-button>
                     </div>
                 </div>
             </div>
