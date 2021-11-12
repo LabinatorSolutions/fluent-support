@@ -4,7 +4,7 @@
             <div class="fs_box">
                 <div class="fs_box_header">
                     <div class="fs_box_head">
-                        {{$t('Individual Performance')}}
+                        {{ $t('Individual Performance') }}
                     </div>
                     <div class="fs_box_actions">
                         <el-date-picker
@@ -60,9 +60,11 @@
                             <template #default="scope">
                                 <template v-if="scope.row.active_stat">
                                     <ul style="margin: 0; padding: 0; list-style: none;">
-                                        <li>{{$t('Waiting Tickets')}}: {{scope.row.active_stat.waiting_tickets}}</li>
-                                        <li>{{$t('Average Waiting')}}: {{scope.row.active_stat.average_waiting}}</li>
-                                        <li>{{$t('Max Waiting')}}: {{scope.row.active_stat.max_waiting}}</li>
+                                        <li>{{ $t('Waiting Tickets') }}: {{ scope.row.active_stat.waiting_tickets }}
+                                        </li>
+                                        <li>{{ $t('Average Waiting') }}: {{ scope.row.active_stat.average_waiting }}
+                                        </li>
+                                        <li>{{ $t('Max Waiting') }}: {{ scope.row.active_stat.max_waiting }}</li>
                                     </ul>
                                 </template>
                             </template>
@@ -83,7 +85,7 @@ import each from 'lodash/each';
 
 export default {
     name: 'AgentReports',
-    props:['url'],
+    props: ['url'],
     data() {
         return {
             reports: [],
@@ -184,11 +186,11 @@ export default {
             });
             return summary;
         },
-        showOrHideSummaries(){
-          if(this.url=='my-reports/my-summary'){
-            return false;
-          }
-          return true;
+        showOrHideSummaries() {
+            if (this.url == 'my-reports/my-summary') {
+                return false;
+            }
+            return true;
         }
     },
     methods: {
@@ -216,7 +218,7 @@ export default {
             return new Date() <= val;
         },
         getSummaries(param) {
-            const { columns } = param;
+            const {columns} = param;
             const sums = [];
             columns.forEach((column, index) => {
                 if (index === 0) {

@@ -87,7 +87,15 @@
             </div>
         </div>
         <div class="fs_padded_20" v-else>
-            <el-skeleton :rows="7" animated/>
+            <el-row :gutter="30">
+                <el-col :sm="12" :md="18" :xs="24">
+                    <el-skeleton style="background: white; box-sizing: border-box; padding: 20px;" :rows="9" animated/>
+                </el-col>
+                <el-col :sm="12" :md="6" :xs="24">
+                    <el-skeleton style="margin-bottom: 20px;background: white; padding: 20px; box-sizing: border-box" :rows="3" animated/>
+                    <el-skeleton style="background: white; padding: 20px; box-sizing: border-box" :rows="3" animated/>
+                </el-col>
+            </el-row>
         </div>
     </div>
 </template>

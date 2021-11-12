@@ -17,7 +17,7 @@ class ActivityLoggerPolicy extends Policy
     {
         return PermissionManager::currentUserCan('fst_view_activity_logs');
     }
-
+    
     public function getSettings(Request $request)
     {
         return PermissionManager::currentUserCan('fst_manage_settings');

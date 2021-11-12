@@ -49,7 +49,7 @@
             :title="$t('Add a New Business Inbox')"
             v-model="create_modal"
             width="60%">
-            <el-form :data="new_business" label-position="top">
+            <el-form v-if="can_create_mailbox" :data="new_business" label-position="top">
                 <el-form-item :label="$t('Inbox Name')">
                     <el-input type="text" v-model="new_business.name"></el-input>
                 </el-form-item>
@@ -66,8 +66,14 @@
                     </el-radio-group>
                 </el-form-item>
             </el-form>
+            <div class="fs_narrow_promo" style="background: white;" v-else>
+                <h3>Create Multiple Shared inbox and connect your email inbox with Fluent Support</h3>
+                <p>{{$t('pro_promo')}}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
+            </div>
+
             <template #footer>
-                <span class="dialog-footer">
+                <span v-if="can_create_mailbox" class="dialog-footer">
                   <el-button @click="create_modal = false">{{ $t('Cancel') }}</el-button>
                   <el-button type="primary" @click="createMailBox()">{{ $t('Add Business Inbox') }}</el-button>
                 </span>
@@ -122,6 +128,19 @@ export default {
                 fallback_box: ''
             },
             deleteing: false
+        }
+    },
+    computed: {
+        can_create_mailbox() {
+            if (this.has_pro) {
+                return true;
+            }
+
+            if (this.mailboxes.length > 1) {
+                return false;
+            }
+
+            return true;
         }
     },
     methods: {
@@ -209,6 +228,9 @@ export default {
     },
     mounted() {
         this.fetch();
+
+        this.$setTitle('Business Settings');
+
     }
 }
 </script>
