@@ -16,10 +16,12 @@ return function($file) {
 
     add_action('plugins_loaded', function() use ($file) {
         $application = new Application($file);
-
-        load_plugin_textdomain('fluent-support', false, 'fluent-support/language/');
-
         do_action('fluent_support_loaded', $application);
         do_action('fluent_support_addons_loaded', $application);
+
+        add_action('init', function () {
+            load_plugin_textdomain('fluent-support', false, 'fluent-support/language/');
+        });
+
     });
 };
