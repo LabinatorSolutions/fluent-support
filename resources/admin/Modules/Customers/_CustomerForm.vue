@@ -63,7 +63,7 @@ export default {
                     type: 'input-radio',
                     options: {
                         'active': {'id': 'active', 'value': 'active', 'label': 'Active'},
-                        'inactive': {'id': 'inactive', 'value': 'inactive', 'label': 'Inactive'}
+                        'inactive': {'id': 'inactive', 'value': 'inactive', 'label': 'Blocked'}
                     },
                     wrapper_class: 'fs_half_field'
                 },
@@ -75,7 +75,7 @@ export default {
                     },
                     type: 'html-viewer',
                     wrapper_class: 'fs_warn',
-                    html: 'If you select <b>Inactive</b> status then this customer can not submit a ticket or any response'
+                    html: 'If you select <b>Blocked</b> status then this customer can not submit a ticket or any response'
                 },
             },
             address_fields: {

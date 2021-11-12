@@ -87,7 +87,7 @@ export default {
     methods: {
         create() {
             this.errors.clear();
-            this.creating = false;
+            this.creating = true;
             this.$post('tickets', {
                 ...this.ticket,
                 attachments: this.attachments,
