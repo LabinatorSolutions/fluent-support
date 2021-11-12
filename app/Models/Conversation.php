@@ -23,9 +23,9 @@ class Conversation extends Model
 
     public static function boot()
     {
-//        static::creating(function ($model) {
-//            $model->person_type = static::$type;
-//        });
+        static::creating(function ($model) {
+            $model->content_hash = md5($model->content);
+        });
     }
 
     /**
