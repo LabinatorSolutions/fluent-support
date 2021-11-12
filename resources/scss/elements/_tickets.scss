@@ -76,11 +76,12 @@
                 h2 {
                     color: #314351;
                     font-weight: 400;
-                    line-height: 30px;
+                    line-height: 27px;
                     word-wrap: break-word;
                     font-size: 22.5px;
                     display: inline-block;
                     margin: 0;
+                    padding: 0 4em 0 0;
                 }
 
                 .fs_tk_tags {
@@ -99,9 +100,10 @@
                 top: 8px;
 
                 span.fs_ticket_id {
-                    margin-right: 10px;
-                    font-size: 20px;
-                    color: #93a1b0;
+                    font-size: 16px;
+                    color: #b9b9b9;
+                    font-weight: 400;
+                    vertical-align: text-top;
                 }
             }
         }
@@ -138,7 +140,7 @@
                 position: absolute;
                 left: 0;
                 top: 0;
-                background: #606dbe;
+                background: #1785EB;
             }
 
             &.fs_person_agent:before {
@@ -146,7 +148,7 @@
                 position: relative;
                 left: 0px;
                 top: 0px;
-                background: #5d6cc3;
+                background: #1785EB;
                 color: #fff;
                 font-size: 10px;
                 padding: 5px 10px;
@@ -199,16 +201,17 @@
             }
 
             .fs_thread_title {
-                color: #8494a5;
-                font-weight: 400;
-                font-size: 18px;
+                color: #7a7b7d;
+                font-weight: 600;
+                font-size: 14px;
                 line-height: 1.2em;
                 margin-bottom: 12px;
                 display: inline-block;
 
                 strong {
+                    font-size: 18px;
                     font-weight: 500;
-                    color: #253642;
+                    color: #3e4245;
                 }
             }
 
@@ -260,11 +263,22 @@
             overflow: hidden;
 
             .fs_product {
+                @media all and (max-width: 767px) {
+                    display: flex;
+                }
                 float: right;
                 padding: 10px 15px 0 0;
                 font-size: 16px;
                 color: #99a5b4;
                 cursor: pointer;
+                & .fs_refresh_tk_page {
+                    background: #e0e0e0;
+                }
+                & .fs_refresh_tk_page:hover {
+                    background: #B9DAF9;
+                    color: #000;
+                    border-color: transparent;
+                }
             }
         }
 
@@ -313,7 +327,7 @@ img.tk_customer_avatar {
     display: inline-block;
     font-size: 12.5px;
     font-weight: 400;
-    padding: 1px 10px;
+    padding: 4px 8px;
     cursor: pointer;
     line-height: 14px;
     margin: 0 4px 0 0;
@@ -360,7 +374,7 @@ img.tk_customer_avatar {
 }
 
 .fs_tk_sidebar_wrap {
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .fs_tk_card {
@@ -371,7 +385,7 @@ img.tk_customer_avatar {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     border-radius: 3px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     padding: 15px 20px 25px 20px;
     width: 100%;
 
@@ -586,19 +600,26 @@ ul.fs_tk_actions {
 
     li {
         cursor: pointer;
-        padding: 10px 20px;
+        padding: 10px 4px;
         display: inline-block;
         margin: 0;
+        vertical-align: bottom;
 
         i {
             font-size: 24px;
             line-height: 30px;
         }
 
-        &.fs_action_active {
-            background: #5d6cc3;
-            color: white;
-        }
+         &.fs_add_reply, &.fs_add_note, &.fs_add_workflow {
+             padding: 5px 9px;
+             display: inline-block;
+             background: #e0e0e0;
+             margin: 5px;
+             border-radius: 10%;
+             &.fs_action_active{
+                 background: #B9DAF9;
+             }
+         }
     }
 }
 
