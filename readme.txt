@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
 Tested up to: 5.8
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -142,6 +142,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.4.1 (Date: November 12, 2021) =
+* Remove Fluent Forms Dependencies
+* Deep integration with FluentCRM
+* UI Improvements
 
 = 1.4.0 (Date: November 12, 2021) =
 * Initial Release
