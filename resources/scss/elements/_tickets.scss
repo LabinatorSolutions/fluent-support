@@ -95,6 +95,7 @@
                     .fs_tags {
                         margin: 5px 0 0 10px;
                         float: left;
+
                         .fs_add_tag_icon {
                             &:hover {
                                 background: #4da4ff;
@@ -655,3 +656,46 @@ ul.fs_tk_actions {
     }
 }
 
+
+.fs_crm_profile {
+    border-top: 1px solid #e1e2e5;
+    margin: 10px -20px -10px;
+    padding: 15px 20px 0;
+
+    .fs_crm_heading {
+        margin-bottom: 5px;
+
+        img {
+            margin-right: 0px;
+        }
+
+        a {
+            display: flex;
+            text-decoration: none;
+
+            span.el-tag {
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
+                margin-left: -2px;
+
+                &.fc_status_subscribed {
+                    background-color: #7742e6;
+                    border-color: #7742e6;
+                    color: white;
+                }
+            }
+        }
+    }
+
+    > span {
+        padding-bottom: 7px;
+        display: block;
+    }
+
+    .fs_taggables .dashicons {
+        font-size: 15px;
+        margin-right: 5px;
+        color: #e1e2e5;
+        margin-top: 1px;
+    }
+}

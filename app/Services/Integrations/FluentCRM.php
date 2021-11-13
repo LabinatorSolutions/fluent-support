@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services\Integrations;
 
+use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Person;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
@@ -10,7 +11,7 @@ class FluentCRM
 {
     public function boot()
     {
-        add_filter('fluent_support/customer_extra_widgets', array($this, 'getCRMProfile'), 20, 2);
+       // add_filter('fluent_support/customer_extra_widgets', array($this, 'getCRMProfile'), 20, 2);
         add_filter('fluentcrm-support_tickets_providers', array($this, 'pushProvider'));
         add_filter('fluentcrm-get_support_tickets_fluent_support', array($this, 'getSupportTickets'), 10, 2);
     }
@@ -41,7 +42,7 @@ class FluentCRM
 
     public function getSupportTickets($data, $subscriber)
     {
-        $supportPerson = Person::where('email', $subscriber->email)->first();
+        $supportPerson = Customer::where('email', $subscriber->email)->first();
 
         if(!$supportPerson) {
             return  $data;

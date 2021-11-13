@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-select clearable filterable :placeholder="field.placeholder" v-model="modelValue">
+        <el-select clearable filterable :multiple="field.multiple" :placeholder="field.placeholder" v-model="modelValue">
             <el-option
                 v-for="item in field.options"
                 :key="item.id"

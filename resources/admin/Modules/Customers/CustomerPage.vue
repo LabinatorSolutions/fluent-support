@@ -10,7 +10,6 @@
                 </div>
                 <div class="fs_box_actions fs_customer_filters">
                     <div class="fs_cs_status_filter">
-
                     </div>
                 </div>
             </div>
@@ -48,6 +47,7 @@
                                             </a>
                                             <span v-else> {{ customer.email }}</span>
                                         </div>
+                                        <fluent-crm-profile v-if="fluentcrm_profile" :crm_profile="fluentcrm_profile" />
                                     </div>
                                 </div>
                             </div>
@@ -102,12 +102,14 @@
 
 <script type="text/babel">
 import CustomerForm from './_CustomerForm';
+import FluentCrmProfile from '@/admin/Modules/Tickets/parts/_CrmProfile';
 
 export default {
     name: "CustomerPage",
     props: ['customer_id'],
     components: {
-        CustomerForm
+        CustomerForm,
+        FluentCrmProfile
     },
     data() {
         return {
@@ -115,19 +117,21 @@ export default {
             loading_sidebar: false,
             customer: false,
             widgets: false,
-            tickets: []
+            tickets: [],
+            fluentcrm_profile: false
         }
     },
     methods: {
         fetchCustomer() {
             this.loading = !this.loading;
             this.$get('customers/' + this.customer_id, {
-                with: ['widgets', 'tickets']
+                with: ['widgets', 'tickets', 'fluentcrm_profile']
             })
                 .then(response => {
                     this.customer = response.customer;
                     this.widgets = response.widgets;
                     this.tickets = response.tickets;
+                    this.fluentcrm_profile = response.fluentcrm_profile;
                 })
                 .catch(errors => {
                     this.$handleError(errors);

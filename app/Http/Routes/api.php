@@ -55,6 +55,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->post('bulk-actions', 'TicketController@doBulkActions'); // close_tickets | delete_tickets | assign_agent | assign_tags
     $router->post('bulk-reply', 'TicketController@doBulkReplies');
 
+    $router->post('sync-fluentcrm-tags', 'TicketController@syncFluentCrmTags');
+
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
@@ -82,6 +84,9 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->post('/slack-integration', 'SlackController@saveSettings');
     $router->get('/pages', 'SettingsController@getPages');
     $router->post('/setup', 'SettingsController@setupPortal');
+
+    $router->get('/fluentcrm-settings', 'SettingsController@getFluentCRMSettings');
+    $router->post('/intsall-fluentcrm', 'SettingsController@installFluentCRM');
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {

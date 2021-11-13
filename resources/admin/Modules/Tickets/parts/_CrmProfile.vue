@@ -1,0 +1,90 @@
+<template>
+    <div v-if="crm_profile" class="fs_crm_profile">
+        <div class="fs_crm_heading">
+            <a target="_blank" rel="noopener" :href="crm_profile.view_url">
+                <img style="max-width: 20px" :src="appVars.fluentcrm_config.icon"/>
+                <span class="el-tag el-tag--mini el-tag--danger" :class="'fc_status_'+crm_profile.status">{{ ucFirst(crm_profile.status) }}</span>
+            </a>
+        </div>
+        <span style="color: #f06060;" v-if="crm_profile.name_mismatch">{{ crm_profile.full_name }}</span>
+        <div class="fs_taggables">
+            <i class="dashicons dashicons-tag"></i>
+            <span class="el-tag el-tag--mini el-tag--plain" v-for="tag in crm_profile.tags" :key="tag.id">{{
+                    tag.title
+                }}</span>
+
+            <el-popover
+                v-if="can_add_tags"
+                placement="bottom"
+                :width="400"
+                v-model:visible="popVisible"
+                trigger="manual"
+            >
+                <template #reference>
+                    <span @click="popVisible = !popVisible" style="cursor: pointer"
+                          class="fs_add_tag_icon el-tag el-tag--mini el-tag--plain"><i
+                        class="el-icon-plus"></i></span>
+                </template>
+
+                <h4>Apply / Remove Tags on FluentCRM Profile</h4>
+
+                <el-select :multiple="true" v-model="attachedTags"
+                           size="small">
+                    <el-option
+                        v-for="tag in all_tags"
+                        :key="tag.id" :value="tag.id"
+                        :label="tag.title"></el-option>
+                </el-select>
+
+                <el-button v-loading="saving" @click="syncTags()" :disabled="saving" type="primary" size="small"
+                           style="margin-top: 20px">Update Settings
+                </el-button>
+
+            </el-popover>
+        </div>
+    </div>
+</template>
+
+<script type="text/babel">
+import each from 'lodash/each';
+
+export default {
+    name: 'CRMProfile',
+    props: ['crm_profile'],
+    data() {
+        return {
+            all_tags: this.appVars.fluentcrm_config.tags,
+            can_add_tags: this.appVars.fluentcrm_config.can_add_tags,
+            attachedTags: [],
+            popVisible: false,
+            saving: false
+        }
+    },
+    methods: {
+        syncTags() {
+            this.saving = true;
+            this.$post('tickets/sync-fluentcrm-tags', {
+                contact_id: this.crm_profile.id,
+                tags: this.attachedTags
+            })
+                .then(response => {
+                    this.$notify.success(response.message);
+                    this.crm_profile.tags = response.tags;
+                    this.popVisible = false;
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.saving = false;
+                });
+
+        }
+    },
+    mounted() {
+        each(this.crm_profile.tags, (tag) => {
+            this.attachedTags.push(tag.id);
+        });
+    }
+}
+</script>

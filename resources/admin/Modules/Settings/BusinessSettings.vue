@@ -73,7 +73,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
-                })
+                });
         }
     },
     mounted() {

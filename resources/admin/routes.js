@@ -13,6 +13,7 @@ import IntegrationView from './Modules/Settings/IntegrationView';
 import SlackIntegration from "./Modules/Settings/SlackIntegration";
 import CustomFields from "./Modules/Settings/CustomFields";
 import LicenseManagement from "./Modules/Settings/LicenseManagement";
+import FluentCRMIntegration from "./Modules/Settings/FluentCRMIntegration";
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -109,6 +110,11 @@ export default [
                 path: 'slack-integration',
                 name: 'slack-integration',
                 component: SlackIntegration
+            },
+            {
+                path: 'fluentcrm-integration',
+                name: 'fluentcrm_integration',
+                component: FluentCRMIntegration
             },
             {
                 path: 'license-management',
