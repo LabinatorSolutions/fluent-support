@@ -87,7 +87,11 @@ class FluentCRM
             $customerData['status'] = $syncSettings['default_status'];
             $subscriber = FluentCrmApi('contacts')->createOrUpdate($customerData);
 
-            if($customerData['status'] == 'pending' && $subscriber->status == 'pending') {
+            if (!$subscriber) {
+                return false;
+            }
+
+            if ($customerData['status'] == 'pending' && $subscriber->status == 'pending') {
                 $subscriber->sendDoubleOptinEmail();
             }
         }
