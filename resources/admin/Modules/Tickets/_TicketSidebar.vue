@@ -23,12 +23,15 @@
                             {{ ticket.customer.email }}
                         </a>
                         <span v-else> {{ ticket.customer.email }}</span>
-                        <p class="fs_customer_address">{{getCustomerAddress(ticket.customer)}}</p>
+                        <p class="fs_customer_address">{{ getCustomerAddress(ticket.customer) }}</p>
                     </div>
                 </div>
                 <div v-if="ticket.customer.note" class="fs_customer_note">
                     {{ ticket.customer.note }}
                 </div>
+
+                <fluent-crm-profile v-if="fluentcrm_profile" :crm_profile="fluentcrm_profile" />
+
             </div>
         </div>
 
@@ -59,7 +62,9 @@
                             query: {prev_ticket: ticket_id}
                         }">
                             <i class="el-icon-message"></i> {{ other_ticket.title }} <span class="fs_badge"
-                                                                                           :class="'fs_badge_'+other_ticket.status">{{ other_ticket.status }}</span>
+                                                                                           :class="'fs_badge_'+other_ticket.status">{{
+                                other_ticket.status
+                            }}</span>
                         </router-link>
                     </li>
                 </ul>
@@ -100,13 +105,16 @@
 <script type="text/babel">
 import CustomerForm from "../Customers/_CustomerForm";
 import RemoteSelector from "../../Pieces/RemoteSelector";
+import FluentCrmProfile from './parts/_CrmProfile';
 
 export default {
     name: 'TicketSidebar',
     components: {
-        CustomerForm, RemoteSelector
+        CustomerForm,
+        RemoteSelector,
+        FluentCrmProfile
     },
-    props: ['ticket_id', 'ticket'],
+    props: ['ticket_id', 'ticket', 'fluentcrm_profile'],
     data() {
         return {
             loading: true,

@@ -15,6 +15,7 @@ use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
+use FluentSupport\Framework\Support\Arr;
 
 class TicketController extends Controller
 {
@@ -187,11 +188,18 @@ class TicketController extends Controller
             $ticket->custom_fields = $ticket->customData('admin', true);
         }
 
-        return [
+        $data = [
             'ticket'    => $ticket,
             'responses' => $responses,
             'agent_id'  => $agent->id
         ];
+
+        if (in_array('fluentcrm_profile', $request->get('with_data', [])) && defined('FLUENTCRM')) {
+            $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($ticket->customer);
+        }
+
+        return $data;
+
     }
 
     public function createResponse(Request $request, $ticketId)
@@ -348,7 +356,7 @@ class TicketController extends Controller
             }
 
             return [
-                'message' => sprintf( __('%d tickets have been closed', 'fluent-support'), count($tickets))
+                'message' => sprintf(__('%d tickets have been closed', 'fluent-support'), count($tickets))
             ];
         } else if ($action == 'delete_tickets') {
             $tickets = $query->get();
@@ -480,7 +488,6 @@ class TicketController extends Controller
 
     }
 
-
     public function deleteResponse(Request $request, $ticketId, $responseId)
     {
         $ticket = Ticket::findOrFail($ticketId);
@@ -604,8 +611,61 @@ class TicketController extends Controller
         $ticket = Ticket::findOrFail($ticketId);
 
         return [
-            'custom_data' =>  (object) $ticket->customData(),
+            'custom_data'     => (object)$ticket->customData(),
             'rendered_fields' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields($ticket->customer)
         ];
+    }
+
+    public function syncFluentCrmTags(Request $request)
+    {
+
+        if (!defined('FLUENTCRM')) {
+            return $this->sendError([
+                'message' => 'FluentCRM is not installed'
+            ]);
+        }
+
+        $contactId = absint($request->get('contact_id'));
+
+        if (!$contactId) {
+            return $this->sendError([
+                'message' => 'Contact could not be found'
+            ]);
+        }
+
+        $tagIds = array_filter($request->get('tags', []), 'absint');
+        $canAddTags = \FluentCrm\App\Services\PermissionManager::currentUserCan('fcrm_manage_contacts');
+        $canAddTags = apply_filters('fluent_support/can_user_add_tags_to_customer', $canAddTags);
+
+        if (!$canAddTags) {
+            return $this->sendError([
+                'message' => 'Sorry you do not have permission to add contact tags'
+            ]);
+        }
+
+        $contact = \FluentCrm\App\Models\Subscriber::findOrFail($contactId);
+
+        $existingTags = $contact->tags;
+        $existingTagIds = [];
+        foreach ($existingTags as $tag) {
+            $existingTagIds[] = $tag->id;
+        }
+        $newTagIds = array_diff($tagIds, $existingTagIds);
+        $removedTagIds = array_diff($existingTagIds, $tagIds);
+
+        if ($newTagIds) {
+            $contact->attachTags($newTagIds);
+        }
+
+        if ($removedTagIds) {
+            $contact->detachTags($removedTagIds);
+        }
+
+
+        return [
+            'tags'    => $contact->tags,
+            'message' => 'FluentCRM contact tags has been updated'
+        ];
+
     }
 }

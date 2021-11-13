@@ -6,6 +6,7 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
@@ -62,6 +63,10 @@ class CustomerController extends Controller
                 ->orderBy('id', 'DESC')
                 ->limit(20)
                 ->get();
+        }
+
+        if(in_array('fluentcrm_profile', $with)) {
+            $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($customer);
         }
 
         return $data;

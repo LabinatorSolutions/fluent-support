@@ -318,10 +318,12 @@ class Menu
             'has_file_upload'           => !!Helper::ticketAcceptedFileMiles()
         ));
 
+        if(defined('FLUENTCRM')) {
+            $appVars['fluentcrm_config'] = Helper::getFluentCRMTagConfig();
+        }
+
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
-
         wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', $appVars);
-
         do_action('fluent_support/admin_app_loaded', $app);
 
     }

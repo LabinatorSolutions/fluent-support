@@ -14,6 +14,7 @@ Domain Path: /language
 
 define('FLUENT_SUPPORT_VERSION', '1.4.0');
 define('FLUENT_SUPPORT_UPLOAD_DIR', 'fluent-support');
+define('FLUENT_SUPPORT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
 require __DIR__.'/vendor/autoload.php';
 

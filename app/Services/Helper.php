@@ -101,7 +101,8 @@ class Helper
         return $mimeNames;
     }
 
-    public static function getFileUploadMessage() {
+    public static function getFileUploadMessage()
+    {
         $mimeHeadings = self::getAcceptedMimeHeadings();
         $settings = (new Settings())->globalBusinessSettings();
         $maxFileSize = absint($settings['max_file_size']);
@@ -378,6 +379,63 @@ class Helper
     public static function getCurrentPerson()
     {
         return Person::where('user_id', get_current_user_id())->first();
+    }
+
+    public static function getFluentCRMTagConfig()
+    {
+        if (!defined('FLUENTCRM')) {
+            return [
+                'can_add_tags' => false,
+                'tags'         => [],
+                'logo'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg',
+                'icon'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluent-crm-icon.png',
+            ];
+        }
+
+        $canAddTags = \FluentCrm\App\Services\PermissionManager::currentUserCan('fcrm_manage_contacts');
+
+        $canAddTags = apply_filters('fluent_support/can_user_add_tags_to_customer', $canAddTags);
+        $crmTags = [];
+        if ($canAddTags) {
+            $crmTags = \FluentCrm\App\Models\Tag::select(['id', 'title'])->orderBy('title', 'ASC')->get();
+        }
+
+        return [
+            'can_add_tags' => $canAddTags,
+            'tags'         => $crmTags,
+            'logo'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg',
+            'icon'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluent-crm-icon.png',
+        ];
+
+    }
+
+    public static function getFluentCrmContactData($customer)
+    {
+        if(!defined('FLUENTCRM')) {
+            return false;
+        }
+        $contact = \FluentCrmApi('contacts')->getContactByUserRef($customer->email);
+        if ($contact) {
+            $tags = $contact->tags;
+            $urlBase = apply_filters('fluentcrm_menu_url_base', admin_url('admin.php?page=fluentcrm-admin#/'));
+            $crmProfileUrl = $urlBase . 'subscribers/' . $contact->id;
+
+            $contactData = [
+                'id'            => $contact->id,
+                'first_name'    => $contact->first_name,
+                'last_name'     => $contact->last_name,
+                'full_name'     => $contact->full_name,
+                'name_mismatch' => $contact->full_name != $customer->full_name,
+                'tags'          => $tags,
+                'status'        => $contact->status,
+                'stats'         => $contact->stats(),
+                'view_url'      => $crmProfileUrl
+            ];
+
+            return $contactData;
+        }
+
+        return false;
     }
 
 }

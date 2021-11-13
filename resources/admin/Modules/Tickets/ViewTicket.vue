@@ -19,7 +19,8 @@
                             </li>
                         </template>
 
-                        <li title="Run Workflow" class="fs_add_workflow" v-if="appVars.manual_workflows && appVars.manual_workflows.length">
+                        <li title="Run Workflow" class="fs_add_workflow"
+                            v-if="appVars.manual_workflows && appVars.manual_workflows.length">
                             <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]"/>
                         </li>
 
@@ -301,7 +302,7 @@
                 </div>
             </div>
             <div class="fs_ticket_sidebar">
-                <ticket-sidebar :ticket_id="ticket_id" :ticket="ticket"/>
+                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket"/>
             </div>
         </template>
         <template v-else>
@@ -311,9 +312,12 @@
                 </div>
             </div>
             <div style="margin-left: 20px;" class="fs_ticket_sidebar">
-                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;" :rows="3" animated/>
-                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;" :rows="3" animated/>
-                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;" :rows="3" animated/>
+                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;"
+                             :rows="3" animated/>
+                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;"
+                             :rows="3" animated/>
+                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;"
+                             :rows="3" animated/>
             </div>
         </template>
 
@@ -366,7 +370,8 @@ export default {
             active_agents: [],
             edit_response_modal: false,
             editing_response: false,
-            showCustomDataEditForm: false
+            showCustomDataEditForm: false,
+            fluentcrm_profile: false
         }
     },
     watch: {
@@ -384,11 +389,16 @@ export default {
     methods: {
         fetchTicket() {
             this.loading = true;
-            this.$get(`tickets/${this.ticket_id}`)
+            this.$get(`tickets/${this.ticket_id}`, {
+                with_data: ['fluentcrm_profile']
+            })
                 .then(response => {
                     this.ticket = response.ticket;
                     this.$setTitle(response.ticket.title);
                     this.conversations = response.responses;
+                    if (this.appVars.fluentcrm_config) {
+                        this.fluentcrm_profile = response.fluentcrm_profile;
+                    }
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
