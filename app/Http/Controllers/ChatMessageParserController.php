@@ -72,14 +72,14 @@ class ChatMessageParserController extends Controller
     {
         $slackSettings = SlackHelper::getSettings();
 
+        if($request->get('type') == 'url_verification') {
+            return $request->get('challenge');
+        }
+
         if ($slackSettings['reply_from_slack'] == 'yes'){
 
             $eventSubType = $request->get('event.subtype');
             $channelId = $request->get('event.channel');
-
-            if($request->get('type') == 'url_verification') {
-                return $request->get('challenge');
-            }
 
             if($slackSettings['channel_id'] == $channelId &&  $eventSubType== 'message_changed') {
                 $user = $request->get('event.message.user');
