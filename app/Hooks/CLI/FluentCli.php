@@ -142,7 +142,7 @@ class FluentCli
 
         while ($hasMore) {
             \WP_CLI::line( 'Itteration: '.$itteration);
-            $oldTickets = wpFluent()->table('fs_tickets_old')
+            $oldTickets = \FluentSupport\App\App::db()->table('fs_tickets_old')
                 ->select(['id', 'customer_id'])
                 ->offset($itteration * 100)
                 ->limit(100)
@@ -154,7 +154,7 @@ class FluentCli
                 $hasMore = false;
             } else {
                 foreach ($oldTickets as $oldTicket) {
-                    wpFluent()->table('fs_tickets')
+                    \FluentSupport\App\App::db()->table('fs_tickets')
                         ->where('id', $oldTicket->id)
                         ->update([
                             'customer_id' => $oldTicket->customer_id
@@ -173,7 +173,7 @@ class FluentCli
 
         foreach ($nullTickets as $nullTicket)
         {
-            $emailLog = wpFluent()->table('fsmpt_email_logs')
+            $emailLog = \FluentSupport\App\App::db()->table('fsmpt_email_logs')
                 ->where('subject', 'Request Received: '.$nullTicket->title)
                 ->first();
 
