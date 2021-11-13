@@ -452,7 +452,7 @@ class Ticket extends Model
 
     public function getLastAgentResponse()
     {
-        return wpFluent()->table('fs_conversations')
+        return \FluentSupport\App\App::db()->table('fs_conversations')
             ->select(['fs_conversations.*'])
             ->where('fs_conversations.conversation_type', 'response')
             ->where('fs_conversations.ticket_id', $this->id)
@@ -463,7 +463,7 @@ class Ticket extends Model
 
     public function getLastResponse()
     {
-        return wpFluent()->table('fs_conversations')
+        return \FluentSupport\App\App::db()->table('fs_conversations')
             ->where('ticket_id', $this->id)
             ->orderBy('id', 'DESC')
             ->first();
