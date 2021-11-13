@@ -3,11 +3,11 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Custom Ticket Fields</h3>
+                    <h3>{{$t('Custom Ticket Fields')}}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
                     <el-button @click="addFieldVisible = true" type="primary" icon="el-icon-plus" size="small">
-                        Add New Field
+                        {{$t('Add New Field')}}
                     </el-button>
                 </div>
             </div>
@@ -44,9 +44,9 @@
                 </div>
             </template>
             <div class="fs_narrow_promo" v-else>
-                <h3>Add custom fields to your tickets and collect extra data from ticket open form.</h3>
-                <p>This is a pro feature. Please upgrade to Fluent Support Pro to use this feature</p>
-                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">Upgrade To Pro</a>
+                <h3>{{$t('tk_data_collect_using_customfield')}}</h3>
+                <p>{{$t('pro_promo')}}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
             </div>
         </div>
         <el-dialog
