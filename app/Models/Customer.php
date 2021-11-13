@@ -49,8 +49,8 @@ class Customer extends Person
             if(empty($customerData['first_name']) && empty($customerData['last_name'])) {
                 $customerData['first_name'] = $user->display_name;
             }
-
             $customerData['user_id'] = $user->ID;
+
         }
 
         if(!$customer) {
@@ -59,6 +59,9 @@ class Customer extends Person
             }
             // we have to create customer
             $customer = self::create($customerData);
+
+            do_action('fluent_support/customer_created', $customer);
+
         } else {
             if(!empty($customerData['user_id']) || !empty($customerData['remote_uid'])) {
                 $customerData = array_filter($customerData);
