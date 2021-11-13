@@ -286,7 +286,7 @@
                                         <span v-else v-html="fieldValue"></span>
                                     </li>
                                 </ul>
-                                <p v-else>No additional data found</p>
+                                <p v-else>{{$t('No additional data found')}}</p>
                             </div>
                         </div>
                         <el-dialog
