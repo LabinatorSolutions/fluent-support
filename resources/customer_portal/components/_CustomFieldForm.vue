@@ -10,11 +10,13 @@
                             :placeholder="field.placeholder"
                             v-model="custom_data[field.slug]"
                         />
-                        <el-select :placeholder="field.placeholder" clearable v-else-if="field.type == 'select-one'" v-model="custom_data[field.slug]">
+                        <el-select :placeholder="field.placeholder" clearable v-else-if="field.type == 'select-one'"
+                                   v-model="custom_data[field.slug]">
                             <el-option v-for="option in field.options" :key="option"
                                        :value="option" :label="option"></el-option>
                         </el-select>
-                        <el-select :placeholder="field.placeholder" clearable v-else-if="field.type == 'select'" :filterable="field.filterable"
+                        <el-select :placeholder="field.placeholder" clearable v-else-if="field.type == 'select'"
+                                   :filterable="field.filterable"
                                    :multiple="field.multiple"
                                    v-model="custom_data[field.slug]">
                             <el-option v-for="option in field.options" :key="option.id"
@@ -97,14 +99,14 @@ export default {
             let allPassed = true;
 
             each(field.conditions, (condition) => {
-                if(this.dependancyPass(condition)) {
+                if (this.dependancyPass(condition)) {
                     singlePass = true;
                 } else {
                     allPassed = false;
                 }
             });
 
-            if(field.match_type == 'yes') {
+            if (field.match_type == 'yes') {
                 return singlePass && allPassed;
             }
 
@@ -116,22 +118,22 @@ export default {
          */
         compare(sourceVal, operator, givenVal) {
 
-            if(typeof sourceVal == 'string') {
+            if (typeof sourceVal == 'string') {
                 sourceVal = sourceVal.toLowerCase();
             }
 
-            if(typeof givenVal == 'string') {
+            if (typeof givenVal == 'string') {
                 givenVal = givenVal.toLowerCase();
             }
 
             switch (operator) {
                 case '=':
-                    if(isArray(givenVal)) {
+                    if (isArray(givenVal)) {
                         return givenVal.indexOf(sourceVal) !== -1;
                     }
                     return sourceVal == givenVal
                 case '!=':
-                    if(isArray(givenVal)) {
+                    if (isArray(givenVal)) {
                         return givenVal.indexOf(sourceVal) === -1;
                     }
                     return sourceVal != givenVal
@@ -161,9 +163,9 @@ export default {
 
                 let sourceValue = '';
 
-                if(itemKey.indexOf('ticket_') === 0) { // it's a ticket property
+                if (itemKey.indexOf('ticket_') === 0) { // it's a ticket property
                     itemKey = itemKey.replace('ticket_', '');
-                    if(itemKey == 'product_id') {
+                    if (itemKey == 'product_id') {
                         sourceValue = this.formattedProducts[this.ticket[itemKey]];
                     } else {
                         sourceValue = this.ticket[itemKey];
@@ -172,7 +174,7 @@ export default {
                     sourceValue = this.custom_data[itemKey];
                 }
 
-                if(!sourceValue) {
+                if (!sourceValue) {
                     sourceValue = '';
                 }
 
