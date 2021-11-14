@@ -4,7 +4,7 @@
             <ul>
                 <li v-for="(settings_menu, settings_index) in settings_items">
                     <router-link :to="{ name: settings_menu.route_name, query: settings_menu.route_query }">
-                        <i :class="settings_menu.icon" />
+                        <i :class="settings_menu.icon"/>
                         {{ settings_menu.title }}
                     </router-link>
                 </li>
@@ -28,7 +28,7 @@ export default {
                     icon: 'el-icon-document'
                 },
                 {
-                    title: this.$t('Tags'),
+                    title: this.$t('Ticket Tags'),
                     route_name: 'tags',
                     icon: 'el-icon-collection-tag',
                     route_query: {}
@@ -66,7 +66,7 @@ export default {
         }
     },
     mounted() {
-        if(this.has_pro) {
+        if (this.has_pro) {
             this.settings_items.push({
                 title: this.$t('License Management'),
                 route_name: 'license',
