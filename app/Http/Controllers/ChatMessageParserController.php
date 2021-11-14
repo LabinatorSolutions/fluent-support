@@ -3,12 +3,9 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
-use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Services\Parser\Parsedown;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\Framework\Request\Request;
-use FluentSupport\Framework\Support\Arr;
 use FluentSupportPro\App\Services\Integrations\Slack\SlackNotification;
 
 class ChatMessageParserController extends Controller
