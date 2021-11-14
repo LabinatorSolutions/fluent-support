@@ -326,6 +326,10 @@ class TransStrings
             'No additional data found' => __('No additional data found', 'fluent-support'),
             'Admin Priority:' => __('No additional data found', 'fluent-support'),
             'Ticket created at ' => __('Ticket created at ', 'fluent-support'),
+            'Update Settings' => __('Update Settings', 'fluent-support'),
+            'Apply / Remove Tags on FluentCRM Profile' => __('Apply / Remove Tags on FluentCRM Profile', 'fluent-support'),
+            'block_instruction' => __('If you select <b>Blocked</b> status then this customer can not submit a ticket or any response', 'fluent-support'),
+            'Blocked' => __('Blocked', 'fluent-support'),
         ];
     }
 }
