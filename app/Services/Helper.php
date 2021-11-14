@@ -299,7 +299,7 @@ class Helper
 
     public static function getTicketMeta($ticketId, $key, $default = '')
     {
-        $data = Meta::where('object_type', 'ticket_mata')
+        $data = Meta::where('object_type', 'ticket_meta')
             ->where('key', $key)
             ->where('object_id', $ticketId)
             ->first();
@@ -316,11 +316,11 @@ class Helper
 
     public static function updateTicketMeta($ticketId, $key, $value)
     {
-        $data = Meta::where('object_type', 'ticket_mata')
+        $data = Meta::where('object_type', 'ticket_meta')
             ->where('key', $key)
             ->where('object_id', $ticketId)
             ->first();
-
+        
         if ($data) {
             return Meta::where('id', $data->id)
                 ->update([
@@ -329,7 +329,7 @@ class Helper
         }
 
         return Meta::insert([
-            'object_type' => 'ticket_mata',
+            'object_type' => 'ticket_meta',
             'object_id'   => $ticketId,
             'key'         => $key,
             'value'       => maybe_serialize($value)
@@ -411,7 +411,7 @@ class Helper
 
     public static function getFluentCrmContactData($customer)
     {
-        if(!defined('FLUENTCRM')) {
+        if (!defined('FLUENTCRM')) {
             return false;
         }
         $contact = \FluentCrmApi('contacts')->getContactByUserRef($customer->email);
