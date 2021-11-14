@@ -9,61 +9,200 @@
                     :value="fieldKey"
                 ></el-option>
             </el-select>
+        </el-form-item>
+        <template v-if="item.type">
+            <el-row :gutter="30">
+                <el-col :sm="12" :xs="24">
+                    <el-form-item :label="$t('Public Label')">
+                        <el-input @keyup.native="maybeSetSlug()" :placeholder="$t('Custom Field Public Label')"
+                                  v-model="item.label"></el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col :sm="12" :xs="24">
+                    <el-form-item :label="$t('Admin Label (Optional)')">
+                        <el-input @keyup.native="maybeSetSlug()" :placeholder="$t('Custom Field Admin Label')"
+                                  v-model="item.admin_label"></el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row :gutter="30">
+                <el-col :sm="12" :xs="24">
+                    <el-form-item :label="$t('Slug (Optional)')">
+                        <el-input maxlength="20" :placeholder="$t('Custom Field Slug')" :disabled="form_type == 'update'"
+                                  v-model="item.slug">
+                            <template v-if="form_type == 'new'" #prepend>cf_</template>
+                        </el-input>
+                        <p v-if="form_type == 'new'">You can not change the slug once save a custom field</p>
+                    </el-form-item>
+                </el-col>
+                <el-col :sm="12" :xs="24">
+                    <el-form-item :label="$t('Placeholder')">
+                        <el-input :placeholder="$t('Field Placeholder')" v-model="item.placeholder" />
+                    </el-form-item>
+                </el-col>
+            </el-row>
 
-            <template v-if="item.type">
-                <el-form-item :label="$t('Public Label')">
-                    <el-input @keyup.native="maybeSetSlug()" :placeholder="$t('Custom Field Public Label')"
-                              v-model="item.label"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('Admin Label (Optional)')">
-                    <el-input @keyup.native="maybeSetSlug()" :placeholder="$t('Custom Field Admin Label')"
-                              v-model="item.admin_label"></el-input>
-                </el-form-item>
-                <el-form-item :label="$t('Slug (Optional)')">
-                    <el-input maxlength="20" :placeholder="$t('Custom Field Slug')" :disabled="form_type == 'update'"
-                              v-model="item.slug">
-                        <template v-if="form_type == 'new'" #prepend>cf_</template>
-                    </el-input>
-                    <p v-if="form_type == 'new'">You can not change the slug once save a custom field</p>
-                </el-form-item>
-                <el-form-item v-if="hasOptions(item.type)" :label="$t('Field Value Options')">
-                    <ul class="fluentcrm_option_lists">
-                        <li v-for="(optionName, optionIndex) in item.options" :key="optionIndex">
-                            {{ optionName }}
-                            <i @click="removeOptionItem(optionIndex)" class="fluentcrm_clickable el-icon-close"></i>
-                        </li>
-                    </ul>
-                    <el-input
-                        class="input-new-tag"
-                        v-if="optionInputVisible"
-                        v-model="optionInputValue"
-                        ref="saveTagInput"
-                        placeholder="type and press enter"
-                        size="mini"
-                        @keyup.enter.native="handleOptionInputConfirm"
-                        @blur="handleOptionInputConfirm"
-                    >
-                    </el-input>
-                    <el-button v-else class="button-new-tag" size="small" @click="showOptionInput">
-                        + New Option
-                    </el-button>
-                </el-form-item>
-                <el-form-item style="margin-top: 10px;">
-                    <el-checkbox true-label="yes" false-label="no" v-model="item.admin_only">This is an agent only field</el-checkbox>
+            <el-form-item v-if="hasOptions(item.type)" :label="$t('Field Value Options')">
+                <ul class="fluentcrm_option_lists">
+                    <li v-for="(optionName, optionIndex) in item.options" :key="optionIndex">
+                        <el-input placeholder="Option Value" v-model="item.options[optionIndex]" type="text">
+                            <template #suffix>
+                                <i @click="removeOptionItem(optionIndex)" class="fluentcrm_clickable el-icon-close"></i>
+                            </template>
+                        </el-input>
+                    </li>
+                </ul>
+                <el-input
+                    class="input-new-tag"
+                    v-if="optionInputVisible"
+                    v-model="optionInputValue"
+                    ref="saveTagInput"
+                    placeholder="type and press enter"
+                    @keyup.enter.native="handleOptionInputConfirm"
+                    @blur="handleOptionInputConfirm"
+                >
+                </el-input>
+                <el-button v-else class="button-new-tag" size="small" @click="showOptionInput">
+                    + New Option
+                </el-button>
+            </el-form-item>
+
+            <el-row style="margin-top: 10px;" :gutter="30">
+                <el-col :sm="12" :xs="24">
+                    <el-form-item>
+                        <el-checkbox true-label="yes" false-label="no" v-model="item.admin_only">This is an agent
+                            only field
+                        </el-checkbox>
+                    </el-form-item>
+                </el-col>
+                <el-col :sm="12" :xs="24">
+                    <el-form-item>
+                        <el-checkbox @change="initConditions(item)" v-model="item.has_logics" true-label="yes"
+                                     false-label="no">Enable Conditional Logics
+                        </el-checkbox>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+            <template v-if="item.has_logics == 'yes' && item.conditions">
+                <table style="margin-bottom: 20px;" class="fs_table fs_stripe">
+                    <thead>
+                    <tr>
+                        <th>Field</th>
+                        <th>Operator</th>
+                        <th>Match Value</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(condition,conditionIndex) in item.conditions" :key="conditionIndex">
+                        <td>
+                            <el-select filterable v-model="condition.item_key" placeholder="Select Field">
+                                <el-option
+                                    v-for="(field, fieldKey) in keyedFields"
+                                    :key="field.slug" :value="field.slug"
+                                    :disabled="field.slug == item.slug"
+                                    :label="field.admin_label || field.label"></el-option>
+                            </el-select>
+                        </td>
+                        <td>
+                            <el-select v-if="condition.item_key && keyedFields[condition.item_key]" filterable
+                                       v-model="condition.operator"
+                                       placeholder="Select Field">
+                                <el-option label="Equal" value="="/>
+                                <el-option label="Not Equal" value="!="/>
+                                <template v-if="keyedFields[condition.item_key].type == 'number'">
+                                    <el-option label="Less than" value="lt"/>
+                                    <el-option label="Greater Than" value="gt"/>
+                                </template>
+                                <template v-else-if="!keyedFields[condition.item_key].options">
+                                    <el-option label="Contains" value="contains"/>
+                                    <el-option label="Not Contains" value="not_contains"/>
+                                </template>
+                            </el-select>
+                        </td>
+                        <td>
+                            <template
+                                v-if="condition.operator && condition.item_key && keyedFields[condition.item_key]">
+                                <el-select v-if="keyedFields[condition.item_key].options" v-model="condition.value"
+                                           placeholder="Select Value">
+                                    <el-option v-for="option in keyedFields[condition.item_key].options" :key="option"
+                                               :label="option" :value="option"></el-option>
+                                </el-select>
+                                <el-input v-else
+                                          :type="(keyedFields[condition.item_key].type == 'number') ? 'number' : 'text'"
+                                          v-model="condition.value" placeholder="Type Compare Value"/>
+                            </template>
+                        </td>
+                        <td>
+                            <el-button @click="addCondition(conditionIndex)" size="mini" type="success"
+                                       icon="el-icon-plus"/>
+                            <el-button @click="removeCondition(conditionIndex)" :disabled="item.conditions.length == 1"
+                                       size="mini" type="danger"
+                                       icon="el-icon-delete"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <el-form-item label="Condition Match Type">
+                    <el-radio-group v-model="item.match_type">
+                        <el-radio label="all">Match all conditions</el-radio>
+                        <el-radio label="any">Match any conditions</el-radio>
+                    </el-radio-group>
                 </el-form-item>
             </template>
-        </el-form-item>
+        </template>
     </el-form>
 </template>
 
 <script type="text/babel">
+import each from 'lodash/each';
+
 export default {
     name: 'FieldForm',
-    props: ['field_types', 'item', 'form_type'],
+    props: ['field_types', 'item', 'form_type', 'fields'],
     data() {
         return {
             optionInputVisible: false,
             optionInputValue: ''
+        }
+    },
+    computed: {
+        keyedFields() {
+            const supportProducts = [];
+            each(this.appVars.support_products, (product) => {
+                supportProducts.push(product.title);
+            });
+
+            const formattedFields = {
+                ticket_title: {
+                    label: 'Ticket Title',
+                    slug: 'ticket_title',
+                    type: 'text'
+                },
+                ticket_content: {
+                    label: 'Ticket Content',
+                    slug: 'ticket_content',
+                    type: 'text'
+                },
+                ticket_client_priority: {
+                    label: 'Ticket Client Priority',
+                    slug: 'ticket_client_priority',
+                    type: 'select-one',
+                    options: Object.keys(this.appVars.client_priorities)
+                },
+                ticket_product_id: {
+                    label: 'Selected Product or Service',
+                    slug: 'ticket_product_id',
+                    type: 'select-one',
+                    options: supportProducts
+                }
+            };
+            each(this.fields, (field) => {
+                formattedFields[field.slug] = field;
+            });
+
+            return formattedFields;
         }
     },
     methods: {
@@ -111,6 +250,31 @@ export default {
         },
         removeOptionItem(fieldIndex) {
             this.item.options.splice(fieldIndex, 1);
+        },
+        initConditions(item) {
+            if (!item.conditions || !item.conditions.length) {
+                item.conditions = [
+                    {
+                        item_key: '',
+                        operator: '=',
+                        value: ''
+                    }
+                ];
+            }
+
+            if (!item.match_type) {
+                item.match_type = 'all';
+            }
+        },
+        addCondition(conditionIndex) {
+            this.item.conditions.splice(conditionIndex + 1, 0, {
+                item_key: '',
+                operator: '=',
+                value: ''
+            });
+        },
+        removeCondition(conditionIndex) {
+            this.item.conditions.splice(conditionIndex, 1);
         }
     },
     mounted() {

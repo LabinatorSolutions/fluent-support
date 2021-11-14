@@ -14,7 +14,13 @@
             <template v-if="has_pro">
                 <div v-if="!loading" class="fs_box_body">
                     <el-table :empty-text="$t('No Custom Fields Found')" border stripe :data="fields">
-                        <el-table-column :label="$t('Label')" prop="label"></el-table-column>
+                        <el-table-column :label="$t('Label')" prop="label">
+                            <template #default="scope">
+                                {{scope.row.label || scope.row.admin_label}}
+                                <i title="Agent Only Field" v-if="scope.row.admin_only == 'yes'" class="el-icon-lock" />
+                                <i title="Conditional Field" v-if="scope.row.has_logics == 'yes'" class="el-icon-connection" />
+                            </template>
+                        </el-table-column>
                         <el-table-column :label="$t('Slug')" prop="slug"></el-table-column>
                         <el-table-column :label="$t('Type')" prop="type"></el-table-column>
                         <el-table-column width="160" :label="$t('Actions')">
@@ -65,7 +71,7 @@
             v-model="updateFieldVisible"
             :append-to-body=true
             width="60%">
-            <custom-field-form form_type="update" :field_types="field_types" :item="update_field"></custom-field-form>
+            <custom-field-form v-if="updateFieldVisible" :fields="fields" form_type="update" :field_types="field_types" :item="update_field"></custom-field-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="updateField()" type="primary" size="small">Update Field</el-button>
             </div>
