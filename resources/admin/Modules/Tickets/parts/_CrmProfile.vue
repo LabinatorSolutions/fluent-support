@@ -26,7 +26,7 @@
                         class="el-icon-plus"></i></span>
                 </template>
 
-                <h4>Apply / Remove Tags on FluentCRM Profile</h4>
+                <h4>{{$t('Apply / Remove Tags on FluentCRM Profile')}}</h4>
 
                 <el-select :multiple="true" v-model="attachedTags"
                            size="small">
@@ -37,7 +37,7 @@
                 </el-select>
 
                 <el-button v-loading="saving" @click="syncTags()" :disabled="saving" type="primary" size="small"
-                           style="margin-top: 20px">Update Settings
+                           style="margin-top: 20px">{{$t('Update Settings')}}
                 </el-button>
 
             </el-popover>
