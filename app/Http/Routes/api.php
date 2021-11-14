@@ -141,7 +141,7 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
     $router->post('telegram_bot_response/{token}', 'ChatMessageParserController@handleTelegramWebhook')->alphaNumDash('token');
-    $router->post('slack_response', 'ChatMessageParserController@handleSlackEvent');
+    $router->post('slack_response/{token}', 'ChatMessageParserController@handleSlackEvent')->alphaNumDash('token');
 });
 
 $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(function ($router) {
