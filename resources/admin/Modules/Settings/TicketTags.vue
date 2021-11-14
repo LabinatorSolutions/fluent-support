@@ -3,11 +3,11 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{$t('Ticket Tags')}}</h3>
+                    <h3>{{ $t('Ticket Tags') }}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
                     <el-button @click="createTagModal()" type="primary" icon="el-icon-plus" size="small">
-                        {{$t('Add New')}}
+                        {{ $t('Add New') }}
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
@@ -27,7 +27,9 @@
                         <el-table-column prop="description" label="Description"></el-table-column>
                         <el-table-column label="Tickets">
                             <template #default="scope">
-                                <router-link :to="{name: 'tickets', query: {tags: [scope.row.id]}}">{{scope.row.count}}</router-link>
+                                <router-link :to="{name: 'tickets', query: {tags: [scope.row.id]}}">
+                                    {{ scope.row.count }}
+                                </router-link>
                             </template>
                         </el-table-column>
                         <el-table-column width="120" label="Action">
@@ -43,7 +45,8 @@
                                     @confirm="deleteTag(scope.row)"
                                 >
                                     <template #reference>
-                                        <el-button v-loading="fetching" style="margin-left: 10px; color: red;" type="text"
+                                        <el-button v-loading="fetching" style="margin-left: 10px; color: red;"
+                                                   type="text"
                                                    size="medium"
                                                    icon="el-icon-delete"></el-button>
                                     </template>
@@ -60,9 +63,9 @@
                 </div>
             </template>
             <div class="fs_narrow_promo" v-else>
-                <h3>{{$t('segment_ticket_by_tags')}}</h3>
-                <p>{{$t('pro_promo')}}</p>
-                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
+                <h3>{{ $t('segment_ticket_by_tags') }}</h3>
+                <p>{{ $t('pro_promo') }}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
             </div>
         </div>
 
@@ -84,7 +87,8 @@
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateTag()">{{$t('Save')}}</el-button>
+                  <el-button v-loading="saving" :disabled="saving" type="primary"
+                             @click="createOrUpdateTag()">{{ $t('Save') }}</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -94,9 +98,10 @@
 
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
+
 export default {
     name: 'TicketTags',
-    components:{Pagination},
+    components: {Pagination},
     data() {
         return {
             tags: [],
@@ -151,6 +156,7 @@ export default {
                     });
                     this.fetchTags();
                     this.tag_modal = false;
+                    this.renewOptions('ticket-tags/options');
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -172,12 +178,6 @@ export default {
             this.tag_modal = true;
         },
         deleteTag(tag) {
-            // const r = confirm(this.$t("Are you sure, You want to delete this?"));
-            //
-            // if (!r) {
-            //     return ;
-            // }
-
             this.$del(`ticket-tags/${tag.id}`)
                 .then(response => {
                     this.$notify({
@@ -186,11 +186,12 @@ export default {
                         position: 'bottom-right'
                     });
                     this.fetchTags();
+                    this.renewOptions('ticket-tags/options');
                 });
         }
     },
     mounted() {
-        if( this.has_pro ) {
+        if (this.has_pro) {
             this.fetchTags();
         }
     }

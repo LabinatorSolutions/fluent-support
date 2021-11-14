@@ -62,6 +62,14 @@ export default class FluentFramework {
                 },
                 $t(string) {
                     return window.window.fluentSupportAdmin.i18n[string] || string;
+                },
+                renewOptions(type) {
+                    this.$get(type)
+                        .then(response => {
+                            if (response.option_key) {
+                                self.appVars[response.option_key] = response.options;
+                            }
+                        });
                 }
             }
         });
