@@ -445,7 +445,7 @@ export default {
                     each(response.update_data, (data, key) => {
                         this.ticket[key] = data;
                     });
-
+                    this.fetchTicket();
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

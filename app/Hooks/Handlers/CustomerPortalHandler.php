@@ -67,6 +67,8 @@ class CustomerPortalHandler
             'Priority'                    => __('Priority', 'fluent-support'),
             'Related Product/Service'     => __('Related Product/Service', 'fluent-support'),
             'agent_and_officials_can_see' => __('Only you and official support agents can view this conversations', 'fluent-support'),
+            'reopen_ticket_instruction'    => __('If you still have related issues. Please reopen this ticket and reply', 'fluent-support'),
+            'ticket_closed'    => __('This ticket has been closed at', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
