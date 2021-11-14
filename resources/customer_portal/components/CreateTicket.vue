@@ -25,7 +25,7 @@
                 <div class="fs_tk_row">
                     <div v-if="products.length" class="fs_tk_col">
                         <el-form-item class="fs_ticket_product" :label="$t('Related Product/Service')">
-                            <el-select v-model="ticket.product_id" :placeholder="$t('Select related Product/Service')">
+                            <el-select clearable v-model="ticket.product_id" :placeholder="$t('Select related Product/Service')">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
                             </el-select>
                         </el-form-item>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="fs_tk_col">
                         <el-form-item class="fs_ticket_priority" :label="$t('Priority')">
-                            <el-select v-model="ticket.client_priority" :placeholder="$t('Select Priority')">
+                            <el-select clearable v-model="ticket.client_priority" :placeholder="$t('Select Priority')">
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
                             </el-select>
                         </el-form-item>
@@ -41,7 +41,7 @@
                     </div>
                 </div>
 
-                <custom-fields-form :custom_data="custom_data" />
+                <custom-fields-form :ticket="ticket" :custom_data="custom_data" />
 
                 <el-form-item>
                     <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('Create Ticket')}}</el-button>
