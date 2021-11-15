@@ -168,7 +168,7 @@
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
-                             :class="(conversation.person.title!='' && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) ">
+                             :class="(conversation.person.title && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) ">
 
                         <span class="agent_title"
                               v-if="conversation.person.title"> {{ conversation.person.title }} </span>
