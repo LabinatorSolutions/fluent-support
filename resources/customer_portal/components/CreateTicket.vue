@@ -2,7 +2,7 @@
     <div class="fs_all_tickets">
         <div class="fs_tk_actions fs_tk_header fs_tk_create_head">
             <div class="fs_tk_left">
-                <h3>{{$t('Submit a Support Ticket')}}</h3>
+                <h3>{{$t('submit_heading')}}</h3>
             </div>
             <div class="fs_tk_right">
                 <el-button @click="$router.push({ name: 'dashboard' })" size="small" type="info">{{$t('View All')}}</el-button>
@@ -10,17 +10,17 @@
         </div>
         <div style="background: white; padding: 20px;" class="fs_tk_body">
             <el-form :data="ticket" label-position="top">
-                <el-form-item :label="$t('Subject')">
-                    <el-input :placeholder="$t('What\'s about this support ticket')" type="text" v-model="ticket.title"></el-input>
+                <el-form-item :label="$t('subject')">
+                    <el-input :placeholder="$t('subject_placeholder')" type="text" v-model="ticket.title"></el-input>
                     <error :error="errors.get('title')"/>
                 </el-form-item>
 
                 <div class="fs_tk_suggestions" v-if="fetchingSuggestions || suggestions.length">
-                    <p v-if="fetchingSuggestions">Looking for similar posts...</p>
+                    <p v-if="fetchingSuggestions">{{$t('suggestion_loading')}}</p>
 
                     <template v-else>
                         <p class="fs_tk_suggestion_articles">
-                            <b>{{ $t('Suggested articles') }}</b>
+                            <b>{{ $t('articles_heading') }}</b>
                         </p>
 
                         <p v-for="suggestion in suggestions">
@@ -31,26 +31,26 @@
                     </template>
                 </div>
 
-                <el-form-item :label="$t('Ticket Details')">
+                <el-form-item :label="$t('ticket_details')">
                     <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" />
-                    <p class="fs_tk_help">{{$t('Please provide details about your problem')}}</p>
+                    <p class="fs_tk_help">{{$t('details_help')}}</p>
                     <error :error="errors.get('content')"/>
                 </el-form-item>
 
                 <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments" />
 
-                <div class="fs_tk_row">
+                <div v-if="products.length || priorities.length" class="fs_tk_row">
                     <div v-if="products.length" class="fs_tk_col">
-                        <el-form-item class="fs_ticket_product" :label="$t('Related Product/Service')">
-                            <el-select clearable v-model="ticket.product_id" :placeholder="$t('Select related Product/Service')">
+                        <el-form-item class="fs_ticket_product" :label="$t('product_services')">
+                            <el-select clearable v-model="ticket.product_id" :placeholder="$t('service_placeholder')">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
                             </el-select>
                         </el-form-item>
                         <error :error="errors.get('product_id')"/>
                     </div>
-                    <div class="fs_tk_col">
-                        <el-form-item class="fs_ticket_priority" :label="$t('Priority')">
-                            <el-select clearable v-model="ticket.client_priority" :placeholder="$t('Select Priority')">
+                    <div v-if="priorities.length" class="fs_tk_col">
+                        <el-form-item class="fs_ticket_priority" :label="$t('priority')">
+                            <el-select clearable v-model="ticket.client_priority" :placeholder="$t('priority_placeholder')">
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
                             </el-select>
                         </el-form-item>
@@ -61,7 +61,7 @@
                 <custom-fields-form :ticket="ticket" :custom_data="custom_data" />
 
                 <el-form-item>
-                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('Create Ticket')}}</el-button>
+                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('btn_text')}}</el-button>
                 </el-form-item>
 
             </el-form>
@@ -106,6 +106,11 @@ export default {
     },
     watch: {
         'ticket.title': function (newVal, oldVal) {
+
+            if(!this.appVars.has_doc_integration) {
+                return;
+            }
+
             if (this.hasQueryOrSpace(newVal)) {
                 this.fetchingSuggestions = true;
                 this.debouncedGetSuggestions();

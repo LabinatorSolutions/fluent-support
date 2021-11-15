@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="fs_tk_right">
-                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">{{ $t('Create a New Ticket') }}</button>
+                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">{{ $t('create_ticket_cta') }}</button>
             </div>
         </div>
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">

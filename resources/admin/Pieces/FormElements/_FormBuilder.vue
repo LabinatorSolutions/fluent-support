@@ -25,6 +25,7 @@ import HtmlViewer from './_HtmlViewer'
 import AgentSelectors from './_AgentSelectors'
 import TagSelectors from './_TagSelectors'
 import CountrySelector from './_CountrySelector'
+import ObjectTabularInput from './_ObjectTabularInput'
 
 export default {
     name: 'global_form_builder',
@@ -41,7 +42,8 @@ export default {
         HtmlViewer,
         AgentSelectors,
         TagSelectors,
-        CountrySelector
+        CountrySelector,
+        ObjectTabularInput
     },
     props: {
         formData: {
