@@ -1,6 +1,6 @@
 <template>
     <div class="fs_mailboxes">
-        <div class="fs_box_wrapper" v-loading="fetching">
+        <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
                     <h3>{{ $t('Business Inboxes') }}</h3>
@@ -11,7 +11,7 @@
                     </el-button>
                 </div>
             </div>
-            <div class="">
+            <div v-if="!fetching" class="">
                 <el-row :gutter="30">
                     <el-col v-for="box in mailboxes" :key="box.id" :sm="12" :md="6" :xl="6">
                         <div class="fs_mail_box">
@@ -42,6 +42,9 @@
                         </div>
                     </el-col>
                 </el-row>
+            </div>
+            <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
             </div>
         </div>
 

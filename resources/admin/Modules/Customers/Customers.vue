@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="loading" class="fs_all_tickets">
+    <div class="fs_all_tickets">
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
@@ -32,45 +32,51 @@
                 </div>
             </div>
             <div class="fs_box_body fs_padded_20">
-                <el-table stripe :data="customers">
-                    <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
-                    <el-table-column :label="$t('Name')" width="260">
-                        <template #default="scope">
-                            <router-link :to="{name: 'view_customer', params: { customer_id: scope.row.id }}">
-                                {{ scope.row.full_name }}
-                            </router-link>
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="$t('Email')">
-                        <template #default="scope">
-                            {{ scope.row.email }}
-                        </template>
-                    </el-table-column>
-                    <el-table-column width="120" :label="$t('Status')">
-                        <template #default="scope">
-                            {{ scope.row.status }}
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="$t('Last Activity')" width="160">
-                        <template #default="scope">
-                            {{ $timeDiff(scope.row.last_response_at) }}
-                        </template>
-                    </el-table-column>
-                    <el-table-column :label="$t('Stats')" width="180">
-                        <template #default="scope">
-                            <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
+                <template v-if="!first_time_loading">
+                    <el-table v-loading="loading" stripe :data="customers">
+                        <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
+                        <el-table-column :label="$t('Name')" width="260">
+                            <template #default="scope">
+                                <router-link :to="{name: 'view_customer', params: { customer_id: scope.row.id }}">
+                                    {{ scope.row.full_name }}
+                                </router-link>
+                            </template>
+                        </el-table-column>
+                        <el-table-column :label="$t('Email')">
+                            <template #default="scope">
+                                {{ scope.row.email }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column width="120" :label="$t('Status')">
+                            <template #default="scope">
+                                {{ scope.row.status }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column :label="$t('Last Activity')" width="160">
+                            <template #default="scope">
+                                {{ $timeDiff(scope.row.last_response_at) }}
+                            </template>
+                        </el-table-column>
+                        <el-table-column :label="$t('Stats')" width="180">
+                            <template #default="scope">
+                                <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
                                 <span class="fs_badge"><i
                                     class="el-icon-folder"></i> {{ scope.row.total_tickets }}</span>
-                            </router-link>
-                            <span class="fs_badge"><i
-                                class="el-icon-chat-line-round"></i> {{ scope.row.total_responses }}</span>
-                        </template>
-                    </el-table-column>
-                </el-table>
+                                </router-link>
+                                <span class="fs_badge"><i
+                                    class="el-icon-chat-line-round"></i> {{ scope.row.total_responses }}</span>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="fframe_pagination_wrapper">
+                        <pagination @fetch="fetchCustomers()" :pagination="pagination"/>
+                    </div>
+                </template>
 
-                <div class="fframe_pagination_wrapper">
-                    <pagination @fetch="fetchCustomers()" :pagination="pagination"/>
+                <div v-else style="padding: 15px;">
+                    <el-skeleton :rows="10" animated/>
                 </div>
+
             </div>
         </div>
         <el-dialog
@@ -102,6 +108,7 @@ export default {
                 current_page: 1,
                 total: 0
             },
+            first_time_loading: true,
             search: '',
             loading: false,
             editing_customer: {},
@@ -132,6 +139,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_time_loading = false;
                 });
         },
         showEditCustomerModal(customer) {

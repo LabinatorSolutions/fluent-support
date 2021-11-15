@@ -11,7 +11,7 @@
             </div>
             <div v-if="fields" class="fs_box_body fs_padded_20">
                 <form-builder :fields="fields.fields" :formData="settings" />
-                <el-button @click="saveSettings()" v-loading="saving" :disabled="saving" type="success">{{fields.button_text}}</el-button>
+                <el-button @click="saveSettings()" size="small" v-loading="saving" :disabled="saving" type="success">{{fields.button_text}}</el-button>
             </div>
             <div class="fs_box_body fs_padded_20" v-else>
                 <h3>{{$t('Settings could not be found')}}!</h3>

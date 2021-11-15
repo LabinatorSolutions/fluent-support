@@ -35,7 +35,7 @@
             </el-form-item>
 
             <el-form-item>
-                <el-button v-loading="saving" :disabled="saving" @click="saveSettings()" type="primary">
+                <el-button v-loading="saving" :disabled="saving" @click="saveSettings()" type="success">
                     {{$t('Save Settings')}}
                 </el-button>
             </el-form-item>

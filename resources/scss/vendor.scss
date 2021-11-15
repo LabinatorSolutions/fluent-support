@@ -133,3 +133,10 @@
 .el-date-editor .el-range-separator {
     width: auto;
 }
+
+.el-notification.right {
+    top: 40px !important;
+}
+.el-popconfirm__action {
+    text-align: center;
+}

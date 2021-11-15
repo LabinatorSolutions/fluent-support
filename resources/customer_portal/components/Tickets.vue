@@ -15,7 +15,9 @@
                 </div>
             </div>
             <div class="fs_tk_right">
-                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">{{ $t('create_ticket_cta') }}</button>
+                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">
+                    {{ $t('create_ticket_cta') }}
+                </button>
             </div>
         </div>
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">
@@ -46,7 +48,9 @@
                         <span class="fs_thread_count">{{ ticket.response_count }}</span>
                     </td>
                     <td class="fs_tk_status">
-                        <span class="fs_badge" :class="'fs_badge_'+ticket.status">{{ ticket.status }}</span>
+                        <el-tag size="mini" :type="getStatus(ticket.status)" :effect="getEffect(ticket.status)">
+                            {{ ticket.status }}
+                        </el-tag>
                     </td>
                     <td class="fs_tk_date">
                         <span class="fs_tk_date">{{ ticket.human_date }}</span>
@@ -56,7 +60,8 @@
                 <tbody v-else>
                 <tr>
                     <td colspan="4">
-                        <p v-if="filter_type == 'all'" style="text-align: center;">Looks like you did not open any support tickets yet</p>
+                        <p v-if="filter_type == 'all'" style="text-align: center;">Looks like you did not open any
+                            support tickets yet</p>
                         <p v-else style="text-align: center;">No support tickets found for this filter</p>
                     </td>
                 </tr>
@@ -131,6 +136,21 @@ export default {
                     this.fetching = false;
                     this.first_loading = false;
                 });
+        },
+        getStatus(status) {
+            if (status == 'active') {
+                return 'success';
+            }
+
+            if (status == 'closed') {
+                return 'info';
+            }
+
+            return '';
+
+        },
+        getEffect(status) {
+            return (status == 'active') ? 'dark' : 'plain';
         },
         gotToTicket(row) {
             this.$router.push({
