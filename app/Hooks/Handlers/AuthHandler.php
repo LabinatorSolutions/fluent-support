@@ -35,6 +35,15 @@ class AuthHandler
         ]);
 
         $return .= wp_login_form($loginArgs);
+
+        if ($attributes['show-signup'] == 'true') {
+            $return .= '<p style="text-align: center">'
+                . __('Not registered?', 'fluent-support')
+                . ' <a href="#" id="fs_show_signup">'
+                . __('Create an Account', 'fluent-support')
+                . '</a></p>';
+        }
+
         $return .= '</div>';
         return $return;
     }
@@ -51,21 +60,33 @@ class AuthHandler
 
         wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
             'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
-            'nonce'  => wp_create_nonce('wp_rest')
+            'nonce'  => wp_create_nonce('wp_rest'),
+            'hide'   => $attributes['hide']
         ]);
 
         $registrationFields = static::getSignupFields();
 
-        $registrationForm = '<div class="fst_registration_wrapper"><form id="fstRegistrationForm" class="fs_registration_form" method="post" name="fs_registration_form">';
+        $hide = $attributes['hide'] == 'true' ? 'hide' : '';
+        $registrationForm = '<div class="fst_registration_wrapper ' . $hide . '"><form id="fstRegistrationForm" class="fs_registration_form" method="post" name="fs_registration_form">';
 
         foreach ($registrationFields as $fieldName => $registrationField) {
             $registrationForm .= $this->renderField($fieldName, $registrationField);
         }
 
         $registrationForm .= '<input type="hidden" name="__redirect_to" value="' . $attributes['redirect-to'] . '">';
-        $registrationForm .= '<button type="submit" id="fst_submit">' . $this->submitBtnLoadingSvg() . '<span>' .  __('Signup', 'fluent-support') . '</span></button>';
+        $registrationForm .= '<button type="submit" id="fst_submit">' . $this->submitBtnLoadingSvg() . '<span>' . __('Signup', 'fluent-support') . '</span></button>';
 
-        $registrationForm .= '</form></div>';
+        $registrationForm .= '</form>';
+
+        if ($hide) {
+            $registrationForm .= '<p style="text-align: center">'
+                . __('Already have an account?', 'fluent-support')
+                . ' <a href="#" id="fs_show_login">'
+                . __('Login', 'fluent-support')
+                . '</a></p>';
+        }
+
+        $registrationForm .= '</div>';
 
         return $registrationForm;
     }
@@ -74,8 +95,8 @@ class AuthHandler
     {
         $authForm = '<div class="fst_auth_wrapper">';
 
-        $authForm .= do_shortcode('[fluent_support_login]');
-        $authForm .= do_shortcode('[fluent_support_signup]');
+        $authForm .= do_shortcode('[fluent_support_login show-signup=true]');
+        $authForm .= do_shortcode('[fluent_support_signup hide=true]');
 
         $authForm .= '</div>';
 
@@ -90,73 +111,73 @@ class AuthHandler
 
         $textTypes = ['text', 'email', 'password'];
 
-        $html = '<div class="fst_field_group fst_field_'.$fieldName.'">';
-        if($label = Arr::get($field, 'label')) {
-            $html .= '<div class="fst_field_label ' . $isRequired . '"><label for="'.Arr::get($field, 'id').'">'.$label.'</label></div>';
+        $html = '<div class="fst_field_group fst_field_' . $fieldName . '">';
+        if ($label = Arr::get($field, 'label')) {
+            $html .= '<div class="fst_field_label ' . $isRequired . '"><label for="' . Arr::get($field, 'id') . '">' . $label . '</label></div>';
         }
 
-        if(in_array($fieldType, $textTypes)) {
+        if (in_array($fieldType, $textTypes)) {
 
             $inputAtts = array_filter([
-                'type' => esc_attr($fieldType),
-                'id' => esc_attr(Arr::get($field, 'id')),
+                'type'        => esc_attr($fieldType),
+                'id'          => esc_attr(Arr::get($field, 'id')),
                 'placeholder' => esc_attr(Arr::get($field, 'placeholder')),
-                'name' => esc_attr($fieldName)
+                'name'        => esc_attr($fieldName)
             ]);
 
             $atts = '';
 
             foreach ($inputAtts as $attKey => $att) {
-                $atts .= $attKey.'="'.$att.'" ';
+                $atts .= $attKey . '="' . $att . '" ';
             }
 
-            if(Arr::get($field, 'required')) {
+            if (Arr::get($field, 'required')) {
                 $atts .= 'required';
             }
 
-            $html .= '<div class="fs_input_wrap"><input '.$atts.'/></div>';
+            $html .= '<div class="fs_input_wrap"><input ' . $atts . '/></div>';
         } else {
             return '';
         }
 
-        return $html.'</div>';
+        return $html . '</div>';
     }
 
     public static function getSignupFields()
     {
         return apply_filters('fluent_support/registration_form_fields', [
             'first_name' => [
-                'required' => true,
-                'type' => 'text',
-                'label' => __('First name', 'fluent-support'),
-                'id' => 'fst_first_name',
+                'required'    => true,
+                'type'        => 'text',
+                'label'       => __('First name', 'fluent-support'),
+                'id'          => 'fst_first_name',
                 'placeholder' => __('First name', 'fluent-support')
             ],
-            'last_name' => [
-                'type' => 'text',
-                'label' => __('Last Name', 'fluent-support'),
-                'id' => 'fst_last_name',
+            'last_name'  => [
+                'type'        => 'text',
+                'label'       => __('Last Name', 'fluent-support'),
+                'id'          => 'fst_last_name',
                 'placeholder' => __('Last name', 'fluent-support')
             ],
-            'username' => [
-                'required' => true,
-                'type' => 'text',
-                'label' => __('Username', 'fluent-support'),
-                'id' => 'fst_username',
+            'username'   => [
+                'required'    => true,
+                'type'        => 'text',
+                'label'       => __('Username', 'fluent-support'),
+                'id'          => 'fst_username',
                 'placeholder' => __('Username', 'fluent-support')
             ],
-            'email' => [
-                'required' => true,
-                'type' => 'email',
-                'label' => __('Email Address', 'fluent-support'),
-                'id' => 'fst_email',
+            'email'      => [
+                'required'    => true,
+                'type'        => 'email',
+                'label'       => __('Email Address', 'fluent-support'),
+                'id'          => 'fst_email',
                 'placeholder' => __('Your Email Address', 'fluent-support')
             ],
-            'password' => [
-                'required' => true,
-                'type' => 'password',
-                'label' => __('Password', 'fluent-support'),
-                'id' => 'fst_password',
+            'password'   => [
+                'required'    => true,
+                'type'        => 'password',
+                'label'       => __('Password', 'fluent-support'),
+                'id'          => 'fst_password',
                 'placeholder' => __('Password', 'fluent-support')
             ]
         ]);
@@ -184,7 +205,9 @@ class AuthHandler
     {
         $shortCodeDefaults = apply_filters('fluent-support/auth_shortcode_defaults', [
             'auto-redirect' => false,
-            'redirect-to'   => Helper::getPortalBaseUrl()
+            'redirect-to'   => Helper::getPortalBaseUrl(),
+            'hide'          => false,
+            'show-signup'   => false
         ]);
 
         return shortcode_atts($shortCodeDefaults, $attributes);
@@ -197,7 +220,7 @@ class AuthHandler
                 $redirect = $attributes['redirect-to'];
                 ?>
                 <script type="text/javascript">
-                    document.addEventListener("DOMContentLoaded", function() {
+                    document.addEventListener("DOMContentLoaded", function () {
                         var redirect = "<?php echo $redirect; ?>";
                         window.location.replace(redirect);
                     });
