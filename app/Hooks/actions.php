@@ -100,3 +100,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     \WP_CLI::add_command( 'fluent_support', '\FluentSupport\App\Hooks\CLI\FluentCli' );
 }
 
+
+(new \FluentSupport\App\Hooks\Handlers\PermissionFilterManager)->init();
+

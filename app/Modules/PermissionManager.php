@@ -109,6 +109,25 @@ class PermissionManager
         return 'own';
     }
 
+    public static function agentTicketPermissionLevel($userId = false)
+    {
+        if(!$userId) {
+            $userId = get_current_user_id();
+        }
+
+        $permissions = self::getUserPermissions($userId);
+
+        if (in_array('fst_manage_other_tickets', $permissions)) {
+            return 'all';
+        }
+
+        if (in_array('fst_manage_unassigned_tickets', $permissions)) {
+            return 'own_plus';
+        }
+
+        return 'own';
+    }
+
     public static function hasTicketPermission($ticket)
     {
         $permissionLevel = self::currentUserTicketsPermissionLevel();
