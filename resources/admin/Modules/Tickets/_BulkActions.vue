@@ -36,7 +36,7 @@
                     </el-popover>
                 </li>
                 <li title="Run Workflow">
-                    <work-flow-selector @reloadTickets="fetchTickets()" :ticket_ids="[ticket_selections]"/>
+                    <work-flow-selector @reloadTickets="fetchTickets()" :ticket_ids="ticket_selections"/>
                 </li>
                 <li title="Add Tag(s)">
                     <el-popover

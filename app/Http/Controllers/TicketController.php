@@ -48,18 +48,7 @@ class TicketController extends Controller
         ]);
 
         // apply filters by access level
-        $permissionLevel = PermissionManager::currentUserTicketsPermissionLevel();
-        if ($permissionLevel != 'all') {
-            $agent = Helper::getAgentByUserId();
-            if ($permissionLevel == 'own') {
-                $ticketsQuery->where('agent_id', $agent->id);
-            } else {
-                $ticketsQuery->where(function ($q) use ($agent) {
-                    $q->where('agent_id', $agent->id);
-                    $q->orWhereNull('agent_id');
-                });
-            }
-        }
+        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsQuery, false]);
 
         if ($customerId = $request->get('customer_id')) {
             $ticketsQuery = $ticketsQuery->where('customer_id', $customerId);
