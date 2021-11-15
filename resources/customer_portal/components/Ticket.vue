@@ -10,7 +10,7 @@
                                 {{ ticket.title }}
                             </h2>
                             <div class="fs_tk_tags">
-                                <span  class="fs_badge">{{ ticket.product.title }}</span>
+                                <span v-if="ticket.product" class="fs_badge">{{ ticket.product.title }}</span>
                                 <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
                             </div>
                         </div>
