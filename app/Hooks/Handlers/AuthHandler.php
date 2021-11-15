@@ -50,7 +50,8 @@ class AuthHandler
         wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js');
 
         wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
-            'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup'
+            'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
+            'nonce'  => wp_create_nonce('wp_rest')
         ]);
 
         $registrationFields = static::getSignupFields();

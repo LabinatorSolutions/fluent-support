@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             request.open('POST', window.fluentSupportPublic.signup, true);
             request.responseType = 'json';
+            request.setRequestHeader('X-WP-Nonce', window.fluentSupportPublic.nonce);
 
             request.onload = function () {
                 if (this.status === 200) {
@@ -39,10 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         window.location.replace(this.response.redirect);
                     }
                 } else {
-                    if (this.response.error) {
+                    let genericError = this.response.error;
+
+                    if (this.response.data && this.response.data.status === 403) {
+                        genericError = this.response.message;
+                    }
+
+                    if (genericError) {
                         let el = document.createElement("div");
                         el.classList.add('error', 'text-danger');
-                        el.innerHTML = this.response.error;
+                        el.innerHTML = genericError;
 
                         form.appendChild(el);
                     } else {
