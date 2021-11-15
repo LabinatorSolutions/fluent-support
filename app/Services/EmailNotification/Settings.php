@@ -53,7 +53,7 @@ class Settings
 
         $defaults = [
             'portal_page_id'        => '',
-            'login_message'         => __('<p>Please login to access the Customer Support Portal</p> [fluent_support_login]', 'fluent-support'),
+            'login_message'         => sprintf(__('%1sPlease login or create an account to access the Customer Support Portal%2s [fluent_support_auh]', 'fluent-support'), '<p>', '</p>'),
             'disable_public_ticket' => 'no',
             'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
             'max_file_size'         => 2
@@ -95,7 +95,7 @@ class Settings
             'login_message'         => [
                 'type'        => 'wp-editor',
                 'label'       => __('Message for non logged in users', 'fluent-support'),
-                'inline_help' => __('Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form. For the user registration use this shortcode <code>[fluent_support_signup]</code> in your page ', 'fluent-support')
+                'inline_help' => 'Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form. For the user registration use this shortcode <code>[fluent_support_signup]</code> and for both form please use <code>[fluent_support_auth]</code> in your page '
             ],
             'disable_public_ticket' => [
                 'type'           => 'inline-checkbox',

@@ -28,6 +28,8 @@
                 <el-input :readonly="true" v-model="email_pipe.mapped_email" />
                 <el-button style="margin-top: 20px;" @click="loadPipeStatus()">I have done it</el-button>
                 <p>Once you activate the auto-forward for {{mailbox.email}}, the status will be active</p>
+                <p>For the confirmation email from your email service provider, please check the latest ticket. A new ticket should be created with confirmation code.</p>
+                <p><a target="_blank" rel="noopener" href="https://fluentsupport.com/docs/email-piping-email-based-support-ticket/">Read the email piping documentation</a></p>
             </div>
             <div class="fs_pipe_box" v-else-if="email_pipe.status == 'active'">
                 <h3>Your MailBox is active</h3>
