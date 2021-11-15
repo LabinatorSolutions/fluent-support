@@ -14,6 +14,23 @@
                     <el-input :placeholder="$t('What\'s about this support ticket')" type="text" v-model="ticket.title"></el-input>
                     <error :error="errors.get('title')"/>
                 </el-form-item>
+
+                <div class="fs_tk_suggestions" v-if="fetchingSuggestions || suggestions.length">
+                    <p v-if="fetchingSuggestions">Looking for similar posts...</p>
+
+                    <template v-else>
+                        <p class="fs_tk_suggestion_articles">
+                            <b>{{ $t('Suggested articles') }}</b>
+                        </p>
+
+                        <p v-for="suggestion in suggestions">
+                            <a :href="suggestion.link" target="_blank" class="fs_tk_suggestion">
+                                {{ suggestion.title }}
+                            </a>
+                        </p>
+                    </template>
+                </div>
+
                 <el-form-item :label="$t('Ticket Details')">
                     <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" />
                     <p class="fs_tk_help">{{$t('Please provide details about your problem')}}</p>
@@ -58,6 +75,7 @@ import Error from '../../admin/Pieces/Error';
 import Errors from '../../admin/Bits/Errors';
 import AttachmentForm from "../../admin/Modules/Tickets/_AttachmentForm";
 import CustomFieldsForm from "./_CustomFieldForm";
+import {debounce} from "lodash";
 
 
 export default {
@@ -82,7 +100,23 @@ export default {
             attachments: [],
             products: this.appVars.support_products,
             priorities: this.appVars.customer_ticket_priorities,
+            suggestions: [],
+            fetchingSuggestions: false,
         }
+    },
+    watch: {
+        'ticket.title': function (newVal, oldVal) {
+            if (this.hasQueryOrSpace(newVal)) {
+                this.fetchingSuggestions = true;
+                this.debouncedGetSuggestions();
+            } else {
+                this.fetchingSuggestions = false;
+                this.suggestions = [];
+            }
+        }
+    },
+    created () {
+        this.debouncedGetSuggestions = debounce(this.getSuggestions, 500);
     },
     methods: {
         create() {
@@ -102,6 +136,26 @@ export default {
             .always(() => {
                 this.creating = false;
             });
+        },
+
+        getSuggestions() {
+            this.$get('search-doc', {
+                search: this.ticket.title
+            })
+                .then(response => {
+                    this.suggestions = response;
+                })
+                .catch((errors) => {
+                    console.log(errors);
+                    // this.errors.record(errors);
+                })
+                .always(() => {
+                    this.fetchingSuggestions = false;
+                });
+        },
+
+        hasQueryOrSpace(search) {
+            return search && (search.length >= 5 || (search.split(' ').length > 1));
         }
     }
 }

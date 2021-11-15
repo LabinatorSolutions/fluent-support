@@ -34,6 +34,12 @@ export default {
                     route_query: {}
                 },
                 {
+                    title: this.$t('Ticket Form Config'),
+                    route_name: 'ticket-form-config',
+                    icon: 'el-icon-setting',
+                    route_query: {}
+                },
+                {
                     title: this.$t('Custom Fields'),
                     route_name: 'custom_fields',
                     route_query: {},
