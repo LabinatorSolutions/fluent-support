@@ -101,15 +101,25 @@ class CustomerPortalController extends Controller
         $data['customer_id'] = $customer->id;
         $data['product_source'] = 'local';
         $data['mailbox_id'] = $this->resolveMailboxId($request);
-        $data['priority'] = sanitize_text_field($data['client_priority']);
-        $data['client_priority'] = sanitize_text_field($data['client_priority']);
+
+        $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
+
+        if(!in_array('priority', $disabledFields)) {
+            $data['priority'] = sanitize_text_field($data['client_priority']);
+            $data['client_priority'] = sanitize_text_field($data['client_priority']);
+        }
+
+        if(!in_array('product_services', $disabledFields)) {
+            unset($data['product_id']);
+        }
+
         $data['source'] = 'web';
 
         $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
         do_action('fluent_support/before_ticket_create', $data, $customer);
         $ticket = Ticket::create($data);
 
-        if ($attachments = Arr::get($data, 'attachments')) {
+        if ($attachments = Arr::get($data, 'attachments') && !in_array('file_upload', $disabledFields)) {
             Attachment::whereNull('ticket_id')
                 ->whereIn('file_hash', $attachments)
                 ->whereNull('ticket_id')

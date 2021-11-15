@@ -274,7 +274,7 @@ class TransStrings
             'Private'    => __('Private', 'fluent-support'),
             'Public'    => __('Public', 'fluent-support'),
             'not_to_share_private_info'    => __('Please do not share any private information.', 'fluent-support'),
-            'agent_and_officials_can_see'    => __('Only you and official support agents can view this conversations', 'fluent-support'),
+            'agent_and_officials_can_see'    => __('Only you and official support agents can view this conversation', 'fluent-support'),
             'This ticket is'    => __('This ticket is', 'fluent-support'),
             'by'    => __('by', 'fluent-support'),
             'started the conversation'    => __('started the conversation', 'fluent-support'),

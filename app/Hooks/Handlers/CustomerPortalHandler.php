@@ -16,13 +16,17 @@ class CustomerPortalHandler
 {
     public function renderPortal()
     {
-        if (static::customerStatus() && static::customerStatus()->status === 'inactive') {
+        $person = Helper::getCurrentPerson();
+        if ($person && $person->status === 'inactive') {
             return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . __('You don’t have permission to view the tickets', 'fluent-support') . '</h3></div>';
         } else if (PermissionManager::currentUserPermissions()) {
             $adminPortalUrl = Helper::getPortalAdminBaseUrl();
             return '<div style="text-align: center;"><h3>' . __('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support') . '</h3><a href="' . $adminPortalUrl . '">' . __('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
             $this->enqueueScripts();
+            if (!$person) {
+                $this->maybeCreateCustomer();
+            }
             return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
         } else {
             $businessSettings = Helper::getBusinessSettings();
@@ -52,7 +56,6 @@ class CustomerPortalHandler
         wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css', [], FLUENT_SUPPORT_VERSION);
 
         $i18ns = [
-            'Create a New Ticket'         => __('Create a New Ticket', 'fluent-support'),
             'Conversation'                => __('Conversation', 'fluent-support'),
             'Click Here to Write a reply' => __('Click Here to Write a reply', 'fluent-support'),
             'All'                         => __('All', 'fluent-support'),
@@ -62,13 +65,24 @@ class CustomerPortalHandler
             'Status'                      => __('Status', 'fluent-support'),
             'Next'                        => __('Next', 'fluent-support'),
             'Prev'                        => __('Prev', 'fluent-support'),
-            'Subject'                     => __('Subject', 'fluent-support'),
-            'Ticket Details'              => __('Ticket Details', 'fluent-support'),
-            'Priority'                    => __('Priority', 'fluent-support'),
-            'Related Product/Service'     => __('Related Product/Service', 'fluent-support'),
-            'agent_and_officials_can_see' => __('Only you and official support agents can view this conversations', 'fluent-support'),
-            'reopen_ticket_instruction'    => __('If you still have related issues. Please reopen this ticket and reply', 'fluent-support'),
-            'ticket_closed'    => __('This ticket has been closed at', 'fluent-support'),
+            'agent_and_officials_can_see' => __('Only you and official support agents can view this conversation', 'fluent-support'),
+            'reopen_ticket_instruction'   => __('If you still have related issues. Please reopen this ticket and reply', 'fluent-support'),
+            'ticket_closed'               => __('This ticket has been closed at', 'fluent-support'),
+
+            'subject_placeholder' => __('What\'s about this support ticket', 'fluent-support'),
+            'service_placeholder' => __('Select related Product/Service', 'fluent-support'),
+            'suggestion_loading' => __('Looking for similar articles...', 'fluent-support'),
+            'articles_heading' => __('Suggested articles', 'fluent-support'),
+            'priority_placeholder' => __('Select Priority', 'fluent-support'),
+
+            'subject'          => __('Subject', 'fluent-support-pro'),
+            'ticket_details'   => __('Ticket Details', 'fluent-support-pro'),
+            'details_help'     => __('Please provide details about your problem', 'fluent-support-pro'),
+            'product_services' => __('Related Product/Service', 'fluent-support-pro'),
+            'priority'         => __('Priority', 'fluent-support-pro'),
+            'btn_text'         => __('Create Ticket', 'fluent-support-pro'),
+            'submit_heading'   => __('Submit a Support Ticket', 'fluent-support-pro'),
+            'create_ticket_cta' => __('Create a New Ticket', 'fluent-support')
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
@@ -81,7 +95,8 @@ class CustomerPortalHandler
             'view_tickets_url'           => '#/',
             'i18n'                       => $i18ns,
             'fallback_image'             => $assets . 'images/file.png',
-            'has_file_upload'            => !!Helper::ticketAcceptedFileMiles()
+            'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
+            'has_rich_text_editor'       => true
         ];
 
         if ($this->isSignedTicketView()) {
@@ -91,10 +106,12 @@ class CustomerPortalHandler
             add_filter('user_can_richedit', '__return_true');
         }
 
-        wp_tinymce_inline_scripts();
-        wp_enqueue_editor();
-
         $data = apply_filters('fluent_support/customer_portal_vars', $data);
+
+        if (!empty($data['has_rich_text_editor'])) {
+            wp_tinymce_inline_scripts();
+            wp_enqueue_editor();
+        }
 
         wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', $data);
     }
@@ -123,5 +140,30 @@ class CustomerPortalHandler
         }
 
         return isset($_REQUEST['fs_view']) && $_REQUEST['fs_view'] == 'ticket' && isset($_REQUEST['support_hash']) && isset($_REQUEST['ticket_id']);
+    }
+
+    private function maybeCreateCustomer()
+    {
+        $userId = get_current_user_id();
+        if (!$userId) {
+            return false;
+        }
+        $person = Helper::getCurrentPerson();
+        if ($person) {
+            return true;
+        }
+
+        $user = get_user_by('ID', $userId);
+
+        $request = App::request();
+
+        $onBehalf = [
+            'user_id'         => $user->id,
+            'email'           => $user->user_email,
+            'last_ip_address' => $request->getIp()
+        ];
+
+        Customer::maybeCreateCustomer($onBehalf);
+        return true;
     }
 }

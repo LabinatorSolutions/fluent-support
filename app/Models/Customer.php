@@ -37,7 +37,6 @@ class Customer extends Person
     public static function maybeCreateCustomer($customerData)
     {
         $customer = self::getCustomerFromData($customerData);
-
         $user = get_user_by('email', $customerData['email']);
         if($user) {
             if($user->first_name) {
@@ -50,7 +49,6 @@ class Customer extends Person
                 $customerData['first_name'] = $user->display_name;
             }
             $customerData['user_id'] = $user->ID;
-
         }
 
         if(!$customer) {

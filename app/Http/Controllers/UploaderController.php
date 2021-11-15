@@ -39,6 +39,15 @@ class UploaderController extends Controller
             $person = Helper::getCurrentPerson();
         }
 
+        if ($person->person_type == 'customer') {
+            $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
+            if (in_array('file_upload', $disabledFields)) {
+                return $this->sendError([
+                    'message' => 'You do not have permission to upload a file'
+                ]);
+            }
+        }
+
         $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
 
         $attachments = [];
