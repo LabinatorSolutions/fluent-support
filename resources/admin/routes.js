@@ -11,6 +11,7 @@ import TicketTags from './Modules/Settings/TicketTags';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 import SlackIntegration from "./Modules/Settings/SlackIntegration";
+import TicketFormConfig from "./Modules/Settings/TicketFormConfig";
 import CustomFields from "./Modules/Settings/CustomFields";
 import LicenseManagement from "./Modules/Settings/LicenseManagement";
 import FluentCRMIntegration from "./Modules/Settings/FluentCRMIntegration";
@@ -80,6 +81,11 @@ export default [
                 name: 'global_settings',
                 path: '',
                 component: BusinessSettings
+            },
+            {
+                name: 'ticket-form-config',
+                path: 'ticket-form-config',
+                component: TicketFormConfig
             },
             {
                 name: 'custom_fields',
