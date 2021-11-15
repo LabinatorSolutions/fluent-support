@@ -10,7 +10,7 @@
         <div v-if="!loading" class="fs_box_wrapper fs_padded_20">
             <div v-if="current_integration">
                 <h3>{{ current_integration.title }} {{$t('Integration Settings')}}</h3>
-                <p>{{ current_integration.description }}</p>
+                <p v-html="current_integration.description"></p>
                 <hr/>
             </div>
 
