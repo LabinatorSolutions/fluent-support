@@ -114,7 +114,11 @@
 }
 
 .fst_auth_wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-gap: 20px;
+    .hide {
+        display: none;
+    }
+
+    #fst_submit {
+        margin-bottom: 15px;
+    }
 }

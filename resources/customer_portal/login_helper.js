@@ -73,4 +73,18 @@ document.addEventListener('DOMContentLoaded', () => {
             request.send(data);
         })
     }
+
+    function fsToggleForms(event, that, target) {
+        event.preventDefault();
+        that.parentNode.parentNode.classList.toggle('hide');
+        document.querySelector(target).classList.toggle('hide');
+    }
+
+    document.getElementById('fs_show_signup').addEventListener('click', function (event) {
+        fsToggleForms(event, this, '.fst_registration_wrapper');
+    });
+
+    document.getElementById('fs_show_login').addEventListener('click', function (event) {
+        fsToggleForms(event, this, '.fst_login_wrapper');
+    });
 })
