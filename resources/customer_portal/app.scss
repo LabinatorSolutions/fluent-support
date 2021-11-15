@@ -869,3 +869,19 @@ ul.el-upload-list.el-upload-list--picture {
         margin-right: 10px;
     }
 }
+
+.fs_tk_suggestions {
+    margin-bottom: 22px;
+
+    p {
+        margin-bottom: 10px;
+
+        > .fs_tk_suggestion {
+            text-decoration: none;
+        }
+    }
+
+    .fs_tk_suggestion_articles {
+        border-bottom: 1px solid #ebeef3;
+    }
+}
