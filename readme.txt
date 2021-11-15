@@ -1,9 +1,9 @@
 === Fluent Support - WordPress Helpdesk and Customer Support Ticket Plugin ===
-Contributors: techjewel, wpmanageninja
+Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
 Tested up to: 5.8
-Stable tag: 1.4.2
+Stable tag: 1.4.5
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -142,6 +142,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.4.5 (Date: November 15, 2021) =
+* UI & UX Improvements
+* Added Signup and Login Form
+* Fully Translation Ready
 
 = 1.4.2 (Date: November 14, 2021) =
 * UI Improvements

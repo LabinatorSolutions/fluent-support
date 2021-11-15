@@ -98,7 +98,7 @@
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdate()">{{$t('Update')}}</el-button>
+                  <el-button v-loading="saving" :disabled="saving" type="success" @click="createOrUpdate()">{{$t('Save')}}</el-button>
                 </span>
             </template>
         </el-dialog>

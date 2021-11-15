@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="loading" class="fs_all_tickets">
+    <div class="fs_all_tickets">
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
@@ -9,7 +9,7 @@
                         size="mini"
                         icon="el-icon-plus">{{ $t('Add Ticket') }}
                     </el-button>
-                    <el-button v-loading="loading"
+                    <el-button
                                @click="fetchTickets()"
                                icon="el-icon-refresh"
                                size="mini"></el-button>
@@ -43,7 +43,8 @@
                 </el-button>
 
                 <el-table
-                    v-if="app_ready"
+                    v-loading="loading"
+                    v-if="app_ready && !first_time_loading"
                     :data="tickets"
                     stripe
                     @row-click="gotToTicket"
@@ -127,6 +128,10 @@
                     </el-table-column>
                 </el-table>
 
+                <div v-else style="padding: 15px;">
+                    <el-skeleton :rows="10" animated/>
+                </div>
+
                 <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
                     <pagination @fetch="fetchTickets()" :pagination="pagination"/>
                 </div>
@@ -201,7 +206,8 @@ export default {
             add_ticket_modal: false,
             appReady: false,
             add_response_modal: false,
-            show_filters: !this.is_mobile
+            show_filters: !this.is_mobile,
+            first_time_loading: true
         }
     },
     watch: {
@@ -244,6 +250,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
+                    this.first_time_loading = false;
                 })
         },
         gotToTicket(row) {

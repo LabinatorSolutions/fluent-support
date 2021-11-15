@@ -1,6 +1,6 @@
 <template>
     <div class="fs_all_workflows">
-        <div v-if="!loading" class="fs_box_wrapper">
+        <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
                     <el-breadcrumb separator="/">
@@ -16,7 +16,7 @@
                         <el-switch @change="updateWorkFlow()" active-value="published" inactive-value="draft"
                                    v-model="workflow.status"/>
                     </span>
-                    <el-button :disabled="saving" v-loading="saving" size="small" type="primary"
+                    <el-button :disabled="saving" v-loading="saving" size="small" type="success"
                                @click="updateWorkFlow()">Update Workflow
                     </el-button>
                 </div>
@@ -66,8 +66,8 @@
 
 
             </div>
-            <div v-else class="fs_workflow_edit_wrap">
-                <div style="background: white">
+            <div style="background: white; padding: 20px; margin-top: 20px;" v-else class="fs_workflow_edit_wrap">
+                <div>
                     <el-skeleton :rows="3" animated/>
                     <el-skeleton :rows="4" animated/>
                 </div>

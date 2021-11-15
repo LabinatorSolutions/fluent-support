@@ -16,6 +16,7 @@ import  ElOption from "element-plus/lib/el-option";
 import  ElRadioGroup from "element-plus/lib/el-radio-group";
 import  ElCheckboxGroup from "element-plus/lib/el-checkbox-group";
 import  ElRadio from "element-plus/lib/el-radio";
+import  ElTag from "element-plus/lib/el-tag";
 
 const app = createApp(Application);
 
@@ -36,6 +37,7 @@ app.component(ElOption.name, ElOption)
 app.component(ElRadioGroup.name, ElRadioGroup)
 app.component(ElRadio.name, ElRadio)
 app.component(ElCheckboxGroup.name, ElCheckboxGroup)
+app.component(ElTag.name, ElTag)
 
 app.use(ElLoading);
 

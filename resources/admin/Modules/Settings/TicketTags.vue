@@ -58,8 +58,8 @@
                         <pagination @fetch="fetchTags()" :pagination="pagination"/>
                     </div>
                 </div>
-                <div class="fs_box_body" v-else>
-                    <el-skeleton :rows="5" animated/>
+                <div style="background: white;" class="fs_box_body" v-else>
+                    <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
                 </div>
             </template>
             <div class="fs_narrow_promo" v-else>
@@ -87,7 +87,7 @@
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary"
+                  <el-button v-loading="saving" :disabled="saving" type="success"
                              @click="createOrUpdateTag()">{{ $t('Save') }}</el-button>
                 </span>
             </template>

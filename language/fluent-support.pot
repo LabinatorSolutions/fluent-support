@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-14 15:58+0000\n"
+"POT-Creation-Date: 2021-11-15 15:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid " assign this ticket to self"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:298
+#: app/Http/Controllers/TicketController.php:287
 #: svn/trunk/app/Http/Controllers/TicketController.php:298
 msgid " has been updated"
 msgstr ""
@@ -31,17 +31,24 @@ msgstr ""
 msgid " in this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:395
+#: app/Http/Controllers/TicketController.php:384
 #: svn/trunk/app/Http/Controllers/TicketController.php:395
 msgid " tickets has been assigned to"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:369
+#: app/Http/Controllers/TicketController.php:358
 #: svn/trunk/app/Http/Controllers/TicketController.php:369
 msgid " tickets have been deleted"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:359
+#: app/Services/EmailNotification/Settings.php:56
+#, php-format
+msgid ""
+"%1sPlease login or create an account to access the Customer Support "
+"Portal%2s [fluent_support_auh]"
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:348
 #: svn/trunk/app/Http/Controllers/TicketController.php:359
 #, php-format
 msgid "%d tickets have been closed"
@@ -53,7 +60,6 @@ msgstr ""
 msgid "%s ago"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:56
 #: svn/trunk/app/Services/EmailNotification/Settings.php:56
 msgid ""
 "<p>Please login to access the Customer Support Portal</p> "
@@ -66,6 +72,7 @@ msgid "Action"
 msgstr ""
 
 #: app/Services/TransStrings.php:305
+#: svn/trunk/app/Services/TransStrings.php:305
 msgid "Actions"
 msgstr ""
 
@@ -95,6 +102,7 @@ msgid "Add Business Inbox"
 msgstr ""
 
 #: app/Services/TransStrings.php:294
+#: svn/trunk/app/Services/TransStrings.php:294
 msgid ""
 "Add custom fields to your tickets and collect extra data from ticket open "
 "form."
@@ -119,6 +127,7 @@ msgid "Add New Business Inbox"
 msgstr ""
 
 #: app/Services/TransStrings.php:298
+#: svn/trunk/app/Services/TransStrings.php:298
 msgid "Add New Custom Field"
 msgstr ""
 
@@ -127,6 +136,7 @@ msgid "Add new customer"
 msgstr ""
 
 #: app/Services/TransStrings.php:300
+#: svn/trunk/app/Services/TransStrings.php:300
 msgid "Add New Field"
 msgstr ""
 
@@ -136,6 +146,7 @@ msgid "Add New Support Staff"
 msgstr ""
 
 #: app/Services/TransStrings.php:308
+#: svn/trunk/app/Services/TransStrings.php:308
 msgid "Add New WorkFlow"
 msgstr ""
 
@@ -172,14 +183,17 @@ msgid "Added By Email"
 msgstr ""
 
 #: app/Services/TransStrings.php:325
+#: svn/trunk/app/Services/TransStrings.php:325
 msgid "Additional Data "
 msgstr ""
 
 #: app/Services/TransStrings.php:315
+#: svn/trunk/app/Services/TransStrings.php:315
 msgid "Address Line 1"
 msgstr ""
 
 #: app/Services/TransStrings.php:316
+#: svn/trunk/app/Services/TransStrings.php:316
 msgid "Address Line 2"
 msgstr ""
 
@@ -189,7 +203,7 @@ msgid "Admin Email Address"
 msgstr ""
 
 #: app/Services/TransStrings.php:284
-#: svn/trunk/app/Services/TransStrings.php:285
+#: svn/trunk/app/Services/TransStrings.php:284
 msgid "Admin Priority"
 msgstr ""
 
@@ -224,7 +238,7 @@ msgstr ""
 msgid "Agent Last Name"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:375
+#: app/Http/Controllers/TicketController.php:364
 #: svn/trunk/app/Http/Controllers/TicketController.php:375
 msgid "agent_id param is required"
 msgstr ""
@@ -235,7 +249,7 @@ msgid "Agents Reports"
 msgstr ""
 
 #: app/Services/TransStrings.php:200
-#: app/Hooks/Handlers/CustomerPortalHandler.php:58
+#: app/Hooks/Handlers/CustomerPortalHandler.php:61
 #: svn/trunk/app/Services/TransStrings.php:200
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:58
 msgid "All"
@@ -246,6 +260,7 @@ msgid "All Customers"
 msgstr ""
 
 #: app/Services/TransStrings.php:323
+#: svn/trunk/app/Services/TransStrings.php:323
 msgid "All Inbox"
 msgstr ""
 
@@ -265,7 +280,12 @@ msgid "All Tickets"
 msgstr ""
 
 #: app/Services/TransStrings.php:307
+#: svn/trunk/app/Services/TransStrings.php:307
 msgid "All Workflows"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:83
+msgid "Already have an account?"
 msgstr ""
 
 #: app/Http/Controllers/CustomerController.php:118
@@ -284,6 +304,7 @@ msgid "API Response Error"
 msgstr ""
 
 #: app/Services/TransStrings.php:330
+#: svn/trunk/app/Services/TransStrings.php:330
 msgid "Apply / Remove Tags on FluentCRM Profile"
 msgstr ""
 
@@ -329,11 +350,8 @@ msgid "Awesome! Your support portal is ready to go!"
 msgstr ""
 
 #: app/Services/TransStrings.php:332
+#: svn/trunk/app/Services/TransStrings.php:332
 msgid "Blocked"
-msgstr ""
-
-#: svn/trunk/app/Http/Controllers/ChatMessageParserController.php:20
-msgid "Bot Token could not be verified"
 msgstr ""
 
 #: app/Services/Tickets/CustomFieldsService.php:17
@@ -358,7 +376,7 @@ msgid "Business Settings"
 msgstr ""
 
 #: app/Services/TransStrings.php:279
-#: svn/trunk/app/Services/TransStrings.php:280
+#: svn/trunk/app/Services/TransStrings.php:279
 msgid "by"
 msgstr ""
 
@@ -367,16 +385,16 @@ msgid "Cancel"
 msgstr ""
 
 #: app/Services/TransStrings.php:292
-#: svn/trunk/app/Services/TransStrings.php:293
+#: svn/trunk/app/Services/TransStrings.php:292
 msgid "Change Customer"
 msgstr ""
 
 #: app/Services/TransStrings.php:293
-#: svn/trunk/app/Services/TransStrings.php:294
+#: svn/trunk/app/Services/TransStrings.php:293
 msgid "Check overall activities"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:57
+#: app/Hooks/Handlers/CustomerPortalHandler.php:60
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:57
 msgid "Click Here to Write a reply"
 msgstr ""
@@ -402,6 +420,7 @@ msgid "Client Priority"
 msgstr ""
 
 #: app/Services/TransStrings.php:324
+#: svn/trunk/app/Services/TransStrings.php:324
 msgid "Client Priority: "
 msgstr ""
 
@@ -421,7 +440,7 @@ msgid "Close Ticket"
 msgstr ""
 
 #: app/Services/TransStrings.php:116
-#: app/Hooks/Handlers/CustomerPortalHandler.php:60
+#: app/Hooks/Handlers/CustomerPortalHandler.php:63
 #: svn/trunk/app/Services/TransStrings.php:116
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:60
 msgid "Closed"
@@ -455,12 +474,13 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:56
+#: app/Hooks/Handlers/CustomerPortalHandler.php:59
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:56
 msgid "Conversation"
 msgstr ""
 
 #: app/Services/TransStrings.php:319
+#: svn/trunk/app/Services/TransStrings.php:319
 msgid "Country"
 msgstr ""
 
@@ -469,7 +489,7 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:55
+#: app/Hooks/Handlers/CustomerPortalHandler.php:85
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:55
 msgid "Create a New Ticket"
 msgstr ""
@@ -481,6 +501,10 @@ msgstr ""
 #: app/Services/TransStrings.php:243
 #: svn/trunk/app/Services/TransStrings.php:243
 msgid "Create a Ticket"
+msgstr ""
+
+#: app/Hooks/Handlers/AuthHandler.php:43
+msgid "Create an Account"
 msgstr ""
 
 #: app/Services/TransStrings.php:40 svn/trunk/app/Services/TransStrings.php:40
@@ -557,10 +581,12 @@ msgid "Currently Viewing"
 msgstr ""
 
 #: app/Services/TransStrings.php:296
+#: svn/trunk/app/Services/TransStrings.php:296
 msgid "Custom Fields"
 msgstr ""
 
 #: app/Services/TransStrings.php:295
+#: svn/trunk/app/Services/TransStrings.php:295
 msgid "Custom Ticket Fields"
 msgstr ""
 
@@ -578,6 +604,7 @@ msgid "Customer First Name"
 msgstr ""
 
 #: app/Services/TransStrings.php:309
+#: svn/trunk/app/Services/TransStrings.php:309
 msgid "Customer First name"
 msgstr ""
 
@@ -590,7 +617,7 @@ msgstr ""
 msgid "Customer has been added"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:597
+#: app/Http/Controllers/TicketController.php:586
 #: app/Http/Controllers/CustomerController.php:143
 #: svn/trunk/app/Http/Controllers/TicketController.php:597
 #: svn/trunk/app/Http/Controllers/CustomerController.php:143
@@ -602,15 +629,16 @@ msgid "Customer Last Name"
 msgstr ""
 
 #: app/Services/TransStrings.php:310
+#: svn/trunk/app/Services/TransStrings.php:310
 msgid "Customer Last name"
 msgstr ""
 
 #: app/Services/TransStrings.php:291
-#: svn/trunk/app/Services/TransStrings.php:292
+#: svn/trunk/app/Services/TransStrings.php:291
 msgid "Customer Management"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:23
+#: app/Hooks/Handlers/CustomerPortalHandler.php:24
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:23
 msgid ""
 "Customer Portal is only accessible by Customers. Looks like you are a "
@@ -629,7 +657,7 @@ msgid "Dashboard"
 msgstr ""
 
 #: app/Services/TransStrings.php:236
-#: app/Hooks/Handlers/CustomerPortalHandler.php:61
+#: app/Hooks/Handlers/CustomerPortalHandler.php:64
 #: svn/trunk/app/Services/TransStrings.php:236
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:61
 msgid "Date"
@@ -708,7 +736,7 @@ msgstr ""
 msgid "email"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:150
+#: app/Hooks/Handlers/AuthHandler.php:172
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:150
 msgid "Email Address"
 msgstr ""
@@ -801,8 +829,8 @@ msgstr ""
 msgid "First Name"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:130
-#: app/Hooks/Handlers/AuthHandler.php:132
+#: app/Hooks/Handlers/AuthHandler.php:152
+#: app/Hooks/Handlers/AuthHandler.php:154
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:130
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:132
 msgid "First name"
@@ -853,7 +881,7 @@ msgstr ""
 msgid "Go to Dashboard"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:23
+#: app/Hooks/Handlers/CustomerPortalHandler.php:24
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:23
 msgid "Go to Support Admin Page"
 msgstr ""
@@ -890,13 +918,14 @@ msgid ""
 msgstr ""
 
 #: app/Services/TransStrings.php:331
+#: svn/trunk/app/Services/TransStrings.php:331
 msgid ""
 "If you select <b>Blocked</b> status then this customer can not submit a "
 "ticket or any response"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:70
-#: svn/trunk/app/Services/TransStrings.php:279
+#: app/Hooks/Handlers/CustomerPortalHandler.php:69
+#: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:70
 msgid "If you still have related issues. Please reopen this ticket and reply"
 msgstr ""
 
@@ -905,6 +934,7 @@ msgid "in the selected page"
 msgstr ""
 
 #: app/Services/TransStrings.php:322
+#: svn/trunk/app/Services/TransStrings.php:322
 msgid "Inbox"
 msgstr ""
 
@@ -963,6 +993,7 @@ msgid ""
 msgstr ""
 
 #: app/Services/TransStrings.php:313
+#: svn/trunk/app/Services/TransStrings.php:313
 msgid "Job Title"
 msgstr ""
 
@@ -971,6 +1002,7 @@ msgid "JSON"
 msgstr ""
 
 #: app/Services/TransStrings.php:302
+#: svn/trunk/app/Services/TransStrings.php:302
 msgid "Label"
 msgstr ""
 
@@ -1008,13 +1040,13 @@ msgstr ""
 msgid "Last Month"
 msgstr ""
 
-#: app/Services/TransStrings.php:43 app/Hooks/Handlers/AuthHandler.php:136
+#: app/Services/TransStrings.php:43 app/Hooks/Handlers/AuthHandler.php:158
 #: svn/trunk/app/Services/TransStrings.php:43
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:136
 msgid "Last Name"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:138
+#: app/Hooks/Handlers/AuthHandler.php:160
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:138
 msgid "Last name"
 msgstr ""
@@ -1025,16 +1057,25 @@ msgid "Last Week"
 msgstr ""
 
 #: app/Services/TransStrings.php:301
+#: svn/trunk/app/Services/TransStrings.php:301
 msgid "License Management"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:26
+#: app/Hooks/Handlers/CustomerPortalHandler.php:30
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:26
 msgid "Loading Customer Portal. Please wait..."
 msgstr ""
 
+#: app/Hooks/Handlers/AuthHandler.php:85
+msgid "Login"
+msgstr ""
+
 #: app/Hooks/actions.php:56 svn/trunk/app/Hooks/actions.php:56
 msgid "Logout"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:74
+msgid "Looking for similar articles..."
 msgstr ""
 
 #: app/Services/TransStrings.php:12 svn/trunk/app/Services/TransStrings.php:12
@@ -1110,17 +1151,19 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:63
+#: app/Hooks/Handlers/CustomerPortalHandler.php:66
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:63
 msgid "Next"
 msgstr ""
 
 #: app/Services/TransStrings.php:326 app/Services/TransStrings.php:327
+#: svn/trunk/app/Services/TransStrings.php:326
+#: svn/trunk/app/Services/TransStrings.php:327
 msgid "No additional data found"
 msgstr ""
 
 #: app/Http/Controllers/ChatMessageParserController.php:61
-#: svn/trunk/app/Http/Controllers/ChatMessageParserController.php:56
+#: svn/trunk/app/Http/Controllers/ChatMessageParserController.php:61
 msgid "No Agent found"
 msgstr ""
 
@@ -1130,6 +1173,7 @@ msgid "No available tags found"
 msgstr ""
 
 #: app/Services/TransStrings.php:297
+#: svn/trunk/app/Services/TransStrings.php:297
 msgid "No Custom Fields Found"
 msgstr ""
 
@@ -1141,7 +1185,7 @@ msgid "No Customer Found"
 msgstr ""
 
 #: app/Http/Controllers/ChatMessageParserController.php:52
-#: svn/trunk/app/Http/Controllers/ChatMessageParserController.php:47
+#: svn/trunk/app/Http/Controllers/ChatMessageParserController.php:52
 msgid "No ticket found"
 msgstr ""
 
@@ -1150,7 +1194,12 @@ msgstr ""
 msgid "Normal"
 msgstr ""
 
+#: app/Hooks/Handlers/AuthHandler.php:41
+msgid "Not registered?"
+msgstr ""
+
 #: app/Services/TransStrings.php:314
+#: svn/trunk/app/Services/TransStrings.php:314
 msgid "Note"
 msgstr ""
 
@@ -1171,14 +1220,17 @@ msgid "Only %s files are allowed."
 msgstr ""
 
 #: app/Services/TransStrings.php:277
-#: app/Hooks/Handlers/CustomerPortalHandler.php:69
+#: app/Hooks/Handlers/CustomerPortalHandler.php:68
+msgid "Only you and official support agents can view this conversation"
+msgstr ""
+
 #: svn/trunk/app/Services/TransStrings.php:277
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:69
 msgid "Only you and official support agents can view this conversations"
 msgstr ""
 
 #: app/Services/TransStrings.php:197
-#: app/Hooks/Handlers/CustomerPortalHandler.php:59
+#: app/Hooks/Handlers/CustomerPortalHandler.php:62
 #: svn/trunk/app/Services/TransStrings.php:197
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:59
 msgid "Open"
@@ -1189,8 +1241,8 @@ msgstr ""
 msgid "Open Tickets"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:157
-#: app/Hooks/Handlers/AuthHandler.php:159
+#: app/Hooks/Handlers/AuthHandler.php:179
+#: app/Hooks/Handlers/AuthHandler.php:181
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:157
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:159
 msgid "Password"
@@ -1272,7 +1324,6 @@ msgstr ""
 msgid "Please provide fallback box"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:98
 #: svn/trunk/app/Services/EmailNotification/Settings.php:98
 msgid ""
 "Please provide message for not logged in users. You can place login "
@@ -1325,7 +1376,7 @@ msgstr ""
 msgid "Press enter to save"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:64
+#: app/Hooks/Handlers/CustomerPortalHandler.php:67
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:64
 msgid "Prev"
 msgstr ""
@@ -1336,7 +1387,6 @@ msgid "Previous Conversations"
 msgstr ""
 
 #: app/Services/TransStrings.php:214
-#: app/Hooks/Handlers/CustomerPortalHandler.php:67
 #: svn/trunk/app/Services/TransStrings.php:214
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:67
 msgid "Priority"
@@ -1408,7 +1458,6 @@ msgid "Quick Stats"
 msgstr ""
 
 #: app/Services/TransStrings.php:264
-#: app/Hooks/Handlers/CustomerPortalHandler.php:68
 #: svn/trunk/app/Services/TransStrings.php:264
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:68
 msgid "Related Product/Service"
@@ -1459,7 +1508,7 @@ msgstr ""
 msgid "Reply and Close"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:271
+#: app/Http/Controllers/CustomerPortalController.php:281
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:271
 msgid "Reply has been added"
 msgstr ""
@@ -1495,13 +1544,13 @@ msgstr ""
 msgid "Response Count"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:486
+#: app/Http/Controllers/TicketController.php:475
 #: svn/trunk/app/Http/Controllers/TicketController.php:486
 msgid "Response has been added to the selected tickets"
 msgstr ""
 
 #: app/Http/Controllers/ChatMessageParserController.php:69
-#: svn/trunk/app/Http/Controllers/ChatMessageParserController.php:64
+#: svn/trunk/app/Http/Controllers/ChatMessageParserController.php:69
 msgid "Response has been successfully recorded"
 msgstr ""
 
@@ -1540,7 +1589,7 @@ msgid "Search Agents"
 msgstr ""
 
 #: app/Services/TransStrings.php:288
-#: svn/trunk/app/Services/TransStrings.php:289
+#: svn/trunk/app/Services/TransStrings.php:288
 msgid "Search Custom Fields"
 msgstr ""
 
@@ -1549,7 +1598,7 @@ msgid "Search Customers"
 msgstr ""
 
 #: app/Services/TransStrings.php:287
-#: svn/trunk/app/Services/TransStrings.php:288
+#: svn/trunk/app/Services/TransStrings.php:287
 msgid "Search Products"
 msgstr ""
 
@@ -1559,7 +1608,7 @@ msgid "Search Replies"
 msgstr ""
 
 #: app/Services/TransStrings.php:286
-#: svn/trunk/app/Services/TransStrings.php:287
+#: svn/trunk/app/Services/TransStrings.php:286
 msgid "Search Tags"
 msgstr ""
 
@@ -1579,15 +1628,19 @@ msgid "Select Portal Page"
 msgstr ""
 
 #: app/Services/TransStrings.php:265
+#: app/Hooks/Handlers/CustomerPortalHandler.php:76
 #: svn/trunk/app/Services/TransStrings.php:265
 msgid "Select Priority"
 msgstr ""
 
 #: app/Services/TransStrings.php:312
+#: svn/trunk/app/Services/TransStrings.php:312
 msgid "Select Product"
 msgstr ""
 
-#: app/Services/TransStrings.php:93 svn/trunk/app/Services/TransStrings.php:93
+#: app/Services/TransStrings.php:93
+#: app/Hooks/Handlers/CustomerPortalHandler.php:73
+#: svn/trunk/app/Services/TransStrings.php:93
 msgid "Select related Product/Service"
 msgstr ""
 
@@ -1608,12 +1661,12 @@ msgstr ""
 msgid "Selected Business has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:510
+#: app/Http/Controllers/TicketController.php:499
 #: svn/trunk/app/Http/Controllers/TicketController.php:510
 msgid "Selected response has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:541
+#: app/Http/Controllers/TicketController.php:530
 #: svn/trunk/app/Http/Controllers/TicketController.php:541
 msgid "Selected response has been updated"
 msgstr ""
@@ -1623,7 +1676,7 @@ msgstr ""
 msgid "Selected support staff has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:413
+#: app/Http/Controllers/TicketController.php:402
 #: svn/trunk/app/Http/Controllers/TicketController.php:413
 msgid "Selected tags has been added to tickets"
 msgstr ""
@@ -1665,7 +1718,7 @@ msgstr ""
 msgid "Setup Associate Product/Services for Tickets"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:65
+#: app/Hooks/Handlers/AuthHandler.php:77
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:65
 msgid "Signup"
 msgstr ""
@@ -1675,25 +1728,26 @@ msgid "Slack"
 msgstr ""
 
 #: app/Services/TransStrings.php:289
-#: svn/trunk/app/Services/TransStrings.php:290
+#: svn/trunk/app/Services/TransStrings.php:289
 msgid "Slack Integration"
 msgstr ""
 
 #: app/Services/TransStrings.php:290
-#: svn/trunk/app/Services/TransStrings.php:291
+#: svn/trunk/app/Services/TransStrings.php:290
 msgid "Slack User ID"
 msgstr ""
 
 #: app/Services/TransStrings.php:303
+#: svn/trunk/app/Services/TransStrings.php:303
 msgid "Slug"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:419
+#: app/Http/Controllers/TicketController.php:408
 #: svn/trunk/app/Http/Controllers/TicketController.php:419
 msgid "Sorry no action found as available"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:448
+#: app/Http/Controllers/TicketController.php:437
 #: svn/trunk/app/Http/Controllers/TicketController.php:448
 msgid "Sorry no tickets found based on your filter and bulk actions"
 msgstr ""
@@ -1703,23 +1757,23 @@ msgstr ""
 msgid "Sorry! FluentCRM could not be installed. Please install manually"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:249
-#: app/Http/Controllers/CustomerPortalController.php:289
-#: app/Http/Controllers/CustomerPortalController.php:333
+#: app/Http/Controllers/CustomerPortalController.php:259
+#: app/Http/Controllers/CustomerPortalController.php:299
+#: app/Http/Controllers/CustomerPortalController.php:343
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:249
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:289
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:333
 msgid "Sorry! No customer found"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:303
-#: app/Http/Controllers/CustomerPortalController.php:339
+#: app/Http/Controllers/CustomerPortalController.php:313
+#: app/Http/Controllers/CustomerPortalController.php:349
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:303
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:339
 msgid "Sorry! You can not close this ticket"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:263
+#: app/Http/Controllers/CustomerPortalController.php:273
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:263
 msgid "Sorry! You can not reply to this ticket"
 msgstr ""
@@ -1741,10 +1795,10 @@ msgstr ""
 
 #: app/Http/Controllers/CustomerPortalController.php:33
 #: app/Http/Controllers/CustomerPortalController.php:89
-#: app/Http/Controllers/CustomerPortalController.php:170
-#: app/Http/Controllers/CustomerPortalController.php:255
-#: app/Http/Controllers/CustomerPortalController.php:295
-#: app/Http/Controllers/CustomerPortalController.php:325
+#: app/Http/Controllers/CustomerPortalController.php:180
+#: app/Http/Controllers/CustomerPortalController.php:265
+#: app/Http/Controllers/CustomerPortalController.php:305
+#: app/Http/Controllers/CustomerPortalController.php:335
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:33
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:89
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:170
@@ -1754,8 +1808,8 @@ msgstr ""
 msgid "Sorry, You do not have access to customer portal"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:502
-#: app/Http/Controllers/TicketController.php:532
+#: app/Http/Controllers/TicketController.php:491
+#: app/Http/Controllers/TicketController.php:521
 #: svn/trunk/app/Http/Controllers/TicketController.php:502
 #: svn/trunk/app/Http/Controllers/TicketController.php:532
 msgid "Sorry, You do not have permission to delete this response"
@@ -1765,17 +1819,17 @@ msgstr ""
 msgid "Sorry, You do not have permission to this page"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:163
+#: app/Http/Controllers/CustomerPortalController.php:173
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:163
 msgid "Sorry, You do not have permission to this support ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:165
-#: app/Http/Controllers/TicketController.php:225
-#: app/Http/Controllers/TicketController.php:247
-#: app/Http/Controllers/TicketController.php:273
-#: app/Http/Controllers/TicketController.php:311
-#: app/Http/Controllers/TicketController.php:329
+#: app/Http/Controllers/TicketController.php:154
+#: app/Http/Controllers/TicketController.php:214
+#: app/Http/Controllers/TicketController.php:236
+#: app/Http/Controllers/TicketController.php:262
+#: app/Http/Controllers/TicketController.php:300
+#: app/Http/Controllers/TicketController.php:318
 #: svn/trunk/app/Http/Controllers/TicketController.php:165
 #: svn/trunk/app/Http/Controllers/TicketController.php:225
 #: svn/trunk/app/Http/Controllers/TicketController.php:247
@@ -1785,7 +1839,7 @@ msgstr ""
 msgid "Sorry, You do not have permission to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:217
+#: app/Http/Controllers/TicketController.php:206
 #: svn/trunk/app/Http/Controllers/TicketController.php:217
 msgid ""
 "Sorry, You do not have permission. Please add yourself as support agent first"
@@ -1804,11 +1858,12 @@ msgid "Start"
 msgstr ""
 
 #: app/Services/TransStrings.php:280
-#: svn/trunk/app/Services/TransStrings.php:281
+#: svn/trunk/app/Services/TransStrings.php:280
 msgid "started the conversation"
 msgstr ""
 
 #: app/Services/TransStrings.php:317
+#: svn/trunk/app/Services/TransStrings.php:317
 msgid "State"
 msgstr ""
 
@@ -1817,14 +1872,13 @@ msgid "Stats"
 msgstr ""
 
 #: app/Services/TransStrings.php:57
-#: app/Hooks/Handlers/CustomerPortalHandler.php:62
+#: app/Hooks/Handlers/CustomerPortalHandler.php:65
 #: svn/trunk/app/Services/TransStrings.php:57
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:62
 msgid "Status"
 msgstr ""
 
 #: app/Services/TransStrings.php:261
-#: app/Hooks/Handlers/CustomerPortalHandler.php:65
 #: svn/trunk/app/Services/TransStrings.php:261
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:65
 msgid "Subject"
@@ -1845,11 +1899,16 @@ msgstr ""
 msgid "Successfully registered to the site."
 msgstr ""
 
+#: app/Hooks/Handlers/CustomerPortalHandler.php:75
+msgid "Suggested articles"
+msgstr ""
+
 #: app/Services/TransStrings.php:83 svn/trunk/app/Services/TransStrings.php:83
 msgid "Support Channel"
 msgstr ""
 
 #: app/Services/TransStrings.php:311
+#: svn/trunk/app/Services/TransStrings.php:311
 msgid "Support From Email"
 msgstr ""
 
@@ -1883,6 +1942,7 @@ msgid "Support Staffs"
 msgstr ""
 
 #: app/Services/TransStrings.php:320
+#: svn/trunk/app/Services/TransStrings.php:320
 msgid "Support Tickets"
 msgstr ""
 
@@ -1903,12 +1963,12 @@ msgstr ""
 msgid "Tag Description"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:576
+#: app/Http/Controllers/TicketController.php:565
 #: svn/trunk/app/Http/Controllers/TicketController.php:576
 msgid "Tag has been added to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:587
+#: app/Http/Controllers/TicketController.php:576
 #: svn/trunk/app/Http/Controllers/TicketController.php:587
 msgid "Tag has been removed from this ticket"
 msgstr ""
@@ -1918,7 +1978,7 @@ msgstr ""
 msgid "Tag Title"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:402
+#: app/Http/Controllers/TicketController.php:391
 #: svn/trunk/app/Http/Controllers/TicketController.php:402
 msgid "tag_ids param is required"
 msgstr ""
@@ -1996,8 +2056,9 @@ msgid ""
 msgstr ""
 
 #: app/Services/TransStrings.php:250
-#: app/Hooks/Handlers/CustomerPortalHandler.php:71
+#: app/Hooks/Handlers/CustomerPortalHandler.php:70
 #: svn/trunk/app/Services/TransStrings.php:250
+#: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:71
 msgid "This ticket has been closed at"
 msgstr ""
 
@@ -2046,11 +2107,11 @@ msgid "Ticket created at"
 msgstr ""
 
 #: app/Services/TransStrings.php:328
+#: svn/trunk/app/Services/TransStrings.php:328
 msgid "Ticket created at "
 msgstr ""
 
 #: app/Services/TransStrings.php:263
-#: app/Hooks/Handlers/CustomerPortalHandler.php:66
 #: svn/trunk/app/Services/TransStrings.php:263
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:66
 msgid "Ticket Details"
@@ -2062,13 +2123,13 @@ msgstr ""
 
 #: app/Services/Tickets/ResponseService.php:97
 #: app/Services/Tickets/TicketService.php:21
-#: svn/trunk/app/Services/Tickets/ResponseService.php:89
+#: svn/trunk/app/Services/Tickets/ResponseService.php:97
 #: svn/trunk/app/Services/Tickets/TicketService.php:21
 msgid "Ticket has been closed"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:142
-#: app/Http/Controllers/CustomerPortalController.php:136
+#: app/Http/Controllers/TicketController.php:131
+#: app/Http/Controllers/CustomerPortalController.php:146
 #: svn/trunk/app/Http/Controllers/TicketController.php:142
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:136
 msgid "Ticket has been created successfully"
@@ -2166,6 +2227,7 @@ msgid "Total Summaries"
 msgstr ""
 
 #: app/Services/TransStrings.php:304
+#: svn/trunk/app/Services/TransStrings.php:304
 msgid "Type"
 msgstr ""
 
@@ -2175,6 +2237,7 @@ msgid "Un-Assigned"
 msgstr ""
 
 #: app/Services/TransStrings.php:321
+#: svn/trunk/app/Services/TransStrings.php:321
 msgid "Unassigned"
 msgstr ""
 
@@ -2184,7 +2247,7 @@ msgid "Unassigned Tickets"
 msgstr ""
 
 #: app/Services/TransStrings.php:282
-#: svn/trunk/app/Services/TransStrings.php:283
+#: svn/trunk/app/Services/TransStrings.php:282
 msgid "Unknown error. Please reload this page"
 msgstr ""
 
@@ -2194,6 +2257,7 @@ msgid "Update"
 msgstr ""
 
 #: app/Services/TransStrings.php:299
+#: svn/trunk/app/Services/TransStrings.php:299
 msgid "Update Custom Field"
 msgstr ""
 
@@ -2207,6 +2271,7 @@ msgid "Update Response"
 msgstr ""
 
 #: app/Services/TransStrings.php:329
+#: svn/trunk/app/Services/TransStrings.php:329
 msgid "Update Settings"
 msgstr ""
 
@@ -2216,7 +2281,7 @@ msgid "Update Type"
 msgstr ""
 
 #: app/Services/TransStrings.php:285
-#: svn/trunk/app/Services/TransStrings.php:286
+#: svn/trunk/app/Services/TransStrings.php:285
 msgid "Updating Custom Field Data"
 msgstr ""
 
@@ -2229,14 +2294,15 @@ msgstr ""
 msgid "Use shortcode"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:143
-#: app/Hooks/Handlers/AuthHandler.php:145
+#: app/Hooks/Handlers/AuthHandler.php:165
+#: app/Hooks/Handlers/AuthHandler.php:167
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:143
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:145
 msgid "Username"
 msgstr ""
 
 #: app/Services/TransStrings.php:306
+#: svn/trunk/app/Services/TransStrings.php:306
 msgid "Verify License"
 msgstr ""
 
@@ -2250,7 +2316,7 @@ msgid "View Settings"
 msgstr ""
 
 #: app/Services/TransStrings.php:281
-#: svn/trunk/app/Services/TransStrings.php:282
+#: svn/trunk/app/Services/TransStrings.php:281
 msgid "View Your Tickets"
 msgstr ""
 
@@ -2283,6 +2349,7 @@ msgid "Web Based"
 msgstr ""
 
 #: app/Services/TransStrings.php:262
+#: app/Hooks/Handlers/CustomerPortalHandler.php:72
 #: svn/trunk/app/Services/TransStrings.php:262
 msgid "What's about this support ticket"
 msgstr ""
@@ -2309,7 +2376,7 @@ msgid "Yesterday"
 msgstr ""
 
 #: app/Services/TransStrings.php:283
-#: svn/trunk/app/Services/TransStrings.php:284
+#: svn/trunk/app/Services/TransStrings.php:283
 msgid "You"
 msgstr ""
 
@@ -2329,12 +2396,12 @@ msgid ""
 "for email reply parsing"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:178
+#: app/Http/Controllers/CustomerPortalController.php:188
 #: svn/trunk/app/Http/Controllers/CustomerPortalController.php:178
 msgid "You do not have permission to view this support ticket"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:20
+#: app/Hooks/Handlers/CustomerPortalHandler.php:21
 #: svn/trunk/app/Hooks/Handlers/CustomerPortalHandler.php:20
 msgid "You don’t have permission to view the tickets"
 msgstr ""
@@ -2343,7 +2410,7 @@ msgstr ""
 msgid "Your Business Details"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:152
+#: app/Hooks/Handlers/AuthHandler.php:174
 #: svn/trunk/app/Hooks/Handlers/AuthHandler.php:152
 msgid "Your Email Address"
 msgstr ""
@@ -2362,5 +2429,6 @@ msgid "Zip"
 msgstr ""
 
 #: app/Services/TransStrings.php:318
+#: svn/trunk/app/Services/TransStrings.php:318
 msgid "Zip Code"
 msgstr ""

@@ -1,5 +1,5 @@
 <template>
-    <div v-loading="loading" class="fs_all_workflows">
+    <div class="fs_all_workflows">
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
@@ -13,47 +13,49 @@
                 </div>
             </div>
             <div v-if="has_pro" class="fs_box_body fs_padded_20">
-                <el-table :data="workflows" border stripe>
-                    <el-table-column prop="id" label="ID" width="90"/>
-                    <el-table-column label="Title">
-                        <template #default="scope">
-                            <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
-                                {{ scope.row.title }}
-                            </router-link>
-                            <span v-if="scope.row.trigger_human_name"
-                                  class="fs_trigger_sub">{{ scope.row.trigger_human_name }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column prop="status" label="Status" width="120"/>
-                    <el-table-column prop="trigger_type" label="Trigger Type" width="120"/>
-                    <el-table-column label="Actions" width="120">
-                        <template #default="scope">
-                            <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
-                                <i class="el-icon-edit"></i>
-                            </router-link>
-                            <el-popconfirm
-                                confirm-button-text="Yes, Delete this"
-                                cancel-button-text="No"
-                                icon="el-icon-info"
-                                icon-color="red"
-                                title="Are you sure to delete this? All associate data will be deleted"
-                                @confirm="deleteWorkflow(scope.row.id)"
-                            >
-                                <template #reference>
-                                    <el-button v-loading="deleting" style="margin-left: 10px; color: red;" type="text"
-                                               size="mini"
-                                               icon="el-icon-delete"></el-button>
-                                </template>
-                            </el-popconfirm>
-                        </template>
-                    </el-table-column>
-                </el-table>
+                <template v-if="!loading">
+                    <el-table :data="workflows" border stripe>
+                        <el-table-column prop="id" label="ID" width="90"/>
+                        <el-table-column label="Title">
+                            <template #default="scope">
+                                <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
+                                    {{ scope.row.title }}
+                                </router-link>
+                                <span v-if="scope.row.trigger_human_name"
+                                      class="fs_trigger_sub">{{ scope.row.trigger_human_name }}</span>
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="status" label="Status" width="120"/>
+                        <el-table-column prop="trigger_type" label="Trigger Type" width="120"/>
+                        <el-table-column label="Actions" width="120">
+                            <template #default="scope">
+                                <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
+                                    <i class="el-icon-edit"></i>
+                                </router-link>
+                                <el-popconfirm
+                                    confirm-button-text="Yes, Delete this"
+                                    cancel-button-text="No"
+                                    icon="el-icon-info"
+                                    icon-color="red"
+                                    title="Are you sure to delete this? All associate data will be deleted"
+                                    @confirm="deleteWorkflow(scope.row.id)"
+                                >
+                                    <template #reference>
+                                        <el-button v-loading="deleting" style="margin-left: 10px; color: red;" type="text"
+                                                   size="mini"
+                                                   icon="el-icon-delete"></el-button>
+                                    </template>
+                                </el-popconfirm>
+                            </template>
+                        </el-table-column>
+                    </el-table>
 
-                <div class="fframe_pagination_wrapper">
-                    <pagination @fetch="fetch()" :pagination="pagination"/>
-                </div>
+                    <div class="fframe_pagination_wrapper">
+                        <pagination @fetch="fetch()" :pagination="pagination"/>
+                    </div>
+                </template>
 
-                <div v-if="loading">
+                <div v-else>
                     <el-skeleton :rows="3" animated/>
                 </div>
             </div>

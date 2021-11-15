@@ -108,7 +108,7 @@
 
             <template #footer>
                 <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="primary" @click="createOrUpdateAgent()">
+                  <el-button v-loading="saving" :disabled="saving" type="success" @click="createOrUpdateAgent()">
                       <span v-if="editing_agent.id">{{$t('Update')}}</span>
                       <span v-else>{{$t('Create')}}</span>
                   </el-button>
