@@ -6,7 +6,7 @@
                     @click="add_response_modal = true">
                     <i class="el-icon-chat-line-square"/>
                 </li>
-                <li :title="$t('Assigned Agent ')">
+                <li :title="$t('Assign Agent ')">
                     <el-popover
                         placement="bottom"
                         :width="400"
