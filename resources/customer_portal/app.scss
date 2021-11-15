@@ -435,9 +435,31 @@
         th, td {
             padding: 12px 15px;
             text-align: left;
+            border: 0;
 
             strong {
                 font-weight: 500;
+            }
+        }
+
+        .fs_tk_status, .fs_tk_date {
+            min-width: 100px;
+        }
+
+        span.fs_tk_date {
+            font-size: 12px;
+            display: inline-block;
+            line-height: 120%;
+        }
+
+        td.fs_thread_count {
+            min-width: 30px;
+
+            span {
+                min-width: 25px;
+                text-align: center;
+                margin: 0;
+                display: inline-block;
             }
         }
 
@@ -579,10 +601,40 @@
 
         input.el-input__inner, textarea {
             border: 1px solid #cbd5e0 !important;
+            line-height: 40px;
+            padding: 0 15px !important;
+            -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+            transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+        }
+
+        .el-button.el-button--success {
+            color: #FFF;
+            background: #67C23A;
+            background-color: #67C23A;
+            border-color: #67C23A;
+
+            &:hover {
+                background: #85ce61;
+                border-color: #85ce61;
+                color: #FFF;
+            }
+        }
+
+        .wp-editor-tools button {
+            background: inherit;
+            color: inherit;
         }
     }
 
+    .fc_custom_data_wrap {
+        padding: 15px 30px;
 
+        h3 {
+            margin: 0px 0px 15px;
+            padding: 0;
+            font-size: 20px;
+        }
+    }
 
     @media all and (max-width: 768px) {
         .fs_thread_body {
@@ -690,6 +742,7 @@
 
             tbody tr, tbody td, tbody {
                 display: block;
+                border: 0;
             }
 
             tbody td {
@@ -701,9 +754,24 @@
             }
 
             tbody tr {
-                .fs_thread_count, .fs_tk_status, .fs_tk_date {
+                td.fs_thread_count, .fs_tk_status, .fs_tk_date {
                     display: inline-block;
                     font-size: 12px;
+                    padding: 0;
+                    min-width: 0;
+                }
+
+                td.fs_thread_count {
+                    padding-left: 10px;
+                    display: inline-block;
+
+                    span {
+                        margin: 0;
+                    }
+                }
+
+                .fs_tk_status {
+                    padding: 0 10px;
                 }
             }
         }
@@ -732,7 +800,6 @@
 
 }
 
-
 .fs_row {
     display: block;
     overflow: hidden;
@@ -748,7 +815,7 @@
 }
 
 #fluent_support_client_app .el-table--fit.el-table table tr td {
-    padding: 12px 0px !important;
+    padding: 12px 0 !important;
 }
 
 .el-upload-list--picture {
@@ -777,7 +844,6 @@ ul.el-upload-list.el-upload-list--picture {
     display: -webkit-inline-box;
     display: -webkit-box;
 }
-
 
 .fc_custom_data_wrap {
     padding: 0 30px 20px;
