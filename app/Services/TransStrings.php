@@ -324,7 +324,7 @@ class TransStrings
             'Client Priority: ' => __('Client Priority: ', 'fluent-support'),
             'Additional Data' => __('Additional Data ', 'fluent-support'),
             'No additional data found' => __('No additional data found', 'fluent-support'),
-            'Admin Priority:' => __('No additional data found', 'fluent-support'),
+            'Admin Priority:' => __('Admin Priority:', 'fluent-support'),
             'Ticket created at ' => __('Ticket created at ', 'fluent-support'),
             'Update Settings' => __('Update Settings', 'fluent-support'),
             'Apply / Remove Tags on FluentCRM Profile' => __('Apply / Remove Tags on FluentCRM Profile', 'fluent-support'),
