@@ -109,7 +109,7 @@ class CustomerPortalController extends Controller
             $data['client_priority'] = sanitize_text_field($data['client_priority']);
         }
 
-        if(!in_array('product_services', $disabledFields)) {
+        if(in_array('product_services', $disabledFields)) {
             unset($data['product_id']);
         }
 
