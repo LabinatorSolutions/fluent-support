@@ -34,7 +34,7 @@ class FeedIntegration extends IntegrationManager
 
         $assets = $app['url.assets'];
 
-        $this->logo = $assets.'/images/fluent-support-logo.png';
+        $this->logo = $assets.'/images/fluent-support-color-logo.png';
 
         $this->description = __('Create Support Ticket From Your Form Submission in FluentSupport', 'fluentform');
 
