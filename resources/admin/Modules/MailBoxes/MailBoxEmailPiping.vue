@@ -9,7 +9,7 @@
                 <hr/>
                 <el-checkbox style="margin-bottom: 20px; margin-top: 10px;" v-model="terms_agree">I agree with the
                     Fluent Support email parsing <a target="_blank" rel="noopener"
-                                                    href="https://fluentsupport.com/about/email-parsing">terms and
+                                                    href="https://fluentsupport.com/privacy-policy/email-piping-data-policy/">terms and
                         conditions</a></el-checkbox>
                 <br />
                 <el-button @click="issueEmail()" type="primary" :disabled="!terms_agree">Get Piping Email Details
