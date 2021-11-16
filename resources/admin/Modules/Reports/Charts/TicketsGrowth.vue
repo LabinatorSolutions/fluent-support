@@ -1,9 +1,9 @@
 <template>
     <div style="width: 100%; height: 400px">
         <bar-chart-base
-                        v-if="chartData"
-                        :chartData="chartData"
-                        :chartOptions="chartOptions"
+            v-if="chartData"
+            :chartData="chartData"
+            :chartOptions="chartOptions"
         ></bar-chart-base>
     </div>
 </template>
@@ -11,9 +11,10 @@
 <script type="text/babel">
 import each from 'lodash/each'
 import BarChartBase from "./BarChartBase";
+
 export default {
     name: 'TicketsGrowthChart',
-    props:['date_range'],
+    props: ['date_range'],
     components: {
         BarChartBase
     },
@@ -37,7 +38,7 @@ export default {
                             },
                             ticks: {
                                 beginAtZero: true,
-                                userCallback: function(label, index, labels) {
+                                userCallback: function (label, index, labels) {
                                     // when the floored value is the same as the value we have a whole number
                                     if (Math.floor(label) === label) {
                                         return label;
@@ -74,7 +75,7 @@ export default {
     methods: {
         fetchReport() {
             this.fetching = true;
-            this.$get('reports/tickets-growth',{ date_range: this.date_range })
+            this.$get('reports/tickets-growth', {date_range: this.date_range})
                 .then(response => {
                     this.setupChartItems(response.stats);
                 });
@@ -92,7 +93,7 @@ export default {
             });
             chartData.datasets.push({
                 label: 'Ticket Activity',
-                backgroundColor: '#7757e6',
+                backgroundColor: '#0cbe7e',
                 data: statData
             });
 

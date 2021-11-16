@@ -104,7 +104,10 @@ export default {
                 ticket: this.ticket
             })
                 .then((response) => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.$router.push({name: 'view_ticket', params: {ticket_id: response.ticket.id}});
                 })
                 .catch((errors) => {

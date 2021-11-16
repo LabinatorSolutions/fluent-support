@@ -122,7 +122,10 @@ export default {
             })
                 .then((response) => {
                     this.fields = response.fields;
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                 })
                 .catch((error) => {
                     this.handleError(error);
@@ -142,11 +145,17 @@ export default {
         },
         validateField(item) {
             if (!item.label) {
-                this.$notify.error('Please Provide label');
+                this.$notify.error({
+                    message: 'Please Provide label',
+                    position: 'bottom-right'
+                });
                 return false;
             }
             if (item.options && !item.options.length) {
-                this.$notify.error('Please Field Option Values');
+                this.$notify.error({
+                    message: 'Please Field Option Values',
+                    position: 'bottom-right'
+                });
                 return false;
             }
             return true;

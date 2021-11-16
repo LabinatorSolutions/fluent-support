@@ -129,7 +129,10 @@ export default {
             this.loading = true;
             this.$put(`customers/${this.customer.id}`, this.customer)
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.$emit('updated', response.customer);
                 })
                 .catch((errors) => {
@@ -143,7 +146,10 @@ export default {
             this.loading = true;
             this.$post('customers', this.customer)
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.$emit('updated', response.customer);
                 })
                 .catch((errors) => {
@@ -158,7 +164,10 @@ export default {
             this.$del(`customers/${this.customer.id}`)
                 .then(response => {
                     this.$router.go(-1);
-                    this.$notify.success(response.message)
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    })
                 })
                 .catch(errors => {
                     this.$handleError(errors)

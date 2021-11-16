@@ -440,7 +440,10 @@ export default {
                 prop_value: this.ticket[propName]
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
 
                     each(response.update_data, (data, key) => {
                         this.ticket[key] = data;
@@ -463,7 +466,10 @@ export default {
             this.$post(`tickets/${this.ticket.id}/close`)
                 .then(response => {
                     this.ticket.status = response.ticket.status;
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     if (window.history.state.back) {
                         this.$router.go(-1);
                     }

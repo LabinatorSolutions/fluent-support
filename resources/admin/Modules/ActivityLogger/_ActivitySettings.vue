@@ -10,7 +10,7 @@
         </el-form>
 
         <span class="dialog-footer">
-            <el-button v-loading="saving" :disabled="saving" type="primary" @click="updateSettings()">
+            <el-button v-loading="saving" :disabled="saving" type="success" @click="updateSettings()">
                 Update Settings
             </el-button>
         </span>
@@ -48,7 +48,11 @@ export default {
                 activity_settings: this.activity_settings
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
+
                     this.$emit('updated');
                 })
                 .catch((errors) => {

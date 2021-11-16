@@ -2,7 +2,7 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>{{$t('Support Staffs')}}</h3>
+                <h3>{{$t('Support Staff')}}</h3>
             </div>
             <div class="fs_box_actions">
                 <el-button @click="createStaffModal()" type="primary" icon="el-icon-plus" size="small">
@@ -252,7 +252,7 @@ export default {
     mounted() {
         this.fetchAgents();
         this.fetchSettings();
-        this.$setTitle('Support Staffs');
+        this.$setTitle('Support Staff');
     }
 }
 </script>

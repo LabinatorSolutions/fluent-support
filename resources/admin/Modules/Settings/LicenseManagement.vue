@@ -90,7 +90,10 @@ export default {
         },
         verifyLicense() {
             if (!this.licenseKey) {
-                this.$notify.error('Please provide a license key');
+                this.$notify.error({
+                    message: 'Please provide a license key',
+                    position: 'bottom-right'
+                });
                 this.errorMessage = 'Please provide a license key';
                 return;
             }
@@ -103,7 +106,10 @@ export default {
             })
                 .then(response => {
                     this.licenseData = response.license_data;
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                 })
                 .catch((errorResponse) => {
                     let errorMessage = '';
@@ -131,7 +137,10 @@ export default {
             this.$post('pro/remove-license')
                 .then(response => {
                     this.licenseData = response.license_data;
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                 })
                 .catch((errors) => {
                     this.handleError(errors)

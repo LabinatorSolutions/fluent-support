@@ -92,7 +92,7 @@ export default {
             });
             chartData.datasets.push({
                 label: 'Ticket Resolve Stats',
-                backgroundColor: '#7757e6',
+                backgroundColor: '#0cbe7e',
                 data: statData
             });
             console.log(chartData);

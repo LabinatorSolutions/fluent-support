@@ -198,12 +198,12 @@ class AuthHandler
           </path>
         </svg>';
 
-        return apply_filters('fluent-support/signup_loading_icon', $loadingIcon);
+        return apply_filters('fluent_support/signup_loading_icon', $loadingIcon);
     }
 
     protected function getShortcodes($attributes)
     {
-        $shortCodeDefaults = apply_filters('fluent-support/auth_shortcode_defaults', [
+        $shortCodeDefaults = apply_filters('fluent_support/auth_shortcode_defaults', [
             'auto-redirect' => false,
             'redirect-to'   => Helper::getPortalBaseUrl(),
             'hide'          => false,

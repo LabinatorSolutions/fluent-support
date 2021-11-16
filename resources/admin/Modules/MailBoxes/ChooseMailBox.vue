@@ -213,7 +213,10 @@ export default {
                 fallback_id: this.deleting_box.fallback_box,
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.fetch();
                     this.deleting_box = {
                         show_modal: false,

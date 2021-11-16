@@ -17,9 +17,9 @@ class AuthController extends Controller
 
         $messages = $this->getMessages($rules);
 
-        $formData = apply_filters('fluent-support/signup_form_data', $request->all());
+        $formData = apply_filters('fluent_support/signup_form_data', $request->all());
 
-        do_action('fluent-support/before_signup_validation', []);
+        do_action('fluent_support/before_signup_validation', []);
 
         $this->validate($formData, $rules, $messages);
 
@@ -30,7 +30,7 @@ class AuthController extends Controller
         if (is_wp_error($userId)) {
             return $this->response(
                 apply_filters(
-                    'fluent-support/signup_create_user_error',
+                    'fluent_support/signup_create_user_error',
                     ['error' => $userId->get_error_message()]
                 ), 423);
         }
@@ -42,7 +42,7 @@ class AuthController extends Controller
         $this->login($userId);
 
         return $this->response(
-            apply_filters('fluent-support/signup_complete_response', [
+            apply_filters('fluent_support/signup_complete_response', [
                 'message'  => __('Successfully registered to the site.', 'fluent-support'),
                 'redirect' => Arr::get($formData, '__redirect_to', Helper::getPortalBaseUrl())
             ])
@@ -67,18 +67,18 @@ class AuthController extends Controller
             }
         }
 
-        return apply_filters('fluent-support/signup_validation_rules', $rules);
+        return apply_filters('fluent_support/signup_validation_rules', $rules);
     }
 
     protected function getMessages($rules = [])
     {
-        return apply_filters('fluent-support/signup_validation_messages', [], $rules);
+        return apply_filters('fluent_support/signup_validation_messages', [], $rules);
     }
 
     protected function createUser($formData = [])
     {
-        $email = apply_filters('fluent-support/signup_email', Arr::get($formData, 'email'));
-        $userName = apply_filters('fluent-support/signup_username', Arr::get($formData, 'username'));
+        $email = apply_filters('fluent_support/signup_email', Arr::get($formData, 'email'));
+        $userName = apply_filters('fluent_support/signup_username', Arr::get($formData, 'username'));
 
         if (empty($formData['password'])) {
             $password = wp_generate_password(8);
@@ -86,7 +86,7 @@ class AuthController extends Controller
             $password = $formData['password'];
         }
 
-        $password = apply_filters('fluent-support/signup_password', $password);
+        $password = apply_filters('fluent_support/signup_password', $password);
 
         do_action('fluent_support/before_creating_user', $userName, $password, $email);
 
@@ -104,11 +104,11 @@ class AuthController extends Controller
         ]);
 
         if ($name) {
-            do_action('fluent-support/before_updating_user', $data);
+            do_action('fluent_support/before_updating_user', $data);
 
-            wp_update_user(apply_filters('fluent-support/update_user_data', $data));
+            wp_update_user(apply_filters('fluent_support/update_user_data', $data));
 
-            do_action('fluent-support/after_updating_user', $data);
+            do_action('fluent_support/after_updating_user', $data);
         }
     }
 
@@ -116,21 +116,21 @@ class AuthController extends Controller
     {
         $user = new \WP_User($userId);
 
-        do_action('fluent-support/before_assigning_role', $user);
+        do_action('fluent_support/before_assigning_role', $user);
 
-        $user->set_role(apply_filters('fluent-support/user_role', 'subscriber'));
+        $user->set_role(apply_filters('fluent_support/user_role', 'subscriber'));
 
-        do_action('fluent-support/after_assigning_role', $user);
+        do_action('fluent_support/after_assigning_role', $user);
     }
 
     protected function login($userId)
     {
-        do_action('fluent-support/before_logging_in_user', $userId);
+        do_action('fluent_support/before_logging_in_user', $userId);
 
         wp_clear_auth_cookie();
         wp_set_current_user($userId);
         wp_set_auth_cookie($userId);
 
-        do_action('fluent-support/after_logging_in_user', $userId);
+        do_action('fluent_support/after_logging_in_user', $userId);
     }
 }

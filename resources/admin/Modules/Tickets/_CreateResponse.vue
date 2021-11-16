@@ -66,7 +66,10 @@ export default {
             this.creating = true;
             this.$post(action, data)
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.response_body = '';
                     this.$emit('created', response.response, response);
                     this.attachments = [];

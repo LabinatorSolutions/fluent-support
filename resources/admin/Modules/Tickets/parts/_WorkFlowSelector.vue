@@ -85,7 +85,10 @@ export default {
                 ticket_ids: this.ticket_ids
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.modalVisible = false;
                     this.$emit('reloadTickets');
                 })

@@ -1938,7 +1938,7 @@ msgstr ""
 
 #: app/Services/TransStrings.php:166
 #: svn/trunk/app/Services/TransStrings.php:166
-msgid "Support Staffs"
+msgid "Support Staff"
 msgstr ""
 
 #: app/Services/TransStrings.php:320

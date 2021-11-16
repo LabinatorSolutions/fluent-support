@@ -73,7 +73,10 @@ export default {
         saveSettings() {
 
             if (this.settings.enabled == 'yes' && !this.settings.assigned_tags.length) {
-                this.$notify.error('Please select at least one FluentCRM Tag');
+                this.$notify.error({
+                    message: 'Please select at least one FluentCRM Tag',
+                    position: 'bottom-right'
+                });
                 return false;
             }
 
@@ -100,7 +103,10 @@ export default {
             this.installing = true;
             this.$post('settings/intsall-fluentcrm')
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.fetchSettings();
                 })
                 .catch((errors) => {

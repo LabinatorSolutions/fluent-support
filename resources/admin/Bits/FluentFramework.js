@@ -222,8 +222,8 @@ export default class FluentFramework {
             type: 'error',
             title: 'Error',
             message: errorMessage,
-            offset: 32,
-            dangerouslyUseHTMLString: true
+            dangerouslyUseHTMLString: true,
+            position: 'bottom-right'
         });
     }
 

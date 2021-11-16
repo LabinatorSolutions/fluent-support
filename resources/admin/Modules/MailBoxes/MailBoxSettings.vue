@@ -81,7 +81,10 @@ export default {
         saveSettings() {
 
             if(this.mailbox.box_type == 'email' && this.mailbox.settings.admin_email_address == this.mailbox.email) {
-                this.$notify.error('Your Admin Email Address and Support From Email should not be same. Please use a different email address.');
+                this.$notify.error({
+                    message: 'Your Admin Email Address and Support From Email should not be same. Please use a different email address.',
+                    position: 'bottom-right'
+                });
                 return false;
             }
 

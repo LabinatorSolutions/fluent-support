@@ -216,6 +216,8 @@ export default {
             this.fetch();
         }
         this.$setTitle('Saved Replies');
+
     }
+
 }
 </script>

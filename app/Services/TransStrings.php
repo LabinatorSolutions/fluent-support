@@ -163,7 +163,7 @@ class TransStrings
             'Product Description'    => __('Product Description', 'fluent-support'),
             'Tags'    => __('Tags', 'fluent-support'),
             'Ticket Types'    => __('Ticket Types', 'fluent-support'),
-            'Support Staffs'    => __('Support Staffs', 'fluent-support'),
+            'Support Staff'    => __('Support Staff', 'fluent-support'),
             'Notification Integrations'    => __('Notification Integrations', 'fluent-support'),
             'Add New'    => __('Add New', 'fluent-support'),
             'Search Agents'    => __('Search Agents', 'fluent-support'),
