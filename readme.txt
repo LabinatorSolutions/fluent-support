@@ -115,7 +115,7 @@ OR
 == Frequently Asked Questions ==
 = Are there any limitations about how many support tickets I can manage? =
 
-No, there are no limitations. You can manage as many support tickets or customers or support staffs as you want.
+No, there are no limitations. You can manage as many support tickets or customers or support staff as you want.
 
 
 = Is it 100% self-hosted? =

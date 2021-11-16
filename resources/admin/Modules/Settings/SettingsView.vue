@@ -52,7 +52,7 @@ export default {
                     icon: 'el-icon-goods'
                 },
                 {
-                    title: this.$t('Support Staffs'),
+                    title: this.$t('Support Staff'),
                     route_name: 'support-staffs',
                     route_query: {},
                     icon: 'el-icon-user'

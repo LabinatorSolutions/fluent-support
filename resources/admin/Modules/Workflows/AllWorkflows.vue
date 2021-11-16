@@ -169,7 +169,10 @@ export default {
             this.creating = true;
             this.$post('workflows', this.new_workflow)
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.$router.push({name: 'edit-workflow', params: {workflow_id: response.workflow.id}})
                 })
                 .catch((errors) => {
@@ -183,7 +186,10 @@ export default {
             this.deleting = true;
             this.$del('workflows/' + workflowId)
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.fetch();
                 })
                 .catch((errors) => {

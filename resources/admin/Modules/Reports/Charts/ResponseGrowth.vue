@@ -92,7 +92,7 @@ export default {
             });
             chartData.datasets.push({
                 label: 'Response Stats',
-                backgroundColor: '#7757e6',
+                backgroundColor: '#0cbe7e',
                 data: statData
             });
             console.log(chartData);

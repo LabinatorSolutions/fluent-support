@@ -132,7 +132,10 @@ export default {
                 workflow: workFlow
             })
                 .then((response) => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     if(response.workflow.trigger_type == 'automatic') {
                         this.workflow_conditions = response.workflow.settings.conditions;
                     }

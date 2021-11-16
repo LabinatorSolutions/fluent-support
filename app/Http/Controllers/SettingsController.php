@@ -101,6 +101,12 @@ class SettingsController extends Controller
 
         $settingsClass->save('global_business_settings', $globalSettings);
 
+
+        if(defined('WC_PLUGIN_FILE')) {
+            // URL Flash
+            flush_rewrite_rules(false);
+        }
+
         return [
             'mailbox'         => $newMailBox,
             'global_settings' => $globalSettings,

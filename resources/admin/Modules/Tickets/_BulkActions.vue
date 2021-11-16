@@ -142,7 +142,10 @@ export default {
             data.ticket_ids = this.ticket_selections;
             this.$post('tickets/bulk-actions', data)
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.fetchTickets();
                 })
                 .catch((errors) => {
@@ -154,7 +157,10 @@ export default {
         },
         assignAgent() {
             if (!this.agent_id) {
-                this.$notify.error('Please select an agent first');
+                this.$notify.error({
+                    message: 'Please select an agent first',
+                    position: 'bottom-right'
+                });
                 return false;
             }
 
@@ -165,7 +171,10 @@ export default {
         },
         assignTags() {
             if (!this.tag_ids.length) {
-                this.$notify.error('Please select tag first');
+                this.$notify.error({
+                    message: 'Please select tag first',
+                    position: 'bottom-right'
+                });
                 return false;
             }
 

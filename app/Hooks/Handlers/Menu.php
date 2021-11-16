@@ -35,7 +35,7 @@ class Menu
             $menuPosition = 4;
         }
 
-        $menuPosition = apply_filters('fluent-support/admin_menu_position', $menuPosition);
+        $menuPosition = apply_filters('fluent_support/admin_menu_position', $menuPosition);
 
         add_menu_page(
             __('Fluent Support', 'fluent-support'),

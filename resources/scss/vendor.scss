@@ -134,9 +134,12 @@
     width: auto;
 }
 
-.el-notification.right {
-    top: 40px !important;
-}
 .el-popconfirm__action {
     text-align: center;
+}
+
+.el-button {
+    .el-loading-mask {
+        background: transparent;
+    }
 }
