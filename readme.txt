@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
 Tested up to: 5.8
-Stable tag: 1.4.7
+Stable tag: 1.5.0
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -12,6 +12,8 @@ The Fastest & Most feature rich Support Ticketing system for WordPress.
 
 == Description ==
 = The Super Fast, most versatile and feature-rich support plugin for WordPress =
+
+[youtube https://www.youtube.com/watch?v=29NRuKkVSSI]
 
 👉 Official Website Link: [Official Website](https://fluentsupport.com/)
 👉 Join Our FB Community: [FluentSupport Facebook Group](https://facebook.com/groups/fluentsupport)
@@ -143,9 +145,10 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 
 == Changelog ==
 
-= 1.4.7 (Date: November 16, 2021) =
+= 1.5.0 (Date: November 16, 2021) =
 * Save notifications improvement
 * Enforcing hook names convention
+* The final release for public launch
 
 = 1.4.6 (Date: November 15, 2021) =
 * UI & UX Improvements
