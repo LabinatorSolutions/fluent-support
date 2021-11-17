@@ -48,7 +48,7 @@
                         </el-form-item>
                         <error :error="errors.get('product_id')"/>
                     </div>
-                    <div v-if="priorities.length" class="fs_tk_col">
+                    <div v-if="Object.keys(priorities).length" class="fs_tk_col">
                         <el-form-item class="fs_ticket_priority" :label="$t('priority')">
                             <el-select clearable v-model="ticket.client_priority" :placeholder="$t('priority_placeholder')">
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
