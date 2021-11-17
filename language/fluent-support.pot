@@ -40,7 +40,7 @@ msgstr ""
 #, php-format
 msgid ""
 "%1sPlease login or create an account to access the Customer Support "
-"Portal%2s [fluent_support_auh]"
+"Portal%2s [fluent_support_auth]"
 msgstr ""
 
 #: app/Http/Controllers/TicketController.php:348

@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
 Tested up to: 5.8
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -144,6 +144,13 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.5.2 (Date: November 17, 2021) =
+* File upload bug issue fixed
+* Ticket priority display issue fixed fixed
+
+= 1.5.1 (Date: November 16, 2021) =
+* Fix Registration shortcode fixed
 
 = 1.5.0 (Date: November 16, 2021) =
 * Save notifications improvement

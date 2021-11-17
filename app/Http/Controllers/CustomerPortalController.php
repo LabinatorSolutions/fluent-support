@@ -119,7 +119,8 @@ class CustomerPortalController extends Controller
         do_action('fluent_support/before_ticket_create', $data, $customer);
         $ticket = Ticket::create($data);
 
-        if ($attachments = Arr::get($data, 'attachments') && !in_array('file_upload', $disabledFields)) {
+        if (($attachments = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
+
             Attachment::whereNull('ticket_id')
                 ->whereIn('file_hash', $attachments)
                 ->whereNull('ticket_id')
@@ -128,6 +129,8 @@ class CustomerPortalController extends Controller
                     'person_id' => $customer->id,
                     'status'    => 'active'
                 ]);
+
+
             $ticket->load('attachments');
         }
 

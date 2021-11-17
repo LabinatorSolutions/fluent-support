@@ -53,7 +53,7 @@ class Settings
 
         $defaults = [
             'portal_page_id'        => '',
-            'login_message'         => sprintf(__('%1sPlease login or create an account to access the Customer Support Portal%2s [fluent_support_auh]', 'fluent-support'), '<p>', '</p>'),
+            'login_message'         => sprintf(__('%1sPlease login or create an account to access the Customer Support Portal%2s [fluent_support_auth]', 'fluent-support'), '<p>', '</p>'),
             'disable_public_ticket' => 'no',
             'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
             'max_file_size'         => 2
