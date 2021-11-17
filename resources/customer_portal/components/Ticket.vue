@@ -93,7 +93,7 @@
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('started the conversation')}}
+                                            <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('conversation_started')}}
                                         </div>
                                         <div class="fs_thread_actions">
                                             {{ ticket.created_at }}
