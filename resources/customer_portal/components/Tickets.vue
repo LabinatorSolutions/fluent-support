@@ -4,13 +4,13 @@
             <div class="fs_tk_left">
                 <div class="fs_button_groups">
                     <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'all' }"
-                            @click="filter_type = 'all'">All
+                            @click="filter_type = 'all'">{{$t('All')}}
                     </button>
                     <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'open' }"
-                            @click="filter_type = 'open'">Open
+                            @click="filter_type = 'open'">{{$t('Open')}}
                     </button>
                     <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'closed' }"
-                            @click="filter_type = 'closed'">Closed
+                            @click="filter_type = 'closed'">{{$t('Closed')}}
                     </button>
                 </div>
             </div>
@@ -60,9 +60,8 @@
                 <tbody v-else>
                 <tr>
                     <td colspan="4">
-                        <p v-if="filter_type == 'all'" style="text-align: center;">Looks like you did not open any
-                            support tickets yet</p>
-                        <p v-else style="text-align: center;">No support tickets found for this filter</p>
+                        <p v-if="filter_type == 'all'" style="text-align: center;">{{$t('no_open_support_tickets')}}</p>
+                        <p v-else style="text-align: center;">{{$t('no_support_ticket_found')}}</p>
                     </td>
                 </tr>
                 </tbody>
@@ -70,8 +69,8 @@
 
             <div class="fst_pagi_wrapper">
                 <div v-if="hasNextPage || hasPrevPage" class="fs_button_groups fs_pagi">
-                    <button :disabled="!hasPrevPage" @click="pagiAction(-1)" class="fs_btn">&laquo; Prev</button>
-                    <button :disabled="!hasNextPage" @click="pagiAction(1)" class="fs_btn">Next &raquo;</button>
+                    <button :disabled="!hasPrevPage" @click="pagiAction(-1)" class="fs_btn">&laquo; {{$t('Prev')}}</button>
+                    <button :disabled="!hasNextPage" @click="pagiAction(1)" class="fs_btn">{{$t('Next')}} &raquo;</button>
                 </div>
             </div>
         </div>
