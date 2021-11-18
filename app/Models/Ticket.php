@@ -465,6 +465,7 @@ class Ticket extends Model
     {
         return \FluentSupport\App\App::db()->table('fs_conversations')
             ->where('ticket_id', $this->id)
+            ->where('conversation_type', 'response')
             ->orderBy('id', 'DESC')
             ->first();
     }
