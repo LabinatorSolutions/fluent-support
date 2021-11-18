@@ -39,7 +39,7 @@
 
                 <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments" />
 
-                <div v-if="products.length || priorities.length" class="fs_tk_row">
+                <div v-if="products.length || Object.keys(priorities).length" class="fs_tk_row">
                     <div v-if="products.length" class="fs_tk_col">
                         <el-form-item class="fs_ticket_product" :label="$t('product_services')">
                             <el-select clearable v-model="ticket.product_id" :placeholder="$t('service_placeholder')">
