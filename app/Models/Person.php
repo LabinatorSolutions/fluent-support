@@ -151,7 +151,7 @@ class Person extends Model
     {
         $userEditUrl = '';
         if ($this->user_id) {
-            $userEditUrl = get_edit_profile_url($this->user_id);
+            $userEditUrl = get_edit_user_link($this->user_id);
         }
         return apply_filters('fluent_support/person_user_edit_url', $userEditUrl, $this);
     }
