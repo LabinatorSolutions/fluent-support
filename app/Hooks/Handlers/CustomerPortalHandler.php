@@ -74,6 +74,11 @@ class CustomerPortalHandler
             'Click to upload'               => __('Click to upload', 'fluent-support'),
             'This ticket is'                => __('This ticket is', 'fluent-support'),
             'Private'                       => __('Private', 'fluent-support'),
+            'Write a reply'                 => __('Write a reply', 'fluent-support'),
+            'Reply'                         => __('Reply', 'fluent-support'),
+            'You'                           => __('You', 'fluent-support'),
+            'no_open_support_tickets'       => __('Looks like you did not open any support tickets yet', 'fluent-support'),
+            'no_support_ticket_found'       => __('No support tickets found for this filter', 'fluent-support'),
 
             'subject_placeholder' => __('What\'s about this support ticket', 'fluent-support'),
             'service_placeholder' => __('Select related Product/Service', 'fluent-support'),

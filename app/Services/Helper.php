@@ -51,10 +51,10 @@ class Helper
     public static function ticketStatusGroups()
     {
         return apply_filters('fluent_support/ticket_status_groups', [
-            'open'   => ['new', 'active'],
-            'active' => ['active'],
-            'closed' => ['closed'],
-            'new'    => ['new'],
+            'open'   => [__('new', 'fluent-support'), __('active', 'fluent-support')],
+            'active' => [__('active', 'fluent-support')],
+            'closed' => [__('closed', 'fluent-support')],
+            'new'    => [__('new', 'fluent-support')],
             'all'    => []
         ]);
     }

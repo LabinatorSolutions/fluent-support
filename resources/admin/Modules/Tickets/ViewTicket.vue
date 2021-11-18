@@ -456,7 +456,7 @@ export default {
         },
         getHumanName(person) {
             if (this.appVars.me?.id == person.id) {
-                return 'You';
+                return this.$t('You');
             }
 
             return person.full_name;
