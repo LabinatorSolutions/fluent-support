@@ -94,9 +94,9 @@ export default {
                     wrapper_class: 'fs_half_field',
                 },
                 city: {
-                    label: this.$t('Address Line 2'),
+                    label: this.$t('City'),
                     data_type: 'text',
-                    placeholder: this.$t('Address Line 2'),
+                    placeholder: this.$t('City'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
                 },
