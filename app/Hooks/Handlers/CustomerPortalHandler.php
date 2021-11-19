@@ -79,6 +79,9 @@ class CustomerPortalHandler
             'You'                           => __('You', 'fluent-support'),
             'no_open_support_tickets'       => __('Looks like you did not open any support tickets yet', 'fluent-support'),
             'no_support_ticket_found'       => __('No support tickets found for this filter', 'fluent-support'),
+            'Delete Customer'               => __('Delete Customer', 'fluent-support'),
+            'Update Customer'               => __('Update Customer', 'fluent-support'),
+            'Create Customer'               => __('Create Customer', 'fluent-support'),
 
             'subject_placeholder' => __('What\'s about this support ticket', 'fluent-support'),
             'service_placeholder' => __('Select related Product/Service', 'fluent-support'),
