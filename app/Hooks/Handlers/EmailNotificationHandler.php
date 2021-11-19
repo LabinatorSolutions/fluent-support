@@ -20,8 +20,7 @@ class EmailNotificationHandler
 
         // Let's send welcome email to customer if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_customer');
-        if ($customer->status == 'inactive' && $emailSettings && $emailSettings['status'] == 'yes') {
-
+        if ($emailSettings && $emailSettings['status'] == 'yes') {
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
                 'business' => $mailbox,
@@ -231,6 +230,13 @@ class EmailNotificationHandler
         $footerText = apply_filters('fluent_support/email_footer_credit', 'This email is a service from ' . $businessName . '. Support Plugin is Powered by <a href="https://fluentsupport.com/?utm_source=user&utm_medium=wp&utm_campaign=mail_footer" style="color:#9e9e9e;" target="_new">FluentSupport</a>.');
 
         $data['email_footer'] = $footerText;
+
+        $emailTypeForCustomerFooter = ['ticket_created_email_to_customer', 'ticket_replied_by_agent_email_to_customer', 'ticket_closed_by_agent_email_to_customer'];
+
+        if (defined('FLUENTSUPPORTPRO') && in_array($data['email_type'], $emailTypeForCustomerFooter)
+            && !is_null($data['business']->email_footer)) {
+            $data['email_footer'] = $data['business']->email_footer;
+        }
 
         $emailBody = $app->view->make('emails.ticket_template', $data);
         $emogrifier = new Emogrifier($emailBody, $this->emailTemplateCss());
