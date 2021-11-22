@@ -124,7 +124,7 @@ No, there are no limitations. You can manage as many support tickets or customer
 
 Yes, Fluent Support is 100% self-hosted. Fluent Support will not connect with any of our SAAS servers. You own the data, and your data should be hosted on your hosting server.
 
-= Is it a GDPR compliant? =
+= Is it GDPR compliant? =
 
 Yes, your data never goes to a different server like HelpScout, ZenDesk or Freshdesk. All the data will be saved and managed into WordPress.
 
@@ -144,6 +144,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.5.3 (Date: November 22, 2021) =
+* Preview text issue fixed
+* Support for Non-Latin chars
+* Customer Delete Feature added
 
 = 1.5.2 (Date: November 17, 2021) =
 * File upload bug issue fixed
