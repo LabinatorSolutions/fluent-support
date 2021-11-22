@@ -3,8 +3,10 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Activity;
+use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\FileSystem;
 
 class CleanupHandler
 {
@@ -42,4 +44,40 @@ class CleanupHandler
         Activity::where('created_at', '<', $oldDateTime)->delete();
     }
 
+    public function deleteTicketAttachments($ticket)
+    {
+        $uploadDir = wp_upload_dir();
+        $dir = $uploadDir['basedir'] . FLUENT_SUPPORT_UPLOAD_DIR;
+
+        $attachments = Attachment::where('ticket_id', $ticket->id)->get();
+
+        if (!$attachments->isEmpty()) {
+            $ticketDir = $dir . '/ticket_' . $ticket->id;
+            if (is_dir($ticketDir)) {
+                $this->deleteDir($ticketDir);
+            }
+
+            foreach ($attachments as $attachment) {
+                if ($attachment->driver != 'local') {
+                    continue;
+                }
+                if (file_exists($attachment->file_path)) {
+                    @unlink($attachment->file_path);
+                }
+            }
+
+            Attachment::where('ticket_id', $ticket->id)->delete();
+        }
+
+    }
+
+    private function deleteDir($dir)
+    {
+        if (!class_exists('\WP_Filesystem_Direct')) {
+            require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
+            require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php');
+        }
+        $fileSystemDirect = new \WP_Filesystem_Direct(false);
+        $fileSystemDirect->rmdir($dir, true);
+    }
 }
