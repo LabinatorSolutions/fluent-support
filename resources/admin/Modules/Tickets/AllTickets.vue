@@ -83,7 +83,7 @@
                                 </span>
                                 <span v-if="scope.row.source == 'email'"><i class="el-icon-message"></i></span>
                                 <div class="prev_text_parent">
-                                    <p class="fs_tk_preview_text">{{ getExcerpt(scope.row) }}</p>
+                                    <p class="fs_tk_preview_text" v-html="getExcerpt(scope.row)"></p>
                                 </div>
                             </router-link>
                         </template>
