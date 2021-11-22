@@ -235,7 +235,7 @@ export default {
     mounted() {
         this.fetch();
 
-        this.$setTitle('Business Settings');
+        this.$setTitle('Business Inboxes');
 
     }
 }
