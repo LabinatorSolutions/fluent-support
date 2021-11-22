@@ -154,7 +154,7 @@ class CustomerController extends Controller
         foreach ($tickets as $ticket) {
             $ticket->deleteTicket();
         }
-        
+
         $customer->delete();
         return [
             'message' => __('Customer Deleted Successfully', 'fluent-support')
