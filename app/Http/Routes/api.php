@@ -68,6 +68,7 @@ $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function (
 });
 
 $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
+
 $router->get('options/countries', 'OptionsController@getCountries')->withPolicy('PortalPolicy');
 
 $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles')
@@ -95,7 +96,7 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
 });
 
-$router->prefix('reports')->withPolicy('PortalPolicy')->group(function ($router) {
+$router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router) {
     $router->get('/', 'ReportingController@getOverallReports');
     $router->get('/tickets-growth', 'ReportingController@getTicketsChart');
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
@@ -103,7 +104,7 @@ $router->prefix('reports')->withPolicy('PortalPolicy')->group(function ($router)
     $router->get('/agents-summary', 'ReportingController@getAgentsSummary');
 });
 
-$router->prefix('my-reports')->withPolicy('PortalPolicy')->group(function ($router) {
+$router->prefix('my-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {
     $router->get('/', 'ReportingController@getAgentOverallReports');
     $router->get('/tickets-resolve-growth', 'ReportingController@getAgentResolveChart');
     $router->get('/response-growth', 'ReportingController@getAgentResponseChart');
@@ -135,7 +136,7 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
 
     $router->post('ticket_file_upload','UploaderController@uploadTicketFiles');
 
-    $router->get('me', 'TicketController@me')->withPolicy('PortalPolicy');
+    $router->get('me', 'TicketController@me');
 });
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
