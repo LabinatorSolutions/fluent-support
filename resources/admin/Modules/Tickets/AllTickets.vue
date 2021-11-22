@@ -71,8 +71,7 @@
                                       class="fs_badge">
                                     {{ scope.row.product?.title }}
                                 </span>
-                                <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
-                                <span style="font-size: 10px;" class="fs_tk_number">
+                                <span style="font-size: 10px; margin-right: 5px;" class="fs_tk_number">
                                     #{{ scope.row.id }}
                                      <span v-if="scope.row.live_activity && scope.row.live_activity.length"
                                            class="fs_inline_avatars avatars_small">
@@ -82,7 +81,8 @@
                                         </span>
                                     </span>
                                 </span>
-                                <span v-if="scope.row.source == 'email'"><i class="el-icon-message"></i></span>
+                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'"><i class="el-icon-message"></i></span>
+                                <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
                                 <div class="prev_text_parent">
                                     <p class="fs_tk_preview_text" v-html="getExcerpt(scope.row)"></p>
                                 </div>
