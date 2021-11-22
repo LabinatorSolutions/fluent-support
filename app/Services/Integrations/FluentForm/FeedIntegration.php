@@ -72,6 +72,12 @@ class FeedIntegration extends IntegrationManager
             'product_id'                => '',
             'product_id_selection_type' => 'simple',
             'product_routers'           => [],
+            'customer_other_fields'           => [
+                [
+                    'item_value' => '',
+                    'label'      => ''
+                ]
+            ],
             'conditionals'              => [
                 'conditions' => [],
                 'status'     => false,
@@ -83,6 +89,10 @@ class FeedIntegration extends IntegrationManager
 
     public function getSettingsFields($settings, $formId)
     {
+        $fieldOptions = [];
+        foreach (Customer::mappables() as $key => $column) {
+            $fieldOptions[$key] = $column;
+        }
         return [
             'fields'              => [
                 [
@@ -170,7 +180,17 @@ class FeedIntegration extends IntegrationManager
                             'label' => __('Last Name', 'fluentform')
                         ]
                     ]
-                ]
+                ],
+                [
+                    'key'                => 'customer_other_fields',
+                    'require_list'       => false,
+                    'label'              => __('Customer Other Fields', 'fluentform'),
+                    'tips'               => 'Select which Fluent Forms fields pair with their<br /> respective Fluent Support fields.',
+                    'field_label_remote' => __('Fluent Support Field', 'fluentform'),
+                    'field_label_local'  => __('Form Field', 'fluentform'),
+                    'component'          => 'dropdown_many_fields',
+                    'options'            => $fieldOptions
+                ],
             ],
             'button_require_list' => false,
             'integration_title'   => $this->title
@@ -220,12 +240,12 @@ class FeedIntegration extends IntegrationManager
         return  $customFieldsMapping = [
             'key'                => 'TicketCustomFields',
             'require_list'       => false,
-            'label'              => __('Ticket Customer Fields', 'fluentform'),
+            'label'              => __('Ticket Custom Fields', 'fluentform'),
             'tips'               => __('Please Map Your Ticket Custom Field Data for this form.', 'fluentform'),
             'component'          => 'map_fields',
-            'field_label_remote' => __('Fluent Support Custom Field', 'fluentform'),
-            'field_label_local'  => __('Form Field', 'fluentform'),
-            'primary_fileds'     => $fields
+            'field_label_remote'  => __('Fluent Support Custom Field', 'fluentform'),
+            'field_label_local'   => __('Form Field', 'fluentform'),
+            'primary_fileds'      => $fields
         ];
     }
 
@@ -274,6 +294,13 @@ class FeedIntegration extends IntegrationManager
         }
 
         $customerData = Arr::only($data, ['first_name', 'last_name', 'email']);
+
+        foreach (Arr::get($data, 'customer_other_fields') as $field) {
+            if ($field['item_value']) {
+                $customerData[$field['label']] = $field['item_value'];
+            }
+        }
+
 
         $user = get_user_by('ID', get_current_user_id());
 
