@@ -2,7 +2,7 @@
     <div v-loading="loading" class="fcon_trigger_view">
         <div @click="action.is_open = !action.is_open" class="fcon_provider_info">
             <div class="fc_trigger_titles">
-                <span class="fc_trigger_name">{{actions[action.action_name].title}}</span>
+                <span class="fc_trigger_name">{{ actions[action.action_name].title }}</span>
             </div>
             <div class="fc_trigger_actions">
                 <span class="fc_item_open"><i class="el-icon el-icon-arrow-down"></i></span>
@@ -42,6 +42,7 @@
 
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
+
 export default {
     name: 'ActionMap',
     props: ['action', 'actions'],
@@ -75,7 +76,9 @@ export default {
         }
     },
     mounted() {
-
+        if (!this.action.settings) {
+            this.action.settings = {};
+        }
     }
 }
 </script>
