@@ -27,7 +27,7 @@
                 <h3>Running the <b>{{ selected_workflow.title }}</b> workflow will perform the following actions:</h3>
                 <ul class="fs_workflow_items">
                     <li v-for="(task,taskIndex) in workflow_actions" :key="task.id">
-                        <span v-if="taskIndex != 0">and</span> {{ task.title }}
+                        <span v-if="taskIndex != 0">and</span> {{ task.title || task.action_name }}
                     </li>
                 </ul>
             </div>
