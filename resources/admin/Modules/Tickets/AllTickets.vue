@@ -10,9 +10,9 @@
                         icon="el-icon-plus">{{ $t('Add Ticket') }}
                     </el-button>
                     <el-button
-                               @click="fetchTickets()"
-                               icon="el-icon-refresh"
-                               size="mini"></el-button>
+                        @click="fetchTickets()"
+                        icon="el-icon-refresh"
+                        size="mini"></el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-select filterable @change="fetchTickets()" v-model="order_by" size="mini">
@@ -66,8 +66,9 @@
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
-                                <span style="font-size: 10px;"> by {{scope.row.customer.first_name}}</span>
-                                <span style="margin-left: 5px; font-size: 10px;" v-if="scope.row.product && !filters.product_id"
+                                <span style="font-size: 10px;"> by {{ scope.row.customer.first_name }}</span>
+                                <span style="margin-left: 5px; font-size: 10px;"
+                                      v-if="scope.row.product && !filters.product_id"
                                       class="fs_badge">
                                     {{ scope.row.product?.title }}
                                 </span>
@@ -81,7 +82,8 @@
                                         </span>
                                     </span>
                                 </span>
-                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'"><i class="el-icon-message"></i></span>
+                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'"><i
+                                    class="el-icon-message"></i></span>
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
                                 <div class="prev_text_parent">
                                     <p class="fs_tk_preview_text" v-html="getExcerpt(scope.row)"></p>
@@ -236,7 +238,7 @@ export default {
             })
                 .then(response => {
 
-                    if(response.tickets.total && (!response.tickets.from && this.pagination.current_page > 1)) {
+                    if (response.tickets.total && (!response.tickets.from && this.pagination.current_page > 1)) {
                         this.pagination.current_page = 1;
                         this.fetchTickets();
                         return false;
