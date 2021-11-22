@@ -7,8 +7,10 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
@@ -23,13 +25,36 @@ class TicketController extends Controller
     {
         $user = wp_get_current_user();
 
-        return [
+        $settings = [
             'user_id'     => $user->id,
             'email'       => $user->user_email,
             'person'      => Helper::getAgentByUserId($user->ID),
             'permissions' => PermissionManager::currentUserPermissions(),
             'request'     => $request->all()
         ];
+
+        if ($request->get('with_portal_settings')) {
+
+            $mimeHeadings = Helper::getAcceptedMimeHeadings();
+            $businessSettings = (new Settings())->globalBusinessSettings();
+            $maxFileSize = absint($businessSettings['max_file_size']);
+
+            $portalSettings = [
+                'support_products'           => Product::select(['id', 'title'])->get(),
+                'customer_ticket_priorities' => Helper::customerTicketPriorities(),
+                'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
+                'has_rich_text_editor'       => true,
+                'max_file_size' => $maxFileSize,
+                'mime_headings' => $mimeHeadings
+            ];
+
+            $portalSettings = apply_filters('fluent_support/customer_portal_vars', $portalSettings);
+
+            $settings['portal_settings'] = $portalSettings;
+        }
+
+
+        return $settings;
     }
 
     public function index(Request $request)
