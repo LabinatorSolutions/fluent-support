@@ -157,7 +157,7 @@ class FeedIntegration extends IntegrationManager
                     'html_info' => __('<h4>Please provide the ticket provider info. If user is logged in then it will use that info. For Public users you can set your customer info</h4>', 'fluentform')
                 ],
                 [
-                    'key'                => 'CustomFields',
+                    'key'                => 'CustomerFields',
                     'require_list'       => false,
                     'label'              => __('Customer Data', 'fluentform'),
                     'tips'               => __('Please Map Your Customer Data for this form. If your customer already logged in you can leave this', 'fluentform'),
