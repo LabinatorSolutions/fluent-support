@@ -16,21 +16,41 @@ class CustomerPortalHandler
 {
     public function renderPortal()
     {
+        $invalidPermissionMessage = __('You don\'t have permission to access customer support portal', 'fluent-support');
+
         $person = Helper::getCurrentPerson();
         if ($person && $person->status === 'inactive') {
-            return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . __('You don’t have permission to view the tickets', 'fluent-support') . '</h3></div>';
+            return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . $invalidPermissionMessage . '</h3></div>';
         } else if (PermissionManager::currentUserPermissions()) {
             $adminPortalUrl = Helper::getPortalAdminBaseUrl();
             return '<div style="text-align: center;"><h3>' . __('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support') . '</h3><a href="' . $adminPortalUrl . '">' . __('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
-            $this->enqueueScripts();
+
+            $canAccess = apply_filters('fluent_support/user_portal_access_config', [
+                'status' => true,
+                'message' => $invalidPermissionMessage
+            ]);
+
+            if(empty($canAccess['status'])) {
+                $invalidPermissionMessage = Arr::get($canAccess, 'message', $invalidPermissionMessage);
+                return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . $invalidPermissionMessage . '</h3></div>';
+            }
+
             if (!$person) {
                 $this->maybeCreateCustomer();
             }
+
+            $this->enqueueScripts();
+
             return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
         } else {
+
             $businessSettings = Helper::getBusinessSettings();
-            return do_shortcode(Arr::get($businessSettings, 'login_message', ''));
+            $loggedInMessage = Arr::get($businessSettings, 'login_message', '');
+
+            $loggedInMessage = str_replace('[fluent_support_portal]', '', $loggedInMessage);
+
+            return do_shortcode($loggedInMessage);
         }
     }
 
@@ -162,9 +182,10 @@ class CustomerPortalHandler
         if (!$userId) {
             return false;
         }
+
         $person = Helper::getCurrentPerson();
         if ($person) {
-            return true;
+            return $person;
         }
 
         $user = get_user_by('ID', $userId);
@@ -177,7 +198,6 @@ class CustomerPortalHandler
             'last_ip_address' => $request->getIp()
         ];
 
-        Customer::maybeCreateCustomer($onBehalf);
-        return true;
+        return Customer::maybeCreateCustomer($onBehalf);
     }
 }

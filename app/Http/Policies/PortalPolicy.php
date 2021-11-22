@@ -21,7 +21,19 @@ class PortalPolicy extends Policy
             return PermissionManager::currentUserCan('fst_sensitive_data') || PermissionManager::currentUserCan('fst_manage_other_tickets');
         }
 
-        return !!get_current_user_id();
+        $hasAccess =  !!get_current_user_id();
+
+        if(!$hasAccess) {
+            return false;
+        }
+
+
+        $canAccess = apply_filters('fluent_support/user_portal_access_config', [
+            'status' => true,
+            'message' => 'You do not have permission'
+        ]);
+
+        return $canAccess['status'];
     }
 
     /**
