@@ -58,7 +58,7 @@ class FluentCRM
     public function maybeCreateContact($customer)
     {
         $syncSettings = $this->getSyncSettings();
-        if (!$syncSettings['enabled'] != 'yes') {
+        if ($syncSettings['enabled'] != 'yes') {
             return false;
         }
 
