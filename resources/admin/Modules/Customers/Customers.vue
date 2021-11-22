@@ -33,7 +33,7 @@
             </div>
             <div class="fs_box_body fs_padded_20">
                 <template v-if="!first_time_loading">
-                    <el-table v-loading="loading" stripe :data="customers">
+                    <el-table :row-class-name="tableRowClassName" v-loading="loading" stripe :data="customers">
                         <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
                         <el-table-column :label="$t('Name')" width="260">
                             <template #default="scope">
@@ -49,7 +49,8 @@
                         </el-table-column>
                         <el-table-column width="120" :label="$t('Status')">
                             <template #default="scope">
-                                {{ scope.row.status }}
+                                <span v-if="scope.row.status == 'inactive'">Blocked</span>
+                                <span v-else>{{ ucFirst(scope.row.status) }}</span>
                             </template>
                         </el-table-column>
                         <el-table-column :label="$t('Last Activity')" width="160">
@@ -130,7 +131,7 @@ export default {
             statusFilters: {
                 all: 'All',
                 active: 'Active',
-                inactive: 'Inactive'
+                inactive: 'Blocked'
             },
             status: 'all',
             deleting: false
@@ -182,6 +183,9 @@ export default {
                 .always(() => {
                     this.deleting = false;
                 });
+        },
+        tableRowClassName({ row, rowIndex }) {
+            return 'fs_status_' + row.status;
         }
     },
     mounted() {
