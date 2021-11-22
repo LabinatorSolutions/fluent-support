@@ -44,7 +44,7 @@ class Ticket extends Model
     {
         static::creating(function ($model) {
             $model->slug = static::slugify($model->title);
-            $model->hash = substr(md5( time() . wp_generate_uuid4()), 0, 8).mt_rand(1,99);
+            $model->hash = substr(md5(time() . wp_generate_uuid4()), 0, 8) . mt_rand(1, 99);
             $model->last_customer_response = current_time('mysql');
             $model->content_hash = md5($model->content);
             $model->created_at = current_time('mysql');
@@ -354,7 +354,7 @@ class Ticket extends Model
 
     public function customData($scope = 'admin', $rendered = false)
     {
-        if(!defined('FLUENTSUPPORTPRO')) {
+        if (!defined('FLUENTSUPPORTPRO')) {
             return [];
         }
 
@@ -385,9 +385,9 @@ class Ticket extends Model
 
             $fieldType = $fields[$dataKey]['type'];
 
-            if($value) {
-                if(in_array($fieldType, $customRenderers) && $rendered) {
-                    $value = apply_filters('fluent_support/custom_field_render_'.$fieldType, $value, $scope);
+            if ($value) {
+                if (in_array($fieldType, $customRenderers) && $rendered) {
+                    $value = apply_filters('fluent_support/custom_field_render_' . $fieldType, $value, $scope);
                 } else if ($fieldType == 'checkbox') {
                     $value = array_values(array_filter(explode('|', $value)));
                 }

@@ -148,9 +148,13 @@ class CustomerController extends Controller
     public function delete(Request $request, $customerId)
     {
         $customer = Customer::findOrFail($customerId);
-        Ticket::where('customer_id', $customerId)->delete();
-        Attachment::where('person_id', $customerId)->delete();
-        Conversation::where('person_id', $customerId)->delete();
+
+        $tickets = Ticket::where('customer_id', $customer->id)->get();
+
+        foreach ($tickets as $ticket) {
+            $ticket->deleteTicket();
+        }
+        
         $customer->delete();
         return [
             'message' => __('Customer Deleted Successfully', 'fluent-support')
