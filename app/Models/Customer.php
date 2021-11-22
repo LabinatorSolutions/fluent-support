@@ -70,6 +70,9 @@ class Customer extends Person
             }
             // we have to create customer
             $customer = self::create($customerData);
+
+            do_action('fluent_support/customer_created', $customer);
+
         } else {
             if(!empty($customerData['user_id']) || !empty($customerData['remote_uid'])) {
                 $customerData = array_filter($customerData);

@@ -144,7 +144,7 @@ class CustomerPortalController extends Controller
         }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
-        do_action('fluent_support/customer_created', $customer);
+
         return [
             'message' => __('Ticket has been created successfully', 'fluent-support'),
             'ticket'  => $ticket
