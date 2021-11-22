@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-16 14:03+0000\n"
+"POT-Creation-Date: 2021-11-22 14:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid " assign this ticket to self"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:287
+#: app/Http/Controllers/TicketController.php:312
 msgid " has been updated"
 msgstr ""
 
@@ -28,11 +28,11 @@ msgstr ""
 msgid " in this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:384
+#: app/Http/Controllers/TicketController.php:409
 msgid " tickets has been assigned to"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:358
+#: app/Http/Controllers/TicketController.php:383
 msgid " tickets have been deleted"
 msgstr ""
 
@@ -43,7 +43,7 @@ msgid ""
 "Portal%2s [fluent_support_auth]"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:348
+#: app/Http/Controllers/TicketController.php:373
 #, php-format
 msgid "%d tickets have been closed"
 msgstr ""
@@ -63,6 +63,10 @@ msgstr ""
 
 #: app/Services/TransStrings.php:198
 msgid "Active"
+msgstr ""
+
+#: app/Services/Helper.php:54 app/Services/Helper.php:55
+msgid "active"
 msgstr ""
 
 #: app/Hooks/Handlers/Menu.php:80 app/Hooks/Handlers/Menu.php:81
@@ -202,7 +206,7 @@ msgstr ""
 msgid "Agent Last Name"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:364
+#: app/Http/Controllers/TicketController.php:389
 msgid "agent_id param is required"
 msgstr ""
 
@@ -211,7 +215,7 @@ msgid "Agents Reports"
 msgstr ""
 
 #: app/Services/TransStrings.php:200
-#: app/Hooks/Handlers/CustomerPortalHandler.php:61
+#: app/Hooks/Handlers/CustomerPortalHandler.php:81
 msgid "All"
 msgstr ""
 
@@ -307,16 +311,12 @@ msgstr ""
 msgid "Business Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:77
+#: app/Services/TransStrings.php:77 app/Hooks/Handlers/Menu.php:165
 msgid "Business Inboxes"
 msgstr ""
 
 #: app/Services/TransStrings.php:17
 msgid "Business Name"
-msgstr ""
-
-#: app/Hooks/Handlers/Menu.php:165
-msgid "Business Inboxes"
 msgstr ""
 
 #: app/Services/TransStrings.php:279
@@ -335,7 +335,7 @@ msgstr ""
 msgid "Check overall activities"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:60
+#: app/Hooks/Handlers/CustomerPortalHandler.php:80
 msgid "Click Here to Write a reply"
 msgstr ""
 
@@ -348,6 +348,7 @@ msgid "Click to see Available Dynamic Codes"
 msgstr ""
 
 #: app/Services/TransStrings.php:223
+#: app/Hooks/Handlers/CustomerPortalHandler.php:94
 msgid "Click to upload"
 msgstr ""
 
@@ -368,12 +369,17 @@ msgid "Close Selected Tickets"
 msgstr ""
 
 #: app/Services/TransStrings.php:272
+#: app/Hooks/Handlers/CustomerPortalHandler.php:91
 msgid "Close Ticket"
 msgstr ""
 
 #: app/Services/TransStrings.php:116
-#: app/Hooks/Handlers/CustomerPortalHandler.php:63
+#: app/Hooks/Handlers/CustomerPortalHandler.php:83
 msgid "Closed"
+msgstr ""
+
+#: app/Services/Helper.php:56
+msgid "closed"
 msgstr ""
 
 #: app/Services/TransStrings.php:154 app/Services/TransStrings.php:155
@@ -400,7 +406,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:59
+#: app/Hooks/Handlers/CustomerPortalHandler.php:79
 msgid "Conversation"
 msgstr ""
 
@@ -412,7 +418,7 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:85
+#: app/Hooks/Handlers/CustomerPortalHandler.php:119
 msgid "Create a New Ticket"
 msgstr ""
 
@@ -429,6 +435,7 @@ msgid "Create an Account"
 msgstr ""
 
 #: app/Services/TransStrings.php:40
+#: app/Hooks/Handlers/CustomerPortalHandler.php:104
 msgid "Create Customer"
 msgstr ""
 
@@ -496,7 +503,7 @@ msgstr ""
 msgid "Custom Ticket Fields"
 msgstr ""
 
-#: app/Http/Controllers/CustomerController.php:156
+#: app/Http/Controllers/CustomerController.php:160
 msgid "Customer Deleted Successfully"
 msgstr ""
 
@@ -520,7 +527,7 @@ msgstr ""
 msgid "Customer has been added"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:586
+#: app/Http/Controllers/TicketController.php:611
 #: app/Http/Controllers/CustomerController.php:143
 msgid "Customer has been updated"
 msgstr ""
@@ -537,7 +544,7 @@ msgstr ""
 msgid "Customer Management"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:24
+#: app/Hooks/Handlers/CustomerPortalHandler.php:26
 msgid ""
 "Customer Portal is only accessible by Customers. Looks like you are a "
 "support staff"
@@ -553,7 +560,7 @@ msgid "Dashboard"
 msgstr ""
 
 #: app/Services/TransStrings.php:236
-#: app/Hooks/Handlers/CustomerPortalHandler.php:64
+#: app/Hooks/Handlers/CustomerPortalHandler.php:84
 msgid "Date"
 msgstr ""
 
@@ -563,6 +570,10 @@ msgstr ""
 
 #: app/Services/TransStrings.php:79
 msgid "Delete"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:102
+msgid "Delete Customer"
 msgstr ""
 
 #: app/Services/TransStrings.php:256
@@ -718,13 +729,13 @@ msgstr ""
 msgid "From Email Address"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:277
+#: app/Hooks/Handlers/Menu.php:287
 msgid ""
 "Get activity notification to Slack Channel and keep your support team super "
 "engaged"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:270
+#: app/Hooks/Handlers/Menu.php:280
 msgid ""
 "Get activity notification to Telegram Messenger and reply directly from "
 "Telegram inbox"
@@ -742,7 +753,7 @@ msgstr ""
 msgid "Go to Dashboard"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:24
+#: app/Hooks/Handlers/CustomerPortalHandler.php:26
 msgid "Go to Support Admin Page"
 msgstr ""
 
@@ -782,7 +793,7 @@ msgid ""
 "ticket or any response"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:69
+#: app/Hooks/Handlers/CustomerPortalHandler.php:89
 msgid "If you still have related issues. Please reopen this ticket and reply"
 msgstr ""
 
@@ -894,7 +905,7 @@ msgstr ""
 msgid "License Management"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:30
+#: app/Hooks/Handlers/CustomerPortalHandler.php:45
 msgid "Loading Customer Portal. Please wait..."
 msgstr ""
 
@@ -906,8 +917,12 @@ msgstr ""
 msgid "Logout"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:74
+#: app/Hooks/Handlers/CustomerPortalHandler.php:108
 msgid "Looking for similar articles..."
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:100
+msgid "Looks like you did not open any support tickets yet"
 msgstr ""
 
 #: app/Services/TransStrings.php:12
@@ -974,7 +989,11 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:66
+#: app/Services/Helper.php:54 app/Services/Helper.php:57
+msgid "new"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:86
 msgid "Next"
 msgstr ""
 
@@ -997,6 +1016,10 @@ msgstr ""
 #: app/Http/Controllers/CustomerPortalController.php:26
 #: app/Http/Controllers/CustomerPortalController.php:96
 msgid "No Customer Found"
+msgstr ""
+
+#: app/Hooks/Handlers/CustomerPortalHandler.php:101
+msgid "No support tickets found for this filter"
 msgstr ""
 
 #: app/Http/Controllers/ChatMessageParserController.php:52
@@ -1029,12 +1052,12 @@ msgid "Only %s files are allowed."
 msgstr ""
 
 #: app/Services/TransStrings.php:277
-#: app/Hooks/Handlers/CustomerPortalHandler.php:68
+#: app/Hooks/Handlers/CustomerPortalHandler.php:88
 msgid "Only you and official support agents can view this conversation"
 msgstr ""
 
 #: app/Services/TransStrings.php:197
-#: app/Hooks/Handlers/CustomerPortalHandler.php:62
+#: app/Hooks/Handlers/CustomerPortalHandler.php:82
 msgid "Open"
 msgstr ""
 
@@ -1151,7 +1174,7 @@ msgstr ""
 msgid "Press enter to save"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:67
+#: app/Hooks/Handlers/CustomerPortalHandler.php:87
 msgid "Prev"
 msgstr ""
 
@@ -1172,6 +1195,7 @@ msgid "Priority (Customer)"
 msgstr ""
 
 #: app/Services/TransStrings.php:274
+#: app/Hooks/Handlers/CustomerPortalHandler.php:96
 msgid "Private"
 msgstr ""
 
@@ -1224,6 +1248,7 @@ msgid "Reopen This ticket"
 msgstr ""
 
 #: app/Services/TransStrings.php:253
+#: app/Hooks/Handlers/CustomerPortalHandler.php:92
 msgid "replied"
 msgstr ""
 
@@ -1248,6 +1273,7 @@ msgid "Replies"
 msgstr ""
 
 #: app/Services/TransStrings.php:273
+#: app/Hooks/Handlers/CustomerPortalHandler.php:98
 msgid "Reply"
 msgstr ""
 
@@ -1255,7 +1281,7 @@ msgstr ""
 msgid "Reply and Close"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:281
+#: app/Http/Controllers/CustomerPortalController.php:284
 msgid "Reply has been added"
 msgstr ""
 
@@ -1284,7 +1310,7 @@ msgstr ""
 msgid "Response Count"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:475
+#: app/Http/Controllers/TicketController.php:500
 msgid "Response has been added to the selected tickets"
 msgstr ""
 
@@ -1353,7 +1379,7 @@ msgid "Select Portal Page"
 msgstr ""
 
 #: app/Services/TransStrings.php:265
-#: app/Hooks/Handlers/CustomerPortalHandler.php:76
+#: app/Hooks/Handlers/CustomerPortalHandler.php:110
 msgid "Select Priority"
 msgstr ""
 
@@ -1362,7 +1388,7 @@ msgid "Select Product"
 msgstr ""
 
 #: app/Services/TransStrings.php:93
-#: app/Hooks/Handlers/CustomerPortalHandler.php:73
+#: app/Hooks/Handlers/CustomerPortalHandler.php:107
 msgid "Select related Product/Service"
 msgstr ""
 
@@ -1380,11 +1406,11 @@ msgstr ""
 msgid "Selected Business has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:499
+#: app/Http/Controllers/TicketController.php:524
 msgid "Selected response has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:530
+#: app/Http/Controllers/TicketController.php:555
 msgid "Selected response has been updated"
 msgstr ""
 
@@ -1392,17 +1418,17 @@ msgstr ""
 msgid "Selected support staff has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:402
+#: app/Http/Controllers/TicketController.php:427
 msgid "Selected tags has been added to tickets"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:269
+#: app/Hooks/Handlers/Menu.php:279
 msgid ""
 "Send Telegram notifications to Group, Channel or individual person inbox and "
 "reply from Telegram inbox"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:276
+#: app/Hooks/Handlers/Menu.php:286
 msgid "Send ticket activity notifications to slack"
 msgstr ""
 
@@ -1430,7 +1456,7 @@ msgstr ""
 msgid "Signup"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:275
+#: app/Hooks/Handlers/Menu.php:285
 msgid "Slack"
 msgstr ""
 
@@ -1446,11 +1472,11 @@ msgstr ""
 msgid "Slug"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:408
+#: app/Http/Controllers/TicketController.php:433
 msgid "Sorry no action found as available"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:437
+#: app/Http/Controllers/TicketController.php:462
 msgid "Sorry no tickets found based on your filter and bulk actions"
 msgstr ""
 
@@ -1458,18 +1484,18 @@ msgstr ""
 msgid "Sorry! FluentCRM could not be installed. Please install manually"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:259
-#: app/Http/Controllers/CustomerPortalController.php:299
-#: app/Http/Controllers/CustomerPortalController.php:343
+#: app/Http/Controllers/CustomerPortalController.php:262
+#: app/Http/Controllers/CustomerPortalController.php:302
+#: app/Http/Controllers/CustomerPortalController.php:346
 msgid "Sorry! No customer found"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:313
-#: app/Http/Controllers/CustomerPortalController.php:349
+#: app/Http/Controllers/CustomerPortalController.php:316
+#: app/Http/Controllers/CustomerPortalController.php:352
 msgid "Sorry! You can not close this ticket"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:273
+#: app/Http/Controllers/CustomerPortalController.php:276
 msgid "Sorry! You can not reply to this ticket"
 msgstr ""
 
@@ -1487,15 +1513,15 @@ msgstr ""
 
 #: app/Http/Controllers/CustomerPortalController.php:33
 #: app/Http/Controllers/CustomerPortalController.php:89
-#: app/Http/Controllers/CustomerPortalController.php:180
-#: app/Http/Controllers/CustomerPortalController.php:265
-#: app/Http/Controllers/CustomerPortalController.php:305
-#: app/Http/Controllers/CustomerPortalController.php:335
+#: app/Http/Controllers/CustomerPortalController.php:183
+#: app/Http/Controllers/CustomerPortalController.php:268
+#: app/Http/Controllers/CustomerPortalController.php:308
+#: app/Http/Controllers/CustomerPortalController.php:338
 msgid "Sorry, You do not have access to customer portal"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:491
-#: app/Http/Controllers/TicketController.php:521
+#: app/Http/Controllers/TicketController.php:516
+#: app/Http/Controllers/TicketController.php:546
 msgid "Sorry, You do not have permission to delete this response"
 msgstr ""
 
@@ -1503,20 +1529,20 @@ msgstr ""
 msgid "Sorry, You do not have permission to this page"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:173
+#: app/Http/Controllers/CustomerPortalController.php:176
 msgid "Sorry, You do not have permission to this support ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:154
-#: app/Http/Controllers/TicketController.php:214
-#: app/Http/Controllers/TicketController.php:236
-#: app/Http/Controllers/TicketController.php:262
-#: app/Http/Controllers/TicketController.php:300
-#: app/Http/Controllers/TicketController.php:318
+#: app/Http/Controllers/TicketController.php:179
+#: app/Http/Controllers/TicketController.php:239
+#: app/Http/Controllers/TicketController.php:261
+#: app/Http/Controllers/TicketController.php:287
+#: app/Http/Controllers/TicketController.php:325
+#: app/Http/Controllers/TicketController.php:343
 msgid "Sorry, You do not have permission to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:206
+#: app/Http/Controllers/TicketController.php:231
 msgid ""
 "Sorry, You do not have permission. Please add yourself as support agent first"
 msgstr ""
@@ -1532,6 +1558,7 @@ msgid "Start"
 msgstr ""
 
 #: app/Services/TransStrings.php:280
+#: app/Hooks/Handlers/CustomerPortalHandler.php:93
 msgid "started the conversation"
 msgstr ""
 
@@ -1544,7 +1571,7 @@ msgid "Stats"
 msgstr ""
 
 #: app/Services/TransStrings.php:57
-#: app/Hooks/Handlers/CustomerPortalHandler.php:65
+#: app/Hooks/Handlers/CustomerPortalHandler.php:85
 msgid "Status"
 msgstr ""
 
@@ -1564,7 +1591,7 @@ msgstr ""
 msgid "Successfully registered to the site."
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:75
+#: app/Hooks/Handlers/CustomerPortalHandler.php:109
 msgid "Suggested articles"
 msgstr ""
 
@@ -1614,11 +1641,11 @@ msgstr ""
 msgid "Tag Description"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:565
+#: app/Http/Controllers/TicketController.php:590
 msgid "Tag has been added to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:576
+#: app/Http/Controllers/TicketController.php:601
 msgid "Tag has been removed from this ticket"
 msgstr ""
 
@@ -1626,7 +1653,7 @@ msgstr ""
 msgid "Tag Title"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:391
+#: app/Http/Controllers/TicketController.php:416
 msgid "tag_ids param is required"
 msgstr ""
 
@@ -1634,7 +1661,7 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:268
+#: app/Hooks/Handlers/Menu.php:278
 msgid "Telegram"
 msgstr ""
 
@@ -1692,11 +1719,12 @@ msgid ""
 msgstr ""
 
 #: app/Services/TransStrings.php:250
-#: app/Hooks/Handlers/CustomerPortalHandler.php:70
+#: app/Hooks/Handlers/CustomerPortalHandler.php:90
 msgid "This ticket has been closed at"
 msgstr ""
 
 #: app/Services/TransStrings.php:278
+#: app/Hooks/Handlers/CustomerPortalHandler.php:95
 msgid "This ticket is"
 msgstr ""
 
@@ -1749,8 +1777,8 @@ msgstr ""
 msgid "Ticket has been closed"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:131
-#: app/Http/Controllers/CustomerPortalController.php:146
+#: app/Http/Controllers/TicketController.php:156
+#: app/Http/Controllers/CustomerPortalController.php:149
 msgid "Ticket has been created successfully"
 msgstr ""
 
@@ -1857,6 +1885,7 @@ msgid "Update Custom Field"
 msgstr ""
 
 #: app/Services/TransStrings.php:39
+#: app/Hooks/Handlers/CustomerPortalHandler.php:103
 msgid "Update Customer"
 msgstr ""
 
@@ -1930,7 +1959,7 @@ msgid "Web Based"
 msgstr ""
 
 #: app/Services/TransStrings.php:262
-#: app/Hooks/Handlers/CustomerPortalHandler.php:72
+#: app/Hooks/Handlers/CustomerPortalHandler.php:106
 msgid "What's about this support ticket"
 msgstr ""
 
@@ -1944,6 +1973,7 @@ msgid "WPManageNinja LLC"
 msgstr ""
 
 #: app/Services/TransStrings.php:271
+#: app/Hooks/Handlers/CustomerPortalHandler.php:97
 msgid "Write a reply"
 msgstr ""
 
@@ -1952,6 +1982,7 @@ msgid "Yesterday"
 msgstr ""
 
 #: app/Services/TransStrings.php:283
+#: app/Hooks/Handlers/CustomerPortalHandler.php:99
 msgid "You"
 msgstr ""
 
@@ -1969,12 +2000,12 @@ msgid ""
 "for email reply parsing"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:188
+#: app/Http/Controllers/CustomerPortalController.php:191
 msgid "You do not have permission to view this support ticket"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:21
-msgid "You don’t have permission to view the tickets"
+#: app/Hooks/Handlers/CustomerPortalHandler.php:19
+msgid "You don't have permission to access customer support portal"
 msgstr ""
 
 #: app/Services/TransStrings.php:14

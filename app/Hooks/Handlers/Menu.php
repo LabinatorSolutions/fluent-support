@@ -183,8 +183,18 @@ class Menu
             ];
         }
 
+
         $menuItems = apply_filters('fluent_support/primary_menu_items', $menuItems);
         $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems);
+
+
+        if(!defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
+            $secondayItems[] = [
+                'key' => 'upgrade_to_pro',
+                'label' => 'Upgrade to Pro',
+                'permalink' => 'https://fluentsupport.com'
+            ];
+        }
 
         $app = App::getInstance();
         $this->enqueueAssets();

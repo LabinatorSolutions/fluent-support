@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
 Tested up to: 5.8
-Stable tag: 1.5.1
+Stable tag: 1.5.3
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -14,6 +14,8 @@ The Fastest & Most feature rich Support Ticketing system for WordPress.
 = The Super Fast, most versatile and feature-rich support plugin for WordPress =
 
 [youtube https://www.youtube.com/watch?v=29NRuKkVSSI]
+
+[youtube https://www.youtube.com/watch?v=MrgbYAY9E9s]
 
 👉 Official Website Link: [Official Website](https://fluentsupport.com/)
 👉 Join Our FB Community: [FluentSupport Facebook Group](https://facebook.com/groups/fluentsupport)
@@ -87,6 +89,15 @@ With BuddyPress / BuddyPress integration, you can get detailed overview about yo
 = Automate Smartly and Do More in Less Time =
 With the powerful Workflow and Saved Replied feature (pro) you can automatically send replies, add internal notes, set priority, assign appropriate support agent, etc on customer's query event.
 With the manual workflow, you can create a set of tasks and run those tasks on the selected filtered tickets. So you can automate multiple tickets and on a single click.
+
+= Reviews by WordPress Experts =
+
+[youtube https://www.youtube.com/watch?v=tTyvYHK8hcA]
+
+[youtube https://www.youtube.com/watch?v=HxiJ6zLpbw8]
+
+[youtube https://www.youtube.com/watch?v=qncHY5GsVIU]
+
 
 == Other Plugins By The Same Team ==
 <ul>
