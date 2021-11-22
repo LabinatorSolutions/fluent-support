@@ -65,6 +65,20 @@
                                 </router-link>
                                 <span class="fs_badge"><i
                                     class="el-icon-chat-line-round"></i> {{ scope.row.total_responses }}</span>
+
+                                <el-popconfirm
+                                    v-loading="deleting"
+                                    confirm-button-text="Yes, Delete this Customer"
+                                    cancel-button-text="No"
+                                    icon-color="red"
+                                    @confirm="deleteCustomer(scope.row.id)"
+                                    title="Are you sure to delete this customer? It will delete all associated data with this customer"
+                                >
+                                    <template #reference>
+                                        <span v-loading="deleting" class="fs_badge"><i class="el-icon-delete"></i></span>
+                                    </template>
+                                </el-popconfirm>
+
                             </template>
                         </el-table-column>
                     </el-table>
@@ -118,7 +132,8 @@ export default {
                 active: 'Active',
                 inactive: 'Inactive'
             },
-            status: 'all'
+            status: 'all',
+            deleting: false
         }
     },
     methods: {
@@ -150,6 +165,23 @@ export default {
             this.editing_customer = {};
             this.showEditModal = false;
             this.fetchCustomers();
+        },
+        deleteCustomer(customerId) {
+            this.deleting = true;
+            this.$del(`customers/${customerId}`)
+                .then(response => {
+                    this.fetchCustomers();
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    })
+                })
+                .catch(errors => {
+                    this.$handleError(errors)
+                })
+                .always(() => {
+                    this.deleting = false;
+                });
         }
     },
     mounted() {

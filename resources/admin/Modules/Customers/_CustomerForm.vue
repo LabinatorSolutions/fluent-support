@@ -6,20 +6,6 @@
         <form-builder :fields="address_fields" :form-data="customer"/>
 
         <el-button @click="updateCustomer()" type="success" v-if="customer.id">{{ $t('Update Customer') }}</el-button>
-        <el-popconfirm
-            v-if="customer.id"
-            confirm-button-text="Yes, Delete this Customer"
-            cancel-button-text="No"
-            icon-color="red"
-            title="Are you sure to delete this customer? It will delete all associated data with this customer"
-            @confirm="deleteCustomer"
-        >
-            <template #reference>
-                <el-button v-loading="loading" type="danger">
-                    {{ $t('Delete Customer') }}
-                </el-button>
-            </template>
-        </el-popconfirm>
 
         <el-button @click="createCustomer()" type="success" v-else>{{ $t('Create Customer') }}</el-button>
     </div>
@@ -173,21 +159,6 @@ export default {
                 .always(() => {
                     this.loading = false;
                 });
-        },
-        deleteCustomer() {
-            this.loading = !this.loading;
-            this.$del(`customers/${this.customer.id}`)
-                .then(response => {
-                    this.$router.go(-1);
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    })
-                })
-                .catch(errors => {
-                    this.$handleError(errors)
-                })
-                .always()
         }
     }
 }
