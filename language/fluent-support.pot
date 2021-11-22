@@ -316,7 +316,7 @@ msgid "Business Name"
 msgstr ""
 
 #: app/Hooks/Handlers/Menu.php:165
-msgid "Business Settings"
+msgid "Business Inboxes"
 msgstr ""
 
 #: app/Services/TransStrings.php:279

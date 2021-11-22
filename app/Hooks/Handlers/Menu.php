@@ -162,7 +162,7 @@ class Menu
         if ($canManageSettings) {
             $secondayItems[] = [
                 'key'       => 'mailboxes',
-                'label'     => __('Business Settings', 'fluent-support'),
+                'label'     => __('Business Inboxes', 'fluent-support'),
                 'permalink' => $baseUrl . 'mailboxes'
             ];
         }
