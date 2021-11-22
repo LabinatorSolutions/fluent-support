@@ -32,6 +32,19 @@
 
                     <div style="display: block; margin-top: 10px;">
                         <el-button @click="emitSave()" size="small" type="success">Save</el-button>
+                        <div style="text-align: right; display: inline-block; float: right;">
+                            <el-popconfirm
+                                confirm-button-text="Yes, Delete this Action"
+                                cancel-button-text="No"
+                                icon-color="red"
+                                @confirm="deleteAction()"
+                                title="Are you sure to delete this Action?"
+                            >
+                                <template #reference>
+                                    <el-button type="danger" plain size="small" icon="el-icon-delete"></el-button>
+                                </template>
+                            </el-popconfirm>
+                        </div>
                     </div>
 
                 </div>
@@ -73,6 +86,10 @@ export default {
         emitSave() {
             this.action.is_open = !this.action.is_open;
             this.$emit('update');
+        },
+        deleteAction() {
+            this.action.is_open = !this.action.is_open;
+            this.$emit('deleteAction');
         }
     },
     mounted() {
