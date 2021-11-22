@@ -10,12 +10,12 @@
                             :placeholder="field.placeholder"
                             v-model="custom_data[field.slug]"
                         />
-                        <el-select :placeholder="field.placeholder" clearable v-else-if="field.type == 'select-one'"
+                        <el-select :placeholder="field.placeholder" clearable filterable v-else-if="field.type == 'select-one'"
                                    v-model="custom_data[field.slug]">
                             <el-option v-for="option in field.options" :key="option"
                                        :value="option" :label="option"></el-option>
                         </el-select>
-                        <el-select :placeholder="field.placeholder" clearable v-else-if="field.type == 'select'"
+                        <el-select :placeholder="field.placeholder" clearable filterable v-else-if="field.type == 'select'"
                                    :filterable="field.filterable"
                                    :multiple="field.multiple"
                                    v-model="custom_data[field.slug]">
