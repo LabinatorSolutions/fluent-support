@@ -100,7 +100,9 @@ class AuthController extends Controller
         $data = array_filter([
             'ID'            => $userId,
             'user_nicename' => $name,
-            'display_name'  => $name
+            'display_name'  => $name,
+            'first_name'    => Arr::get($formData, 'first_name'),
+            'last_name'     => Arr::get($formData, 'last_name'),
         ]);
 
         if ($name) {
