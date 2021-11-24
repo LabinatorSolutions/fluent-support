@@ -49,6 +49,47 @@ class AuthController extends Controller
         );
     }
 
+    public function handleLogin(Request $request)
+    {
+
+        $data = $request->all();
+
+        if (empty($data['pwd']) || empty($data['log'])) {
+            return $this->response([
+                'message' => __('Email and Password is required', 'fluent-support')
+            ], 403);
+        }
+
+        $redirectUrl = Helper::getPortalBaseUrl();
+
+        if (get_current_user_id()) { // user already registered
+            return $this->sendSuccess([
+                'redirect' => $redirectUrl
+            ]);
+        }
+
+        $email = $data['log'];
+        $password = $data['pwd'];
+
+
+        if(is_email($email)) {
+            $user = get_user_by('email', $email);
+        } else {
+            $user = get_user_by('login', $email);
+        }
+
+        if($user && wp_check_password($password, $user->user_pass, $user->ID)) {
+            $this->login($user->ID);
+            return $this->sendSuccess([
+                'redirect' => $redirectUrl
+            ]);
+        }
+
+        return $this->response([
+            'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
+        ], 403);
+    }
+
     protected function getRules($fields = [])
     {
         $rules = [];

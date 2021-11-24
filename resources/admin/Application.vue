@@ -6,6 +6,7 @@
                 <router-view />
             </el-config-provider>
         </div>
+
     </div>
 </template>
 
