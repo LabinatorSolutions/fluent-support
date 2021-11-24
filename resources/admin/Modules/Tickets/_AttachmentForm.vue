@@ -65,13 +65,14 @@ export default {
         },
         handleUploadSuccess(response, file, fileList) {
             this.error_message = '';
-            if(!file.raw.type.includes('image')) {
+            this.attachments.push(...response.attachments);
+
+            if(file.raw.type.includes('application')) {
                 if(this.appVars.asset_url) {
                     return file.url = this.appVars.asset_url+'images/file.png';
                 }
                 return file.url = this.appVars.fallback_image;
             }
-            this.attachments.push(...response.attachments);
         }
     }
 }
