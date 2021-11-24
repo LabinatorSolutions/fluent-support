@@ -9,6 +9,8 @@ use FluentSupport\Framework\Support\Arr;
 class AuthHandler
 {
 
+    protected $loaded = false;
+
     public function init()
     {
         add_shortcode('fluent_support_login', array($this, 'loginForm'));
@@ -18,20 +20,22 @@ class AuthHandler
 
     public function loginForm($attributes)
     {
+
+        if(get_current_user_id()) {
+            return '';
+        }
+
+        $this->loadAssets();
         $attributes = $this->getShortcodes($attributes);
         $this->handleAlreadyLoggedIn($attributes);
 
-        $app = App::getInstance();
-        $assets = $app['url.assets'];
-        wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css');
-        wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js');
-        $return = '<div class="fst_login_wrapper">';
+        $return = '<div id="fst_login_form" class="fst_login_wrapper">';
 
         $loginArgs = apply_filters('fluent_support/login_form_args', [
             'echo'           => false,
             'redirect'       => Helper::getPortalBaseUrl(),
             'remember'       => true,
-            'value_remember' => true
+            'value_remember' => true,
         ]);
 
         $return .= wp_login_form($loginArgs);
@@ -50,23 +54,18 @@ class AuthHandler
 
     public function registrationForm($attributes)
     {
+        if(get_current_user_id()) {
+            return '';
+        }
+        
         $attributes = $this->getShortcodes($attributes);
         $this->handleAlreadyLoggedIn($attributes);
 
-        $app = App::getInstance();
-        $assets = $app['url.assets'];
-        wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css');
-        wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js');
-
-        wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
-            'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
-            'nonce'  => wp_create_nonce('wp_rest'),
-            'hide'   => $attributes['hide']
-        ]);
-
         $registrationFields = static::getSignupFields();
-
         $hide = $attributes['hide'] == 'true' ? 'hide' : '';
+
+        $this->loadAssets($hide);
+
         $registrationForm = '<div class="fst_registration_wrapper ' . $hide . '"><form id="fstRegistrationForm" class="fs_registration_form" method="post" name="fs_registration_form">';
 
         foreach ($registrationFields as $fieldName => $registrationField) {
@@ -230,5 +229,27 @@ class AuthHandler
 
             die();
         }
+    }
+
+    public function loadAssets($hide = '')
+    {
+        if ($this->loaded) {
+            return false;
+        }
+
+        $app = App::getInstance();
+        $assets = $app['url.assets'];
+        wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css', [], FLUENT_SUPPORT_VERSION);
+        wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js', [], FLUENT_SUPPORT_VERSION);
+
+        wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
+            'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
+            'login'  => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
+            'nonce'  => wp_create_nonce('wp_rest'),
+            'hide'   => $hide
+        ]);
+
+
+        $this->loaded = true;
     }
 }

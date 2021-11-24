@@ -135,6 +135,10 @@ class Reporting
 
         $reports = $this->pushAgentsReport('closed', $resolves, $reports);
 
+        if(!$reports) {
+            return [];
+        }
+
         $openTickets = $this->db()->table('fs_tickets')
             ->select([
                 $this->db()->raw('COUNT(id) AS count'),
@@ -170,6 +174,7 @@ class Reporting
         }
 
         $agentIds = array_keys($reports);
+
 
         if ($agent) {
             $agentIds = array_map('intval', explode(',', $agent));
