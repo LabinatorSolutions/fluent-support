@@ -21,7 +21,7 @@ class AuthHandler
     public function loginForm($attributes)
     {
 
-        if(get_current_user_id()) {
+        if (get_current_user_id()) {
             return '';
         }
 
@@ -54,10 +54,10 @@ class AuthHandler
 
     public function registrationForm($attributes)
     {
-        if(get_current_user_id()) {
+        if (get_current_user_id()) {
             return '';
         }
-        
+
         $attributes = $this->getShortcodes($attributes);
         $this->handleAlreadyLoggedIn($attributes);
 
