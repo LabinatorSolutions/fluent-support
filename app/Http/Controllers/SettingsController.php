@@ -70,7 +70,7 @@ class SettingsController extends Controller
         }
 
         if ($createPage) {
-            // we have to created the page
+            // we have to create the page
             $page_id = wp_insert_post(
                 array(
                     'comment_status' => 'close',
