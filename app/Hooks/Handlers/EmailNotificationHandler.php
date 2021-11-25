@@ -235,7 +235,7 @@ class EmailNotificationHandler
 
         if (defined('FLUENTSUPPORTPRO') && in_array($data['email_type'], $emailTypeForCustomerFooter)
             && !is_null($data['business']->email_footer)) {
-            $data['email_footer'] = $data['business']->email_footer;
+            $data['email_footer'] = (new \FluentSupport\App\Services\Parser\Parser())->parse($data['business']->email_footer, $data);
         }
 
         $emailBody = $app->view->make('emails.ticket_template', $data);
