@@ -220,6 +220,7 @@ class FeedIntegration extends IntegrationManager
     private function getCustomField()
     {
         $customFields = apply_filters('fluent_support/ticket_custom_fields', []);
+        $fieldToExclude = apply_filters('fluent_support/custom_field_types', []);
 
         if(empty($customFields)){
             return[
@@ -231,11 +232,18 @@ class FeedIntegration extends IntegrationManager
         $fields = [];
         foreach ($customFields as $customFieldKey=>$customFieldValue) {
 
+            if(in_array($customFieldValue['type'], array_keys($fieldToExclude))){
+                unset($customFieldValue);
+            }
+
             $fields[] = [
                 'key'      => $customFieldValue['slug'],
                 'label'    => __($customFieldValue['label'], 'fluentform')
             ];
         }
+
+        $fields = array_map('array_filter', $fields);
+        $fields = array_filter( $fields );
 
         return  $customFieldsMapping = [
             'key'                => 'TicketCustomFields',
