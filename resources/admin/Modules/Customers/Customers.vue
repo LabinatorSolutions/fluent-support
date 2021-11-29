@@ -76,7 +76,7 @@
                                     title="Are you sure to delete this customer? It will delete all associated data with this customer"
                                 >
                                     <template #reference>
-                                        <span v-loading="deleting" class="fs_badge"><i class="el-icon-delete"></i></span>
+                                        <span class="fs_badge"><i class="el-icon-delete"></i></span>
                                     </template>
                                 </el-popconfirm>
 
