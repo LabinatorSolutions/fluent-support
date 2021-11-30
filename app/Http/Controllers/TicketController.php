@@ -111,6 +111,21 @@ class TicketController extends Controller
     public function createTicket(Request $request)
     {
         $ticketData = $request->get('ticket', []);
+
+        if (!empty( $maybeNewCustomer = $request->get('newCustomer') )){
+            $createCustomer = Customer::create($maybeNewCustomer);
+        }
+
+        if ($createCustomer){
+            $ticketData['customer_id'] = $createCustomer->id;
+        }
+
+        if ($ticketData['create_wp_user'] == 'yes') {
+            $authController = new AuthController();
+            $createdUser = $authController->createUser($maybeNewCustomer);
+            $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
+        }
+
         $this->validate($ticketData, [
             'customer_id' => 'required',
             'title'       => 'required',
