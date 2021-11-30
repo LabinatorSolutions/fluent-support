@@ -1,7 +1,7 @@
 <template>
     <div class="fs_create_ticket">
         <el-form :data="ticket" label-position="top">
-            <el-form-item :label="$t('Select Customer')">
+            <el-form-item v-if="ticket.create_customer=='no'" :label="$t('Select Customer')">
                 <remote-selector
                     v-model="ticket.customer_id"
                     response_key="customers"
@@ -12,6 +12,48 @@
                 />
                 <error :error="errors.get('customer_id')"/>
             </el-form-item>
+
+            <el-form-item>
+                <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">Create New Customer</el-checkbox>
+            </el-form-item>
+
+            <div class="fs_tk_create_customer" v-if="ticket.create_customer=='yes'">
+
+                <el-row :gutter="30">
+                    <el-col :md="12" :xs="24">
+                        <el-form-item :label="$t('First Name')">
+                            <el-input :placeholder="$t('First Name')" type="text" v-model="new_customer.first_name"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :md="12" :xs="24">
+                        <el-form-item :label="$t('Last Name')">
+                            <el-input :placeholder="$t('Last Name')" type="text" v-model="new_customer.last_name"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-form-item :label="$t('Email')">
+                    <el-input placeholder="Email" type="email" v-model="new_customer.email"></el-input>
+                </el-form-item>
+
+                <el-row :gutter="30" v-if="ticket.create_wp_user=='yes'">
+                    <el-col :md="12" :xs="24">
+                        <el-form-item :label="$t('Username')">
+                            <el-input :placeholder="$t('Username')" type="text" v-model="new_customer.username"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :md="12" :xs="24">
+                        <el-form-item :label="$t('Password')">
+                            <el-input :placeholder="$t('Password')" type="password" show-password v-model="new_customer.password"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-form-item>
+                    <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_wp_user">Create New User in WordPress</el-checkbox>
+                </el-form-item>
+            </div>
+
             <el-form-item v-if="mailboxes.length > 1" :label="$t('Select Business Inbox')">
                 <el-select v-model="ticket.mailbox_id" :placeholder="$t('Select Business Inbox')">
                     <el-option v-for="mailbox in mailboxes" :key="mailbox.id" :value="mailbox.id"
@@ -92,8 +134,11 @@ export default {
                 content: '',
                 product_id: '',
                 client_priority: '',
-                custom_fields: {}
-            }
+                custom_fields: {},
+                create_customer: 'no',
+                create_wp_user: 'no'
+            },
+            new_customer:{}
         }
     },
     methods: {
@@ -101,7 +146,8 @@ export default {
             this.errors.clear();
             this.creating = true;
             this.$post('tickets', {
-                ticket: this.ticket
+                ticket: this.ticket,
+                newCustomer: this.new_customer
             })
                 .then((response) => {
                     this.$notify.success({

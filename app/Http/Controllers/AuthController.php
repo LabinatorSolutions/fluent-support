@@ -116,7 +116,7 @@ class AuthController extends Controller
         return apply_filters('fluent_support/signup_validation_messages', [], $rules);
     }
 
-    protected function createUser($formData = [])
+    public function createUser($formData = [])
     {
         $email = apply_filters('fluent_support/signup_email', Arr::get($formData, 'email'));
         $userName = apply_filters('fluent_support/signup_username', Arr::get($formData, 'username'));
@@ -134,7 +134,7 @@ class AuthController extends Controller
         return wp_create_user($userName, $password, $email);
     }
 
-    protected function maybeUpdateUser($userId, $formData)
+    public function maybeUpdateUser($userId, $formData)
     {
         $name = trim(Arr::get($formData, 'first_name') . ' ' . Arr::get($formData, 'last_name'));
 
