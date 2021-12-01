@@ -56,7 +56,8 @@ class Settings
             'login_message'         => sprintf(__('%1sPlease login or create an account to access the Customer Support Portal%2s [fluent_support_auth]', 'fluent-support'), '<p>', '</p>'),
             'disable_public_ticket' => 'no',
             'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
-            'max_file_size'         => 2
+            'max_file_size'         => 2,
+            'del_files_on_close'    => 'no'
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
@@ -115,6 +116,13 @@ class Settings
                 'type'    => 'input-text',
                 'data_type' => 'number',
                 'label'   => 'Max File Size (in MegaByte)',
+            ],
+            'del_files_on_close' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Delete all attachments on ticket close', 'fluent-support'),
+                'inline_help'    => __('If you enable this then when a ticket get closed it will delete all the attachments associated with the particular ticket.', 'fluent-support')
             ]
         ];
 
