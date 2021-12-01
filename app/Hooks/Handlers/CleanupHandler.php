@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\Models\Activity;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
 
@@ -42,6 +43,14 @@ class CleanupHandler
         $oldDateTime = date('Y-m-d H:i:s', strtotime(current_time('mysql')) - ($settings['delete_days'] * 86400));
 
         Activity::where('created_at', '<', $oldDateTime)->delete();
+    }
+
+    public function maybeDeleteAttachmentsOnClose($ticket)
+    {
+        $settings = (new Settings())->globalBusinessSettings();
+        if ($settings['del_files_on_close'] == 'yes') {
+            $this->deleteTicketAttachments($ticket);
+        }
     }
 
     public function deleteTicketAttachments($ticket)

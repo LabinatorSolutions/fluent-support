@@ -85,6 +85,7 @@ $app->addAction('fluent_support/ticket_closed_by_agent', 'EmailNotificationHandl
 $app->addAction('fluent_support_hourly_tasks', 'CleanupHandler@initHourlyTasks');
 $app->addAction('fluent_support_daily_tasks', 'CleanupHandler@initDailyTasks');
 $app->addAction('fluent_support/deleting_ticket', 'CleanupHandler@deleteTicketAttachments');
+$app->addAction('fluent_support/ticket_closed', 'CleanupHandler@maybeDeleteAttachmentsOnClose');
 
 if(isset($_GET['fs_view'])) {
     $app->addAction('init', 'ExternalPages@route');
