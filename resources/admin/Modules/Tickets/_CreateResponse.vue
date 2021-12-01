@@ -1,6 +1,6 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
-        <div class="fc_template_box">
+        <div class="fc_template_box" v-if="appVars.has_pro">
             <template-inserter @insert="insertTemplate"/>
         </div>
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body"/>
