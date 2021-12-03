@@ -22,11 +22,11 @@
                 <el-skeleton :rows="5" animated/>
             </div>
         </template>
-        <div style="background: white;" class="fs_narrow_promo" v-else>
+        <div class="fs_narrow_promo" v-else>
             <h3>Ticket Form Customization including Knowledge base integration is available on Pro Version</h3>
             <p>{{ $t('pro_promo') }}</p>
             <a target="_blank" rel="noopener" href="https://fluentsupport.com"
-               class="el-button el-button--primary">{{ $t('Upgrade To Pro') }}</a>
+               class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
         </div>
     </div>
 </template>
