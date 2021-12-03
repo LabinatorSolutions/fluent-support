@@ -21,7 +21,6 @@ class TicketsMigrator
                 `agent_id` BIGINT(20) UNSIGNED NULL,
                 `mailbox_id` BIGINT(20) UNSIGNED NULL,
                 `product_id` BIGINT(20) UNSIGNED NULL,
-                `ticket_type_id` BIGINT(20) UNSIGNED NULL,
                 `product_source` VARCHAR(192) NULL,
                 `privacy` VARCHAR(100) DEFAULT 'private',
                 `priority` VARCHAR(100) DEFAULT 'normal',
