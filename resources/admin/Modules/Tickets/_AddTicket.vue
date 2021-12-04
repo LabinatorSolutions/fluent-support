@@ -157,7 +157,8 @@ export default {
                     this.$router.push({name: 'view_ticket', params: {ticket_id: response.ticket.id}});
                 })
                 .catch((errors) => {
-                    this.errors.record(errors);
+                    this.$handleError(errors);
+                    // this.errors.record(errors);
                 })
                 .always(() => {
                     this.creating = false;

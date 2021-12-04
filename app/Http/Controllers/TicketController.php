@@ -111,19 +111,24 @@ class TicketController extends Controller
     public function createTicket(Request $request)
     {
         $ticketData = $request->get('ticket', []);
+        $maybeNewCustomer = $request->get('newCustomer');
 
-        if (!empty( $maybeNewCustomer = $request->get('newCustomer') )){
+        if ($ticketData['create_wp_user'] == 'yes'){
+            if(!username_exists($maybeNewCustomer['username'])){
+                $authController = new AuthController();
+                $createdUser = $authController->createUser($maybeNewCustomer);
+                $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
+            }else{
+                return $this->sendError(__('This username is already exist in WordPress', 'fluent-support'));
+            }
+        }
+
+        if (!empty( $maybeNewCustomer )){
             $createCustomer = Customer::create($maybeNewCustomer);
         }
 
         if ($createCustomer){
             $ticketData['customer_id'] = $createCustomer->id;
-        }
-
-        if ($ticketData['create_wp_user'] == 'yes') {
-            $authController = new AuthController();
-            $createdUser = $authController->createUser($maybeNewCustomer);
-            $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
         }
 
         $this->validate($ticketData, [
