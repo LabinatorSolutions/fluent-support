@@ -124,7 +124,10 @@ class TicketController extends Controller
         }
 
         if (!empty( $maybeNewCustomer )){
-            $createCustomer = Customer::create($maybeNewCustomer);
+            $createCustomer = Customer::maybeCreateCustomer($maybeNewCustomer);
+            if(Customer::findOrFail($createCustomer->id)){
+                return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
+            }
         }
 
         if ($createCustomer){
