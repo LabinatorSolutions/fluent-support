@@ -61,7 +61,7 @@ class TicketController extends Controller
     {
         $ticketsQuery = Ticket::with([
             'customer'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'email', 'id']);
+                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
             }, 'agent'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },

@@ -118,6 +118,8 @@ $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function
     $router->get('/{customer_id}', 'CustomerController@getCustomer')->int('customer_id');
     $router->put('/{customer_id}', 'CustomerController@update')->int('customer_id');
     $router->delete('/{customer_id}', 'CustomerController@delete')->int('customer_id');
+
+    $router->post('/profile_image/{customer_id}', 'CustomerController@addOrUpdateProfileImage')->int('customer_id');
 });
 
 $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function ($router) {

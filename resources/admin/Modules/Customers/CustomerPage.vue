@@ -17,8 +17,21 @@
             <div style="margin-top: 20px">
                 <el-row :gutter="30">
                     <el-col :sm="12" :md="18" :xs="24">
-                        <div style="padding: 20px" class="fs_box_body">
-                            <customer-form v-if="customer.id" :customer="customer"/>
+                        <div style="padding: 20px; margin-top: 2.3em;" class="fs_box_body">
+                            <div class="fs_cs_profile_picture" @mouseover="showIcon" @mouseout="hideIcon">
+                                <el-upload
+                                    class="fs-avatar-uploader"
+                                    :action="upload_url"
+                                    :on-success ="handleAvatarSuccess"
+                                    :headers="requestHeaders"
+                                    :show-file-list="false"
+                                    drag
+                                >
+                                    <img v-if="customer.photo" :src="customer.photo" class="avatar"/>
+                                    <i class="el-icon-upload avatar-uploader-icon"></i>
+                                </el-upload>
+                            </div>
+                            <customer-form v-if="customer.id" :customer="customer" style="margin-top: 4em;"/>
                         </div>
                     </el-col>
                     <el-col :sm="12" :md="6" :xs="24">
@@ -118,7 +131,11 @@ export default {
             customer: false,
             widgets: false,
             tickets: [],
-            fluentcrm_profile: false
+            fluentcrm_profile: false,
+            upload_url: this.appVars.rest.url+'/customers/profile_image/'+this.customer_id,
+            requestHeaders: {
+                'X-WP-Nonce': this.appVars.rest.nonce
+            }
         }
     },
     methods: {
@@ -139,6 +156,19 @@ export default {
                 .always(() => {
                     this.loading = !this.loading;
                 })
+        },
+        handleAvatarSuccess(res, file) {
+            this.customer.photo = URL.createObjectURL(file.raw);
+            this.$notify.success({
+                message: 'Profile picture has been updated successfully',
+                position: 'bottom-right'
+            });
+        },
+        showIcon() {
+            document.querySelector('.avatar-uploader-icon').style.display = 'initial';
+        },
+        hideIcon() {
+            document.querySelector('.avatar-uploader-icon').style.display = 'none';
         }
     },
     mounted() {
@@ -146,3 +176,41 @@ export default {
     }
 }
 </script>
+
+
+<style lang="scss">
+.fs_cs_profile_picture{
+    position: absolute;
+    top: -0.8em;
+    left: 1.9em;
+    .fs-avatar-uploader{
+        .avatar-uploader-icon {
+            display: none;
+            font-size: 2.9em;
+            color: #fafafa;
+            position: absolute;
+            top: -0.4em;
+            left: 0.8em;
+        }
+        .el-upload-dragger {
+            width: unset;
+            height: unset;
+            background: transparent;
+            border: none;
+        }
+        img {
+            border: none;
+            width: 7.3em;
+            height: 7.3em;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
+        }
+        .avatar-uploader .el-upload {
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+    }
+}
+</style>
