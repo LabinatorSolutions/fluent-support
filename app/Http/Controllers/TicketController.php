@@ -123,15 +123,16 @@ class TicketController extends Controller
             }
         }
 
-        if (!empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first())){
-            $createCustomer = Customer::create($maybeNewCustomer);
-        }
-        else{
-            return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
-        }
-
-        if ($createCustomer){
-            $ticketData['customer_id'] = $createCustomer->id;
+        if($request->get('create_customer') == 'yes'){
+            if (!empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first())){
+                $createCustomer = Customer::create($maybeNewCustomer);
+                if ($createCustomer){
+                    $ticketData['customer_id'] = $createCustomer->id;
+                }
+            }
+            else{
+                return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
+            }
         }
 
         $this->validate($ticketData, [
