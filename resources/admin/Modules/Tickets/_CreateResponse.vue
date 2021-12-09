@@ -7,11 +7,11 @@
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
-                    <el-button v-loading="creating" @click="create('no')" size="large" type="success">
+                    <el-button v-loading="creating" :disabled="creating" @click="create('no')" size="large" type="success">
                         <span v-if="type== 'note'">{{ $t('Add Internal Note') }}</span>
                         <span v-else>{{ $t('Add Reply') }}</span>
                     </el-button>
-                    <el-button v-if="type != 'note'" @click="create('yes')" size="large" type="danger">
+                    <el-button v-if="type != 'note'" :disabled="creating" @click="create('yes')" size="large" type="danger">
                         {{ $t('Reply and Close') }}
                     </el-button>
                     <p v-if="type== 'note'">{{ $t('internal_note_warning') }}</p>
