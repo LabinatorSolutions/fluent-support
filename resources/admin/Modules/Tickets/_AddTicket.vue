@@ -63,7 +63,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('Subject')">
-                <el-input :placeholder="$t('What\'s about this support ticket')" type="text"
+                <el-input :placeholder="$t('subject_placeholder')" type="text"
                           v-model="ticket.title"></el-input>
                 <error :error="errors.get('title')"/>
             </el-form-item>
