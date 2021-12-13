@@ -4,32 +4,32 @@
             <div class="fs_box_header">
                 <div class="fs_box_head">
                     <el-breadcrumb separator="/">
-                        <el-breadcrumb-item :to="{ name: 'workflows' }">Workflows</el-breadcrumb-item>
-                        <el-breadcrumb-item>Edit</el-breadcrumb-item>
+                        <el-breadcrumb-item :to="{ name: 'workflows' }">{{$t('Workflows')}}</el-breadcrumb-item>
+                        <el-breadcrumb-item>{{$t('Edit')}}</el-breadcrumb-item>
                         <template v-if="workflow">
                             <el-breadcrumb-item>{{ workflow.title }} ({{ workflow.status }})</el-breadcrumb-item>
                         </template>
                     </el-breadcrumb>
                 </div>
                 <div v-if="workflow" class="fs_box_actions fs_ticket_orders">
-                    <span style="margin-right: 10px; " class="fcon_status">Status: {{ workflow.status }}
+                    <span style="margin-right: 10px; " class="fcon_status">{{$t('Status')}}: {{ workflow.status }}
                         <el-switch @change="updateWorkFlow()" active-value="published" inactive-value="draft"
                                    v-model="workflow.status"/>
                     </span>
                     <el-button :disabled="saving" v-loading="saving" size="small" type="success"
-                               @click="updateWorkFlow()">Update Workflow
+                               @click="updateWorkFlow()">{{$t('Update Workflow')}}
                     </el-button>
                 </div>
             </div>
 
             <div v-if="workflow" v-loading="saving" class="fs_workflow_edit_wrap">
                 <div style="padding: 20px 0px;">
-                    <el-input type="text" placeholder="Workflow Title" v-model="workflow.title"/>
+                    <el-input type="text" :placeholder="$t('Workflow Title')" v-model="workflow.title"/>
                 </div>
                 <div v-if="workflow.trigger_type == 'automatic'" class="fs_box fs_triggers_wrap">
                     <div class="fs_box_header" style="padding: 10px 15px;font-size: 16px;">
                         <div class="fs_box_head">
-                            <h3>Set Your Trigger & Conditions</h3>
+                            <h3>{{$t('Set Your Trigger & Conditions')}}</h3>
                         </div>
                     </div>
                     <div class="fs_box_body fs_padded_20">
@@ -41,7 +41,7 @@
                 <div v-else class="fs_box fs_triggers_wrap">
                     <div class="fs_box_header" style="padding: 10px 15px;font-size: 16px;">
                         <div class="fs_box_head">
-                            <h3>Manual Trigger</h3>
+                            <h3>{{$t('Manual Trigger')}}</h3>
                         </div>
                     </div>
                     <div class="fs_box_body fs_padded_20">
@@ -53,7 +53,7 @@
                 <div style="margin-top: 20px" class="fs_box fs_actions_wrap">
                     <div class="fs_box_header" style="padding: 10px 15px;font-size: 16px;">
                         <div class="fs_box_head">
-                            <h3>Workflow Actions (Tasks)</h3>
+                            <h3>{{$t('Workflow Actions (Tasks)')}}</h3>
                         </div>
                     </div>
                     <div class="fs_box_body fs_padded_20">

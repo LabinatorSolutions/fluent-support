@@ -66,7 +66,7 @@
             </el-row>
         </div>
         <div class="fs_narrow_promo" style="background: white;" v-else>
-            <h3>Get Overall reports of all the support agents and their performance</h3>
+            <h3>{{$t("get_overall_reports")}}</h3>
             <p>{{$t('pro_promo')}}</p>
             <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
         </div>

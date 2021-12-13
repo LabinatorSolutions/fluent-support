@@ -3,7 +3,7 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>Incoming Webhook</h3>
+                    <h3>{{$t('Incoming Webhook')}}</h3>
                 </div>
             </div>
             <div style="padding: 20px; background: white;" class="fs_box_body fs_narrow_promo" v-if="has_pro && webhook==''">
@@ -13,10 +13,10 @@
                 <el-form>
                     <el-form-item>
                         <el-input label="Incoming Webhook URL" v-model="webhook" :readonly="true"/>
-                        <span style="color:red">To create tickets using webhooks please copy this webhook URL and paste to the site from where you want to create ticket in this site.</span>
+                        <span style="color:red">{{$t('to_create_tickets_using_webhooks_notice')}}</span>
                     </el-form-item>
                 </el-form>
-                <h3>Fillable Fields</h3>
+                <h3>{{ $t('Fillable Fields') }}</h3>
                 <el-table :data="fields">
                     <el-table-column prop="field" label="Field"/>
                     <el-table-column prop="field_key" label="Field Key"/>
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="fs_narrow_promo" v-if="!has_pro">
-            <h3>Use incoming webhook to create ticket from extranal sites.</h3>
+            <h3>{{ $t('use_webhook_to_create_ticket_from_external_site') }}</h3>
             <p>{{ $t('pro_promo') }}</p>
             <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
         </div>

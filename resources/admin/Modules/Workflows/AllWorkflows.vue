@@ -33,11 +33,11 @@
                                     <i class="el-icon-edit"></i>
                                 </router-link>
                                 <el-popconfirm
-                                    confirm-button-text="Yes, Delete this"
-                                    cancel-button-text="No"
+                                    :confirm-button-text="$t('Yes, Delete this')"
+                                    :cancel-button-text="$t('No')"
                                     icon="el-icon-info"
                                     icon-color="red"
-                                    title="Are you sure to delete this? All associate data will be deleted"
+                                    :title="$t('Are you sure to delete this? All associate data will be deleted')"
                                     @confirm="deleteWorkflow(scope.row.id)"
                                 >
                                     <template #reference>
@@ -60,14 +60,14 @@
                 </div>
             </div>
             <div class="fs_narrow_promo" style="background: white;" v-else>
-                <h3>Automate your tickets by applying manual or automated tasks</h3>
+                <h3>{{$t('Automate your tickets by applying manual or automated tasks')}}</h3>
                 <p>{{$t('pro_promo')}}</p>
                 <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
             </div>
         </div>
         <el-dialog
             v-model="showAddModal"
-            title="Add a New Workflow"
+            :title="$t('Add a New Workflow')"
             width="60%"
         >
             <el-form :data="new_workflow" label-position="top">
@@ -76,8 +76,8 @@
                 </el-form-item>
                 <el-form-item label="Workflow Type">
                     <el-radio-group v-model="new_workflow.trigger_type">
-                        <el-radio value="manual" label="manual">Manual</el-radio>
-                        <el-radio value="automatic" label="automatic">Automatic</el-radio>
+                        <el-radio value="manual" label="manual">{{ $t('Manual') }}</el-radio>
+                        <el-radio value="automatic" label="automatic">{{$t('Automatic')}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <div class="fs_workflow_type_info">
@@ -87,7 +87,7 @@
                             workflow from a ticket, Fluent Support performs all the actions.
                         </div>
                         <div class="fs_workflow_info_body">
-                            <b>Example</b><br/>
+                            <b>{{$t('Example')}}</b><br/>
                             When a customer's ticket/response in with a specific question, you execute this workflow to
                             send a reply, add a tag and assign it to someone on your team.
                         </div>
@@ -98,7 +98,7 @@
                             happening to your tickets and conversations, It will run the defined actions automatically.
                         </div>
                         <div class="fs_workflow_info_body">
-                            <b>Example</b><br/>
+                            <b>{{$t('Example')}}</b><br/>
                             When the subject line contains "Bug Report", you want Fluent Support to automatically add a
                             tag, send an email to the customer and assign a support agent.
                         </div>
@@ -108,7 +108,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button v-loading="creating" :disabled="creating || !new_workflow.title" type="primary"
-                               @click="createWorkflow()">Continue</el-button>
+                               @click="createWorkflow()">{{$t('Continue')}}</el-button>
                 </span>
             </template>
         </el-dialog>

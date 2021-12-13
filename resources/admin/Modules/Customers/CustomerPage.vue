@@ -4,7 +4,7 @@
             <div style="padding: 20px" class="fs_box_header">
                 <div class="fs_box_head">
                     <el-breadcrumb separator="/">
-                        <el-breadcrumb-item :to="{ name: 'Customers' }">Customers</el-breadcrumb-item>
+                        <el-breadcrumb-item :to="{ name: 'Customers' }">{{$t('Customers')}}</el-breadcrumb-item>
                         <el-breadcrumb-item>{{ customer.first_name }} {{ customer.last_name }}</el-breadcrumb-item>
                     </el-breadcrumb>
                 </div>

@@ -659,7 +659,7 @@ class TicketController extends Controller
 
         if (!defined('FLUENTCRM')) {
             return $this->sendError([
-                'message' => 'FluentCRM is not installed'
+                'message' => __('FluentCRM is not installed', 'fluent-support')
             ]);
         }
 
@@ -667,7 +667,7 @@ class TicketController extends Controller
 
         if (!$contactId) {
             return $this->sendError([
-                'message' => 'Contact could not be found'
+                'message' => __('Contact could not be found', 'fluent-support')
             ]);
         }
 
@@ -677,7 +677,7 @@ class TicketController extends Controller
 
         if (!$canAddTags) {
             return $this->sendError([
-                'message' => 'Sorry you do not have permission to add contact tags'
+                'message' => __('Sorry you do not have permission to add contact tags', 'fluent-support')
             ]);
         }
 
@@ -702,7 +702,7 @@ class TicketController extends Controller
 
         return [
             'tags'    => $contact->tags,
-            'message' => 'FluentCRM contact tags has been updated'
+            'message' => __('FluentCRM contact tags has been updated', 'fluent-support')
         ];
 
     }

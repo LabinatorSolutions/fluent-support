@@ -52,7 +52,7 @@ export default {
             this.attachments.splice(this.attachments.indexOf(file.response.attachments[0]), 1);
         },
         handleExceed(files,fileList) {
-            this.error_message = `You can upload maximum ${fileList.length} files`;
+            this.error_message = `${this.$t('You can upload maximum')} ${fileList.length} ${this.$t('files')}`;
         },
         handleError(err, file, fileList) {
             let message = this.convertToText(JSON.parse(err.message));

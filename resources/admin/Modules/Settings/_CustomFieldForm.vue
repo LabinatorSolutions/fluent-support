@@ -32,7 +32,7 @@
                                   v-model="item.slug">
                             <template v-if="form_type == 'new'" #prepend>cf_</template>
                         </el-input>
-                        <p v-if="form_type == 'new'">You can not change the slug once save a custom field</p>
+                        <p v-if="form_type == 'new'">{{$t('You can not change the slug once save a custom field')}}</p>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
@@ -57,28 +57,28 @@
                     v-if="optionInputVisible"
                     v-model="optionInputValue"
                     ref="saveTagInput"
-                    placeholder="type and press enter"
+                    :placeholder="$t('type and press enter')"
                     @keyup.enter.native="handleOptionInputConfirm"
                     @blur="handleOptionInputConfirm"
                 >
                 </el-input>
                 <el-button v-else class="button-new-tag" size="small" @click="showOptionInput">
-                    + New Option
+                    + {{$t('New Option')}}
                 </el-button>
             </el-form-item>
 
             <el-row style="margin-top: 10px;" :gutter="30">
                 <el-col :sm="12" :xs="24">
                     <el-form-item>
-                        <el-checkbox true-label="yes" false-label="no" v-model="item.admin_only">This is an agent
-                            only field
+                        <el-checkbox true-label="yes" false-label="no" v-model="item.admin_only">
+                            {{$t('This is an agent only field')}}
                         </el-checkbox>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
                     <el-form-item>
                         <el-checkbox @change="initConditions(item)" v-model="item.has_logics" true-label="yes"
-                                     false-label="no">Enable Conditional Logics
+                                     false-label="no">{{$t('Enable Conditional Logics')}}
                         </el-checkbox>
                     </el-form-item>
                 </el-col>
@@ -88,16 +88,16 @@
                 <table style="margin-bottom: 20px;" class="fs_table fs_stripe">
                     <thead>
                     <tr>
-                        <th>Field</th>
-                        <th>Operator</th>
-                        <th>Match Value</th>
+                        <th>{{$t('Field')}}</th>
+                        <th>{{$t('Operator')}}</th>
+                        <th>{{$t('Match Value')}}</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="(condition,conditionIndex) in item.conditions" :key="conditionIndex">
                         <td>
-                            <el-select filterable v-model="condition.item_key" placeholder="Select Field">
+                            <el-select filterable v-model="condition.item_key" :placeholder="$t('Select Field')">
                                 <el-option
                                     v-for="(field, fieldKey) in keyedFields"
                                     :key="field.slug" :value="field.slug"
@@ -108,16 +108,16 @@
                         <td>
                             <el-select v-if="condition.item_key && keyedFields[condition.item_key]" filterable
                                        v-model="condition.operator"
-                                       placeholder="Select Field">
-                                <el-option label="Equal" value="="/>
-                                <el-option label="Not Equal" value="!="/>
+                                       :placeholder="$t('Select Field')">
+                                <el-option :label="$t('Equal')" value="="/>
+                                <el-option :label="$t('Not Equal')" value="!="/>
                                 <template v-if="keyedFields[condition.item_key].type == 'number'">
-                                    <el-option label="Less than" value="lt"/>
-                                    <el-option label="Greater Than" value="gt"/>
+                                    <el-option :label="$t('Less than')" value="lt"/>
+                                    <el-option :label="$t('Greater Than')" value="gt"/>
                                 </template>
                                 <template v-else-if="!keyedFields[condition.item_key].options">
-                                    <el-option label="Contains" value="contains"/>
-                                    <el-option label="Not Contains" value="not_contains"/>
+                                    <el-option :label="$t('Contains')" value="contains"/>
+                                    <el-option :label="$t('Not Contains')" value="not_contains"/>
                                 </template>
                             </el-select>
                         </td>
@@ -131,7 +131,7 @@
                                 </el-select>
                                 <el-input v-else
                                           :type="(keyedFields[condition.item_key].type == 'number') ? 'number' : 'text'"
-                                          v-model="condition.value" placeholder="Type Compare Value"/>
+                                          v-model="condition.value" :placeholder="$t('Type Compare Value')"/>
                             </template>
                         </td>
                         <td>
@@ -146,8 +146,8 @@
                 </table>
                 <el-form-item label="Condition Match Type">
                     <el-radio-group v-model="item.match_type">
-                        <el-radio label="all">Match all conditions</el-radio>
-                        <el-radio label="any">Match any conditions</el-radio>
+                        <el-radio label="all">{{$t('Match all conditions')}}</el-radio>
+                        <el-radio label="any">{{$t('Match any conditions')}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
             </template>

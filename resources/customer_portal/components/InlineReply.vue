@@ -24,7 +24,7 @@
             <error :error="errors.get('permission_error')"/>
 
             <p class="fs_private_disc" v-if="ticket.privacy == 'private'">{{$t('This ticket is')}} <b>{{$t('Private')}}</b>. {{$t('agent_and_officials_can_see')}}</p>
-            <p class="fs_public_disc" v-else>This ticket is <b>{{$t('Public')}}</b>. {{$t('not_to_share_private_info')}}</p>
+            <p class="fs_public_disc" v-else>{{$t('This ticket is')}} <b>{{$t('Public')}}</b>. {{$t('not_to_share_private_info')}}</p>
         </div>
     </div>
 </template>

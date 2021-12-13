@@ -45,23 +45,23 @@ class StatModule
 
         return [
             'new_tickets'    => [
-                'title' => 'New Tickets',
+                'title' => __('New Tickets', 'fluent-support'),
                 'count' => $newTickets
             ],
             'active_tickets' => [
-                'title' => 'Active Tickets',
+                'title' => __('Active Tickets', 'fluent-support'),
                 'count' => $activeTickets
             ],
             'closed_tickets' => [
-                'title' => 'Closed Tickets',
+                'title' => __('Closed Tickets', 'fluent-support'),
                 'count' => $closedTickets
             ],
             'responses'      => [
-                'title' => 'Responses',
+                'title' => __('Responses', 'fluent-support'),
                 'count' => $responses
             ],
             'interactions'  =>[
-                'title' =>'Interactions',
+                'title' => __('Interactions', 'fluent-support'),
                 'count' => $interactions
             ]
         ];
@@ -83,19 +83,19 @@ class StatModule
 
         return [
             'new_tickets'    => [
-                'title' => 'New Tickets',
+                'title' => __('New Tickets', 'fluent-support'),
                 'count' => $newTickets
             ],
             'active_tickets' => [
-                'title' => 'Active Tickets',
+                'title' => __('Active Tickets', 'fluent-support'),
                 'count' => $activeTickets
             ],
             'closed_tickets' => [
-                'title' => 'Closed Tickets',
+                'title' => __('Closed Tickets', 'fluent-support'),
                 'count' => $closedTickets
             ],
             'responses'      => [
-                'title' => 'Responses',
+                'title' => __('Responses', 'fluent-support'),
                 'count' => $responses
             ]
         ];
@@ -115,15 +115,15 @@ class StatModule
 
         return [
             'replies_count' =>  [
-                'title' => 'Total Replies',
+                'title' => __('Total Replies', 'fluent-support'),
                 'count' => $replies_count
             ],
             'interactions_count' => [
-                'title' => 'Total Interactions',
+                'title' => __('Total Interactions', 'fluent-support'),
                 'count' => $interactions_count
             ],
             'total_closed' => [
-                'title' => 'Total Closed',
+                'title' => __('Total Closed', 'fluent-support'),
                 'count' => $total_closed
             ]
         ];

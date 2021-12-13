@@ -206,11 +206,11 @@
                                                     <el-dropdown-menu>
                                                         <el-dropdown-item
                                                             :command="{ type: 'edit', conversation: conversation }"
-                                                            icon="el-icon-edit"> Edit
+                                                            icon="el-icon-edit"> {{$t('Edit')}}
                                                         </el-dropdown-item>
                                                         <el-dropdown-item
                                                             :command="{ type: 'delete', conversation: conversation }"
-                                                            icon="el-icon-delete"> Delete
+                                                            icon="el-icon-delete"> {{$t('Delete')}}
                                                         </el-dropdown-item>
                                                     </el-dropdown-menu>
                                                 </template>
@@ -246,7 +246,7 @@
                                 <section class="fs_thread_message">
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
-                                            <strong>{{ ticket.customer?.full_name }}</strong> started the conversation
+                                            <strong>{{ ticket.customer?.full_name }}</strong> {{$t('started the conversation')}}
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="ticket.source == 'email'"

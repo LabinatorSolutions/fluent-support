@@ -27,7 +27,7 @@
                             <template #default="scope">
                                 <el-button type="text" @click="updateFieldModal(scope.$index)" size="medium"
                                            icon="el-icon-edit"></el-button>
-                                <el-popconfirm title="Are you sure to delete this field?"
+                                <el-popconfirm :title="$t('custom_ticket_field_delete')"
                                                @confirm="deleteField(scope.$index)">
                                     <template #reference>
                                         <el-button type="text" size="medium" icon="el-icon-delete" style="color: red; margin-right: .3em;"></el-button>
@@ -62,7 +62,7 @@
             width="60%">
             <custom-field-form form_type="new" :field_types="field_types" :item="new_item"></custom-field-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="createField()" type="success" size="small">Add</el-button>
+                <el-button @click="createField()" type="success" size="small">{{$t('Add')}}</el-button>
             </div>
         </el-dialog>
 
@@ -73,7 +73,7 @@
             width="60%">
             <custom-field-form v-if="updateFieldVisible" :fields="fields" form_type="update" :field_types="field_types" :item="update_field"></custom-field-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="updateField()" type="success" size="small">Update Field</el-button>
+                <el-button @click="updateField()" type="success" size="small">{{$t('Update Field')}}</el-button>
             </div>
         </el-dialog>
     </div>

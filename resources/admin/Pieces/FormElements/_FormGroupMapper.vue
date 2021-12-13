@@ -10,7 +10,7 @@
         <tr v-for="(fieldItem, fieldKey) in field.fields" :key="fieldKey">
             <td>{{fieldItem.label}}</td>
             <td>
-                <el-select clearable filterable v-model="model[fieldKey]" placeholder="Select Value">
+                <el-select clearable filterable v-model="model[fieldKey]" :placeholder="$t('Select Value')">
                     <el-option
                         v-for="option in field.value_options"
                         :key="option.id"

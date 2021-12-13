@@ -10,7 +10,7 @@
         <tbody>
         <tr v-for="(item, itemIndex) in model" :key="itemIndex">
             <td>
-                <el-select clearable filterable v-model="item.field_key" placeholder="Select Contact Property">
+                <el-select clearable filterable v-model="item.field_key" :placeholder="$t('Select Contact Property')">
                     <el-option
                         v-for="(option, optionKey) in field.fields"
                         :key="optionKey"
@@ -19,7 +19,7 @@
                 </el-select>
             </td>
             <td>
-                <el-select clearable filterable v-model="item.field_value" placeholder="Select Form Property">
+                <el-select clearable filterable v-model="item.field_value" :placeholder="$t('Select Form Property')">
                     <el-option
                         v-for="option in field.value_options"
                         :key="option.id"
@@ -39,7 +39,7 @@
             </td>
             <td>
                 <div class="text-align-right">
-                    <el-button @click="addMore()" size="small" icon="el-icon-plus">Add More</el-button>
+                    <el-button @click="addMore()" size="small" icon="el-icon-plus">{{$t('Add More')}}</el-button>
                 </div>
             </td>
         </tr>

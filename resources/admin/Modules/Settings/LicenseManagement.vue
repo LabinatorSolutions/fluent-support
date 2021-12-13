@@ -18,13 +18,13 @@
 
                 <div style="background: white;" v-loading="verifying" class="fs_narrow_promo text-align-center" :class="'fc_license_'+licenseData.status">
                     <div v-if="licenseData.status == 'expired'">
-                        <h3>Looks like your license has been expired {{licenseData.expires | nsHumanDiffTime}}</h3>
-                        <a :href="licenseData.renew_url" target="_blank" class="el-button el-button--danger el-button--small">Click Here to Renew your License</a>
+                        <h3>{{$t('Looks like your license has been expired')}} {{licenseData.expires | nsHumanDiffTime}}</h3>
+                        <a :href="licenseData.renew_url" target="_blank" class="el-button el-button--danger el-button--small">{{$t('Click Here to Renew your License')}}</a>
 
                         <hr style="margin: 20px 0px;" />
-                        <p v-if="!showNewLicenseInput">Have a new license Key? <a @click.prevent="showNewLicenseInput = !showNewLicenseInput" href="#">Click here</a></p>
+                        <p v-if="!showNewLicenseInput">{{$t('Have a new license Key?')}} <a @click.prevent="showNewLicenseInput = !showNewLicenseInput" href="#">Click here</a></p>
                         <div v-else>
-                            <h3>Your License Key</h3>
+                            <h3>{{$t('Your License Key')}}</h3>
                             <el-input v-model="licenseKey" placeholder="License Key">
                                 <template #append>
                                     <el-button @click="verifyLicense()" icon="el-icon-lock">{{$t('Verify License')}}</el-button>
@@ -34,19 +34,19 @@
                     </div>
                     <div v-else-if="licenseData.status == 'valid'">
                         <div class="text-align-center"><span style="font-size: 50px;" class="el-icon el-icon-circle-check"></span></div>
-                        <h2>You license key is valid and activated</h2>
+                        <h2>{{$t('You license key is valid and activated')}}</h2>
                         <hr style="margin: 20px 0px;" />
-                        <p>Want to deactivate this license? <a @click.prevent="deactivateLicense()" href="#">Click here</a></p>
+                        <p>{{$t('Want to deactivate this license?')}} <a @click.prevent="deactivateLicense()" href="#">{{$t('Click here')}}</a></p>
                     </div>
                     <div v-else>
-                        <h3>Please Provide a license key of FluentSupport - Customer Support Plugin for WordPress</h3>
+                        <h3>{{$t('Please Provide a license key of FluentSupport - Customer Support Plugin for WordPress')}}</h3>
                         <el-input v-model="licenseKey" placeholder="License Key">
                             <template #append>
                                 <el-button @click="verifyLicense()" icon="el-icon-lock">{{$t('Verify License')}}</el-button>
                             </template>
                         </el-input>
                         <hr style="margin: 20px 0 30px;" />
-                        <p v-if="!showNewLicenseInput">Don't have a license key? <a target="_blank" :href="licenseData.purchase_url">Purchase one here</a></p>
+                        <p v-if="!showNewLicenseInput">{{$t('dont_have_a_license_key')}} <a target="_blank" :href="licenseData.purchase_url">{{$t('Purchase one here')}}</a></p>
                     </div>
                 </div>
 
@@ -54,7 +54,7 @@
             </div>
             <div style="padding: 20px; background: white;" class="fs_box_body fs_narrow_promo" v-else>
                 <el-skeleton :rows="5" animated/>
-                <h3>Fetching License Information Please wait</h3>
+                <h3>{{$t('Fetching License Information Please wait')}}</h3>
             </div>
         </div>
     </div>

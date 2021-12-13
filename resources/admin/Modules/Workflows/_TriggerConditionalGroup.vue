@@ -24,12 +24,12 @@
                         <el-select @change="maybeValueReset(setting, 'operator')" placeholder="Operator"
                                    v-model="setting.data_operator">
                             <template v-if="all_conditions[setting.data_key].data_type == 'string'">
-                                <el-option value="contains" label="Contains"></el-option>
-                                <el-option value="not_contains" label="Not contains"></el-option>
+                                    <el-option value="contains" :label="$t('Contains')"></el-option>
+                                <el-option value="not_contains" :label="$t('Not contains')"></el-option>
                             </template>
                             <template v-if="all_conditions[setting.data_key].data_type == 'single_dropdown'">
-                                <el-option value="equal" label="Equal"></el-option>
-                                <el-option value="not_equal" label="Not Equal"></el-option>
+                                <el-option value="equal" :label="$t('Equal')"></el-option>
+                                <el-option value="not_equal" :label="$t('Not Equal')"></el-option>
                             </template>
                             <template
                                 v-else-if="all_conditions[setting.data_key].data_type == 'yes_no'">
@@ -38,12 +38,12 @@
                             </template>
 
                             <template v-else-if="all_conditions[setting.data_key].data_type == 'date_range'">
-                                <el-option value="<" label="Is before"></el-option>
-                                <el-option value=">" label="Is after"></el-option>
-                                <el-option value="range" label="Is between"></el-option>
+                                <el-option value="<" :label="$t('Is before')"></el-option>
+                                <el-option value=">" :label="$t('Is after')"></el-option>
+                                <el-option value="range" :label="$t('Is between')"></el-option>
                             </template>
                             <template v-else-if="all_conditions[setting.data_key].data_type == 'time_range'">
-                                <el-option value="range" label="Is between"></el-option>
+                                <el-option value="range" :label="$t('Is between')"></el-option>
                             </template>
                         </el-select>
                     </div>
@@ -54,20 +54,20 @@
                                        :value="optionKey" :key="optionKey" :label="option"></el-option>
                         </el-select>
                         <template v-else-if="all_conditions[setting.data_key].data_type == 'date_range'">
-                            <el-date-picker value-format="YYYY-MM-DD HH:mm" v-if="setting.data_operator == '>' || setting.data_operator == '<'" v-model="setting.data_value" type="datetime" placeholder="Pick a day" />
+                            <el-date-picker value-format="YYYY-MM-DD HH:mm" v-if="setting.data_operator == '>' || setting.data_operator == '<'" v-model="setting.data_value" type="datetime" :placeholder="$t('Pick a day')" />
                             <div v-else-if="setting.data_operator == 'range'" class="fs_range_inputs">
-                                <el-date-picker value-format="YYYY-MM-DD HH:mm" v-model="setting.value_1" type="datetime" placeholder="From" />
-                                <el-date-picker value-format="YYYY-MM-DD HH:mm" v-model="setting.value_2" type="datetime" placeholder="To" />
+                                <el-date-picker value-format="YYYY-MM-DD HH:mm" v-model="setting.value_1" type="datetime" :placeholder="$t('From')" />
+                                <el-date-picker value-format="YYYY-MM-DD HH:mm" v-model="setting.value_2" type="datetime" :placeholder="$t('To')" />
                             </div>
                         </template>
                         <template v-else-if="all_conditions[setting.data_key].data_type == 'time_range'">
                             <div v-if="setting.data_operator == 'range'" class="fs_range_inputs">
                                 <el-time-select start="00:00"
                                                 step="00:10"
-                                                end="23:59" v-model="setting.value_1" placeholder="From" />
+                                                end="23:59" v-model="setting.value_1" :placeholder="$t('From')" />
                                 <el-time-select start="00:00"
                                                 step="00:10"
-                                                end="23:59" v-model="setting.value_2" placeholder="To" />
+                                                end="23:59" v-model="setting.value_2" :placeholder="$t('To')" />
                             </div>
                         </template>
                     </div>
@@ -76,11 +76,11 @@
                     <el-button @click="removeCondition(settingIndex)" type="text" icon="el-icon-delete"></el-button>
                 </div>
             </div>
-            <p v-if="(settingIndex+1) != settings.length" class="fs_cond_or">OR</p>
+            <p v-if="(settingIndex+1) != settings.length" class="fs_cond_or">{{$t('OR')}}</p>
         </div>
 
         <div class="fs_add_new_cond text-align-center">
-            <el-button @click="addMore()" size="small" type="text" icon="el-icon-plus">OR</el-button>
+            <el-button @click="addMore()" size="small" type="text" icon="el-icon-plus">{{$t('OR')}}</el-button>
         </div>
 
     </div>
