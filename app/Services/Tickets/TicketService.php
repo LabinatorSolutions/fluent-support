@@ -53,11 +53,12 @@ class TicketService
     }
 
     public function onAgentChange($ticket, $person){
+        do_action('fluent_support/ticket_agent_change', $ticket, $person);
         Conversation::create([
             'ticket_id' => $ticket->id,
             'person_id' => $person->id,
             'conversation_type' => 'internal_info',
-            'content' => $ticket->agent->full_name !== $person->full_name ?
+            'content' => $ticket->agent->user_id !== $person->user_id ?
                          __($person->full_name .' assign '. $ticket->agent->full_name .' in this ticket' , 'fluent-support') :
                          __($person->full_name. ' assign this ticket to self', 'fluent-support')
         ]);

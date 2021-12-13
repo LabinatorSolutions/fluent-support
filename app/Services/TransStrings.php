@@ -330,6 +330,9 @@ class TransStrings
             'Apply / Remove Tags on FluentCRM Profile' => __('Apply / Remove Tags on FluentCRM Profile', 'fluent-support'),
             'block_instruction' => __('If you select <b>Blocked</b> status then this customer can not submit a ticket or any response', 'fluent-support'),
             'Blocked' => __('Blocked', 'fluent-support'),
+            'Ticket Link(Agent)' => __('Ticket Link(Agent)', 'fluent-support'),
+            'Ticket Link(Customer)' => __('Ticket Link(Customer)', 'fluent-support'),
+
         ];
     }
 }

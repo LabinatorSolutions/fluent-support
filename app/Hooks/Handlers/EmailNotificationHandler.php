@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Emogrifier;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Mailer;
 use FluentSupport\Framework\Support\Arr;
 
@@ -203,6 +204,55 @@ class EmailNotificationHandler
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
                // $headers[] = 'Message-ID: ' . $ticket->message_id;
+            }
+
+            Mailer::send($emailTo, $subject, $emailBody, $headers);
+        }
+    }
+
+    public function onAgentAssign($agent, $ticket)
+    {
+        $currentUser = Helper::getAgentByUserId();
+
+        if (!is_null($currentUser) && $currentUser->user_id == $agent->user_id){
+            return;
+        }
+
+        $mailbox = $ticket->mailbox;
+
+        if (!$mailbox) {
+            return;
+        }
+
+        // Let's send welcome email to customer if enabled
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_agent_on_change');
+
+        if ($emailSettings && $emailSettings['status'] == 'yes') {
+
+            if($agent) {
+                $emailTo = $agent->email;
+            }
+
+            if(!$emailTo || !is_email($emailTo)) {
+                return;
+            }
+
+            $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
+                'business' => $mailbox,
+                'ticket'   => $ticket,
+                'agent'    => $agent
+            ]);
+
+            $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
+                'business'   => $mailbox,
+                'ticket'     => $ticket,
+                'agent'      => $agent,
+                'email_type' => 'ticket_agent_on_change'
+            ]);
+
+            $headers = $mailbox->getMailerHeader();
+            if ($ticket->message_id) {
+                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
             Mailer::send($emailTo, $subject, $emailBody, $headers);
