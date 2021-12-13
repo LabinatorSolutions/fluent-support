@@ -186,7 +186,7 @@ class Settings
             'ticket_agent_on_change' => [
                 'key'            => 'ticket_agent_on_change',
                 'title'          => __('Ticket Agent Change (To Agent)', 'fluent-support'),
-                'description'    => __('This email will be sent to new Assigned Agent when someone change the ticket agent', 'fluent-support'),
+                'description'    => __('This email will be sent to newly assigned agent', 'fluent-support'),
                 'email_subject'  => 'Ticket Agent Change: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ]
