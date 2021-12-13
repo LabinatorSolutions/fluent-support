@@ -154,7 +154,7 @@ class SettingsController extends Controller
                         'operator'   => '=',
                         'value'      => 'yes'
                     ],
-                    'inline_help' => __('Select the default status for new contacts. If you select pending and it\'s a new contact then a double optin email will be sent', 'fluent-support')
+                    'inline_help' => __('Select the default status for new contacts. If you select pending and it\'s a new contact then a double option email will be sent', 'fluent-support')
                 ],
                 'assigned_list'  => [
                     'type'       => 'input-options',

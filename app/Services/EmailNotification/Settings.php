@@ -109,7 +109,7 @@ class Settings
             'accepted_file_types'   => [
                 'wrapper_class' => 'fs_half_field',
                 'type'    => 'checkbox-group',
-                'label'   => 'Accepted File Types',
+                'label'   => __('Accepted File Types', 'fluent-support'),
                 'options' => $formattedMimeGroups
             ],
             'max_file_size' => [

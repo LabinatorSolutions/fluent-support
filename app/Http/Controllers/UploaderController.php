@@ -43,7 +43,7 @@ class UploaderController extends Controller
             $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
             if (in_array('file_upload', $disabledFields)) {
                 return $this->sendError([
-                    'message' => 'You do not have permission to upload a file'
+                    'message' => __('You do not have permission to upload a file', 'fluent-support')
                 ]);
             }
         }

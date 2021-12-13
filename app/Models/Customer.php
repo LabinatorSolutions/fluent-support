@@ -37,13 +37,13 @@ class Customer extends Person
     public static function mappables()
     {
         return [
-            'title'          => 'Customer Title',
-            'address_line_1' => 'Address Line 1',
-            'address_line_2' => 'Address Line 2',
-            'city'           => 'City',
-            'state'          => 'State',
-            'zip'            => 'Zip Code',
-            'country'        => 'Country',
+            'title'          => __('Customer Title', 'fluent-support'),
+            'address_line_1' => __('Address Line 1', 'fluent-support'),
+            'address_line_2' => __('Address Line 2', 'fluent-support'),
+            'city'           => __('City', 'fluent-support'),
+            'state'          => __('State', 'fluent-support'),
+            'zip'            => __('Zip Code', 'fluent-support'),
+            'country'        => __('Country', 'fluent-support'),
         ];
     }
 

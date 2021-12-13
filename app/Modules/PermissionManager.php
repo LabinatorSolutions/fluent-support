@@ -146,35 +146,35 @@ class PermissionManager
     {
         return [
             [
-                'title'       => 'Tickets Permissions',
+                'title'       => __('Tickets Permissions', 'fluent-support'),
                 'permissions' => [
-                    'fst_view_dashboard'            => 'View Dashboard',
-                    'fst_manage_own_tickets'        => 'Manage Own Tickets',
-                    'fst_manage_unassigned_tickets' => 'Manage Unassigned Tickets',
-                    'fst_manage_other_tickets'      => 'Manage Others Tickets',
-                    'fst_delete_tickets'            => 'Delete Tickets',
+                    'fst_view_dashboard'            => __('View Dashboard', 'fluent-support'),
+                    'fst_manage_own_tickets'        => __('Manage Own Tickets', 'fluent-support'),
+                    'fst_manage_unassigned_tickets' => __('Manage Unassigned Tickets', 'fluent-support'),
+                    'fst_manage_other_tickets'      => __('Manage Others Tickets', 'fluent-support'),
+                    'fst_delete_tickets'            => __('Delete Tickets', 'fluent-support'),
                 ]
             ],
             [
-                'title'       => 'Workflow Permissions',
+                'title'       => __('Workflow Permissions', 'fluent-support'),
                 'permissions' => [
-                    'fst_manage_workflows'     => 'Manage Workflows',
-                    'fst_run_workflows'        => 'Run workflows',
-                    'fst_manage_saved_replies' => 'Manage Saved Replies'
+                    'fst_manage_workflows'     => __('Manage Workflows', 'fluent-support'),
+                    'fst_run_workflows'        => __('Run workflows', 'fluent-support'),
+                    'fst_manage_saved_replies' => __('Manage Saved Replies', 'fluent-support')
                 ]
             ],
             [
-                'title'       => 'Settings',
+                'title'       => __('Settings', 'fluent-support'),
                 'permissions' => [
-                    'fst_manage_settings' => 'Manage Overall Settings',
-                    'fst_sensitive_data'  => 'Access Private Data (Customers, Agents)'
+                    'fst_manage_settings' => __('Manage Overall Settings', 'fluent-support'),
+                    'fst_sensitive_data'  => __('Access Private Data (Customers, Agents)', 'fluent-support')
                 ]
             ],
             [
-                'title'       => 'Reporting',
+                'title'       => __('Reporting', 'fluent-support'),
                 'permissions' => [
-                    'fst_view_all_reports'   => 'View All Reports',
-                    'fst_view_activity_logs' => 'View Activity Logs'
+                    'fst_view_all_reports'   => __('View All Reports', 'fluent-support'),
+                    'fst_view_activity_logs' => __('View Activity Logs', 'fluent-support')
                 ]
             ]
         ];

@@ -49,7 +49,7 @@
                         </el-table-column>
                         <el-table-column width="120" :label="$t('Status')">
                             <template #default="scope">
-                                <span v-if="scope.row.status == 'inactive'">Blocked</span>
+                                <span v-if="scope.row.status == 'inactive'">{{$t('Blocked')}}</span>
                                 <span v-else>{{ ucFirst(scope.row.status) }}</span>
                             </template>
                         </el-table-column>
@@ -69,11 +69,11 @@
 
                                 <el-popconfirm
                                     v-loading="deleting"
-                                    confirm-button-text="Yes, Delete this Customer"
-                                    cancel-button-text="No"
+                                    :confirm-button-text="$t('Yes, Delete this Customer')"
+                                    :cancel-button-text="$t('No')"
                                     icon-color="red"
                                     @confirm="deleteCustomer(scope.row.id)"
-                                    title="Are you sure to delete this customer? It will delete all associated data with this customer"
+                                    :title="$t('Are you sure to delete this customer? It will delete all associated data with this customer')"
                                 >
                                     <template #reference>
                                         <span class="fs_badge"><i class="el-icon-delete"></i></span>

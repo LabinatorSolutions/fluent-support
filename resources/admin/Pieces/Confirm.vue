@@ -12,14 +12,14 @@
                 size="mini"
                 type="text"
                 @click="cancel()">
-                cancel
+                {{$t('cancel')}}
             </el-button>
 
             <el-button
                 type="primary"
                 size="mini"
                 @click="confirm()">
-                confirm
+                {{$t('confirm')}}
             </el-button>
         </div>
 
@@ -39,7 +39,7 @@
                 default: 'top-end'
             },
             message: {
-                default: 'Are you sure to delete this?'
+                default: this.$t('Are you sure to delete this?')
             }
         },
         data() {

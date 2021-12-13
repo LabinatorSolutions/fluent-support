@@ -3,7 +3,7 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>FluentCRM Integration Settings</h3>
+                    <h3>{{$t('FluentCRM Integration Settings')}}</h3>
                 </div>
             </div>
             <div v-if="!fetching" class="fs_box_body">
@@ -15,10 +15,12 @@
                 </template>
                 <div v-else style="padding: 20px; background: white;" class="fs_narrow_promo">
                     <img style="max-width: 300px; max-height: 50px" :src="fluentcrm_logo" />
-                    <h3>Email Marketing Automation, Newsletter and CRM Plugin for WordPress</h3>
-                    <p><a target="_blank" rel="noopener" href="https://fluentcrm.com">FluentCRM</a> is a Self Hosted Email Marketing Automation Plugin for WordPress. Manage your leads and customers, email campaigns, automated email sequencing, learner and affiliate management, and monitor user activities and many more in one place; without ever having to leave your WordPress dashboard!</p>
-                    <p>Integrate your support customers with FluentCRM to segment, automate your email marketing.</p>
-                    <el-button v-loading="installing" :disabled="installing" @click="installFluentCRM()" type="success">Install & Activate FluentCRM (it's free)</el-button>
+                    <h3>{{ $t('email_marketing_automation_newsletter_crm') }}</h3>
+                    <p><a target="_blank" rel="noopener" href="https://fluentcrm.com">FluentCRM</a> {{$t('email_marketing_automation_newsletter_crm_infos')}}</p>
+                    <p>{{ $t('integrate_support_customers_with_fluentcrm') }}</p>
+                    <el-button v-loading="installing" :disabled="installing" @click="installFluentCRM()" type="success">
+                        {{ $t('install_fluentcrm') }}
+                    </el-button>
                 </div>
             </div>
             <div style="padding: 20px; background: white;" class="fs_box_body fs_narrow_promo" v-else>

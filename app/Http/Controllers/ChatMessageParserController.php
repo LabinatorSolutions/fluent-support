@@ -14,7 +14,7 @@ class ChatMessageParserController extends Controller
     {
         if (!defined('FLUENTSUPPORTPRO')) {
             return $this->sendSuccess([
-                'message' => 'Telegram Integration requires pro version of Fluent Support',
+                'message' => __('Telegram Integration requires pro version of Fluent Support', 'fluent-support'),
                 'status'  => false
             ]);
         }
@@ -22,7 +22,7 @@ class ChatMessageParserController extends Controller
         // Validate Token
         if (\FluentSupportPro\App\Services\Integrations\Telegram\TelegramHelper::getWebhookToken() != $token) {
             return $this->sendSuccess([
-                'message' => 'Bot Token could not be verified',
+                'message' => __('Bot Token could not be verified', 'fluent-support'),
                 'status'  => false
             ]);
         }
@@ -77,7 +77,7 @@ class ChatMessageParserController extends Controller
     {
         if (!defined('FLUENTSUPPORTPRO')) {
             return $this->sendSuccess([
-                'message' => 'Slack Integration requires pro version of Fluent Support',
+                'message' => __('Slack Integration requires pro version of Fluent Support', 'fluent-support'),
                 'status'  => false
             ]);
         }
@@ -85,7 +85,7 @@ class ChatMessageParserController extends Controller
         // Validate Token
         if (\FluentSupportPro\App\Services\Integrations\Slack\SlackHelper::getWebhookToken() != $token) {
             return $this->sendSuccess([
-                'message' => 'Bot Token could not be verified',
+                'message' => __('Bot Token could not be verified', 'fluent-support'),
                 'status'  => false
             ]);
         }

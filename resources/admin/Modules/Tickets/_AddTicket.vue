@@ -14,7 +14,7 @@
             </el-form-item>
 
             <el-form-item>
-                <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">Create New Customer</el-checkbox>
+                <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">{{$t('Create New Customer')}}</el-checkbox>
             </el-form-item>
 
             <div class="fs_tk_create_customer" v-if="ticket.create_customer=='yes'">
@@ -50,7 +50,9 @@
                 </el-row>
 
                 <el-form-item>
-                    <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_wp_user">Create New User in WordPress</el-checkbox>
+                    <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_wp_user">
+                        {{$t('Create New User in WordPress')}}
+                    </el-checkbox>
                 </el-form-item>
             </div>
 
