@@ -123,7 +123,7 @@ class TicketController extends Controller
             }
         }
 
-        if($request->get('create_customer') == 'yes'){
+        if($ticketData['create_customer'] == 'yes'){
             if (!empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first())){
                 $createCustomer = Customer::create($maybeNewCustomer);
                 if ($createCustomer){
