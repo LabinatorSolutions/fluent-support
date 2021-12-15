@@ -168,7 +168,7 @@ class CustomerController extends Controller
 
         $uploadedImage = FileSystem::setSubDir('customer_avatars')->put($request->files());
 
-        if($avatar = $uploadedImage{0}['url']){
+        if($avatar = $uploadedImage[0]['url']){
             $customer->avatar = $avatar;
             $customer->save();
 
