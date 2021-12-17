@@ -7,4 +7,5 @@
 return [
     'tickets' => 'FluentSupport\App\Api\Classes\Tickets',
     'customers' => 'FluentSupport\App\Api\Classes\Customers',
+    'agents' => 'FluentSupport\App\Api\Classes\Agents',
 ];
