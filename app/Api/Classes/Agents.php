@@ -68,7 +68,7 @@ class Agents
     }
 
     /**
-     * createAgentWithOrWithoutWpUser method will create an new agent
+     * createAgentWithOrWithoutWpUser method will create a new agent
      * also it will create a wp user if you want to create one
      * if you want to create a wp user too then the process will be 1st it will create a wp user
      * then after creating the wp user successfully it will create a fluent support agent
