@@ -27,8 +27,6 @@ class Tickets
     /**
      * getTickets method will return all tickets
      *
-     * @param mixed $status
-     * @param mixed $customer
      * @return object
      */
     public function getTickets()
