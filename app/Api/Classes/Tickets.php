@@ -2,8 +2,10 @@
 
 namespace FluentSupport\App\Api\Classes;
 
+use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Tickets\ResponseService;
 
 class Tickets
 {
@@ -29,20 +31,17 @@ class Tickets
      * @param mixed $customer
      * @return object
      */
-    public function getTickets($query=false)
+    public function getTickets()
     {
-
-        if(!$query) {
-            $ticketsQuery = Ticket::with([
-                'customer' => function ($query) {
-                    $query->select(['first_name', 'last_name', 'id', 'email']);
-                }, 'agent' => function ($query) {
-                    $query->select(['first_name', 'last_name', 'id', 'email']);
-                }
-            ])
-                ->orderBy('id', 'DESC');
-            return $ticketsQuery->paginate();
-        }
+        $ticketsQuery = Ticket::with([
+            'customer' => function ($query) {
+                $query->select(['first_name', 'last_name', 'id', 'email']);
+            }, 'agent' => function ($query) {
+                $query->select(['first_name', 'last_name', 'id', 'email']);
+            }
+        ])
+            ->orderBy('id', 'DESC');
+        return $ticketsQuery->paginate();
     }
 
     /**
@@ -54,6 +53,28 @@ class Tickets
     {
         if (is_numeric($id)) {
             return Ticket::findOrFail($id);
+        }
+        return false;
+    }
+
+    /**
+     * addResponse method add response to a ticket
+     * @param array $data
+     * @param int $agentId
+     * @param int $ticketId
+     */
+
+    public function addResponse(array $data, int $agentId, int $ticketId)
+    {
+        if(!$agentId || !$ticketId || !$data['content']){
+            return false;
+        }
+
+        $agent = Agent::findOrFail($agentId);
+        $ticket = Ticket::findOrFail($ticketId);
+
+        if($agent && $ticket){
+            return (new ResponseService())->createResponse($data, $agent, $ticket);
         }
         return false;
     }
