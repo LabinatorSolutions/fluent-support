@@ -13,6 +13,12 @@
                         @click="fetchTickets()"
                         icon="el-icon-refresh"
                         size="mini"></el-button>
+                    <el-switch
+                        v-model="advance_filter"
+                        @change="advance_filter!=advance_filter"
+                        active-text="Advance Filter"
+                        inactive-text=""
+                    />
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-select filterable @change="fetchTickets()" v-model="order_by" size="mini">
@@ -32,7 +38,7 @@
             <div class="fs_box_body">
                 <div v-if="show_filters">
                     <ticket-filters
-                        v-if="appReady"
+                        v-if="appReady & !advance_filter"
                         @fetchTickets="fetchTickets"
                         :filters="filters"
                         :search="search"
@@ -41,6 +47,49 @@
                 </div>
                 <el-button size="mini" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
                 </el-button>
+
+                <div v-if="advance_filter">
+                    <div v-if="advance_filter && has_pro" class="fs_rich_container">
+                        <div class="fs_rich_wrap">
+                            <div v-for="(rich_filter, filterIndex) in advanced_filters" :key="filterIndex">
+                                <div class="fs_rich_filter">
+                                    <rich-filter @maybeRemove="maybeRemoveGroup(filterIndex)" :items="rich_filter" />
+                                </div>
+                                <div class="fs_cond_or">
+                                    <em>OR</em>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fs_cond_or">
+                            <em @click="addConditionGroup()"
+                                style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><i
+                                class="el-icon-plus"></i> OR</em>
+                        </div>
+                        <template v-if="has_pro">
+                            <el-button type="primary" size="small" @click="fetchTickets()">{{$t('Filter')}}</el-button>
+                            <el-button size="small" @click="advanced_filters = [[]]; fetchTickets()">{{$t('Clear Filters')}}}</el-button>
+
+                            <div class="el-alert el-alert--info is-light" style="margin-top: 20px;" v-if="appVars.advanced_filter_suggestions.length">
+                                <ul class="fs_list">
+                                    <li
+                                        v-for="suggestion in appVars.advanced_filter_suggestions"
+                                        :key="suggestion.provider"
+                                    >
+                                        {{suggestion.title}} <a style="font-weight: bold;" :href="suggestion.btn_url">{{suggestion.btn_text}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </template>
+                    </div>
+
+                    <div class="fs_narrow_promo" v-else>
+                        <h3>{{ $t('advance_filter_promo') }}</h3>
+                        <p>{{ $t('pro_promo') }}</p>
+                        <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
+                    </div>
+
+                </div>
 
                 <el-table
                     v-loading="loading"
@@ -159,6 +208,7 @@ import AddTicket from './_AddTicket';
 import TicketTags from './parts/_Tags';
 import TicketFilters from '@/admin/Modules/Tickets/parts/TicketFilters';
 import TicketBulkActions from './_BulkActions';
+import RichFilter from "./parts/RichFilters/RichFilter";
 
 export default {
     name: 'AllTickets',
@@ -167,7 +217,8 @@ export default {
         AddTicket,
         TicketTags,
         TicketFilters,
-        TicketBulkActions
+        TicketBulkActions,
+        RichFilter
     },
     data() {
         return {
@@ -210,7 +261,9 @@ export default {
             appReady: false,
             add_response_modal: false,
             show_filters: !this.is_mobile,
-            first_time_loading: true
+            first_time_loading: true,
+            advance_filter: false,
+            advanced_filters: [[]]
         }
     },
     watch: {
@@ -223,6 +276,7 @@ export default {
     },
     methods: {
         fetchTickets() {
+            console.log(this.appVars.advanced_filter_options)
             if (!this.app_ready) {
                 return false;
             }
@@ -255,6 +309,14 @@ export default {
                     this.loading = false;
                     this.first_time_loading = false;
                 })
+        },
+        addConditionGroup() {
+            this.advanced_filters.push([]);
+        },
+        maybeRemoveGroup(index) {
+            if (this.advanced_filters.length > 1) {
+                this.advanced_filters.splice(index, 1);
+            }
         },
         gotToTicket(row) {
             this.$router.push({

@@ -320,7 +320,7 @@ class Helper
             ->where('key', $key)
             ->where('object_id', $ticketId)
             ->first();
-        
+
         if ($data) {
             return Meta::where('id', $data->id)
                 ->update([
@@ -436,6 +436,292 @@ class Helper
         }
 
         return false;
+    }
+
+    public static function getAdvancedFilterOptions()
+    {
+        $groups = [
+            'customer' => [
+                'label'    => 'Customer',
+                'value'    => 'customer',
+                'children' => [
+                    [
+                        'label' => 'General Properties',
+                        'value' => 'search',
+                    ],
+                    [
+                        'label' => 'First Name',
+                        'value' => 'first_name',
+                    ],
+                    [
+                        'label' => 'Last Name',
+                        'value' => 'last_name',
+                    ],
+                    [
+                        'label' => 'Email',
+                        'value' => 'email',
+                    ],
+                    [
+                        'label' => 'Address Line 1',
+                        'value' => 'address_line_1',
+                    ],
+                    [
+                        'label' => 'Address Line 2',
+                        'value' => 'address_line_2',
+                    ],
+                    [
+                        'label' => 'City',
+                        'value' => 'city',
+                    ],
+                    [
+                        'label' => 'State',
+                        'value' => 'state',
+                    ],
+                    [
+                        'label' => 'Postal Code',
+                        'value' => 'postal_code',
+                    ],
+                    [
+                        'label' => 'Country',
+                        'value' => 'country',
+                        'type' => 'selections',
+                        'component'   => 'options_selector',
+                        'option_key'  => 'countries',
+                        'is_multiple' => true,
+                        'is_singular_value' => true
+                    ],
+                    [
+                        'label' => 'Phone',
+                        'value' => 'phone',
+                    ],
+                ],
+            ],
+            'agent' => [
+                'label'    => 'Agent',
+                'value'    => 'agent',
+                'children' => [
+                    [
+                        'label' => 'General Properties',
+                        'value' => 'search',
+                    ],
+                    [
+                        'label' => 'First Name',
+                        'value' => 'first_name',
+                    ],
+                    [
+                        'label' => 'Last Name',
+                        'value' => 'last_name',
+                    ],
+                    [
+                        'label' => 'Email',
+                        'value' => 'email',
+                    ],
+                    [
+                        'label' => 'Address Line 1',
+                        'value' => 'address_line_1',
+                    ],
+                    [
+                        'label' => 'Address Line 2',
+                        'value' => 'address_line_2',
+                    ],
+                    [
+                        'label' => 'City',
+                        'value' => 'city',
+                    ],
+                    [
+                        'label' => 'State',
+                        'value' => 'state',
+                    ],
+                    [
+                        'label' => 'Postal Code',
+                        'value' => 'postal_code',
+                    ],
+                    [
+                        'label' => 'Country',
+                        'value' => 'country',
+                        'type' => 'selections',
+                        'component'   => 'options_selector',
+                        'option_key'  => 'countries',
+                        'is_multiple' => true,
+                        'is_singular_value' => true
+                    ],
+                    [
+                        'label' => 'Phone',
+                        'value' => 'phone',
+                    ],
+                ],
+            ],
+            'segment'    => [
+                'label'    => 'Ticket Segment',
+                'value'    => 'segment',
+                'children' => [
+                    [
+                        'label'       => 'Status',
+                        'value'       => 'status',
+                        'type'        => 'selections',
+                        'component'   => 'options_selector',
+                        'option_key'  => 'statuses',
+                        'is_multiple' => true,
+                        'is_singular_value' => true
+                    ],
+                    [
+                        'label'       => 'Client Priority',
+                        'value'       => 'client_priority',
+                        'type'        => 'selections',
+                        'component'   => 'options_selector',
+                        'option_key'  => 'contact_types',
+                        'is_multiple' => false,
+                        'is_singular_value' => true
+                    ],
+                    [
+                        'label'       => 'Agent Priority',
+                        'value'       => 'priority',
+                        'type'        => 'selections',
+                        'component'   => 'options_selector',
+                        'option_key'  => 'contact_types',
+                        'is_multiple' => false,
+                        'is_singular_value' => true
+                    ],
+                    [
+                        'label'       => 'Tags',
+                        'value'       => 'tags',
+                        'type'        => 'selections',
+                        'component'   => 'options_selector',
+                        'option_key'  => 'tags',
+                        'is_multiple' => true,
+                    ]
+                ],
+            ]
+        ];
+
+        if ($customFields = fluentcrm_get_custom_contact_fields()) {
+            // form data for custom fields in groups
+            $children = [];
+            foreach ($customFields as $field) {
+                $item = [
+                    'label' => $field['label'],
+                    'value' => $field['slug'],
+                    'type'  => $field['type'],
+                ];
+
+                if ($item['type'] == 'number') {
+                    $item['type'] = 'numeric';
+                } else if ($item['type'] == 'date') {
+                    $item['type'] = 'dates';
+                } else if (isset($field['options'])) {
+                    $item['type'] = 'selections';
+                    $options = $field['options'];
+                    $formattedOptions = [];
+                    foreach ($options as $option) {
+                        $formattedOptions[$option] = $option;
+                    }
+                    $item['options'] = $formattedOptions;
+                    $isMultiple = in_array($field['type'], ['checkbox', 'select-multi']);
+                    $item['is_multiple'] = $isMultiple;
+                    if($isMultiple) {
+                        $item['is_singular_value'] = true;
+                    }
+
+                } else {
+                    $item['type'] = 'text';
+                }
+
+                $children[] = $item;
+
+            }
+
+            $groups['custom_fields'] = [
+                'label'    => 'Custom Fields',
+                'value'    => 'custom_fields',
+                'children' => $children
+            ];
+        }
+
+        if (!defined('FLUENTCAMPAIGN') && defined('WC_PLUGIN_FILE')) {
+            $groups['woo'] = [
+                'label'    => 'WooCommerce',
+                'value'    => 'woo',
+                'children' => [
+                    [
+                        'value'    => 'total_order_count',
+                        'label'    => 'Total Order Count (Pro Required)',
+                        'type'     => 'numeric',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'    => 'total_order_value',
+                        'label'    => 'Total Order Value  (Pro Required)',
+                        'type'     => 'numeric',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'    => 'last_order_date',
+                        'label'    => 'Last Order Date  (Pro Required)',
+                        'type'     => 'dates',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'    => 'first_order_date',
+                        'label'    => 'First Order Date  (Pro Required)',
+                        'type'     => 'dates',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'       => 'purchased_items',
+                        'label'       => 'Purchased Products  (Pro Required)',
+                        'type'        => 'selections',
+                        'component'   => 'product_selector',
+                        'is_multiple' => true,
+                        'disabled'    => true
+                    ],
+                ],
+            ];
+        }
+
+        if (!defined('FLUENTCAMPAIGN') && class_exists('\Easy_Digital_Downloads')) {
+            $groups['edd'] = [
+                'label'    => 'EDD',
+                'value'    => 'edd',
+                'children' => [
+                    [
+                        'value'    => 'total_order_count',
+                        'label'    => 'Total Order Count (Pro Required)',
+                        'type'     => 'numeric',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'    => 'total_order_value',
+                        'label'    => 'Total Order Value  (Pro Required)',
+                        'type'     => 'numeric',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'    => 'last_order_date',
+                        'label'    => 'Last Order Date  (Pro Required)',
+                        'type'     => 'dates',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'    => 'first_order_date',
+                        'label'    => 'First Order Date  (Pro Required)',
+                        'type'     => 'dates',
+                        'disabled' => true
+                    ],
+                    [
+                        'value'       => 'purchased_items',
+                        'label'       => 'Purchased Products  (Pro Required)',
+                        'type'        => 'selections',
+                        'component'   => 'product_selector',
+                        'is_multiple' => true,
+                        'disabled'    => true
+                    ],
+                ],
+            ];
+        }
+
+        $groups = apply_filters('fluent_support/advanced_filter_options', $groups);
+
+        return array_values($groups);
     }
 
 }

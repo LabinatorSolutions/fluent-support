@@ -49,6 +49,8 @@ import {
     ElDropdownItem,
     ElBreadcrumb,
     ElBreadcrumbItem,
+    ElCascader,
+    ElCascaderPanel,
 
     ElTag,
 
@@ -105,7 +107,9 @@ const components = [
     ElDropdownItem,
     ElDatePicker,
     ElTag,
-    ElSelectV2
+    ElSelectV2,
+    ElCascader,
+    ElCascaderPanel
 ];
 
 components.forEach(component => {
