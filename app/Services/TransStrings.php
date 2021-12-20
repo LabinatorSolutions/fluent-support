@@ -210,6 +210,8 @@ class TransStrings
             'Waiting for Reply'    => __('Waiting for Reply', 'fluent-support'),
             'Please input'    => __('Please input', 'fluent-support'),
             'Reset Filters'    => __('Reset Filters', 'fluent-support'),
+            'Clear Filters'     => __('Clear Filters', 'fluent-support'),
+            'Filter'     => __('Filter', 'fluent-support'),
             'Priority'    => __('Priority', 'fluent-support'),
             'Client Priority'    => __('Client Priority', 'fluent-support'),
             'Product ID'    => __('Product ID', 'fluent-support'),
@@ -454,7 +456,8 @@ class TransStrings
             'Select Form Property' => __('Select Form Property', 'fluent-support'),
             'Add More' => __('Add More', 'fluent-support'),
             'confirm' => __('confirm', 'fluent-support'),
-            'Are you sure to delete this?' => __('Are you sure to delete this?', 'fluent-support')
+            'Are you sure to delete this?' => __('Are you sure to delete this?', 'fluent-support'),
+            'advance_filter_promo' => __('Using advance filtering you can get more specific tickets', 'fluent-support')
         ];
     }
 }

@@ -202,3 +202,25 @@ ul.el-upload-list.el-upload-list--picture {
         }
     }
 }
+
+.fs_rich_container{
+    overflow: hidden;
+    background: #ffffff;
+    border-bottom: 1px solid white;
+    padding: 15px;
+    .fs_rich_filter{
+        background: #f9fafa;
+        border: 1px solid #d5dce1;
+        border-radius: 3px;
+        margin-bottom: 20px;
+        padding: 5px 10px 10px;
+    }
+    .fs_cond_or {
+        border-bottom: 1px dashed #d5dce1;
+        margin: 0 0 35px;
+        color: gray;
+        padding: 0;
+        text-align: center;
+    }
+}
+
