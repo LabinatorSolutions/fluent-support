@@ -16,8 +16,9 @@
                     <el-switch
                         v-model="advance_filter"
                         @change="advance_filter!=advance_filter"
-                        active-text="Advance Filter"
+                        active-text="Advanced Filter"
                         inactive-text=""
+                        style="margin-left: 0.6em;"
                     />
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
