@@ -21,7 +21,7 @@
                     <el-button @click="addVisible = !addVisible" size="small" icon="el-icon-plus">Add</el-button>
                 </template>
             </el-popover>
-            Add new filter to narrow down your contacts based on different properties
+            {{$t('advance_filter_help_text')}}
         </div>
 
         <div v-else class="fs_filter_intro fs_padded_20">
