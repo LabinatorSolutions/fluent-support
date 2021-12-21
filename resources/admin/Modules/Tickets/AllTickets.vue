@@ -68,7 +68,7 @@
                         </div>
                         <template v-if="has_pro">
                             <el-button type="primary" size="small" @click="fetchTickets()">{{$t('Filter')}}</el-button>
-                            <el-button size="small" @click="advanced_filters = [[]]; fetchTickets()">{{$t('Clear Filters')}}}</el-button>
+                            <el-button size="small" @click="advanced_filters = [[]]; fetchTickets()">{{$t('Clear Filters')}}</el-button>
 
                             <div class="el-alert el-alert--info is-light" style="margin-top: 20px;" v-if="appVars.advanced_filter_suggestions.length">
                                 <ul class="fs_list">
@@ -211,6 +211,9 @@ import TicketFilters from '@/admin/Modules/Tickets/parts/TicketFilters';
 import TicketBulkActions from './_BulkActions';
 import RichFilter from "./parts/RichFilters/RichFilter";
 
+const isEmpty = require('lodash/isEmpty');
+const isArray = require('lodash/isArray');
+
 export default {
     name: 'AllTickets',
     components: {
@@ -277,20 +280,44 @@ export default {
     },
     methods: {
         fetchTickets() {
-            console.log(this.appVars.advanced_filter_options)
             if (!this.app_ready) {
                 return false;
             }
             this.ticket_selections = [];
             this.loading = true;
-            this.$get('tickets', {
+            let query = {
                 page: this.pagination.current_page,
                 per_page: this.pagination.per_page,
                 order_by: this.order_by,
                 order_type: this.order_type,
                 search: this.search,
-                filters: this.filters
-            })
+                filters: this.filters,
+                advanced_filter: this.advanced_filters
+            };
+
+            if (this.advanced_filter==true) {
+                query = {advanced_filters: JSON.stringify(this.advanced_filters), ...query}
+            } else {
+                query = {...this.filters, ...query};
+            }
+
+            const params = {};
+
+            each(query, (val, key) => {
+                if (!isEmpty(val)) {
+                    params[key] = val;
+                }
+            });
+
+            window.fs_sub_params = params;
+
+            params.t = Date.now();
+
+            this.$router.replace({
+                name: 'tickets', query: params
+            });
+
+            this.$get('tickets', query)
                 .then(response => {
 
                     if (response.tickets.total && (!response.tickets.from && this.pagination.current_page > 1)) {
