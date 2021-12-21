@@ -569,7 +569,7 @@ class Helper
                         'value'       => 'client_priority',
                         'type'        => 'selections',
                         'component'   => 'options_selector',
-                        'option_key'  => 'contact_types',
+                        'option_key'  => 'client_priority',
                         'is_multiple' => false,
                         'is_singular_value' => true
                     ],
@@ -578,7 +578,7 @@ class Helper
                         'value'       => 'priority',
                         'type'        => 'selections',
                         'component'   => 'options_selector',
-                        'option_key'  => 'contact_types',
+                        'option_key'  => 'priority',
                         'is_multiple' => false,
                         'is_singular_value' => true
                     ],

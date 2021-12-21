@@ -3,14 +3,14 @@
         <td style="width: 190px">
             {{ ucFirst(itemConfig.provider) }} <span class="fs_provider_separator">/</span> {{ itemConfig.label }}
         </td>
-        <td style="width: 190px" class="fc_filter_operator">
+        <td style="width: 190px" class="fs_filter_operator">
             <el-select size="mini" placeholder="Select Operator" @visible-change="maybeOperatorSelected"
                        v-model="item.operator">
                 <el-option v-for="(optionLabel,option) in operatorOptions" :key="option" :value="option"
                            :label="optionLabel"></el-option>
             </el-select>
         </td>
-        <td class="fc_filter_value">
+        <td class="fs_filter_value">
             <el-input size="mini" v-if="!itemConfig.type || itemConfig.type == 'text'" placeholder="Condition Value"
                       type="text" v-model="item.value"/>
             <el-input size="mini" v-else-if="itemConfig.type == 'numeric'" type="number" placeholder="Condition Value"
@@ -67,10 +67,14 @@
 </template>
 
 <script>
-
+import isArray from 'lodash/isArray';
+import OptionSelector from '../../../../Pieces/FormElements/_OptionSelector';
 export default {
     name: "RichFilterItem",
     props: ['item', 'filterLabels'],
+    components: {
+        OptionSelector
+    },
     data() {
         return {}
     },

@@ -49,7 +49,7 @@ import RichFilterItem from './_RichFilterItem';
 import each from 'lodash/each';
 
 export default {
-    name: "RichFilter",
+    name: 'RichFilter',
     components: {
         RichFilterItem
     },
