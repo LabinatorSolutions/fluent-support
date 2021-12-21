@@ -50,13 +50,6 @@
                         size: 'mini'
                     }"/>
                 </template>
-                <template v-else-if="itemConfig.component == 'tax_selector'">
-                    <taxonomy-terms-selector v-model="item.value" :field="{
-                        is_multiple: itemConfig.is_multiple,
-                        size: 'mini',
-                        taxonomy: itemConfig.taxonomy
-                    }"/>
-                </template>
                 <pre v-else>{{ itemConfig }}</pre>
             </template>
         </td>
@@ -131,7 +124,7 @@ export default {
         closingSource(status) {
             if (!status) {
                 setTimeout(() => {
-                    jQuery(this.$el).find('.fc_filter_operator .el-select').trigger('click');
+                    jQuery(this.$el).find('.fs_filter_operator .el-select').trigger('click');
                 }, 300);
             }
         },
@@ -141,7 +134,7 @@ export default {
                     this.item.value = '';
                 }
                 setTimeout(() => {
-                    jQuery(this.$el).find('.fc_filter_value input').focus();
+                    jQuery(this.$el).find('.fs_filter_value input').focus();
                 }, 200);
             }
         },
@@ -157,7 +150,7 @@ export default {
             const objectValues = Object.keys(this.operatorOptions);
             if (objectValues.length) {
                 this.item.operator = objectValues[0];
-                jQuery(this.$el).find('.fc_filter_operator .el-select').trigger('click');
+                jQuery(this.$el).find('.fs_filter_operator .el-select').trigger('click');
             }
         }
     }

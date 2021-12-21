@@ -24,7 +24,7 @@
             {{$t('advance_filter_help_text')}}
         </div>
 
-        <div v-else class="fs_filter_intro fs_padded_20">
+        <div v-else class="fs_filter_intro">
             <el-popover
                 placement="right"
                 width="450"
@@ -35,7 +35,8 @@
                                    :options="filterOptions"
                                    v-model="new_item"/>
                 <template #reference>
-                    <el-button @click="addVisible = !addVisible" size="small" icon="el-icon-plus">And</el-button>
+                    <el-button @click="addVisible = !addVisible" size="small" icon="el-icon-plus" style="margin-top: 0.7em;
+">And</el-button>
                 </template>
             </el-popover>
         </div>
@@ -80,7 +81,7 @@ export default {
             if (this.new_item.length == 2) {
                 let operator = '';
 
-                if (this.new_item[0] == 'customer' && this.new_item[1] != 'country') {
+                if (this.new_item[0] == 'customer' && this.new_item[1] != 'agent') {
                     operator = 'contains';
                 }
 

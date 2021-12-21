@@ -34,19 +34,20 @@
 export default {
     name: 'OptionSelector',
     props: ['value', 'field'],
+    emits: ['update:value'],
     data() {
         return {
             options: {},
             model: this.value,
             element_ready: false,
-            new_item: '',
+            new_item: [],
             creating: false,
             create_pop_status: false
         }
     },
     watch: {
         model(value) {
-            this.$emit('input', value);
+            this.$emit('update:modelValue', value);
         }
     },
     methods: {
@@ -91,10 +92,10 @@ export default {
         }
     },
     mounted() {
-        if (window.fc_options_cache && window.fc_options_cache[this.field.option_key]) {
-            this.options = window.fc_options_cache;
+        if (window.fs_options_cache && window.fs_options_cache[this.field.option_key]) {
+            this.options = window.fs_options_cache;
             if (this.field.is_multiple && typeof this.value !== 'object') {
-                this.$set(this, 'model', []);
+                this.$set(this, 'modelValue', []);
             }
             this.element_ready = true;
         } else {
