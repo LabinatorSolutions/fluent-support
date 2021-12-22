@@ -311,9 +311,10 @@ class Ticket extends Model
     public function buildSegmentFilterQuery($query, $filters)
     {
         foreach ($filters as $filter) {
-            if (in_array($filter['property'], ['tags'])) {
+            if (in_array($filter['property'], ['tags', 'product'])) {
+                $subField = $filter['property'] == 'tags' ? 'tag_id' : 'product_id';
                 list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
-                $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, 'tag_id', $filter);
+                $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
             } else {
                 $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
 
@@ -324,6 +325,14 @@ class Ticket extends Model
         return $query;
     }
 
+    /**
+     * method to search by properties
+     * @param $provider
+     * @param $query
+     * @param $search
+     * @param string $operator
+     * @return mixed
+     */
     public function buildSearchableQuery($provider, $query, $search, $operator = 'LIKE')
     {
         $fields = $this->searchable;
