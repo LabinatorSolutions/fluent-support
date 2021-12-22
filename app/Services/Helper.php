@@ -581,6 +581,14 @@ class Helper
                         'component'   => 'options_selector',
                         'option_key'  => 'tags',
                         'is_multiple' => true,
+                    ],
+                    [
+                        'label'       => 'Products',
+                        'value'       => 'product',
+                        'type'        => 'selections',
+                        'component'   => 'options_selector',
+                        'option_key'  => 'product',
+                        'is_multiple' => true,
                     ]
                 ],
             ]
