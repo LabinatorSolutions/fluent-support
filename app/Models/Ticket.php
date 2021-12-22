@@ -226,6 +226,103 @@ class Ticket extends Model
         return $query;
     }
 
+    /**
+     * @param $filter
+     * @return string[]
+     */
+
+    public static function parseRelationalFilterQueryMethods($filter)
+    {
+        // default operator = in
+        $method = 'whereHas';
+        $subMethod = 'whereIn';
+
+        switch ($filter['operator']) {
+            case 'not_in':
+                $method = 'whereDoesntHave';
+                $subMethod = 'whereIn';
+
+                break;
+            case 'in_all':
+                $method = 'whereHas';
+                $subMethod = 'where';
+
+                break;
+            case 'not_in_all':
+                $method = 'whereDoesntHave';
+                $subMethod = 'where';
+
+                break;
+        }
+
+        return [$method, $subMethod];
+    }
+
+    /**
+     * Relation builder
+     * @param $relation
+     * @param $query
+     * @param $method
+     * @param $subMethod
+     * @param $subField
+     * @param $filter
+     * @param false $provider
+     * @return mixed
+     */
+    
+    public static function buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, $filter, $provider = false)
+    {
+        if (in_array($filter['operator'], ['in_all', 'not_in_all'])) {
+            foreach ($filter['value'] as $item) {
+                $query = static::buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, ['value' => $item, 'operator' => ''], $provider);
+            }
+        } else {
+            $query = $query->{$method}($relation, function ($relationQuery) use ($subMethod, $subField, $filter, $provider) {
+                $relationQuery = $relationQuery->{$subMethod}($subField, $filter['value']);
+
+                if ($provider) {
+                    $relationQuery = $relationQuery->where('provider', $provider);
+                }
+
+                return $relationQuery;
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * get tickets by advanced filter segment data
+     * @param $query
+     * @param $filters
+     * @return ModelQueryBuilder
+     */
+
+    public function buildSegmentFilterQuery($query, $filters)
+    {
+        foreach ($filters as $filter) {
+            if (in_array($filter['property'], ['tags'])) {
+                list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
+                $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, 'tag_id', $filter);
+            } else {
+                $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
+
+                $query = $query->{$method}($filter['property'], (array) $filter['value']);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * Filter by ticket general properties like customer name, agent name etc
+     * @param $query
+     * @param $filters
+     */
+    public function filterTicketByProperties($query, $filters)
+    {
+        // Code will be here
+    }
 
     /**
      * One2Many: Customer has to many Click Tickets
