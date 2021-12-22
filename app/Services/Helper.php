@@ -446,10 +446,6 @@ class Helper
                 'value'    => 'customer',
                 'children' => [
                     [
-                        'label' => 'General Properties',
-                        'value' => 'search',
-                    ],
-                    [
                         'label' => 'First Name',
                         'value' => 'first_name',
                     ],
@@ -500,10 +496,6 @@ class Helper
                 'label'    => 'Agent',
                 'value'    => 'agent',
                 'children' => [
-                    [
-                        'label' => 'General Properties',
-                        'value' => 'search',
-                    ],
                     [
                         'label' => 'First Name',
                         'value' => 'first_name',
