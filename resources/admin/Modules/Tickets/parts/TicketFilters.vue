@@ -120,7 +120,7 @@ export default {
     computed: {
         has_active_filter() {
             const f = this.filters;
-            return f.status_type != 'open' || f.product_id || f.mailbox_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length;
+            return f.status_type != 'open' || f.product_id || f.mailbox_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length || f.filter_type;
         }
     },
     methods: {
