@@ -207,7 +207,7 @@ import Pagination from '../../Pieces/Pagination'
 import each from 'lodash/each';
 import AddTicket from './_AddTicket';
 import TicketTags from './parts/_Tags';
-import TicketFilters from '@/admin/Modules/Tickets/parts/TicketFilters';
+import TicketFilters from "./parts/TicketFilters";
 import TicketBulkActions from './_BulkActions';
 import RichFilter from "./parts/RichFilters/RichFilter";
 
@@ -241,7 +241,8 @@ export default {
                 client_priority: '',
                 waiting_for_reply: '',
                 ticket_tags: [],
-                mailbox_id: ''
+                mailbox_id: '',
+                filter_type: 'simple'
             },
             search: '',
             order_by: 'last_customer_response',
@@ -280,6 +281,8 @@ export default {
     },
     methods: {
         fetchTickets() {
+            this.advance_filter === true ? this.filters.filter_type='advanced' : this.filters.filter_type='simple';
+
             if (!this.app_ready) {
                 return false;
             }
@@ -292,10 +295,10 @@ export default {
                 order_type: this.order_type,
                 search: this.search,
                 filters: this.filters,
-                advanced_filter: this.advanced_filters
+                advanced_filters: this.advanced_filters
             };
 
-            if (this.advanced_filter==true) {
+            if (this.advanced_filter) {
                 query = {advanced_filters: JSON.stringify(this.advanced_filters), ...query}
             } else {
                 query = {...this.filters, ...query};
