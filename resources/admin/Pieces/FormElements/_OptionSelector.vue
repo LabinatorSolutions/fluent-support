@@ -92,15 +92,7 @@ export default {
         }
     },
     mounted() {
-        if (window.fs_options_cache && window.fs_options_cache[this.field.option_key]) {
-            this.options = window.fs_options_cache;
-            if (this.field.is_multiple && typeof this.value !== 'object') {
-                this.$set(this, 'modelValue', []);
-            }
-            this.element_ready = true;
-        } else {
-            this.getOptions();
-        }
+        this.getOptions();
     }
 }
 </script>
