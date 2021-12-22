@@ -269,7 +269,7 @@ class Ticket extends Model
      * @param false $provider
      * @return mixed
      */
-    
+
     public static function buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, $filter, $provider = false)
     {
         if (in_array($filter['operator'], ['in_all', 'not_in_all'])) {
@@ -319,11 +319,50 @@ class Ticket extends Model
      * @param $query
      * @param $filters
      */
-    public function filterTicketByProperties($query, $filters)
-    {
-        // Code will be here
-    }
 
+    public function filterTicketByProperties($provider, $query, $filters)
+    {
+        foreach ($filters as $index => $filter) {
+            if ($filter['operator'] == 'contains') {
+                if ($index == 0) {
+                    $query->whereHas($provider, function ($q) use ($filter) {
+                        $q->where($filter['property'], 'LIKE', '%'.$filter['value'].'%' );
+                    });
+                }
+                $query->orWhereHas($provider, function ($q) use ($filter) {
+                    $q->orWhere($filter['property'], 'LIKE', '%'.$filter['value'].'%');
+                });
+            } elseif ($filter['operator'] == 'not_contains') {
+                if ($index == 0) {
+                    $query->whereHas($provider, function ($q) use ($filter) {
+                        $q->where($filter['property'], 'NOT LIKE', '%'.$filter['value'].'%');
+                    });
+                }
+                $query->orWhereHas($provider, function ($q) use ($filter) {
+                    $q->orWhere($filter['property'], 'NOT LIKE', '%'.$filter['value'].'%');
+                });
+            } else if ($filter['operator'] == '=') {
+                if ($index == 0) {
+                    $query->whereHas($provider, function ($q) use ($filter) {
+                        $q->where($filter['property'], '=', $filter['value']);
+                    });
+                }
+                $query->orWhereHas($provider, function ($q) use ($filter) {
+                    $q->orWhere($filter['property'], '=', $filter['value']);
+                });
+            } else if ($filter['operator'] == '!=') {
+                if ($index == 0) {
+                    $query->whereHas($provider, function ($q) use ($filter) {
+                        $q->where($filter['property'], '!=', $filter['value']);
+                    });
+                }
+                $query->orWhereHas($provider, function ($q) use ($filter) {
+                    $q->orWhere($filter['property'], '!=', $filter['value']);
+                });
+            }
+            return $query;
+        }
+    }
     /**
      * One2Many: Customer has to many Click Tickets
      * @return Model Collection
