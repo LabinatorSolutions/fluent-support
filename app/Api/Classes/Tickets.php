@@ -39,7 +39,15 @@ class Tickets
             }
         ])
             ->orderBy('id', 'DESC');
-        return $ticketsQuery->paginate();
+        $tickets = $ticketsQuery->paginate();
+        
+        if (defined('FLUENTSUPPORTPRO')){
+            foreach ($tickets as $ticket) {
+                $ticket->custom_fields = $ticket->customData();
+            }
+        }
+
+        return $tickets;
     }
 
     /**
@@ -50,7 +58,11 @@ class Tickets
     public function getTicket(int $id)
     {
         if (is_numeric($id)) {
-            return Ticket::findOrFail($id);
+            $ticket = Ticket::findOrFail($id);
+            if (defined('FLUENTSUPPORTPRO')){
+                $ticket->custom_fields = $ticket->customData();
+            }
+            return $ticket;
         }
         return false;
     }
