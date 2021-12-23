@@ -62,17 +62,11 @@ class TicketController extends Controller
         if($request->get('filter_type')=='advanced'){
             $queryArgs = [
                 'filter_type'        => 'advanced',
-                'filters_groups_raw' => $this->request->get('advanced_filters'),
-                'search'             => $this->request->get('search', ''),
-                'sort_by'            => $this->request->get('sort_by', 'id'),
-                'sort_type'          => $this->request->get('sort_type', 'DESC'),
-                'has_commerce'       => $this->request->get('has_commerce'),
-                'custom_fields'      => $this->request->get('custom_fields') == 'true'
+                'filters_groups_raw' => $this->request->get('advanced_filters')
             ];
 
 
             if(defined('FLUENTSUPPORTPRO')){
-                $filteredTickets = (new \FluentSupportPro\App\Services\TicketQueryService($queryArgs))->paginate();
                 return [
                     'tickets' => (new \FluentSupportPro\App\Services\TicketQueryService($queryArgs))->paginate()
                 ];
