@@ -65,6 +65,7 @@ class Ticket extends Model
         'email',
         'first_name',
         'last_name',
+        'country',
         'city',
         'zip',
         'state',
@@ -370,17 +371,21 @@ class Ticket extends Model
     {
 
         foreach ($filters as $index=>$filter) {
-            $operator = $filter['operator'];
-            $searchTerm = $filter['value'];
-
-            if ($filter['operator'] == 'contains') {
+            if ($filter['operator']=='in' || $filter['operator']=='not_in') {
+                $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
+                $query = $query->whereHas($provider, function ($q) use ($method, $filter) {
+                        $q->{$method}($filter['property'], $filter['value']);
+                });
+            }
+            elseif ($filter['operator'] == 'contains') {
                 $operator = 'LIKE';
                 $searchTerm = '%' . $filter['value'] . '%';
+                $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
             } elseif ($filter['operator'] == 'not_contains') {
                 $operator = 'NOT LIKE';
                 $searchTerm = '%' . $filter['value'] . '%';
+                $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
             }
-            $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
 
             if ($filter['operator'] == '=') {
                 $query->whereHas($provider, function ($q) use ($index, $filter) {
@@ -390,7 +395,7 @@ class Ticket extends Model
                         $q->orWhere($filter['property'], '=', $filter['value']);
                     }
                 });
-            } else if ($filter['operator'] == '!=') {
+            } elseif ($filter['operator'] == '!=') {
                     $query->whereHas($provider, function ($q) use ($index, $filter) {
                         if ($index == 0){
                             $q->where($filter['property'], '!=', $filter['value']);
