@@ -33,8 +33,7 @@
 <script>
 export default {
     name: 'OptionSelector',
-    props: ['value', 'field'],
-    emits: ['update:value'],
+    props: ['value', 'field', 'modelValue'],
     data() {
         return {
             options: {},
@@ -57,7 +56,6 @@ export default {
                 fields: 'tags,statuses,client_priority,priority,' + this.field.option_key
             };
             this.$get('rich-filter/options', query).then(response => {
-                window.fs_options_cache = response.options;
                 this.options = response.options;
                 this.element_ready = true;
             })
