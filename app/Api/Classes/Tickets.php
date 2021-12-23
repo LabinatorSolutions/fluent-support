@@ -40,7 +40,7 @@ class Tickets
         ])
             ->orderBy('id', 'DESC');
         $tickets = $ticketsQuery->paginate();
-        
+
         if (defined('FLUENTSUPPORTPRO')){
             foreach ($tickets as $ticket) {
                 $ticket->custom_fields = $ticket->customData();
@@ -105,7 +105,14 @@ class Tickets
             return false;
         }
 
-        return Ticket::create($data);
+        $createdTicket = Ticket::create($data);
+
+        if (defined('FLUENTSUPPORTPRO') && !empty($data['custom_fields'])) {
+            $createdTicket->syncCustomFields($data['custom_fields']);
+            $createdTicket->custom_fields = $createdTicket->customData();
+        }
+
+        return $createdTicket;
 
     }
 
