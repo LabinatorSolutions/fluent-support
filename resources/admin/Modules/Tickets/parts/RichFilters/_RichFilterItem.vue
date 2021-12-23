@@ -29,13 +29,6 @@
                         option_key: itemConfig.option_key
                     }"></option-selector>
                 </template>
-<!--                <template v-else-if="itemConfig.component == 'product_selector'">-->
-<!--                    <ajax-selector v-model="item.value" :field="{-->
-<!--                        is_multiple: itemConfig.is_multiple,-->
-<!--                        option_key: 'product_selector_' + itemConfig.provider,-->
-<!--                        size: 'mini'-->
-<!--                    }"/>-->
-<!--                </template>-->
                 <template v-else-if="itemConfig.options">
                     <el-select size="mini" :multiple="itemConfig.is_multiple" placeholder="Select Option"
                                v-model="item.value">
@@ -43,13 +36,6 @@
                                    :label="optionLabel"></el-option>
                     </el-select>
                 </template>
-<!--                <template v-else-if="itemConfig.component == 'ajax_selector'">-->
-<!--                    <ajax-selector v-model="item.value" :field="{-->
-<!--                        is_multiple: itemConfig.is_multiple,-->
-<!--                        option_key: itemConfig.option_key,-->
-<!--                        size: 'mini'-->
-<!--                    }"/>-->
-<!--                </template>-->
                 <pre v-else>{{ itemConfig }}</pre>
             </template>
         </td>
