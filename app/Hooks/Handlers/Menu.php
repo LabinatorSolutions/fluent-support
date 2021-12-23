@@ -335,7 +335,7 @@ class Menu
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
 
         if(defined('FLUENTSUPPORTPRO_PLUGIN_VERSION')) {
-            $appVars['advanced_filter_options'] = Helper::getAdvancedFilterOptions();
+            $appVars['advanced_filter_options'] = \FluentSupportPro\App\Services\ProHelper::getAdvancedFilterOptions();
             $appVars['advanced_filter_suggestions'] = apply_filters('fluent_support/advanced_filter_suggestions', []);
         }
 
