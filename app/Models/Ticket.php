@@ -81,9 +81,9 @@ class Ticket extends Model
      * @param string $search
      * @return ModelQueryBuilder
      */
-    public function scopeSearchBy($query, $search)
+    public function scopeSearchBy($query, $search, $provider=false)
     {
-        if ($search) {
+        if ($search && !$provider) {
 
             if (strpos($search, ':')) {
                 $array = explode(':', $search);
@@ -110,6 +110,23 @@ class Ticket extends Model
                     $query->orWhere($field, 'LIKE', "$search%");
                 }
             });
+        }else{
+            foreach ($search as $s) {
+                $operator = $s['operator'];
+                if ($operator == 'contains') {
+                    $query = $query->where(function ($query) use ($s){
+                        $query->where($s['property'], 'LIKE', '%'.$s['value'].'%');
+                    });
+                } elseif ($operator == 'not_contains') {
+                    $query = $query->where(function ($query) use ($s){
+                        $query->where($s['property'], 'NOT LIKE', '%'.$s['value'].'%');
+                    });
+                } else {
+                    $query = $query->where(function ($query) use ($s){
+                        $query->where($s['property'], $s['operator'], $s['value']);
+                    });
+                }
+            }
         }
 
         return $query;
@@ -369,7 +386,6 @@ class Ticket extends Model
 
     public function filterTicketByProperties($provider, $query, $filters)
     {
-
         foreach ($filters as $index=>$filter) {
             if ($filter['operator']=='in' || $filter['operator']=='not_in') {
                 $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
