@@ -1,6 +1,6 @@
 <template>
     <div class="activities fs_box fs_box_wrapper">
-        <div v-if="!loading" class="fs_box_header" style="font-size: 16px;">
+        <div v-if="!loading" class="fs_box_header">
             <div class="fs_box_head">
                 {{$t('Overall Activities')}}
             </div>
@@ -117,3 +117,13 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .fs_box_wrapper .fs_box_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+        font-size: 16px;
+    }
+</style>

@@ -159,3 +159,12 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .fs_box_wrapper .fs_box_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+</style>
