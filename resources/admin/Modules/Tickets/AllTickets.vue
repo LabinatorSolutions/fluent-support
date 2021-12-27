@@ -56,7 +56,7 @@
                                 <div class="fs_rich_filter">
                                     <rich-filter @maybeRemove="maybeRemoveGroup(filterIndex)" :items="rich_filter" />
                                 </div>
-                                <div class="fs_cond_or">
+                                <div class="fs_cond_or" v-if="(filterIndex+1) != advanced_filters.length">
                                     <em>OR</em>
                                 </div>
                             </div>

@@ -221,6 +221,15 @@ ul.el-upload-list.el-upload-list--picture {
         color: gray;
         padding: 0;
         text-align: center;
+        & em{
+            background: #fff;
+            font-size: 1.2em;
+            font-style: normal;
+            margin: 0 10px;
+            padding: 0 10px;
+            position: relative;
+            top: 9px;
+        }
     }
 }
 
