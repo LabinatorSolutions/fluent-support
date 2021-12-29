@@ -100,6 +100,28 @@ class Customers
         }
     }
 
+    /**
+     * deleteCustomer method will delete customer with or without customer tickets and attachments
+     * @param int $id
+     * @param bool $withAssociatedData | this will delete all tickets and attachments of this customer
+     */
+    public function deleteCustomer(int $id, bool $withAssociatedData=false)
+    {
+        if(!$id){
+            return;
+        }
+
+        $customer = Customer::findOrFail($id);
+        if ($withAssociatedData){
+            $tickets = Ticket::where('customer_id', $id);
+            foreach ($tickets->get() as $ticket){
+                (new \FluentSupport\App\Hooks\Handlers\CleanupHandler())->deleteTicketAttachments($ticket);
+            }
+            $tickets->delete();
+        }
+        $customer->delete();
+    }
+
     public function getInstance()
     {
         return $this->instance;

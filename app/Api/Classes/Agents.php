@@ -100,6 +100,18 @@ class Agents
         }
     }
 
+    /**
+     * deleteAgent method will delete agent by id
+     * @param int $id
+     */
+    public function deleteAgent(int $id)
+    {
+        if (!$id){
+            return;
+        }
+        Agent::findOrFail($id)->delete();
+    }
+
     public function getInstance()
     {
         return $this->instance;
