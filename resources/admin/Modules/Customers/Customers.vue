@@ -61,11 +61,13 @@
                         <el-table-column :label="$t('Stats')" width="180">
                             <template #default="scope">
                                 <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
-                                <span class="fs_badge"><i
-                                    class="el-icon-folder"></i> {{ scope.row.total_tickets }}</span>
+                                    <el-button size="small" type="text" icon="el-icon-folder" style="color:#409eff;">
+                                        {{ scope.row.total_tickets }}
+                                    </el-button>
                                 </router-link>
-                                <span class="fs_badge"><i
-                                    class="el-icon-chat-line-round"></i> {{ scope.row.total_responses }}</span>
+                                <el-button size="small" type="text" icon="el-icon-chat-line-round" style="color:#409eff;">
+                                    {{ scope.row.total_responses }}
+                                </el-button>
 
                                 <el-popconfirm
                                     v-loading="deleting"
@@ -76,6 +78,7 @@
                                     :title="$t('Are you sure to delete this customer? It will delete all associated data with this customer')"
                                 >
                                     <template #reference>
+                                        <el-button size="small" type="text" icon="el-icon-delete" style="color:red;"/>
                                         <span class="fs_badge"><i class="el-icon-delete"></i></span>
                                     </template>
                                 </el-popconfirm>
