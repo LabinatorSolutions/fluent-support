@@ -61,6 +61,12 @@ export default {
         operatorOptions() {
             const type = this.itemConfig.type;
             if (!type || type == 'text') {
+                if(this.itemConfig.provider=='tickets' || this.itemConfig.provider=='conversations'){
+                    return {
+                        contains: 'includes',
+                        not_contains: 'does not includes'
+                    }
+                }
                 return {
                     '=': 'equal',
                     '!=': 'does not equal',
@@ -68,16 +74,8 @@ export default {
                     not_contains: 'does not includes'
                 }
             }
-            if (type == 'numeric') {
-                return {
-                    '=': 'equal',
-                    '!=': 'does not equal',
-                    '>': 'greater than',
-                    '<': 'less than'
-                }
-            }
             if (type == 'selections') {
-                if (this.itemConfig.is_multiple && this.itemConfig.provider != 'subscriber' && this.itemConfig.provider != 'custom_fields' && !this.itemConfig.is_singular_value) {
+                if (this.itemConfig.is_multiple) {
                     return {
                         in: 'includes in any of',
                         not_in: 'not includes in any',
@@ -89,15 +87,6 @@ export default {
                     in: 'includes in',
                     not_in: 'not includes in'
                 };
-            }
-            if (type == 'dates') {
-                return {
-                    before: 'before',
-                    after: 'after',
-                    date_equal: 'in the date',
-                    days_before: 'before days',
-                    days_within: 'within days'
-                }
             }
             return {}
         },

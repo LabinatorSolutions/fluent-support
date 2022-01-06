@@ -114,16 +114,12 @@ class Ticket extends Model
             foreach ($search as $s) {
                 $operator = $s['operator'];
                 if ($operator == 'contains') {
-                    $query = $query->where(function ($query) use ($s){
-                        $query->where($s['property'], 'LIKE', '%'.$s['value'].'%');
+                    $query = $query->where(function ($query) use ($s) {
+                        $query->where($s['property'], 'LIKE', "%".$s['value']."%");
                     });
                 } elseif ($operator == 'not_contains') {
                     $query = $query->where(function ($query) use ($s){
                         $query->where($s['property'], 'NOT LIKE', '%'.$s['value'].'%');
-                    });
-                } else {
-                    $query = $query->where(function ($query) use ($s){
-                        $query->where($s['property'], $s['operator'], $s['value']);
                     });
                 }
             }
