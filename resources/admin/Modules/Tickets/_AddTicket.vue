@@ -95,7 +95,7 @@
                 </el-col>
             </el-row>
 
-            <custom-fields-form :custom_data="ticket.custom_fields" v-if="has_pro" />
+            <custom-field-form :custom_data="ticket.custom_fields" v-if="has_pro" />
 
             <el-form-item>
                 <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">
@@ -112,7 +112,7 @@ import WpEditor from '../../Pieces/_wp_editor';
 import RemoteSelector from '../../Pieces/RemoteSelector';
 import Error from '../../../admin/Pieces/Error';
 import Errors from '../../../admin/Bits/Errors';
-import CustomFieldsForm from './parts/_CustomFieldForm';
+import CustomFieldForm from './parts/_CustomFieldForm';
 
 export default {
     name: 'CreateTicketForm',
@@ -120,7 +120,7 @@ export default {
         WpEditor,
         RemoteSelector,
         Error,
-        CustomFieldsForm
+        CustomFieldForm
     },
     data() {
         return {
