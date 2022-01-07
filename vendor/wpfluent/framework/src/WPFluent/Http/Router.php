@@ -7,17 +7,17 @@ use FluentSupport\Framework\Support\Arr;
 class Router
 {
     protected $app = null;
-    
+
     protected $name = [];
-    
+
     protected $prefix = [];
 
     protected $routes = [];
 
     protected $routeGroups = [];
-    
+
     protected $groupStack = [];
-    
+
     protected $policyHandler = null;
 
     public function __construct($app)
@@ -57,6 +57,8 @@ class Router
         call_user_func($callback, $this);
         array_pop($this->prefix);
         array_pop($this->name);
+
+        return $this;
     }
 
     public function withPolicy($handler)
