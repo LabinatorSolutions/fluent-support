@@ -296,7 +296,7 @@ class Ticket extends Model
 
     public static function buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, $filter, $provider = false)
     {
-        if (in_array($filter['operator'], ['in_all', 'not_in_all'])) {
+        if (in_array($filter['operator'], ['in_all', 'not_in_all']) && $filter['value']) {
             foreach ($filter['value'] as $item) {
                 $query = static::buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, ['value' => $item, 'operator' => ''], $provider);
             }
