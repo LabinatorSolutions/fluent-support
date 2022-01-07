@@ -81,17 +81,30 @@ export default {
             if (this.new_item.length == 2) {
                 let operator = '';
 
-                if (this.new_item[0] == 'customer' && this.new_item[1] != 'agent') {
+                if (this.new_item[0] === 'customer' && this.new_item[1] !== 'agent') {
                     operator = 'contains';
                 }
-
-                this.items.push({
-                    source: [...this.new_item],
-                    operator: operator,
-                    value: ''
-                });
-                this.addVisible = false;
-                this.new_item = [];
+                let tempItem = this.new_item;
+                let exist = false;
+                this.items.forEach(function(item){
+                    if(item.source[0] === tempItem[0] && item.source[1] === tempItem[1]){
+                        exist = true;
+                    }
+                })
+                if(!exist){
+                    this.items.push({
+                        source: [...this.new_item],
+                        operator: operator,
+                        value: ''
+                    });
+                    this.addVisible = false;
+                    this.new_item = [];
+                }else{
+                    this.$notify.error({
+                        message: 'Selected item already selected',
+                        position: 'bottom-right'
+                    })
+                }
             }
         },
         removeItem(index) {
