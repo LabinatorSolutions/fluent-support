@@ -29,7 +29,7 @@ class PortalPolicy extends Policy
 
         $canAccess = apply_filters('fluent_support/user_portal_access_config', [
             'status'  => true,
-            'message' => 'You do not have permission'
+            'message' => __('You do not have permission', 'fluent-support')
         ]);
 
         return $canAccess['status'];

@@ -68,6 +68,7 @@ class FeedIntegration extends IntegrationManager
             'list_id'                   => '', // this is the business ID
             'ticket_title'              => '',
             'ticket_body'               => '',
+            'client_priority'           => '',
             'attachments'               => '',
             'product_id'                => '',
             'product_id_selection_type' => 'simple',
@@ -149,6 +150,14 @@ class FeedIntegration extends IntegrationManager
                     'label'          => __('Ticket Attachments', 'fluentform'),
                     'Placeholder'    => __('Ticket Attachments', 'fluentform'),
                     'tips'           => __('Please input your file upload or image upload field shortcode here', 'fluentform'),
+                    'component'      => 'value_text'
+                ],
+                [
+                    'key'            => 'client_priority',
+                    'require_list'   => false,
+                    'label'          => __('Ticket Priority', 'fluentform'),
+                    'Placeholder'    => __('Ticket Priority', 'fluentform'),
+                    'tips'           => __('Make sure form field values match with Fluent Support priorities', 'fluentform'),
                     'component'      => 'value_text'
                 ],
                 $this->getCustomField(), //Getting Fluent Support Custom Field To Map
@@ -290,6 +299,8 @@ class FeedIntegration extends IntegrationManager
             'title' => sanitize_text_field(wp_unslash(Arr::get($data, 'ticket_title'))),
             'content' => wp_unslash(wp_kses_post(Arr::get($data, 'ticket_content'))),
             'attachments' => sanitize_text_field(Arr::get($data, 'ticket_attachments')),
+            'client_priority' => strtolower(sanitize_text_field(Arr::get($data, 'client_priority'))),
+            'priority' => strtolower(sanitize_text_field(Arr::get($data, 'client_priority'))),
             'custom_fields' => $ticketCustomField,
             'source' => 'web'
         ];

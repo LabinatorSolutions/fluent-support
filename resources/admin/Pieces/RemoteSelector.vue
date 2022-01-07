@@ -3,7 +3,7 @@
         v-model="modelValue"
         filterable
         remote
-        placeholder="Search"
+        :placeholder="$t('Search')"
         :remote-method="fetchData"
         :loading="loading">
         <el-option

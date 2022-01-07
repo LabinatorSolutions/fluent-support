@@ -11,7 +11,9 @@
             <el-form-item :label="$t('Admin Email Address')">
                 <el-input type="email" v-model="mailbox.settings.admin_email_address"></el-input>
                 <p>{{$t('admin_get_email')}}</p>
-                <p v-if="mailbox.box_type == 'email' && mailbox.settings.admin_email_address == mailbox.email" style="color: red;">Your Admin Email Address and Support From Email should not be same. Please use a different email address.</p>
+                <p v-if="mailbox.box_type == 'email' && mailbox.settings.admin_email_address == mailbox.email" style="color: red;">
+                    {{$t('different_email_between_admin_and_support')}}
+                </p>
             </el-form-item>
 
             <el-form-item v-if="mailbox.box_type == 'email'" :label="$t('Mapped Email')">
@@ -20,7 +22,9 @@
                     <p>{{$t('mapped_webhook_email')}}</p>
                 </template>
                 <div v-else>
-                    <h4>Please configure <router-link :to="{name: 'email_piping', params: { box_id: mailbox.id }}">your email piping settings first</router-link></h4>
+                    <h4>{{$t('Please configure')}} <router-link :to="{name: 'email_piping', params: { box_id: mailbox.id }}">
+                        {{$t('your email piping settings first')}}
+                    </router-link></h4>
                 </div>
             </el-form-item>
 

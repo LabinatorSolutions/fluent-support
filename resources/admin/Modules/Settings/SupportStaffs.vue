@@ -35,10 +35,10 @@
                     <template #default="scope">
                         <el-tooltip placement="top">
                             <template #content>
-                                <p>Assigned Permissions</p>
+                                <p>{{$t('Assigned Permissions')}}</p>
                                 <span style="display: block" v-for="permission in scope.row.permissions">{{ readable(permission) }}</span>
                             </template>
-                            <el-button type="default" size="small">{{ scope.row.permissions.length }} permissions</el-button>
+                            <el-button type="default" size="small">{{ scope.row.permissions.length }} {{$t('Permissions')}}</el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>

@@ -59,9 +59,22 @@ class TicketController extends Controller
 
     public function index(Request $request)
     {
+        if($request->get('filter_type')=='advanced'){
+            $queryArgs = [
+                'filter_type'        => 'advanced',
+                'filters_groups_raw' => $this->request->get('advanced_filters')
+            ];
+
+
+            if(defined('FLUENTSUPPORTPRO')){
+                return [
+                    'tickets' => (new \FluentSupportPro\App\Services\TicketQueryService($queryArgs))->paginate()
+                ];
+            }
+        }
         $ticketsQuery = Ticket::with([
             'customer'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'email', 'id']);
+                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
             }, 'agent'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
@@ -111,6 +124,30 @@ class TicketController extends Controller
     public function createTicket(Request $request)
     {
         $ticketData = $request->get('ticket', []);
+        $maybeNewCustomer = $request->get('newCustomer');
+
+        if ($ticketData['create_wp_user'] == 'yes'){
+            if(!username_exists($maybeNewCustomer['username'])){
+                $authController = new AuthController();
+                $createdUser = $authController->createUser($maybeNewCustomer);
+                $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
+            }else{
+                return $this->sendError(__('This username is already exist in WordPress', 'fluent-support'));
+            }
+        }
+
+        if($ticketData['create_customer'] == 'yes'){
+            if (!empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first())){
+                $createCustomer = Customer::create($maybeNewCustomer);
+                if ($createCustomer){
+                    $ticketData['customer_id'] = $createCustomer->id;
+                }
+            }
+            else{
+                return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
+            }
+        }
+
         $this->validate($ticketData, [
             'customer_id' => 'required',
             'title'       => 'required',
@@ -635,7 +672,7 @@ class TicketController extends Controller
 
         if (!defined('FLUENTCRM')) {
             return $this->sendError([
-                'message' => 'FluentCRM is not installed'
+                'message' => __('FluentCRM is not installed', 'fluent-support')
             ]);
         }
 
@@ -643,7 +680,7 @@ class TicketController extends Controller
 
         if (!$contactId) {
             return $this->sendError([
-                'message' => 'Contact could not be found'
+                'message' => __('Contact could not be found', 'fluent-support')
             ]);
         }
 
@@ -653,7 +690,7 @@ class TicketController extends Controller
 
         if (!$canAddTags) {
             return $this->sendError([
-                'message' => 'Sorry you do not have permission to add contact tags'
+                'message' => __('Sorry you do not have permission to add contact tags', 'fluent-support')
             ]);
         }
 
@@ -678,7 +715,7 @@ class TicketController extends Controller
 
         return [
             'tags'    => $contact->tags,
-            'message' => 'FluentCRM contact tags has been updated'
+            'message' => __('FluentCRM contact tags has been updated', 'fluent-support')
         ];
 
     }

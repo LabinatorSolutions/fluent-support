@@ -86,17 +86,33 @@ export default {
                     '{{customer.last_name}}': this.$t('Customer Last Name'),
                     '{{customer.full_name}}': this.$t('Customer Full Name'),
                     '{{customer.email}}': this.$t('Customer Email'),
+                    '{{ticket.admin_url}}': this.$t('Ticket Link(Agent)'),
+                    '{{ticket.public_url}}': this.$t('Ticket Link(Customer)'),
                     '{{ticket.id}}': this.$t('Ticket ID'),
                     '{{ticket.title}}': this.$t('Ticket Title'),
                     '{{ticket.content}}': this.$t('Ticket Content'),
                     '{{business.name}}': this.$t('Business Name')
                 }
-            } else {
+            } else if (this.active_email== 'ticket_agent_on_change') {
+                return {
+                    '{{ticket.admin_url}}' : this.$t('Ticket Link(Agent)'),
+                    '{{ticket.id}}': this.$t('Ticket ID'),
+                    '{{ticket.title}}': this.$t('Ticket Title'),
+                    '{{ticket.content}}': this.$t('Ticket Content'),
+                    '{{business.name}}': this.$t('Business Name'),
+                    '{{agent.first_name}}': this.$t('Assigned Agent First Name'),
+                    '{{agent.last_name}}': this.$t('AssignedAgent Last Name'),
+                    '{{agent.full_name}}': this.$t('Assigned Agent Full Name'),
+                }
+            }
+            else {
                 return {
                     '{{customer.first_name}}':  this.$t('Customer First Name'),
                     '{{customer.last_name}}': this.$t('Customer Last Name'),
                     '{{customer.full_name}}': this.$t('Customer Full Name'),
                     '{{customer.email}}': this.$t('Customer Email'),
+                    '{{ticket.admin_url}}' : this.$t('Ticket Link(Agent)'),
+                    '{{ticket.public_url}}': this.$t('Ticket Link(Customer)'),
                     '{{ticket.id}}': this.$t('Ticket ID'),
                     '{{ticket.title}}': this.$t('Ticket Title'),
                     '{{ticket.content}}': this.$t('Ticket Content'),

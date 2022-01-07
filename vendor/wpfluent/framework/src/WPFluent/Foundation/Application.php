@@ -7,6 +7,7 @@ use FluentSupport\Framework\Foundation\Config;
 use FluentSupport\Framework\Foundation\Container;
 use FluentSupport\Framework\Foundation\FoundationTrait;
 use FluentSupport\Framework\Foundation\ComponentBinder;
+use FluentSupport\App\Api\Api;
 
 class Application extends Container
 {
@@ -134,6 +135,7 @@ class Application extends Container
     {
         require_once $this->basePath . 'app/Hooks/actions.php';
         require_once $this->basePath . 'app/Hooks/filters.php';
+        require_once $this->basePath . 'app/Api/FsFunctions.php';
 
         $this->addAction('rest_api_init', function($wpRestServer) use ($app) {
             try {

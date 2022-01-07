@@ -3,25 +3,25 @@
         <template v-if="appReady">
             <el-row v-if="fields" :gutter="30">
                 <el-col v-for="(field, fieldName) in fields" :key="fieldName" :xs="24" :md="12">
-                    <el-form :data="formData" :label-position="labelPosition">
+                    <el-form :data="custom_data" :label-position="labelPosition">
                         <el-form-item :label="field.label">
                             <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
-                                      :type="field.type" v-model="formData[field.slug]"/>
-                            <el-select v-else-if="field.type == 'select-one'" v-model="formData[field.slug]">
+                                      :type="field.type" v-model="custom_data[field.slug]"/>
+                            <el-select v-else-if="field.type == 'select-one'" v-model="custom_data[field.slug]">
                                 <el-option v-for="option in field.options" :key="option"
                                            :value="option" :label="option"></el-option>
                             </el-select>
                             <el-select v-else-if="field.type == 'select'" :filterable="field.filterable"
                                        :multiple="field.multiple"
-                                       v-model="formData[field.slug]">
+                                       v-model="custom_data[field.slug]">
                                 <el-option v-for="option in field.options" :key="option.id"
                                            :value="option.id" :label="option.title"></el-option>
                             </el-select>
-                            <el-radio-group v-else-if="field.type == 'radio'" v-model="formData[field.slug]">
+                            <el-radio-group v-else-if="field.type == 'radio'" v-model="custom_data[field.slug]">
                                 <el-radio v-for="option in field.options" :key="option"
                                           :value="option" :label="option"></el-radio>
                             </el-radio-group>
-                            <el-checkbox-group v-else-if="field.type == 'checkbox'" v-model="formData[field.slug]">
+                            <el-checkbox-group v-else-if="field.type == 'checkbox'" v-model="custom_data[field.slug]">
                                 <el-checkbox v-for="option in field.options" :key="option"
                                              :value="option" :label="option"></el-checkbox>
                             </el-checkbox-group>
@@ -85,16 +85,16 @@ export default {
                 this.formData = this.custom_data;
             }
 
-            if (isEmpty(this.formData)) {
+            if (isEmpty(this.custom_data)) {
                 this.formData = {};
             }
 
             each(this.fields, (field, fieldName) => {
                 if (field.type == 'checkbox') {
-                    if (!this.formData[fieldName] || !isArray(this.formData[fieldName])) {
-                        this.formData[fieldName] = [];
-                    } else if (!this.formData[fieldName]) {
-                        this.formData[fieldName] = '';
+                    if (!this.custom_data[fieldName] || !isArray(this.custom_data[fieldName])) {
+                        this.custom_data[fieldName] = [];
+                    } else if (!this.custom_data[fieldName]) {
+                        this.custom_data[fieldName] = '';
                     }
                 }
             });
@@ -105,7 +105,7 @@ export default {
         saveEditedCustomFieldData() {
             this.saving = true;
             this.$post(`ticket-custom-fields/${this.ticket_id}/sync`, {
-                custom_fields: this.formData,
+                custom_fields: this.custom_data,
             })
                 .then(response => {
                     this.$notify({

@@ -320,7 +320,7 @@ class Helper
             ->where('key', $key)
             ->where('object_id', $ticketId)
             ->first();
-        
+
         if ($data) {
             return Meta::where('id', $data->id)
                 ->update([
@@ -437,5 +437,4 @@ class Helper
 
         return false;
     }
-
 }

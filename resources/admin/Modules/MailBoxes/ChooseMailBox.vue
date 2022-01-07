@@ -32,8 +32,8 @@
                             </div>
                             <div class="fs_mail_body">
                                 <p>{{ box.email }}</p>
-                                <p>Type: {{ box.box_type }}</p>
-                                <p>Tickets Counts: {{ box.tickets_count }}</p>
+                                <p>{{$t('Type')}}: {{ box.box_type }}</p>
+                                <p>{{$t('Tickets Counts')}}: {{ box.tickets_count }}</p>
                                 <router-link class="el-button el-button--success el-button--small"
                                              :to="{name: 'box_settings', params: { box_id: box.id }}">
                                     {{ $t('View Settings') }}

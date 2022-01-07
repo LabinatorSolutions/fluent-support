@@ -228,6 +228,7 @@ ul.fs_card_list {
 .fs_inline_photo_40 {
     display: inline-block;
     margin-right: 10px;
+    max-height: 40px;
     width: 40px;
     border-radius: 50%;
 }
@@ -368,6 +369,7 @@ table.fs_table {
 
         & img {
             width: 40px;
+            max-height: 40px;
             margin-right: 1em;
             border-radius: 50%;
         }

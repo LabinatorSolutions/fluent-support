@@ -12,6 +12,6 @@
 
 #### Run the project
 
-- `npm install` 
-- `npx mix watch` 
+- `npm install --force`
+- `npx mix watch`
 - `npx mix --production`

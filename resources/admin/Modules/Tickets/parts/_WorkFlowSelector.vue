@@ -20,14 +20,14 @@
         <el-dialog
             v-model="modalVisible"
             :append-to-body="true"
-            title="Review your Workflow"
+            :title="$t('Review your Workflow')"
             width="60%"
         >
             <div v-if="modalVisible" v-loading="fetchingActions" class="fs_workflow_desc">
-                <h3>Running the <b>{{ selected_workflow.title }}</b> workflow will perform the following actions:</h3>
+                <h3>{{$t('Running the')}} <b>{{ selected_workflow.title }}</b> {{$t('workflow will perform the following actions:')}}</h3>
                 <ul class="fs_workflow_items">
                     <li v-for="(task,taskIndex) in workflow_actions" :key="task.id">
-                        <span v-if="taskIndex != 0">and</span> {{ task.title || task.action_name }}
+                        <span v-if="taskIndex != 0">{{$t('and')}}</span> {{ task.title || task.action_name }}
                     </li>
                 </ul>
             </div>
@@ -35,7 +35,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button v-loading="applying" :disabled="applying || fetchingActions" type="primary"
-                               @click="runWorkFow()">Run Workflow</el-button>
+                               @click="runWorkFow()">{{$t('Run Workflow')}}</el-button>
                 </span>
             </template>
         </el-dialog>
