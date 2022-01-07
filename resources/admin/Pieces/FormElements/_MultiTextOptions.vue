@@ -5,7 +5,7 @@
                 <el-button @click="deleteUrl(OptionIndex)" :disabled="options.length == 1" slot="append" icon="el-icon-delete"></el-button>
             </el-input>
         </div>
-        <el-button @click="addMoreUrl()" size="small" type="info">Add More</el-button>
+        <el-button @click="addMoreUrl()" size="small" type="info">{{$t('Add More')}}</el-button>
     </div>
 </template>
 

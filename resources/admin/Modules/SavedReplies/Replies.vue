@@ -44,11 +44,11 @@
                                 <el-button @click="editModal(scope.row)" size="medium"
                                            icon="el-icon-edit" type="text" ></el-button>
                               <el-popconfirm
-                                  confirm-button-text="Yes, Delete this"
-                                  cancel-button-text="No"
+                                  :confirm-button-text="$t('Yes, Delete this')"
+                                  :cancel-button-text="$t('No')"
                                   icon="el-icon-info"
                                   icon-color="red"
-                                  title="Are you sure to delete this template?"
+                                  :title="$t('replies_delete_warning')"
                                   @confirm="deleteReply(scope.row)"
                               >
                                 <template #reference>

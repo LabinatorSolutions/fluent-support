@@ -1,8 +1,8 @@
 <template>
     <div class="activities fs_box fs_box_wrapper">
-        <div v-if="!loading" class="fs_box_header" style="font-size: 16px;">
+        <div v-if="!loading" class="fs_box_header">
             <div class="fs_box_head">
-                Overall Activities
+                {{$t('Overall Activities')}}
             </div>
             <div class="fs_box_actions">
                 <el-button v-loading="loading"
@@ -15,7 +15,7 @@
         <div class="fs_box fs_activity_box" v-if="activities">
             <div class="fs_box_body">
                 <div v-if="settings.disable_logs == 'yes'">
-                    <h3 class="text-align-center">Activity Logs are currently disabled</h3>
+                    <h3 class="text-align-center">{{$t('Activity Logs are currently disabled')}}</h3>
                 </div>
 
                 <template v-if="!loading">
@@ -46,7 +46,7 @@
 
         <el-dialog
             v-model="showSettingsModal"
-            title="Activity Log Settings"
+            :title="$t('Activity Log Settings')"
             width="60%"
             :append-to-body="true"
         >
@@ -117,3 +117,13 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    .fs_box_wrapper .fs_box_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: row;
+        font-size: 16px;
+    }
+</style>

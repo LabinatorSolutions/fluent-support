@@ -1,8 +1,8 @@
 <template>
     <div v-loading="loading" class="ffc_customer_form">
-        <h3>Basic Info</h3>
+        <h3>{{$t('Basic Info')}}</h3>
         <form-builder :fields="basic_fields" :form-data="customer"/>
-        <h3>Address Info</h3>
+        <h3>{{$t('Address Info')}}</h3>
         <form-builder :fields="address_fields" :form-data="customer"/>
 
         <el-button @click="updateCustomer()" type="success" v-if="customer.id">{{ $t('Update Customer') }}</el-button>

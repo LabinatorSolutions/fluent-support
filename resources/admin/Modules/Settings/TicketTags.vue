@@ -22,26 +22,26 @@
             <template v-if="has_pro">
                 <div v-if="!fetching" class="fs_box_body">
                     <el-table stripe :data="tags">
-                        <el-table-column width="80" prop="id" label="ID"></el-table-column>
-                        <el-table-column prop="title" label="Title"></el-table-column>
-                        <el-table-column prop="description" label="Description"></el-table-column>
-                        <el-table-column label="Tickets">
+                        <el-table-column width="80" prop="id" :label="$t('ID')"></el-table-column>
+                        <el-table-column prop="title" :label="$t('Title')"></el-table-column>
+                        <el-table-column prop="description" :label="$t('Description')"></el-table-column>
+                        <el-table-column :label="$t('Tickets')">
                             <template #default="scope">
                                 <router-link :to="{name: 'tickets', query: {tags: [scope.row.id]}}">
                                     {{ scope.row.count }}
                                 </router-link>
                             </template>
                         </el-table-column>
-                        <el-table-column width="120" label="Action">
+                        <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
                                 <el-button @click="editTagModal(scope.row)" size="medium" type="text"
                                            icon="el-icon-edit"></el-button>
                                 <el-popconfirm
-                                    confirm-button-text="Yes, Delete this"
-                                    cancel-button-text="No"
+                                    :confirm-button-text="$t('Yes, Delete this')"
+                                    :cancel-button-text="$t('No')"
                                     icon="el-icon-info"
                                     icon-color="red"
-                                    title="Are you sure to delete this tag?"
+                                    :title="$t('tag_delete_warning')"
                                     @confirm="deleteTag(scope.row)"
                                 >
                                     <template #reference>

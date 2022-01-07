@@ -8,19 +8,19 @@
         </el-form-item>
 
         <div class="fs_trigger_conditions" v-if="workflow.trigger_key && app_ready">
-            <h3>Conditions</h3>
+            <h3>{{$t('Conditions')}}</h3>
             <div class="fs_each_cond_group" v-for="(conditionGroup, condIndex) in workflow_conditions"
                  :key="condIndex">
                 <trigger-conditional-group @deleteGroup="deleteGroup(condIndex)"
                                            :conditional_fields="conditional_fields"
                                            :all_conditions="trigger_fields.conditions" :settings="conditionGroup"/>
                 <p v-if="(condIndex+1) != workflow_conditions.length" class="fs_cond_and">
-                    <em>AND</em>
+                    <em>{{$t('AND')}}</em>
                 </p>
             </div>
             <div class="fs_cond_and">
                 <em style="cursor: pointer;color: #07c;font-weight: bold;" @click="addMore()"><i
-                    class="el-icon-plus"></i> AND</em>
+                    class="el-icon-plus"></i> {{$t('AND')}}</em>
             </div>
         </div>
 

@@ -14,7 +14,8 @@ class Settings
             'ticket_replied_by_agent_email_to_customer',
             'ticket_closed_by_agent_email_to_customer',
             'ticket_created_email_to_admin',
-            'ticket_replied_by_customer_email_to_admin'
+            'ticket_replied_by_customer_email_to_admin',
+            'ticket_agent_on_change'
         ]);
         return $key;
     }
@@ -56,7 +57,8 @@ class Settings
             'login_message'         => sprintf(__('%1sPlease login or create an account to access the Customer Support Portal%2s [fluent_support_auth]', 'fluent-support'), '<p>', '</p>'),
             'disable_public_ticket' => 'no',
             'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
-            'max_file_size'         => 2
+            'max_file_size'         => 2,
+            'del_files_on_close'    => 'no'
         ];
 
         $existingSettings = Helper::getOption('global_business_settings', []);
@@ -107,7 +109,7 @@ class Settings
             'accepted_file_types'   => [
                 'wrapper_class' => 'fs_half_field',
                 'type'    => 'checkbox-group',
-                'label'   => 'Accepted File Types',
+                'label'   => __('Accepted File Types', 'fluent-support'),
                 'options' => $formattedMimeGroups
             ],
             'max_file_size' => [
@@ -115,6 +117,13 @@ class Settings
                 'type'    => 'input-text',
                 'data_type' => 'number',
                 'label'   => 'Max File Size (in MegaByte)',
+            ],
+            'del_files_on_close' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Delete all attachments on ticket close', 'fluent-support'),
+                'inline_help'    => __('If you enable this then when a ticket get closed it will delete all the attachments associated with the particular ticket.', 'fluent-support')
             ]
         ];
 
@@ -172,6 +181,13 @@ class Settings
                 'title'          => __('Replied by Customer (To Agent/Admin)', 'fluent-support'),
                 'description'    => __('This email will be sent to Assigned Agent or Admin when a customer reply to a ticket', 'fluent-support'),
                 'email_subject'  => 'New Response: {{ticket.title}} #{{ticket.id}}',
+                'default_status' => 'yes'
+            ],
+            'ticket_agent_on_change' => [
+                'key'            => 'ticket_agent_on_change',
+                'title'          => __('Ticket Agent Change (To Agent)', 'fluent-support'),
+                'description'    => __('This email will be sent to newly assigned agent', 'fluent-support'),
+                'email_subject'  => 'Ticket Agent Change: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes'
             ]
         ];
@@ -249,6 +265,8 @@ class Settings
             return '<p>A new ticket (<a href="{{ticket.admin_url}}">{{ticket.title}}</a>) as been submitted by {{customer.full_name}}</p><h4>Ticket Body</h4><p>{{ticket.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
         } else if ($emailKey == 'ticket_replied_by_customer_email_to_admin') {
             return '<p>A new response has been added to "<a href="{{ticket.admin_url}}">{{ticket.title}}</a>"  by {{customer.full_name}}</p><h4>Response Body</h4><p>{{response.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
+        } else if($emailKey == 'ticket_agent_on_change') {
+            return '<p>Hi <strong><em>{{agent.full_name}}</em>,</strong></p><p>Ticket "<a href="{{ticket.admin_url}}">#{{ticket.id}}</a>" assigned to you.</p>';
         }
 
         return '';

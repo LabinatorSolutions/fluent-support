@@ -61,7 +61,18 @@ class Ticket extends Model
         'title',
         'slug',
         'content',
-        'id'
+        'id',
+        'email',
+        'first_name',
+        'last_name',
+        'country',
+        'city',
+        'zip',
+        'state',
+        'country',
+        'note',
+        'address_line_1',
+        'address_line_2'
     ];
 
     /**
@@ -70,9 +81,9 @@ class Ticket extends Model
      * @param string $search
      * @return ModelQueryBuilder
      */
-    public function scopeSearchBy($query, $search)
+    public function scopeSearchBy($query, $search, $provider=false)
     {
-        if ($search) {
+        if ($search && !$provider) {
 
             if (strpos($search, ':')) {
                 $array = explode(':', $search);
@@ -99,6 +110,19 @@ class Ticket extends Model
                     $query->orWhere($field, 'LIKE', "$search%");
                 }
             });
+        }else{
+            foreach ($search as $s) {
+                $operator = $s['operator'];
+                if ($operator == 'contains') {
+                    $query = $query->where(function ($query) use ($s) {
+                        $query->where($s['property'], 'LIKE', "%".$s['value']."%");
+                    });
+                } elseif ($operator == 'not_contains') {
+                    $query = $query->where(function ($query) use ($s){
+                        $query->where($s['property'], 'NOT LIKE', '%'.$s['value'].'%');
+                    });
+                }
+            }
         }
 
         return $query;
@@ -226,7 +250,176 @@ class Ticket extends Model
         return $query;
     }
 
+    /**
+     * @param $filter
+     * @return string[]
+     */
 
+    public static function parseRelationalFilterQueryMethods($filter)
+    {
+        // default operator = in
+        $method = 'whereHas';
+        $subMethod = 'whereIn';
+
+        switch ($filter['operator']) {
+            case 'not_in':
+                $method = 'whereDoesntHave';
+                $subMethod = 'whereIn';
+
+                break;
+            case 'in_all':
+                $method = 'whereHas';
+                $subMethod = 'where';
+
+                break;
+            case 'not_in_all':
+                $method = 'whereDoesntHave';
+                $subMethod = 'where';
+
+                break;
+        }
+
+        return [$method, $subMethod];
+    }
+
+    /**
+     * Relation builder
+     * @param $relation
+     * @param $query
+     * @param $method
+     * @param $subMethod
+     * @param $subField
+     * @param $filter
+     * @param false $provider
+     * @return mixed
+     */
+
+    public static function buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, $filter, $provider = false)
+    {
+        if (in_array($filter['operator'], ['in_all', 'not_in_all']) && $filter['value']) {
+            foreach ($filter['value'] as $item) {
+                $query = static::buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, ['value' => $item, 'operator' => ''], $provider);
+            }
+        } else {
+            $query = $query->{$method}($relation, function ($relationQuery) use ($subMethod, $subField, $filter, $provider) {
+                $relationQuery = $relationQuery->{$subMethod}($subField, $filter['value']);
+
+                if ($provider) {
+                    $relationQuery = $relationQuery->where('provider', $provider);
+                }
+
+                return $relationQuery;
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * get tickets by advanced filter segment data
+     * @param $query
+     * @param $filters
+     * @return ModelQueryBuilder
+     */
+
+    public function buildSegmentFilterQuery($query, $filters)
+    {
+        foreach ($filters as $filter) {
+            if (in_array($filter['property'], ['tags', 'product'])) {
+                $subField = $filter['property'] == 'tags' ? 'tag_id' : 'product_id';
+                list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
+                $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
+            } else {
+                $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
+
+                $query = $query->{$method}($filter['property'], (array) $filter['value']);
+            }
+        }
+
+        return $query;
+    }
+
+    /**
+     * method to search by properties
+     * @param $provider
+     * @param $query
+     * @param $search
+     * @param string $operator
+     * @return mixed
+     */
+    public function buildSearchableQuery($provider, $query, $search, $operator = 'LIKE')
+    {
+        $fields = $this->searchable;
+
+        $query->whereHas($provider, function ($query) use ($fields, $search, $operator) {
+            $query->where(array_shift($fields), $operator, $search);
+
+            $nameArray = explode(' ', $search);
+
+            if (count($nameArray) >= 2) {
+                $query->orWhere(function ($q) use ($nameArray, $operator) {
+                    $firstName = array_shift($nameArray);
+                    $lastName = implode(' ', $nameArray);
+
+                    $q->where('first_name', $operator, $firstName);
+                    $q->where('last_name', $operator, $lastName);
+                });
+            }
+
+            foreach ($fields as $field) {
+                $query->orWhere($field, $operator, $search);
+            }
+        });
+
+        return $query;
+    }
+
+    /**
+     * Filter by ticket general properties like customer name, agent name etc
+     * @param $query
+     * @param $filters
+     */
+
+    public function filterTicketByProperties($provider, $query, $filters)
+    {
+        foreach ($filters as $index=>$filter) {
+            if ($filter['operator']=='in' || $filter['operator']=='not_in') {
+                $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
+                $query = $query->whereHas($provider, function ($q) use ($method, $filter) {
+                        $q->{$method}($filter['property'], $filter['value']);
+                });
+            }
+            elseif ($filter['operator'] == 'contains') {
+                $operator = 'LIKE';
+                $searchTerm = '%' . $filter['value'] . '%';
+                $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
+            } elseif ($filter['operator'] == 'not_contains') {
+                $operator = 'NOT LIKE';
+                $searchTerm = '%' . $filter['value'] . '%';
+                $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
+            }
+
+            if ($filter['operator'] == '=') {
+                $query->whereHas($provider, function ($q) use ($index, $filter) {
+                    if ($index == 0){
+                        $q->where($filter['property'], '=', $filter['value']);
+                    }else{
+                        $q->orWhere($filter['property'], '=', $filter['value']);
+                    }
+                });
+            } elseif ($filter['operator'] == '!=') {
+                    $query->whereHas($provider, function ($q) use ($index, $filter) {
+                        if ($index == 0){
+                            $q->where($filter['property'], '!=', $filter['value']);
+                        }else{
+                            $q->orWhere($filter['property'], '!=', $filter['value']);
+                        }
+                    });
+
+            }
+            return $query;
+        }
+    }
     /**
      * One2Many: Customer has to many Click Tickets
      * @return Model Collection

@@ -7,6 +7,7 @@ use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
@@ -159,5 +160,29 @@ class CustomerController extends Controller
         return [
             'message' => __('Customer Deleted Successfully', 'fluent-support')
         ];
+    }
+
+    public function addOrUpdateProfileImage(Request $request)
+    {
+        $customer = Customer::findOrFail($request->get('customer_id'));
+
+        $uploadedImage = FileSystem::setSubDir('customer_avatars')->put($request->files());
+
+        if($avatar = $uploadedImage[0]['url']){
+            $customer->avatar = $avatar;
+            $customer->save();
+
+            return[
+                'message' => __('Profile picture has been updated successfully', 'fluent-support'),
+                'image'   => $customer->avatar,
+                'customer' => $customer
+            ];
+        }
+
+        else{
+            return $this->sendError([
+                'message' => __('Something went wrong while updating the profile picture', 'fluent-support')
+            ]);
+        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace FluentSupport\Framework\Foundation;
 
+use FluentSupport\App\Api\Api;
 use FluentSupport\Framework\View\View;
 use FluentSupport\Framework\Http\Router;
 use FluentSupport\Framework\Request\Request;
@@ -27,7 +28,8 @@ class ComponentBinder
         'Events',
         'DataBase',
         'Router',
-        'Paginator'
+        'Paginator',
+        'Api'
     ];
 
     public function __construct($app)
@@ -99,8 +101,18 @@ class ComponentBinder
         });
 
         Model::setEventDispatcher($this->app['events']);
-        
+
         Model::setConnectionResolver(new ConnectionResolver);
+    }
+
+    protected function bindApi()
+    {
+        $this->app->singleton('FluentSupport\App\Api\Api', function ($app) {
+            return new Api($app);
+        });
+
+        $this->app->alias('FluentSupport\App\Api\Api', 'api');
+
     }
 
     protected function bindRouter()
@@ -115,7 +127,7 @@ class ComponentBinder
         AbstractPaginator::currentPathResolver(function () {
             return $this->app['request']->url();
         });
-        
+
         AbstractPaginator::currentPageResolver(function ($pageName = 'page') {
             $page = $this->app['request']->get($pageName);
 

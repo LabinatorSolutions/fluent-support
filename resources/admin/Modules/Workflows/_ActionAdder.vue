@@ -1,6 +1,6 @@
 <template>
     <div class="fcon_add_trigger">
-        <h3>Select Action</h3>
+        <h3>{{$t('Select Action')}}</h3>
         <ul class="fcon_provider_selectors">
             <el-select @change="actionSuccess()" v-model="action.action_name">
                 <el-option v-for="(action, actionName) in all_actions" :value="actionName"

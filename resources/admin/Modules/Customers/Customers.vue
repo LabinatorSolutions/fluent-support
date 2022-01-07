@@ -49,7 +49,7 @@
                         </el-table-column>
                         <el-table-column width="120" :label="$t('Status')">
                             <template #default="scope">
-                                <span v-if="scope.row.status == 'inactive'">Blocked</span>
+                                <span v-if="scope.row.status == 'inactive'">{{$t('Blocked')}}</span>
                                 <span v-else>{{ ucFirst(scope.row.status) }}</span>
                             </template>
                         </el-table-column>
@@ -61,22 +61,25 @@
                         <el-table-column :label="$t('Stats')" width="180">
                             <template #default="scope">
                                 <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
-                                <span class="fs_badge"><i
-                                    class="el-icon-folder"></i> {{ scope.row.total_tickets }}</span>
+                                    <el-button size="small" type="text" icon="el-icon-folder" style="color:#409eff;">
+                                        {{ scope.row.total_tickets }}
+                                    </el-button>
                                 </router-link>
-                                <span class="fs_badge"><i
-                                    class="el-icon-chat-line-round"></i> {{ scope.row.total_responses }}</span>
+                                <el-button size="small" type="text" icon="el-icon-chat-line-round" style="color:#409eff;">
+                                    {{ scope.row.total_responses }}
+                                </el-button>
 
                                 <el-popconfirm
                                     v-loading="deleting"
-                                    confirm-button-text="Yes, Delete this Customer"
-                                    cancel-button-text="No"
+                                    :confirm-button-text="$t('Yes, Delete this Customer')"
+                                    :cancel-button-text="$t('No')"
                                     icon-color="red"
                                     @confirm="deleteCustomer(scope.row.id)"
-                                    title="Are you sure to delete this customer? It will delete all associated data with this customer"
+                                    :title="$t('Are you sure to delete this customer? It will delete all associated data with this customer')"
                                 >
                                     <template #reference>
-                                        <span v-loading="deleting" class="fs_badge"><i class="el-icon-delete"></i></span>
+                                        <el-button size="small" type="text" icon="el-icon-delete" style="color:red;"/>
+                                        <span class="fs_badge"><i class="el-icon-delete"></i></span>
                                     </template>
                                 </el-popconfirm>
 

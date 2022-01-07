@@ -5,8 +5,8 @@
                         :actions="all_actions"/>
         </div>
         <action-adder v-if="show_adder" @success="appendAction" :all_actions="all_actions"/>
-        <el-button style="margin-top: 30px;" size="small" type="info" @click="show_adder = true" v-else>Add Another
-            Action
+        <el-button style="margin-top: 30px;" size="small" type="info" @click="show_adder = true" v-else>
+            {{$t('Add Another Action')}}
         </el-button>
     </div>
 </template>

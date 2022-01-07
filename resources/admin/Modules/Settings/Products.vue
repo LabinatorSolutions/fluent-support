@@ -28,11 +28,11 @@
                             <el-button @click="editProductModal(scope.row)" size="medium" type="text"
                                        icon="el-icon-edit"></el-button>
                             <el-popconfirm
-                                confirm-button-text="Yes, Delete this"
-                                cancel-button-text="No"
+                                :confirm-button-text="$t('Yes, Delete this')"
+                                :cancel-button-text="$t('No')"
                                 icon="el-icon-info"
                                 icon-color="red"
-                                title="Are you sure to delete this product?"
+                                :title="$t('product_delete_warning')"
                                 @confirm="deleteProduct(scope.row)"
                             >
                                 <template #reference>

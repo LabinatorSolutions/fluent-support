@@ -29,9 +29,9 @@
                             <el-button @click="assignAgent()" style="margin-top: 20px;" :disabled="!agent_id"
                                        size="small"
                                        type="danger">
-                                Assign Agent
+                                {{$t('Assign Agent')}}
                             </el-button>
-                            <el-button @click="assignAgentPop = false" size="small" type="default">Close</el-button>
+                            <el-button @click="assignAgentPop = false" size="small" type="default">{{$t('Close')}}</el-button>
                         </div>
                     </el-popover>
                 </li>
@@ -60,7 +60,7 @@
                             <el-button style="margin-top: 20px;" size="small" type="success"
                                        @click="assignTags()">Apply Tags
                             </el-button>
-                            <el-button @click="addTagPop = false" size="small" type="default">Close</el-button>
+                            <el-button @click="addTagPop = false" size="small" type="default">{{$t('Close')}}</el-button>
                         </div>
                     </el-popover>
                 </li>
@@ -73,9 +73,9 @@
                         <template #reference>
                             <i @click="togglePop()" class="el-icon-finished"/>
                         </template>
-                        <p>Are you sure, you want to close selected tickets?</p>
+                        <p>{{$t('close_selected_ticket_warning')}}</p>
                         <el-button style="margin-top: 20px;" size="small" type="success"
-                                   @click="closeTickets()">Close Selected Tickets
+                                   @click="closeTickets()">{{$t('Close Selected Tickets')}}
                         </el-button>
                     </el-popover>
                 </li>
@@ -88,9 +88,9 @@
                         <template #reference>
                             <i @click="togglePop()" class="el-icon-delete"/>
                         </template>
-                        <p>Are you sure, you want to delete selected tickets?</p>
+                        <p>{{$t('delete_selected_ticket_warning')}}</p>
                         <el-button style="margin-top: 20px;" size="small" type="danger"
-                                   @click="deleteTickets()">Yes, Delete Selected Tickets
+                                   @click="deleteTickets()">{{$t('Yes, Delete Selected Tickets')}}
                         </el-button>
                     </el-popover>
                 </li>
@@ -158,7 +158,7 @@ export default {
         assignAgent() {
             if (!this.agent_id) {
                 this.$notify.error({
-                    message: 'Please select an agent first',
+                    message: this.$t('Please select an agent first'),
                     position: 'bottom-right'
                 });
                 return false;
@@ -172,7 +172,7 @@ export default {
         assignTags() {
             if (!this.tag_ids.length) {
                 this.$notify.error({
-                    message: 'Please select tag first',
+                    message: this.$t('Please select tag first'),
                     position: 'bottom-right'
                 });
                 return false;

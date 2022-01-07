@@ -1,17 +1,17 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
-        <div class="fc_template_box">
+        <div class="fc_template_box" v-if="appVars.has_pro">
             <template-inserter @insert="insertTemplate"/>
         </div>
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body"/>
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
-                    <el-button v-loading="creating" @click="create('no')" size="large" type="success">
+                    <el-button v-loading="creating" :disabled="creating" @click="create('no')" size="large" type="success">
                         <span v-if="type== 'note'">{{ $t('Add Internal Note') }}</span>
                         <span v-else>{{ $t('Add Reply') }}</span>
                     </el-button>
-                    <el-button v-if="type != 'note'" @click="create('yes')" size="large" type="danger">
+                    <el-button v-if="type != 'note'" :disabled="creating" @click="create('yes')" size="large" type="danger">
                         {{ $t('Reply and Close') }}
                     </el-button>
                     <p v-if="type== 'note'">{{ $t('internal_note_warning') }}</p>

@@ -2,7 +2,7 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>Ticket Form Settings</h3>
+                <h3>{{$t('Ticket Form Settings')}}</h3>
             </div>
             <div class="fs_box_actions">
 
@@ -12,8 +12,8 @@
             <div style="padding: 20px;" v-if="!fetching" class="fs_box_body">
                 <form-builder :fields="settings_fields" :form-data="settings"/>
                 <div style="display: block">
-                    <el-button @click="saveSettings()" :disabled="saving" v-loading="saving" type="success">Save
-                        Settings
+                    <el-button @click="saveSettings()" :disabled="saving" v-loading="saving" type="success">
+                        {{$t('Save Settings')}}
                     </el-button>
                 </div>
             </div>
@@ -22,11 +22,11 @@
                 <el-skeleton :rows="5" animated/>
             </div>
         </template>
-        <div style="background: white;" class="fs_narrow_promo" v-else>
-            <h3>Ticket Form Customization including Knowledge base integration is available on Pro Version</h3>
+        <div class="fs_narrow_promo" v-else>
+            <h3>{{$t('ticket_form_notice_for_pro')}}</h3>
             <p>{{ $t('pro_promo') }}</p>
             <a target="_blank" rel="noopener" href="https://fluentsupport.com"
-               class="el-button el-button--primary">{{ $t('Upgrade To Pro') }}</a>
+               class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
         </div>
     </div>
 </template>

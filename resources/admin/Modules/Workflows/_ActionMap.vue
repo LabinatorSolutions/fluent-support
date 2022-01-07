@@ -10,8 +10,8 @@
         </div>
         <div class="fcon_trigger_details">
             <div v-if="action.is_open" class="fcon_trigger_editor">
-                <h3>Action</h3>
-                <el-select @change="triggerEventChanged()" placeholder="Select Integration Event"
+                <h3>{{$t('Action')}}</h3>
+                <el-select @change="triggerEventChanged()" :placeholder="$t('Select Integration Event')"
                            v-model="action.action_name">
                     <el-option
                         v-for="(actionItem, triggerName) in actions"
@@ -31,14 +31,14 @@
 
 
                     <div style="display: block; margin-top: 10px;">
-                        <el-button @click="emitSave()" size="small" type="success">Save</el-button>
+                        <el-button @click="emitSave()" size="small" type="success">{{$t('Save')}}</el-button>
                         <div style="text-align: right; display: inline-block; float: right;">
                             <el-popconfirm
-                                confirm-button-text="Yes, Delete this Action"
-                                cancel-button-text="No"
+                                :confirm-button-text="$t('Yes, Delete this Action')"
+                                :cancel-button-text="$t('No')"
                                 icon-color="red"
                                 @confirm="deleteAction()"
-                                title="Are you sure to delete this Action?"
+                                :title="$t('delete_action_warning')"
                             >
                                 <template #reference>
                                     <el-button type="danger" plain size="small" icon="el-icon-delete"></el-button>

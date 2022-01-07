@@ -33,6 +33,8 @@ import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
 
 import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
 
+import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
+
 export default [
     {
         path: '/',
@@ -126,6 +128,11 @@ export default [
                 path: 'license-management',
                 name: 'license',
                 component: LicenseManagement
+            },
+            {
+                path: 'incoming-webhook',
+                name: 'incoming-webhook',
+                component: IncomingWebhook
             }
         ]
     },

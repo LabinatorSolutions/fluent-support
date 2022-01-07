@@ -64,6 +64,12 @@ export default {
                     icon: 'el-icon-cpu'
                 },
                 {
+                    title: this.$t('Incoming Webhook'),
+                    route_name: 'incoming-webhook',
+                    route_query: {},
+                    icon: 'el-icon-connection'
+                },
+                {
                     title: this.$t('Notification Integrations'),
                     route_name: 'integration',
                     icon: 'el-icon-alarm-clock'
