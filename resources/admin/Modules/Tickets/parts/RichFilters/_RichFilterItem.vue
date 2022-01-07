@@ -13,14 +13,6 @@
         <td class="fs_filter_value">
             <el-input size="mini" v-if="!itemConfig.type || itemConfig.type == 'text'" placeholder="Condition Value"
                       type="text" v-model="item.value"/>
-            <el-input size="mini" v-else-if="itemConfig.type == 'numeric'" type="number" placeholder="Condition Value"
-                      v-model="item.value"/>
-            <template v-else-if="itemConfig.type == 'dates'">
-                <el-input size="mini" v-if="item.operator == 'days_before' || item.operator == 'days_within'"
-                          type="number" placeholder="Days" v-model="item.value"/>
-                <el-date-picker value-format="yyyy-MM-dd" v-else-if="item.operator" size="mini"
-                                v-model="item.value"></el-date-picker>
-            </template>
             <template v-if="itemConfig.type == 'selections'">
                 <template v-if="itemConfig.component == 'options_selector'">
                     <option-selector v-model="item.value" :field="{
