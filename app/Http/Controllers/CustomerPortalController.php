@@ -130,7 +130,6 @@ class CustomerPortalController extends Controller
                     'status'    => 'active'
                 ]);
 
-
             $ticket->load('attachments');
         }
 

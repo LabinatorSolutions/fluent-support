@@ -11,11 +11,17 @@
             </div>
             <div class="fs_box_body" v-if="has_pro && webhook">
                 <el-form>
-                    <el-form-item>
-                        <el-input label="Incoming Webhook URL" v-model="webhook" :readonly="true"/>
-                        <span style="color:red">{{$t('to_create_tickets_using_webhooks_notice')}}</span>
+                    <el-form-item size="small">
+                        <el-input style="width:90%; margin-right:.2em;" label="Incoming Webhook URL" v-model="webhook" :readonly="true" />
+                        <el-popconfirm title="Are you sure to regenerate the webhook again? If you regenerate the url again then you have change all your used webhook"
+                                       @confirm="updateWebhook">
+                            <template #reference>
+                                <el-button icon="el-icon-refresh"></el-button>
+                            </template>
+                        </el-popconfirm>
                     </el-form-item>
                 </el-form>
+                <span style="color:red">{{$t('to_create_tickets_using_webhooks_notice')}}</span>
                 <h3>{{ $t('Fillable Fields') }}</h3>
                 <el-table :data="fields">
                     <el-table-column prop="field" label="Field"/>
@@ -42,27 +48,27 @@ export default {
             webhook: '',
             fields: [
                 {
-                    field: 'Ticket Title',
+                    field: 'Ticket Title(Required)',
                     field_key: 'title',
                     type: 'Text'
                 },
                 {
-                    field: 'Ticket Content',
+                    field: 'Ticket Content(Required)',
                     field_key: 'content',
                     type: 'Text'
                 },
                 {
-                    field: 'First Name',
+                    field: 'Customer First Name',
                     field_key: 'first_name',
                     type: 'Text'
                 },
                 {
-                    field: 'Last Name',
+                    field: 'Customer Last Name',
                     field_key: 'last_name',
                     type: 'Text'
                 },
                 {
-                    field: 'Email',
+                    field: 'Customer Email(Required)',
                     field_key: 'email',
                     type: 'Email'
                 },
@@ -72,33 +78,38 @@ export default {
                     type: 'Text'
                 },
                 {
-                    field: 'Address Line 1',
+                    field: 'Customer Address Line 1',
                     field_key: 'address_line_1',
                     type: 'Text'
                 },
                 {
-                    field: 'Address Line 2',
+                    field: 'Customer Address Line 2',
                     field_key: 'address_line_2',
                     type: 'Text'
                 },
                 {
-                    field: 'City',
+                    field: 'Customer City',
                     field_key: 'city',
                     type: 'Text'
                 },
                 {
-                    field: 'State',
+                    field: 'Customer State',
                     field_key: 'state',
                     type: 'Text'
                 },
                 {
-                    field: 'Zip',
+                    field: 'Customer Zip',
                     field_key: 'zip',
                     type: 'Text'
                 },
                 {
-                    field: 'Country',
+                    field: 'Customer Country',
                     field_key: 'country',
+                    type: 'Text'
+                },
+                {
+                    field: 'Ticket Custom Field',
+                    field_key: 'custom_fields[custom_field_slug]',
                     type: 'Text'
                 }
 
@@ -112,6 +123,23 @@ export default {
                 .then(response => {
                     this.webhook = response.webhook;
                     this.loading!=this.loading;
+                })
+                .catch(errors => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading != this.loading;
+                });
+        },
+        updateWebhook() {
+            this.loading = true;
+            this.$put('settings/incoming-webhook')
+                .then(response => {
+                    this.$notify.success({
+                        'message' : response.message,
+                        'position' : 'bottom-right'
+                    });
+                    this.fetch();
                 })
                 .catch(errors => {
                     this.$handleError(errors);
