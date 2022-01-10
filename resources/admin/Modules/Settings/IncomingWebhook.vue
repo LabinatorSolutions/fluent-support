@@ -6,14 +6,14 @@
                     <h3>{{$t('Incoming Webhook')}}</h3>
                 </div>
             </div>
-            <div style="padding: 20px; background: white;" class="fs_box_body fs_narrow_promo" v-if="has_pro && webhook==''">
+            <div style="padding: 20px; background: white;" class="fs_box_body fs_narrow_promo" v-if="has_pro && webhook === ''">
                 <el-skeleton :rows="5" animated/>
             </div>
             <div class="fs_box_body" v-if="has_pro && webhook">
                 <el-form>
                     <el-form-item size="small">
                         <el-input style="width:90%; margin-right:.2em;" label="Incoming Webhook URL" v-model="webhook" :readonly="true" />
-                        <el-popconfirm title="Are you sure to regenerate the webhook again? If you regenerate the url again then you have change all your used webhook"
+                        <el-popconfirm title="Are you sure to regenerate the webhook url? If you regenerate the url you have to change all your used webhook"
                                        @confirm="updateWebhook">
                             <template #reference>
                                 <el-button icon="el-icon-refresh"></el-button>
