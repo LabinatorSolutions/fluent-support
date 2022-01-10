@@ -58,7 +58,9 @@ class Conversation extends Model
         } else {
             foreach ($search as $s) {
                 $operator = $s['operator'];
-
+                if ($s['property'] == 'conversation_content'){
+                    $s['property'] = 'content';
+                }
                 if ($operator == 'contains') {
                     $query = $query->where(function ($query) use ($s) {
                         $query->where($s['property'], 'LIKE', "%".$s['value']."%");
