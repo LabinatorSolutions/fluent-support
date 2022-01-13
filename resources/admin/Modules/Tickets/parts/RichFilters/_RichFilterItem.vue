@@ -30,6 +30,12 @@
                 </template>
                 <pre v-else>{{ itemConfig }}</pre>
             </template>
+            <template v-else-if="itemConfig.type == 'dates'">
+                <el-input size="mini" v-if="item.operator == 'days_before' || item.operator == 'days_within'"
+                          type="number" placeholder="Days" v-model="item.value"/>
+                <el-date-picker value-format="YYYY-MM-DD" v-else-if="item.operator" size="mini"
+                                v-model="item.value"></el-date-picker>
+            </template>
         </td>
         <td style="width: 50px; text-align: right;">
             <el-button @click="removeItem()" type="danger" size="mini" plain icon="el-icon-delete"></el-button>
@@ -53,7 +59,7 @@ export default {
         operatorOptions() {
             const type = this.itemConfig.type;
             if (!type || type == 'text') {
-                if(this.itemConfig.provider=='tickets' || this.itemConfig.provider=='conversations'){
+                if(this.itemConfig.provider=='tickets'){
                     return {
                         contains: 'includes',
                         not_contains: 'does not includes'
@@ -75,10 +81,26 @@ export default {
                         not_in_all: 'includes none of'
                     };
                 }
+
+                if (this.itemConfig.option_key== 'waiting_for_reply'){
+                    return {
+                        '=': 'equal',
+                        '!=': 'does not equal',
+                    }
+                }
                 return {
                     in: 'includes in',
                     not_in: 'not includes in'
                 };
+            }
+            if (type == 'dates') {
+                return {
+                    before: 'before',
+                    after: 'after',
+                    date_equal: 'in the date',
+                    days_before: 'before days',
+                    days_within: 'within days'
+                }
             }
             return {}
         },

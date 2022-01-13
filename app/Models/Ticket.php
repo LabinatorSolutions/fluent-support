@@ -76,43 +76,54 @@ class Ticket extends Model
     ];
 
     /**
-     * Local scope to filter subscribers by search/query string
+     * Local scope to filter tickets by search/query string
      * @param ModelQueryBuilder $query
      * @param string $search
      * @return ModelQueryBuilder
      */
-    public function scopeSearchBy($query, $search, $provider=false)
+    public function scopeSearchBy($query, $search)
     {
-        if ($search && !$provider) {
+        if (strpos($search, ':')) {
+            $array = explode(':', $search);
+            $column = $array[0];
+            $value = $array[1];
+            $columns = $this->fillable;
+            $columns[] = 'id';
 
-            if (strpos($search, ':')) {
-                $array = explode(':', $search);
-                $column = $array[0];
-                $value = $array[1];
-                $columns = $this->fillable;
-                $columns[] = 'id';
-
-                if (in_array($column, $columns) && $value) {
-                    if (is_numeric($value)) {
-                        $query->where($column, $value);
-                    } else {
-                        $query->where($column, 'LIKE', "%$value%");
-                    }
-                    return $query;
+            if (in_array($column, $columns) && $value) {
+                if (is_numeric($value)) {
+                    $query->where($column, $value);
+                } else {
+                    $query->where($column, 'LIKE', "%$value%");
                 }
+                return $query;
             }
+        }
 
-            $fields = $this->searchable;
-            $query->where(function ($query) use ($fields, $search) {
-                $query->where(array_shift($fields), 'LIKE', "%$search%");
+        $fields = $this->searchable;
+        $query->where(function ($query) use ($fields, $search) {
+            $query->where(array_shift($fields), 'LIKE', "%$search%");
 
-                foreach ($fields as $field) {
-                    $query->orWhere($field, 'LIKE', "$search%");
-                }
-            });
-        }else{
-            foreach ($search as $s) {
-                $operator = $s['operator'];
+            foreach ($fields as $field) {
+                $query->orWhere($field, 'LIKE', "$search%");
+            }
+        });
+
+        return $query;
+    }
+
+    /**
+     * Local scope to filter tickets by diffrent filtering condition
+     * @param ModelQueryBuilder $query
+     * @param mixed $search
+     * @return ModelQueryBuilder
+     */
+
+    public function doSearchForAdvancedFilter($query, $search)
+    {
+        foreach ($search as $s) {
+            $operator = $s['operator'];
+            if(in_array($s['property'], ['title','content' ])){
                 if ($operator == 'contains') {
                     $query = $query->where(function ($query) use ($s) {
                         $query->where($s['property'], 'LIKE', "%".$s['value']."%");
@@ -123,8 +134,16 @@ class Ticket extends Model
                     });
                 }
             }
+            if($s['property'] == 'conversation_content'){
+                $query = (new \FluentSupport\App\Models\Conversation())->scopeSearchBy($query, $search, $provider='conversation');
+            }
+            if(in_array($s['property'], ['created_at', 'updated_at', 'waiting_since', 'last_agent_response', 'last_customer_response'])){
+                $query = (new \FluentSupport\App\Models\Ticket())->buildDateBaseFilterQuery($query, $search);
+            }
+            if(in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply'])){
+                $query = (new \FluentSupport\App\Models\Ticket())->buildPropertiesFilterQuery($query, $search);
+            }
         }
-
         return $query;
     }
 
@@ -193,9 +212,9 @@ class Ticket extends Model
     }
 
     /**
-     * Local scope to filter subscribers by search/query string
+     * Local scope to filter tickets by agent id
      * @param ModelQueryBuilder $query
-     * @param array $statuses
+     * @param int $agentId
      * @return ModelQueryBuilder
      */
     public function scopeFilterByAgentId($query, $agentId)
@@ -283,6 +302,71 @@ class Ticket extends Model
     }
 
     /**
+     * Parse filter to set proper operator and value for the filter query.
+     *
+     * @param array $filter
+     * @return array
+     */
+    public static function filterParser($filter)
+    {
+        switch ($filter['operator']) {
+            case 'before':
+                $filter['operator'] = '<';
+                $filter['value'] = $filter['value'] . ' 23:59:59';
+                break;
+
+            case 'after':
+                $filter['operator'] = '>';
+                $filter['value'] = $filter['value'] . ' 23:59:59';
+                break;
+
+            case 'date_equal':
+                $filter['operator'] = 'LIKE';
+                $filter['value'] = '%' . $filter['value'] . '%';
+                break;
+
+            case 'days_before':
+                $filter['operator'] = '<';
+                $filter['value'] = date('Y-m-d', current_time('timestamp') - $filter['value'] * 24 * 60 * 60);
+                break;
+
+            case 'days_within':
+                $filter['operator'] = 'BETWEEN';
+                $filter['value'] = [
+                    date('Y-m-d', current_time('timestamp') - $filter['value'] * 24 * 60 * 60),
+                    date('Y-m-d') . ' 23:59:59'
+                ];
+                break;
+        }
+
+        return $filter;
+    }
+
+    /**
+     * @param \FluentSupport\Framework\Database\Orm\Builder|\FluentSupport\Framework\Database\Query\Builder $query
+     * @param array $filters
+     * @return \FluentSupport\App\Models\Ticket
+     */
+    public function buildDateBaseFilterQuery($query, $filters)
+    {
+        foreach ($filters as $filter) {
+            if(empty($filter['value'])) {
+                continue;
+            }
+            $filter = static::filterParser($filter);
+            $query->where(function ($dateQuery) use ($filter) {
+
+                if ($filter['operator'] == 'BETWEEN') {
+                    $dateQuery->whereBetween($filter['property'], $filter['value']);
+                } else {
+                    $dateQuery->where($filter['property'], $filter['operator'], $filter['value']);
+                }
+            });
+        }
+        return $query;
+    }
+
+    /**
      * Relation builder
      * @param $relation
      * @param $query
@@ -322,14 +406,29 @@ class Ticket extends Model
      * @return ModelQueryBuilder
      */
 
-    public function buildSegmentFilterQuery($query, $filters)
+    public function buildPropertiesFilterQuery($query, $filters)
     {
         foreach ($filters as $filter) {
             if (in_array($filter['property'], ['tags', 'product'])) {
                 $subField = $filter['property'] == 'tags' ? 'tag_id' : 'product_id';
                 list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
                 $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
-            } else {
+            } elseif ($filter['property'] == 'waiting_for_reply'){
+                global $wpdb;
+                if (($filter['value'] == 'true' && $filter['operator'] == '=') || ($filter['value'] == 'false' && $filter['operator'] == '!=')){
+                    $query = $query->where(function ($q) use ($wpdb) {
+                        $q->whereRaw($wpdb->prefix . 'fs_tickets.last_agent_response < ' . $wpdb->prefix . 'fs_tickets.last_customer_response')
+                            ->orWhereNull('last_agent_response')
+                            ->orWhere('status', 'new');
+                    });
+                }
+                else {
+                    $query = $query->where(function ($q) use ($wpdb) {
+                        $q->whereRaw($wpdb->prefix . 'fs_tickets.last_customer_response < ' . $wpdb->prefix . 'fs_tickets.last_agent_response');
+                    });
+                }
+            }
+            else {
                 $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
 
                 $query = $query->{$method}($filter['property'], (array) $filter['value']);
@@ -380,7 +479,7 @@ class Ticket extends Model
      * @param $filters
      */
 
-    public function filterTicketByProperties($provider, $query, $filters)
+    public function filterTicketByUser($provider, $query, $filters)
     {
         foreach ($filters as $index=>$filter) {
             if ($filter['operator']=='in' || $filter['operator']=='not_in') {
