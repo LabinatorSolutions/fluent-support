@@ -200,7 +200,7 @@ class TicketController extends Controller
     {
         $agent = Helper::getAgentByUserId();
         $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
-            $q->where('status', 'active');
+            $q->whereIn('status', ['active', 'inline']);
         }]);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
 
