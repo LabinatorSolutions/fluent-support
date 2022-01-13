@@ -164,9 +164,8 @@ class Ticket extends Model
 
     public function scopeWaitingOnly($query)
     {
-        global $wpdb;
-        $query->where(function ($q) use ($wpdb) {
-            $q->whereRaw($wpdb->prefix . 'fs_tickets.last_agent_response < ' . $wpdb->prefix . 'fs_tickets.last_customer_response')
+        $query->where(function ($q){
+            $q->whereColumn('last_agent_response', '<' ,'last_customer_response')
                 ->orWhereNull('last_agent_response')
                 ->orWhere('status', 'new');
         });
@@ -414,17 +413,16 @@ class Ticket extends Model
                 list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
                 $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
             } elseif ($filter['property'] == 'waiting_for_reply'){
-                global $wpdb;
                 if (($filter['value'] == 'true' && $filter['operator'] == '=') || ($filter['value'] == 'false' && $filter['operator'] == '!=')){
-                    $query = $query->where(function ($q) use ($wpdb) {
-                        $q->whereRaw($wpdb->prefix . 'fs_tickets.last_agent_response < ' . $wpdb->prefix . 'fs_tickets.last_customer_response')
+                    $query = $query->where(function ($q){
+                        $q->whereColumn('last_agent_response', '<' ,'last_customer_response')
                             ->orWhereNull('last_agent_response')
                             ->orWhere('status', 'new');
                     });
                 }
                 else {
-                    $query = $query->where(function ($q) use ($wpdb) {
-                        $q->whereRaw($wpdb->prefix . 'fs_tickets.last_customer_response < ' . $wpdb->prefix . 'fs_tickets.last_agent_response');
+                    $query = $query->where(function ($q) {
+                        $q->whereColumn('last_customer_response', '<' ,'last_agent_response');
                     });
                 }
             }
