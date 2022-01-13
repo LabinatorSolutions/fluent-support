@@ -84,9 +84,10 @@ export default {
                 if (this.new_item[0] === 'customer' && this.new_item[1] !== 'agent') {
                     operator = 'contains';
                 }
+
                 let tempItem = this.new_item;
                 let exist = false;
-                this.items.forEach(function(item){
+                each(this.items, (item) => {
                     if(item.source[0] === tempItem[0] && item.source[1] === tempItem[1]){
                         exist = true;
                     }
@@ -98,7 +99,7 @@ export default {
                         value: ''
                     });
                     this.addVisible = false;
-                    this.new_item = [];
+                    // this.new_item = [];
                 }else{
                     this.$notify.error({
                         message: 'Selected item already selected',
