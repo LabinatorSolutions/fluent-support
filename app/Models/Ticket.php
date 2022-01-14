@@ -140,8 +140,17 @@ class Ticket extends Model
 
             //If selected item is Ticket Conversation Content
             if($s['property'] == 'conversation_content'){
-                //Call scopeSearchBy inside fluent support model with conversation as provider
-                $query = (new \FluentSupport\App\Models\Conversation())->scopeSearchBy($query, $s, 'conversation');
+                $operator = $s['operator'];
+                if($operator == 'contains') {
+                    $query = $query->whereHas('responses', function ($q) use ($s) {
+                        $q->where('content', 'LIKE', "%".$s['value']."%");
+                    });
+
+                } else if ($operator == 'not_contains') {
+                    $query = $query->whereHas('responses', function ($q) use ($s) {
+                        $q->where('content', 'NOT LIKE', "%".$s['value']."%");
+                    });
+                }
             }
 
             //If selected item is Ticket created or Last Response or Customer Waiting For, or Last Agent Response or Last Customer Response
@@ -149,7 +158,7 @@ class Ticket extends Model
                 $query = (new \FluentSupport\App\Models\Ticket())->buildDateBaseFilterQuery($query, $s);
             }
 
-
+            //If selected item is Ticket Status or Client Priority or Agent Priority or Tags or Product or Waiting For Reply
             if(in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply'])){
                 $query = (new \FluentSupport\App\Models\Ticket())->buildPropertiesFilterQuery($query, $s);
             }
