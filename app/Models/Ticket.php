@@ -113,7 +113,7 @@ class Ticket extends Model
     }
 
     /**
-     * Local scope to filter tickets by diffrent filtering condition
+     * Local scope to filter tickets by different filtering condition
      * @param ModelQueryBuilder $query
      * @param mixed $search
      * @return ModelQueryBuilder
@@ -123,25 +123,35 @@ class Ticket extends Model
     {
         foreach ($search as $s) {
             $operator = $s['operator'];
+            //If selected item for ticket either title or content
             if(in_array($s['property'], ['title','content' ])){
+                //If the selected condition is contains, query operator id LIKE
                 if ($operator == 'contains') {
                     $query = $query->where(function ($query) use ($s) {
                         $query->where($s['property'], 'LIKE', "%".$s['value']."%");
                     });
                 } elseif ($operator == 'not_contains') {
+                    //If the selected condition is not_contains, query operator id NOT LIKE
                     $query = $query->where(function ($query) use ($s){
                         $query->where($s['property'], 'NOT LIKE', '%'.$s['value'].'%');
                     });
                 }
             }
+
+            //If selected item is Ticket Conversation Content
             if($s['property'] == 'conversation_content'){
-                $query = (new \FluentSupport\App\Models\Conversation())->scopeSearchBy($query, $search, $provider='conversation');
+                //Call scopeSearchBy inside fluent support model with conversation as provider
+                $query = (new \FluentSupport\App\Models\Conversation())->scopeSearchBy($query, $s, 'conversation');
             }
+
+            //If selected item is Ticket created or Last Response or Customer Waiting For, or Last Agent Response or Last Customer Response
             if(in_array($s['property'], ['created_at', 'updated_at', 'waiting_since', 'last_agent_response', 'last_customer_response'])){
-                $query = (new \FluentSupport\App\Models\Ticket())->buildDateBaseFilterQuery($query, $search);
+                $query = (new \FluentSupport\App\Models\Ticket())->buildDateBaseFilterQuery($query, $s);
             }
+
+
             if(in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply'])){
-                $query = (new \FluentSupport\App\Models\Ticket())->buildPropertiesFilterQuery($query, $search);
+                $query = (new \FluentSupport\App\Models\Ticket())->buildPropertiesFilterQuery($query, $s);
             }
         }
         return $query;
@@ -348,20 +358,16 @@ class Ticket extends Model
      */
     public function buildDateBaseFilterQuery($query, $filters)
     {
-        foreach ($filters as $filter) {
-            if(empty($filter['value'])) {
-                continue;
-            }
-            $filter = static::filterParser($filter);
-            $query->where(function ($dateQuery) use ($filter) {
+        $filter = static::filterParser($filters);
+        $query->where(function ($dateQuery) use ($filter) {
 
-                if ($filter['operator'] == 'BETWEEN') {
-                    $dateQuery->whereBetween($filter['property'], $filter['value']);
-                } else {
-                    $dateQuery->where($filter['property'], $filter['operator'], $filter['value']);
-                }
-            });
-        }
+            if ($filter['operator'] == 'BETWEEN') {
+                $dateQuery->whereBetween($filter['property'], $filter['value']);
+            } else {
+                $dateQuery->where($filter['property'], $filter['operator'], $filter['value']);
+            }
+        });
+
         return $query;
     }
 
