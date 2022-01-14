@@ -28,7 +28,7 @@
                 </div>
             </el-form-item>
 
-            <el-form-item :label="$t('Email Footer For Customers')">
+            <el-form-item :label="$t('Email Footer For Customers')" v-if="has_pro">
                 <wp-editor :height="100" v-model="mailbox.email_footer"/>
                 <div>
                     <el-button size="small" style="cursor: pointer;" @click="show_codes = !show_codes">{{$t('see_available_dynamic_shortcodes')}}:</el-button>
