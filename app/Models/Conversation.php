@@ -44,9 +44,9 @@ class Conversation extends Model
      * @param string $search
      * @return ModelQueryBuilder
      */
-    public function scopeSearchBy($query, $search, $provider=false)
+    public function scopeSearchBy($query, $search)
     {
-        if ($search && !$provider) {
+        if ($search) {
             $fields = $this->searchable;
             $query->where(function ($query) use ($fields, $search) {
                 $query->where(array_shift($fields), 'LIKE', "%$search%");
@@ -55,22 +55,6 @@ class Conversation extends Model
                     $query->orWhere($field, 'LIKE', "$search%");
                 }
             });
-        } else {
-            foreach ($search as $s) {
-                $operator = $s['operator'];
-                if ($s['property'] == 'conversation_content'){
-                    $s['property'] = 'content';
-                }
-                if ($operator == 'contains') {
-                    $query = $query->where(function ($query) use ($s) {
-                        $query->where($s['property'], 'LIKE', "%".$s['value']."%");
-                    });
-                } else if ($operator == 'not_contains') {
-                    $query = $query->where(function ($query) use ($s){
-                        $query->where($s['property'], 'NOT LIKE', '%'.$s['value'].'%');
-                    });
-                }
-            }
         }
 
         return $query;
