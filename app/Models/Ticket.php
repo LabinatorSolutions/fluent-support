@@ -416,38 +416,37 @@ class Ticket extends Model
     /**
      * get tickets by advanced filter segment data
      * @param $query
-     * @param $filters
+     * @param $filter
      * @return ModelQueryBuilder
      */
 
-    public function buildPropertiesFilterQuery($query, $filters)
+    public function buildPropertiesFilterQuery($query, $filter)
     {
-        foreach ($filters as $filter) {
-            if (in_array($filter['property'], ['tags', 'product'])) {
-                $subField = $filter['property'] == 'tags' ? 'tag_id' : 'product_id';
-                list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
-                $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
-            } elseif ($filter['property'] == 'waiting_for_reply'){
-                if (($filter['value'] == 'true' && $filter['operator'] == '=') || ($filter['value'] == 'false' && $filter['operator'] == '!=')){
-                    $query = $query->where(function ($q){
-                        $q->whereColumn('last_agent_response', '<' ,'last_customer_response')
-                            ->orWhereNull('last_agent_response')
-                            ->orWhere('status', 'new');
-                    });
-                }
-                else {
-                    $query = $query->where(function ($q) {
-                        $q->whereColumn('last_customer_response', '<' ,'last_agent_response');
-                    });
-                }
+        if (in_array($filter['property'], ['tags', 'product'])) {
+            $subField = $filter['property'] == 'tags' ? 'tag_id' : 'product_id';
+            list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
+            $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
+        }
+
+        elseif ($filter['property'] == 'waiting_for_reply'){
+            if (($filter['value'] == 'true' && $filter['operator'] == '=') || ($filter['value'] == 'false' && $filter['operator'] == '!=')){
+                $query = $query->where(function ($q){
+                    $q->whereColumn('last_agent_response', '<' ,'last_customer_response')
+                        ->orWhereNull('last_agent_response')
+                        ->orWhere('status', 'new');
+                });
             }
             else {
-                $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
-
-                $query = $query->{$method}($filter['property'], (array) $filter['value']);
+                $query = $query->where(function ($q) {
+                    $q->whereColumn('last_customer_response', '<' ,'last_agent_response');
+                });
             }
         }
 
+        else {
+            $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
+            $query = $query->{$method}($filter['property'], (array) $filter['value']);
+        }
         return $query;
     }
 
