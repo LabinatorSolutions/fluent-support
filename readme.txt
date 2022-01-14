@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
 Tested up to: 5.8
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -155,6 +155,17 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+= 1.5.4 (Date: January 17, 2022) =
+* Added - Email notification on ticket assign
+* Added - Ticket priority selection in Fluent Forms integration
+* Added - Customer profile picture changing option in agent area
+* Added - Customer registration on ticket creation from agent area
+* Added - WordPress user registration on ticket creation from agent area
+* Added - Plugin PHP API
+* Added - Ticket customer changing option from agent dashboard
+* Added - Missing translations
+* Fixed - Attachment issue
+* Fixed - Email notification not sending to customer when agent reply to a ticket
 
 = 1.5.3 (Date: November 22, 2021) =
 * Preview text issue fixed
