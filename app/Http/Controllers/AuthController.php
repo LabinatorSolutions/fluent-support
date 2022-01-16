@@ -51,7 +51,6 @@ class AuthController extends Controller
 
     public function handleLogin(Request $request)
     {
-
         $data = $request->all();
 
         if (empty($data['pwd']) || empty($data['log'])) {
@@ -68,17 +67,34 @@ class AuthController extends Controller
             ]);
         }
 
+
         $email = $data['log'];
         $password = $data['pwd'];
 
 
-        if(is_email($email)) {
+        if (is_email($email)) {
             $user = get_user_by('email', $email);
         } else {
             $user = get_user_by('login', $email);
         }
 
-        if($user && wp_check_password($password, $user->user_pass, $user->ID)) {
+        if (!$user) {
+            return $this->response([
+                'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
+            ], 403);
+        }
+
+        $info = array(
+            'user_login'    => sanitize_text_field(trim($_POST['log'])),
+            'user_password' => trim($_POST['pwd']),
+            'remember'      => apply_filters('fluentsupport_login_remember', true)
+        );
+
+        if (apply_filters('fluent_support_use_native_login', true)) {
+            return $this->nativeLoginHandler($user, $info, $redirectUrl);
+        }
+
+        if (wp_check_password($password, $user->user_pass, $user->ID)) {
             $this->login($user->ID);
             return $this->sendSuccess([
                 'redirect' => $redirectUrl
@@ -88,6 +104,70 @@ class AuthController extends Controller
         return $this->response([
             'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
         ], 403);
+    }
+
+    private function nativeLoginHandler($user, $info, $redirectUrl = '')
+    {
+        if(!$redirectUrl) {
+            $redirectUrl = Helper::getPortalBaseUrl();
+        }
+        
+        $secure_cookie = is_ssl();
+        if (!$secure_cookie && !force_ssl_admin()) {
+            if (get_user_option('use_ssl', $user->ID)) {
+                $secure_cookie = true;
+                force_ssl_admin(true);
+            }
+        }
+
+        if (class_exists('\Limit_Login_Attempts')) {
+            global $limit_login_attempts_obj;
+            $limit_login_attempts_try = $limit_login_attempts_obj->wp_authenticate_user($user, false);
+            if (is_wp_error($limit_login_attempts_try)) {
+                return $this->response([
+                    'message' => implode('<br/>', $limit_login_attempts_try->get_error_messages())
+                ], 403);
+            }
+        }
+
+        $user_signon = wp_signon($info, $secure_cookie);
+
+        if (!is_wp_error($user_signon) && empty($_COOKIE[LOGGED_IN_COOKIE])) {
+            if (headers_sent()) {
+                return $this->response([
+                    'message' => sprintf(__('<strong>ERROR</strong>: Cookies are blocked due to unexpected output. For help, please see <a href="%1$s">this documentation</a> or try the <a href="%2$s">support forums</a>.'),
+                        __('https://codex.wordpress.org/Cookies'), __('https://wordpress.org/support/'))
+                ], 403);
+            }
+        }
+
+        if (is_wp_error($user_signon)) {
+            $errorMessage = __('Email or Password is not valid. Please try again', 'fluent-support');
+
+            if (class_exists('Limit_Login_Attempts')) {
+                global $limit_login_attempts_obj;
+                if ($limit_login_attempts_obj) {
+                    $limit_login_attempts_obj->limit_login_failed($user->user_login);
+                    $msg = $limit_login_attempts_obj->get_message();
+                    if ($msg) {
+                        $errorMessage = $msg;
+                    }
+                }
+            }
+
+            return $this->response([
+                'message' => $errorMessage
+            ], 403);
+        }
+
+        // WP Last Login plugin compatibility
+        if (class_exists('\Obenland_Wp_Last_Login')) {
+            update_user_meta($user_signon->ID, 'wp-last-login', time());
+        }
+
+        return $this->sendSuccess([
+            'redirect' => $redirectUrl
+        ]);
     }
 
     protected function getRules($fields = [])
