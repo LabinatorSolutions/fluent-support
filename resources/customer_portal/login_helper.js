@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
             const data = new FormData(form);
+
             const request = new XMLHttpRequest();
 
             request.open('POST', window.fluentSupportPublic.signup, true);
@@ -29,6 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (this.status === 200) {
                     if (this.response.redirect) {
                         window.location.replace(this.response.redirect);
+                    } else {
+                        window.location.reload();
                     }
                 } else {
                     let genericError = this.response.error;
@@ -99,6 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
             })
 
             const data = new FormData(loginForm[0]);
+            data.append('_support_login_nonce', window.fluentSupportPublic.fsupport_login_nonce);
+
             const request = new XMLHttpRequest();
 
             request.open('POST', window.fluentSupportPublic.login, true);
@@ -109,6 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (this.status === 200) {
                     if (this.response.redirect) {
                         window.location.replace(this.response.redirect);
+                    } else {
+                        window.location.reload();
                     }
                 } else {
                     let genericError = this.response.error;

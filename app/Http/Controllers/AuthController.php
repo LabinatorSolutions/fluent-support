@@ -11,6 +11,13 @@ class AuthController extends Controller
 {
     public function signup(Request $request)
     {
+
+        if (!wp_verify_nonce($request->get('_fsupport_signup_nonce'), 'fluent_support_signup_nonce')) {
+            $this->sendError([
+                'message' => __('Security verification failed. Please try again', 'fluent-support')
+            ]);
+        }
+
         $fields = AuthHandler::getSignupFields();
 
         $rules = $this->getRules($fields);
@@ -51,6 +58,12 @@ class AuthController extends Controller
 
     public function handleLogin(Request $request)
     {
+        if (!wp_verify_nonce($request->get('_support_login_nonce'), 'fsupport_login_nonce')) {
+            return $this->response([
+                'message' => __('Security verification failed', 'fluent-support')
+            ], 403);
+        }
+
         $data = $request->all();
 
         if (empty($data['pwd']) || empty($data['log'])) {
@@ -67,10 +80,8 @@ class AuthController extends Controller
             ]);
         }
 
-
         $email = $data['log'];
         $password = $data['pwd'];
-
 
         if (is_email($email)) {
             $user = get_user_by('email', $email);
@@ -87,7 +98,7 @@ class AuthController extends Controller
         $info = array(
             'user_login'    => sanitize_text_field(trim($_POST['log'])),
             'user_password' => trim($_POST['pwd']),
-            'remember'      => apply_filters('fluentsupport_login_remember', true)
+            'remember'      => isset($_POST['rememberme']),
         );
 
         if (apply_filters('fluent_support_use_native_login', true)) {
@@ -108,10 +119,10 @@ class AuthController extends Controller
 
     private function nativeLoginHandler($user, $info, $redirectUrl = '')
     {
-        if(!$redirectUrl) {
+        if (!$redirectUrl) {
             $redirectUrl = Helper::getPortalBaseUrl();
         }
-        
+
         $secure_cookie = is_ssl();
         if (!$secure_cookie && !force_ssl_admin()) {
             if (get_user_option('use_ssl', $user->ID)) {
