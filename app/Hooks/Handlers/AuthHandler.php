@@ -20,7 +20,6 @@ class AuthHandler
 
     public function loginForm($attributes)
     {
-
         if (get_current_user_id()) {
             return '';
         }
@@ -73,6 +72,7 @@ class AuthHandler
         }
 
         $registrationForm .= '<input type="hidden" name="__redirect_to" value="' . $attributes['redirect-to'] . '">';
+        $registrationForm .= '<input type="hidden" name="_fsupport_signup_nonce" value="' . wp_create_nonce('fluent_support_signup_nonce') . '">';
         $registrationForm .= '<button type="submit" id="fst_submit">' . $this->submitBtnLoadingSvg() . '<span>' . __('Signup', 'fluent-support') . '</span></button>';
 
         $registrationForm .= '</form>';
@@ -246,7 +246,8 @@ class AuthHandler
             'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
             'login'  => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
             'nonce'  => wp_create_nonce('wp_rest'),
-            'hide'   => $hide
+            'hide'   => $hide,
+            'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce')
         ]);
 
 
