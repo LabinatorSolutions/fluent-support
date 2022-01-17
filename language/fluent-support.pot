@@ -1960,7 +1960,7 @@ msgstr ""
 
 #: app/Services/TransStrings.php:262
 #: app/Hooks/Handlers/CustomerPortalHandler.php:106
-msgid "What's about this support ticket"
+msgid "What's this support ticket about"
 msgstr ""
 
 #: app/Hooks/Handlers/Menu.php:71 app/Hooks/Handlers/Menu.php:72
