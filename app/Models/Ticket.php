@@ -58,21 +58,10 @@ class Ticket extends Model
      * @var array
      */
     protected $searchable = [
+        'content',
         'title',
         'slug',
-        'content',
-        'id',
-        'email',
-        'first_name',
-        'last_name',
-        'country',
-        'city',
-        'zip',
-        'state',
-        'country',
-        'note',
-        'address_line_1',
-        'address_line_2'
+        'id'
     ];
 
     /**
@@ -103,9 +92,8 @@ class Ticket extends Model
         $fields = $this->searchable;
         $query->where(function ($query) use ($fields, $search) {
             $query->where(array_shift($fields), 'LIKE', "%$search%");
-
             foreach ($fields as $field) {
-                $query->orWhere($field, 'LIKE', "$search%");
+                $query->orWhere($field, 'LIKE', "%$search%");
             }
         });
 
@@ -429,14 +417,13 @@ class Ticket extends Model
         }
 
         elseif ($filter['property'] == 'waiting_for_reply'){
-            if (($filter['value'] == 'true' && $filter['operator'] == '=') || ($filter['value'] == 'false' && $filter['operator'] == '!=')){
+            if (($filter['value'] == 'yes' && $filter['operator'] == '=') || ($filter['value'] == 'no' && $filter['operator'] == '!=')){
                 $query = $query->where(function ($q){
                     $q->whereColumn('last_agent_response', '<' ,'last_customer_response')
                         ->orWhereNull('last_agent_response')
                         ->orWhere('status', 'new');
                 });
-            }
-            else {
+            } else {
                 $query = $query->where(function ($q) {
                     $q->whereColumn('last_customer_response', '<' ,'last_agent_response');
                 });
