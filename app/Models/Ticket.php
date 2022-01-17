@@ -147,7 +147,7 @@ class Ticket extends Model
             }
 
             //If selected item is Ticket Status or Client Priority or Agent Priority or Tags or Product or Waiting For Reply
-            if(in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply'])){
+            if(in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply', 'agent_id', 'mailbox_id'])){
                 $query = (new \FluentSupport\App\Models\Ticket())->buildPropertiesFilterQuery($query, $s);
             }
         }
