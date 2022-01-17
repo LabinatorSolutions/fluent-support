@@ -188,10 +188,10 @@ class Menu
         $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems);
 
 
-        if(!defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
+        if (!defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
             $secondayItems[] = [
-                'key' => 'upgrade_to_pro',
-                'label' => 'Upgrade to Pro',
+                'key'       => 'upgrade_to_pro',
+                'label'     => 'Upgrade to Pro',
                 'permalink' => 'https://fluentsupport.com'
             ];
         }
@@ -313,6 +313,7 @@ class Menu
             'support_agents'            => $agents,
             'support_products'          => Product::select(['id', 'title'])->get(),
             'client_priorities'         => Helper::customerTicketPriorities(),
+            'ticket_statuses'           => Helper::ticketStatuses(),
             'admin_priorities'          => Helper::adminTicketPriorities(),
             'mailboxes'                 => MailBox::select(['id', 'name', 'settings'])->get(),
             'me'                        => $me,
@@ -328,7 +329,7 @@ class Menu
             'has_file_upload'           => !!Helper::ticketAcceptedFileMiles()
         ));
 
-        if(defined('FLUENTCRM')) {
+        if (defined('FLUENTCRM')) {
             $appVars['fluentcrm_config'] = Helper::getFluentCRMTagConfig();
         }
 
