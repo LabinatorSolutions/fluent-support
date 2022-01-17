@@ -72,7 +72,7 @@ class TicketController extends Controller
         if($request->get('filter_type')=='advanced'){
             $queryArgs['filters_groups_raw'] = json_decode($this->request->get('advanced_filters'), true);
         } else {
-            $queryArgs['filters'] = $request->get('filters', []);
+            $queryArgs['simple_filters'] = $request->get('filters', []);
             $queryArgs['search'] = trim(sanitize_text_field($request->get('search', '')));
             if ($customerId = $request->get('customer_id')) {
                 $queryArgs['customer_id'] = intval($customerId);
