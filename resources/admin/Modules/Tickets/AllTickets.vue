@@ -61,7 +61,6 @@
                         <el-button size="small" @click="advanced_filters = [[]]; fetchTickets()">
                             {{ $t('Clear Filters') }}
                         </el-button>
-
                     </div>
                     <div class="fs_narrow_promo" v-else>
                         <h3>{{ $t('advance_filter_promo') }}</h3>

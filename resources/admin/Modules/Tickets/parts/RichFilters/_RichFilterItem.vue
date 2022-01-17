@@ -74,6 +74,14 @@ export default {
                 }
             }
             if (type == 'selections') {
+
+                if(this.itemConfig.is_singular_value) {
+                    return {
+                        in: 'includes in',
+                        not_in: 'not includes in'
+                    };
+                }
+
                 if (this.itemConfig.is_multiple) {
                     return {
                         in: 'includes in any of',
@@ -89,6 +97,7 @@ export default {
                         '!=': 'does not equal',
                     }
                 }
+
                 return {
                     in: 'includes in',
                     not_in: 'not includes in'

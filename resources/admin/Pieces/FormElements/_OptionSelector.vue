@@ -1,47 +1,29 @@
 <template>
-    <div class="fs_options_selector" :class="(field.creatable) ? 'fs_option_creatable' : ''">
-        <el-select :size="field.size" v-loading="!element_ready" v-model="model" :multiple="field.is_multiple"
+    <div class="fs_options_selector">
+        <el-select :size="field.size" v-model="model" :multiple="field.is_multiple"
                    :placeholder="field.placeholder"
                    clearable
                    filterable>
-            <el-option v-if="element_ready"
-                       v-for="option in options[field.option_key]"
-                       :key="option.id"
-                       :value="option.id"
-                       :label="option.title"><span v-html="option.title"></span></el-option>
+            <el-option
+                v-for="option in options"
+                :key="option.id"
+                :value="option.id"
+                :label="option.title"><span v-html="option.title"></span></el-option>
         </el-select>
-        <el-popover
-            v-if="field.creatable"
-            placement="left"
-            v-model="create_pop_status"
-            width="400"
-            trigger="manual">
-            <div>
-                <el-input placeholder="Provide Name" v-model="new_item">
-                    <template slot="append">
-                        <el-button @click="createNewItem()" type="success">Add</el-button>
-                    </template>
-                </el-input>
-            </div>
-            <el-button @click="create_pop_status = !create_pop_status" slot="reference" class="fc_with_select"
-                       type="info">+
-            </el-button>
-        </el-popover>
     </div>
 </template>
 
 <script>
+import each from 'lodash/each';
+
 export default {
     name: 'OptionSelector',
     props: ['value', 'field', 'modelValue'],
     data() {
         return {
-            options: {},
+            options: [],
             model: this.value,
             element_ready: false,
-            new_item: [],
-            creating: false,
-            create_pop_status: false
         }
     },
     watch: {
@@ -50,63 +32,37 @@ export default {
         }
     },
     methods: {
-        getOptions() {
-            this.app_ready = false;
-            const query = {
-                fields: 'tags,statuses,client_priority,priority,' + this.field.option_key
-            };
-            this.$get('rich-filter/options', query).then(response => {
-                this.options = response.options;
-                this.element_ready = true;
-            })
-                .catch((error) => {
-                    this.handleError(error);
-                })
-                .always(() => {
+        setOptions() {
+            const validKeys = {
+                ticket_statuses: 'object_type',
+                client_priorities: 'object_type',
+                admin_priorities: 'object_type',
+                ticket_tags: 'array_type',
+                support_products: 'array_type',
+            }
 
+            const optionKey = this.field.option_key;
+
+            if (!validKeys[optionKey] || !this.appVars[optionKey]) {
+                return false;
+            }
+
+            let options = [];
+            if (validKeys[optionKey] == 'object_type') {
+                each(this.appVars[optionKey], (value, key) => {
+                    this.options.push({
+                        id: key,
+                        title: value,
+                    });
                 });
-        },
-        createNewItem() {
-            this.creating = true;
-            this.$post(this.field.option_key + '/bulk', {
-                items: [
-                    {
-                        title: this.new_item
-                    }
-                ]
-            })
-                .then(response => {
-                    this.create_pop_status = false;
-                    this.$notify.success(response.message);
-                    this.getOptions();
-                    this.new_item = '';
-                })
-                .catch((errros) => {
-                    this.handleError(errros);
-                })
-                .always(() => {
-                    this.creating = false;
-                });
+            } else {
+                this.options = options;
+            }
+
         }
     },
     mounted() {
-        this.getOptions();
+        this.setOptions();
     }
 }
 </script>
-
-<style lang="scss">
-.fs_option_creatable {
-    display: block;
-    width: 100%;
-
-    .el-select {
-        width: 80%;
-        float: left;
-    }
-
-    .fs_with_select {
-        float: left;
-    }
-}
-</style>
