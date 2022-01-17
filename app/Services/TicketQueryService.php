@@ -22,7 +22,7 @@ class TicketQueryService
             'limit'              => false,
             'offset'             => false,
             'simple_filters'     => [],
-            'customer_id' => '',
+            'customer_id'        => '',
             'search'             => ''
         ]);
         $this->setupQuery();
@@ -50,6 +50,7 @@ class TicketQueryService
                 });
             }
         } else {
+
             if($simpleFilters = $this->args['simple_filters']) {
                 $ticketsQuery->applyFilters($simpleFilters);
             }
