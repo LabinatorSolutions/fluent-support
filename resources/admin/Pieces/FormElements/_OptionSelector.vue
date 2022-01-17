@@ -39,6 +39,8 @@ export default {
                 admin_priorities: 'object_type',
                 ticket_tags: 'array_type',
                 support_products: 'array_type',
+                support_agents: 'object_type',
+                mailboxes: 'object_type'
             }
 
             const optionKey = this.field.option_key;
@@ -47,18 +49,34 @@ export default {
                 return false;
             }
 
-            let options = [];
             if (validKeys[optionKey] == 'object_type') {
-                each(this.appVars[optionKey], (value, key) => {
-                    this.options.push({
-                        id: key,
-                        title: value,
+                if(optionKey == 'support_agents'){
+                    each(this.appVars[optionKey], (item) => {
+                        this.options.push({
+                            id: item.id,
+                            title: item.full_name,
+                        });
+                    })
+                }
+                else if(optionKey == 'mailboxes'){
+                    each(this.appVars[optionKey], (item) => {
+                        this.options.push({
+                            id: item.id,
+                            title: item.name,
+                        });
+                    })
+                }
+                else {
+                    each(this.appVars[optionKey], (value, key) => {
+                        this.options.push({
+                            id: key,
+                            title: value,
+                        });
                     });
-                });
+                }
             } else {
-                this.options = options;
+                this.options = this.appVars[optionKey];
             }
-
         }
     },
     mounted() {
