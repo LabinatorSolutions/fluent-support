@@ -14,8 +14,9 @@
                         icon="el-icon-refresh"
                         size="mini"></el-button>
                     <el-switch
-                        v-model="advance_filter"
-                        @change="advance_filter!=advance_filter"
+                        v-model="filter_type"
+                        active-value="advanced"
+                        inactive-value="simple"
                         active-text="Advanced Filter"
                         inactive-text=""
                         style="margin-left: 0.6em;"
@@ -37,24 +38,12 @@
                 </div>
             </div>
             <div class="fs_box_body">
-                <div v-if="show_filters">
-                    <ticket-filters
-                        v-if="appReady & !advance_filter"
-                        @fetchTickets="fetchTickets"
-                        :filters="filters"
-                        :search="search"
-                        @searchChange="(s) => { search = s; }"
-                        :reset-filters="resetFilters"/>
-                </div>
-                <el-button size="mini" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
-                </el-button>
-
-                <div v-if="advance_filter">
-                    <div v-if="advance_filter && has_pro" class="fs_rich_container">
-                        <div class="fs_rich_wrap">
+                <div v-if="filter_type == 'advanced'">
+                    <div v-if="has_pro" class="fs_rich_container">
+                        <div v-if="appReady" class="fs_rich_wrap">
                             <div v-for="(rich_filter, filterIndex) in advanced_filters" :key="filterIndex">
                                 <div class="fs_rich_filter">
-                                    <rich-filter @maybeRemove="maybeRemoveGroup(filterIndex)" :items="rich_filter" />
+                                    <rich-filter @maybeRemove="maybeRemoveGroup(filterIndex)" :items="rich_filter"/>
                                 </div>
                                 <div class="fs_cond_or" v-if="(filterIndex+1) != advanced_filters.length">
                                     <em>OR</em>
@@ -66,31 +55,34 @@
                                 style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><i
                                 class="el-icon-plus"></i> OR</em>
                         </div>
-                        <template v-if="has_pro">
-                            <el-button type="primary" size="small" @click="fetchTickets()">{{$t('Filter')}}</el-button>
-                            <el-button size="small" @click="advanced_filters = [[]]; fetchTickets()">{{$t('Clear Filters')}}</el-button>
 
-                            <div class="el-alert el-alert--info is-light" style="margin-top: 20px;" v-if="appVars.advanced_filter_suggestions.length">
-                                <ul class="fs_list">
-                                    <li
-                                        v-for="suggestion in appVars.advanced_filter_suggestions"
-                                        :key="suggestion.provider"
-                                    >
-                                        {{suggestion.title}} <a style="font-weight: bold;" :href="suggestion.btn_url">{{suggestion.btn_text}}</a>
-                                    </li>
-                                </ul>
-                            </div>
+                        <el-button type="primary" size="small" @click="fetchTickets()">{{ $t('Filter') }}
+                        </el-button>
+                        <el-button size="small" @click="advanced_filters = [[]]; fetchTickets()">
+                            {{ $t('Clear Filters') }}
+                        </el-button>
 
-                        </template>
                     </div>
-
                     <div class="fs_narrow_promo" v-else>
                         <h3>{{ $t('advance_filter_promo') }}</h3>
                         <p>{{ $t('pro_promo') }}</p>
-                        <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
+                        <a target="_blank" rel="noopener" href="https://fluentsupport.com"
+                           class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
                     </div>
-
                 </div>
+                <template v-else>
+                    <div v-if="show_filters">
+                        <ticket-filters
+                            v-if="appReady"
+                            @fetchTickets="fetchTickets"
+                            :filters="filters"
+                            :search="search"
+                            @searchChange="(s) => { search = s; }"
+                            :reset-filters="resetFilters"/>
+                    </div>
+                    <el-button size="mini" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
+                    </el-button>
+                </template>
 
                 <el-table
                     v-loading="loading"
@@ -241,8 +233,7 @@ export default {
                 client_priority: '',
                 waiting_for_reply: '',
                 ticket_tags: [],
-                mailbox_id: '',
-                filter_type: 'simple'
+                mailbox_id: ''
             },
             search: '',
             order_by: 'last_customer_response',
@@ -267,8 +258,8 @@ export default {
             add_response_modal: false,
             show_filters: !this.is_mobile,
             first_time_loading: true,
-            advance_filter: false,
-            advanced_filters: [[]]
+            advanced_filters: [[]],
+            filter_type: 'simple'
         }
     },
     watch: {
@@ -281,11 +272,10 @@ export default {
     },
     methods: {
         fetchTickets() {
-            this.advance_filter === true ? this.filters.filter_type='advanced' : this.filters.filter_type='simple';
-
             if (!this.app_ready) {
                 return false;
             }
+
             this.ticket_selections = [];
             this.loading = true;
             let query = {
@@ -293,15 +283,19 @@ export default {
                 per_page: this.pagination.per_page,
                 order_by: this.order_by,
                 order_type: this.order_type,
-                search: this.search,
-                filters: this.filters,
-                advanced_filters: this.advanced_filters
+                filter_type: this.filter_type
             };
 
-            if (this.advanced_filter) {
-                query = {advanced_filters: JSON.stringify(this.advanced_filters), ...query}
+            if(this.filter_type == 'advanced' && this.has_pro) {
+                query.advanced_filters = JSON.stringify(this.advanced_filters);
             } else {
-                query = {...this.filters, ...query};
+                query.filters = this.filters;
+                query.search = this.search;
+
+                if(!this.has_pro) {
+                    query.filter_type = 'simple';
+                    this.filter_type = 'simple';
+                }
             }
 
             const params = {};
@@ -313,16 +307,10 @@ export default {
             });
 
             window.fs_sub_params = params;
-
             params.t = Date.now();
-
-            this.$router.replace({
-                name: 'tickets', query: params
-            });
 
             this.$get('tickets', query)
                 .then(response => {
-
                     if (response.tickets.total && (!response.tickets.from && this.pagination.current_page > 1)) {
                         this.pagination.current_page = 1;
                         this.fetchTickets();
@@ -356,12 +344,14 @@ export default {
             });
         },
         setFromSaveFilters(callback) {
-            let filters = this.$getData('tickets_filter', {});
+            this.filter_type = this.$getData('tickets_filter_type', 'simple');
+
+            const filters = this.$getData('tickets_filter', {});
             each(filters, (filter, filterKey) => {
                 this.filters[filterKey] = filter;
             });
 
-            let ticketPref = this.$getData('tickets_pref', false);
+            const ticketPref = this.$getData('tickets_pref', false);
             if (ticketPref) {
                 this.order_by = ticketPref.order_by;
                 this.order_type = ticketPref.order_type;
@@ -369,10 +359,15 @@ export default {
                 this.pagination.current_page = ticketPref.current_page;
                 this.search = ticketPref.search;
             }
+
+            const advancedFilters = this.$getData('tickets_advanced_filters', false);
+            if(advancedFilters) {
+                this.advanced_filters = advancedFilters;
+            }
+
             this.appReady = true;
         },
         saveFilters() {
-            this.$saveData('tickets_filter', this.filters);
             this.$saveData('tickets_pref', {
                 order_by: this.order_by,
                 order_type: this.order_type,
@@ -380,6 +375,15 @@ export default {
                 search: this.search,
                 current_page: this.pagination.current_page
             });
+
+            this.$saveData('tickets_filter_type', this.filter_type);
+
+            if(this.filter_type == 'advanced') {
+                this.$saveData('tickets_advanced_filters', this.advanced_filters);
+            } else {
+                this.$saveData('tickets_filter', this.filters);
+            }
+
         },
         changeOrderType() {
             if (this.order_type == 'DESC') {

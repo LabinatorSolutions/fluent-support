@@ -14,10 +14,10 @@ use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
+use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
-use FluentSupport\Framework\Support\Arr;
 
 class TicketController extends Controller
 {
@@ -59,20 +59,29 @@ class TicketController extends Controller
 
     public function index(Request $request)
     {
+
+        $filterType = $request->get('filter_type', 'simple');
+
+        $queryArgs = [
+            'with' => [],
+            'filter_type' => $filterType,
+            'sort_by' => $request->get('order_by', 'id'),
+            'sort_type' => $request->get('order_type', 'DESC'),
+        ];
+
         if($request->get('filter_type')=='advanced'){
-            $queryArgs = [
-                'filter_type'        => 'advanced',
-                'filters_groups_raw' => $this->request->get('advanced_filters')
-            ];
-
-
-            if(defined('FLUENTSUPPORTPRO')){
-                return [
-                    'tickets' => (new \FluentSupportPro\App\Services\TicketQueryService($queryArgs))->paginate()
-                ];
+            $queryArgs['filters_groups_raw'] = json_decode($this->request->get('advanced_filters'), true);
+        } else {
+            $queryArgs['filters'] = $request->get('filters', []);
+            $queryArgs['search'] = trim(sanitize_text_field($request->get('search', '')));
+            if ($customerId = $request->get('customer_id')) {
+                $queryArgs['customer_id'] = intval($customerId);
             }
         }
-        $ticketsQuery = Ticket::with([
+
+        $ticketsModel = (new TicketQueryService($queryArgs))->getModel();
+
+        $ticketsModel = $ticketsModel->with([
             'customer'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
             }, 'agent'         => function ($query) {
@@ -85,24 +94,12 @@ class TicketController extends Controller
             }
         ]);
 
+
         // apply filters by access level
-        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsQuery, false]);
+        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsModel, false]);
 
-        if ($customerId = $request->get('customer_id')) {
-            $ticketsQuery = $ticketsQuery->where('customer_id', $customerId);
-        }
 
-        if ($filters = $request->get('filters', [])) {
-            $ticketsQuery->applyFilters($filters);
-        }
-
-        if ($search = $request->get('search')) {
-            $ticketsQuery->searchBy($search);
-        }
-
-        $ticketsQuery->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
-
-        $tickets = $ticketsQuery->paginate();
+        $tickets = $ticketsModel->paginate();
 
         $perPage = $request->get('per_page');
 

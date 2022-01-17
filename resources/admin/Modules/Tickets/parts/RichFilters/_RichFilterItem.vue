@@ -46,6 +46,7 @@
 <script>
 import isArray from 'lodash/isArray';
 import OptionSelector from '../../../../Pieces/FormElements/_OptionSelector';
+
 export default {
     name: "RichFilterItem",
     props: ['item', 'filterLabels'],
@@ -59,7 +60,7 @@ export default {
         operatorOptions() {
             const type = this.itemConfig.type;
             if (!type || type == 'text') {
-                if(this.itemConfig.provider=='tickets'){
+                if (this.itemConfig.provider == 'tickets') {
                     return {
                         contains: 'includes',
                         not_contains: 'does not includes'
@@ -82,7 +83,7 @@ export default {
                     };
                 }
 
-                if (this.itemConfig.option_key== 'waiting_for_reply'){
+                if (this.itemConfig.option_key == 'waiting_for_reply') {
                     return {
                         '=': 'equal',
                         '!=': 'does not equal',
