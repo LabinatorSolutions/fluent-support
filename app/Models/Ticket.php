@@ -343,6 +343,13 @@ class Ticket extends Model
                     date('Y-m-d') . ' 23:59:59'
                 ];
                 break;
+            case 'date_range':
+                $filter['operator'] = 'BETWEEN';
+                if(isset($filter['value'][0]))
+                    $filter['value'][0] .=  ' 00:00:00';
+                if(isset($filter['value'][1]))
+                    $filter['value'][1] .= ' 23:59:59';
+                break;
         }
 
         return $filter;
