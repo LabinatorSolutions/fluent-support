@@ -109,37 +109,29 @@ class Reporting
     public function agentSummary($from = false, $to = false, $agent = false)
     {
         if(!$from) {
-            $from = current_time('mysql');
+            $from = current_time('Y-m-d');
         }
 
         if(!$to) {
-            $to = date('Y-m-d', current_time('timestamp') + 86400);
-        } else {
-            $to = date('Y-m-d', strtotime($to) + 86400);
+            $to = current_time('Y-m-d');
         }
 
-        $from = $this->makeFromDate($from);
-        $to = $this->makeToDate($to);
-
+        $from .= ' 00:00:00';
+        $to .= ' 23:59:59';
         $reports = [];
-        $selectedFrom = $from->format('Y-m-d') . ' 00:00:00';
-        $selectedTo = $to->format('Y-m-d'). ' 23:59:59';
 
         $resolves = $this->db()->table('fs_tickets')
             ->select([
                 $this->db()->raw('COUNT(id) AS count'),
                 'agent_id',
-                'resolved_at',
             ])
             ->groupBy('agent_id')
             ->where('status', 'closed')
-            ->WhereBetween('resolved_at', [$selectedFrom, $selectedTo])
+            ->whereBetween('resolved_at', [$from, $to])
             ->get();
         $reports = $this->pushAgentsReport('closed', $resolves, $reports);
 
-        if(!$reports) {
-            return [];
-        }
+
 
         $openTickets = $this->db()->table('fs_tickets')
             ->select([
@@ -160,7 +152,7 @@ class Reporting
             ->whereHas('person', function ($q) {
                 $q->where('person_type', '=', 'agent');
             })
-            ->whereBetween('created_at', [$selectedFrom,$selectedTo])
+            ->whereBetween('created_at', [$from, $to])
             ->where('conversation_type', 'response')
             ->groupBy('agent_id')
             ->get();
@@ -170,7 +162,7 @@ class Reporting
         foreach ($responses as $response) {
             $reports[$response->agent_id]['interactions'] = Conversation::where('person_id', $response->agent_id)
                 ->where('conversation_type', 'response')
-                ->whereBetween('created_at', [$selectedFrom, $selectedTo])
+                ->whereBetween('created_at', [$from, $to])
                 ->groupBy('ticket_id')
                 ->get()
                 ->count();
