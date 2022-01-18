@@ -7,12 +7,12 @@
             </tbody>
         </table>
 
-        <div v-if="Object.keys(items).length==0" class="fs_filter_intro fs_padded_20">
+        <div v-if="Object.keys(items).length === 0" class="fs_filter_intro fs_padded_20">
             <el-popover
                 placement="right"
                 width="450"
-                v-model="addVisible"
-                trigger="click">
+                v-model:visible="addVisible"
+                trigger="manual">
                 <el-cascader-panel @change="maybeSelected"
                                    style="width: 100%"
                                    :options="filterOptions"
@@ -28,8 +28,8 @@
             <el-popover
                 placement="right"
                 width="450"
-                v-model="addVisible"
-                trigger="click">
+                v-model:visible="addVisible"
+                trigger="manual">
                 <el-cascader-panel @change="maybeSelected"
                                    style="width: 100%"
                                    :options="filterOptions"
@@ -78,7 +78,7 @@ export default {
     },
     methods: {
         maybeSelected() {
-            if (this.new_item.length == 2) {
+            if (this.new_item.length === 2) {
                 let operator = '';
 
                 if (this.new_item[0] === 'customer' && this.new_item[1] !== 'agent') {
@@ -98,14 +98,15 @@ export default {
                         operator: operator,
                         value: ''
                     });
-                    this.addVisible = false;
-                    // this.new_item = [];
                 }else{
                     this.$notify.error({
                         message: 'Selected item already selected',
                         position: 'bottom-right'
                     })
                 }
+
+                this.addVisible = false;
+                this.new_item = [];
             }
         },
         removeItem(index) {

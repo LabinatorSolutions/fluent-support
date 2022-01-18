@@ -11,10 +11,10 @@
             </el-select>
         </td>
         <td class="fs_filter_value">
-            <el-input size="mini" v-if="!itemConfig.type || itemConfig.type == 'text'" placeholder="Condition Value"
+            <el-input size="mini" v-if="!itemConfig.type || itemConfig.type === 'text'" placeholder="Condition Value"
                       type="text" v-model="item.value"/>
-            <template v-if="itemConfig.type == 'selections'">
-                <template v-if="itemConfig.component == 'options_selector'">
+            <template v-if="itemConfig.type === 'selections'">
+                <template v-if="itemConfig.component === 'options_selector'">
                     <option-selector v-model="item.value" :field="{
                         is_multiple: itemConfig.is_multiple,
                         size: 'mini',
@@ -30,8 +30,8 @@
                 </template>
                 <pre v-else>{{ itemConfig }}</pre>
             </template>
-            <template v-else-if="itemConfig.type == 'dates'">
-                <el-input size="mini" v-if="item.operator == 'days_before' || item.operator == 'days_within'"
+            <template v-else-if="itemConfig.type === 'dates'">
+                <el-input size="mini" v-if="item.operator === 'days_before' || item.operator === 'days_within'"
                           type="number" placeholder="Days" v-model="item.value"/>
                 <el-date-picker value-format="YYYY-MM-DD" v-else-if="item.operator" size="mini"
                                 v-model="item.value"></el-date-picker>
@@ -59,8 +59,8 @@ export default {
     computed: {
         operatorOptions() {
             const type = this.itemConfig.type;
-            if (!type || type == 'text') {
-                if (this.itemConfig.provider == 'tickets') {
+            if (!type || type === 'text') {
+                if (this.itemConfig.provider === 'tickets') {
                     return {
                         contains: 'includes',
                         not_contains: 'does not includes'
@@ -73,7 +73,7 @@ export default {
                     not_contains: 'does not includes'
                 }
             }
-            if (type == 'selections') {
+            if (type === 'selections') {
 
                 if(this.itemConfig.is_singular_value) {
                     return {
@@ -91,7 +91,7 @@ export default {
                     };
                 }
 
-                if (this.itemConfig.option_key == 'waiting_for_reply') {
+                if (this.itemConfig.option_key === 'waiting_for_reply') {
                     return {
                         '=': 'equal',
                         '!=': 'does not equal',
@@ -103,7 +103,7 @@ export default {
                     not_in: 'not includes in'
                 };
             }
-            if (type == 'dates') {
+            if (type === 'dates') {
                 return {
                     before: 'before',
                     after: 'after',
