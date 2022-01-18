@@ -33,8 +33,18 @@
             <template v-else-if="itemConfig.type === 'dates'">
                 <el-input size="mini" v-if="item.operator === 'days_before' || item.operator === 'days_within'"
                           type="number" placeholder="Days" v-model="item.value"/>
-                <el-date-picker value-format="YYYY-MM-DD" v-else-if="item.operator" size="mini"
+                <el-date-picker value-format="YYYY-MM-DD" v-else-if="item.operator === 'date_range'" size="mini"
+                    v-model="item.value"
+                    type="daterange"
+                    :range-separator="$t('To')"
+                    :start-placeholder="$t('Start')"
+                    :end-placeholder="$t('End')"
+                    :unlink-panels=true
+                >
+                </el-date-picker>
+                <el-date-picker v-else value-format="YYYY-MM-DD" size="mini"
                                 v-model="item.value"></el-date-picker>
+
             </template>
         </td>
         <td style="width: 50px; text-align: right;">
@@ -109,7 +119,8 @@ export default {
                     after: 'after',
                     date_equal: 'in the date',
                     days_before: 'before days',
-                    days_within: 'within days'
+                    days_within: 'within days',
+                    date_range: 'within dates'
                 }
             }
             return {}
