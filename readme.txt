@@ -8,10 +8,10 @@ Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The Fastest & Most feature rich Support Ticketing system for WordPress.
+The Fastest & Most Feature Rich Support and Customer Ticketing System for WordPress.
 
 == Description ==
-= The Super Fast, most versatile and feature-rich support plugin for WordPress =
+= The Super Fast, most versatile and feature-rich support and customer ticketing plugin for WordPress =
 
 [youtube https://www.youtube.com/watch?v=29NRuKkVSSI]
 
@@ -155,7 +155,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
-= 1.5.4 (Date: January 17, 2022) =
+= 1.5.4 (Date: January 19, 2022) =
 * Added - Email notification on ticket assign
 * Added - Ticket priority selection in Fluent Forms integration
 * Added - Customer profile picture changing option in agent area
@@ -164,6 +164,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Added - Plugin PHP API
 * Added - Ticket customer changing option from agent dashboard
 * Added - Missing translations
+* Authentication Improvements
 * Fixed - Attachment issue
 * Fixed - Email notification not sending to customer when agent reply to a ticket
 
