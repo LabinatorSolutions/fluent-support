@@ -180,15 +180,16 @@ class Person extends Model
             ->first();
         if ($meta) {
             $meta->value = maybe_serialize($metaValue);
-            $meta->save();
+            $meta->update();
         }
-
-        Meta::create([
-            'object_type' => 'person_meta',
-            'object_id'   => $this->id,
-            'key'         => $metaKey,
-            'value'       => maybe_serialize($metaValue)
-        ]);
+        if (!$meta){
+            Meta::create([
+                'object_type' => 'person_meta',
+                'object_id'   => $this->id,
+                'key'         => $metaKey,
+                'value'       => maybe_serialize($metaValue)
+            ]);
+        }
         return true;
     }
 
