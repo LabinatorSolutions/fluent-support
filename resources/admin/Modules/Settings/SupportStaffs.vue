@@ -104,6 +104,13 @@
                     </el-form-item>
                 </div>
 
+                <div class="slack_integration" v-if="integrationSettings.includes('twilio_settings')">
+                    <h3>Twilio Integration</h3>
+                    <el-form-item label="WhatsApp Phone Number">
+                        <el-input type="text" placeholder="Ex: +123456789" v-model="editing_agent.whatsapp_number"/>
+                    </el-form-item>
+                </div>
+
             </el-form>
 
             <template #footer>
