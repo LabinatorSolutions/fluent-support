@@ -39,7 +39,16 @@ class EmailNotificationHandler
             if ($ticket->message_id) {
                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
-            Mailer::send($customer->email, $subject, $emailBody, $headers);
+
+            $attachments = [];
+
+            if ($files = $ticket->attachments){
+                foreach ($files as $file){
+                    $attachments[] = $file->file_path;
+                }
+            }
+
+            Mailer::send($customer->email, $subject, $emailBody, $headers, $attachments);
         }
 
         // let's send email to admin if enabled
@@ -68,7 +77,16 @@ class EmailNotificationHandler
             if ($ticket->message_id) {
                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
-            Mailer::send($mailTo, $subject, $emailBody, $headers);
+
+            $attachments = [];
+
+            if ($files = $ticket->attachments){
+                foreach ($files as $file){
+                    $attachments[] = $file->file_path;
+                }
+            }
+
+            Mailer::send($mailTo, $subject, $emailBody, $headers, $attachments);
         }
 
     }
@@ -114,8 +132,15 @@ class EmailNotificationHandler
 
 
             $headers = $mailbox->getMailerHeader();
+            $attachments = [];
 
-            Mailer::send($customer->email, $subject, $emailBody, $headers);
+            if ($files = $response->attachments){
+                foreach ($files as $file){
+                    $attachments[] = $file->file_path;
+                }
+            }
+
+            Mailer::send($customer->email, $subject, $emailBody, $headers, $attachments);
         }
     }
 
@@ -206,7 +231,16 @@ class EmailNotificationHandler
                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
-            Mailer::send($emailTo, $subject, $emailBody, $headers);
+            $attachments = [];
+
+            if ($files = $response->attachments){
+                foreach ($files as $file){
+                    $attachments[] = $file->file_path;
+                }
+            }
+
+
+            Mailer::send($emailTo, $subject, $emailBody, $headers, $attachments);
         }
     }
 
