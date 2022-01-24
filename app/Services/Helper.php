@@ -9,6 +9,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Person;
 use FluentSupport\App\Services\EmailNotification\Settings;
+use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Support\Arr;
 
 class Helper
@@ -445,5 +446,31 @@ class Helper
         }
 
         return false;
+    }
+
+    public static function uploadProfilePicture($model , $id, $subDir, $files){
+        $model = "FluentSupport\App\Models\\".$model;
+        $row = $model::findOrFail($id);
+
+        $uploadedImage = FileSystem::setSubDir($subDir)->put($files);
+
+        if($avatar = $uploadedImage[0]['url']){
+            $row->avatar = $avatar;
+            $row->save();
+
+            return[
+                'message' => __('Profile picture has been updated successfully', 'fluent-support'),
+                'image'   => $row->avatar,
+                'person' => $row
+            ];
+        }
+
+        else{
+            $controller = new FluentSupport\Framework\Http\Controller();
+
+            return $controller->sendError([
+                'message' => __('Something went wrong while updating the profile picture', 'fluent-support')
+            ]);
+        }
     }
 }
