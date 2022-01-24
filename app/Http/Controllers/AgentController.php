@@ -248,4 +248,9 @@ class AgentController extends Controller
 
         return $data;
     }
+
+    public function addOrUpdateProfileImage(Request $request)
+    {
+        return Helper::uploadProfilePicture('Agent', $request->get('user_id'), 'agents_avatars', $request->files());
+    }
 }
