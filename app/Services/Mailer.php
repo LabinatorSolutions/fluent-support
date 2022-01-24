@@ -7,7 +7,7 @@ use FluentSupport\Framework\Support\Arr;
 
 class Mailer
 {
-    public static function send($to, $subject, $body, $extraHeader = [])
+    public static function send($to, $subject, $body, $extraHeader = [], $attachments = [])
     {
         $headers = self::getHeaders();
 
@@ -17,7 +17,7 @@ class Mailer
             }
         }
 
-        return wp_mail($to, $subject, $body, $headers);
+        return wp_mail($to, $subject, $body, $headers, $attachments);
     }
 
     public static function getHeaders()
