@@ -155,3 +155,8 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
+
+$router->prefix('users')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
+    $router->post('/profile_image/{user_id}', 'AgentController@addOrUpdateProfileImage')->int('user_id');
+
+});

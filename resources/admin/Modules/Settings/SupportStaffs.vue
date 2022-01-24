@@ -21,6 +21,22 @@
         <div v-if="!loading" class="fs_box_body">
             <el-table stripe :data="agents">
                 <el-table-column :label="$t('ID')" prop="id" width="90"/>
+                <el-table-column :label="$t('Avatar')">
+                    <template #default="scope">
+                        <div class="fs_as_profile_picture" @mouseover="showIcon(scope.row.id)" @mouseout="hideIcon(scope.row.id)">
+                            <el-upload
+                                class="fs-avatar-uploader"
+                                :action='upload_url+scope.row.id'
+                                :on-success ="handleAvatarSuccess"
+                                :headers="requestHeaders"
+                                :show-file-list="false"
+                                drag>
+                                <img :src='scope.row.photo' class="custom-avatar" :alt='scope.row.full_name'/>
+                                <i class="el-icon-upload avatar-uploader-icon" :id='"avatar-uploader-icon-"+scope.row.id'></i>
+                            </el-upload>
+                        </div>
+                    </template>
+                </el-table-column>
                 <el-table-column :label="$t('Name')">
                     <template #default="scope">
                         <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
@@ -148,7 +164,11 @@ export default {
             agent_modal: false,
             saving: false,
             search:'',
-            integrationSettings: []
+            integrationSettings: [],
+            upload_url: this.appVars.rest.url+'/users/profile_image/',
+            requestHeaders: {
+                'X-WP-Nonce': this.appVars.rest.nonce
+            }
         }
     },
     methods: {
@@ -254,6 +274,23 @@ export default {
             .catch((errors) => {
                 this.$handleError(errors);
             });
+        },
+        handleAvatarSuccess(res, file) {
+            let id = res.person.id;
+            let index = this.agents.findIndex(row => row.id === id);
+
+            this.agents[index].photo = URL.createObjectURL(file.raw);
+
+            this.$notify.success({
+                message: 'Profile picture has been updated successfully',
+                position: 'bottom-right'
+            });
+        },
+        showIcon(id) {
+            document.querySelector('#avatar-uploader-icon-'+id).style.display = 'initial';
+        },
+        hideIcon(id) {
+            document.querySelector('#avatar-uploader-icon-'+id).style.display = 'none';
         }
     },
     mounted() {
@@ -263,3 +300,43 @@ export default {
     }
 }
 </script>
+
+
+<style lang="scss">
+.fs_as_profile_picture{
+    position: absolute;
+    top: 0.5em;
+    left: -0.7em;
+    .fs-avatar-uploader{
+        .avatar-uploader-icon {
+            display: none;
+            font-size: 2.2em;
+            color: #fafafa;
+            position: absolute;
+            top: -0.5em;
+            left: 1.4em;
+        }
+        .el-upload-dragger {
+            width: unset;
+            height: unset;
+            background: transparent;
+            border: none;
+        }
+        img {
+            border: none;
+            border-radius: 50%;
+            width: 58%;
+            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
+        }
+        .avatar-uploader .el-upload {
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+    }
+}
+.el-table .cell{
+    min-height: 52px;
+}
+</style>
