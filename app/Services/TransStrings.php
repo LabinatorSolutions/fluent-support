@@ -411,7 +411,7 @@ class TransStrings
             'Click Here to Renew your License' => __('Click Here to Renew your License', 'fluent-support'),
             'Have a new license Key?' => __('Have a new license Key?', 'fluent-support'),
             'Your License Key' => __('Your License Key', 'fluent-support'),
-            'You license key is valid and activated' => __('You license key is valid and activated', 'fluent-support'),
+            'Your license key is valid and activated' => __('Your license key is valid and activated', 'fluent-support'),
             'Want to deactivate this license?' => __('Want to deactivate this license?', 'fluent-support'),
             'Please Provide a license key of FluentSupport - Customer Support Plugin for WordPress' => __('Please Provide a license key of FluentSupport - Customer Support Plugin for WordPress', 'fluent-support'),
             'dont_have_a_license_key' => __('Don\'t have a license key?', 'fluent-support'),
