@@ -6,6 +6,14 @@ use FluentSupport\App\Http\Controllers\AuthController;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
 
+/**
+ *  Customers class for REST API
+ *
+ * @package FluentSupport\App\Api\Classes
+ *
+ * @version 1.0.0
+ */
+
 class Customers
 {
     private $instance = null;
@@ -37,8 +45,8 @@ class Customers
     /**
      * getCustomer method will return a specific customer by id
      *
-     * @param  int   $customerId
-     * @return object
+     * @param int $customerId
+     * @return object|boolean
      */
 
     public function getCustomer(int $customerId)
@@ -52,9 +60,9 @@ class Customers
     /**
      * updateCustomer method will update the specific customer by id
      *
-     * @param  array   $data
-     * @param  int   $customer_id
-     * @return object
+     * @param array $data
+     * @param int $customer_id
+     * @return object|boolean
      */
 
     public function updateCustomer(array $data, int $customer_id)
@@ -72,11 +80,11 @@ class Customers
      * createCustomerWithOrWithoutWpUser method will create a customer
      * also it will create a wp user if you want to create one
      * if you want to create a wp user too then the process will be 1st it will create a wp user
-     * then after creating the wp user successfully it will create a fluent support customer
+     * after creating the wp user successfully it will create a fluent support customer
      *
      * @param  array   $data
      * @param bool $createWpUser
-     * @return object
+     * @return object|boolean
      */
 
     public function createCustomerWithOrWithoutWpUser(array $data, bool $createWpUser=false)
@@ -98,6 +106,8 @@ class Customers
                 return Customer::create($data);
             }
         }
+
+        return false;
     }
 
     /**

@@ -11,6 +11,15 @@ use FluentSupport\App\Models\Person;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Support\Arr;
+/**
+ *  Helper - REST API Helper Class
+ *
+ *  App helper for REST API
+ *
+ * @package FluentSupport\App\Services
+ *
+ * @version 1.0.0
+ */
 
 class Helper
 {
@@ -19,6 +28,12 @@ class Helper
         return App::getInstance($module);
     }
 
+    /**
+     * Get agent information by user id
+     * The function will get user id as parameter or get id from session and return agent information
+     * @param null $userId
+     * @return false
+     */
     public static function getAgentByUserId($userId = null)
     {
         if ($userId === null) {
@@ -31,6 +46,11 @@ class Helper
         return Agent::where('user_id', $userId)->first();
     }
 
+    /**
+     * This function will return the list of ticket priorities list for customer
+     *
+     * @return mixed
+     */
     public static function customerTicketPriorities()
     {
         return apply_filters('fluent_support/customer_ticket_priorities', [
@@ -40,6 +60,11 @@ class Helper
         ]);
     }
 
+    /**
+     * This function will return the list of ticket priorities list for Admin
+     *
+     * @return mixed
+     */
     public static function adminTicketPriorities()
     {
         return apply_filters('fluent_support/admin_ticket_priorities', [
@@ -49,6 +74,12 @@ class Helper
         ]);
     }
 
+
+    /**
+     * This function will return ticket status group
+     *
+     * @return mixed
+     */
     public static function ticketStatusGroups()
     {
         return apply_filters('fluent_support/ticket_status_groups', [
@@ -60,6 +91,11 @@ class Helper
         ]);
     }
 
+    /**
+     * This function will return ticket status list
+     *
+     * @return mixed
+     */
     public static function ticketStatuses()
     {
         return apply_filters('fluent_support/ticket_statuses', [
@@ -448,6 +484,14 @@ class Helper
         return false;
     }
 
+    /**
+     * Update profile picture for a user in person table using person id
+     * @param $model
+     * @param $id
+     * @param $subDir
+     * @param $files
+     * @return array
+     */
     public static function uploadProfilePicture($model , $id, $subDir, $files){
         $model = "FluentSupport\App\Models\\".$model;
         $row = $model::findOrFail($id);

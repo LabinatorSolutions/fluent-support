@@ -4,6 +4,14 @@ namespace FluentSupport\App\Api\Classes;
 
 use FluentSupport\App\Models\Product;
 
+/**
+ *  Products class for REST API
+ *
+ * @package FluentSupport\App\Api\Classes
+ *
+ * @version 1.0.0
+ */
+
 class Products
 {
     private $instance = null;
@@ -22,7 +30,7 @@ class Products
     }
 
     /**
-     * getProducts method will returns all available products
+     * getProducts method will return all available products
      */
     public function getProducts()
     {
