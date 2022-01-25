@@ -5,6 +5,14 @@ namespace FluentSupport\App\Api\Classes;
 use FluentSupport\App\Http\Controllers\AuthController;
 use FluentSupport\App\Models\Agent;
 
+/**
+ *  Agent class for REST API
+ *
+ * @package FluentSupport\App\Api\Classes
+ *
+ * @version 1.0.0
+ */
+
 class Agents
 {
     private $instance = null;
@@ -34,10 +42,10 @@ class Agents
     }
 
     /**
-     * getCustomer method will return a specific customer by id
+     * getAgent method will return a specific agent by id
      *
-     * @param  int   $agentId
-     * @return object
+     * @param int $agentId
+     * @return mixed
      */
 
     public function getAgent(int $agentId)
@@ -49,11 +57,11 @@ class Agents
     }
 
     /**
-     * updateAgent method will update the specific customer by id
+     * updateAgent method will update the specific agent by id
      *
-     * @param  array   $data
-     * @param  int   $agentId
-     * @return object
+     * @param array $data
+     * @param int $agentId
+     * @return mixed
      */
 
     public function updateAgent(array $data, int $agentId)
@@ -71,11 +79,11 @@ class Agents
      * createAgentWithOrWithoutWpUser method will create a new agent
      * also it will create a wp user if you want to create one
      * if you want to create a wp user too then the process will be 1st it will create a wp user
-     * then after creating the wp user successfully it will create a fluent support agent
+     * after creating the wp user successfully it will create a fluent support agent
      *
      * @param  array   $data
      * @param bool $createWpUser
-     * @return object
+     * @return mixed
      */
 
     public function createAgentWithOrWithoutWpUser(array $data, bool $createWpUser=false)
@@ -91,13 +99,15 @@ class Agents
         if(!username_exists($data['username'])){
             $authController = new AuthController();
             $createdUser = $authController->createUser($data);
-            $updateUser = $authController->maybeUpdateUser($createdUser, $data);
+            $authController->maybeUpdateUser($createdUser, $data);
             if($createdUser){
                 $data['user_id'] = $createdUser;
                 return Agent::create($data);
 
             }
-        }
+        }else return false;//username already exist
+
+        return  false;
     }
 
     /**

@@ -4,6 +4,14 @@ namespace FluentSupport\App\Api\Classes;
 
 use FluentSupport\App\Models\TicketTag;
 
+/**
+ *  Tags class for REST API
+ *
+ * @package FluentSupport\App\Api\Classes
+ *
+ * @version 1.0.0
+ */
+
 class Tags
 {
     private $instance = null;

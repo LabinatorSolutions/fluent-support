@@ -7,6 +7,14 @@ use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Tickets\ResponseService;
 
+/**
+ *  Tickets class for REST API
+ *
+ * @package FluentSupport\App\Api\Classes
+ *
+ * @version 1.0.0
+ */
+
 class Tickets
 {
     private $instance = null;
@@ -53,6 +61,7 @@ class Tickets
     /**
      * getTicket method will return a specific ticket by id
      * @param int $id
+     * @return object|false
      */
 
     public function getTicket(int $id)
@@ -68,10 +77,11 @@ class Tickets
     }
 
     /**
-     * addResponse method add response to a ticket
+     * addResponse method add response to a ticket by agent and ticket ID
      * @param array $data
      * @param int $agentId
      * @param int $ticketId
+     * @return array|boolean
      */
 
     public function addResponse(array $data, int $agentId, int $ticketId)
@@ -92,7 +102,7 @@ class Tickets
     /**
      *  createTicket method will create a new ticket
      * @param array $data
-     * @return object
+     * @return object| boolean
      */
 
     public function createTicket(array $data)
