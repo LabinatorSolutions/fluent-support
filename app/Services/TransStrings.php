@@ -458,7 +458,8 @@ class TransStrings
             'confirm' => __('confirm', 'fluent-support'),
             'Are you sure to delete this?' => __('Are you sure to delete this?', 'fluent-support'),
             'advance_filter_promo' => __('Using advanced filtering you can get more specific tickets', 'fluent-support-pro'),
-            'advance_filter_help_text' => __('Add new filter to narrow down your contacts based on different properties', 'fluent-support-pro')
+            'advance_filter_help_text' => __('Add new filter to narrow down your contacts based on different properties', 'fluent-support-pro'),
+            'Send Attachments' => __('Send Attachments', 'fluent-support'),
         ];
     }
 }
