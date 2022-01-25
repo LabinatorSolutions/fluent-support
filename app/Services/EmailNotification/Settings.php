@@ -153,42 +153,48 @@ class Settings
                 'title'          => __('Ticket Created (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when a customer submit a support ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'no'
+                'default_status' => 'yes',
+                'send_attachments'=> 'yes'
             ],
             'ticket_replied_by_agent_email_to_customer' => [
                 'key'            => 'ticket_replied_by_agent_email_to_customer',
                 'title'          => __('Replied by Agent (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when an agent reply to a ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'yes'
+                'default_status' => 'yes',
+                'send_attachments'=> 'no'
             ],
             'ticket_closed_by_agent_email_to_customer'  => [
                 'key'            => 'ticket_closed_by_agent_email_to_customer',
                 'title'          => __('Ticket Closed by Agent (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when an agent close a ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'yes'
+                'default_status' => 'yes',
+                'send_attachments'=> 'no'
             ],
             'ticket_created_email_to_admin'             => [
                 'key'            => 'ticket_created_email_to_admin',
                 'title'          => __('Ticket Created (To Admin)', 'fluent-support'),
                 'description'    => __('This email will be sent when the business when a new ticket has been submitted', 'fluent-support'),
                 'email_subject'  => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'yes'
+                'default_status' => 'yes',
+                'send_attachments'=> 'yes'
             ],
             'ticket_replied_by_customer_email_to_admin' => [
                 'key'            => 'ticket_replied_by_customer_email_to_admin',
                 'title'          => __('Replied by Customer (To Agent/Admin)', 'fluent-support'),
                 'description'    => __('This email will be sent to Assigned Agent or Admin when a customer reply to a ticket', 'fluent-support'),
                 'email_subject'  => 'New Response: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'yes'
+                'default_status' => 'yes',
+                'send_attachments'=> 'yes'
             ],
             'ticket_agent_on_change' => [
                 'key'            => 'ticket_agent_on_change',
                 'title'          => __('Ticket Agent Change (To Agent)', 'fluent-support'),
                 'description'    => __('This email will be sent to newly assigned agent', 'fluent-support'),
                 'email_subject'  => 'Ticket Agent Change: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'yes'
+                'default_status' => 'yes',
+                'send_attachments'=> 'no'
             ]
         ];
 
@@ -206,7 +212,8 @@ class Settings
                 'email_subject'    => $settingsDefaults[$emailKey]['email_subject'],
                 'email_body'       => $this->getDefaultEmailBody($emailKey, $box->box_type),
                 'status'           => $settingsDefaults[$emailKey]['default_status'],
-                'can_edit_subject' => (in_array($emailKey, $strictSubjectKeys) && $box->box_type == 'email') ? 'no' : 'yes'
+                'can_edit_subject' => (in_array($emailKey, $strictSubjectKeys) && $box->box_type == 'email') ? 'no' : 'yes',
+                'send_attachments' => $settingsDefaults[$emailKey]['send_attachments']
             ];
 
             if ($box->box_type == 'email' && in_array($emailKey, $strictSubjectKeys)) {
@@ -236,6 +243,10 @@ class Settings
 
         if (empty($savedSettings['email_body'])) {
             $savedSettings['email_body'] = $this->getDefaultEmailBody($emailKey, $box->box_type);
+        }
+
+        if (empty($savedSettings['send_attachments'])) {
+            $savedSettings['send_attachments'] = $settingsDefaults[$emailKey]['send_attachments'];
         }
 
         return $savedSettings;

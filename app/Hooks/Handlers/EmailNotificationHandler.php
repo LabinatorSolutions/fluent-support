@@ -42,7 +42,7 @@ class EmailNotificationHandler
 
             $attachments = [];
 
-            if ($files = $ticket->attachments){
+            if (($files = $ticket->attachments) && $emailSettings['send_attachments'] == 'yes'){
                 foreach ($files as $file){
                     $attachments[] = $file->file_path;
                 }
@@ -80,7 +80,7 @@ class EmailNotificationHandler
 
             $attachments = [];
 
-            if ($files = $ticket->attachments){
+            if (($files = $ticket->attachments) && $emailSettings['send_attachments'] == 'yes'){
                 foreach ($files as $file){
                     $attachments[] = $file->file_path;
                 }
@@ -134,7 +134,7 @@ class EmailNotificationHandler
             $headers = $mailbox->getMailerHeader();
             $attachments = [];
 
-            if ($files = $response->attachments){
+            if (($files = $response->attachments) && $emailSettings['send_attachments']=='yes'){
                 foreach ($files as $file){
                     $attachments[] = $file->file_path;
                 }
@@ -233,7 +233,7 @@ class EmailNotificationHandler
 
             $attachments = [];
 
-            if ($files = $response->attachments){
+            if (($files = $response->attachments) && $emailSettings['send_attachments'] == 'yes'){
                 foreach ($files as $file){
                     $attachments[] = $file->file_path;
                 }

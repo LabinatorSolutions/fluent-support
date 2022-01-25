@@ -38,6 +38,9 @@
                         <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">
                             {{$t('enable_email')}}
                         </el-checkbox>
+                        <el-checkbox true-label="yes" false-label="no" v-if="active_email_settings.status=='yes' && allowed_mails_for_attachments.includes(active_email_settings.key)" v-model="active_email_settings.send_attachments">
+                            {{$t('Send Attachments')}}
+                        </el-checkbox>
                     </el-form-item>
                     <el-button @click="saveSettings" :disabled="saving" v-loading="saving" type="success">{{$t('Save Settings')}}</el-button>
                 </el-col>
@@ -72,7 +75,13 @@ export default {
             configs: [],
             edit_modal:false,
             loading: false,
-            saving: false
+            saving: false,
+            allowed_mails_for_attachments: [
+                'ticket_created_email_to_customer',
+                'ticket_created_email_to_admin',
+                'ticket_replied_by_agent_email_to_customer',
+                'ticket_replied_by_customer_email_to_admin'
+            ]
         }
     },
     computed: {
