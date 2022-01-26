@@ -481,10 +481,11 @@ class Ticket extends Model
 
     /**
      * Filter by ticket general properties like customer name, agent name etc
+     * @param $provider
      * @param $query
      * @param $filters
+     * @return mixed|void
      */
-
     public function filterTicketByUser($provider, $query, $filters)
     {
         foreach ($filters as $index=>$filter) {
