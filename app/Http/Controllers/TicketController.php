@@ -19,6 +19,14 @@ use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
 
+/**
+ *  TicketController class for REST API related to ticket
+ * This class is responsible for getting / inserting/ modifying data for all request related to ticket
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
+
 class TicketController extends Controller
 {
     public function me(Request $request)
@@ -57,11 +65,16 @@ class TicketController extends Controller
         return $settings;
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function index(Request $request)
     {
-
+        //Selected filter type, either simple or Advanced
         $filterType = $request->get('filter_type', 'simple');
 
+        /*Prepare Query Arguments*/
         $queryArgs = [
             'with' => [],
             'filter_type' => $filterType,
@@ -69,15 +82,21 @@ class TicketController extends Controller
             'sort_type' => $request->get('order_type', 'DESC'),
         ];
 
+
+        //If the selected filter type is advanced
         if($request->get('filter_type')=='advanced'){
+            //Get the selected query params for advanced filter
             $queryArgs['filters_groups_raw'] = json_decode($this->request->get('advanced_filters'), true);
         } else {
+            //Selected filter type is simple
             $queryArgs['simple_filters'] = $request->get('filters', []);
             $queryArgs['search'] = trim(sanitize_text_field($request->get('search', '')));
             if ($customerId = $request->get('customer_id')) {
                 $queryArgs['customer_id'] = intval($customerId);
             }
         }
+
+        /*End Prepare Query Arguments*/
 
         $ticketsModel = (new TicketQueryService($queryArgs))->getModel();
 

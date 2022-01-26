@@ -19,7 +19,7 @@ use FluentSupport\Framework\Support\Arr;
 /**
  *  AgentController class for REST API
  * This class is responsible for getting data for all request related to agent
- * @package FluentSupport\App\Api\Classes
+ * @package FluentSupport\App\Http\Controllers
  *
  * @version 1.0.0
  */

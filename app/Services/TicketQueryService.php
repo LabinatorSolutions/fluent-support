@@ -28,8 +28,12 @@ class TicketQueryService
         $this->setupQuery();
     }
 
+    /**
+     *setupQuery method will prepare query to get the tickets based on the selected filter options
+     */
     private function setupQuery()
     {
+        //If filter conditions added in advanced filtering
         if ($this->args['filters_groups_raw']) {
             $this->formatAdvancedFilters();
         }
@@ -45,6 +49,7 @@ class TicketQueryService
                 }
                 $ticketsQuery->{$method}(function ($q) use ($group) {
                     foreach ($group as $providerName => $items) {
+                        //Call doSearchForAdvancedFilter/filterTicketByUser dynamically from pro
                         do_action_ref_array('fluent_support\tickets_filter_' . $providerName, [&$q, $items]);
                     }
                 });
@@ -93,14 +98,18 @@ class TicketQueryService
         return $this->model;
     }
 
+    /**
+     *formatAdvancedFilters method will format the requested variable for advanced filtering
+     */
     private function formatAdvancedFilters()
     {
         $filters = $this->args['filters_groups_raw'];
 
         $groups = [];
-
+        //$filterGroup mean all items under And, OR
         foreach ($filters as $filterGroup) {
             $group = [];
+            //$filterItem is individual item under a group(And/OR)
             foreach ($filterGroup as $filterItem) {
                 if (count($filterItem['source']) != 2 || empty($filterItem['source'][0]) || empty($filterItem['source'][1]) || empty($filterItem['operator'])) {
                     continue;
