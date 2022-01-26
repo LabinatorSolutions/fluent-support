@@ -16,6 +16,14 @@ use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\Framework\Support\Arr;
 
+/**
+ *  AgentController class for REST API
+ * This class is responsible for getting data for all request related to agent
+ * @package FluentSupport\App\Api\Classes
+ *
+ * @version 1.0.0
+ */
+
 class AgentController extends Controller
 {
     public function index(Request $request)
@@ -200,9 +208,14 @@ class AgentController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @return array
+     */
     public function myStats(Request $request)
     {
-        $agent = Helper::getAgentByUserId();
+        $agent = Helper::getAgentByUserId();//Get logged in agent information
+        //Get the statistics and responses by the agent
         $response = $this->getAgentStat($request, $agent->id);
 
         if(defined('FLUENTSUPPORTPRO')) {
@@ -213,11 +226,19 @@ class AgentController extends Controller
 
     }
 
+    /**
+     * getAgentStat method will return ticket statistics by an agent id
+     *
+     * @param Request $request
+     * @param $agentId
+     * @return array
+     */
     public function getAgentStat(Request $request, $agentId)
     {
-        $agent = Agent::findOrFail($agentId);
-        $stats = StatModule::getAgentStat($agentId);
+        $agent = Agent::findOrFail($agentId);//Get agent information
+        $stats = StatModule::getAgentStat($agentId);//Get ticket statistics
 
+        //If the logged-in user has permission to manage unassigned tickets, get number of unassigned tickets
         if (PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
             $stats['unassigned_tickets'] = [
                 'title' => __('Unassigned Tickets', 'fluent-support'),
@@ -231,18 +252,26 @@ class AgentController extends Controller
 
         $with = $request->get('with', []);
 
+        //If the request come with suggested_tickets
         if (in_array('suggested_tickets', $with)) {
+            //Get suggested tickets from ticketHelper
             $data['suggested_tickets'] = TicketHelper::getSuggestedTickets($agent->id);
         }
 
+        //If the request come with overall_stats
         if(in_array('overall_stats', $with)) {
+            //Get overall status
             $data['overall_stats'] = (new Reporting())->getActiveStats();
         }
 
+        //If the request come with individual_stat
         if(in_array('individual_stat', $with)) {
+            //get overall statistics by agent id
             $data['individual_stat'] = (new Reporting())->getActiveStatByAgent($agent->id);
         }
+        //If the request come with my_overall_stats
         if(in_array('my_overall_stats', $with)){
+            //Get the overall statistics by the agent
             $data['my_overall_stats'] = StatModule::getAgentOverallStats($agent->id);
         }
 

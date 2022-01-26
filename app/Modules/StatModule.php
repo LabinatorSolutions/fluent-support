@@ -7,6 +7,14 @@ use FluentSupport\App\Models\Ticket;
 
 class StatModule
 {
+    /**
+     * getAgentStat method will return ticket statistics by an agent id
+     * This method will get agent id, start date and end date as parameter and fetch the ticket information and return
+     * @param $agentId
+     * @param false $startDate
+     * @param false $endDate
+     * @return array[]
+     */
     public static function getAgentStat($agentId, $startDate = false, $endDate = false)
     {
         if (!$startDate) {
@@ -18,24 +26,29 @@ class StatModule
         $startDate = date('Y-m-d 00:00.01', strtotime($startDate));
         $endDate = date('Y-m-d 23:59.59', strtotime($endDate));
 
+        //Get list of new ticket by agent
         $newTickets = Ticket::where('agent_id', $agentId)
             ->where('status', 'new')
             ->count();
 
+        //Get list of active ticket by agent
         $activeTickets = Ticket::where('agent_id', $agentId)
             ->where('status', 'active')
             ->count();
 
+        //Get list of closed ticket by agent within a date range(default today)
         $closedTickets = Ticket::where('agent_id', $agentId)
             ->where('status', 'closed')
             ->whereBetween('resolved_at', [$startDate, $endDate])
             ->count();
 
+        //Get list of response by agent id within a date range(default today)
         $responses = Conversation::where('conversation_type', 'response')
             ->where('person_id', $agentId)
             ->whereBetween('created_at', [$startDate, $endDate])
             ->count();
 
+        //Count the response in tickets within a date range(default today) for agent
         $interactions = Conversation::where('person_id', $agentId)
             ->where('conversation_type', 'response')
             ->whereBetween('created_at', [$startDate, $endDate])
@@ -101,16 +114,24 @@ class StatModule
         ];
     }
 
+    /**
+     * getAgentOverallStats method will produce overall statistics by agent
+     * @param $agentId
+     * @return array[]
+     */
     public static function getAgentOverallStats($agentId)
     {
+        //Get count of response by the agent
         $replies_count = Conversation::where('person_id', $agentId)->count();
 
+        //Get the number of interactions/responses by agent with tickets
         $interactions_count = Conversation::where('person_id', $agentId)
                                 ->where('conversation_type', 'response')
                                 ->groupBy('ticket_id')
                                 ->get()
                                 ->count();
 
+        //Get the number of tickets that are closed by this agent
         $total_closed = Ticket::where('agent_id', $agentId)->where('status', 'closed')->count();
 
         return [

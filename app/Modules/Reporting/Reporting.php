@@ -211,6 +211,11 @@ class Reporting
         return $reports;
     }
 
+    /**
+     * getActiveStats method will return the statistics for active tickets
+     * This method will get the list of open tickets calculate the wait times and return results
+     * @return array|false
+     */
     public function getActiveStats()
     {
         // We will calculate the wait times for open waiting tickets
@@ -247,6 +252,12 @@ class Reporting
         ];
     }
 
+    /**
+     * getActiveStatByAgent method will return the statistics of active tickets for an agent
+     * This method will get  agent id as parameter, fetch the list of open tickets by agent id, calculate the wait times and return results
+     * @param $agentId
+     * @return array|false
+     */
     public function getActiveStatByAgent($agentId)
     {
         $waitStat = Ticket::waitingOnly()
