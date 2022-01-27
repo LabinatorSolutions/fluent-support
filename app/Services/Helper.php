@@ -208,8 +208,16 @@ class Helper
         ];
     }
 
+    /**
+     * getOption method will return settings using key
+     * This method will get key as parameter, fetch data from database, beautify the data and return
+     * @param $key
+     * @param string $default
+     * @return mixed|string
+     */
     public static function getOption($key, $default = '')
     {
+        //Get settings from meta table using the key
         $data = Meta::where('object_type', 'option')
             ->where('key', $key)
             ->first();
@@ -224,12 +232,21 @@ class Helper
         return $default;
     }
 
+    /**
+     * updateOption method will update or insert settings
+     * This method will get key and value as parameter, check exists or not. If exist update value by key, else insert value for the key
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
     public static function updateOption($key, $value)
     {
+        //Get settings from meta table using the key
         $data = Meta::where('object_type', 'option')
             ->where('key', $key)
             ->first();
 
+        //If data is available, update existing data and return
         if ($data) {
             return Meta::where('id', $data->id)
                 ->update([
@@ -237,6 +254,7 @@ class Helper
                 ]);
         }
 
+        //If newly submit, create new record and return
         return Meta::insert([
             'object_type' => 'option',
             'key'         => $key,

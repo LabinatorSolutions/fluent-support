@@ -9,8 +9,21 @@ use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
 
+/**
+ *  SettingsController class is responsible for all settings
+ * This class is responsible for all request related to settings under global settings tab
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
+
 class SettingsController extends Controller
 {
+    /**
+     * getSettings method will return the settings by settings key
+     * @param Request $request
+     * @return array|array[]
+     */
     public function getSettings(Request $request)
     {
         $settingsKey = $request->get('settings_key');
@@ -31,6 +44,11 @@ class SettingsController extends Controller
         return $integrationSettings;
     }
 
+    /**
+     * saveSettings method will save the requested settings data by setting key
+     * @param Request $request
+     * @return array
+     */
     public function saveSettings(Request $request)
     {
         $settingsKey = $request->get('settings_key');
