@@ -35,6 +35,12 @@ class Settings
         ];
     }
 
+    /**
+     * save method will save the requested settings by settings key
+     * @param $settingsKey
+     * @param $settings
+     * @return mixed
+     */
     public function save($settingsKey, $settings)
     {
         if ($settingsKey == 'global_business_settings' && empty($settings['accepted_file_types'])) {
@@ -44,6 +50,11 @@ class Settings
         return Helper::updateOption($settingsKey, $settings);
     }
 
+    /**
+     * globalBusinessSettings method will fetch global settings from database, parse and return
+     * @param bool $cached
+     * @return array|mixed
+     */
     public function globalBusinessSettings($cached = true)
     {
         static $settings;
@@ -61,6 +72,7 @@ class Settings
             'del_files_on_close'    => 'no'
         ];
 
+        //Get default/existing settings from database using the key global_business_settings
         $existingSettings = Helper::getOption('global_business_settings', []);
 
         if (!$existingSettings) {
@@ -73,6 +85,11 @@ class Settings
         return $settings;
     }
 
+
+    /**
+     * getGlobalBusinessSettingsFields method will prepare the list of field, and it's property that will be used in global settings form
+     * @return array
+     */
     private function getGlobalBusinessSettingsFields()
     {
 
@@ -91,7 +108,7 @@ class Settings
                 'label'       => __('Portal Page', 'fluent-support'),
                 'show_id'     => true,
                 'placeholder' => __('Select Portal Page', 'fluent-support'),
-                'options'     => Helper::getWPPages(),
+                'options'     => Helper::getWPPages(),//Get list of published pages
                 'inline_help' => __('Please provide the page id where you want to show the tickets for your customers. Use shortcode <code>[fluent_support_portal]</code> in that page', 'fluent-support')
             ],
             'login_message'         => [
