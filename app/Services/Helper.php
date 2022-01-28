@@ -473,18 +473,25 @@ class Helper
 
     }
 
+    /**
+     * getFluentCrmContactData method will get information from fluent crm using user email
+     * @param $customer
+     * @return array|false
+     */
     public static function getFluentCrmContactData($customer)
     {
         if (!defined('FLUENTCRM')) {
             return false;
         }
+        //Get contact info from FluentCRM using customer email
         $contact = \FluentCrmApi('contacts')->getContactByUserRef($customer->email);
         if ($contact) {
             $tags = $contact->tags;
             $urlBase = apply_filters('fluentcrm_menu_url_base', admin_url('admin.php?page=fluentcrm-admin#/'));
             $crmProfileUrl = $urlBase . 'subscribers/' . $contact->id;
 
-            $contactData = [
+            //Return contact data
+            return  [
                 'id'            => $contact->id,
                 'first_name'    => $contact->first_name,
                 'last_name'     => $contact->last_name,
@@ -495,8 +502,6 @@ class Helper
                 'stats'         => $contact->stats(),
                 'view_url'      => $crmProfileUrl
             ];
-
-            return $contactData;
         }
 
         return false;

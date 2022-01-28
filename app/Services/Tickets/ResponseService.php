@@ -9,6 +9,13 @@ use FluentSupport\Framework\Support\Arr;
 
 class ResponseService
 {
+    /**
+     * createResponse method is responsible for create responses to ticket by agent or customer
+     * @param $data
+     * @param $person
+     * @param $ticket
+     * @return array|false
+     */
     public function createResponse($data, $person, $ticket)
     {
         if (empty($data['content'])) {

@@ -169,6 +169,11 @@ class Ticket extends Model
         return $query;
     }
 
+    /**
+     * Local scope to filter tickets by not response by agent
+     * @param $query
+     * @return mixed
+     */
     public function scopeWaitingOnly($query)
     {
         $query->where(function ($q){
@@ -179,6 +184,13 @@ class Ticket extends Model
         return $query;
     }
 
+    /**
+     * scopeApplyFilters method will filet ticket based on the selected filters
+     * This method will get filter option as parameter, loop through and apply conditions in query
+     * @param $query
+     * @param $filters
+     * @return mixed
+     */
     public function scopeApplyFilters($query, $filters)
     {
         $supportedColumns = ['product_id', 'client_priority', 'priority', 'mailbox_id'];
@@ -186,9 +198,12 @@ class Ticket extends Model
             if (!$filterValue && ($filterValue !== '0' || $filterValue !== 0)) {
                 continue;
             }
+            //If filer using status
             if ($filterKey == 'status_type') {
+                //Get list of ticket status
                 $statusArray = Helper::getTkStatusesByGroupName($filterValue);
                 if ($statusArray) {
+                    //Apply filet where status in
                     $query->whereIn('status', $statusArray);
                 }
             } else if (in_array($filterKey, $supportedColumns)) {
@@ -197,17 +212,21 @@ class Ticket extends Model
                 if ($filterValue != 'yes') {
                     continue;
                 }
+                //Apply filter where no response by agent
                 $query = $this->scopeWaitingOnly($query);
             } else if ($filterKey == 'agent_id') {
+                //Apply filter where ticket is not assigned
                 if ($filterValue == 'unassigned') {
                     $query->whereNull($filterKey);
                 } else {
+                    //Apply filter, get only assigned ticket
                     $query->where($filterKey, $filterValue);
                 }
             } else if ($filterKey == 'ticket_tags') {
                 if (!$filterValue) {
                     continue;
                 }
+                //Apply filter where ticket only has this tag id
                 $query->whereHas('tags', function ($q) use ($filterValue) {
                     $q->whereIn('tag_id', $filterValue);
                 });
