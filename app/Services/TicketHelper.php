@@ -9,8 +9,15 @@ use FluentSupport\App\Modules\PermissionManager;
 
 class TicketHelper
 {
+    /**
+     * getActivity method will return the activity in a ticket by agent
+     * @param $ticketId
+     * @param false $currentAgentId
+     * @return array
+     */
     public static function getActivity($ticketId, $currentAgentId = false)
     {
+        //Get the ticket meta information
         $meta = Meta::where('object_type', 'ticket_meta')
             ->where('key', '_live_activity')
             ->where('object_id', $ticketId)
@@ -59,6 +66,12 @@ class TicketHelper
             ->get();
     }
 
+    /**
+     * removeFromActivities method will remove the old live activity by agent and ticket id
+     * @param $ticketId
+     * @param $agentId
+     * @return bool
+     */
     public static function removeFromActivities($ticketId, $agentId)
     {
         $meta = Meta::where('object_type', 'ticket_meta')

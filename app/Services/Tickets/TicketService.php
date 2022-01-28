@@ -6,6 +6,13 @@ use FluentSupport\App\Models\Conversation;
 
 class TicketService
 {
+    /**
+     * this function will set the ticket status as closed
+     * @param $ticket
+     * @param $person
+     * @param string $internalNote
+     * @return mixed
+     */
     public function close($ticket, $person, $internalNote = '')
     {
         if ($ticket->status != 'closed') {
@@ -21,6 +28,7 @@ class TicketService
                 $internalNote = __('Ticket has been closed', 'fluent-support');
             }
 
+            //Keep track in conversation
             Conversation::create([
                 'ticket_id' => $ticket->id,
                 'person_id' => $person->id,

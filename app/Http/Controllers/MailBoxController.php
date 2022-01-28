@@ -9,6 +9,11 @@ use FluentSupport\Framework\Request\Request;
 
 class MailBoxController extends Controller
 {
+    /**
+     * index method will return the list of business inbox
+     * @param Request $request
+     * @return array
+     */
     public function index(Request $request)
     {
         $mailboxes = MailBox::all();

@@ -66,6 +66,7 @@ class TicketController extends Controller
     }
 
     /**
+     * index method will return the list of ticket based on the selected filter
      * @param Request $request
      * @return array
      */
@@ -137,12 +138,20 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * createTicket method will create new ticket as well as customer or WP user
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function createTicket(Request $request)
     {
         $ticketData = $request->get('ticket', []);
         $maybeNewCustomer = $request->get('newCustomer');
 
+        //If user select create WP user during ticket creation
         if ($ticketData['create_wp_user'] == 'yes'){
+            //Check if username already in use, if not create new user
             if(!username_exists($maybeNewCustomer['username'])){
                 $authController = new AuthController();
                 $createdUser = $authController->createUser($maybeNewCustomer);
@@ -151,8 +160,9 @@ class TicketController extends Controller
                 return $this->sendError(__('This username is already exist in WordPress', 'fluent-support'));
             }
         }
-
+        //If user select create customer during ticket creation
         if($ticketData['create_customer'] == 'yes'){
+            //Check user already exist as customer, if not create new
             if (!empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first())){
                 $createCustomer = Customer::create($maybeNewCustomer);
                 if ($createCustomer){
@@ -170,6 +180,7 @@ class TicketController extends Controller
             'content'     => 'required'
         ]);
 
+        //Get customer information from db
         $customer = Customer::findOrFail($ticketData['customer_id']);
 
         if (empty($ticketData['mailbox_id'])) {
@@ -212,21 +223,33 @@ class TicketController extends Controller
 
     }
 
+    /**
+     * getTicket method will return ticket information by ticket id
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function getTicket(Request $request, $ticketId)
     {
+        //Get logged in agent information
         $agent = Helper::getAgentByUserId();
+
         $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
             $q->whereIn('status', ['active', 'inline']);
         }]);
         $responseWith = $request->get('response_with', ['person', 'attachments']);
 
+        //Get ticket by id
         $ticket = Ticket::with($ticketWith)
             ->findOrFail($ticketId);
 
+        //If ticket has customer
         if ($ticket->customer) {
+            //Get and set customer profile url
             $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
         }
 
+        //If user do not have permission in this ticket
         if (!PermissionManager::hasTicketPermission($ticket)) {
             return $this->sendError([
                 'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
@@ -238,6 +261,7 @@ class TicketController extends Controller
             $ticket->load('closed_by_person');
         }
 
+        //Get ticket responses
         $responses = Conversation::where('ticket_id', $ticketId)
             ->with($responseWith)
             ->orderBy('id', 'DESC')
@@ -249,6 +273,7 @@ class TicketController extends Controller
 
         $ticket->content = make_clickable(wpautop($ticket->content, false));
 
+        //Get last activity by agent
         $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
 
         if (defined('FLUENTSUPPORTPRO')) {
@@ -261,6 +286,7 @@ class TicketController extends Controller
             'agent_id'  => $agent->id
         ];
 
+        //Is request come with fluentcrm_profile, get fluent crm contack information
         if (in_array('fluentcrm_profile', $request->get('with_data', [])) && defined('FLUENTCRM')) {
             $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($ticket->customer);
         }
@@ -269,6 +295,13 @@ class TicketController extends Controller
 
     }
 
+    /**
+     * createResponse method will create response by agent for the ticket
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function createResponse(Request $request, $ticketId)
     {
         $data = $request->all();
@@ -277,6 +310,7 @@ class TicketController extends Controller
             'content' => 'required'
         ]);
 
+        //Get logged-in agent information
         $agent = Helper::getAgentByUserId(get_current_user_id());
 
         if (!$agent) {
@@ -287,6 +321,7 @@ class TicketController extends Controller
 
         $ticket = Ticket::findOrFail($ticketId);
 
+        //If the agent has permission to view this ticket
         if (!PermissionManager::hasTicketPermission($ticket)) {
             return $this->sendError([
                 'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
@@ -305,16 +340,25 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * getTicketWidgets method generate additional information for a ticket by  customer
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function getTicketWidgets(Request $request, $ticketId)
     {
+        //Get ticket with customer by ticket
         $ticket = Ticket::with('customer')->findOrFail($ticketId);
 
+        //If the logged-in user has permission
         if (!PermissionManager::hasTicketPermission($ticket)) {
             return $this->sendError([
                 'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
             ]);
         }
 
+        //Get last 10 tickets of this customer except this
         $otherTickets = Ticket::where('id', '!=', $ticketId)
             ->select(['id', 'title', 'status', 'created_at'])
             ->where('customer_id', $ticket->customer_id)
@@ -328,6 +372,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * updateTicketProperty method will update ticket property
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function updateTicketProperty(Request $request, $ticketId)
     {
         $assigner = Helper::getAgentByUserId(get_current_user_id());
@@ -367,6 +417,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * closeTicket method close the ticket by id
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function closeTicket(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId(get_current_user_id());
@@ -385,6 +441,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * reOpenTicket method will reopen a closed ticket
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function reOpenTicket(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId(get_current_user_id());
@@ -403,18 +465,28 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * doBulkActions method is responsible for bulk action
+     * This function will get ticket ids and action as parameter and perform action based on the selection
+     * @param Request $request
+     * @return array|string[]|void
+     */
     public function doBulkActions(Request $request)
     {
+        //Get all ticket ids
         $ticketIds = $request->get('ticket_ids', []);
-        $action = $request->get('bulk_action');
+        $action = $request->get('bulk_action');//get action
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
 
+        //If agent do not have permission to manage other tickets
         if (!$hasAllPermission) {
+            //Filter ticket by agent_id
             $query->where('agent_id', $agent->id);
         }
 
+        //If bulk action is close ticket
         if ($action == 'close_tickets') {
             $query->where('status', '!=', 'closed');
             $tickets = $query->get();
@@ -426,6 +498,7 @@ class TicketController extends Controller
                 'message' => sprintf(__('%d tickets have been closed', 'fluent-support'), count($tickets))
             ];
         } else if ($action == 'delete_tickets') {
+            //If bulk action is delete ticket
             $tickets = $query->get();
 
             foreach ($tickets as $ticket) {
@@ -436,6 +509,7 @@ class TicketController extends Controller
                 'message' => __(count($tickets) . ' tickets have been deleted', 'fluent-support')
             ];
         } else if ($action == 'assign_agent') {
+            //If action is assign agent
             $agentId = absint($request->get('agent_id'));
             if (!$agentId) {
                 $this->sendError([
@@ -445,6 +519,7 @@ class TicketController extends Controller
 
             $agent = Agent::findOrFail($agentId);
 
+            //Filter ticket where not assign same agent or none
             $query->where(function ($q) use ($agent) {
                 $q->where('agent_id', '!=', $agent->id)
                     ->orWhereNull('agent_id');
@@ -462,7 +537,7 @@ class TicketController extends Controller
                 'message' => __(count($tickets) . ' tickets has been assigned to', 'fluent-support') . ' ' . $agent->full_name
             ];
         } else if ($action == 'assign_tags') {
-
+            //if action is assign tags
             $tags = array_filter(array_map('absint', $request->get('tag_ids', [])));
             if (!$tags) {
                 $this->sendError([
@@ -487,6 +562,13 @@ class TicketController extends Controller
         ]);
     }
 
+    /**
+     * doBulkReplies method will create response for bulk tickets
+     * This function will get ticket ids, content, attachment etc and create response for tickets
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function doBulkReplies(Request $request)
     {
         $data = $request->all();
@@ -495,27 +577,33 @@ class TicketController extends Controller
             'ticket_ids' => 'required|array'
         ]);
 
+        //get all ticket ids
         $ticketIds = $request->get('ticket_ids');
         $ticketIds = array_filter($ticketIds, 'absint');
 
+        //Get logged in agent information
         $agent = Helper::getAgentByUserId();
 
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
 
         $query = Ticket::whereIn('id', $ticketIds)->where('status', '!=', 'closed');
 
+        //If the agent does not have permission
         if (!$hasAllPermission) {
+            //Filter ticket by agent_id
             $query->where('agent_id', $agent->id);
         }
 
         $tickets = $query->get();
 
+        //if not ticket found
         if ($tickets->isEmpty()) {
             $this->sendError([
                 'message' => __('Sorry no tickets found based on your filter and bulk actions', 'fluent-support')
             ]);
         }
 
+        //get response data
         $responseData = [
             'content'           => $request->get('content'),
             'conversation_type' => $request->get('conversation_type', 'response'),
@@ -524,6 +612,7 @@ class TicketController extends Controller
 
         $attachments = $request->get('attachments', []);
 
+        //If request with file
         if ($attachments) {
             $attachments = Attachment::whereNull('ticket_id')
                 ->orderBy('id', 'asc')
@@ -555,6 +644,13 @@ class TicketController extends Controller
 
     }
 
+    /**
+     * deleteResponse method will remove a response from ticket by ticket id and response id
+     * @param Request $request
+     * @param $ticketId
+     * @param $responseId
+     * @return array
+     */
     public function deleteResponse(Request $request, $ticketId, $responseId)
     {
         $ticket = Ticket::findOrFail($ticketId);
@@ -579,6 +675,14 @@ class TicketController extends Controller
 
     }
 
+    /**
+     * updateResponse method will update ticket response using ticket and response id
+     * @param Request $request
+     * @param $ticketId
+     * @param $responseId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function updateResponse(Request $request, $ticketId, $responseId)
     {
         $data = $request->all();
@@ -610,6 +714,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * getLiveActivity method will return the activity in a ticket by agents
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function getLiveActivity(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
@@ -619,6 +729,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * removeLiveActivity method will remove activities that
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function removeLiveActivity(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
@@ -629,6 +745,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * addTag method will add tag in ticket by ticket id
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function addTag(Request $request, $ticketId)
     {
         $ticket = Ticket::findOrFail($ticketId);
@@ -645,6 +767,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * detachTag method will remove all tags from tickets
+     * @param $ticketId
+     * @param $tagId
+     * @return array
+     */
     public function detachTag($ticketId, $tagId)
     {
         $ticket = Ticket::findOrFail($ticketId);
@@ -656,6 +784,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * changeTicketCustomer method will update customer in a ticket
+     * This method will get ticket id and customer id as parameter, it will replace existing customer id with new
+     * @param Request $request
+     * @return array
+     */
     public function changeTicketCustomer(Request $request)
     {
         $updateCustomer = Ticket::where('id', $request->get('ticket_id'))
@@ -666,6 +800,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * getTicketCustomData method will return the custom data by ticket id
+     * @param Request $request
+     * @param $ticketId
+     * @return array|array[]
+     */
     public function getTicketCustomData(Request $request, $ticketId)
     {
         if (!defined('FLUENTSUPPORTPRO')) {
@@ -683,6 +823,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * syncFluentCrmTags method will synchronize the tags with Fluent CRM by contact id
+     *This function will get contact id and tags as parameter, get existing tags from crm and updated added/removed tags
+     * @param Request $request
+     * @return array
+     */
     public function syncFluentCrmTags(Request $request)
     {
 
