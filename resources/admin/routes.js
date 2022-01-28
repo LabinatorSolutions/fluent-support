@@ -34,6 +34,7 @@ import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
 import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
 
 import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
+import ZapierIntegration from "./Modules/Settings/ZapierIntegration";
 
 export default [
     {
@@ -133,6 +134,11 @@ export default [
                 path: 'incoming-webhook',
                 name: 'incoming-webhook',
                 component: IncomingWebhook
+            },
+            {
+                path: 'zapier-integration',
+                name: 'zapier_integration',
+                component: ZapierIntegration
             }
         ]
     },
