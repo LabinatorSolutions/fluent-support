@@ -260,7 +260,7 @@ class TransStrings
             'Select Customer'    => __('Select Customer', 'fluent-support'),
             'Select Business'    => __('Select Business', 'fluent-support'),
             'Subject'    => __('Subject', 'fluent-support'),
-            'subject_placeholder'    => __('What\'s this support ticket about', 'fluent-support'),
+            'subject_placeholder'    => __('What\'s this support ticket about?', 'fluent-support'),
             'Ticket Details'    => __('Ticket Details', 'fluent-support'),
             'Related Product/Service'    => __('Related Product/Service', 'fluent-support'),
             'Select Priority'    => __('Select Priority', 'fluent-support'),
