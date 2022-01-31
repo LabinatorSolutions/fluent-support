@@ -13,7 +13,7 @@ import each from 'lodash/each'
 import BarChartBase from "./BarChartBase";
 export default {
     name: 'ResolveGrowth',
-    props:['date_range', 'url'],
+    props:['date_range', 'url', 'agent_id'],
     components: {
         BarChartBase
     },
@@ -74,7 +74,10 @@ export default {
     methods: {
         fetchReport() {
             this.fetching = true;
-            this.$get(this.url + '/tickets-resolve-growth',{ date_range: this.date_range})
+            this.$get(this.url + '/tickets-resolve-growth', {
+                date_range: this.date_range,
+                agent_id: this.agent_id
+            })
                 .then(response => {
                     this.setupChartItems(response.stats);
                 });

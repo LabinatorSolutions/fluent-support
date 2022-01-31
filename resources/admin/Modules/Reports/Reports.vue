@@ -23,23 +23,30 @@
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
-                                <el-date-picker
-                                    size="small"
-                                    v-model="date_range"
-                                    type="daterange"
-                                    :range-separator="$t('To')"
-                                    :start-placeholder="$t('Start')"
-                                    :end-placeholder="$t('End')"
-                                    :unlink-panels=true
-                                    @change="filterReport"
-                                    value-format="YYYY-MM-DD"
-                                    style="float: right;"
-                                >
-                                </el-date-picker>
+                                <div class="fs_agent_report_rh_filter">
+                                    <el-select clearable filterable size="small" placeholder="All Agent" @change="filterReport" v-model="agent"
+                                               class="fs_report_by_agent">
+                                        <el-option v-for="agent in appVars.support_agents" :key="agent.id" :value="agent.id"
+                                                   :label="agent.full_name"></el-option>
+                                    </el-select>
+
+                                    <el-date-picker
+                                        size="small"
+                                        v-model="date_range"
+                                        type="daterange"
+                                        :range-separator="$t('To')"
+                                        :start-placeholder="$t('Start')"
+                                        :end-placeholder="$t('End')"
+                                        :unlink-panels=true
+                                        @change="filterReport"
+                                        value-format="YYYY-MM-DD"
+                                    >
+                                    </el-date-picker>
+                                </div>
                             </div>
                         </div>
                         <div class="fs_box_body">
-                            <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'reports'"></component>
+                            <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'reports'" :agent_id="agent"></component>
                         </div>
                     </div>
                     <agent-reports :url="'reports/agents-summary'"/>
@@ -99,7 +106,8 @@ export default {
                 'tickets-chart': 'Ticket Stats',
                 'resolve-chart': 'Resolve Stats',
                 'response-chart': 'Response Stats',
-            }
+            },
+            agent: '',
         }
     },
     methods: {
@@ -136,3 +144,25 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.fs_agent_report_rh_filter{
+    float: right;
+    .fs_report_by_agent{
+        width: auto;
+        margin-right: 0.3em;
+    }
+        @media (max-width: 767px) {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: center;
+            padding: 0.7em;
+            .fs_report_by_agent{
+                width: auto;
+                margin-right: 0;
+                margin-bottom: 0.4em;
+            }
+        }
+}
+</style>

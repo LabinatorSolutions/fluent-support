@@ -39,9 +39,15 @@ class ReportingController extends Controller
     public function getTicketsChart(Request $request, Reporting $reporting)
     {
         list($from, $to) = $request->get('date_range') ?: ['', ''];
+        $filter = [];
+        $stats = $reporting->getTicketsGrowth($from, $to);
 
+        if($agent_id = $request->get('agent_id')) {
+            $filter['agent_id'] = $agent_id;
+            $stats = $reporting->getTicketsGrowth($from, $to, $filter);
+        }
         return [
-            'stats' => $reporting->getTicketsGrowth($from, $to)
+            'stats' => $stats
         ];
     }
 
@@ -54,9 +60,16 @@ class ReportingController extends Controller
     public function getResolveChart(Request $request, Reporting $reporting)
     {
         list($from, $to) = $request->get('date_range') ?: ['', ''];
+        $filter = [];
+        $stats = $reporting->getTicketResolveGrowth($from, $to);
+
+        if($agent_id = $request->get('agent_id')) {
+            $filter['agent_id'] = $agent_id;
+            $stats = $reporting->getTicketResolveGrowth($from, $to, $filter);
+        }
 
         return [
-            'stats' => $reporting->getTicketResolveGrowth($from, $to)
+            'stats' => $stats
         ];
     }
 
@@ -69,9 +82,16 @@ class ReportingController extends Controller
     public function getResponseChart(Request $request, Reporting $reporting)
     {
         list($from, $to) = $request->get('date_range') ?: ['', ''];
+        $filter = [];
+        $stats = $reporting->getResponseGrowth($from, $to);
+
+        if($person_id = $request->get('agent_id')) {
+            $filter['person_id'] = $person_id;
+            $stats = $reporting->getResponseGrowth($from, $to, $filter);
+        }
 
         return [
-            'stats' => $reporting->getResponseGrowth($from, $to)
+            'stats' => $stats
         ];
     }
 

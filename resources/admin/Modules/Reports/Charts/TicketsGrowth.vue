@@ -14,7 +14,7 @@ import BarChartBase from "./BarChartBase";
 
 export default {
     name: 'TicketsGrowthChart',
-    props: ['date_range'],
+    props: ['date_range', 'agent_id'],
     components: {
         BarChartBase
     },
@@ -75,7 +75,10 @@ export default {
     methods: {
         fetchReport() {
             this.fetching = true;
-            this.$get('reports/tickets-growth', {date_range: this.date_range})
+            this.$get('reports/tickets-growth', {
+                date_range: this.date_range,
+                agent_id: this.agent_id
+            })
                 .then(response => {
                     this.setupChartItems(response.stats);
                 });
