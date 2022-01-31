@@ -18,6 +18,11 @@ class AuthHandler
         add_shortcode('fluent_support_auth', array($this, 'authForm'));
     }
 
+    /**
+     * loginForm will generate html for login form
+     * @param $attributes
+     * @return string
+     */
     public function loginForm($attributes)
     {
         if (get_current_user_id()) {
@@ -51,6 +56,11 @@ class AuthHandler
         return $return;
     }
 
+    /**
+     * registrationForm method will generate html for sign up form
+     * @param $attributes
+     * @return string
+     */
     public function registrationForm($attributes)
     {
         if (get_current_user_id()) {
@@ -90,6 +100,11 @@ class AuthHandler
         return $registrationForm;
     }
 
+    /**
+     * authForm will render the login form html
+     * @param $attributes
+     * @return string
+     */
     public function authForm($attributes)
     {
         $authForm = '<div class="fst_auth_wrapper">';
@@ -102,6 +117,12 @@ class AuthHandler
         return $authForm;
     }
 
+    /**
+     * renderField method will generate html for a field
+     * @param $fieldName
+     * @param $field
+     * @return string
+     */
     private function renderField($fieldName, $field)
     {
         $fieldType = Arr::get($field, 'type');
@@ -142,6 +163,10 @@ class AuthHandler
         return $html . '</div>';
     }
 
+    /**
+     * getSignupFields method will return the list of fields that will be used for sign up form
+     * @return mixed
+     */
     public static function getSignupFields()
     {
         return apply_filters('fluent_support/registration_form_fields', [

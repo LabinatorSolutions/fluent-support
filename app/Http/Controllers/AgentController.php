@@ -51,6 +51,12 @@ class AgentController extends Controller
         ];
     }
 
+    /**
+     * addAgent method will add new agent in person table
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function addAgent(Request $request)
     {
         $data = $request->all();
@@ -112,6 +118,13 @@ class AgentController extends Controller
         ];
     }
 
+    /**
+     * updateAgent method will update the information of an exiting agent
+     * @param Request $request
+     * @param $agentId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function updateAgent(Request $request, $agentId)
     {
         $agent = Agent::findOrFail($agentId);
@@ -166,6 +179,12 @@ class AgentController extends Controller
         ];
     }
 
+    /**
+     * deleteAgent will delete an exiting agent and add an alternative agent as replacement
+     * @param Request $request
+     * @param $agentId
+     * @return array
+     */
     public function deleteAgent(Request $request, $agentId)
     {
         $fallBackAgentId = $request->get('fallback_agent_id');
@@ -278,6 +297,11 @@ class AgentController extends Controller
         return $data;
     }
 
+    /**
+     * addOrUpdateProfileImage method will upload profile picture for a given user id
+     * @param Request $request
+     * @return array
+     */
     public function addOrUpdateProfileImage(Request $request)
     {
         return Helper::uploadProfilePicture('Agent', $request->get('user_id'), 'agents_avatars', $request->files());

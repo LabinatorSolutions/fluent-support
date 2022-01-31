@@ -7,6 +7,11 @@ use FluentSupport\Framework\Request\Request;
 
 class IntegrationController extends Controller
 {
+    /**
+     * getSettings method will fetch the list of integration settings by integration key
+     * @param Request $request
+     * @return false
+     */
     public function getSettings(Request $request)
     {
         $settingsKey = $request->get('integration_key');
@@ -14,6 +19,11 @@ class IntegrationController extends Controller
         return IntegrationSettingsModule::getSettings($settingsKey, true);
     }
 
+    /**
+     * saveSettings method will save the integration settings by integration key
+     * @param Request $request
+     * @return array
+     */
     public function saveSettings(Request $request)
     {
         $settingsKey = $request->get('integration_key');

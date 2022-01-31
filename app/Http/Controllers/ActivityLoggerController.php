@@ -5,8 +5,20 @@ namespace FluentSupport\App\Http\Controllers;
 use FluentSupport\App\Models\Activity;
 use FluentSupport\App\Services\Helper;
 
+/**
+ *  ActivityLoggerController class for REST API
+ * This class is responsible for getting data for all request related to activity and activity settings
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
+
 class ActivityLoggerController extends Controller
 {
+    /**
+     * getActivities method will get information regarding all activity with users(agent/customer) and activity settings
+     * @return array
+     */
     public function getActivities()
     {
         $activities = Activity::with([
@@ -23,6 +35,10 @@ class ActivityLoggerController extends Controller
         ];
     }
 
+    /**
+     * getSettings method will get the list of activity settings and return
+     * @return array
+     */
     public function getSettings()
     {
         $settings = Helper::getOption('_activity_settings', []);
@@ -40,6 +56,10 @@ class ActivityLoggerController extends Controller
 
     }
 
+    /**
+     * updateSettings method will update existing activity settings
+     * @return array
+     */
     public function updateSettings()
     {
         $settings = $this->request->get('activity_settings', []);

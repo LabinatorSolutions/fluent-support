@@ -9,16 +9,30 @@ use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Request\Request;
 
+/**
+ * UploaderController class is responsible for uploading file
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
 class UploaderController extends Controller
 {
+    /**
+     * uploadTicketFiles method will upload all the attached file in a ticket
+     * @param Request $request
+     * @return array[]
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function uploadTicketFiles(Request $request)
     {
+        //get settings  from settings table
         $settings = (new Settings())->globalBusinessSettings();
         $maxFileSize = absint($settings['max_file_size']);
         $mimeHeadings = Helper::getAcceptedMimeHeadings();
 
         $maxSizeBytes = $maxFileSize * 1024;
 
+        //Validate the file type and size
         $files = $this->validate($this->request->files(), [
             'file' => 'max:' . $maxSizeBytes . '|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
         ], [
@@ -26,12 +40,15 @@ class UploaderController extends Controller
             'file.max'       => sprintf(__('The file can not be more than %dMB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support'), $maxFileSize)
         ]);
 
+
+        //get ticket by ticket id
         $ticketId = $request->get('ticket_id');
 
         if ($ticketId == 'undefined') {
             $ticketId = NULL;
         }
 
+        //Get customer or agent
         if ($ticketId && $request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
             $person = $ticket->customer;
@@ -39,6 +56,7 @@ class UploaderController extends Controller
             $person = Helper::getCurrentPerson();
         }
 
+        //Check if customer has permission to uipload file
         if ($person->person_type == 'customer') {
             $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
             if (in_array('file_upload', $disabledFields)) {
@@ -47,10 +65,11 @@ class UploaderController extends Controller
                 ]);
             }
         }
-
+        //Move file into the directory
         $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
 
         $attachments = [];
+        //Create records in attachment table
         foreach ($uploadedFiles as $file) {
 
             $fileData = [
