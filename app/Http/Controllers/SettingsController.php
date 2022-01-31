@@ -31,6 +31,11 @@ class SettingsController extends Controller
         return (new Settings)->get($settingsKey);
     }
 
+    /**
+     * getIntegrationSettings method will return the settings for integration
+     * @param Request $request
+     * @return array
+     */
     public function getIntegrationSettings(Request $request)
     {
         $settings = Meta::where('object_type', 'integration_settings')->get();
@@ -61,6 +66,10 @@ class SettingsController extends Controller
         ];
     }
 
+    /**
+     * getPages method will return the list of pages created in WP
+     * @return array
+     */
     public function getPages()
     {
         return [
@@ -68,6 +77,12 @@ class SettingsController extends Controller
         ];
     }
 
+    /**
+     * setupPortal method will setup the support portal
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function setupPortal(Request $request)
     {
         $mailbox = $request->get('mailbox');
@@ -133,6 +148,11 @@ class SettingsController extends Controller
 
     }
 
+    /**
+     * getFluentCRMSettings method will return the settings for Fluent CRM
+     * @param Request $request
+     * @return array
+     */
     public function getFluentCRMSettings(Request $request)
     {
         if (defined('FLUENTCRM')) {
@@ -212,6 +232,10 @@ class SettingsController extends Controller
 
     }
 
+    /**
+     * installFluentCRM method will install Fluent CRM plugin
+     * @return array
+     */
     public function installFluentCRM()
     {
 

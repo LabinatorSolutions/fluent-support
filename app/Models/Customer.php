@@ -47,6 +47,12 @@ class Customer extends Person
         ];
     }
 
+    /**
+     * maybeCreateCustomer method will update existing customer or create new
+     * This method will get request to create customer, this will check existence, if exist it will update otherwise it will create new.
+     * @param $customerData
+     * @return false|Customer
+     */
     public static function maybeCreateCustomer($customerData)
     {
         $customer = self::getCustomerFromData($customerData);
@@ -100,6 +106,11 @@ class Customer extends Person
         );
     }
 
+    /**
+     * getCustomerFromData method will return customer information by user id or email address
+     * @param $customerData
+     * @return false
+     */
     public static function getCustomerFromData($customerData)
     {
         $remoteUid = Arr::get($customerData, 'remote_uid');
@@ -122,11 +133,19 @@ class Customer extends Person
         return $customer;
     }
 
+    /**
+     * getTicketCounts method will return the number of tickets by a customer
+     * @return mixed
+     */
     public function getTicketCounts()
     {
         return Ticket::where('customer_id', $this->id)->count();
     }
 
+    /**
+     * getResponseCounts will return the number of responses by a customer
+     * @return mixed
+     */
     public function getResponseCounts()
     {
         return Conversation::where('person_id', $this->id)->count();

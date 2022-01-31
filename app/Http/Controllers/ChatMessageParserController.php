@@ -8,8 +8,21 @@ use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupportPro\App\Services\Integrations\Slack\SlackNotification;
 
+/**
+ *  ChatMessageParserController class is responsible for getting information from integrated 3rd party request and response
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
+
 class ChatMessageParserController extends Controller
 {
+    /**
+     * handleTelegramWebhook will get the content from telegram, check the data validity and create response in a ticket
+     * @param Request $request
+     * @param $token
+     * @return mixed
+     */
     public function handleTelegramWebhook(Request $request, $token)
     {
         if (!defined('FLUENTSUPPORTPRO')) {
@@ -73,6 +86,12 @@ class ChatMessageParserController extends Controller
 
     }
 
+    /**
+     * handleSlackEvent will get content from slack,check the data validity and create response in a ticket
+     * @param Request $request
+     * @param $token
+     * @return array|\ArrayAccess|mixed
+     */
     public function handleSlackEvent(Request $request, $token)
     {
         if (!defined('FLUENTSUPPORTPRO')) {

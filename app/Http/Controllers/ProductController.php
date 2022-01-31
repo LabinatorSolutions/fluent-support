@@ -11,6 +11,11 @@ use FluentSupport\Framework\Support\Arr;
 
 class ProductController extends Controller
 {
+    /**
+     * index method will return the list of product
+     * @param Request $request
+     * @return array
+     */
     public function index(Request $request)
     {
         $products = Product::orderBy('id', 'DESC')->searchBy($request->get('search'))->paginate();
@@ -20,6 +25,12 @@ class ProductController extends Controller
         ];
     }
 
+    /**
+     * get method will get product by id and return
+     * @param Request $request
+     * @param $productId
+     * @return array
+     */
     public function get(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
@@ -28,6 +39,12 @@ class ProductController extends Controller
         ];
     }
 
+    /**
+     * creare method will create new product
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function create(Request $request)
     {
         $data = $request->all();
@@ -44,6 +61,14 @@ class ProductController extends Controller
         ];
     }
 
+
+    /**
+     * update methd will update an exiting product by id
+     * @param Request $request
+     * @param $productId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function update(Request $request, $productId)
     {
         $data = $request->all();
@@ -61,6 +86,12 @@ class ProductController extends Controller
         ];
     }
 
+    /**
+     * delete method will delete an existing product by id
+     * @param Request $request
+     * @param $productId
+     * @return array
+     */
     public function delete(Request $request, $productId)
     {
         Product::where('id', $productId)

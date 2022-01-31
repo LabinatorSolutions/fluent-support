@@ -9,6 +9,12 @@ use FluentSupport\App\Hooks\Handlers\AuthHandler;
 
 class AuthController extends Controller
 {
+    /**
+     * signUp method will create new user submitted data from sign up form
+     * @param Request $request
+     * @return \WP_REST_Response
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function signup(Request $request)
     {
 
@@ -56,6 +62,11 @@ class AuthController extends Controller
         );
     }
 
+    /**
+     * handleLogin method will perform login functionality and redirect
+     * @param Request $request
+     * @return \WP_REST_Response
+     */
     public function handleLogin(Request $request)
     {
         if (!wp_verify_nonce($request->get('_support_login_nonce'), 'fsupport_login_nonce')) {
@@ -181,6 +192,11 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * getRules method will prepare the rules for the input field
+     * @param array $fields
+     * @return mixed
+     */
     protected function getRules($fields = [])
     {
         $rules = [];
@@ -202,11 +218,22 @@ class AuthController extends Controller
         return apply_filters('fluent_support/signup_validation_rules', $rules);
     }
 
+
+    /**
+     * getMessages message will return the validation message regarding sign up or sign in
+     * @param array $rules
+     * @return mixed
+     */
     protected function getMessages($rules = [])
     {
         return apply_filters('fluent_support/signup_validation_messages', [], $rules);
     }
 
+    /**
+     * createUser method will create new user
+     * @param array $formData
+     * @return mixed
+     */
     public function createUser($formData = [])
     {
         $email = apply_filters('fluent_support/signup_email', Arr::get($formData, 'email'));
@@ -225,6 +252,11 @@ class AuthController extends Controller
         return wp_create_user($userName, $password, $email);
     }
 
+    /**
+     * maybeUpdateUser method will update user information if exists
+     * @param $userId
+     * @param $formData
+     */
     public function maybeUpdateUser($userId, $formData)
     {
         $name = trim(Arr::get($formData, 'first_name') . ' ' . Arr::get($formData, 'last_name'));
@@ -246,6 +278,10 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * assignRole method will assign role to a given user id
+     * @param $userId
+     */
     protected function assignRole($userId)
     {
         $user = new \WP_User($userId);
@@ -257,6 +293,11 @@ class AuthController extends Controller
         do_action('fluent_support/after_assigning_role', $user);
     }
 
+
+    /**
+     * login method will clear existing cookies and set new cookie for a given user id
+     * @param $userId
+     */
     protected function login($userId)
     {
         do_action('fluent_support/before_logging_in_user', $userId);

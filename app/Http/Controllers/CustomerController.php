@@ -12,29 +12,45 @@ use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
+/**
+ * CustomerController class for REST API
+ * This class is responsible for getting data for all request related to customer
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
 class CustomerController extends Controller
 {
+    /**
+     * index method will return the list of customers
+     * @param Request $request
+     * @return array
+     */
     public function index(Request $request)
     {
+        //Add order by selected by suer
         $customersQuery = Customer::orderBy('id', 'DESC')
             ->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
 
+        //Filter query based on the search item
         if ($request->get('search')) {
             $customersQuery->searchBy($request->get('search'));
         }
 
-
         $status = $request->get('status');
+        //Filter customer by selected status
         if ($status && $status != 'all') {
             $customersQuery->filterByStatues([$status]);
         }
 
         $customers = $customersQuery->paginate();
 
+        //Get total ticket and responses in ticket by individual customer
         foreach ($customers as $customer) {
             $customer->total_tickets = $customer->getTicketCounts();
             $customer->total_responses = $customer->getResponseCounts();
             if ($customer->user_id) {
+                //Get profile link, if they are WP user
                 $customer->user_profile = admin_url('user-edit.php?user_id=' . $customer->user_id);
             }
         }
@@ -44,6 +60,14 @@ class CustomerController extends Controller
         ];
     }
 
+
+    /**
+     * getCustomer method will return individual customer information by customer id
+     * This function will also get information about extra widgets, tickets and Fluent CRM
+     * @param Request $request
+     * @param $customerId
+     * @return array
+     */
     public function getCustomer(Request $request, $customerId)
     {
         $customer = Customer::findOrFail($customerId);
@@ -74,6 +98,12 @@ class CustomerController extends Controller
 
     }
 
+    /**
+     * Create method will create new customer
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function create(Request $request)
     {
         $data = $request->all();
@@ -105,6 +135,13 @@ class CustomerController extends Controller
         ];
     }
 
+    /**
+     * update method will update existing customer by customer id
+     * @param Request $request
+     * @param $customerId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function update(Request $request, $customerId)
     {
         $customer = Customer::findOrFail($customerId);
@@ -146,6 +183,12 @@ class CustomerController extends Controller
         ];
     }
 
+    /**
+     * delete method will delete a customer and all ticket by that customer
+     * @param Request $request
+     * @param $customerId
+     * @return array
+     */
     public function delete(Request $request, $customerId)
     {
         $customer = Customer::findOrFail($customerId);
@@ -162,6 +205,11 @@ class CustomerController extends Controller
         ];
     }
 
+    /**
+     * addOrUpdateProfileImage method will update a customer avatar
+     * @param Request $request
+     * @return array
+     */
     public function addOrUpdateProfileImage(Request $request)
     {
         $customer = Customer::findOrFail($request->get('customer_id'));

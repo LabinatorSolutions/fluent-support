@@ -262,6 +262,12 @@ class Helper
         ]);
     }
 
+    /**
+     * getIntegrationOption method will return the integration settings by integration key
+     * @param $key
+     * @param string $default
+     * @return mixed|string
+     */
     public static function getIntegrationOption($key, $default = '')
     {
         $data = Meta::where('object_type', 'integration_settings')
@@ -278,6 +284,12 @@ class Helper
         return $default;
     }
 
+    /**
+     * updateIntegrationOption method will update existing settings or create new settings by integration key
+     * @param $key
+     * @param $value
+     * @return mixed
+     */
     public static function updateIntegrationOption($key, $value)
     {
         $data = Meta::where('object_type', 'integration_settings')
@@ -335,6 +347,10 @@ class Helper
         return $baseUrl . 'tickets/' . $ticket->id . '/view';
     }
 
+    /**
+     * getPortalBaseUrl will get the portal page id and return link of the page
+     * @return mixed
+     */
     public static function getPortalBaseUrl()
     {
         $businessSettings = self::getBusinessSettings();

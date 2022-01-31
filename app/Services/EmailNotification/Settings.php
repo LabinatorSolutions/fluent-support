@@ -152,16 +152,23 @@ class Settings
         return $box->saveMeta('_email_' . $emailKey, $settings);
     }
 
+    /**
+     * getBoxEmailSettings method will reply the email settings
+     * @param $box
+     * @param $emailKey
+     * @return array|false
+     */
     public function getBoxEmailSettings($box, $emailKey)
     {
         if (!$box) {
             return false;
         }
 
+        #ticket_closed_by_agent_email_to_customer 2 times, is it wrong or right!!!
         $strictSubjectKeys = apply_filters('fluent_support/strict_subjects', [
             'ticket_replied_by_agent_email_to_customer',
             'ticket_closed_by_agent_email_to_customer',
-            'ticket_closed_by_agent_email_to_customer'
+            'ticket_created_email_to_customer'
         ]);
 
         $settingsDefaults = [
@@ -269,6 +276,12 @@ class Settings
         return $savedSettings;
     }
 
+    /**
+     * getDefaultEmailBody method will return html for email body
+     * @param $emailKey
+     * @param string $type
+     * @return string
+     */
     private function getDefaultEmailBody($emailKey, $type = 'web')
     {
         if ($emailKey == 'ticket_created_email_to_customer') {

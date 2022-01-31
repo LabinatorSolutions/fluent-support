@@ -5,8 +5,19 @@ namespace FluentSupport\App\Http\Controllers;
 use FluentSupport\App\Modules\IntegrationSettingsModule;
 use FluentSupport\Framework\Request\Request;
 
+/**
+ *  SlackController class is responsible for getting and save Slack settings
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
 class SlackController extends Controller
 {
+    /**
+     * getSettings method will generate data for Slack settings
+     * @param Request $request
+     * @return false
+     */
     public function getSettings(Request $request)
     {
         $settingsKey = $request->get('integration_key');
@@ -14,6 +25,11 @@ class SlackController extends Controller
         return IntegrationSettingsModule::getSettings($settingsKey, true);
     }
 
+    /**
+     * saveSettings method will save settings data for Slack
+     * @param Request $request
+     * @return array
+     */
     public function saveSettings(Request $request)
     {
         $settingsKey = $request->get('integration_key');

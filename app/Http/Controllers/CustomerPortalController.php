@@ -15,10 +15,24 @@ use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
+/**
+ * CustomerPortalController class for REST API
+ * This class is responsible for getting data for all request related to customer and customer portal
+ * @package FluentSupport\App\Http\Controllers
+ *
+ * @version 1.0.0
+ */
+
 class CustomerPortalController extends Controller
 {
+    /**
+     * getTickets will generate ticket information with customer and agents by customer
+     * @param Request $request
+     * @return array
+     */
     public function getTickets(Request $request)
     {
+        //Get customer information
         $customer = $this->resolveCustomer($request);
 
         if (!$customer) {
@@ -41,6 +55,7 @@ class CustomerPortalController extends Controller
             'closed' => ['closed']
         ], $request->get('filter_type', ''));
 
+        //get tickets with customer and agent
         $ticketsQuery = Ticket::with([
             'customer' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
@@ -69,6 +84,12 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    /**
+     * createTicket method will create ticket submitted by customers
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function createTicket(Request $request)
     {
         $data = $request->all();
@@ -150,8 +171,15 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    /**
+     * getTicket method will get the ticket information with customer and agent as well as response in a ticket by ticket id
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function getTicket(Request $request, $ticketId)
     {
+        //Get ticket by id with customer, agent, product and attachments
         $ticket = Ticket::where('id', $ticketId)
             ->with([
                 'customer' => function ($query) {
@@ -192,6 +220,7 @@ class CustomerPortalController extends Controller
             ]);
         }
 
+        //Get responses in a ticket by
         $responses = Conversation::where('ticket_id', $ticketId)
             ->with([
                 'person' => function ($query) {
@@ -238,6 +267,13 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    /**
+     * createResponse method will create response by customer in a ticket by ticket id
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function createResponse(Request $request, $ticketId)
     {
         $data = $request->all();
@@ -286,6 +322,12 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    /**
+     * closeTicket method will close a ticket by customer using ticket id
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function closeTicket(Request $request, $ticketId)
     {
         $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
@@ -322,6 +364,12 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    /**
+     * closeTicket method will re-open a ticket by customer using ticket id
+     * @param Request $request
+     * @param $ticketId
+     * @return array
+     */
     public function reOpenTicket(Request $request, $ticketId)
     {
         $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
@@ -361,6 +409,13 @@ class CustomerPortalController extends Controller
 
     }
 
+    /**
+     * resolveCustomer method will create and return or only return existing customer
+     * This method will het customer id or customer info or option to force create as parameter.
+     * @param $request
+     * @param false $forceCreate
+     * @return false|Customer
+     */
     private function resolveCustomer($request, $forceCreate = false)
     {
         $onBehalf = $request->get('on_behalf');
@@ -384,6 +439,10 @@ class CustomerPortalController extends Controller
         return Customer::getCustomerFromData($onBehalf);
     }
 
+    /**
+     * getPublicOptions method will return the list of product and customer priorities
+     * @return array
+     */
     public function getPublicOptions()
     {
         $products = Product::select(['id', 'title'])->get();
@@ -394,6 +453,10 @@ class CustomerPortalController extends Controller
         ];
     }
 
+    /**
+     * getCustomFieldsRender method will return the list of custom fields
+     * @return array|array[]
+     */
     public function getCustomFieldsRender()
     {
         if(!defined('FLUENTSUPPORTPRO')) {
@@ -408,6 +471,11 @@ class CustomerPortalController extends Controller
 
     }
 
+    /**
+     * resolveMailboxId method will either get information of the mailbox added by user or default and return the id
+     * @param $request
+     * @return null
+     */
     private function resolveMailboxId($request)
     {
         if ($mailboxId = $request->get('mailbox_id')) {

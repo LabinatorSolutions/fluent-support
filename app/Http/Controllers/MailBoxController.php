@@ -27,6 +27,12 @@ class MailBoxController extends Controller
         ];
     }
 
+    /**
+     * get method will fetch and return information related to business box
+     * @param Request $request
+     * @param $id
+     * @return mixed
+     */
     public function get(Request $request, $id)
     {
         $mailbox = MailBox::findOrFail($id);
@@ -36,6 +42,13 @@ class MailBoxController extends Controller
         ]);
     }
 
+
+    /**
+     * Save method will create new business box
+     * @param Request $request
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function save(Request $request)
     {
         $data = $request->get('business');
@@ -68,6 +81,13 @@ class MailBoxController extends Controller
         ];
     }
 
+    /**
+     * Update method will update existing information for a business by mailbox id
+     * @param Request $request
+     * @param $mailBoxId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function update(Request $request, $mailBoxId)
     {
         $data = $request->get('business');
@@ -95,6 +115,12 @@ class MailBoxController extends Controller
         ];
     }
 
+    /**
+     * delete method will delete a business from mailbox and replaced with alternative
+     * @param Request $request
+     * @param $mailBoxId
+     * @return array
+     */
     public function delete(Request $request, $mailBoxId)
     {
         $fallbackId = $request->get('fallback_id');
@@ -127,6 +153,13 @@ class MailBoxController extends Controller
 
     }
 
+    /**
+     * getEmailSettings method will get and return the mailbox email settings
+     * @param Request $request
+     * @param Settings $settings
+     * @param $boxId
+     * @return array
+     */
     public function getEmailSettings(Request $request, Settings $settings, $boxId)
     {
         $box = MailBox::findOrFail($boxId);
@@ -137,6 +170,13 @@ class MailBoxController extends Controller
         ];
     }
 
+    /**
+     * getEmailsSetups method will return email settings for a business box by box id
+     * @param Request $request
+     * @param Settings $settings
+     * @param $boxId
+     * @return array
+     */
     public function getEmailsSetups(Request $request, Settings $settings, $boxId)
     {
         $box = MailBox::findOrFail($boxId);
@@ -154,6 +194,14 @@ class MailBoxController extends Controller
         ];
     }
 
+    /**
+     * saveEmailSettings method will save the email settings for a business box using box id
+     * @param Request $request
+     * @param Settings $settings
+     * @param $boxId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
     public function saveEmailSettings(Request $request, Settings $settings, $boxId)
     {
         $data = wp_unslash($request->get('email_settings'));

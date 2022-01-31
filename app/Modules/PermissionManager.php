@@ -4,8 +4,19 @@ namespace FluentSupport\App\Modules;
 
 use FluentSupport\App\Services\Helper;
 
+/**
+ *  PermissionManager class is responsible for getting/settings data related to permission
+ * @package FluentSupport\App\Modules
+ *
+ * @version 1.0.0
+ */
+
 class PermissionManager
 {
+    /**
+     * pluginPermissions method will return the list of permissions support by Fluent Support Plugin
+     * @return string[]
+     */
     public static function pluginPermissions()
     {
         return [
@@ -24,6 +35,12 @@ class PermissionManager
         ];
     }
 
+    /**
+     * attachPermissions method will add selected permission to the user
+     * @param $user
+     * @param $permissions
+     * @return false|mixed
+     */
     public static function attachPermissions($user, $permissions)
     {
         if (is_numeric($user)) {
@@ -52,6 +69,11 @@ class PermissionManager
         return $user;
     }
 
+    /**
+     * getUserPermissions method will get all permissions for a user
+     * @param false $user
+     * @return array|string[]
+     */
     public static function getUserPermissions($user = false)
     {
         if (is_numeric($user)) {
@@ -72,6 +94,11 @@ class PermissionManager
         return array_values(array_intersect(array_keys($user->allcaps), $pluginPermission));
     }
 
+    /**
+     * currentUserPermissions method will return the permission of logged-in user
+     * @param bool $cached
+     * @return array|mixed|string[]
+     */
     public static function currentUserPermissions($cached = true)
     {
         static $permissions;
@@ -85,6 +112,11 @@ class PermissionManager
         return $permissions;
     }
 
+    /**
+     * currentUserCan method will return whether a user has the selected permission or not
+     * @param $permission
+     * @return bool
+     */
     public static function currentUserCan($permission)
     {
         if (current_user_can('manage_options')) {
@@ -94,6 +126,10 @@ class PermissionManager
         return current_user_can($permission);
     }
 
+    /**
+     * currentUserTicketsPermissionLevel method will return the permission level for a user in tickets
+     * @return string
+     */
     public static function currentUserTicketsPermissionLevel()
     {
         $permissions = self::currentUserPermissions();
@@ -109,6 +145,11 @@ class PermissionManager
         return 'own';
     }
 
+    /**
+     * agentTicketPermissionLevel method will return the access level of an agent in tickets
+     * @param false $userId
+     * @return string
+     */
     public static function agentTicketPermissionLevel($userId = false)
     {
         if(!$userId) {
@@ -128,6 +169,11 @@ class PermissionManager
         return 'own';
     }
 
+    /**
+     * hasTicketPermission method will return whether the selected user has permission in selected ticket or not
+     * @param $ticket
+     * @return bool
+     */
     public static function hasTicketPermission($ticket)
     {
         $permissionLevel = self::currentUserTicketsPermissionLevel();
@@ -142,6 +188,10 @@ class PermissionManager
         return !$ticket->agent_id && $permissionLevel == 'own_plus';
     }
 
+    /**
+     * getReadablePermissionGroups method will return the permission group as array
+     * @return array[]
+     */
     public static function getReadablePermissionGroups()
     {
         return [
