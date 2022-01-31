@@ -4,7 +4,12 @@ namespace FluentSupport\App\Modules;
 
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
-
+/**
+ * StatModule class is responsible for getting data related to report
+ * @package FluentSupport\App\Modules
+ *
+ * @version 1.0.0
+ */
 class StatModule
 {
     /**
@@ -80,6 +85,11 @@ class StatModule
         ];
     }
 
+    /**
+     * getOverAllStats method will return the overall statistics for all tickets
+     * This method will count the ticket number by ticket status and return the array
+     * @return array[]
+     */
     public static function getOverAllStats()
     {
         $newTickets = Ticket::where('status', 'new')

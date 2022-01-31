@@ -2,6 +2,14 @@
 
 namespace FluentSupport\App\Modules\Reporting;
 
+/**
+ * ReportingHelperTrait is act as helper of report
+ * This will help to get frequency, several date format, get advanced or backdated date and other
+ * @package FluentSupport\App\Modules\Reporting
+ *
+ * @version 1.0.0
+ */
+
 trait ReportingHelperTrait
 {
     protected static $daily = 'P1D';
@@ -33,19 +41,34 @@ trait ReportingHelperTrait
         return new \DatePeriod($from, new \DateInterval($interval), $to);
     }
 
+
+    /**
+     * getFrequency method will return the frequency
+     * this function get date from and date to as parameter and find the frequency and return
+     * @param $from
+     * @param $to
+     * @return string
+     */
     protected function getFrequency($from, $to)
     {
         $numDays = $to->diff($from)->format("%a");
-
+        //If number of days in the range is greater than 2 month and less than or equal to 3 months
         if ($numDays > 62 && $numDays <= 181) {
             return static::$weekly;
         } else if ($numDays > 181) {
+            //Greater than 3 months
             return static::$monthly;
         }
 
         return static::$daily;
     }
 
+    /**
+     * prepareSelect method will prepare the field to select
+     * @param $frequency
+     * @param string $dateField
+     * @return array
+     */
     protected function prepareSelect($frequency, $dateField = 'created_at')
     {
         $select = [
@@ -62,6 +85,11 @@ trait ReportingHelperTrait
         return $select;
     }
 
+    /**
+     * getGroupAndOrder method will return order by and group by value based on frequency
+     * @param $frequency
+     * @return string[]
+     */
     protected function getGroupAndOrder($frequency)
     {
         $orderBy = $groupBy = 'date';
