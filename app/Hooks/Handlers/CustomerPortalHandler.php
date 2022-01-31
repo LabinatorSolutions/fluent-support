@@ -103,7 +103,7 @@ class CustomerPortalHandler
             'Update Customer'             => __('Update Customer', 'fluent-support'),
             'Create Customer'             => __('Create Customer', 'fluent-support'),
 
-            'subject_placeholder'  => __('What\'s this support ticket about', 'fluent-support'),
+            'subject_placeholder'  => __('What\'s this support ticket about?', 'fluent-support'),
             'service_placeholder'  => __('Select related Product/Service', 'fluent-support'),
             'suggestion_loading'   => __('Looking for similar articles...', 'fluent-support'),
             'articles_heading'     => __('Suggested articles', 'fluent-support'),

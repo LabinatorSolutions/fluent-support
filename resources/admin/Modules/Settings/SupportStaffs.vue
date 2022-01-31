@@ -21,7 +21,7 @@
         <div v-if="!loading" class="fs_box_body">
             <el-table stripe :data="agents">
                 <el-table-column :label="$t('ID')" prop="id" width="90"/>
-                <el-table-column :label="$t('Avatar')">
+                <el-table-column :label="$t('Avatar')" width="90">
                     <template #default="scope">
                         <div class="fs_as_profile_picture" @mouseover="showIcon(scope.row.id)" @mouseout="hideIcon(scope.row.id)">
                             <el-upload
@@ -37,17 +37,17 @@
                         </div>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('Name')">
+                <el-table-column :label="$t('Name')" width="120">
                     <template #default="scope">
                         <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('Title')">
+                <el-table-column :label="$t('Title')" width="140">
                     <template #default="scope">
                         <span  style="font-size: 14px; color: #56c288;">{{scope.row.title}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('Permissions')">
+                <el-table-column :label="$t('Permissions')" width="140">
                     <template #default="scope">
                         <el-tooltip placement="top">
                             <template #content>
@@ -58,8 +58,8 @@
                         </el-tooltip>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('Replies')" prop="replies_count" width="140"/>
-                <el-table-column :label="$t('Interactions')" prop="interactions_count" width="140"/>
+                <el-table-column :label="$t('Replies')" prop="replies_count" width="120"/>
+                <el-table-column :label="$t('Interactions')" prop="interactions_count" width="120"/>
                 <el-table-column :label="$t('Actions')" width="100">
                     <template #default="scope">
                         <el-button @click="initEdit(scope.row)" size="medium" type="text" icon="el-icon-edit" />
@@ -313,8 +313,8 @@ export default {
             font-size: 2.2em;
             color: #fafafa;
             position: absolute;
-            top: -0.5em;
-            left: 1.4em;
+            top: -1.2em;
+            left: 1.1em;
         }
         .el-upload-dragger {
             width: unset;
@@ -325,8 +325,8 @@ export default {
         img {
             border: none;
             border-radius: 50%;
-            width: 58%;
-            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
+            width: 50%;
+            //box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
         }
         .avatar-uploader .el-upload {
             border-radius: 6px;
