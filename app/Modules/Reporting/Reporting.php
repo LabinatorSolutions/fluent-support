@@ -6,27 +6,43 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 
+/**
+ * Reporting class is responsible for getting data related to report
+ * @package FluentSupport\App\Modules\Reporting
+ *
+ * @version 1.0.0
+ */
 class Reporting
 {
     use ReportingHelperTrait;
 
+    /**
+     * getTicketsGrowth will generate tickets statistics and return
+     * @param false $from
+     * @param false $to
+     * @param array $filters
+     * @return array
+     */
     public function getTicketsGrowth($from = false, $to = false, $filters = [])
     {
+        //Generate report period
         $period = $this->makeDatePeriod(
-            $from = $this->makeFromDate($from),
-            $to = $this->makeToDate($to),
-            $frequency = $this->getFrequency($from, $to)
+            $from = $this->makeFromDate($from),//Date from
+            $to = $this->makeToDate($to),//Date to
+            $frequency = $this->getFrequency($from, $to)// frequency P1D, P1W, P1M
         );
 
+        //Get group by and order by i.e date,week, month
         list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
 
-
+        //get all tickets statistics within the date range
         $query = $this->db()->table('fs_tickets')
             ->select($this->prepareSelect($frequency))
             ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
             ->groupBy($groupBy)
             ->orderBy($orderBy, 'ASC');
 
+        //If filter by product or agent or status selected
         if ($filters) {
             if (!empty($filters['statuses'])) {
                 $query->whereIn('status', $filters['statuses']);
@@ -46,16 +62,24 @@ class Reporting
         return $this->getResult($period, $items);
     }
 
+    /**
+     * getTicketResolveGrowth method will get the statistics for resolved/closed tickets
+     * @param false $from
+     * @param false $to
+     * @param array $filters
+     * @return array
+     */
     public function getTicketResolveGrowth($from = false, $to = false, $filters = [])
     {
         $period = $this->makeDatePeriod(
-            $from = $this->makeFromDate($from),
-            $to = $this->makeToDate($to),
-            $frequency = $this->getFrequency($from, $to)
+            $from = $this->makeFromDate($from),//Date from
+            $to = $this->makeToDate($to),//date to
+            $frequency = $this->getFrequency($from, $to)// frequency P1D, P1W, P1M
         );
 
-        list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
+        list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);//Get group by and order by i.e date,week, month
 
+        //get the closed ticket statistics within the date range
         $query = $this->db()->table('fs_tickets')
             ->select($this->prepareSelect($frequency, 'resolved_at'))
             ->whereBetween('resolved_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
@@ -63,6 +87,7 @@ class Reporting
             ->groupBy($groupBy)
             ->orderBy($orderBy, 'ASC');
 
+        //If filter by product or agent is selected
         if ($filters) {
             if (!empty($filters['product_id'])) {
                 $query->where('product_id', $filters['product_id']);
@@ -78,6 +103,13 @@ class Reporting
         return $this->getResult($period, $items);
     }
 
+    /**
+     * getResponseGrowth method will generate the statistics for response
+     * @param false $from
+     * @param false $to
+     * @param array $filters
+     * @return array
+     */
     public function getResponseGrowth($from = false, $to = false, $filters = [])
     {
         $period = $this->makeDatePeriod(
@@ -106,6 +138,13 @@ class Reporting
         return $this->getResult($period, $items);
     }
 
+    /**
+     * agentSummary method will prepare ticket summary with responses by agent
+     * @param false $from
+     * @param false $to
+     * @param false $agent
+     * @return mixed
+     */
     public function agentSummary($from = false, $to = false, $agent = false)
     {
         if(!$from) {
@@ -120,6 +159,7 @@ class Reporting
         $to .= ' 23:59:59';
         $reports = [];
 
+        //Get tickets statistics that are closed
         $resolves = $this->db()->table('fs_tickets')
             ->select([
                 $this->db()->raw('COUNT(id) AS count'),
@@ -129,10 +169,10 @@ class Reporting
             ->where('status', 'closed')
             ->whereBetween('resolved_at', [$from, $to])
             ->get();
+
         $reports = $this->pushAgentsReport('closed', $resolves, $reports);
 
-
-
+        //get statistics for all except closed ticket
         $openTickets = $this->db()->table('fs_tickets')
             ->select([
                 $this->db()->raw('COUNT(id) AS count'),
@@ -144,6 +184,7 @@ class Reporting
 
         $reports = $this->pushAgentsReport('opens', $openTickets, $reports);
 
+        //Get response by agent
         $responses = Conversation::select([
             $this->db()->raw('COUNT(id) AS count'),
             $this->db()->raw('person_id as agent_id'),
@@ -159,6 +200,7 @@ class Reporting
 
         $reports = $this->pushAgentsReport('responses', $responses, $reports);
 
+        //Get interactions/responses by individual agents
         foreach ($responses as $response) {
             $reports[$response->agent_id]['interactions'] = Conversation::where('person_id', $response->agent_id)
                 ->where('conversation_type', 'response')
@@ -169,7 +211,6 @@ class Reporting
         }
 
         $agentIds = array_keys($reports);
-
 
         if ($agent) {
             $agentIds = array_map('intval', explode(',', $agent));
@@ -194,6 +235,14 @@ class Reporting
         return $agents;
     }
 
+
+    /**
+     * pushAgentsReport method will format the ticket summary report by agent
+     * @param $type
+     * @param $tickets
+     * @param $reports
+     * @return array
+     */
     private function pushAgentsReport($type, $tickets, $reports)
     {
         foreach ($tickets as $ticket) {
