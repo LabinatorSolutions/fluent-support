@@ -407,7 +407,7 @@ class TicketController extends Controller
             $updateData['agent'] = $ticket->agent;
             $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
             if ($prevValue != $ticket->{$propName}) {
-                do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket);
+                do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $assigner);
             }
         }
 
