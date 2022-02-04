@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Response\Response;
 use FluentSupport\Framework\Support\Arr;
 
@@ -108,8 +109,9 @@ class ResponseService
         $ticket->save();
 
         if ($agentAdded) {
+            $assigner = Helper::getCurrentAgent();
             $ticket->load('agent');
-            do_action('fluent_support/agent_assigned_to_ticket', $person, $ticket);
+            do_action('fluent_support/agent_assigned_to_ticket', $person, $ticket, $assigner);
             $updateData['agent'] = $ticket->agent;
         }
 

@@ -68,7 +68,7 @@ class ShortcodeParser
             return $matches[0];
         }
 
-        if ($dataKey == 'customer' || $dataKey == 'agent') {
+        if ($dataKey == 'customer' || $dataKey == 'agent' || $dataKey == 'assigner') {
             return $this->getPersonValue($data[$dataKey], $valueKey, $defaultValue);
         }
 

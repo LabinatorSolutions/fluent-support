@@ -528,9 +528,10 @@ class TicketController extends Controller
             $tickets = $query->get();
 
             foreach ($tickets as $ticket) {
+                $assigner = Helper::getCurrentAgent();
                 $ticket->agent_id = $agent->id;
                 $ticket->save();
-                do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket);
+                do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket, $assigner);
             }
 
             return [

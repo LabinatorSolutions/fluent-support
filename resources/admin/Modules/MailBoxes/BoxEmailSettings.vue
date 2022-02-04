@@ -112,6 +112,9 @@ export default {
                     '{{agent.first_name}}': this.$t('Assigned Agent First Name'),
                     '{{agent.last_name}}': this.$t('AssignedAgent Last Name'),
                     '{{agent.full_name}}': this.$t('Assigned Agent Full Name'),
+                    '{{assigner.first_name}}': this.$t('Assigner First Name'),
+                    '{{assigner.last_name}}': this.$t('Assigner Last Name'),
+                    '{{assigner.full_name}}': this.$t('Assigner Full Name')
                 }
             }
             else {
