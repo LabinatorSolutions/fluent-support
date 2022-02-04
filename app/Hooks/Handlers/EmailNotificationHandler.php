@@ -244,7 +244,7 @@ class EmailNotificationHandler
         }
     }
 
-    public function onAgentAssign($agent, $ticket)
+    public function onAgentAssign($agent, $ticket, $assigner)
     {
         $currentUser = Helper::getAgentByUserId();
 
@@ -258,7 +258,7 @@ class EmailNotificationHandler
             return;
         }
 
-        // Let's send welcome email to customer if enabled
+        // Let's send notification email to agent if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_agent_on_change');
 
         if ($emailSettings && $emailSettings['status'] == 'yes') {
@@ -274,13 +274,15 @@ class EmailNotificationHandler
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'business' => $mailbox,
                 'ticket'   => $ticket,
-                'agent'    => $agent
+                'agent'    => $agent,
+                'assigner' => $assigner
             ]);
 
             $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
                 'business'   => $mailbox,
                 'ticket'     => $ticket,
                 'agent'      => $agent,
+                'assigner'   => $assigner,
                 'email_type' => 'ticket_agent_on_change'
             ]);
 
