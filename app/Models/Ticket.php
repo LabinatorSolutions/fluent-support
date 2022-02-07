@@ -189,7 +189,7 @@ class Ticket extends Model
      * This method will get filter option as parameter, loop through and apply conditions in query
      * @param $query
      * @param $filters
-     * @return mixed
+     * @return ModelQueryBuilder
      */
     public function scopeApplyFilters($query, $filters)
     {
@@ -377,7 +377,7 @@ class Ticket extends Model
     /**
      * @param \FluentSupport\Framework\Database\Orm\Builder|\FluentSupport\Framework\Database\Query\Builder $query
      * @param array $filters
-     * @return \FluentSupport\App\Models\Ticket
+     * @return ModelQueryBuilder
      */
     public function buildDateBaseFilterQuery($query, $filters)
     {
@@ -403,7 +403,7 @@ class Ticket extends Model
      * @param $subField
      * @param $filter
      * @param false $provider
-     * @return mixed
+     * @return ModelQueryBuilder
      */
 
     public static function buildRelationFilterQuery($relation, $query, $method, $subMethod, $subField, $filter, $provider = false)
@@ -469,7 +469,7 @@ class Ticket extends Model
      * @param $query
      * @param $search
      * @param string $operator
-     * @return mixed
+     * @return ModelQueryBuilder
      */
     public function buildSearchableQuery($provider, $query, $search, $operator = 'LIKE')
     {
@@ -503,7 +503,7 @@ class Ticket extends Model
      * @param $provider
      * @param $query
      * @param $filters
-     * @return mixed|void
+     * @return ModelQueryBuilder
      */
     public function filterTicketByUser($provider, $query, $filters)
     {
@@ -716,6 +716,10 @@ class Ticket extends Model
         return $formattedData;
     }
 
+    /**
+     * @param $data This is the data that will be saved to the ticket_meta for custom fields
+     * @return bool
+     */
     public function syncCustomFields($data)
     {
         if (!is_array($data)) {
@@ -787,6 +791,11 @@ class Ticket extends Model
             ->first();
     }
 
+    /**
+     * This method will assign tags to the ticket
+     * @param $tagIds This is the array of tag ids that will be assigned to the ticket
+     * @return \FluentSupport\App\Models\Ticket
+     */
     public function applyTags($tagIds)
     {
         $result = false;
@@ -799,7 +808,11 @@ class Ticket extends Model
         }
         return $result;
     }
-
+    /**
+     * This method will remove tags from ticket
+     * @param $tagIds This is the array of tag ids that will be removed from the ticket
+     * @return \FluentSupport\App\Models\Ticket
+     */
     public function detachTags($tagIds)
     {
         $result = false;
