@@ -110,52 +110,20 @@
             </template>
         </el-dialog>
 
-        <el-dialog
-            :title="$t('Move all ticekts to new Business Box')"
-            v-model="move_ticket.show_modal"
-            width="60%">
-            <el-form :data="move_ticket" label-position="top">
-                <el-form-item :label="$t('Fallback Business')">
-                    <el-select v-model="move_ticket.fallback_box" :placeholder="$t('Select related Product/Service')">
-                        <el-option :disabled="mailbox.id == move_ticket.box_id" v-for="mailbox in mailboxes"
-                                   :key="mailbox.id" :value="mailbox.id"
-                                   :label="mailbox.name"></el-option>
-                    </el-select>
-                    <p>{{ $t('select_new_business_to_move_tickets') }}</p>
-                </el-form-item>
-                <el-form-item :label="$t('All or Custom')">
-                    <el-select v-model="move_ticket.move_type" clearable :placeholder="$t('Want to move all or custom ticket')" @change='showTicket'>
-                        <el-option v-for="option in ['All', 'Custom']"
-                                   :key="option" :value="option"
-                                   :label="option"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-
-            <tickets v-if="move_ticket.move_type === 'Custom'" :mailbox_id="move_ticket.box_id"
-                      @getSelectedTickets="getSelectedTickets"></tickets>
-
-            <template #footer>
-                <span class="dialog-footer">
-                  <el-button @click="move_ticket.show_modal = false">{{ $t('Cancel') }}</el-button>
-                  <el-button v-loading="moving" :disabled="moving" type="success"
-                             @click="moveTicketMailBox()">{{ $t('Move') }}</el-button>
-                </span>
-            </template>
-        </el-dialog>
-
+        <template v-if="change_box">
+            <move-ticket :mailbox_id="change_box" :mailboxes="mailboxes" @update_mailbox="update_mailbox" @reset_me="reset_me"></move-ticket>
+        </template>
     </div>
 </template>
 
 <script type="text/babel">
 
-import Tickets from './_Tickets';
-import each from "lodash/each";
+import MoveTicket from './MoveTicket';
 
 export default {
     name: 'ChooseMailBox',
     components: {
-        Tickets
+        MoveTicket
     },
     data() {
         return {
@@ -176,14 +144,7 @@ export default {
                 fallback_box: ''
             },
             deleteing: false,
-            move_ticket: {
-                show_modal: false,
-                box_id: '',
-                fallback_box: '',
-                move_type: 'All',
-                selected_tickets: []
-            },
-            moving: false
+            change_box: ''
         }
     },
     computed: {
@@ -212,6 +173,10 @@ export default {
                 .always(() => {
                     this.fetching = false;
                 });
+        },
+        update_mailbox(mailboxes){
+            this.change_box = '';
+            this.mailboxes = mailboxes;
         },
         showNewBusinessModal() {
             this.new_business = {
@@ -249,13 +214,12 @@ export default {
                     this.creating = false;
                 });
         },
-        handleBoxCommand(command) {
+        handleBoxCommand(command) {console.log(command);
             if (command.type == 'delete') {
                 this.deleting_box.box_id = command.box_id;
                 this.deleting_box.show_modal = true;
             }else if(command.type == 'move'){
-                this.move_ticket.box_id = command.box_id;
-                this.move_ticket.show_modal = true;
+                this.change_box = command.box_id;
             }
         },
         deleteMailBox() {
@@ -287,52 +251,9 @@ export default {
                     this.deleteing = false;
                 });
         },
-        showTicket(moveType){
-            this.move_ticket.selected_tickets = [];
-        },
-        getSelectedTickets(selections) {
-            const selectionIds = [];
-            each(selections, (selection) => {
-                selectionIds.push(selection.id);
-            })
-            this.move_ticket.selected_tickets = selectionIds;
-        },
-        moveTicketMailBox(){
-            if (!this.move_ticket.fallback_box || !this.move_ticket.box_id) {
-                alert(this.$t('Please provide fallback box'));
-                return false;
-            }
-            if (!this.move_ticket.move_type) {
-                alert(this.$t('Please provide You want to move all or custom selected tickets?'));
-                return false;
-            }
+        reset_me(){
+            this.change_box = '';
 
-            this.moving = true;
-            this.$put(`mailboxes/${this.move_ticket.box_id}/move_tickets`, {
-                fallback_id: this.move_ticket.fallback_box,
-                tickets: this.move_ticket.selected_tickets
-            })
-                .then(response => {
-                    this.move_ticket = {
-                        show_modal: false,
-                        box_id: '',
-                        fallback_box: '',
-                        move_type: 'All',
-                        selected_tickets: []
-                    };
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    });
-                    this.fetch();
-
-                })
-                .catch((errors) => {
-                    this.handleError(errors);
-                })
-                .always(() => {
-                    this.moving = false;
-                });
         }
     },
     mounted() {
