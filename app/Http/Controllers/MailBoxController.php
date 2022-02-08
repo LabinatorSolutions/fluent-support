@@ -186,7 +186,14 @@ class MailBoxController extends Controller
                 ]);
         }
 
+        $mailboxes = MailBox::all();
+
+        foreach ($mailboxes as $mailbox) {
+            $mailbox->tickets_count = Ticket::where('mailbox_id', $mailbox->id)->count();
+        }
+
         return [
+            'mailboxes' => $mailboxes,
             'message' => __('All ticket moves to the selected Business', 'fluent-support')
         ];
     }
