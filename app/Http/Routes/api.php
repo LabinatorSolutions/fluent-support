@@ -10,6 +10,7 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
     $router->get('/{id}', 'MailBoxController@get')->int('id');
     $router->put('/{id}', 'MailBoxController@update')->int('id');
     $router->delete('/{id}', 'MailBoxController@delete')->int('id');
+    $router->put('/{id}/move_tickets', 'MailBoxController@move_tickets')->int('id');
 
     $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
     $router->get('/{id}/email_configs', 'MailBoxController@getEmailsSetups');

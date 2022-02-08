@@ -153,6 +153,44 @@ class MailBoxController extends Controller
 
     }
 
+    public function move_tickets(Request $request, $mailBoxId){
+
+        $fallbackId = $request->get('fallback_id');
+        $ticketIds  = $request->get('tickets', []);
+
+        if($fallbackId == $mailBoxId) {
+            return $this->sendError([
+                'message' => __('Fallback Box can not be the same as MailBox ID', 'fluent-support')
+            ]);
+        }
+
+        $box = MailBox::findOrFail($mailBoxId);
+        $fallbackBox = MailBox::findOrFail($fallbackId);
+
+        if(empty($box) || empty($fallbackBox)){
+            return $this->sendError([
+                'message' => __('Invalid request submitted', 'fluent-support')
+            ]);
+        }
+
+        if(!empty($ticketIds)){
+            Ticket::whereIn('id', $ticketIds)
+                ->update([
+                    'mailbox_id' => $fallbackBox->id
+                ]);
+        }else{
+            // Move all ticket for the Mail Box
+            Ticket::where('mailbox_id', $mailBoxId)
+                ->update([
+                    'mailbox_id' => $fallbackBox->id
+                ]);
+        }
+
+        return [
+            'message' => __('All ticket moves to the selected Business', 'fluent-support')
+        ];
+    }
+
     /**
      * getEmailSettings method will get and return the mailbox email settings
      * @param Request $request

@@ -92,6 +92,7 @@ class TransStrings
             'Fallback Business'    => __('Fallback Business', 'fluent-support'),
             'Select related Product/Service'    => __('Select related Product/Service', 'fluent-support'),
             'select_fallback_business'    => __('Please select the fallback business in where the existing tickets will be transferred', 'fluent-support'),
+            'select_new_business_to_move_tickets'    => __('Please select the business in where you want to move the tickets', 'fluent-support'),
             'Confirm Delete This Business'    => __('Confirm Delete This Business', 'fluent-support'),
             'Please provide fallback box'    => __('Please provide fallback box', 'fluent-support'),
             'Settings'    => __('Settings', 'fluent-support'),
