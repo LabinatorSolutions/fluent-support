@@ -39,10 +39,10 @@
                                 </el-select>
                             </el-col>
                             <el-col :span="8">
-                                <label>{{$t('Select Project')}}</label>
+                                <label>{{$t('Select Product')}}</label>
                                 <el-select clearable filterable v-model="filters.product_id" remote reserve-keyword
                                            @change="filterTicket"
-                                           :placeholder="$t('Filter By Project')">
+                                           :placeholder="$t('Filter By Product')">
                                     <el-option v-for="product in products" :key="product.id" :value="product.id"
                                                :label="product.name"></el-option>
                                 </el-select>
