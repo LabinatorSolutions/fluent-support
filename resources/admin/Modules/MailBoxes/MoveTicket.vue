@@ -3,7 +3,7 @@
         :title="$t('Move all tickets to new Business Box')"
         v-model="move_ticket.show_modal"
         width="60%" @close="$emit('reset_me')">
-        <el-form :data="move_ticket" label-position="top">
+        <el-form label-position="top">
             <el-form-item :label="$t('Fallback Business')">
                 <el-select v-model="move_ticket.fallback_box" :placeholder="$t('Select Business Box')">
                     <el-option :disabled="mailbox.id == move_ticket.box_id" v-for="mailbox in mailboxes"
@@ -13,7 +13,7 @@
                 <p>{{ $t('select_new_business_to_move_tickets') }}</p>
             </el-form-item>
             <el-form-item :label="$t('All or Custom')">
-                <el-select id="select_type" v-model="move_ticket.move_type" clearable :placeholder="$t('Want to move all or custom ticket')" @change='showTicket'>
+                <el-select id="move_type" v-model="move_ticket.move_type" clearable :placeholder="$t('Want to move all or custom ticket')" @change='showTicket'>
                     <el-option v-for="option in ['All', 'Custom']"
                                :key="option" :value="option"
                                :label="option"></el-option>
@@ -56,7 +56,7 @@
                     <div class="fs_box_body">
                         <h4>Select ticket that you want to move</h4>
                         <hr/>
-                        <el-table :data="filteredTicket" height="350" @selection-change="handleSelectionChange">
+                        <el-table  :v-infinite-scroll="load" class="infinite-list" style="overflow: auto" :data="filteredTicket" height="350" @selection-change="handleSelectionChange">
                             <el-table-column
                                 type="selection"
                                 width="55" :label="$t('Select All')">
@@ -97,6 +97,7 @@
         props:['mailbox_id', 'mailboxes'],
         data() {
             return {
+                count: 10,
                 move_ticket: {
                     show_modal: this.mailbox_id ? true : false,
                     box_id: this.mailbox_id,
@@ -121,29 +122,27 @@
             }
         },
         methods: {
+            load(){
+              this.count += 5;
+            },
             showTicket(moveType){
                 if(moveType === 'Custom'){
                     let query = {
-                        page: 1,
-                        per_page: 10,
                         order_by: 'id',
                         order_type: 'ASC',
                         filter_type: 'simple',
                         filters: this.filters,
                     };
 
-                    this.$get('tickets', query)
+                    this.$get('mailboxes/get_ticket_by_box', query)
                         .then(response => {
-                            this.tickets = this.filteredTicket = response.tickets.data;
+                            this.tickets = this.filteredTicket = response.tickets;
 
                             each(this.tickets, (ticket) => {
-                                let temp = (ticket.customer.first_name) ? ticket.customer.first_name : '';
-                                temp += '#';
-                                temp += (ticket.customer.last_name) ? ticket.customer.last_name : '';
 
-                                const found = this.customers.some(el => el.id === temp);
-                                if (!found && temp && temp !== '#'){
-                                    this.customers.push({id: temp, name: ticket.customer.first_name+' '+ticket.customer.last_name})
+                                const found = this.customers.some(el => el.id === ticket.customer.id);
+                                if (!found && ticket.customer.id){
+                                    this.customers.push({id: ticket.customer.id, name: ticket.customer.first_name+' '+ticket.customer.last_name})
                                 }
 
                                 let tempId = (ticket.product && ticket.product.id) ? ticket.product.id : '';
@@ -168,8 +167,8 @@
                 }
 
             },
-            fetchTicket: function () {
-
+            setPage (val) {
+                this.page = val
             },
             handleSelectionChange: function (selections) {
                 const selectionIds = [];
@@ -179,23 +178,10 @@
                 this.move_ticket.selected_tickets = selectionIds;
             },
             filterTicket: function(){
-                let customer = this.filters.customer.split('#'), first_name = '', last_name = '';
-
-                if(typeof customer[0] !== 'undefined'){
-                    first_name = customer[0];
-                }
-
-                if(typeof customer[1] !== 'undefined'){
-                    last_name = customer[1];
-                }
-
                 this.filteredTicket = this.tickets.filter(
                     (data) =>
-                        (!this.filters.customer || (data.customer.first_name.toLowerCase().includes(first_name.toLowerCase())
-                        && data.customer.last_name.toLowerCase().includes(last_name.toLowerCase())))
-
+                        (!this.filters.customer || (data.customer.id === this.filters.customer))
                         && (this.filters.product_id && (data.product && data.product.id === this.filters.product_id) || !this.filters.product_id)
-
                         && (this.filters.ticket_title && (data.title.toLowerCase().includes(this.filters.ticket_title.toLowerCase())) || !this.filters.ticket_title)
                 )
             },
@@ -209,9 +195,15 @@
                     return false;
                 }
 
+                if (this.move_ticket.move_type == 'Custom' && Object.keys(this.move_ticket.selected_tickets).length < 1) {
+                    alert(this.$t('Please select ticket first'));
+                    return false;
+                }
+
                 this.moving = true;
                 this.$put(`mailboxes/${this.move_ticket.box_id}/move_tickets`, {
                     fallback_id: this.move_ticket.fallback_box,
+                    move_type: this.move_ticket.move_type,
                     tickets: this.move_ticket.selected_tickets
                 })
                     .then(response => {
@@ -237,9 +229,6 @@
                         this.moving = false;
                     });
             }
-        },
-        mounted() {
-            this.fetchTicket();
         }
     }
 

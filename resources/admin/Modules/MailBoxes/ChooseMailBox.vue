@@ -214,7 +214,7 @@ export default {
                     this.creating = false;
                 });
         },
-        handleBoxCommand(command) {console.log(command);
+        handleBoxCommand(command) {
             if (command.type == 'delete') {
                 this.deleting_box.box_id = command.box_id;
                 this.deleting_box.show_modal = true;
@@ -253,7 +253,6 @@ export default {
         },
         reset_me(){
             this.change_box = '';
-
         }
     },
     mounted() {

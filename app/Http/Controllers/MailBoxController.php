@@ -5,6 +5,8 @@ namespace FluentSupport\App\Http\Controllers;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\EmailNotification\Settings;
+use FluentSupport\App\Services\TicketHelper;
+use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\Framework\Request\Request;
 
 class MailBoxController extends Controller
@@ -153,14 +155,21 @@ class MailBoxController extends Controller
 
     }
 
-    public function move_tickets(Request $request, $mailBoxId){
+    public function moveTickets(Request $request, $mailBoxId){
 
         $fallbackId = $request->get('fallback_id');
         $ticketIds  = $request->get('tickets', []);
+        $move_type = $request->get('move_type');
 
         if($fallbackId == $mailBoxId) {
             return $this->sendError([
                 'message' => __('Fallback Box can not be the same as MailBox ID', 'fluent-support')
+            ]);
+        }
+
+        if($move_type == 'Custom' && empty($ticketIds)){
+            return $this->sendError([
+                'message' => __('Invalid request submitted, Select ticket first', 'fluent-support')
             ]);
         }
 
@@ -264,6 +273,27 @@ class MailBoxController extends Controller
 
         return [
             'message' => __('Settings has been updated', 'fluent-support')
+        ];
+    }
+
+    public function getAllTicket(Request $request){
+        $mailbox_id = $request->get('filters.mailbox_id');
+
+        $tickets = (new Ticket())->with([
+            'customer'         => function ($query) {
+                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
+            }, 'agent'         => function ($query) {
+                $query->select(['first_name', 'last_name', 'id']);
+            },
+            'product',
+            'tags',
+            'preview_response' => function ($query) {
+                $query->orderBy('id', 'desc');
+            }
+        ])->where('mailbox_id', $mailbox_id)->get();
+
+        return [
+            'tickets' => $tickets
         ];
     }
 }
