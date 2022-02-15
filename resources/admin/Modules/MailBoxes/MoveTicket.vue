@@ -2,7 +2,7 @@
     <el-dialog
         :title="$t('Move all tickets to new Business Box')"
         v-model="move_ticket.show_modal"
-        width="60%" @close="$emit('reset_me')">
+        width="60%" @close="closeModal">
         <el-form label-position="top">
             <el-form-item :label="$t('Fallback Business')">
                 <el-select v-model="move_ticket.fallback_box" :placeholder="$t('Select Business Box')">
@@ -13,16 +13,15 @@
                 <p>{{ $t('select_new_business_to_move_tickets') }}</p>
             </el-form-item>
             <el-form-item :label="$t('All or Custom')">
-                <el-select id="move_type" v-model="move_ticket.move_type" clearable :placeholder="$t('Want to move all or custom ticket')" @change='showTicket'>
-                    <el-option v-for="option in ['All', 'Custom']"
-                               :key="option" :value="option"
-                               :label="option"></el-option>
+                <el-select id="move_type" v-model="move_ticket.move_type" clearable :placeholder="$t('Want to move all or custom selected')" @change='showTicket'>
+                    <el-option v-for="_move_type in moveTypes"
+                               :key="_move_type" :value="_move_type"
+                               :label="_move_type"></el-option>
                 </el-select>
             </el-form-item>
-
         </el-form>
 
-        <template v-if="show_ticket_selection">
+        <template v-if="!!show_ticket_selection">
             <div class="fs_all_tickets">
                 <div class="fs_box_wrapper">
                     <h4>Filter ticket</h4>
@@ -32,7 +31,6 @@
                             <el-col :span="8">
                                 <label>{{$t('Select Customer')}}</label>
                                 <el-select clearable filterable v-model="filters.customer" remote reserve-keyword
-                                           @change="filterTicket"
                                            :placeholder="$t('Filter by Customer')">
                                     <el-option v-for="customer in customers" :key="customer.id" :value="customer.id"
                                                :label="customer.name"></el-option>
@@ -41,7 +39,6 @@
                             <el-col :span="8">
                                 <label>{{$t('Select Product')}}</label>
                                 <el-select clearable filterable v-model="filters.product_id" remote reserve-keyword
-                                           @change="filterTicket"
                                            :placeholder="$t('Filter By Product')">
                                     <el-option v-for="product in products" :key="product.id" :value="product.id"
                                                :label="product.name"></el-option>
@@ -49,7 +46,7 @@
                             </el-col>
                             <el-col :span="7">
                                 <label>{{$t('Ticket Title')}}</label>
-                                <el-input @keyup="filterTicket" v-model="filters.ticket_title" placeholder="Filter by ticket title" />
+                                <el-input v-model="filters.ticket_title" placeholder="Filter by ticket title" />
                             </el-col>
                         </el-row>
                     </div>
@@ -61,13 +58,13 @@
                                 type="selection"
                                 width="55" :label="$t('Select All')">
                             </el-table-column>
-                            <el-table-column min-width="300" :label="$t('Ticket Title and Customer')">
+                            <el-table-column min-width="300" :label="$t('Tickets')">
                                 <template #default="scope">
                                     <strong>{{ scope.row.title }}</strong>
-                                    <span  style="font-size: 10px;"> by {{ scope.row.customer.first_name }} {{ scope.row.customer.last_name }}</span>
+                                    <span v-if="!filters.customer"  style="font-size: 10px;"> by {{ scope.row.customer.first_name }} {{ scope.row.customer.last_name }}</span>
                                     <span style="margin-left: 5px; font-size: 10px;"
 
-                                          class="fs_badge">
+                                          class="fs_badge" v-if="!!scope.row.product && !filters.product_id">
                                     {{ scope.row.product?.title }}
                                 </span>
                                 </template>
@@ -93,8 +90,9 @@
     import each from "lodash/each";
 
     export default {
-        name: 'AllTickets',
+        name: 'MoveTicket',
         props:['mailbox_id', 'mailboxes'],
+        emits:['update_mailbox', 'reset_me'],
         data() {
             return {
                 count: 10,
@@ -106,7 +104,6 @@
                     selected_tickets: []
                 },
                 show_ticket_selection: false,
-                filteredTicket: [],
                 tickets: [],
                 filters: {
                     status_type: '',
@@ -118,12 +115,16 @@
                 customers: [],
                 products: [],
                 filtered: false,
-                moving: false
+                moving: false,
+                moveTypes: ['All', 'Custom']
             }
         },
         methods: {
             load(){
               this.count += 5;
+            },
+            closeModal(){
+                this.$emit('reset_me');
             },
             showTicket(moveType){
                 if(moveType === 'Custom'){
@@ -136,7 +137,7 @@
 
                     this.$get('mailboxes/get_ticket_by_box', query)
                         .then(response => {
-                            this.tickets = this.filteredTicket = response.tickets;
+                            this.tickets = response.tickets;
 
                             each(this.tickets, (ticket) => {
 
@@ -176,14 +177,6 @@
                     selectionIds.push(selection.id);
                 })
                 this.move_ticket.selected_tickets = selectionIds;
-            },
-            filterTicket: function(){
-                this.filteredTicket = this.tickets.filter(
-                    (data) =>
-                        (!this.filters.customer || (data.customer.id === this.filters.customer))
-                        && (this.filters.product_id && (data.product && data.product.id === this.filters.product_id) || !this.filters.product_id)
-                        && (this.filters.ticket_title && (data.title.toLowerCase().includes(this.filters.ticket_title.toLowerCase())) || !this.filters.ticket_title)
-                )
             },
             moveTicketMailBox: function () {
                 if (!this.move_ticket.fallback_box || !this.move_ticket.box_id) {
@@ -228,6 +221,16 @@
                     .always(() => {
                         this.moving = false;
                     });
+            }
+        },
+        computed: {
+            filteredTicket: function () {
+                return this.tickets.filter(
+                    (data) =>
+                        (!this.filters.customer || (data.customer.id === this.filters.customer))
+                        && (this.filters.product_id && (data.product && data.product.id === this.filters.product_id) || !this.filters.product_id)
+                        && (this.filters.ticket_title && (data.title.toLowerCase().includes(this.filters.ticket_title.toLowerCase())) || !this.filters.ticket_title)
+                )
             }
         }
     }
