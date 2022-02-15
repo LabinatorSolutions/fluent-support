@@ -638,7 +638,9 @@ class Ticket extends Model
         Conversation::where('ticket_id', $this->id)->delete();
         // Delete the ticket meta
         Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)->delete();
-
+        // Delete attachments related to this ticket
+        Attachment::where('ticket_id', $this->id)->delete();
+        // Delete the ticket
         Ticket::where('id', $this->id)->delete();
     }
 
