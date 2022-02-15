@@ -110,7 +110,7 @@
             </template>
         </el-dialog>
 
-        <template v-if="change_box">
+        <template v-if="!!change_box">
             <move-ticket :mailbox_id="change_box" :mailboxes="mailboxes" @update_mailbox="update_mailbox" @reset_me="reset_me"></move-ticket>
         </template>
     </div>
@@ -257,9 +257,7 @@ export default {
     },
     mounted() {
         this.fetch();
-
         this.$setTitle('Business Inboxes');
-
     }
 }
 </script>
