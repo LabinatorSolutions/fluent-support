@@ -13,7 +13,7 @@
                 <p>{{ $t('select_new_business_to_move_tickets') }}</p>
             </el-form-item>
             <el-form-item :label="$t('All or Custom')">
-                <el-select id="move_type" v-model="move_ticket.move_type" clearable :placeholder="$t('Want to move all or custom selected')" @change='showTicket'>
+                <el-select v-model="move_ticket.move_type" :placeholder="$t('Want to move all or custom selected')" @change='showTicket'>
                     <el-option v-for="_move_type in moveTypes"
                                :key="_move_type" :value="_move_type"
                                :label="_move_type"></el-option>
@@ -140,15 +140,13 @@
                             this.tickets = response.tickets;
 
                             each(this.tickets, (ticket) => {
-
-                                const found = this.customers.some(el => el.id === ticket.customer.id);
-                                if (!found && ticket.customer.id){
+                                let customerId = (ticket.customer && ticket.customer.id) ? ticket.customer.id : '';
+                                if (customerId && !this.customers.some(el => el.id === customerId)){
                                     this.customers.push({id: ticket.customer.id, name: ticket.customer.first_name+' '+ticket.customer.last_name})
                                 }
 
-                                let tempId = (ticket.product && ticket.product.id) ? ticket.product.id : '';
-
-                                if(tempId && !this.products.some(el => el.id === tempId)){
+                                let productId = (ticket.product && ticket.product.id) ? ticket.product.id : '';
+                                if(productId && !this.products.some(el => el.id === productId)){
                                     this.products.push({id: ticket.product.id, name: ticket.product.title})
                                 }
                             });
