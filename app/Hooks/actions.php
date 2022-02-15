@@ -106,3 +106,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 (new \FluentSupport\App\Hooks\Handlers\PermissionFilterManager)->init();
 
+// Register the exporter
+(new \FluentSupport\App\Hooks\Handlers\PrivacyHandler())->init();
+
