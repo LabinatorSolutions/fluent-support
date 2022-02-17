@@ -95,7 +95,14 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-
+            <div class="fs_sreplies_shortcodes">
+                <h4>Available Shortcodes For Template:</h4>
+                <ul>
+                    <li v-for="(key, value) in shortcodes">
+                        {{key}} : {{value}}
+                    </li>
+                </ul>
+            </div>
             <template #footer>
                 <span class="dialog-footer">
                   <el-button v-loading="saving" :disabled="saving" type="success" @click="createOrUpdate()">{{$t('Save')}}</el-button>
@@ -129,7 +136,20 @@ export default {
             editing_reply: false,
             edit_modal: false,
             products: this.appVars.support_products,
-            search: ''
+            search: '',
+            shortcodes: {
+                'customer_first_name' : 'Customer First Name',
+                'customer_last_name' : 'Customer Last Name',
+                'customer_full_name' : 'Customer Full Name',
+                'customer_email' : 'Customer Email',
+                'customer_title' : 'Customer Title',
+                'customer_status' : 'Customer Status',
+                'agent_first_name' : 'Agent First Name',
+                'agent_last_name' : 'Agent Last Name',
+                'agent_full_name' : 'Agent Full Name',
+                'agent_email' : 'Agent Email',
+                'agent_title' : 'Agent Title'
+            }
         }
     },
     methods: {
