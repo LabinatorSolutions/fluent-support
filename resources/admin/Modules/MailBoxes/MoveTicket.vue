@@ -61,7 +61,7 @@
                             <el-table-column min-width="300" :label="$t('Tickets')">
                                 <template #default="scope">
                                     <strong>{{ scope.row.title }}</strong>
-                                    <span v-if="!filters.customer"  style="font-size: 10px;"> by {{ scope.row.customer.first_name }} {{ scope.row.customer.last_name }}</span>
+                                    <span v-if="!filters.customer && scope.row.customer"  style="font-size: 10px;"> by {{ scope.row.customer.first_name }} {{ scope.row.customer.last_name }}</span>
                                     <span style="margin-left: 5px; font-size: 10px;"
 
                                           class="fs_badge" v-if="!!scope.row.product && !filters.product_id">
@@ -140,9 +140,14 @@
                             this.tickets = response.tickets;
 
                             each(this.tickets, (ticket) => {
-                                let customerId = (ticket.customer && ticket.customer.id) ? ticket.customer.id : '';
-                                if (customerId && !this.customers.some(el => el.id === customerId)){
-                                    this.customers.push({id: ticket.customer.id, name: ticket.customer.first_name+' '+ticket.customer.last_name})
+                                if(ticket.customer) {
+                                    let customerId = (ticket.customer && ticket.customer.id) ? ticket.customer.id : '';
+                                    if (customerId && !this.customers.some(el => el.id === customerId)) {
+                                        this.customers.push({
+                                            id: ticket.customer.id,
+                                            name: ticket.customer.first_name + ' ' + ticket.customer.last_name
+                                        })
+                                    }
                                 }
 
                                 let productId = (ticket.product && ticket.product.id) ? ticket.product.id : '';
