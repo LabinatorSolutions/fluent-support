@@ -461,6 +461,7 @@ class TransStrings
             'advance_filter_promo' => __('Using advanced filtering you can get more specific tickets', 'fluent-support-pro'),
             'advance_filter_help_text' => __('Add new filter to narrow down your contacts based on different properties', 'fluent-support-pro'),
             'Send Attachments' => __('Send Attachments(Not Recommended)', 'fluent-support'),
+            'Today Stats' => __('Today Stats', 'fluent-support'),
         ];
     }
 }

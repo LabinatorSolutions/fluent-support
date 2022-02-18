@@ -125,6 +125,46 @@ class StatModule
     }
 
     /**
+     * getTodayStats method will return a stats of today's tickets
+     * This method will count the ticket number by ticket status and return the array
+     * @param bool $agentId By default value set to false however when it gets an agent id it will fetch
+     * the result by this id
+     * @return array result in array format
+     */
+    public static function getTodayStats($agentId=false)
+    {
+        $start = date('Y-m-d 00:00.01');
+        $end = date('Y-m-d 23:59.59');
+
+        $newTickets = Ticket::whereBetween('created_at', [$start, $end]);
+
+        $closedTickets = Ticket::where('status', 'closed')->whereBetween('resolved_at', [$start, $end]);
+
+        $responses = Conversation::where('conversation_type', 'response')->whereBetween('created_at', [$start, $end]);
+
+        if($agentId) {
+            $newTickets->where('agent_id', $agentId);
+            $closedTickets->where('agent_id', $agentId);
+            $responses->where('person_id', $agentId);
+        }
+
+        return [
+            'new_tickets'    => [
+                'title' => __('New Tickets', 'fluent-support'),
+                'count' => $newTickets->count()
+            ],
+            'closed_tickets' => [
+                'title' => __('Closed Tickets', 'fluent-support'),
+                'count' => $closedTickets->count()
+            ],
+            'responses'      => [
+                'title' => __('Responses', 'fluent-support'),
+                'count' => $responses->count()
+            ]
+        ];
+    }
+
+    /**
      * getAgentOverallStats method will produce overall statistics by agent
      * @param $agentId
      * @return array[]

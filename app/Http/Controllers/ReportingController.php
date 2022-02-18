@@ -26,7 +26,8 @@ class ReportingController extends Controller
     public function getOverallReports(Request $request)
     {
         return [
-            'overall_reports' => StatModule::getOverAllStats()
+            'overall_reports' => StatModule::getOverAllStats(),
+            'today_reports' => StatModule::getTodayStats()
         ];
     }
 
@@ -119,7 +120,8 @@ class ReportingController extends Controller
         $agent =  Helper::getAgentByUserId(get_current_user_id());
 
         return [
-            'overall_reports' => StatModule::getAgentOverallStats($agent->id)
+            'overall_reports' => StatModule::getAgentOverallStats($agent->id),
+            'today_reports' => StatModule::getTodayStats($agent->id)
         ];
     }
 
