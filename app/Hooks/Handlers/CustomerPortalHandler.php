@@ -116,7 +116,8 @@ class CustomerPortalHandler
             'priority'          => __('Priority', 'fluent-support-pro'),
             'btn_text'          => __('Create Ticket', 'fluent-support-pro'),
             'submit_heading'    => __('Submit a Support Ticket', 'fluent-support-pro'),
-            'create_ticket_cta' => __('Create a New Ticket', 'fluent-support')
+            'create_ticket_cta' => __('Create a New Ticket', 'fluent-support'),
+            'Reopen This ticket' => __('Reopen This ticket', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
