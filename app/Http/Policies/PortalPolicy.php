@@ -26,7 +26,11 @@ class PortalPolicy extends Policy
         if (!$hasAccess) {
             return false;
         }
-
+        /*
+         * @since v1.0.0
+         * Filter portal access settings
+         * @param array $canAccess
+         */
         $canAccess = apply_filters('fluent_support/user_portal_access_config', [
             'status'  => true,
             'message' => __('You do not have permission', 'fluent-support')

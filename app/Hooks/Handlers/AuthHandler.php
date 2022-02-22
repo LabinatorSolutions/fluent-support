@@ -35,6 +35,11 @@ class AuthHandler
 
         $return = '<div id="fst_login_form" class="fst_login_wrapper">';
 
+        /*
+         * @since v1.0.0
+         * Filter login form
+         * @param array $loginArgs
+         */
         $loginArgs = apply_filters('fluent_support/login_form_args', [
             'echo'           => false,
             'redirect'       => Helper::getPortalBaseUrl(),
@@ -169,6 +174,11 @@ class AuthHandler
      */
     public static function getSignupFields()
     {
+        /*
+         * @since v1.0.0
+         * Filter signup form field
+         * @param array $fields
+         */
         return apply_filters('fluent_support/registration_form_fields', [
             'first_name' => [
                 'required'    => true,
@@ -222,11 +232,21 @@ class AuthHandler
           </path>
         </svg>';
 
+        /*
+         * @since v1.0.0
+         * Filter signup form loading icon
+         * @param string $loadingIcon this accepts html element
+         */
         return apply_filters('fluent_support/signup_loading_icon', $loadingIcon);
     }
 
     protected function getShortcodes($attributes)
     {
+        /*
+         * @since v1.0.0
+         * Filter shortcode behavior for agent
+         * @param array $shortCodeDefaults
+         */
         $shortCodeDefaults = apply_filters('fluent_support/auth_shortcode_defaults', [
             'auto-redirect' => false,
             'redirect-to'   => Helper::getPortalBaseUrl(),

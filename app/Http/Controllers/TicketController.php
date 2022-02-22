@@ -55,7 +55,11 @@ class TicketController extends Controller
                 'max_file_size' => $maxFileSize,
                 'mime_headings' => $mimeHeadings
             ];
-
+            /**
+             * @since v1.0.0
+             * Filter customer portal settings
+             * @param array $portalSettings
+             */
             $portalSettings = apply_filters('fluent_support/customer_portal_vars', $portalSettings);
 
             $settings['portal_settings'] = $portalSettings;

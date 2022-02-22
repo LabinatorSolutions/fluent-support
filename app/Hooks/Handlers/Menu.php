@@ -35,6 +35,10 @@ class Menu
             $menuPosition = 4;
         }
 
+        /*
+         * Filter Fluent Support menu position in WordPress dashboard
+         * @param integer $menuPosition
+         */
         $menuPosition = apply_filters('fluent_support/admin_menu_position', $menuPosition);
 
         add_menu_page(
@@ -183,8 +187,18 @@ class Menu
             ];
         }
 
-
+        /*
+         * @since v1.0.0
+         * Filter Fluent Support dashboard top-left menu items
+         * @param array $menuItems
+         */
         $menuItems = apply_filters('fluent_support/primary_menu_items', $menuItems);
+
+        /*
+         * @since v1.0.0
+         * Filter Fluent Support dashboard top-right menu items
+         * @param array $secondayItems
+         */
         $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems);
 
 
@@ -290,6 +304,10 @@ class Menu
             ];
         }
 
+        /*
+         * Filter integration driver
+         * @param array $integrationDrivers
+         */
         $integrationDrivers = apply_filters('fluent_support/integration_drivers', $integrationDrivers);
 
         $tags = TicketTag::select(['id', 'title'])->get()->toArray();
@@ -302,6 +320,11 @@ class Menu
         $i18ns = TransStrings::getTransStrings();
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
 
+        /*
+         * @since v1.0.0
+         * Filter agent portal localize javascript data
+         * @param array $appVars
+         */
         $appVars = apply_filters('fluent_support_app_vars', array(
             'slug'                      => $slug = $app->config->get('app.slug'),
             'nonce'                     => wp_create_nonce($slug),

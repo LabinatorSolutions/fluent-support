@@ -26,6 +26,11 @@ class CustomerPortalHandler
             return '<div style="text-align: center;"><h3>' . __('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support') . '</h3><a href="' . $adminPortalUrl . '">' . __('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
 
+            /*
+            * @since v1.0.0
+            * Filter customer portal access settings
+            * @param array $canAccess
+            */
             $canAccess = apply_filters('fluent_support/user_portal_access_config', [
                 'status'  => true,
                 'message' => $invalidPermissionMessage
@@ -140,7 +145,11 @@ class CustomerPortalHandler
         } else {
             add_filter('user_can_richedit', '__return_true');
         }
-
+        /*
+         * @since v1.0.0
+         * Filter customer portal localize javascript data
+         * @param array $data
+         */
         $data = apply_filters('fluent_support/customer_portal_vars', $data);
 
         if (!empty($data['has_rich_text_editor'])) {
