@@ -11,6 +11,7 @@ use FluentSupport\App\Models\Person;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Support\Arr;
+
 /**
  *  Helper - REST API Helper Class
  *
@@ -20,7 +21,6 @@ use FluentSupport\Framework\Support\Arr;
  *
  * @version 1.0.0
  */
-
 class Helper
 {
     public static function FluentSupport($module = null)
@@ -100,8 +100,8 @@ class Helper
     {
         return apply_filters('fluent_support/ticket_statuses', [
             'new'    => __('New', 'fluent-support'),
-            'active'    => __('Active', 'fluent-support'),
-            'closed'    => __('Closed', 'fluent-support'),
+            'active' => __('Active', 'fluent-support'),
+            'closed' => __('Closed', 'fluent-support'),
         ]);
     }
 
@@ -509,7 +509,7 @@ class Helper
             $crmProfileUrl = $urlBase . 'subscribers/' . $contact->id;
 
             //Return contact data
-            return  [
+            return [
                 'id'            => $contact->id,
                 'first_name'    => $contact->first_name,
                 'last_name'     => $contact->last_name,
@@ -531,31 +531,25 @@ class Helper
      * @param $id
      * @param $subDir
      * @param $files
-     * @return array
+     * @return array|\WP_Error
      */
-    public static function uploadProfilePicture($model , $id, $subDir, $files){
-        $model = "FluentSupport\App\Models\\".$model;
+    public static function uploadProfilePicture($model, $id, $subDir, $files)
+    {
+        $model = "FluentSupport\App\Models\\" . $model;
         $row = $model::findOrFail($id);
 
         $uploadedImage = FileSystem::setSubDir($subDir)->put($files);
 
-        if($avatar = $uploadedImage[0]['url']){
+        if ($avatar = $uploadedImage[0]['url']) {
             $row->avatar = $avatar;
             $row->save();
-
-            return[
+            return [
                 'message' => __('Profile picture has been updated successfully', 'fluent-support'),
                 'image'   => $row->avatar,
-                'person' => $row
+                'person'  => $row
             ];
         }
 
-        else{
-            $controller = new FluentSupport\Framework\Http\Controller();
-
-            return $controller->sendError([
-                'message' => __('Something went wrong while updating the profile picture', 'fluent-support')
-            ]);
-        }
+        return new \WP_Error(423, __('Something went wrong while updating the profile picture', 'fluent-support'));
     }
 }

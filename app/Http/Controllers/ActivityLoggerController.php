@@ -12,7 +12,6 @@ use FluentSupport\App\Services\Helper;
  *
  * @version 1.0.0
  */
-
 class ActivityLoggerController extends Controller
 {
     /**
@@ -68,7 +67,7 @@ class ActivityLoggerController extends Controller
             'disable_logs' => 'no'
         ];
         $settings = wp_parse_args($settings, $defaults);
-        $settings['delete_days'] = intval($settings['delete_days']);
+        $settings['delete_days'] = (int)$settings['delete_days'];
 
         Helper::updateOption('_activity_settings', $settings);
 

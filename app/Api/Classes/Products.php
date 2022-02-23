@@ -5,13 +5,13 @@ namespace FluentSupport\App\Api\Classes;
 use FluentSupport\App\Models\Product;
 
 /**
- *  Products class for REST API
+ *  Products class for PHP API
+ *  Example Usage: $productApi = FluentSupportApi('products');
  *
  * @package FluentSupport\App\Api\Classes
  *
  * @version 1.0.0
  */
-
 class Products
 {
     private $instance = null;
@@ -43,7 +43,7 @@ class Products
      */
     public function getProduct(int $id)
     {
-        if(!$id){
+        if (!$id) {
             return;
         }
 
@@ -56,7 +56,7 @@ class Products
      */
     public function createProduct(array $data)
     {
-        if(empty($data['title'])){
+        if (empty($data['title'])) {
             return;
         }
         Product::create(wp_unslash($data));
@@ -69,7 +69,7 @@ class Products
      */
     public function updateProduct(int $id, array $data)
     {
-        if(!$id || !$data){
+        if (!$id || !$data) {
             return;
         }
         Product::findOrFail($id)->update($data);
@@ -81,7 +81,7 @@ class Products
      */
     public function deleteProduct(int $id)
     {
-        if(!$id){
+        if (!$id) {
             return;
         }
         Product::findOrFail($id)->delete();

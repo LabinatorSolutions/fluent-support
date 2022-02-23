@@ -196,6 +196,7 @@ class Person extends Model
             $meta->value = maybe_serialize($metaValue);
             $meta->update();
         }
+
         if (!$meta){
             Meta::create([
                 'object_type' => 'person_meta',
@@ -204,6 +205,7 @@ class Person extends Model
                 'value'       => maybe_serialize($metaValue)
             ]);
         }
+        
         return true;
     }
 

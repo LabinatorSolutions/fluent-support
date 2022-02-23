@@ -11,7 +11,11 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
     $router->put('/{id}', 'MailBoxController@update')->int('id');
     $router->delete('/{id}', 'MailBoxController@delete')->int('id');
     $router->put('/{id}/move_tickets', 'MailBoxController@moveTickets')->int('id');
-    $router->get('/get_ticket_by_box', 'MailBoxController@getAllTicket')->int('id');
+
+    /*
+     * @todo: Needs to refactor
+     */
+    // $router->get('/{id}/tickets', 'MailBoxController@getTickets')->int('id');
 
     $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
     $router->get('/{id}/email_configs', 'MailBoxController@getEmailsSetups');
@@ -96,6 +100,9 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->post('/', 'AgentController@addAgent');
     $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
     $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
+
+  //  $router->post('/{agent_id}/avatar', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
+
 });
 
 $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router) {
@@ -158,6 +165,9 @@ $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
 
+/*
+ * @todo: Move this to /agents
+ */
 $router->prefix('users')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->post('/profile_image/{user_id}', 'AgentController@addOrUpdateProfileImage')->int('user_id');
 

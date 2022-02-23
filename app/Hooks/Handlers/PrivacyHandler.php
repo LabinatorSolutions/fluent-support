@@ -10,58 +10,97 @@ class PrivacyHandler
 {
     public function init()
     {
-        add_filter( 'wp_privacy_personal_data_exporters', [$this, 'wpRegisterExporter'] );
-        add_filter( 'wp_privacy_personal_data_erasers', [$this, 'wpRegisterEraser'] );
+        add_filter('wp_privacy_personal_data_exporters', [$this, 'registerExporter']);
+        add_filter('wp_privacy_personal_data_erasers', [$this, 'registerEraser']);
+    }
+
+    // Registering exporters to export data
+    public function registerExporter($exporters)
+    {
+        $exporters['fluent-support-tickets'] = array(
+            'exporter_friendly_name' => __('Fluent Support Tickets Exporter', 'fluent-support'),
+            'callback'               => [$this, 'exportTickets'],
+        );
+
+        $exporters['fluent-support-conversations'] = array(
+            'exporter_friendly_name' => __('Fluent Support Conversations Exporter', 'fluent-support'),
+            'callback'               => [$this, 'exportConversations'],
+        );
+
+        $exporters['fluent-support-customer'] = array(
+            'exporter_friendly_name' => __('Fluent Support Customer Exporter', 'fluent-support'),
+            'callback'               => [$this, 'exportCustomerData'],
+        );
+        return $exporters;
+    }
+
+    // Registering erasers to erase data
+    public function registerEraser($erasers)
+    {
+        $erasers['fluent-support'] = array(
+            'eraser_friendly_name' => __('Fluent Support Personal Data Eraser', 'fluent-support'),
+            'callback'             => [$this, 'erasePersonalData'],
+        );
+        return $erasers;
     }
 
     // Method to handle tickets data exporter
     public function exportTickets($user_email, $page = 1)
     {
         $customer = Customer::where('email', $user_email)->select(['id'])->first();
+
+        if (!$customer) {
+            return [
+                'data' => [],
+                'done' => true
+            ];
+        }
+
         $tickets = Ticket::with(['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments'])
             ->where('customer_id', $customer->id)
             ->get();
         $data = [];
+
         foreach ($tickets as $ticket) {
             $data[] = [
-                'group_id' => 'fluent-support-tickets',
+                'group_id'    => 'fluent-support-tickets',
                 'group_label' => __('Fluent Support Tickets', 'fluent-support'),
-                'item_id' => 'ticket-' . $ticket->id,
-                'data' => [
+                'item_id'     => 'ticket-' . $ticket->id,
+                'data'        => [
                     [
-                        'name' => __('Ticket ID', 'fluent-support'),
+                        'name'  => __('Ticket ID', 'fluent-support'),
                         'value' => $ticket->id,
                     ],
                     [
-                        'name' => __('Ticket Title', 'fluent-support'),
+                        'name'  => __('Ticket Title', 'fluent-support'),
                         'value' => $ticket->title,
                     ],
                     [
-                        'name' => __('Ticket Content', 'fluent-support'),
+                        'name'  => __('Ticket Content', 'fluent-support'),
                         'value' => $ticket->content,
                     ],
                     [
-                        'name' => __('Ticket Attachments', 'fluent-support'),
+                        'name'  => __('Ticket Attachments', 'fluent-support'),
                         'value' => $this->ticketAttachments($ticket->attachments),
                     ],
                     [
-                        'name' => __('Ticket Product', 'fluent-support'),
-                        'value' => isset($ticket->product->title) ? $ticket->product->title : '',
+                        'name'  => __('Ticket Product', 'fluent-support'),
+                        'value' => isset($ticket->product) ? $ticket->product->title : '',
                     ],
                     [
-                        'name' => __('Ticket Tags', 'fluent-support'),
+                        'name'  => __('Ticket Tags', 'fluent-support'),
                         'value' => $this->ticketTags($ticket->tags),
                     ],
                     [
-                        'name' => __('Ticket Status', 'fluent-support'),
+                        'name'  => __('Ticket Status', 'fluent-support'),
                         'value' => $ticket->status,
                     ],
                     [
-                        'name' => __('Ticket Priority', 'fluent-support'),
+                        'name'  => __('Ticket Priority', 'fluent-support'),
                         'value' => $ticket->priority,
                     ],
                     [
-                        'name' => __('Ticket Created At', 'fluent-support'),
+                        'name'  => __('Ticket Created At', 'fluent-support'),
                         'value' => $ticket->created_at,
                     ]
                 ],
@@ -70,12 +109,12 @@ class PrivacyHandler
 
         /**
          * Filter to modify tickets exportable data
-         * @since v1.5.5
          * @param array $data
          * @param object $tickets
          * @return array Exportable data
+         * @since v1.5.5
          */
-        $exportableData = apply_filters('fluent_support/make_exportable_tickets_data', $data, $tickets);
+        $exportableData = apply_filters('fluent_support/exportable_tickets_data', $data, $tickets);
         return [
             'data' => $exportableData,
             'done' => true,
@@ -86,35 +125,44 @@ class PrivacyHandler
     public function exportConversations($user_email, $page = 1)
     {
         $customer = Customer::where('email', $user_email)->select(['id'])->first();
+
+        if (!$customer) {
+            return [
+                'data' => [],
+                'done' => true
+            ];
+        }
+
         $conversations = Conversation::with(['attachments'])
             ->where('person_id', $customer->id)
             ->where('conversation_type', 'response')
             ->get();
+
         $data = [];
         foreach ($conversations as $conversation) {
             $data[] = [
-                'group_id' => 'fluent-support-conversations',
+                'group_id'    => 'fluent-support-conversations',
                 'group_label' => __('Fluent Support Conversations', 'fluent-support'),
-                'item_id' => 'conversation-' . $conversation->id,
-                'data' => [
+                'item_id'     => 'conversation-' . $conversation->id,
+                'data'        => [
                     [
-                        'name' => __('Conversation ID', 'fluent-support'),
+                        'name'  => __('Conversation ID', 'fluent-support'),
                         'value' => $conversation->id,
                     ],
                     [
-                        'name' => __('Ticket ID', 'fluent-support'),
+                        'name'  => __('Ticket ID', 'fluent-support'),
                         'value' => $conversation->ticket_id,
                     ],
                     [
-                        'name' => __('Conversation Content', 'fluent-support'),
+                        'name'  => __('Conversation Content', 'fluent-support'),
                         'value' => $conversation->content,
                     ],
                     [
-                        'name' => __('Conversation Attachments', 'fluent-support'),
+                        'name'  => __('Conversation Attachments', 'fluent-support'),
                         'value' => $this->convAttachments($conversation->attachments),
                     ],
                     [
-                        'name' => __('Conversation Created At', 'fluent-support'),
+                        'name'  => __('Conversation Created At', 'fluent-support'),
                         'value' => $conversation->created_at,
                     ]
                 ],
@@ -123,12 +171,12 @@ class PrivacyHandler
 
         /**
          * Filter to modify conversations exportable data
-         * @since v1.5.5
          * @param array $data
          * @param object $conversations
          * @return array Exportable data
+         * @since v1.5.5
          */
-        $exportableData = apply_filters('fluent_support/make_exportable_conversations_data', $data, $conversations);
+        $exportableData = apply_filters('fluent_support/exportable_conversations_data', $data, $conversations);
         return [
             'data' => $exportableData,
             'done' => true,
@@ -140,37 +188,44 @@ class PrivacyHandler
     {
         $customer = Customer::where('email', $user_email)->first();
 
+        if (!$customer) {
+            return [
+                'data' => [],
+                'done' => true
+            ];
+        }
+
         $data[] = [
-            'group_id' => 'fluent-support-customer',
+            'group_id'    => 'fluent-support-customer',
             'group_label' => __('Fluent Support Customer', 'fluent-support'),
-            'item_id' => 'customer-' . $customer->id,
-            'data' => [
+            'item_id'     => 'customer-' . $customer->id,
+            'data'        => [
                 [
-                    'name' => __('Customer ID', 'fluent-support'),
+                    'name'  => __('Customer ID', 'fluent-support'),
                     'value' => $customer->id,
                 ],
                 [
-                    'name' => __('First Name', 'fluent-support'),
+                    'name'  => __('First Name', 'fluent-support'),
                     'value' => $customer->first_name,
                 ],
                 [
-                    'name' => __('Last Name', 'fluent-support'),
+                    'name'  => __('Last Name', 'fluent-support'),
                     'value' => $customer->last_name,
                 ],
                 [
-                    'name' => __('Email', 'fluent-support'),
+                    'name'  => __('Email', 'fluent-support'),
                     'value' => $customer->email,
                 ],
                 [
-                    'name' => __('Status', 'fluent-support'),
+                    'name'  => __('Status', 'fluent-support'),
                     'value' => $customer->status,
                 ],
                 [
-                    'name' => __('IP Address', 'fluent-support'),
+                    'name'  => __('IP Address', 'fluent-support'),
                     'value' => $customer->ip_address,
                 ],
                 [
-                    'name' => __('Last IP Address', 'fluent-support'),
+                    'name'  => __('Last IP Address', 'fluent-support'),
                     'value' => $customer->last_ip_address,
                 ],
                 [
@@ -198,7 +253,7 @@ class PrivacyHandler
                     'value' => $customer->country
                 ],
                 [
-                    'name' => __('Created At', 'fluent-support'),
+                    'name'  => __('Created At', 'fluent-support'),
                     'value' => $customer->created_at
                 ],
             ],
@@ -206,12 +261,12 @@ class PrivacyHandler
 
         /**
          * Filter to modify customer exportable data
-         * @since v1.5.5
          * @param array $data
          * @param object $customer
          * @return array Exportable data
+         * @since v1.5.5
          */
-        $exportableData = apply_filters('fluent_support/make_exportable_customer_data', $data, $customer);
+        $exportableData = apply_filters('fluent_support/exportable_customer_data', $data, $customer);
         return [
             'data' => $exportableData,
             'done' => true,
@@ -221,8 +276,8 @@ class PrivacyHandler
     public function ticketAttachments($attachments)
     {
         $text = '';
-        foreach ($attachments as $attachment){
-            $text .= '<a href='.esc_url($attachment->secureUrl). '>' . esc_html($attachment->title) . '</a>, <br>';
+        foreach ($attachments as $attachment) {
+            $text .= '<a href=' . esc_url($attachment->secureUrl) . '>' . esc_html($attachment->title) . '</a>, <br>';
         }
 
         return $text;
@@ -231,8 +286,8 @@ class PrivacyHandler
     public function convAttachments($attachments)
     {
         $text = '';
-        foreach ($attachments as $attachment){
-            $text .= '<a href='.esc_url($attachment->secureUrl). '>' . esc_html($attachment->title) . '</a>, <br>';
+        foreach ($attachments as $attachment) {
+            $text .= '<a href=' . esc_url($attachment->secureUrl) . '>' . esc_html($attachment->title) . '</a>, <br>';
         }
 
         return $text;
@@ -242,57 +297,38 @@ class PrivacyHandler
     {
         $ticketTags = '';
         foreach ($tags as $tag) {
-            $ticketTags .= $tag->title . ', <br>';
+            $ticketTags .= $tag->title . ', ';
         }
 
-        return  $ticketTags;
+        return $ticketTags;
     }
 
     // Method to handle data eraser
     public function erasePersonalData($user_email, $page = 1)
     {
         $customer = Customer::where('email', $user_email)->select(['id'])->first();
+
+        if (!$customer) {
+            return [
+                'items_removed'  => true,
+                'items_retained' => false,
+                'messages'       => [],
+                'done'           => true
+            ];
+        }
+
         $tickets = Ticket::where('customer_id', $customer->id)->get();
         foreach ($tickets as $ticket) {
             $ticket->deleteTicket();
         }
 
         $customer->delete();
+
         return [
-            'items_removed' => true,
+            'items_removed'  => true,
             'items_retained' => false,
-            'messages' => [],
-            'done' => true,
+            'messages'       => [],
+            'done'           => true,
         ];
     }
-
-    // Registering exporters to export data
-    public function wpRegisterExporter( $exporters )
-    {
-        $exporters['fluent-support-tickets'] = array(
-            'exporter_friendly_name' => __( 'Fluent Support Tickets Exporter', 'fluent-support' ),
-            'callback'               => [ $this, 'exportTickets' ],
-        );
-
-        $exporters['fluent-support-conversations'] = array(
-            'exporter_friendly_name' => __( 'Fluent Support Conversations Exporter', 'fluent-support' ),
-            'callback'               => [ $this, 'exportConversations' ],
-        );
-
-        $exporters['fluent-support-customer'] = array(
-            'exporter_friendly_name' => __( 'Fluent Support Customer Exporter', 'fluent-support' ),
-            'callback'               => [ $this, 'exportCustomerData' ],
-        );
-        return $exporters;
-    }
-
-    // Registering erasers to erase data
-     public function wpRegisterEraser( $erasers )
-     {
-         $erasers['fluent-support'] = array(
-             'eraser_friendly_name' => __( 'Fluent Support Personal Data Eraser', 'fluent-support' ),
-             'callback'             => [ $this, 'erasePersonalData' ],
-         );
-         return $erasers;
-     }
 }

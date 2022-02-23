@@ -215,7 +215,7 @@
                             message: response.message,
                             position: 'bottom-right'
                         });
-                        this.$emit('update_mailbox', response.mailboxes);
+                        this.$emit('update_mailbox');
 
                     })
                     .catch((errors) => {
