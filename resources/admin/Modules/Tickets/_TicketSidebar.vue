@@ -7,7 +7,7 @@
                         <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
                     </router-link>
                 </div>
-                <i class="el-icon-more" style="float:right;" @click="customerManagement"></i>
+                <i v-if="appVars.me.permissions.includes('fst_sensitive_data')" class="el-icon-more" style="float:right;" @click="customerManagement"></i>
             </div>
             <div class="fs_tk_card_body">
                 <div class="fs_tk_line">
