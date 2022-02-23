@@ -37,13 +37,13 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-               // $headers[] = 'Message-ID: ' . $ticket->message_id;
+                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
             $attachments = [];
 
-            if (($files = $ticket->attachments) && $emailSettings['send_attachments'] == 'yes'){
-                foreach ($files as $file){
+            if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
+                foreach ($files as $file) {
                     $attachments[] = $file->file_path;
                 }
             }
@@ -56,7 +56,7 @@ class EmailNotificationHandler
         if ($emailSettings && $emailSettings['status'] == 'yes' && is_email($mailbox->settings['admin_email_address'])) {
 
             $mailTo = Arr::get($mailbox->settings, 'admin_email_address');
-            if(!$mailTo || !is_email($mailTo)) {
+            if (!$mailTo || !is_email($mailTo)) {
                 return;
             }
 
@@ -75,13 +75,13 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-               // $headers[] = 'Message-ID: ' . $ticket->message_id;
+                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
             $attachments = [];
 
-            if (($files = $ticket->attachments) && $emailSettings['send_attachments'] == 'yes'){
-                foreach ($files as $file){
+            if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
+                foreach ($files as $file) {
                     $attachments[] = $file->file_path;
                 }
             }
@@ -109,7 +109,7 @@ class EmailNotificationHandler
             $ticket->load('customer');
             $customer = $ticket->customer;
 
-            if($customer->status == 'inactive') {
+            if ($customer->status == 'inactive') {
                 return false;
             }
 
@@ -134,8 +134,8 @@ class EmailNotificationHandler
             $headers = $mailbox->getMailerHeader();
             $attachments = [];
 
-            if (($files = $response->attachments) && $emailSettings['send_attachments']=='yes'){
-                foreach ($files as $file){
+            if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
+                foreach ($files as $file) {
                     $attachments[] = $file->file_path;
                 }
             }
@@ -158,7 +158,7 @@ class EmailNotificationHandler
             $ticket->load('customer');
             $customer = $ticket->customer;
 
-            if($customer->status == 'inactive') {
+            if ($customer->status == 'inactive') {
                 return false;
             }
 
@@ -201,11 +201,11 @@ class EmailNotificationHandler
             $agent = $ticket->agent;
 
             $emailTo = $mailbox->settings['admin_email_address'];
-            if($agent) {
+            if ($agent) {
                 $emailTo = $agent->email;
             }
 
-            if(!$emailTo || !is_email($emailTo)) {
+            if (!$emailTo || !is_email($emailTo)) {
                 return;
             }
 
@@ -228,17 +228,16 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             if ($ticket->message_id) {
-               // $headers[] = 'Message-ID: ' . $ticket->message_id;
+                // $headers[] = 'Message-ID: ' . $ticket->message_id;
             }
 
             $attachments = [];
 
-            if (($files = $response->attachments) && $emailSettings['send_attachments'] == 'yes'){
-                foreach ($files as $file){
+            if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
+                foreach ($files as $file) {
                     $attachments[] = $file->file_path;
                 }
             }
-
 
             Mailer::send($emailTo, $subject, $emailBody, $headers, $attachments);
         }
@@ -248,7 +247,7 @@ class EmailNotificationHandler
     {
         $currentUser = Helper::getAgentByUserId();
 
-        if (!is_null($currentUser) && $currentUser->user_id == $agent->user_id){
+        if ($currentUser && $currentUser->user_id == $agent->user_id) {
             return;
         }
 
@@ -263,11 +262,11 @@ class EmailNotificationHandler
 
         if ($emailSettings && $emailSettings['status'] == 'yes') {
 
-            if($agent) {
+            if ($agent) {
                 $emailTo = $agent->email;
             }
 
-            if(!$emailTo || !is_email($emailTo)) {
+            if (!$emailTo || !is_email($emailTo)) {
                 return;
             }
 

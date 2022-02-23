@@ -19,17 +19,16 @@ use FluentSupport\Framework\Support\Arr;
 /**
  *  AgentController class for REST API
  * This class is responsible for getting data for all request related to agent
+ *
  * @package FluentSupport\App\Http\Controllers
  *
  * @version 1.0.0
  */
-
 class AgentController extends Controller
 {
     public function index(Request $request)
     {
         $agents = Agent::orderBy('id', 'DESC')
-            //->whereNotNull('user_id')
             ->searchBy($request->get('search'))
             ->paginate();
 
@@ -40,6 +39,7 @@ class AgentController extends Controller
             }
             $agent->replies_count = Conversation::where('person_id', $agent->id)->count();
             $agent->interactions_count = Conversation::where('person_id', $agent->id)->groupBy('ticket_id')->get()->count();
+
             $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
             $agent->slack_user_id = $agent->getMeta('slack_user_id');
             $agent->whatsapp_number = $agent->getMeta('whatsapp_number');
@@ -94,19 +94,19 @@ class AgentController extends Controller
         $agent = Agent::create($data);
         PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
 
-        if(!empty($data['telegram_chat_id'])) {
+        if (!empty($data['telegram_chat_id'])) {
             $chatId = sanitize_text_field($data['telegram_chat_id']);
             $agent->updateMeta('telegram_chat_id', $chatId);
             $agent->telegram_chat_id = $chatId;
         }
 
-        if(!empty($data['slack_user_id'])) {
+        if (!empty($data['slack_user_id'])) {
             $chatId = sanitize_text_field($data['slack_user_id']);
             $agent->updateMeta('slack_user_id', $chatId);
             $agent->slack_user_id = $chatId;
         }
 
-        if(!empty($data['whatsapp_number'])) {
+        if (!empty($data['whatsapp_number'])) {
             $whatsappNumber = sanitize_text_field($data['whatsapp_number']);
             $agent->updateMeta('whatsapp_number', $whatsappNumber);
             $agent->whatsapp_number = $whatsappNumber;
@@ -155,19 +155,19 @@ class AgentController extends Controller
 
         $agent = Agent::findOrFail($agentId);
 
-        if(isset($data['telegram_chat_id'])) {
+        if (isset($data['telegram_chat_id'])) {
             $chatId = sanitize_text_field($data['telegram_chat_id']);
             $agent->updateMeta('telegram_chat_id', $chatId);
             $agent->telegram_chat_id = $chatId;
         }
 
-        if(isset($data['slack_user_id'])) {
+        if (isset($data['slack_user_id'])) {
             $chatId = sanitize_text_field($data['slack_user_id']);
             $agent->updateMeta('slack_user_id', $chatId);
             $agent->slack_user_id = $chatId;
         }
 
-        if(isset($data['whatsapp_number'])) {
+        if (isset($data['whatsapp_number'])) {
             $whatsappNumber = sanitize_text_field($data['whatsapp_number']);
             $agent->updateMeta('whatsapp_number', $whatsappNumber);
             $agent->whatsapp_number = $whatsappNumber;
@@ -237,7 +237,7 @@ class AgentController extends Controller
         //Get the statistics and responses by the agent
         $response = $this->getAgentStat($request, $agent->id);
 
-        if(defined('FLUENTSUPPORTPRO')) {
+        if (defined('FLUENTSUPPORTPRO')) {
             $response['dashboard_notice'] = apply_filters('fluent_support/dashboard_notice', '', $agent);
         }
 
@@ -278,18 +278,18 @@ class AgentController extends Controller
         }
 
         //If the request come with overall_stats
-        if(in_array('overall_stats', $with)) {
+        if (in_array('overall_stats', $with)) {
             //Get overall status
             $data['overall_stats'] = (new Reporting())->getActiveStats();
         }
 
         //If the request come with individual_stat
-        if(in_array('individual_stat', $with)) {
+        if (in_array('individual_stat', $with)) {
             //get overall statistics by agent id
             $data['individual_stat'] = (new Reporting())->getActiveStatByAgent($agent->id);
         }
         //If the request come with my_overall_stats
-        if(in_array('my_overall_stats', $with)){
+        if (in_array('my_overall_stats', $with)) {
             //Get the overall statistics by the agent
             $data['my_overall_stats'] = StatModule::getAgentOverallStats($agent->id);
         }
@@ -304,6 +304,17 @@ class AgentController extends Controller
      */
     public function addOrUpdateProfileImage(Request $request)
     {
-        return Helper::uploadProfilePicture('Agent', $request->get('user_id'), 'agents_avatars', $request->files());
+        /*
+         * @todo: Please refactor this
+         */
+        $result = Helper::uploadProfilePicture('Agent', $request->get('user_id'), 'agents_avatars', $request->files());
+
+        if (is_wp_error($result)) {
+            return $this->sendError([
+                'message' => $request->get_error_message()
+            ]);
+        }
+
+        return $result;
     }
 }

@@ -5,13 +5,14 @@ namespace FluentSupport\App\Api\Classes;
 use FluentSupport\App\Models\TicketTag;
 
 /**
- *  Tags class for REST API
+ *  Tags class for PHP API
+ *
+ * Example Usage: $ticketTagsApi = FluentSupportApi('tags');
  *
  * @package FluentSupport\App\Api\Classes
  *
  * @version 1.0.0
  */
-
 class Tags
 {
     private $instance = null;
@@ -43,7 +44,7 @@ class Tags
      */
     public function getTag(int $id)
     {
-        if(!$id){
+        if (!$id) {
             return;
         }
 
@@ -56,7 +57,7 @@ class Tags
      */
     public function createTag(array $data)
     {
-        if(empty($data['title'])){
+        if (empty($data['title'])) {
             return;
         }
         TicketTag::create(wp_unslash($data));
@@ -69,7 +70,7 @@ class Tags
      */
     public function updateTag(int $id, array $data)
     {
-        if(!$id || !$data){
+        if (!$id || !$data) {
             return;
         }
         TicketTag::findOrFail($id)->update($data);
@@ -81,7 +82,7 @@ class Tags
      */
     public function deleteTag(int $id)
     {
-        if(!$id){
+        if (!$id) {
             return;
         }
         TicketTag::findOrFail($id)->delete();

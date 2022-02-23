@@ -19,7 +19,7 @@ class AuthController extends Controller
     {
 
         if (!wp_verify_nonce($request->get('_fsupport_signup_nonce'), 'fluent_support_signup_nonce')) {
-            $this->sendError([
+            return $this->sendError([
                 'message' => __('Security verification failed. Please try again', 'fluent-support')
             ]);
         }
@@ -31,16 +31,29 @@ class AuthController extends Controller
         $messages = $this->getMessages($rules);
 
         /*
-         * @since v1.0.0
          * Filter user signup form data
+         *
+         * @since v1.0.0
          * @param array $formData
          */
         $formData = apply_filters('fluent_support/signup_form_data', $request->all());
 
-        do_action('fluent_support/before_signup_validation', []);
+        /*
+         * Action before validate user signup
+         *
+         * @since v1.0.0
+         * @param array $formData
+         */
+        do_action('fluent_support/before_signup_validation', $formData);
 
         $this->validate($formData, $rules, $messages);
 
+        /*
+         * Action After validate user signup validation success
+         *
+         * @since v1.0.0
+         * @param array $formData
+         */
         do_action('fluent_support/after_signup_validation', $formData);
 
         $userId = $this->createUser($formData);
@@ -53,23 +66,29 @@ class AuthController extends Controller
                 ), 423);
         }
 
+        /*
+         * Action After creating WP user from ticket sign up form
+         *
+         * @since v1.0.0
+         * @param array $formData
+         */
         do_action('fluent_support/after_creating_user');
 
         $this->maybeUpdateUser($userId, $formData);
         $this->assignRole($userId);
         $this->login($userId);
 
-        return $this->response(
-            /*
-             * @since v1.0.0
-             * Filter for user signup complete message and redirect
-             * @param array $response
-             */
-            apply_filters('fluent_support/signup_complete_response', [
-                'message'  => __('Successfully registered to the site.', 'fluent-support'),
-                'redirect' => Arr::get($formData, '__redirect_to', Helper::getPortalBaseUrl())
-            ])
-        );
+        /*
+         * @since v1.0.0
+         * Filter for user signup complete message and redirect
+         * @param array $response
+         */
+        $response = apply_filters('fluent_support/signup_complete_response', [
+            'message'  => __('Successfully registered to the site.', 'fluent-support'),
+            'redirect' => Arr::get($formData, '__redirect_to', Helper::getPortalBaseUrl())
+        ]);
+
+        return $this->response($response);
     }
 
     /**

@@ -8,13 +8,12 @@ use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Tickets\ResponseService;
 
 /**
- *  Tickets class for REST API
- *
+ *  Tickets class for PHP API
+ * Example Usage: $ticketsApi = FluentSupportApi('tickets');
  * @package FluentSupport\App\Api\Classes
  *
  * @version 1.0.0
  */
-
 class Tickets
 {
     private $instance = null;
@@ -49,7 +48,7 @@ class Tickets
             ->orderBy('id', 'DESC');
         $tickets = $ticketsQuery->paginate();
 
-        if (defined('FLUENTSUPPORTPRO')){
+        if (defined('FLUENTSUPPORTPRO')) {
             foreach ($tickets as $ticket) {
                 $ticket->custom_fields = $ticket->customData();
             }
@@ -68,7 +67,7 @@ class Tickets
     {
         if (is_numeric($id)) {
             $ticket = Ticket::findOrFail($id);
-            if (defined('FLUENTSUPPORTPRO')){
+            if (defined('FLUENTSUPPORTPRO')) {
                 $ticket->custom_fields = $ticket->customData();
             }
             return $ticket;
@@ -86,14 +85,14 @@ class Tickets
 
     public function addResponse(array $data, int $agentId, int $ticketId)
     {
-        if(!$agentId || !$ticketId || !$data['content']){
+        if (!$agentId || !$ticketId || !$data['content']) {
             return false;
         }
 
         $agent = Agent::findOrFail($agentId);
         $ticket = Ticket::findOrFail($ticketId);
 
-        if($agent && $ticket){
+        if ($agent && $ticket) {
             return (new ResponseService())->createResponse($data, $agent, $ticket);
         }
         return false;
@@ -107,7 +106,7 @@ class Tickets
 
     public function createTicket(array $data)
     {
-        if(!$data['customer_id'] || !Customer::findOrFail($data['customer_id'])) {
+        if (!$data['customer_id'] || !Customer::findOrFail($data['customer_id'])) {
             return false;
         }
 

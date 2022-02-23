@@ -61,7 +61,7 @@ class MailBoxController extends Controller
             'email' => 'required'
         ]);
 
-        if($data['box_type'] == 'email') {
+        if ($data['box_type'] == 'email') {
             $data['settings'] = [
                 'admin_email_address' => ''
             ];
@@ -127,7 +127,7 @@ class MailBoxController extends Controller
     {
         $fallbackId = $request->get('fallback_id');
 
-        if($fallbackId == $mailBoxId) {
+        if ($fallbackId == $mailBoxId) {
             return $this->sendError([
                 'message' => __('Fallback Box can not be the same as MailBox ID', 'fluent-support')
             ]);
@@ -155,19 +155,19 @@ class MailBoxController extends Controller
 
     }
 
-    public function moveTickets(Request $request, $mailBoxId){
-
+    public function moveTickets(Request $request, $mailBoxId)
+    {
         $fallbackId = $request->get('fallback_id');
-        $ticketIds  = $request->get('tickets', []);
+        $ticketIds = $request->get('tickets', []);
         $move_type = $request->get('move_type');
 
-        if($fallbackId == $mailBoxId) {
+        if ($fallbackId == $mailBoxId) {
             return $this->sendError([
                 'message' => __('Fallback Box can not be the same as MailBox ID', 'fluent-support')
             ]);
         }
 
-        if($move_type == 'Custom' && empty($ticketIds)){
+        if ($move_type == 'Custom' && empty($ticketIds)) {
             return $this->sendError([
                 'message' => __('Invalid request submitted, Select ticket first', 'fluent-support')
             ]);
@@ -176,18 +176,12 @@ class MailBoxController extends Controller
         $box = MailBox::findOrFail($mailBoxId);
         $fallbackBox = MailBox::findOrFail($fallbackId);
 
-        if(empty($box) || empty($fallbackBox)){
-            return $this->sendError([
-                'message' => __('Invalid request submitted', 'fluent-support')
-            ]);
-        }
-
-        if(!empty($ticketIds)){
+        if (!empty($ticketIds)) {
             Ticket::whereIn('id', $ticketIds)
                 ->update([
                     'mailbox_id' => $fallbackBox->id
                 ]);
-        }else{
+        } else {
             // Move all ticket for the Mail Box
             Ticket::where('mailbox_id', $mailBoxId)
                 ->update([
@@ -195,15 +189,8 @@ class MailBoxController extends Controller
                 ]);
         }
 
-        $mailboxes = MailBox::all();
-
-        foreach ($mailboxes as $mailbox) {
-            $mailbox->tickets_count = Ticket::where('mailbox_id', $mailbox->id)->count();
-        }
-
         return [
-            'mailboxes' => $mailboxes,
-            'message' => __('All ticket moves to the selected Business', 'fluent-support')
+            'message'   => __('All ticket moves to the selected Business', 'fluent-support')
         ];
     }
 
@@ -238,7 +225,7 @@ class MailBoxController extends Controller
         $types = $settings->getEmailSettingsKeys();
 
         $req = [];
-        foreach($types as $type) {
+        foreach ($types as $type) {
             $req[] = $settings->getBoxEmailSettings($box, $type);
         }
 
@@ -276,7 +263,12 @@ class MailBoxController extends Controller
         ];
     }
 
-    public function getAllTicket(Request $request){
+    public function getAllTicket(Request $request)
+    {
+        /*
+         * @todo: Refactor this full Move Tickets Module
+         */
+
         $mailbox_id = $request->get('filters.mailbox_id');
 
         $tickets = (new Ticket())->with([

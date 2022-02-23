@@ -6,13 +6,14 @@ use FluentSupport\App\Http\Controllers\AuthController;
 use FluentSupport\App\Models\Agent;
 
 /**
- *  Agent class for REST API
+ *  Agent class for PHP API
+ *
+ * Example Usage: $agentsApi = FluentSupportApi('agents');
  *
  * @package FluentSupport\App\Api\Classes
  *
  * @version 1.0.0
  */
-
 class Agents
 {
     private $instance = null;
@@ -50,7 +51,7 @@ class Agents
 
     public function getAgent(int $agentId)
     {
-        if(is_numeric($agentId)){
+        if (is_numeric($agentId)) {
             return Agent::findOrFail($agentId);
         }
         return false;
@@ -66,10 +67,10 @@ class Agents
 
     public function updateAgent(array $data, int $agentId)
     {
-        if(!$agentId) {
+        if (!$agentId) {
             return false;
         }
-        if($agent = Agent::where('id', $agentId)->first()){
+        if ($agent = Agent::where('id', $agentId)->first()) {
             return $agent->update($data);
         }
         return false;
@@ -81,14 +82,14 @@ class Agents
      * if you want to create a wp user too then the process will be 1st it will create a wp user
      * after creating the wp user successfully it will create a fluent support agent
      *
-     * @param  array   $data
+     * @param array $data
      * @param bool $createWpUser
      * @return mixed
      */
 
-    public function createAgentWithOrWithoutWpUser(array $data, bool $createWpUser=false)
+    public function createAgentWithOrWithoutWpUser(array $data, bool $createWpUser = false)
     {
-        if(!$createWpUser) {
+        if (!$createWpUser) {
             $isExist = Agent::where('email', $data['email'])->first();
             if (!$data['email'] || !is_email($data['email']) || $isExist) {
                 return false;
@@ -96,18 +97,18 @@ class Agents
             return Agent::create($data);
         }
 
-        if(!username_exists($data['username'])){
+        if (!username_exists($data['username'])) {
             $authController = new AuthController();
             $createdUser = $authController->createUser($data);
             $authController->maybeUpdateUser($createdUser, $data);
-            if($createdUser){
+            if ($createdUser) {
                 $data['user_id'] = $createdUser;
                 return Agent::create($data);
 
             }
-        }else return false;//username already exist
+        }
 
-        return  false;
+        return false;
     }
 
     /**
@@ -116,7 +117,7 @@ class Agents
      */
     public function deleteAgent(int $id)
     {
-        if (!$id){
+        if (!$id) {
             return;
         }
         Agent::findOrFail($id)->delete();

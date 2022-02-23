@@ -200,6 +200,7 @@ class CustomerController extends Controller
         }
 
         $customer->delete();
+
         return [
             'message' => __('Customer Deleted Successfully', 'fluent-support')
         ];

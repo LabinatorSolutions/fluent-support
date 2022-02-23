@@ -178,7 +178,7 @@ class Settings
                 'description'    => __('This email will be sent when a customer submit a support ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes',
-                'send_attachments'=> 'yes'
+                'send_attachments'=> 'no'
             ],
             'ticket_replied_by_agent_email_to_customer' => [
                 'key'            => 'ticket_replied_by_agent_email_to_customer',
@@ -202,7 +202,7 @@ class Settings
                 'description'    => __('This email will be sent when the business when a new ticket has been submitted', 'fluent-support'),
                 'email_subject'  => 'New Ticket: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes',
-                'send_attachments'=> 'yes'
+                'send_attachments'=> 'no'
             ],
             'ticket_replied_by_customer_email_to_admin' => [
                 'key'            => 'ticket_replied_by_customer_email_to_admin',
@@ -210,7 +210,7 @@ class Settings
                 'description'    => __('This email will be sent to Assigned Agent or Admin when a customer reply to a ticket', 'fluent-support'),
                 'email_subject'  => 'New Response: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes',
-                'send_attachments'=> 'yes'
+                'send_attachments'=> 'no'
             ],
             'ticket_agent_on_change' => [
                 'key'            => 'ticket_agent_on_change',

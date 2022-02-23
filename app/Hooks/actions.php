@@ -106,6 +106,6 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 
 (new \FluentSupport\App\Hooks\Handlers\PermissionFilterManager)->init();
 
-// Register the exporter
+// Register the WordPress personal data exporter and eraser
 (new \FluentSupport\App\Hooks\Handlers\PrivacyHandler())->init();
 
