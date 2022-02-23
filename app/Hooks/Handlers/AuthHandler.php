@@ -177,7 +177,7 @@ class AuthHandler
         /*
          * @since v1.0.0
          * Filter signup form field
-         * @param array $fields
+         * @param array $fields Form fields
          */
         return apply_filters('fluent_support/registration_form_fields', [
             'first_name' => [

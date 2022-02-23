@@ -112,6 +112,13 @@ class Person extends Model
         }
 
         $hash = md5(strtolower($email));
+
+        /*
+         * @since v1.0.0
+         * Filter person profile avatar, by default it use gravatar profile picture
+         * @param string $url  link to the profile picture
+         * @pram string $email user gravatar email address
+         */
         return apply_filters(
             'fluent_support/get_avatar',
             "https://www.gravatar.com/avatar/${hash}?s=128",
@@ -153,6 +160,13 @@ class Person extends Model
         if ($this->user_id) {
             $userEditUrl = get_edit_user_link($this->user_id);
         }
+
+        /*
+         * @since v1.0.0
+         * Filter person profile edit url
+         * @param string $userEditUrl User profile edit link
+         * @param object $this        Model object
+         */
         return apply_filters('fluent_support/person_user_edit_url', $userEditUrl, $this);
     }
 
