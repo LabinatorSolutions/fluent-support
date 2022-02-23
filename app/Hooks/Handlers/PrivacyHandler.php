@@ -73,7 +73,7 @@ class PrivacyHandler
          * @since v1.5.5
          * @param array $data
          * @param object $tickets
-         * @return array exportable data
+         * @return array Exportable data
          */
         $exportableData = apply_filters('fluent_support/make_exportable_tickets_data', $data, $tickets);
         return [
@@ -126,7 +126,7 @@ class PrivacyHandler
          * @since v1.5.5
          * @param array $data
          * @param object $conversations
-         * @return array exportable data
+         * @return array Exportable data
          */
         $exportableData = apply_filters('fluent_support/make_exportable_conversations_data', $data, $conversations);
         return [
@@ -209,7 +209,7 @@ class PrivacyHandler
          * @since v1.5.5
          * @param array $data
          * @param object $customer
-         * @return array exportable data
+         * @return array Exportable data
          */
         $exportableData = apply_filters('fluent_support/make_exportable_customer_data', $data, $customer);
         return [

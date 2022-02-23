@@ -30,6 +30,11 @@ class AuthController extends Controller
 
         $messages = $this->getMessages($rules);
 
+        /*
+         * @since v1.0.0
+         * Filter user signup form data
+         * @param array $formData
+         */
         $formData = apply_filters('fluent_support/signup_form_data', $request->all());
 
         do_action('fluent_support/before_signup_validation', []);
@@ -55,6 +60,11 @@ class AuthController extends Controller
         $this->login($userId);
 
         return $this->response(
+            /*
+             * @since v1.0.0
+             * Filter for user signup complete message and redirect
+             * @param array $response
+             */
             apply_filters('fluent_support/signup_complete_response', [
                 'message'  => __('Successfully registered to the site.', 'fluent-support'),
                 'redirect' => Arr::get($formData, '__redirect_to', Helper::getPortalBaseUrl())
@@ -214,7 +224,11 @@ class AuthController extends Controller
                 $rules[$fieldName] = $rules[$fieldName] . $pipe . 'min:8';
             }
         }
-
+        /*
+         * @since v1.0.0
+         * Filter user signup validation rules
+         * @param array $rules
+         */
         return apply_filters('fluent_support/signup_validation_rules', $rules);
     }
 
@@ -226,6 +240,12 @@ class AuthController extends Controller
      */
     protected function getMessages($rules = [])
     {
+        /*
+         * @since v1.0.0
+         * Filter user signup validation message
+         * @param array $arg
+         * @param array $rules
+         */
         return apply_filters('fluent_support/signup_validation_messages', [], $rules);
     }
 
@@ -236,7 +256,18 @@ class AuthController extends Controller
      */
     public function createUser($formData = [])
     {
+        /*
+         * @since v1.0.0
+         * Filter user signup email
+         * @param string $email
+         */
         $email = apply_filters('fluent_support/signup_email', Arr::get($formData, 'email'));
+
+        /*
+         * @since v1.0.0
+         * Filter user signup username
+         * @param string $username
+         */
         $userName = apply_filters('fluent_support/signup_username', Arr::get($formData, 'username'));
 
         if (empty($formData['password'])) {
@@ -245,6 +276,11 @@ class AuthController extends Controller
             $password = $formData['password'];
         }
 
+        /*
+         * @since v1.0.0
+         * Filter user signup password
+         * @param string $password
+         */
         $password = apply_filters('fluent_support/signup_password', $password);
 
         do_action('fluent_support/before_creating_user', $userName, $password, $email);
@@ -271,8 +307,13 @@ class AuthController extends Controller
 
         if ($name) {
             do_action('fluent_support/before_updating_user', $data);
-
-            wp_update_user(apply_filters('fluent_support/update_user_data', $data));
+            /*
+             * @since v1.0.0
+             * Filter user updatable data
+             * @param $data
+             */
+            $updateUserData = apply_filters('fluent_support/update_user_data', $data);
+            wp_update_user($updateUserData);
 
             do_action('fluent_support/after_updating_user', $data);
         }
@@ -287,8 +328,13 @@ class AuthController extends Controller
         $user = new \WP_User($userId);
 
         do_action('fluent_support/before_assigning_role', $user);
-
-        $user->set_role(apply_filters('fluent_support/user_role', 'subscriber'));
+        /*
+         * @since v1.0.0
+         * Filter user assignable role after signup
+         * @param string $setRole WordPress user role key
+         */
+        $setRole = apply_filters('fluent_support/user_role', 'subscriber');
+        $user->set_role($setRole);
 
         do_action('fluent_support/after_assigning_role', $user);
     }
