@@ -9,7 +9,6 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Person;
 use FluentSupport\App\Services\EmailNotification\Settings;
-use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Support\Arr;
 
 /**
@@ -523,33 +522,5 @@ class Helper
         }
 
         return false;
-    }
-
-    /**
-     * Update profile picture for a user in person table using person id
-     * @param $model
-     * @param $id
-     * @param $subDir
-     * @param $files
-     * @return array|\WP_Error
-     */
-    public static function uploadProfilePicture($model, $id, $subDir, $files)
-    {
-        $model = "FluentSupport\App\Models\\" . $model;
-        $row = $model::findOrFail($id);
-
-        $uploadedImage = FileSystem::setSubDir($subDir)->put($files);
-
-        if ($avatar = $uploadedImage[0]['url']) {
-            $row->avatar = $avatar;
-            $row->save();
-            return [
-                'message' => __('Profile picture has been updated successfully', 'fluent-support'),
-                'image'   => $row->avatar,
-                'person'  => $row
-            ];
-        }
-
-        return new \WP_Error(423, __('Something went wrong while updating the profile picture', 'fluent-support'));
     }
 }

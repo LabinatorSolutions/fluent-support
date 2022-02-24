@@ -26,8 +26,9 @@
                         <div class="fs_as_profile_picture" @mouseover="showIcon(scope.row.id)" @mouseout="hideIcon(scope.row.id)">
                             <el-upload
                                 class="fs-avatar-uploader"
-                                :action='upload_url+scope.row.id'
+                                :action='upload_url+scope.row.id+`/avatar`'
                                 :on-success ="handleAvatarSuccess"
+                                :on-error="handleAvatarError"
                                 :headers="requestHeaders"
                                 :show-file-list="false"
                                 drag>
@@ -165,7 +166,7 @@ export default {
             saving: false,
             search:'',
             integrationSettings: [],
-            upload_url: this.appVars.rest.url+'/users/profile_image/',
+            upload_url: this.appVars.rest.url+'/agents/',
             requestHeaders: {
                 'X-WP-Nonce': this.appVars.rest.nonce
             }
@@ -276,13 +277,21 @@ export default {
             });
         },
         handleAvatarSuccess(res, file) {
-            let id = res.person.id;
+            let id = res.agent.id;
             let index = this.agents.findIndex(row => row.id === id);
 
             this.agents[index].photo = URL.createObjectURL(file.raw);
 
             this.$notify.success({
                 message: 'Profile picture has been updated successfully',
+                position: 'bottom-right'
+            });
+        },
+        handleAvatarError(err, _){
+            let errorMessage = JSON.parse(err.message);
+
+            this.$notify.error({
+                message: errorMessage.message,
                 position: 'bottom-right'
             });
         },
