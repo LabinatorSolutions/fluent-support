@@ -100,9 +100,7 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->post('/', 'AgentController@addAgent');
     $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
     $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
-
-  //  $router->post('/{agent_id}/avatar', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
-
+    $router->post('/{agent_id}/avatar', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
 });
 
 $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router) {
@@ -164,11 +162,3 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
-
-/*
- * @todo: Move this to /agents
- */
-$router->prefix('users')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
-    $router->post('/profile_image/{user_id}', 'AgentController@addOrUpdateProfileImage')->int('user_id');
-
-});

@@ -11,6 +11,7 @@ use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
@@ -298,23 +299,46 @@ class AgentController extends Controller
     }
 
     /**
-     * addOrUpdateProfileImage method will upload profile picture for a given user id
+     * addOrUpdateProfileImage method will upload profile picture for a given agent id
      * @param Request $request
      * @return array
      */
     public function addOrUpdateProfileImage(Request $request)
     {
-        /*
-         * @todo: Please refactor this
-         */
-        $result = Helper::uploadProfilePicture('Agent', $request->get('user_id'), 'agents_avatars', $request->files());
+        $allowExtension = [
+            'jpeg', 'jpe', 'jpg', 'png'
+        ];
 
-        if (is_wp_error($result)) {
+        $agent_id = $request->get('agent_id');
+        $file = $request->files();
+
+        $ext = $file['file']->getClientOriginalExtension();
+
+        if(!in_array($ext, $allowExtension)){
             return $this->sendError([
-                'message' => $request->get_error_message()
+                'message' => __('Unsupported file submitted, please select an image file', 'fluent-support')
             ]);
         }
 
-        return $result;
+        $agent = Agent::findOrFail($agent_id);
+
+        $uploadedImage = FileSystem::setSubDir('agents_avatars')->put($file);
+
+        if($avatar = $uploadedImage[0]['url']){
+            $agent->avatar = $avatar;
+            $agent->save();
+
+            return[
+                'message' => __('Profile picture has been updated successfully', 'fluent-support'),
+                'image'   => $agent->avatar,
+                'agent' => $agent
+            ];
+        }
+
+        else{
+            return $this->sendError([
+                'message' => __('Something went wrong while updating the profile picture', 'fluent-support')
+            ]);
+        }
     }
 }

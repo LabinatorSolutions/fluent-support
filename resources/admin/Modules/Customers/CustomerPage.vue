@@ -23,6 +23,7 @@
                                     class="fs-avatar-uploader"
                                     :action="upload_url"
                                     :on-success ="handleAvatarSuccess"
+                                    :on-error="handleAvatarError"
                                     :headers="requestHeaders"
                                     :show-file-list="false"
                                     drag
@@ -161,6 +162,14 @@ export default {
             this.customer.photo = URL.createObjectURL(file.raw);
             this.$notify.success({
                 message: 'Profile picture has been updated successfully',
+                position: 'bottom-right'
+            });
+        },
+        handleAvatarError(err, _){
+            let errorMessage = JSON.parse(err.message);
+
+            this.$notify.error({
+                message: errorMessage.message,
                 position: 'bottom-right'
             });
         },

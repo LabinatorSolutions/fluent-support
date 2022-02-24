@@ -213,9 +213,24 @@ class CustomerController extends Controller
      */
     public function addOrUpdateProfileImage(Request $request)
     {
-        $customer = Customer::findOrFail($request->get('customer_id'));
+        $allowExtension = [
+            'jpeg', 'jpe', 'jpg', 'png'
+        ];
 
-        $uploadedImage = FileSystem::setSubDir('customer_avatars')->put($request->files());
+        $customer_id = $request->get('customer_id');
+        $file = $request->files();
+
+        $ext = $file['file']->getClientOriginalExtension();
+
+        if(!in_array($ext, $allowExtension)){
+            return $this->sendError([
+                'message' => __('Unsupported file submitted, please select an image file', 'fluent-support')
+            ]);
+        }
+
+        $customer = Customer::findOrFail($customer_id);
+
+        $uploadedImage = FileSystem::setSubDir('customer_avatars')->put($file);
 
         if($avatar = $uploadedImage[0]['url']){
             $customer->avatar = $avatar;
