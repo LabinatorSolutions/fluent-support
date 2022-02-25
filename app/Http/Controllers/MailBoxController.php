@@ -157,13 +157,13 @@ class MailBoxController extends Controller
 
     public function moveTickets(Request $request, $mailBoxId)
     {
-        $fallbackId = $request->get('fallback_id');
-        $ticketIds = $request->get('tickets', []);
+        $newBoxId = $request->get('new_box_id');
+        $ticketIds = $request->get('ticket_ids', []);
         $move_type = $request->get('move_type');
 
-        if ($fallbackId == $mailBoxId) {
+        if ($newBoxId == $mailBoxId) {
             return $this->sendError([
-                'message' => __('Fallback Box can not be the same as MailBox ID', 'fluent-support')
+                'message' => __('New Box can not be the same as MailBox ID', 'fluent-support')
             ]);
         }
 
@@ -173,19 +173,18 @@ class MailBoxController extends Controller
             ]);
         }
 
-        $box = MailBox::findOrFail($mailBoxId);
-        $fallbackBox = MailBox::findOrFail($fallbackId);
+        $newBox = MailBox::findOrFail($newBoxId);
 
         if (!empty($ticketIds)) {
             Ticket::whereIn('id', $ticketIds)
                 ->update([
-                    'mailbox_id' => $fallbackBox->id
+                    'mailbox_id' => $newBox->id
                 ]);
         } else {
-            // Move all ticket for the Mail Box
+            // Move all ticket for the MailBox
             Ticket::where('mailbox_id', $mailBoxId)
                 ->update([
-                    'mailbox_id' => $fallbackBox->id
+                    'mailbox_id' => $newBox->id
                 ]);
         }
 
@@ -265,10 +264,6 @@ class MailBoxController extends Controller
 
     public function getTickets(Request $request, $mailbox_id)
     {
-        /*
-         * @todo: Refactor this full Move Tickets Module
-         */
-
         $customer_id = $request->get('filters.customer_id');
         $product_id = $request->get('filters.product_id');
         $ticket_title = $request->get('filters.ticket_title');
@@ -294,7 +289,6 @@ class MailBoxController extends Controller
 
         if ($ticket_title)
             $ticketsQuery->where('title', 'LIKE', "%$ticket_title%");
-
 
         $tickets = $ticketsQuery->paginate();
 

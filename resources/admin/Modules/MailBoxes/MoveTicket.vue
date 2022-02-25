@@ -98,7 +98,7 @@
                 <span class="dialog-footer">
                   <el-button @click="move_ticket.show_modal = false">{{ $t('Cancel') }}</el-button>
                   <el-button v-loading="moving" :disabled="moving" type="success"
-                             @click="moveTicketMailBox()">{{ $t('Move') }} <span v-if="move_ticket.selected_tickets.length != 0"> ( {{move_ticket.selected_tickets.length}} )</span></el-button>
+                             @click="moveTicketMailBox()">{{ $t('Move') }} <span v-if="move_ticket.selected_tickets.length > 0"> ( {{move_ticket.selected_tickets.length}} )</span></el-button>
                 </span>
         </template>
     </el-dialog>
@@ -221,9 +221,9 @@
 
                 this.moving = true;
                 this.$put(`mailboxes/${this.move_ticket.box_id}/move_tickets`, {
-                    fallback_id: this.move_ticket.fallback_box,
+                    new_box_id: this.move_ticket.fallback_box,
                     move_type: this.move_ticket.move_type,
-                    tickets: this.move_ticket.selected_tickets
+                    ticket_ids: this.move_ticket.selected_tickets
                 })
                     .then(response => {
                         this.show_ticket_selection = false;
