@@ -38,7 +38,7 @@
                                             value_selector="id"
                                             label_joiner=" - "
                                             :label_selectors="['full_name','email']"
-                                            @change="CustomerChangeHandler"
+                                            @change="customerChangeHandler"
                                             clearable
                                         />
                                     </el-form-item>
@@ -51,7 +51,7 @@
                                             api_path="products"
                                             value_selector="id"
                                             :label_selectors="['title']"
-                                            @change="ProductChangeHandler"
+                                            @change="productChangeHandler"
                                             clearable
                                         />
                                     </el-form-item>
@@ -155,11 +155,11 @@
             closeModal(){
                 this.$emit('reset_me');
             },
-            CustomerChangeHandler(val){
+            customerChangeHandler(val){
               this.filters.customer_id = val;
               this.showTicket('Custom');
             },
-            ProductChangeHandler(val){
+            productChangeHandler(val){
                 this.filters.product_id = val;
                 this.showTicket('Custom');
             },
