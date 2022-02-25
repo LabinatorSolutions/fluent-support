@@ -27,33 +27,48 @@
                     <h4>Filter ticket</h4>
                     <hr/>
                     <div class="fs_box_head">
-                        <el-row :gutter="20">
-                            <el-col :span="8">
-                                <label>{{$t('Select Customer')}}</label>
-                                <el-select clearable filterable v-model="filters.customer" remote reserve-keyword
-                                           :placeholder="$t('Filter by Customer')">
-                                    <el-option v-for="customer in customers" :key="customer.id" :value="customer.id"
-                                               :label="customer.name"></el-option>
-                                </el-select>
-                            </el-col>
-                            <el-col :span="8">
-                                <label>{{$t('Select Product')}}</label>
-                                <el-select clearable filterable v-model="filters.product_id" remote reserve-keyword
-                                           :placeholder="$t('Filter By Product')">
-                                    <el-option v-for="product in products" :key="product.id" :value="product.id"
-                                               :label="product.name"></el-option>
-                                </el-select>
-                            </el-col>
-                            <el-col :span="7">
-                                <label>{{$t('Ticket Title')}}</label>
-                                <el-input v-model="filters.ticket_title" placeholder="Filter by ticket title" />
-                            </el-col>
-                        </el-row>
+                        <el-form :data="filters" label-position="top">
+                            <el-row :gutter="20">
+                                <el-col :span="8">
+                                    <el-form-item :label="$t('Select Customer')">
+                                        <remote-selector
+                                            v-model="filters.customer_id"
+                                            response_key="customers"
+                                            api_path="customers"
+                                            value_selector="id"
+                                            label_joiner=" - "
+                                            :label_selectors="['full_name','email']"
+                                            @change="CustomerChangeHandler"
+                                            clearable
+                                        />
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item :label="$t('Select Product')">
+                                        <remote-selector
+                                            v-model="filters.product_id"
+                                            response_key="products"
+                                            api_path="products"
+                                            value_selector="id"
+                                            :label_selectors="['title']"
+                                            @change="ProductChangeHandler"
+                                            clearable
+                                        />
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="7">
+                                    <el-form-item :label="$t('Ticket Title')">
+                                        <el-input v-model="filters.ticket_title" placeholder="Filter by ticket title" clearable
+                                        @keyup="showTicket('Custom')" />
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-form>
                     </div>
                     <div class="fs_box_body">
                         <h4>Select ticket that you want to move</h4>
                         <hr/>
-                        <el-table  :v-infinite-scroll="load" class="infinite-list" style="overflow: auto" :data="filteredTicket" height="350" @selection-change="handleSelectionChange">
+                        <el-table  :v-infinite-scroll="load" class="infinite-list" style="overflow: auto" :data="tickets" height="350" @selection-change="handleSelectionChange">
                             <el-table-column
                                 type="selection"
                                 width="55" :label="$t('Select All')">
@@ -61,7 +76,7 @@
                             <el-table-column min-width="300" :label="$t('Tickets')">
                                 <template #default="scope">
                                     <strong>{{ scope.row.title }}</strong>
-                                    <span v-if="!filters.customer && scope.row.customer"  style="font-size: 10px;"> by {{ scope.row.customer.first_name }} {{ scope.row.customer.last_name }}</span>
+                                    <span v-if="!filters.customer_id && scope.row.customer"  style="font-size: 10px;"> by {{ scope.row.customer.first_name }} {{ scope.row.customer.last_name }}</span>
                                     <span style="margin-left: 5px; font-size: 10px;"
 
                                           class="fs_badge" v-if="!!scope.row.product && !filters.product_id">
@@ -70,6 +85,9 @@
                                 </template>
                             </el-table-column>
                         </el-table>
+                        <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                            <pagination @fetch="showTicket('Custom')" :pagination="pagination"/>
+                        </div>
                     </div>
                 </div>
 
@@ -80,22 +98,33 @@
                 <span class="dialog-footer">
                   <el-button @click="move_ticket.show_modal = false">{{ $t('Cancel') }}</el-button>
                   <el-button v-loading="moving" :disabled="moving" type="success"
-                             @click="moveTicketMailBox()">{{ $t('Move') }}</el-button>
+                             @click="moveTicketMailBox()">{{ $t('Move') }} <span v-if="move_ticket.selected_tickets.length != 0"> ( {{move_ticket.selected_tickets.length}} )</span></el-button>
                 </span>
         </template>
     </el-dialog>
 </template>
 
 <script type="text/babel">
+    import Pagination from '../../Pieces/Pagination';
+    import RemoteSelector from '../../Pieces/RemoteSelector';
     import each from "lodash/each";
 
     export default {
         name: 'MoveTicket',
+        components: {
+            Pagination,
+            RemoteSelector
+        },
         props:['mailbox_id', 'mailboxes'],
         emits:['update_mailbox', 'reset_me'],
         data() {
             return {
                 count: 10,
+                pagination: {
+                    current_page: 1,
+                    total: 0,
+                    per_page: 10
+                },
                 move_ticket: {
                     show_modal: this.mailbox_id ? true : false,
                     box_id: this.mailbox_id,
@@ -109,7 +138,7 @@
                     status_type: '',
                     product_id: '',
                     mailbox_id: this.mailbox_id,
-                    customer: '',
+                    customer_id: '',
                     ticket_title: ''
                 },
                 customers: [],
@@ -126,37 +155,30 @@
             closeModal(){
                 this.$emit('reset_me');
             },
+            CustomerChangeHandler(val){
+              this.filters.customer_id = val;
+              this.showTicket('Custom');
+            },
+            ProductChangeHandler(val){
+                this.filters.product_id = val;
+                this.showTicket('Custom');
+            },
             showTicket(moveType){
                 if(moveType === 'Custom'){
                     let query = {
                         order_by: 'id',
-                        order_type: 'ASC',
+                        order_type: 'DESC',
                         filter_type: 'simple',
                         filters: this.filters,
+                        page: this.pagination.current_page,
+                        per_page: this.pagination.per_page,
                     };
 
-                    this.$get('mailboxes/get_ticket_by_box', query)
+                    this.$get(`mailboxes/${this.mailbox_id}/tickets`, query)
                         .then(response => {
-                            this.tickets = response.tickets;
-
-                            each(this.tickets, (ticket) => {
-                                if(ticket.customer) {
-                                    let customerId = (ticket.customer && ticket.customer.id) ? ticket.customer.id : '';
-                                    if (customerId && !this.customers.some(el => el.id === customerId)) {
-                                        this.customers.push({
-                                            id: ticket.customer.id,
-                                            name: ticket.customer.first_name + ' ' + ticket.customer.last_name
-                                        })
-                                    }
-                                }
-
-                                let productId = (ticket.product && ticket.product.id) ? ticket.product.id : '';
-                                if(productId && !this.products.some(el => el.id === productId)){
-                                    this.products.push({id: ticket.product.id, name: ticket.product.title})
-                                }
-                            });
+                            this.tickets = response.tickets.data;
+                            this.pagination.total = response.tickets.total;
                             this.show_ticket_selection = true;
-
                         })
                         .catch((errors) => {
                             this.$handleError(errors);
@@ -168,6 +190,7 @@
                 }else{
                     this.move_ticket.selected_tickets = [];
                     this.show_ticket_selection = false;
+                    this.pagination.total = 0;
                 }
 
             },
@@ -224,16 +247,6 @@
                     .always(() => {
                         this.moving = false;
                     });
-            }
-        },
-        computed: {
-            filteredTicket: function () {
-                return this.tickets.filter(
-                    (data) =>
-                        (!this.filters.customer || (data.customer.id === this.filters.customer))
-                        && (this.filters.product_id && (data.product && data.product.id === this.filters.product_id) || !this.filters.product_id)
-                        && (this.filters.ticket_title && (data.title.toLowerCase().includes(this.filters.ticket_title.toLowerCase())) || !this.filters.ticket_title)
-                )
             }
         }
     }
