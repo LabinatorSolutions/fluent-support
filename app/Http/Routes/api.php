@@ -15,7 +15,7 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
     /*
      * @todo: Needs to refactor
      */
-    // $router->get('/{id}/tickets', 'MailBoxController@getTickets')->int('id');
+    $router->get('/{id}/tickets', 'MailBoxController@getTickets')->int('id');
 
     $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
     $router->get('/{id}/email_configs', 'MailBoxController@getEmailsSetups');

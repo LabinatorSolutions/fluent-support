@@ -57,7 +57,7 @@ class MailBoxController extends Controller
         $data = wp_unslash($data);
 
         $this->validate($data, [
-            'name'  => 'required',
+            'name' => 'required',
             'email' => 'required'
         ]);
 
@@ -96,7 +96,7 @@ class MailBoxController extends Controller
         $data = wp_unslash($data);
 
         $this->validate($data, [
-            'name'  => 'required',
+            'name' => 'required',
             'email' => 'required'
         ]);
 
@@ -190,7 +190,7 @@ class MailBoxController extends Controller
         }
 
         return [
-            'message'   => __('All ticket moves to the selected Business', 'fluent-support')
+            'message' => __('All ticket moves to the selected Business', 'fluent-support')
         ];
     }
 
@@ -231,7 +231,7 @@ class MailBoxController extends Controller
 
         return [
             'email_configs' => $req,
-            'email_keys'    => $types
+            'email_keys' => $types
         ];
     }
 
@@ -248,7 +248,7 @@ class MailBoxController extends Controller
         $data = wp_unslash($request->get('email_settings'));
         $this->validate($data, [
             'email_subject' => 'required',
-            'email_body'    => 'required'
+            'email_body' => 'required'
         ]);
 
         $data['email_body'] = wp_kses_post($data['email_body']);
@@ -263,18 +263,20 @@ class MailBoxController extends Controller
         ];
     }
 
-    public function getAllTicket(Request $request)
+    public function getTickets(Request $request, $mailbox_id)
     {
         /*
          * @todo: Refactor this full Move Tickets Module
          */
 
-        $mailbox_id = $request->get('filters.mailbox_id');
+        $customer_id = $request->get('filters.customer_id');
+        $product_id = $request->get('filters.product_id');
+        $ticket_title = $request->get('filters.ticket_title');
 
-        $tickets = (new Ticket())->with([
-            'customer'         => function ($query) {
+        $ticketsQuery = (new Ticket())->with([
+            'customer' => function ($query) use ($customer_id) {
                 $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent'         => function ($query) {
+            }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
             'product',
@@ -282,7 +284,19 @@ class MailBoxController extends Controller
             'preview_response' => function ($query) {
                 $query->orderBy('id', 'desc');
             }
-        ])->where('mailbox_id', $mailbox_id)->get();
+        ])->where('mailbox_id', $mailbox_id);
+
+        if ($customer_id)
+            $ticketsQuery->where('customer_id', $customer_id);
+
+        if ($product_id)
+            $ticketsQuery->where('product_id', $product_id);
+
+        if ($ticket_title)
+            $ticketsQuery->where('title', 'LIKE', "%$ticket_title%");
+
+
+        $tickets = $ticketsQuery->paginate();
 
         return [
             'tickets' => $tickets
