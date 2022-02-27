@@ -5,7 +5,6 @@ namespace FluentSupport\App\Services\Tickets;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\Framework\Response\Response;
 use FluentSupport\Framework\Support\Arr;
 
 class ResponseService
