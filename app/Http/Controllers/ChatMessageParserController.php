@@ -44,6 +44,13 @@ class ChatMessageParserController extends Controller
         $responseData = \FluentSupportPro\App\Services\Integrations\Telegram\TelegramHelper::parseTelegramBotPayload($payload);
 
         if (is_wp_error($responseData)) {
+            /*
+             * Action on telegram payload error when replying ticket from telegram
+             *
+             * @since v1.0.0
+             * @param object $responseData
+             * @param object $payload
+             */
             do_action('fluent_support/telegram_payload_error', $responseData, $payload);
             return $this->sendSuccess([
                 'message' => $responseData->get_error_message(),

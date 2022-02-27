@@ -136,7 +136,22 @@ class CustomerPortalController extends Controller
 
         $data['source'] = 'web';
 
+        /*
+         * Filter ticket data
+         *
+         * @since v1.0.0
+         * @param array  $data
+         * @param object $customer
+         */
         $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
+
+        /*
+         * Action before ticket create
+         *
+         * @since v1.0.0
+         * @param array  $data
+         * @param object $customer
+         */
         do_action('fluent_support/before_ticket_create', $data, $customer);
         $ticket = Ticket::create($data);
 
@@ -163,6 +178,13 @@ class CustomerPortalController extends Controller
             }
         }
 
+        /*
+         * Action on ticket create
+         *
+         * @since v1.0.0
+         * @param object $ticket
+         * @param object $customer
+         */
         do_action('fluent_support/ticket_created', $ticket, $customer);
 
         return [

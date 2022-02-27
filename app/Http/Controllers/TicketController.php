@@ -209,7 +209,22 @@ class TicketController extends Controller
 
         $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
 
+        /*
+         * Filter ticket data
+         *
+         * @since v1.0.0
+         * @param array  $ticketData
+         * @param object $customer
+         */
         $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
+
+        /*
+         * Action before ticket create
+         *
+         * @since v1.0.0
+         * @param array  $ticketData
+         * @param object $customer
+         */
         do_action('fluent_support/before_ticket_create', $ticketData, $customer);
 
         $createdTicket = Ticket::create($ticketData);
@@ -218,6 +233,13 @@ class TicketController extends Controller
             $createdTicket->syncCustomFields($ticketData['custom_fields']);
         }
 
+        /*
+         * Action on ticket create
+         *
+         * @since v1.0.0
+         * @param object $createdTicket
+         * @param object $customer
+         */
         do_action('fluent_support/ticket_created', $createdTicket, $customer);
 
         return [

@@ -77,6 +77,12 @@ class Customer extends Person
             // we have to create customer
             $customer = self::create($customerData);
 
+            /*
+             * Action on customer create
+             *
+             * @since v1.0.0
+             * @param object $customer
+             */
             do_action('fluent_support/customer_created', $customer);
 
         } else {

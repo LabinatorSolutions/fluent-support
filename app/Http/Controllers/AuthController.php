@@ -308,6 +308,14 @@ class AuthController extends Controller
          */
         $password = apply_filters('fluent_support/signup_password', $password);
 
+        /*
+         * Action before creating WP user using Fluent Support signup form
+         *
+         * @since v1.0.0
+         * @param string $userName
+         * @param string $password
+         * @param string $email
+         */
         do_action('fluent_support/before_creating_user', $userName, $password, $email);
 
         return wp_create_user($userName, $password, $email);
@@ -331,7 +339,14 @@ class AuthController extends Controller
         ]);
 
         if ($name) {
+            /*
+             * Action before updating a customer/user
+             *
+             * @since v1.0.0
+             * @param array $data
+             */
             do_action('fluent_support/before_updating_user', $data);
+
             /*
              * Filter user updatable data
              *
@@ -341,6 +356,12 @@ class AuthController extends Controller
             $updateUserData = apply_filters('fluent_support/update_user_data', $data);
             wp_update_user($updateUserData);
 
+            /*
+             * Action after updating a customer/user
+             *
+             * @since v1.0.0
+             * @param array $data
+             */
             do_action('fluent_support/after_updating_user', $data);
         }
     }
@@ -353,6 +374,12 @@ class AuthController extends Controller
     {
         $user = new \WP_User($userId);
 
+        /*
+         * Action before assigning role to registered user
+         *
+         * @since v1.0.0
+         * @param array $data
+         */
         do_action('fluent_support/before_assigning_role', $user);
         /*
          * Filter user assignable role after signup
@@ -363,6 +390,12 @@ class AuthController extends Controller
         $setRole = apply_filters('fluent_support/user_role', 'subscriber');
         $user->set_role($setRole);
 
+        /*
+         * Action after assigning role to registered user
+         *
+         * @since v1.0.0
+         * @param array $data
+         */
         do_action('fluent_support/after_assigning_role', $user);
     }
 
@@ -373,12 +406,24 @@ class AuthController extends Controller
      */
     protected function login($userId)
     {
+        /*
+         * Action before login
+         *
+         * @since v1.0.0
+         * @param integer $userId
+         */
         do_action('fluent_support/before_logging_in_user', $userId);
 
         wp_clear_auth_cookie();
         wp_set_current_user($userId);
         wp_set_auth_cookie($userId);
 
+        /*
+         * Action after login
+         *
+         * @since v1.0.0
+         * @param integer $userId
+         */
         do_action('fluent_support/after_logging_in_user', $userId);
     }
 }
