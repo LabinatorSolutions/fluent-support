@@ -136,7 +136,13 @@ class MailBoxController extends Controller
         $box = MailBox::findOrFail($mailBoxId);
         $fallbackBox = MailBox::findOrFail($fallbackId);
 
-
+        /*
+         * Action before delete a mailbox
+         *
+         * @since v1.0.0
+         * @param object $box           Mailbox
+         * @param object $fallbackBox   Fallback mailbox
+         */
         do_action('fluent_support/before_delete_email_box', $box, $fallbackBox);
         $box->deleteAllMeta();
         MailBox::where('id', $mailBoxId)->delete();
@@ -147,6 +153,13 @@ class MailBoxController extends Controller
                 'mailbox_id' => $fallbackBox->id
             ]);
 
+        /*
+         * Action on mailbox delete
+         *
+         * @since v1.0.0
+         * @param integer $mailBoxId
+         * @param object $fallbackBox   Fallback mailbox
+         */
         do_action('fluent_support/mailbox_deleted', $mailBoxId, $fallbackBox);
 
         return [

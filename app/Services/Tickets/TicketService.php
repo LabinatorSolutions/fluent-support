@@ -47,6 +47,14 @@ class TicketService
             $ticket->status = 'active';
             $ticket->waiting_since = current_time('mysql');
             $ticket->save();
+
+            /*
+             * Action on ticket reopen
+             *
+             * @since v1.0.0
+             * @param object $ticket
+             * @param object $person
+             */
             do_action('fluent_support/ticket_reopen', $ticket, $person);
             do_action('fluent_support/ticket_reopen_by_' . $person->person_type, $ticket, $person);
             Conversation::create([

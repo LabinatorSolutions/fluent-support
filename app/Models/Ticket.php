@@ -633,6 +633,12 @@ class Ticket extends Model
 
     public function deleteTicket()
     {
+        /*
+         * Action on ticket deleting
+         *
+         * @since v1.0.0
+         * @param object $ticket
+         */
         do_action('fluent_support/deleting_ticket', $this);
         // delete the responses first
         Conversation::where('ticket_id', $this->id)->delete();
@@ -805,6 +811,14 @@ class Ticket extends Model
             if (!$this->hasTag($tagId)) {
                 $this->tags()->attach($tagId, ['source_type' => 'ticket_tag']);
                 $result = true;
+
+                /*
+                 * Action while tag added to ticket
+                 *
+                 * @since v1.0.0
+                 * @param integer $tagId
+                 * @param object  $ticket
+                 */
                 do_action('fluent_support/ticket_tag_added', $tagId, $this);
             }
         }
@@ -821,6 +835,14 @@ class Ticket extends Model
         foreach ($tagIds as $tagId) {
             if ($this->hasTag($tagId)) {
                 $this->tags()->detach($tagId);
+
+                /*
+                 * Action while tag removed from ticket
+                 *
+                 * @since v1.0.0
+                 * @param integer $tagId
+                 * @param object  $ticket
+                 */
                 do_action('fluent_support/ticket_tag_removed', $tagId, $this);
                 $result = true;
             }

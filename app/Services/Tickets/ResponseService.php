@@ -111,15 +111,50 @@ class ResponseService
         if ($agentAdded) {
             $assigner = Helper::getCurrentAgent();
             $ticket->load('agent');
+
+            /*
+             * Action on ticket assign to an agent
+             *
+             * @since v1.0.0
+             * @param object $person
+             * @param object $ticket
+             * @param object $assigner
+             */
             do_action('fluent_support/agent_assigned_to_ticket', $person, $ticket, $assigner);
             $updateData['agent'] = $ticket->agent;
         }
 
+        /*
+         * Action on conversation
+         *
+         * @since v1.0.0
+         * @param string $convoType
+         * @param string $personType
+         * @param object $createdResponse
+         * @param object $ticket
+         * @param object $person
+         */
         do_action('fluent_support/' . $convoType . '_added_by_' . $person->person_type, $createdResponse, $ticket, $person);
 
 
         if ($closed) {
+            /*
+             * Action on ticket close
+             *
+             * @since v1.0.0
+             * @param object $ticket
+             * @param object $person
+             */
             do_action('fluent_support/ticket_closed', $ticket, $person);
+
+            /*
+             * Action on ticket close
+             *
+             * @since v1.0.0
+             * @param string $personType
+             * @param object $ticket
+             * @param object $person
+             */
             do_action('fluent_support/ticket_closed_by_' . $person->person_type, $ticket, $person);
         }
 
