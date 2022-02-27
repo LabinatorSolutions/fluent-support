@@ -188,15 +188,19 @@ class Menu
         }
 
         /*
-         * @since v1.0.0
          * Filter Fluent Support dashboard top-left menu items
+         *
+         * @since v1.0.0
+         *
          * @param array $menuItems
          */
         $menuItems = apply_filters('fluent_support/primary_menu_items', $menuItems);
 
         /*
-         * @since v1.0.0
          * Filter Fluent Support dashboard top-right menu items
+         *
+         * @since v1.0.0
+         *
          * @param array $secondayItems
          */
         $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems);
@@ -321,8 +325,10 @@ class Menu
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
 
         /*
-         * @since v1.0.0
          * Filter agent portal localize javascript data
+         *
+         * @since v1.0.0
+         *
          * @param array $appVars
          */
         $appVars = apply_filters('fluent_support_app_vars', array(
