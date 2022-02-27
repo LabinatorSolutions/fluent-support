@@ -70,12 +70,6 @@ export default {
                     icon: 'el-icon-connection'
                 },
                 {
-                    title: this.$t('Zapier Integration'),
-                    route_name: 'zapier_integration',
-                    route_query: {},
-                    icon: 'el-icon-magic-stick'
-                },
-                {
                     title: this.$t('Notification Integrations'),
                     route_name: 'integration',
                     icon: 'el-icon-alarm-clock'
