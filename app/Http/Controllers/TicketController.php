@@ -56,8 +56,9 @@ class TicketController extends Controller
                 'mime_headings' => $mimeHeadings
             ];
             /**
-             * @since v1.0.0
              * Filter customer portal settings
+             *
+             * @since v1.0.0
              * @param array $portalSettings
              */
             $portalSettings = apply_filters('fluent_support/customer_portal_vars', $portalSettings);

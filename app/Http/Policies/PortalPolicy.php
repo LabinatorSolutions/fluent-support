@@ -27,8 +27,9 @@ class PortalPolicy extends Policy
             return false;
         }
         /*
-         * @since v1.0.0
          * Filter portal access settings
+         *
+         * @since v1.0.0
          * @param array $canAccess
          */
         $canAccess = apply_filters('fluent_support/user_portal_access_config', [

@@ -114,8 +114,9 @@ class Person extends Model
         $hash = md5(strtolower($email));
 
         /*
-         * @since v1.0.0
          * Filter person profile avatar, by default it use gravatar profile picture
+         *
+         * @since v1.0.0
          * @param string $url  link to the profile picture
          * @pram string $email user gravatar email address
          */
@@ -162,8 +163,9 @@ class Person extends Model
         }
 
         /*
-         * @since v1.0.0
          * Filter person profile edit url
+         *
+         * @since v1.0.0
          * @param string $userEditUrl User profile edit link
          * @param object $this        Model object
          */
@@ -205,7 +207,7 @@ class Person extends Model
                 'value'       => maybe_serialize($metaValue)
             ]);
         }
-        
+
         return true;
     }
 

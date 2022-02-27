@@ -79,8 +79,9 @@ class AuthController extends Controller
         $this->login($userId);
 
         /*
-         * @since v1.0.0
          * Filter for user signup complete message and redirect
+         *
+         * @since v1.0.0
          * @param array $response
          */
         $response = apply_filters('fluent_support/signup_complete_response', [
@@ -244,8 +245,9 @@ class AuthController extends Controller
             }
         }
         /*
-         * @since v1.0.0
          * Filter user signup validation rules
+         *
+         * @since v1.0.0
          * @param array $rules
          */
         return apply_filters('fluent_support/signup_validation_rules', $rules);
@@ -260,8 +262,9 @@ class AuthController extends Controller
     protected function getMessages($rules = [])
     {
         /*
-         * @since v1.0.0
          * Filter user signup validation message
+         *
+         * @since v1.0.0
          * @param array $arg
          * @param array $rules
          */
@@ -276,15 +279,17 @@ class AuthController extends Controller
     public function createUser($formData = [])
     {
         /*
-         * @since v1.0.0
          * Filter user signup email
+         *
+         * @since v1.0.0
          * @param string $email
          */
         $email = apply_filters('fluent_support/signup_email', Arr::get($formData, 'email'));
 
         /*
-         * @since v1.0.0
          * Filter user signup username
+         *
+         * @since v1.0.0
          * @param string $username
          */
         $userName = apply_filters('fluent_support/signup_username', Arr::get($formData, 'username'));
@@ -296,8 +301,9 @@ class AuthController extends Controller
         }
 
         /*
-         * @since v1.0.0
          * Filter user signup password
+         *
+         * @since v1.0.0
          * @param string $password
          */
         $password = apply_filters('fluent_support/signup_password', $password);
@@ -327,8 +333,9 @@ class AuthController extends Controller
         if ($name) {
             do_action('fluent_support/before_updating_user', $data);
             /*
-             * @since v1.0.0
              * Filter user updatable data
+             *
+             * @since v1.0.0
              * @param $data
              */
             $updateUserData = apply_filters('fluent_support/update_user_data', $data);
@@ -348,8 +355,9 @@ class AuthController extends Controller
 
         do_action('fluent_support/before_assigning_role', $user);
         /*
-         * @since v1.0.0
          * Filter user assignable role after signup
+         *
+         * @since v1.0.0
          * @param string $setRole WordPress user role key
          */
         $setRole = apply_filters('fluent_support/user_role', 'subscriber');

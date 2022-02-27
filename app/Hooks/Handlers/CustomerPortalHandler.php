@@ -27,8 +27,10 @@ class CustomerPortalHandler
         } else if ($this->hasCustomerPortalAccess()) {
 
             /*
-            * @since v1.0.0
             * Filter customer portal access settings
+            *
+            * @since v1.0.0
+            *
             * @param array $canAccess
             */
             $canAccess = apply_filters('fluent_support/user_portal_access_config', [
@@ -146,8 +148,10 @@ class CustomerPortalHandler
             add_filter('user_can_richedit', '__return_true');
         }
         /*
-         * @since v1.0.0
          * Filter customer portal localize javascript data
+         *
+         *  @since v1.0.0
+         *
          * @param array $data
          */
         $data = apply_filters('fluent_support/customer_portal_vars', $data);
