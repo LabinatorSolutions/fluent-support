@@ -155,6 +155,13 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+= 1.5.5 (Date: March 01, 2022) =
+* Added - GDPR compliance
+* Added - Today's stats of tickets
+* Added - Attachment support in email notification
+* Added - Ticket moving feature from one mailbox to another
+* Fixed - Conflict while creating ticket from agent-end in some specific server
+
 = 1.5.4 (Date: January 19, 2022) =
 * Added - Email notification on ticket assign
 * Added - Ticket priority selection in Fluent Forms integration
