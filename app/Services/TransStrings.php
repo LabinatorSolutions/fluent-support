@@ -462,6 +462,7 @@ class TransStrings
             'advance_filter_help_text' => __('Add new filter to narrow down your contacts based on different properties', 'fluent-support-pro'),
             'Send Attachments' => __('Send Attachments(Not Recommended)', 'fluent-support'),
             'Today Stats' => __('Today Stats', 'fluent-support'),
+            'Shortcodes' => __('Shortcodes', 'fluent-support'),
         ];
     }
 }
