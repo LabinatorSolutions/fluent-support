@@ -87,6 +87,20 @@
                     <el-input type="text" :placeholder="$t('Reply Title')" v-model="editing_reply.title"/>
                 </el-form-item>
                 <el-form-item :label="$t('Content')">
+                    <div class="fc_template_box">
+                        <el-dropdown type="primary" trigger="click">
+                            <el-button size="mini" type="primary" style="margin-right: .3em;">
+                                Shortcodes <i class="el-icon-arrow-down"></i>
+                            </el-button>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
+                                        {{value}}
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+                    </div>
                     <wp-editor v-model="editing_reply.content" />
                 </el-form-item>
                 <el-form-item :label="$t('Prefered Product')">
@@ -95,14 +109,6 @@
                     </el-select>
                 </el-form-item>
             </el-form>
-            <div class="fs_sreplies_shortcodes">
-                <h4>Available Shortcodes For Template:</h4>
-                <ul>
-                    <li v-for="(key, value) in shortcodes">
-                        {{key}} : {{value}}
-                    </li>
-                </ul>
-            </div>
             <template #footer>
                 <span class="dialog-footer">
                   <el-button v-loading="saving" :disabled="saving" type="success" @click="createOrUpdate()">{{$t('Save')}}</el-button>
@@ -138,17 +144,17 @@ export default {
             products: this.appVars.support_products,
             search: '',
             shortcodes: {
-                'customer_first_name' : 'Customer First Name',
-                'customer_last_name' : 'Customer Last Name',
-                'customer_full_name' : 'Customer Full Name',
-                'customer_email' : 'Customer Email',
-                'customer_title' : 'Customer Title',
-                'customer_status' : 'Customer Status',
-                'agent_first_name' : 'Agent First Name',
-                'agent_last_name' : 'Agent Last Name',
-                'agent_full_name' : 'Agent Full Name',
-                'agent_email' : 'Agent Email',
-                'agent_title' : 'Agent Title'
+                '{{customer_first_name}}' : 'Customer First Name',
+                '{{customer_last_name}}' : 'Customer Last Name',
+                '{{customer_full_name}}' : 'Customer Full Name',
+                '{{customer_email}}' : 'Customer Email',
+                '{{customer_title}}' : 'Customer Title',
+                '{{customer_status}}' : 'Customer Status',
+                '{{agent_first_name}}' : 'Agent First Name',
+                '{{agent_last_name}}' : 'Agent Last Name',
+                '{{agent_full_name}}' : 'Agent Full Name',
+                '{{agent_email}}' : 'Agent Email',
+                '{{agent_title}}' : 'Agent Title'
             }
         }
     },
@@ -229,6 +235,13 @@ export default {
 
                     this.fetch();
                 });
+        },
+        insertShortcode(content) {
+            this.edit_modal = false;
+            this.editing_reply.content = this.editing_reply.content.concat(content.target._value);
+            this.$nextTick(() => {
+                this.edit_modal = true;
+            });
         }
     },
     mounted() {
