@@ -59,52 +59,52 @@ export default {
                 },
                 {
                     field: 'Customer First Name',
-                    field_key: 'first_name',
+                    field_key: 'sender[first_name]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer Last Name',
-                    field_key: 'last_name',
+                    field_key: 'sender[last_name]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer Email(Required)',
-                    field_key: 'email',
+                    field_key: 'sender[email]',
                     type: 'Email'
                 },
                 {
                     field: 'Customer Title',
-                    field_key: 'customer_title',
+                    field_key: 'sender[title]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer Address Line 1',
-                    field_key: 'address_line_1',
+                    field_key: 'sender[address_line_1]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer Address Line 2',
-                    field_key: 'address_line_2',
+                    field_key: 'sender[address_line_2]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer City',
-                    field_key: 'city',
+                    field_key: 'sender[city]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer State',
-                    field_key: 'state',
+                    field_key: 'sender[state]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer Zip',
-                    field_key: 'zip',
+                    field_key: 'sender[zip]',
                     type: 'Text'
                 },
                 {
                     field: 'Customer Country',
-                    field_key: 'country',
+                    field_key: 'sender[country]',
                     type: 'Text'
                 },
                 {
