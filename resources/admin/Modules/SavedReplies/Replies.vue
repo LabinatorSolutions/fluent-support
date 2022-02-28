@@ -90,7 +90,7 @@
                     <div class="fc_template_box">
                         <el-dropdown type="primary" trigger="click">
                             <el-button size="mini" type="primary" style="margin-right: .3em;">
-                                Shortcodes <i class="el-icon-arrow-down"></i>
+                                {{$t('Shortcodes')}} <i class="el-icon-arrow-down"></i>
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
