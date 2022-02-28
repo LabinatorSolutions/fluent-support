@@ -1,7 +1,19 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
-        <div class="fc_template_box" v-if="appVars.has_pro">
-            <template-inserter @insert="insertTemplate"/>
+        <div class="fc_template_box">
+            <el-dropdown type="primary" trigger="click">
+                <el-button size="mini" type="primary" style="margin-right: .3em;">
+                    Shortcodes <i class="el-icon-arrow-down"></i>
+                </el-button>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
+                            {{value}}
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+            <template-inserter v-if="appVars.has_pro" @insert="insertTemplate"/>
         </div>
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body"/>
         <div class="fs_row">
@@ -43,7 +55,17 @@ export default {
             creating: false,
             close_ticket: 'no',
             attachments: [],
-            editor_ready: true
+            editor_ready: true,
+            shortcodes: {
+                '{{customer.first_name}}' : 'Customer First Name',
+                '{{customer.last_name}}' : 'Customer Last Name',
+                '{{customer.full_name}}' : 'Customer Full Name',
+                '{{customer.email}}' : 'Customer Email',
+                '{{agent.first_name}}' : 'Agent First Name',
+                '{{agent.last_name}}' : 'Agent Last Name',
+                '{{agent.full_name}}' : 'Agent Full Name',
+                '{{agent.email}}' : 'Agent Email',
+            }
         }
     },
     methods: {
@@ -84,6 +106,13 @@ export default {
         insertTemplate(content) {
             this.editor_ready = false;
             this.response_body = this.response_body + content;
+            this.$nextTick(() => {
+                this.editor_ready = true;
+            });
+        },
+        insertShortcode(content) {
+            this.editor_ready = false;
+            this.response_body = this.response_body.concat(content.target._value);
             this.$nextTick(() => {
                 this.editor_ready = true;
             });
