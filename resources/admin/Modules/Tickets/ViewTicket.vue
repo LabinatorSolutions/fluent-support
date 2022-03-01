@@ -76,9 +76,26 @@
                             </el-select>
 
                         </el-popover>
-                        <span class="fs_business_name"><i class="el-icon-office-building"></i> {{
-                                ticket.mailbox?.name
-                            }}</span>
+
+                        <el-popover
+                            placement="bottom"
+                            :width="400"
+                            trigger="click"
+                        >
+                            <template #reference>
+                                <span class="fs_business_name" style="margin-right: 10px;"><i class="el-icon-office-building"></i> {{
+                                        ticket.mailbox?.name
+                                    }}</span>
+                            </template>
+
+                            <el-select @change="changeMailbox" v-model="ticket.product_id">
+                                <el-option
+                                    v-for="mailbox in mailboxes"
+                                    :key="mailbox.id"
+                                    :value="mailbox.id"
+                                    :label="mailbox.name"></el-option>
+                            </el-select>
+                        </el-popover>
                     </div>
                 </div>
                 <div class="fs_th_header">
@@ -371,7 +388,8 @@ export default {
             edit_response_modal: false,
             editing_response: false,
             showCustomDataEditForm: false,
-            fluentcrm_profile: false
+            fluentcrm_profile: false,
+            mailboxes: this.appVars.mailboxes
         }
     },
     watch: {
@@ -537,6 +555,27 @@ export default {
                 this.editing_response = conversation;
                 this.edit_response_modal = true;
             }
+        },
+        changeMailbox(mailbox) {
+            this.loading != this.loading;
+            this.$put(`mailboxes/${this.ticket.mailbox_id}/move_tickets`, {
+                new_box_id: mailbox,
+                ticket_ids: [this.ticket_id],
+                move_type: 'Custom',
+            })
+                .then(response => {
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
+                    this.fetchTicket();
+                })
+                .catch((error) => {
+                    this.$handleError(error);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
         },
         santizeContent(content) {
             if (!content) {
