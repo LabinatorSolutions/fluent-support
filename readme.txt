@@ -2,7 +2,7 @@
 Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
-Tested up to: 5.8
+Tested up to: 5.9.1
 Stable tag: 1.5.4
 Requires PHP: 7.1
 License: GPLv2 or later
