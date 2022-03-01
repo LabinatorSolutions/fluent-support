@@ -463,6 +463,7 @@ class TransStrings
             'Send Attachments' => __('Send Attachments(Not Recommended)', 'fluent-support'),
             'Today Stats' => __('Today Stats', 'fluent-support'),
             'Shortcodes' => __('Shortcodes', 'fluent-support'),
+            'move_ticket_by_selecting'    => __('Filter and select specific ticket and move these to another mailbox easily', 'fluent-support'),
         ];
     }
 }

@@ -22,7 +22,7 @@
         </el-form>
 
         <template v-if="!!show_ticket_selection">
-            <div class="fs_all_tickets">
+            <div class="fs_all_tickets" v-if="has_pro">
                 <div class="fs_box_wrapper">
                     <h4>Filter ticket</h4>
                     <hr/>
@@ -92,9 +92,14 @@
                 </div>
 
             </div>
+            <div class="fs_narrow_promo" v-else>
+                <h3>{{ $t('move_ticket_by_selecting') }}</h3>
+                <p>{{ $t('pro_promo') }}</p>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
+            </div>
         </template>
 
-        <template #footer>
+        <template #footer v-if="has_pro">
                 <span class="dialog-footer">
                   <el-button @click="move_ticket.show_modal = false">{{ $t('Cancel') }}</el-button>
                   <el-button v-loading="moving" :disabled="moving" type="success"
