@@ -81,13 +81,13 @@
                             placement="bottom"
                             :width="400"
                             trigger="click"
+                            v-if="appVars.me.permissions.includes('fst_manage_settings')"
                         >
                             <template #reference>
-                                <span class="fs_business_name" style="margin-right: 10px;"><i class="el-icon-office-building"></i> {{
-                                        ticket.mailbox?.name
-                                    }}</span>
+                                <span class="fs_business_name" style="margin-right: 10px;">
+                                    <i class="el-icon-office-building"></i> {{ticket.mailbox?.name}}
+                                </span>
                             </template>
-
                             <el-select @change="changeMailbox" v-model="ticket.product_id">
                                 <el-option
                                     v-for="mailbox in mailboxes"
@@ -96,6 +96,10 @@
                                     :label="mailbox.name"></el-option>
                             </el-select>
                         </el-popover>
+
+                        <span v-else class="fs_business_name" style="margin-right: 10px;">
+                            <i class="el-icon-office-building"></i> {{ticket.mailbox?.name}}
+                        </span>
                     </div>
                 </div>
                 <div class="fs_th_header">
