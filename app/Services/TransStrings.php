@@ -24,6 +24,7 @@ class TransStrings
             'are waiting for reply with' => __('are waiting for reply with', 'fluent-support'),
             'wait time' => __('wait time', 'fluent-support'),
             'max wait time' => __('max wait time', 'fluent-support'),
+            'average' => __('average', 'fluent-support'),
             'shortcode_auto_page_creation' => __('Create a page automatically with the shortcode', 'fluent-support'),
             'Complete Setup'    => __('Complete Setup', 'fluent-support'),
             'Setup Associate Product/Services for Tickets'    => __('Setup Associate Product/Services for Tickets', 'fluent-support'),

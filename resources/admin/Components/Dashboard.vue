@@ -60,7 +60,7 @@
                     </ul>
                     <p class="fs_padded_20 fs_stat_helper" v-if="individual_stat">
                         <span class="fs_highlight">{{individual_stat.waiting_tickets}} {{$t('tickets')}}</span> {{$t('are waiting for reply with')}}
-                        <span class="fs_highlight"> average {{individual_stat.average_waiting}} {{$t('wait time')}}</span> & {{$t('max wait time')}}
+                        <span class="fs_highlight"> {{$t('average')}} {{individual_stat.average_waiting}} {{$t('wait time')}}</span> & {{$t('max wait time')}}
                         <span class="fs_highlight">{{individual_stat.max_waiting}}</span>
                     </p>
                 </template>
