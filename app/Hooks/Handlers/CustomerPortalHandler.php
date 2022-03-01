@@ -3,13 +3,10 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
-use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
-use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\TransStrings;
 use FluentSupport\Framework\Support\Arr;
 
 class CustomerPortalHandler
