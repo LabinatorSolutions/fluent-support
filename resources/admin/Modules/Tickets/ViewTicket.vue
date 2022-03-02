@@ -88,7 +88,7 @@
                                     <i class="el-icon-office-building"></i> {{ticket.mailbox?.name}}
                                 </span>
                             </template>
-                            <el-select @change="changeMailbox" v-model="ticket.product_id">
+                            <el-select @change="changeMailbox" v-model="ticket.mailbox.name">
                                 <el-option
                                     v-for="mailbox in mailboxes"
                                     :key="mailbox.id"
