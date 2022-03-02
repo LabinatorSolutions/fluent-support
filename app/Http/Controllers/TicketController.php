@@ -34,7 +34,7 @@ class TicketController extends Controller
         $user = wp_get_current_user();
 
         $settings = [
-            'user_id'     => $user->id,
+            'user_id'     => $user->ID,
             'email'       => $user->user_email,
             'person'      => Helper::getAgentByUserId($user->ID),
             'permissions' => PermissionManager::currentUserPermissions(),

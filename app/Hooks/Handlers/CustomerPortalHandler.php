@@ -205,7 +205,7 @@ class CustomerPortalHandler
         $request = App::request();
 
         $onBehalf = [
-            'user_id'         => $user->id,
+            'user_id'         => $user->ID,
             'email'           => $user->user_email,
             'last_ip_address' => $request->getIp()
         ];
