@@ -144,17 +144,17 @@ export default {
             products: this.appVars.support_products,
             search: '',
             shortcodes: {
-                '{{customer_first_name}}' : 'Customer First Name',
-                '{{customer_last_name}}' : 'Customer Last Name',
-                '{{customer_full_name}}' : 'Customer Full Name',
-                '{{customer_email}}' : 'Customer Email',
-                '{{customer_title}}' : 'Customer Title',
-                '{{customer_status}}' : 'Customer Status',
-                '{{agent_first_name}}' : 'Agent First Name',
-                '{{agent_last_name}}' : 'Agent Last Name',
-                '{{agent_full_name}}' : 'Agent Full Name',
-                '{{agent_email}}' : 'Agent Email',
-                '{{agent_title}}' : 'Agent Title'
+                '{{customer.first_name}}' : 'Customer First Name',
+                '{{customer.last_name}}' : 'Customer Last Name',
+                '{{customer.full_name}}' : 'Customer Full Name',
+                '{{customer.email}}' : 'Customer Email',
+                '{{customer.title}}' : 'Customer Title',
+                '{{customer.status}}' : 'Customer Status',
+                '{{agent.first_name}}' : 'Agent First Name',
+                '{{agent.last_name}}' : 'Agent Last Name',
+                '{{agent.full_name}}' : 'Agent Full Name',
+                '{{agent.email}}' : 'Agent Email',
+                '{{agent.title}}' : 'Agent Title'
             }
         }
     },
