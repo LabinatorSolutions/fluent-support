@@ -294,14 +294,17 @@ class MailBoxController extends Controller
             }
         ])->where('mailbox_id', $mailbox_id);
 
-        if ($customer_id)
+        if ($customer_id) {
             $ticketsQuery->where('customer_id', $customer_id);
+        }
 
-        if ($product_id)
+        if ($product_id) {
             $ticketsQuery->where('product_id', $product_id);
+        }
 
-        if ($ticket_title)
+        if ($ticket_title) {
             $ticketsQuery->where('title', 'LIKE', "%$ticket_title%");
+        }
 
         $tickets = $ticketsQuery->paginate();
 
