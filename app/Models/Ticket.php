@@ -781,13 +781,15 @@ class Ticket extends Model
 
     public function getLastAgentResponse()
     {
-        return \FluentSupport\App\App::db()->table('fs_conversations')
+        $query =  \FluentSupport\App\App::db()->table('fs_conversations')
             ->select(['fs_conversations.*'])
             ->where('fs_conversations.conversation_type', 'response')
             ->where('fs_conversations.ticket_id', $this->id)
-            ->join('fs_persons', 'fs_persons.person_type', '=', 'agent')
-            ->orderBy('fs_conversations.id', 'DESC')
-            ->first();
+            ->where('fs_persons.person_type', '=', 'agent')
+            ->join('fs_persons', 'fs_persons.id', '=', 'fs_conversations.person_id')
+            ->orderBy('fs_conversations.id', 'DESC');
+
+        return $query->first();
     }
 
     public function getLastResponse()

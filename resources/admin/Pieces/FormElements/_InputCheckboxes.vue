@@ -9,6 +9,8 @@
 </template>
 
 <script type="text/babel">
+import isArray from 'lodash/isArray';
+
 export default {
     name: 'CheckBoxGroup',
     props: ['field', 'value'],
@@ -21,6 +23,11 @@ export default {
     watch: {
         model(value) {
             this.$emit('input', value);
+        }
+    },
+    created() {
+        if (!isArray(this.value)) {
+            this.model = [];
         }
     }
 }
