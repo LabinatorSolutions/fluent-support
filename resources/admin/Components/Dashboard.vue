@@ -35,7 +35,7 @@
 
                         <p class="fs_padded_20 fs_stat_helper" v-if="overall_stats">
                             <span class="fs_highlight">{{overall_stats.waiting_tickets}} {{$t('tickets')}}</span> {{$t('are waiting for reply with')}}
-                            <span class="fs_highlight"> average {{overall_stats.average_waiting}} {{$t('wait time')}}</span> & {{$t('max wait time')}}
+                            <span class="fs_highlight"> {{$t('average')}} {{overall_stats.average_waiting}} {{$t('wait time')}}</span> & {{$t('max wait time')}}
                             <span class="fs_highlight">{{overall_stats.max_waiting}}</span>
                         </p>
 
