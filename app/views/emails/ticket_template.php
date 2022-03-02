@@ -16,11 +16,11 @@
 </head>
 <body>
 <div class="fs_comment">
-    <?php echo $email_body; ?>
+    <?php echo $email_body;  // WPCS: XSS ok. ?>
 </div>
 
 <div style="color: #9e9e9e; margin: 10px 0 14px 0; padding-top: 10px;border-top: 1px solid #eeeeee;">
-    <?php echo $email_footer; ?>
+    <?php echo $email_footer;  // WPCS: XSS ok. ?>
 </div>
 </body>
 </html>

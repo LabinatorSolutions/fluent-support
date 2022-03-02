@@ -273,7 +273,7 @@ class AuthHandler
                 ?>
                 <script type="text/javascript">
                     document.addEventListener("DOMContentLoaded", function () {
-                        var redirect = "<?php echo $redirect; ?>";
+                        var redirect = "<?php echo esc_url($redirect); ?>";
                         window.location.replace(redirect);
                     });
                 </script>
