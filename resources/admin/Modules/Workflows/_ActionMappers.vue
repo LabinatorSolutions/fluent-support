@@ -4,7 +4,7 @@
             <action-map @deleteAction="removeAction(actionIndex)" @update="triggerUpdate()" :action="action"
                         :actions="all_actions"/>
         </div>
-        <action-adder v-if="show_adder" @success="appendAction" :all_actions="all_actions"/>
+        <action-adder v-show="show_adder" @success="appendAction" :all_actions="all_actions"/>
         <el-button style="margin-top: 30px;" size="small" type="info" @click="show_adder = true" v-else>
             {{$t('Add Another Action')}}
         </el-button>
@@ -22,6 +22,7 @@ export default {
         ActionMap,
         ActionAdder
     },
+    emits: ['update'],
     data() {
         return {
             show_adder: false
@@ -32,6 +33,7 @@ export default {
             this.show_adder = false;
             action.workflow_id = this.workflow_id;
             this.actions.push(action);
+            console.log(this.actions);
         },
         triggerUpdate() {
             this.$emit('update');

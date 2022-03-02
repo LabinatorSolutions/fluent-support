@@ -10,7 +10,7 @@
         </div>
         <div class="fcon_trigger_details">
             <div v-if="action.is_open" class="fcon_trigger_editor">
-                <h3>{{$t('Action')}}</h3>
+                <h3>{{ $t('Action') }}</h3>
                 <el-select @change="triggerEventChanged()" :placeholder="$t('Select Integration Event')"
                            v-model="action.action_name">
                     <el-option
@@ -31,7 +31,7 @@
 
 
                     <div style="display: block; margin-top: 10px;">
-                        <el-button @click="emitSave()" size="small" type="success">{{$t('Save')}}</el-button>
+                        <el-button @click="emitSave()" size="small" type="success">{{ $t('Save') }}</el-button>
                         <div style="text-align: right; display: inline-block; float: right;">
                             <el-popconfirm
                                 :confirm-button-text="$t('Yes, Delete this Action')"
@@ -69,6 +69,7 @@ export default {
             builder_ready: true
         }
     },
+    emits: ['update', 'deleteAction'],
     methods: {
         triggerEventChanged() {
             if (!this.action.action_name) {
@@ -93,6 +94,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.action);
         if (!this.action.settings) {
             this.action.settings = {};
         }

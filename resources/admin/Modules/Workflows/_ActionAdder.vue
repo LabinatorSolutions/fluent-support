@@ -37,13 +37,20 @@ export default {
     methods: {
         actionSuccess() {
             if (this.action.action_name) {
+                let defaultSettings = {};
+                if(this.all_actions[this.action.action_name].settings_defaults) {
+                    defaultSettings = JSON.parse(JSON.stringify(this.all_actions[this.action.action_name].settings_defaults));
+                }
                 this.action.is_open = true;
+                this.action.settings = defaultSettings;
                 this.$emit('success', this.action);
-                this.action = {
-                    title: '',
-                    action_name: '',
-                    settings: {}
-                };
+                setTimeout(() => {
+                    this.action = {
+                        title: '',
+                        action_name: '',
+                        settings: {}
+                    };
+                }, 200);
             }
         }
     },
