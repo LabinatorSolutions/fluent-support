@@ -143,7 +143,7 @@ class SettingsController extends Controller
             'mailbox'         => $newMailBox,
             'global_settings' => $globalSettings,
             'mailboxes'       => MailBox::select(['id', 'name', 'settings'])->get(),
-            'has_fluentform' => defined('FLUENTFORM')
+            'has_fluentform'  => defined('FLUENTFORM')
         ];
 
     }
@@ -262,18 +262,20 @@ class SettingsController extends Controller
         $user = get_user_by('ID', get_current_user_id());
         $data = [
             'answers'    => [
-                'website'    => site_url(),
-                'email'      => $optinEmail,
-                'first_name' => $user->first_name,
-                'last_name'  => $user->last_name,
-                'name'       => $user->display_name
+                'website'        => site_url(),
+                'email'          => $optinEmail,
+                'first_name'     => $user->first_name,
+                'last_name'      => $user->last_name,
+                'name'           => $user->display_name,
+                'has_fluentform' => defined('FLUENTFORM') ? 'yes' : 'no'
             ],
             'questions'  => [
-                'website'    => 'website',
-                'first_name' => 'first_name',
-                'last_name'  => 'last_name',
-                'email'      => 'email',
-                'name'       => 'name'
+                'website'        => 'website',
+                'first_name'     => 'first_name',
+                'last_name'      => 'last_name',
+                'email'          => 'email',
+                'name'           => 'name',
+                'has_fluentform' => 'has_fluentform'
             ],
             'user'       => [
                 'email' => $optinEmail
