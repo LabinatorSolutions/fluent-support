@@ -90,6 +90,7 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->post('/slack-integration', 'SlackController@saveSettings');
     $router->get('/pages', 'SettingsController@getPages');
     $router->post('/setup', 'SettingsController@setupPortal');
+    $router->post('/setup-installation', 'SettingsController@setupInstallation');
 
     $router->get('/fluentcrm-settings', 'SettingsController@getFluentCRMSettings');
     $router->post('/intsall-fluentcrm', 'SettingsController@installFluentCRM');

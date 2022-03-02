@@ -151,3 +151,43 @@
 .el-table .fs_status_inactive {
     background-color: #fff7b1;
 }
+
+.fs_setup {
+    .suggest_box {
+        margin-bottom: 10px;
+        padding: 10px 20px;
+        border: 1px solid #0ebe7e;
+        border-radius: 5px;
+    }
+    .email_optin {
+        label {
+            font-weight: 500;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+    }
+}
+
+@media (min-width: 1100px) {
+    .fc_essential_modal {
+        &.el-dialog {
+            top: 30%;
+            min-width: 600px !important;
+            border-radius: 0;
+            .dialog-footer {
+                background: transparent;
+                text-align: right;
+                display: block;
+                padding-bottom: 20px;
+            }
+            .el-dialog__header {
+                background: transparent;
+                padding-left: 20px;
+                border: none;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+            }
+        }
+    }
+}
