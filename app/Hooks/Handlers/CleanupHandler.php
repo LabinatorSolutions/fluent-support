@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
+use FluentSupport\App\Services\Integrations\Maintenance;
 
 class CleanupHandler
 {
@@ -88,5 +89,10 @@ class CleanupHandler
         }
         $fileSystemDirect = new \WP_Filesystem_Direct(false);
         $fileSystemDirect->rmdir($dir, true);
+    }
+
+    public function maybeMaintanceTask()
+    {
+        (new Maintenance())->maybeProcessData();
     }
 }

@@ -16,7 +16,6 @@ use FluentSupport\Framework\Request\Request;
  *
  * @version 1.0.0
  */
-
 class SettingsController extends Controller
 {
     /**
@@ -135,7 +134,7 @@ class SettingsController extends Controller
         $settingsClass->save('global_business_settings', $globalSettings);
 
 
-        if(defined('WC_PLUGIN_FILE')) {
+        if (defined('WC_PLUGIN_FILE')) {
             // URL Flash
             flush_rewrite_rules(false);
         }
@@ -143,7 +142,8 @@ class SettingsController extends Controller
         return [
             'mailbox'         => $newMailBox,
             'global_settings' => $globalSettings,
-            'mailboxes'       => MailBox::select(['id', 'name', 'settings'])->get()
+            'mailboxes'       => MailBox::select(['id', 'name', 'settings'])->get(),
+            'has_fluentform' => defined('FLUENTFORM')
         ];
 
     }
@@ -221,15 +221,72 @@ class SettingsController extends Controller
                 'is_installed'    => true,
                 'settings'        => $settings,
                 'settings_fields' => $settingsFields,
-                'fluentcrm_logo' => FLUENT_SUPPORT_PLUGIN_URL.'assets/images/fluentcrm-logo.svg'
+                'fluentcrm_logo'  => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg'
             ];
         }
 
         return [
-            'is_installed' => false,
-            'fluentcrm_logo' => FLUENT_SUPPORT_PLUGIN_URL.'assets/images/fluentcrm-logo.svg'
+            'is_installed'   => false,
+            'fluentcrm_logo' => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg'
         ];
 
+    }
+
+
+    public function setupInstallation(Request $request)
+    {
+        $installFluentForm = $request->get('install_fluentform', 'no');
+
+        if ($installFluentForm == 'yes' && !defined('FLUENTFORM')) {
+            $this->installFluentForm();
+        }
+
+        $optinEmail = $request->get('optin_email', 'no');
+        if ($optinEmail && is_email($optinEmail)) {
+            $this->shareEmail($optinEmail);
+        }
+
+        $shareEssential = $request->get('share_essentials', 'no');
+        if ($shareEssential == 'yes') {
+            Helper::updateOption('_share_essential', $shareEssential);
+        }
+
+        return $this->sendSuccess([
+            'message' => __('Installation has been completed', 'fluent-support')
+        ]);
+
+    }
+
+    private function shareEmail($optinEmail)
+    {
+        $user = get_user_by('ID', get_current_user_id());
+        $data = [
+            'answers'    => [
+                'website'    => site_url(),
+                'email'      => $optinEmail,
+                'first_name' => $user->first_name,
+                'last_name'  => $user->last_name,
+                'name'       => $user->display_name
+            ],
+            'questions'  => [
+                'website'    => 'website',
+                'first_name' => 'first_name',
+                'last_name'  => 'last_name',
+                'email'      => 'email',
+                'name'       => 'name'
+            ],
+            'user'       => [
+                'email' => $optinEmail
+            ],
+            'fb_capture' => 1,
+            'form_id'    => 77
+        ];
+
+        $url = add_query_arg($data, 'https://wpmanageninja.com/');
+
+        wp_remote_post($url, [
+            'sslverify' => false
+        ]);
     }
 
     /**
@@ -252,7 +309,7 @@ class SettingsController extends Controller
             ]);
         }
 
-        $plugin_id = 'fluent-connect';
+        $plugin_id = 'fluent-crm';
         $plugin = [
             'name'      => 'Fluent CRM',
             'repo-slug' => 'fluent-crm',
@@ -270,6 +327,44 @@ class SettingsController extends Controller
             return $this->sendError([
                 'message' => __('Sorry! FluentCRM could not be installed. Please install manually', 'fluent-support')
             ]);
+        }
+    }
+
+    public function installFluentForm()
+    {
+
+        if (defined('FLUENTFORM')) {
+            return [
+                'is_installed' => true,
+                'message'      => __('Fluent Forms plugin has been installed and activated successfully', 'fluent-support')
+            ];
+        }
+
+        if (!current_user_can('install_plugins')) {
+            return $this->sendError([
+                'message' => __('Sorry! you do not have permission to install plugin', 'fluent-crm')
+            ]);
+        }
+
+        $plugin_id = 'fluent-crm';
+        $plugin = [
+            'name'      => 'Fluent CRM',
+            'repo-slug' => 'fluent-crm',
+            'file'      => 'fluent-crm.php',
+        ];
+
+        $this->backgroundInstaller($plugin, $plugin_id);
+
+        if (defined('FLUENTCRM')) {
+            return [
+                'is_installed' => true,
+                'message'      => __('Fluent Forms plugin has been installed and activated successfully', 'fluent-support')
+            ];
+        } else {
+            return [
+                'is_installed' => false,
+                'message'      => __('Fluent Forms could not be installed', 'fluent-support')
+            ];
         }
     }
 

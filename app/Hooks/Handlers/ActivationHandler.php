@@ -17,5 +17,9 @@ class ActivationHandler
         if (! wp_next_scheduled ( 'fluent_support_daily_tasks' )) {
             wp_schedule_event( time(), 'daily', 'fluent_support_daily_tasks' );
         }
+
+        if (! wp_next_scheduled ( 'fluent_support_weekly_tasks' )) {
+            wp_schedule_event( time(), 'weekly', 'fluent_support_weekly_tasks' );
+        }
     }
 }
