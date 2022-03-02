@@ -16,16 +16,17 @@ define('FLUENT_SUPPORT_VERSION', '1.5.5');
 define('FLUENT_SUPPORT_UPLOAD_DIR', 'fluent-support');
 define('FLUENT_SUPPORT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
-call_user_func(function($bootstrap) {
+call_user_func(function ($bootstrap) {
     $bootstrap(__FILE__);
-}, require(__DIR__.'/boot/app.php'));
+}, require(__DIR__ . '/boot/app.php'));
 
 
-// Handle Network new Site Activation
-add_action('wpmu_new_blog', function ($blogId) {
-    switch_to_blog($blogId);
-    (new \FluentSupport\App\Hooks\Handlers\ActivationHandler)->handle(false);
-    restore_current_blog();
+add_action('wp_insert_site', function ($new_site) {
+    if (is_plugin_active_for_network('fluent-support/fluent-support.php')) {
+        switch_to_blog($new_site->blog_id);
+        (new \FluentSupport\App\Hooks\Handlers\ActivationHandler)->handle(false);
+        restore_current_blog();
+    }
 });
