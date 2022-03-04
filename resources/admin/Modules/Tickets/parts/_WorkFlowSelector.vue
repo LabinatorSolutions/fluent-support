@@ -7,7 +7,7 @@
             trigger="click"
         >
             <template #reference>
-                <i class="el-icon-lightning"/>
+                <el-icon><lightning /></el-icon>
             </template>
 
             <ul class="fs_workflows_list">

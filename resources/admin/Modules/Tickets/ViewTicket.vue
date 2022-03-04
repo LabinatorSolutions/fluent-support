@@ -9,13 +9,13 @@
                                 class="fs_add_reply"
                                 :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
                                 @click="show_response_box = 'response'">
-                                <i class="el-icon-chat-line-square"/>
+                                <el-icon style="vertical-align: middle;"><chat-line-square /></el-icon>
                             </li>
                             <li :title="$t('Add Internal Note')"
                                 class="fs_add_note"
                                 :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
                                 @click="show_response_box = 'note'">
-                                <i class="el-icon-notebook-1"/>
+                                <el-icon style="vertical-align: middle;"><notebook /></el-icon>
                             </li>
                         </template>
 
@@ -34,7 +34,7 @@
                                 <span class="fs_agent_photo_icon" v-if="ticket.agent">
                                     <img :alt="ticket.agent?.full_name" :src="ticket.agent?.photo"/>
                                 </span>
-                                    <i v-else class="el-icon-user"/>
+                                    <el-icon style="vertical-align: middle;" v-else><user /></el-icon>
                                 </template>
 
                                 <el-select filterable @change="updateTicketAttr('agent_id')" v-model="ticket.agent_id">
@@ -49,7 +49,8 @@
 
                     </ul>
                     <div class="fs_product">
-                        <el-button v-loading="loading" @click="fetchTicket()" icon="el-icon-refresh"
+                        <el-button v-loading="loading" @click="fetchTicket()"
+                                   icon="Refresh"
                                    class="fs_refresh_tk_page"
                                    size="small"></el-button>
                         <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
@@ -62,7 +63,7 @@
                             trigger="click"
                         >
                             <template #reference>
-                                <span style="margin-right: 10px;"><i class="el-icon-goods"></i> {{
+                                <span style="margin-right: 10px;"><el-icon style="vertical-align: middle;"><goods /></el-icon> {{
                                         ticket.product?.title
                                     }}</span>
                             </template>
@@ -85,7 +86,7 @@
                         >
                             <template #reference>
                                 <span class="fs_business_name" style="margin-right: 10px;">
-                                    <i class="el-icon-office-building"></i> {{ticket.mailbox?.name}}
+                                    <el-icon style="vertical-align: middle;"><office-building /></el-icon> {{ticket.mailbox?.name}}
                                 </span>
                             </template>
                             <el-select @change="changeMailbox" v-model="ticket.mailbox.name">
@@ -98,7 +99,7 @@
                         </el-popover>
 
                         <span v-else class="fs_business_name" style="margin-right: 10px;">
-                            <i class="el-icon-office-building"></i> {{ticket.mailbox?.name}}
+                            <el-icon style="vertical-align: middle;"><office-building /></el-icon> {{ticket.mailbox?.name}}
                         </span>
                     </div>
                 </div>
@@ -132,7 +133,7 @@
                                 <template #reference>
                                     <span :title="$t('Client Priority: ') + ticket.client_priority "
                                           :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge">
-                                        <i class="el-icon-user"></i> {{ ticket.client_priority }}</span>
+                                        <el-icon style="vertical-align: middle;"><user /></el-icon> {{ ticket.client_priority }}</span>
                                 </template>
 
                                 <el-select @change="updateTicketAttr('client_priority')"
@@ -152,8 +153,8 @@
                             >
                                 <template #reference>
                                     <span :title="$t('Admin Priority:') + ticket.priority "
-                                          :class="'fs_badge_priority_'+ticket.priority" class="fs_badge"> <i
-                                        class="el-icon-service"></i> {{ ticket.priority }}</span>
+                                          :class="'fs_badge_priority_'+ticket.priority" class="fs_badge">
+                                        <el-icon style="vertical-align: middle;"><service /></el-icon> {{ ticket.priority }}</span>
                                 </template>
 
                                 <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority"
@@ -215,23 +216,23 @@
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="conversation.source == 'email'"
-                                                  :title="$t('Added By Email')"><i class="el-icon-message"></i></span>
+                                                  :title="$t('Added By Email')"><el-icon style="vertical-align: middle;"><message /></el-icon></span>
                                             <span :title="conversation.created_at">{{
                                                     $timeDiff(conversation.created_at)
                                                 }}</span>
                                             <el-dropdown @command="handleResponseActionCommand" trigger="click">
                                                 <span class="el-dropdown-link">
-                                                    <i class="el-icon-arrow-down el-icon--right"></i>
+                                                    <el-icon><arrow-down /></el-icon>
                                                 </span>
                                                 <template #dropdown>
                                                     <el-dropdown-menu>
                                                         <el-dropdown-item
                                                             :command="{ type: 'edit', conversation: conversation }"
-                                                            icon="el-icon-edit"> {{$t('Edit')}}
+                                                            icon="EditPen"> {{$t('Edit')}}
                                                         </el-dropdown-item>
                                                         <el-dropdown-item
                                                             :command="{ type: 'delete', conversation: conversation }"
-                                                            icon="el-icon-delete"> {{$t('Delete')}}
+                                                            icon="Delete"> {{$t('Delete')}}
                                                         </el-dropdown-item>
                                                     </el-dropdown-menu>
                                                 </template>
@@ -247,7 +248,7 @@
                                                 v-for="attachment in conversation.attachments"
                                                 :key="attachment.file_hash"
                                             >
-                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                <el-icon style="vertical-align: middle;"><paperclip /></el-icon> <a target="_blank" rel="noopener"
                                                                                      :href="attachment.secureUrl">{{
                                                     attachment.title
                                                 }}</a>
@@ -271,7 +272,7 @@
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span style="margin-right: 5px" v-if="ticket.source == 'email'"
-                                                  :title="$t('Added By Email')"><i class="el-icon-message"></i></span>
+                                                  :title="$t('Added By Email')"><el-icon style="vertical-align: middle;"><message /></el-icon></span>
                                             <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
                                         </div>
                                     </div>
@@ -283,7 +284,7 @@
                                                 v-for="attachment in ticket.attachments"
                                                 :key="attachment.file_hash"
                                             >
-                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                <el-icon style="vertical-align: middle;"><paperclip /></el-icon> <a target="_blank" rel="noopener"
                                                                                      :href="attachment.secureUrl">{{
                                                     attachment.title
                                                 }}</a>
@@ -295,7 +296,7 @@
                             <div v-if="has_pro && !isEmpty(appVars.custom_fields)" class="fc_custom_data_wrap">
                                 <h3>{{ $t('Additional Data') }}
                                     <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text"
-                                               icon="el-icon-edit" size="mini"></el-button>
+                                               icon="EditPen" size="mini"></el-button>
                                 </h3>
                                 <ul v-if="!isEmpty(ticket.custom_fields)">
                                     <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">

@@ -6,7 +6,7 @@
                     <h3>{{ $t('Ticket Tags') }}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
-                    <el-button @click="createTagModal()" type="primary" icon="el-icon-plus" size="small">
+                    <el-button @click="createTagModal()" type="primary" icon="Plus" size="small">
                         {{ $t('Add New') }}
                     </el-button>
                 </div>
@@ -14,7 +14,7 @@
                     <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="mini"
                               :placeholder="$t('Search Tags')" v-model="search">
                         <template #append>
-                            <el-button @click="fetchTags" :disabled="!has_pro" icon="el-icon-search"></el-button>
+                            <el-button @click="fetchTags" :disabled="!has_pro" icon="Search"></el-button>
                         </template>
                     </el-input>
                 </div>
