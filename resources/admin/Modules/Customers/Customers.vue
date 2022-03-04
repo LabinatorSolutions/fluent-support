@@ -7,7 +7,7 @@
                     <el-button
                         @click="showEditCustomerModal({})"
                         size="mini"
-                        icon="el-icon-plus">{{ $t('Add Customer') }}
+                        icon="Plus">{{ $t('Add Customer') }}
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_customer_filters">
@@ -26,7 +26,7 @@
                     <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="mini"
                               :placeholder="$t('Search Customers')" v-model="search">
                         <template #append>
-                            <el-button @click="fetchCustomers()" icon="el-icon-search"></el-button>
+                            <el-button @click="fetchCustomers()" icon="Search"></el-button>
                         </template>
                     </el-input>
                 </div>
@@ -61,7 +61,7 @@
                         <el-table-column :label="$t('Stats')" width="180">
                             <template #default="scope">
                                 <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
-                                    <el-button size="small" type="text" icon="el-icon-folder" style="color:#409eff;">
+                                    <el-button size="small" type="text" icon="Folder" style="color:#409eff;">
                                         {{ scope.row.total_tickets }}
                                     </el-button>
                                 </router-link>
@@ -78,8 +78,8 @@
                                     :title="$t('Are you sure to delete this customer? It will delete all associated data with this customer')"
                                 >
                                     <template #reference>
-                                        <el-button size="small" type="text" icon="el-icon-delete" style="color:red;"/>
-                                        <span class="fs_badge"><i class="el-icon-delete"></i></span>
+                                        <el-button size="small" type="text" icon="Delete" style="color:red;"/>
+                                        <span class="fs_badge"><i class="Delete"></i></span>
                                     </template>
                                 </el-popconfirm>
 

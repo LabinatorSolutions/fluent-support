@@ -13,7 +13,7 @@
                     <el-input @keyup.enter="getProducts" clearable @clear="getProducts" size="mini"
                               :placeholder="$t('Search Products')" v-model="search">
                         <template #append>
-                            <el-button @click="getProducts" icon="el-icon-search"></el-button>
+                            <el-button @click="getProducts" icon="Search"></el-button>
                         </template>
                     </el-input>
                 </div>

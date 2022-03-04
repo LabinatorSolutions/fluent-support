@@ -101,7 +101,8 @@
                             </template>
                         </el-dropdown>
                     </div>
-                    <wp-editor v-model="editing_reply.content" />
+                    <wp-editor v-model="editing_reply.content"/>
+<!--                    <tinymce id="d1" v-model="editing_reply.content"></tinymce>-->
                 </el-form-item>
                 <el-form-item :label="$t('Prefered Product')">
                     <el-select :placeholder="$t('Select Product')" v-model="editing_reply.product_id" clearable size="small">
@@ -122,12 +123,14 @@
 <script title="text/babel">
 import Pagination from '../../Pieces/Pagination'
 import WpEditor from '../../Pieces/_wp_editor';
+// import tinymce from 'vue-tinymce-editor'
 
 export default {
     name: 'SavedReplies',
     components: {
         WpEditor,
-        Pagination
+        Pagination,
+        // tinymce
     },
     data() {
         return {

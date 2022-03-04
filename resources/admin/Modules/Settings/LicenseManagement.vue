@@ -9,7 +9,7 @@
                     <el-button
                         type="text"
                         size="medium"
-                        icon="el-icon-refresh"
+                        icon="Refresh"
                         @click="fetchLicense()">
                     </el-button>
                 </div>
@@ -27,7 +27,7 @@
                             <h3>{{$t('Your License Key')}}</h3>
                             <el-input v-model="licenseKey" placeholder="License Key">
                                 <template #append>
-                                    <el-button @click="verifyLicense()" icon="el-icon-lock">{{$t('Verify License')}}</el-button>
+                                    <el-button @click="verifyLicense()" icon="Lock">{{$t('Verify License')}}</el-button>
                                 </template>
                             </el-input>
                         </div>
