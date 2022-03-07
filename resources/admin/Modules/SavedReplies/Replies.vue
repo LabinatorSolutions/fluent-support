@@ -6,7 +6,7 @@
                     <h3>{{$t('Saved Replies')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="el-icon-plus" size="small">
+                    <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="Plus" size="small">
                         {{$t('Create New')}}
                     </el-button>
                 </div>
@@ -14,7 +14,7 @@
                     <el-input @keyup.enter="fetch" clearable @clear="fetch" :disabled="!has_pro" size="mini"
                               :placeholder="$t('Search Replies')" v-model="search">
                         <template #append>
-                            <el-button @click="fetch" :disabled="!has_pro" icon="el-icon-search"></el-button>
+                            <el-button @click="fetch" :disabled="!has_pro" icon="Search"></el-button>
                         </template>
                     </el-input>
                 </div>

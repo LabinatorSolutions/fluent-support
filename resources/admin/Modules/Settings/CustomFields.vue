@@ -6,7 +6,7 @@
                     <h3>{{$t('Custom Ticket Fields')}}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
-                    <el-button @click="addFieldVisible = true" type="primary" icon="el-icon-plus" size="small">
+                    <el-button @click="addFieldVisible = true" type="primary" icon="Plus" size="small">
                         {{$t('Add New Field')}}
                     </el-button>
                 </div>
@@ -17,8 +17,8 @@
                         <el-table-column :label="$t('Label')" prop="label">
                             <template #default="scope">
                                 {{scope.row.label || scope.row.admin_label}}
-                                <i title="Agent Only Field" v-if="scope.row.admin_only == 'yes'" class="el-icon-lock" />
-                                <i title="Conditional Field" v-if="scope.row.has_logics == 'yes'" class="el-icon-connection" />
+                                <el-icon :title="'Agent Only Field'" v-if="scope.row.admin_only == 'yes'"><Lock/></el-icon>
+                                <el-icon :title="'Conditional Field'" v-if="scope.row.has_logics == 'yes'"><Connection/></el-icon>
                             </template>
                         </el-table-column>
                         <el-table-column :label="$t('Slug')" prop="slug"></el-table-column>
@@ -26,20 +26,20 @@
                         <el-table-column width="160" :label="$t('Actions')">
                             <template #default="scope">
                                 <el-button type="text" @click="updateFieldModal(scope.$index)" size="medium"
-                                           icon="el-icon-edit"></el-button>
+                                           icon="EditPen"></el-button>
                                 <el-popconfirm :title="$t('custom_ticket_field_delete')"
                                                @confirm="deleteField(scope.$index)">
                                     <template #reference>
-                                        <el-button type="text" size="medium" icon="el-icon-delete" style="color: red; margin-right: .3em;"></el-button>
+                                        <el-button type="text" size="medium" icon="Delete" style="color: red; margin-right: .3em;"></el-button>
                                     </template>
                                 </el-popconfirm>
 
                                 <el-button-group>
                                     <el-button @click="movePosition(scope.$index, 'up')" :disabled="scope.$index == 0"
-                                               size="mini" icon="el-icon-arrow-up"></el-button>
+                                               size="mini" icon="ArrowUp"></el-button>
                                     <el-button @click="movePosition(scope.$index, 'down')"
                                                :disabled="scope.$index == (fields.length - 1)" size="mini"
-                                               icon="el-icon-arrow-down"></el-button>
+                                               icon="ArrowDown"></el-button>
                                 </el-button-group>
                             </template>
                         </el-table-column>

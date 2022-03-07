@@ -65,7 +65,7 @@
                                         {{ scope.row.total_tickets }}
                                     </el-button>
                                 </router-link>
-                                <el-button size="small" type="text" icon="el-icon-chat-line-round" style="color:#409eff;">
+                                <el-button size="small" type="text" icon="ChatLineRound" style="color:#409eff;">
                                     {{ scope.row.total_responses }}
                                 </el-button>
 
@@ -79,7 +79,7 @@
                                 >
                                     <template #reference>
                                         <el-button size="small" type="text" icon="Delete" style="color:red;"/>
-                                        <span class="fs_badge"><i class="Delete"></i></span>
+                                        <span class="fs_badge"><Delete /></span>
                                     </template>
                                 </el-popconfirm>
 

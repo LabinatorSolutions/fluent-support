@@ -70,6 +70,7 @@ import {
     Service,
     Message,
     ArrowDown,
+    ArrowUp,
     EditPen,
     Delete,
     Paperclip,
@@ -88,6 +89,11 @@ import {
     Cpu,
     AlarmClock,
     Connection,
+    InfoFilled,
+    CircleCheck,
+    UploadFilled,
+    Folder,
+    ChatLineRound
 } from '@element-plus/icons-vue/dist/es';
 
 const app = createApp({});
@@ -152,6 +158,7 @@ const components = [
     Service,
     Message,
     ArrowDown,
+    ArrowUp,
     EditPen,
     Delete,
     Paperclip,
@@ -170,6 +177,11 @@ const components = [
     Cpu,
     AlarmClock,
     Connection,
+    InfoFilled,
+    CircleCheck,
+    UploadFilled,
+    Folder,
+    ChatLineRound
 ];
 
 components.forEach(component => {
