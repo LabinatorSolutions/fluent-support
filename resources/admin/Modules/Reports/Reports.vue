@@ -9,7 +9,7 @@
                                 <el-dropdown style="display: inline-block; cursor: pointer; line-height: 100%;" @command="handleComponentChange" trigger="hover">
                                     <span class="el-dropdown-link">
                                         {{ chartMaps[currently_showing] }}
-                                        <i class="el-icon-arrow-down el-icon--right"></i>
+                                        <el-icon> <ArrowDown /> </el-icon>
                                     </span>
                                     <template #dropdown>
                                         <el-dropdown-menu>

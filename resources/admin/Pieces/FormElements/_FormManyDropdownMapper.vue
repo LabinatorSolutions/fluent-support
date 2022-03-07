@@ -39,7 +39,7 @@
             </td>
             <td>
                 <div class="text-align-right">
-                    <el-button @click="addMore()" size="small" icon="el-icon-plus">{{$t('Add More')}}</el-button>
+                    <el-button @click="addMore()" size="small" icon="Plus">{{$t('Add More')}}</el-button>
                 </div>
             </td>
         </tr>
