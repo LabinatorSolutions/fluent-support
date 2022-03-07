@@ -52,8 +52,7 @@
                         </div>
                         <div class="fs_cond_or">
                             <em @click="addConditionGroup()"
-                                style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><i
-                                class="el-icon-plus"></i> OR</em>
+                                style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> OR</em>
                         </div>
 
                         <el-button type="primary" size="small" @click="fetchTickets()">{{ $t('Filter') }}

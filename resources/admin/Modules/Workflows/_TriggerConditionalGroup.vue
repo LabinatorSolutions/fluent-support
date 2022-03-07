@@ -80,7 +80,7 @@
         </div>
 
         <div class="fs_add_new_cond text-align-center">
-            <el-button @click="addMore()" size="small" type="text" icon="el-icon-plus">{{$t('OR')}}</el-button>
+            <el-button @click="addMore()" size="small" type="text" icon="Plus">{{$t('OR')}}</el-button>
         </div>
 
     </div>

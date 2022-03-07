@@ -22,8 +22,8 @@
             >
                 <template #reference>
                     <span @click="popVisible = !popVisible" style="cursor: pointer"
-                          class="fs_add_tag_icon el-tag el-tag--mini el-tag--plain"><i
-                        class="el-icon-plus"></i></span>
+                          class="fs_add_tag_icon el-tag el-tag--mini el-tag--plain"><el-icon style="vertical-align: middle;"><Plus /></el-icon>
+                    </span>
                 </template>
 
                 <h4>{{$t('Apply / Remove Tags on FluentCRM Profile')}}</h4>

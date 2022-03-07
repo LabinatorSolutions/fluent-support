@@ -296,7 +296,7 @@
                             <div v-if="has_pro && !isEmpty(appVars.custom_fields)" class="fc_custom_data_wrap">
                                 <h3>{{ $t('Additional Data') }}
                                     <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text"
-                                               icon="EditPen" size="mini"></el-button>
+                                               icon="EditPen" size="small"></el-button>
                                 </h3>
                                 <ul v-if="!isEmpty(ticket.custom_fields)">
                                     <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">

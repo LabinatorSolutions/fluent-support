@@ -3,20 +3,6 @@ import Application from './Application';
 import { createWebHashHistory, createRouter } from 'vue-router'
 import routes from "./routes";
 
-// import  ElUpload from "element-plus/lib/el-upload";
-// import  ElLoading from "element-plus/lib/el-loading";
-// import  ElSkeleton from "element-plus/lib/el-skeleton";
-// import  ElButton from "element-plus/lib/el-button";
-// import  ElCheckbox from "element-plus/lib/el-checkbox";
-// import  ElForm from "element-plus/lib/el-form";
-// import  ElFormItem from "element-plus/lib/el-form-item";
-// import  ElInput from "element-plus/lib/el-input";
-// import  ElSelect from "element-plus/lib/el-select";
-// import  ElOption from "element-plus/lib/el-option";
-// import  ElRadioGroup from "element-plus/lib/el-radio-group";
-// import  ElCheckboxGroup from "element-plus/lib/el-checkbox-group";
-// import  ElRadio from "element-plus/lib/el-radio";
-// import  ElTag from "element-plus/lib/el-tag";
 
 import {
     ElUpload,
@@ -34,6 +20,8 @@ import {
     ElRadio,
     ElTag
 } from 'element-plus';
+
+import {Refresh} from '@element-plus/icons-vue/dist/es';
 
 const app = createApp(Application);
 
@@ -56,22 +44,11 @@ const components = [
     ElRadioGroup,
     ElCheckboxGroup,
     ElRadio,
-    ElTag
-];
+    ElTag,
 
-// app.component(ElUpload.name, ElUpload)
-// app.component(ElSkeleton.name, ElSkeleton)
-// app.component(ElButton.name, ElButton)
-// app.component(ElCheckbox.name, ElCheckbox)
-// app.component(ElForm.name, ElForm)
-// app.component(ElFormItem.name, ElFormItem)
-// app.component(ElInput.name, ElInput)
-// app.component(ElSelect.name, ElSelect)
-// app.component(ElOption.name, ElOption)
-// app.component(ElRadioGroup.name, ElRadioGroup)
-// app.component(ElRadio.name, ElRadio)
-// app.component(ElCheckboxGroup.name, ElCheckboxGroup)
-// app.component(ElTag.name, ElTag)
+    // Icon component
+    Refresh
+];
 
 components.forEach(component => {
     app.component(component.name, component)

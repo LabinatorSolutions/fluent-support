@@ -3,11 +3,10 @@
         <el-popover
             placement="bottom"
             :width="400"
-            v-model:visible="visible"
             trigger="click"
         >
             <template #reference>
-                <el-icon><lightning /></el-icon>
+               <el-icon style="vertical-align: middle;"><Lightning /></el-icon>
             </template>
 
             <ul class="fs_workflows_list">
