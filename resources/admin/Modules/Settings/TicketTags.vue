@@ -35,11 +35,11 @@
                         <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
                                 <el-button @click="editTagModal(scope.row)" size="medium" type="text"
-                                           icon="el-icon-edit"></el-button>
+                                           icon="EditPen"></el-button>
                                 <el-popconfirm
                                     :confirm-button-text="$t('Yes, Delete this')"
                                     :cancel-button-text="$t('No')"
-                                    icon="el-icon-info"
+                                    icon="InfoFilled"
                                     icon-color="red"
                                     :title="$t('tag_delete_warning')"
                                     @confirm="deleteTag(scope.row)"
@@ -48,7 +48,7 @@
                                         <el-button v-loading="fetching" style="margin-left: 10px; color: red;"
                                                    type="text"
                                                    size="medium"
-                                                   icon="el-icon-delete"></el-button>
+                                                   icon="Delete"></el-button>
                                     </template>
                                 </el-popconfirm>
                             </template>

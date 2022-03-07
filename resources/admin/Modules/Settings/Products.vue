@@ -6,7 +6,7 @@
                     <h3>{{$t('Products')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button @click="createTicketModal()" type="primary" icon="el-icon-plus" size="small">{{$t('Create New')}}
+                    <el-button @click="createTicketModal()" type="primary" icon="Plus" size="small">{{$t('Create New')}}
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
@@ -26,11 +26,11 @@
                     <el-table-column width="120" :label="$t('Action')">
                         <template #default="scope">
                             <el-button @click="editProductModal(scope.row)" size="medium" type="text"
-                                       icon="el-icon-edit"></el-button>
+                                       icon="EditPen"></el-button>
                             <el-popconfirm
                                 :confirm-button-text="$t('Yes, Delete this')"
                                 :cancel-button-text="$t('No')"
-                                icon="el-icon-info"
+                                icon="InfoFilled"
                                 icon-color="red"
                                 :title="$t('product_delete_warning')"
                                 @confirm="deleteProduct(scope.row)"
@@ -38,7 +38,7 @@
                                 <template #reference>
                                     <el-button v-loading="fetching" style="margin-left: 10px; color: red;" type="text"
                                                size="medium"
-                                               icon="el-icon-delete"></el-button>
+                                               icon="Delete"></el-button>
                                 </template>
                             </el-popconfirm>
                         </template>

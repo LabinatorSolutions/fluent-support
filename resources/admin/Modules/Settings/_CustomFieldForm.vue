@@ -136,10 +136,10 @@
                         </td>
                         <td>
                             <el-button @click="addCondition(conditionIndex)" size="mini" type="success"
-                                       icon="el-icon-plus"/>
+                                       icon="Plus"/>
                             <el-button @click="removeCondition(conditionIndex)" :disabled="item.conditions.length == 1"
                                        size="mini" type="danger"
-                                       icon="el-icon-delete"/>
+                                       icon="Delete"/>
                         </td>
                     </tr>
                     </tbody>
