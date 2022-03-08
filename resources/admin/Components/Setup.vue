@@ -104,7 +104,7 @@
                 </template>
                 <div v-else>
                     <div class="text-align-center">
-                        <h1 style="font-size: 45px; color: #7757e6;"><i class="el-icon-circle-check"></i></h1>
+                        <h1 style="font-size: 45px; color: #7757e6;"><el-icon> <CircleCheck/> </el-icon></h1>
                         <h2>{{ $t('support_portal_ready') }}</h2>
                     </div>
                     <hr/>

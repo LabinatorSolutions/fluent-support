@@ -95,7 +95,8 @@ import {
     Folder,
     ChatLineRound,
     PriceTag,
-    Finished
+    Finished,
+    Box
 } from '@element-plus/icons-vue/dist/es';
 
 const app = createApp({});
@@ -185,7 +186,8 @@ const components = [
     Folder,
     ChatLineRound,
     PriceTag,
-    Finished
+    Finished,
+    Box
 ];
 
 components.forEach(component => {

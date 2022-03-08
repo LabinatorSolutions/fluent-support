@@ -73,7 +73,7 @@
                                                 v-for="attachment in conversation.attachments"
                                                 :key="attachment.file_hash"
                                             >
-                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                <el-icon> <Paperclip /> </el-icon> <a target="_blank" rel="noopener"
                                                                                      :href="attachment.secureUrl">{{
                                                     attachment.title
                                                 }}</a>
@@ -107,7 +107,7 @@
                                                 v-for="attachment in ticket.attachments"
                                                 :key="attachment.file_hash"
                                             >
-                                                <i class="el-icon-paperclip"></i> <a target="_blank" rel="noopener"
+                                                <el-icon> <Paperclip /> </el-icon> <a target="_blank" rel="noopener"
                                                                                      :href="attachment.secureUrl">{{
                                                     attachment.title
                                                 }}</a>

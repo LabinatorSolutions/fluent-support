@@ -8,7 +8,7 @@
         </div>
         <span style="color: #f06060;" v-if="crm_profile.name_mismatch">{{ crm_profile.full_name }}</span>
         <div class="fs_taggables">
-            <i class="dashicons dashicons-tag"></i>
+            <i class="dashicons dashicons-tag" style="vertical-align: middle"></i>
             <span class="el-tag el-tag--mini el-tag--plain" v-for="tag in crm_profile.tags" :key="tag.id">{{
                     tag.title
                 }}</span>

@@ -21,7 +21,10 @@ import {
     ElTag
 } from 'element-plus';
 
-import {Refresh} from '@element-plus/icons-vue/dist/es';
+import {
+    Refresh,
+    Paperclip
+} from '@element-plus/icons-vue/dist/es';
 
 const app = createApp(Application);
 
@@ -47,7 +50,8 @@ const components = [
     ElTag,
 
     // Icon component
-    Refresh
+    Refresh,
+    Paperclip
 ];
 
 components.forEach(component => {
