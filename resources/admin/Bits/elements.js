@@ -93,7 +93,9 @@ import {
     CircleCheck,
     UploadFilled,
     Folder,
-    ChatLineRound
+    ChatLineRound,
+    PriceTag,
+    Finished
 } from '@element-plus/icons-vue/dist/es';
 
 const app = createApp({});
@@ -181,7 +183,9 @@ const components = [
     CircleCheck,
     UploadFilled,
     Folder,
-    ChatLineRound
+    ChatLineRound,
+    PriceTag,
+    Finished
 ];
 
 components.forEach(component => {

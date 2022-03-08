@@ -6,7 +6,7 @@
                     <h3>{{ $t('Business Inboxes') }}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button size="small" @click="showNewBusinessModal()" type="primary">
+                    <el-button size="medium" @click="showNewBusinessModal()" type="primary">
                         {{ $t('Add New Business Inbox') }}
                     </el-button>
                 </div>
@@ -19,16 +19,16 @@
                                 <h3>{{ box.name }}</h3>
                                 <el-dropdown @command="handleBoxCommand" class="fs_mail_action" trigger="click">
                                       <span class="el-dropdown-link">
-                                            <i class="el-icon-arrow-down el-icon--right"></i>
+                                            <el-icon><ArrowDown /></el-icon>
                                       </span>
                                     <template #dropdown>
                                         <el-dropdown-menu>
                                             <el-dropdown-item v-if="box.tickets_count > 0" :command="{ type: 'move', box_id: box.id }"
-                                                              icon="el-icon-edit">{{ $t('Move Tickets') }}
+                                                              icon="EditPen">{{ $t('Move Tickets') }}
                                             </el-dropdown-item>
 
                                             <el-dropdown-item :command="{ type: 'delete', box_id: box.id }"
-                                                              icon="el-icon-delete">{{ $t('Delete') }}
+                                                              icon="Delete">{{ $t('Delete') }}
                                             </el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>

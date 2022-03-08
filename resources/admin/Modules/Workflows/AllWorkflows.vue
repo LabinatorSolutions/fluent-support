@@ -6,7 +6,7 @@
                     <h3>{{ $t('All Workflows') }}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions fs_ticket_orders">
-                    <el-button type="primary" @click="showAddModal = true" size="small" icon="Plus">{{
+                    <el-button type="primary" @click="showAddModal = true" size="medium" icon="Plus">{{
                             $t('Add New WorkFlow')
                         }}
                     </el-button>

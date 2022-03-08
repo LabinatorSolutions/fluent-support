@@ -5,7 +5,7 @@
                 <span class="fc_trigger_name">{{ actions[action.action_name].title }}</span>
             </div>
             <div class="fc_trigger_actions">
-                <span class="fc_item_open"><i class="el-icon el-icon-arrow-down"></i></span>
+                <span class="fc_item_open"><el-icon><ArrowDown /></el-icon></span>
             </div>
         </div>
         <div class="fcon_trigger_details">
@@ -41,7 +41,7 @@
                                 :title="$t('delete_action_warning')"
                             >
                                 <template #reference>
-                                    <el-button type="danger" plain size="small" icon="el-icon-delete"></el-button>
+                                    <el-button type="danger" plain size="small" icon="Delete"></el-button>
                                 </template>
                             </el-popconfirm>
                         </div>
