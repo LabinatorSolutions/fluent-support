@@ -6,7 +6,7 @@
                 <template #content>
                     <span v-html="field.help"></span>
                 </template>
-                <i class="tooltip-icon el-icon-info"></i>
+                <el-icon> <InfoFilled /> </el-icon>
             </el-tooltip>
         </div>
         <slot></slot>
