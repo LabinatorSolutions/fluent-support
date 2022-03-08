@@ -122,12 +122,10 @@
 <script title="text/babel">
 import Pagination from '../../Pieces/Pagination'
 import WpEditor from '../../Pieces/_wp_editor';
-import Modal from "@/admin/Pieces/Modal";
 
 export default {
     name: 'SavedReplies',
     components: {
-        Modal,
         WpEditor,
         Pagination,
     },
