@@ -4,7 +4,7 @@
             <ul v-loading="working" class="fs_tk_actions">
                 <li :title="$t('Add Reply')"
                     @click="add_response_modal = true">
-                    <i class="el-icon-chat-line-square"/>
+                    <el-icon> <ChatLineSquare /> </el-icon>
                 </li>
                 <li :title="$t('Assign Agent ')">
                     <el-popover
@@ -14,8 +14,9 @@
                         v-model:visible="assignAgentPop"
                     >
                         <template #reference>
-                            <i :class="{fs_pop_active: assignAgentPop}" @click="togglePop('assignAgentPop')"
-                               class="el-icon-user"/>
+                            <el-icon :class="{'fs_pop_active': assignAgentPop}" @click="togglePop('assignAgentPop')">
+                                <User />
+                            </el-icon>
                         </template>
 
                         <div class="fs_extended_pop">
@@ -31,7 +32,7 @@
                                        type="danger">
                                 {{$t('Assign Agent')}}
                             </el-button>
-                            <el-button @click="assignAgentPop = false" size="small" type="default">{{$t('Close')}}</el-button>
+                            <el-button @click="assignAgentPop = false" size="small" type="default" style="margin-top: 20px;">{{$t('Close')}}</el-button>
                         </div>
                     </el-popover>
                 </li>
@@ -46,8 +47,9 @@
                         v-model:visible="addTagPop"
                     >
                         <template #reference>
-                            <i @click="togglePop('addTagPop')" :class="{fs_pop_active: assignAgentPop}"
-                               class="el-icon-price-tag"/>
+                            <el-icon @click="togglePop('addTagPop')" :class="{fs_pop_active: assignAgentPop}">
+                                <PriceTag />
+                            </el-icon>
                         </template>
                         <div class="fs_extended_pop">
                             <el-select :multiple="true" filterable v-model="tag_ids">
@@ -71,7 +73,7 @@
                         trigger="click"
                     >
                         <template #reference>
-                            <i @click="togglePop()" class="el-icon-finished"/>
+                            <el-icon @click="togglePop()"> <Finished /> </el-icon>
                         </template>
                         <p>{{$t('close_selected_ticket_warning')}}</p>
                         <el-button style="margin-top: 20px;" size="small" type="success"
@@ -86,7 +88,7 @@
                         trigger="click"
                     >
                         <template #reference>
-                            <i @click="togglePop()" class="el-icon-delete"/>
+                            <el-icon @click="togglePop()"> <Delete /> </el-icon>
                         </template>
                         <p>{{$t('delete_selected_ticket_warning')}}</p>
                         <el-button style="margin-top: 20px;" size="small" type="danger"

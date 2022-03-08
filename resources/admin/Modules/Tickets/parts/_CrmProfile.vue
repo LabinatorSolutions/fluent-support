@@ -8,7 +8,7 @@
         </div>
         <span style="color: #f06060;" v-if="crm_profile.name_mismatch">{{ crm_profile.full_name }}</span>
         <div class="fs_taggables">
-            <i class="dashicons dashicons-tag"></i>
+            <i class="dashicons dashicons-tag" style="vertical-align: middle"></i>
             <span class="el-tag el-tag--mini el-tag--plain" v-for="tag in crm_profile.tags" :key="tag.id">{{
                     tag.title
                 }}</span>
@@ -22,8 +22,8 @@
             >
                 <template #reference>
                     <span @click="popVisible = !popVisible" style="cursor: pointer"
-                          class="fs_add_tag_icon el-tag el-tag--mini el-tag--plain"><i
-                        class="el-icon-plus"></i></span>
+                          class="fs_add_tag_icon el-tag el-tag--mini el-tag--plain"><el-icon style="vertical-align: middle;"><Plus /></el-icon>
+                    </span>
                 </template>
 
                 <h4>{{$t('Apply / Remove Tags on FluentCRM Profile')}}</h4>

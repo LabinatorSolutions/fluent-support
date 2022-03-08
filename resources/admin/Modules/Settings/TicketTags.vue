@@ -6,7 +6,7 @@
                     <h3>{{ $t('Ticket Tags') }}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
-                    <el-button @click="createTagModal()" type="primary" icon="el-icon-plus" size="small">
+                    <el-button @click="createTagModal()" type="primary" icon="Plus" size="small">
                         {{ $t('Add New') }}
                     </el-button>
                 </div>
@@ -14,7 +14,7 @@
                     <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="mini"
                               :placeholder="$t('Search Tags')" v-model="search">
                         <template #append>
-                            <el-button @click="fetchTags" :disabled="!has_pro" icon="el-icon-search"></el-button>
+                            <el-button @click="fetchTags" :disabled="!has_pro" icon="Search"></el-button>
                         </template>
                     </el-input>
                 </div>
@@ -35,11 +35,11 @@
                         <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
                                 <el-button @click="editTagModal(scope.row)" size="medium" type="text"
-                                           icon="el-icon-edit"></el-button>
+                                           icon="EditPen"></el-button>
                                 <el-popconfirm
                                     :confirm-button-text="$t('Yes, Delete this')"
                                     :cancel-button-text="$t('No')"
-                                    icon="el-icon-info"
+                                    icon="InfoFilled"
                                     icon-color="red"
                                     :title="$t('tag_delete_warning')"
                                     @confirm="deleteTag(scope.row)"
@@ -48,7 +48,7 @@
                                         <el-button v-loading="fetching" style="margin-left: 10px; color: red;"
                                                    type="text"
                                                    size="medium"
-                                                   icon="el-icon-delete"></el-button>
+                                                   icon="Delete"></el-button>
                                     </template>
                                 </el-popconfirm>
                             </template>

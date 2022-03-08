@@ -29,7 +29,7 @@
                                     drag
                                 >
                                     <img v-if="customer.photo" :src="customer.photo" class="avatar"/>
-                                    <i class="el-icon-upload avatar-uploader-icon"></i>
+                                    <el-icon> <UploadFilled /> </el-icon>
                                 </el-upload>
                             </div>
                             <customer-form v-if="customer.id" :customer="customer" style="margin-top: 4em;"/>
@@ -88,7 +88,7 @@
                             params: { ticket_id: other_ticket.id },
                             query: {prev_ticket: ticket_id}
                         }">
-                                                <i class="el-icon-message"></i> {{ other_ticket.title }} <span class="fs_badge" :class="'fs_badge_'+other_ticket.status">{{other_ticket.status}}</span>
+                                                <el-icon> <Message /> </el-icon> {{ other_ticket.title }} <span class="fs_badge" :class="'fs_badge_'+other_ticket.status">{{other_ticket.status}}</span>
                                             </router-link>
                                         </li>
                                     </ul>

@@ -73,7 +73,7 @@
             <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="mini"
                       :placeholder="$t('Please input')" v-model="searchInput">
                 <template #append>
-                    <el-button @click="fetchTickets()" icon="el-icon-search"></el-button>
+                    <el-button @click="fetchTickets()" icon="Search"></el-button>
                 </template>
             </el-input>
         </div>

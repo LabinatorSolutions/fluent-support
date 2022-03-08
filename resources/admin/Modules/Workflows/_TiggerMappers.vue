@@ -19,8 +19,7 @@
                 </p>
             </div>
             <div class="fs_cond_and">
-                <em style="cursor: pointer;color: #07c;font-weight: bold;" @click="addMore()"><i
-                    class="el-icon-plus"></i> {{$t('AND')}}</em>
+                <em style="cursor: pointer;color: #07c;font-weight: bold;" @click="addMore()"><el-icon><Plus /></el-icon> {{$t('AND')}}</em>
             </div>
         </div>
 

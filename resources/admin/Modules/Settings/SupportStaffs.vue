@@ -5,7 +5,7 @@
                 <h3>{{$t('Support Staff')}}</h3>
             </div>
             <div class="fs_box_actions">
-                <el-button @click="createStaffModal()" type="primary" icon="el-icon-plus" size="small">
+                <el-button @click="createStaffModal()" type="primary" icon="Plus" size="small">
                     {{$t('Add New')}}
                 </el-button>
             </div>
@@ -13,7 +13,7 @@
                 <el-input @keyup.enter="fetchAgents" clearable @clear="fetchAgents" size="mini"
                           :placeholder="$t('Search Agents')" v-model="search">
                     <template #append>
-                        <el-button @click="fetchAgents" icon="el-icon-search"></el-button>
+                        <el-button @click="fetchAgents" icon="Search"></el-button>
                     </template>
                 </el-input>
             </div>
@@ -33,7 +33,7 @@
                                 :show-file-list="false"
                                 drag>
                                 <img :src='scope.row.photo' class="custom-avatar" :alt='scope.row.full_name'/>
-                                <i class="el-icon-upload avatar-uploader-icon" :id='"avatar-uploader-icon-"+scope.row.id'></i>
+                                <el-icon :class='"avatar-uploader-icon avatar-uploader-icon-"+scope.row.id'><upload-filled /></el-icon>
                             </el-upload>
                         </div>
                     </template>
@@ -63,8 +63,8 @@
                 <el-table-column :label="$t('Interactions')" prop="interactions_count" width="120"/>
                 <el-table-column :label="$t('Actions')" width="100">
                     <template #default="scope">
-                        <el-button @click="initEdit(scope.row)" size="medium" type="text" icon="el-icon-edit" />
-                        <el-button @click="deleteAgent(scope.row.id)" size="medium" type="text" icon="el-icon-delete" style="color:red;"/>
+                        <el-button @click="initEdit(scope.row)" size="medium" type="text" icon="EditPen" />
+                        <el-button @click="deleteAgent(scope.row.id)" size="medium" type="text" icon="Delete" style="color:red;"/>
                     </template>
                 </el-table-column>
             </el-table>
@@ -169,7 +169,8 @@ export default {
             upload_url: this.appVars.rest.url+'/agents/',
             requestHeaders: {
                 'X-WP-Nonce': this.appVars.rest.nonce
-            }
+            },
+            show_icon: false
         }
     },
     methods: {
@@ -296,10 +297,10 @@ export default {
             });
         },
         showIcon(id) {
-            document.querySelector('#avatar-uploader-icon-'+id).style.display = 'initial';
+            document.querySelector('.avatar-uploader-icon-'+id).style.display = 'initial';
         },
         hideIcon(id) {
-            document.querySelector('#avatar-uploader-icon-'+id).style.display = 'none';
+            document.querySelector('.avatar-uploader-icon-'+id).style.display = 'none';
         }
     },
     mounted() {
@@ -322,7 +323,7 @@ export default {
             font-size: 2.2em;
             color: #fafafa;
             position: absolute;
-            top: -1.2em;
+            top: 0.2em;
             left: 1.1em;
         }
         .el-upload-dragger {

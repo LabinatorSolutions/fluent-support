@@ -2,9 +2,9 @@
     <div>
         <el-select v-loading="loading" clearable filterable :placeholder="field.placeholder" v-model="modelValue">
             <el-option
-                v-for="(county,countryCode) in countries"
+                v-for="(country,countryCode) in countries"
                 :key="countryCode"
-                :label="county"
+                :label="country"
                 :value="countryCode">
             </el-option>
         </el-select>

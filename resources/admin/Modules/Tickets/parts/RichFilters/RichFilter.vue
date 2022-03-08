@@ -18,7 +18,7 @@
                                    :options="filterOptions"
                                    v-model="new_item"/>
                 <template #reference>
-                    <el-button @click="addVisible = !addVisible" size="small" icon="el-icon-plus">Add</el-button>
+                    <el-button @click="addVisible = !addVisible" size="small" icon="Plus">Add</el-button>
                 </template>
             </el-popover>
             {{$t('advance_filter_help_text')}}
@@ -35,7 +35,7 @@
                                    :options="filterOptions"
                                    v-model="new_item"/>
                 <template #reference>
-                    <el-button @click="addVisible = !addVisible" size="small" icon="el-icon-plus" style="margin-top: 0.7em;
+                    <el-button @click="addVisible = !addVisible" size="small" icon="Plus" style="margin-top: 0.7em;
 ">And</el-button>
                 </template>
             </el-popover>

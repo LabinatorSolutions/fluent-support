@@ -6,15 +6,15 @@
                     <h3>{{$t('Saved Replies')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="el-icon-plus" size="small">
+                    <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="Plus" size="medium">
                         {{$t('Create New')}}
                     </el-button>
                 </div>
-                <div class="fs_box_actions fs_ticket_orders">
+                <div class="fs_box_actions fs_ticket_orders" style="margin-right: 0.7em;">
                     <el-input @keyup.enter="fetch" clearable @clear="fetch" :disabled="!has_pro" size="mini"
                               :placeholder="$t('Search Replies')" v-model="search">
                         <template #append>
-                            <el-button @click="fetch" :disabled="!has_pro" icon="el-icon-search"></el-button>
+                            <el-button @click="fetch" :disabled="!has_pro" icon="Search"></el-button>
                         </template>
                     </el-input>
                 </div>
@@ -42,11 +42,11 @@
                         <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
                                 <el-button @click="editModal(scope.row)" size="medium"
-                                           icon="el-icon-edit" type="text" ></el-button>
+                                           icon="EditPen" type="text" ></el-button>
                               <el-popconfirm
                                   :confirm-button-text="$t('Yes, Delete this')"
                                   :cancel-button-text="$t('No')"
-                                  icon="el-icon-info"
+                                  icon="InfoFilled"
                                   icon-color="red"
                                   :title="$t('replies_delete_warning')"
                                   @confirm="deleteReply(scope.row)"
@@ -54,7 +54,7 @@
                                 <template #reference>
                                   <el-button v-loading="loading" style="margin-left: 10px; color: red;" type="text"
                                              size="medium"
-                                             icon="el-icon-delete"></el-button>
+                                             icon="Delete"></el-button>
                                 </template>
                               </el-popconfirm>
                             </template>
@@ -89,8 +89,8 @@
                 <el-form-item :label="$t('Content')">
                     <div class="fc_template_box">
                         <el-dropdown type="primary" trigger="click">
-                            <el-button size="mini" type="primary" style="margin-right: .3em;">
-                                {{$t('Shortcodes')}} <i class="el-icon-arrow-down"></i>
+                            <el-button size="small" type="primary" style="margin-right: .3em;">
+                                {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
                             </el-button>
                             <template #dropdown>
                                 <el-dropdown-menu>
@@ -101,7 +101,7 @@
                             </template>
                         </el-dropdown>
                     </div>
-                    <wp-editor v-model="editing_reply.content" />
+                    <wp-editor v-model="editing_reply.content"/>
                 </el-form-item>
                 <el-form-item :label="$t('Prefered Product')">
                     <el-select :placeholder="$t('Select Product')" v-model="editing_reply.product_id" clearable size="small">
@@ -127,7 +127,7 @@ export default {
     name: 'SavedReplies',
     components: {
         WpEditor,
-        Pagination
+        Pagination,
     },
     data() {
         return {
@@ -155,7 +155,8 @@ export default {
                 '{{agent.full_name}}' : 'Agent Full Name',
                 '{{agent.email}}' : 'Agent Email',
                 '{{agent.title}}' : 'Agent Title'
-            }
+            },
+            open: false
         }
     },
     methods: {

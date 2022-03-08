@@ -25,7 +25,7 @@
 
         <template slot="reference">
             <slot name="reference">
-                <i class="el-icon-delete"/>
+                <el-icon> <Delete /> </el-icon>
             </slot>
         </template>
     </el-popover>

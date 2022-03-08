@@ -1,5 +1,4 @@
 import { createApp } from 'vue';
-
 import {
     ElMenu,
     ElMenuItem,
@@ -60,6 +59,46 @@ import {
     ElNotification
 } from 'element-plus';
 
+import {
+    Notebook,
+    ChatLineSquare,
+    User,
+    Lightning,
+    Refresh,
+    Goods,
+    OfficeBuilding,
+    Service,
+    Message,
+    ArrowDown,
+    ArrowUp,
+    EditPen,
+    Delete,
+    Paperclip,
+    Stopwatch,
+    Tickets,
+    View,
+    Plus,
+    Flag,
+    CaretBottom,
+    CaretTop,
+    Search,
+    Setting,
+    Lock,
+    CollectionTag,
+    Document,
+    Cpu,
+    AlarmClock,
+    Connection,
+    InfoFilled,
+    CircleCheck,
+    UploadFilled,
+    Folder,
+    ChatLineRound,
+    PriceTag,
+    Finished,
+    Box
+} from '@element-plus/icons-vue/dist/es';
+
 const app = createApp({});
 
 const components = [
@@ -109,7 +148,46 @@ const components = [
     ElTag,
     ElSelectV2,
     ElCascader,
-    ElCascaderPanel
+    ElCascaderPanel,
+
+    // Icons
+    Notebook,
+    ChatLineSquare,
+    User,
+    Lightning,
+    Refresh,
+    Goods,
+    OfficeBuilding,
+    Service,
+    Message,
+    ArrowDown,
+    ArrowUp,
+    EditPen,
+    Delete,
+    Paperclip,
+    Stopwatch,
+    Tickets,
+    View,
+    Plus,
+    Flag,
+    CaretBottom,
+    CaretTop,
+    Search,
+    Setting,
+    Lock,
+    CollectionTag,
+    Document,
+    Cpu,
+    AlarmClock,
+    Connection,
+    InfoFilled,
+    CircleCheck,
+    UploadFilled,
+    Folder,
+    ChatLineRound,
+    PriceTag,
+    Finished,
+    Box
 ];
 
 components.forEach(component => {

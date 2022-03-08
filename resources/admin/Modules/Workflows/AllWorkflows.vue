@@ -6,7 +6,7 @@
                     <h3>{{ $t('All Workflows') }}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions fs_ticket_orders">
-                    <el-button type="primary" @click="showAddModal = true" size="small" icon="el-icon-plus">{{
+                    <el-button type="primary" @click="showAddModal = true" size="medium" icon="Plus">{{
                             $t('Add New WorkFlow')
                         }}
                     </el-button>
@@ -30,12 +30,12 @@
                         <el-table-column label="Actions" width="120">
                             <template #default="scope">
                                 <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
-                                    <i class="el-icon-edit"></i>
+                                    <el-icon> <EditPen /> </el-icon>
                                 </router-link>
                                 <el-popconfirm
                                     :confirm-button-text="$t('Yes, Delete this')"
                                     :cancel-button-text="$t('No')"
-                                    icon="el-icon-info"
+                                    icon="InfoFilled"
                                     icon-color="red"
                                     :title="$t('Are you sure to delete this? All associate data will be deleted')"
                                     @confirm="deleteWorkflow(scope.row.id)"
@@ -43,7 +43,7 @@
                                     <template #reference>
                                         <el-button v-loading="deleting" style="margin-left: 10px; color: red;" type="text"
                                                    size="mini"
-                                                   icon="el-icon-delete"></el-button>
+                                                   icon="Delete"></el-button>
                                     </template>
                                 </el-popconfirm>
                             </template>

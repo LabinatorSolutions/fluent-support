@@ -9,7 +9,7 @@
                     <el-button
                         type="text"
                         size="medium"
-                        icon="el-icon-refresh"
+                        icon="Refresh"
                         @click="fetchLicense()">
                     </el-button>
                 </div>
@@ -27,13 +27,13 @@
                             <h3>{{$t('Your License Key')}}</h3>
                             <el-input v-model="licenseKey" placeholder="License Key">
                                 <template #append>
-                                    <el-button @click="verifyLicense()" icon="el-icon-lock">{{$t('Verify License')}}</el-button>
+                                    <el-button @click="verifyLicense()" icon="Lock">{{$t('Verify License')}}</el-button>
                                 </template>
                             </el-input>
                         </div>
                     </div>
                     <div v-else-if="licenseData.status == 'valid'">
-                        <div class="text-align-center"><span style="font-size: 50px;" class="el-icon el-icon-circle-check"></span></div>
+                        <el-icon style="font-size: 50px; text-align: center;"><circle-check /></el-icon>
                         <h2>{{$t('Your license key is valid and activated')}}</h2>
                         <hr style="margin: 20px 0px;" />
                         <p>{{$t('Want to deactivate this license?')}} <a @click.prevent="deactivateLicense()" href="#">{{$t('Click here')}}</a></p>
@@ -42,7 +42,7 @@
                         <h3>{{$t('Please Provide a license key of FluentSupport - Customer Support Plugin for WordPress')}}</h3>
                         <el-input v-model="licenseKey" placeholder="License Key">
                             <template #append>
-                                <el-button @click="verifyLicense()" icon="el-icon-lock">{{$t('Verify License')}}</el-button>
+                                <el-button @click="verifyLicense()" icon="Lock">{{$t('Verify License')}}</el-button>
                             </template>
                         </el-input>
                         <hr style="margin: 20px 0 30px;" />
