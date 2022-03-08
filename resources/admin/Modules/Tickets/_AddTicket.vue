@@ -135,7 +135,7 @@ export default {
                 title: '',
                 content: '',
                 product_id: '',
-                client_priority: '',
+                client_priority: 'normal',
                 custom_fields: CustomFieldForm.data(),
                 create_customer: 'no',
                 create_wp_user: 'no'
