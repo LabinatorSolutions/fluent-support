@@ -85,6 +85,10 @@ export default {
                 this.formData = this.custom_data;
             }
 
+            if (!isEmpty(this.custom_data)) {
+                this.formData = this.custom_data;
+            }
+
             if (isEmpty(this.formData)) {
                 this.formData = {};
             }
