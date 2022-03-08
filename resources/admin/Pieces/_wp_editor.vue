@@ -70,32 +70,6 @@ export default {
         }
     },
     methods: {
-
-        // initEditor(editor) {
-        //     this.editor = editor;
-        //     editor.on('KeyUp', (e) => {
-        //         this.submitNewContent();
-        //     });
-        //     editor.on('Change', (e) => {
-        //         if(this.editor.getContent() !== this.value){
-        //             this.submitNewContent();
-        //         }
-        //         this.$emit('editorChange', e);
-        //     });
-        //     editor.on('init', (e) => {
-        //         editor.setContent(this.content);
-        //         this.$emit('input', this.content);
-        //     });
-        //     if(this.readonly){
-        //         this.editor.setMode('readonly');
-        //     } else {
-        //         this.editor.setMode('design');
-        //     }
-        //
-        //     this.$emit('editorInit', editor);
-        // },
-
-
         initEditor() {
             if (!this.hasWpEditor) {
                 return;

@@ -29,7 +29,7 @@
             </td>
             <td>
                 <div class="text-align-right">
-                    <el-button @click="deleteItem(itemIndex)" :disabled="model.length == 1" type="info" size="small" icon="el-icon-delete"></el-button>
+                    <el-button @click="deleteItem(itemIndex)" :disabled="model.length == 1" type="info" size="small" icon="Delete"></el-button>
                 </div>
             </td>
         </tr>

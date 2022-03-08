@@ -2,7 +2,7 @@
     <div class="fc_url_boxes">
         <div class="fc_each_text_option" v-for="(option,OptionIndex) in options"  :key="OptionIndex">
             <el-input :type="field.input_type" :placeholder="field.placeholder" v-model="option.value">
-                <el-button @click="deleteUrl(OptionIndex)" :disabled="options.length == 1" slot="append" icon="el-icon-delete"></el-button>
+                <el-button @click="deleteUrl(OptionIndex)" :disabled="options.length == 1" slot="append" icon="Delete"></el-button>
             </el-input>
         </div>
         <el-button @click="addMoreUrl()" size="small" type="info">{{$t('Add More')}}</el-button>
