@@ -29,7 +29,7 @@
             </td>
             <td>
                 <div class="text-align-right">
-                    <el-button @click="deleteItem(itemIndex)" :disabled="model.length == 1" type="info" size="small" icon="el-icon-delete"></el-button>
+                    <el-button @click="deleteItem(itemIndex)" :disabled="model.length == 1" type="info" size="small" icon="Delete"></el-button>
                 </div>
             </td>
         </tr>
@@ -39,7 +39,7 @@
             </td>
             <td>
                 <div class="text-align-right">
-                    <el-button @click="addMore()" size="small" icon="el-icon-plus">{{$t('Add More')}}</el-button>
+                    <el-button @click="addMore()" size="small" icon="Plus">{{$t('Add More')}}</el-button>
                 </div>
             </td>
         </tr>

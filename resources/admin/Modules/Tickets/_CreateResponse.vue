@@ -2,8 +2,8 @@
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
         <div class="fc_template_box">
             <el-dropdown type="primary" trigger="click">
-                <el-button size="mini" type="primary" style="margin-right: .3em;">
-                    {{$t('Shortcodes')}} <i class="el-icon-arrow-down"></i>
+                <el-button size="small" type="primary" style="margin-right: .3em;">
+                    {{$t('Shortcodes')}} <el-icon><ArrowDown /></el-icon>
                 </el-button>
                 <template #dropdown>
                     <el-dropdown-menu>

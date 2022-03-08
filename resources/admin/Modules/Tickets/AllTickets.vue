@@ -7,11 +7,11 @@
                     <el-button
                         @click="add_ticket_modal = true"
                         size="mini"
-                        icon="el-icon-plus">{{ $t('Add Ticket') }}
+                        icon="Plus">{{ $t('Add Ticket') }}
                     </el-button>
                     <el-button
                         @click="fetchTickets()"
-                        icon="el-icon-refresh"
+                        icon="Refresh"
                         size="mini"></el-button>
                     <el-switch
                         v-model="filter_type"
@@ -32,8 +32,8 @@
                         ></el-option>
                     </el-select>
                     <el-button @click="changeOrderType()" size="mini">
-                        <i v-if="order_type == 'DESC'" class="el-icon-caret-bottom"></i>
-                        <i v-else class="el-icon-caret-top"></i>
+                        <el-icon v-if="order_type == 'DESC'"> <CaretBottom/> </el-icon>
+                        <el-icon v-else> <CaretTop/> </el-icon>
                     </el-button>
                 </div>
             </div>
@@ -52,8 +52,7 @@
                         </div>
                         <div class="fs_cond_or">
                             <em @click="addConditionGroup()"
-                                style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><i
-                                class="el-icon-plus"></i> OR</em>
+                                style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> OR</em>
                         </div>
 
                         <el-button type="primary" size="small" @click="fetchTickets()">{{ $t('Filter') }}
@@ -153,8 +152,8 @@
                                     scope.row.status
                                 }}</span>
                             <span class="fs_badge" :title="$t('Client Priority: ') + scope.row.client_priority "
-                                  :class="'fs_badge_priority_'+scope.row.client_priority"> <i class="el-icon-user"></i>
-                                <i class="el-icon-s-flag"></i>  {{ scope.row.client_priority }}
+                                  :class="'fs_badge_priority_'+scope.row.client_priority"> <el-icon><User/></el-icon>
+                                <el-icon><Flag/></el-icon>  {{ scope.row.client_priority }}
                             </span>
                         </template>
                     </el-table-column>
@@ -163,10 +162,10 @@
                         width="180">
                         <template #default="scope">
                             <span style="opacity: 0.4;" :title="$t('Ticket created at ') + scope.row.created_at">
-                                <i class="el-icon-chat-line-square"></i> {{ $timeDiff(scope.row.created_at) }}
+                                <el-icon style="vertical-align: middle;"> <ChatLineSquare /> </el-icon> {{ $timeDiff(scope.row.created_at) }}
                             </span>
                             <span style="display: block;" :title="$t('Waiting Time')">
-                                <i class="el-icon-stopwatch"></i> {{ $timeDiff(scope.row.waiting_since) }}
+                                <el-icon style="vertical-align: middle;"> <Stopwatch /> </el-icon> {{ $timeDiff(scope.row.waiting_since) }}
                             </span>
                         </template>
                     </el-table-column>

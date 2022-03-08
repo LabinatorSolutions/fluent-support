@@ -61,7 +61,7 @@
                             params: { ticket_id: other_ticket.id },
                             query: {prev_ticket: ticket_id}
                         }">
-                            <i class="el-icon-message"></i> {{ other_ticket.title }} <span class="fs_badge"
+                            <el-icon> <Message /> </el-icon> {{ other_ticket.title }} <span class="fs_badge"
                                                                                            :class="'fs_badge_'+other_ticket.status">{{
                                 other_ticket.status
                             }}</span>

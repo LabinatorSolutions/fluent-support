@@ -73,14 +73,14 @@
                     </div>
                 </template>
                 <div class="fs_cond_block fs_cond_action">
-                    <el-button @click="removeCondition(settingIndex)" type="text" icon="el-icon-delete"></el-button>
+                    <el-button @click="removeCondition(settingIndex)" type="text" icon="Delete"></el-button>
                 </div>
             </div>
             <p v-if="(settingIndex+1) != settings.length" class="fs_cond_or">{{$t('OR')}}</p>
         </div>
 
         <div class="fs_add_new_cond text-align-center">
-            <el-button @click="addMore()" size="small" type="text" icon="el-icon-plus">{{$t('OR')}}</el-button>
+            <el-button @click="addMore()" size="small" type="text" icon="Plus">{{$t('OR')}}</el-button>
         </div>
 
     </div>

@@ -17,8 +17,16 @@ mix.webpackConfig({
     //         }
     //     ]
     // },
+    module: {
+        rules: [
+            {
+                test: /\.mjs$/i,
+                resolve: { byDependency: { esm: { fullySpecified: false } } }
+            }
+        ]
+    },
     output: {
-        publicPath: Mix.isUsing('hmr') ? '/' : '/wp-content/plugins/fluent-crm/assets/',
+        publicPath: Mix.isUsing('hmr') ? '/' : '/wp-content/plugins/fluent-support/assets/',
         chunkFilename: 'admin/js/[name].js'
     },
     plugins: [

@@ -6,7 +6,7 @@
         v-model:visible="visible"
     >
         <template #reference>
-            <el-button @click="initModal()" size="mini" type="default">{{$t('Templates')}}</el-button>
+            <el-button @click="initModal()" size="small" type="default">{{$t('Templates')}}</el-button>
         </template>
         <div class="fs_template_inserter">
             <div class="fs_row">
@@ -18,7 +18,7 @@
                 <div class="fs_half">
                     <el-input @keyup.enter="searchTemplates()" :placeholder="$t('Search Replies')" v-model="search" class="input-with-select">
                         <template #append>
-                            <el-button @click="searchTemplates()" icon="el-icon-search"></el-button>
+                            <el-button @click="searchTemplates()" icon="Search"></el-button>
                         </template>
                     </el-input>
                 </div>

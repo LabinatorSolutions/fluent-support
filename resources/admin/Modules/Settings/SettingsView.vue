@@ -4,7 +4,7 @@
             <ul>
                 <li v-for="(settings_menu, settings_index) in settings_items">
                     <router-link :to="{ name: settings_menu.route_name, query: settings_menu.route_query }">
-                        <i :class="settings_menu.icon"/>
+                        <el-icon> <component :is="settings_menu.icon"/> </el-icon>
                         {{ settings_menu.title }}
                     </router-link>
                 </li>
@@ -25,54 +25,54 @@ export default {
                 {
                     title: this.$t('Global Settings'),
                     route_name: 'global_settings',
-                    icon: 'el-icon-document'
+                    icon: 'Document'
                 },
                 {
                     title: this.$t('Ticket Tags'),
                     route_name: 'tags',
-                    icon: 'el-icon-collection-tag',
+                    icon: 'CollectionTag',
                     route_query: {}
                 },
                 {
                     title: this.$t('Ticket Form Config'),
                     route_name: 'ticket-form-config',
-                    icon: 'el-icon-setting',
+                    icon: 'Setting',
                     route_query: {}
                 },
                 {
                     title: this.$t('Custom Fields'),
                     route_name: 'custom_fields',
                     route_query: {},
-                    icon: 'el-icon-tickets'
+                    icon: 'Tickets'
                 },
                 {
                     title: this.$t('Products'),
                     route_name: 'products',
                     route_query: {},
-                    icon: 'el-icon-goods'
+                    icon: 'Goods'
                 },
                 {
                     title: this.$t('Support Staff'),
                     route_name: 'support-staffs',
                     route_query: {},
-                    icon: 'el-icon-user'
+                    icon: 'User'
                 },
                 {
                     title: this.$t('FluentCRM Integration'),
                     route_name: 'fluentcrm_integration',
                     route_query: {},
-                    icon: 'el-icon-cpu'
+                    icon: 'Cpu'
                 },
                 {
                     title: this.$t('Incoming Webhook'),
                     route_name: 'incoming-webhook',
                     route_query: {},
-                    icon: 'el-icon-connection'
+                    icon: 'Connection'
                 },
                 {
                     title: this.$t('Notification Integrations'),
                     route_name: 'integration',
-                    icon: 'el-icon-alarm-clock'
+                    icon: 'AlarmClock'
                 }
             ]
         }
@@ -82,7 +82,7 @@ export default {
             this.settings_items.push({
                 title: this.$t('License Management'),
                 route_name: 'license',
-                icon: 'el-icon-lock'
+                icon: 'Lock'
             });
         }
     }
