@@ -4,7 +4,7 @@
             effect="plain"
             v-for="(tag,tagIndex) in tags"
             :key="tag.id"
-            size="mini"
+            size="small"
             @close="removeTag(tagIndex, tag)"
             :closable="creatable">
             {{ tag.title }}
@@ -21,7 +21,7 @@
                 <h3>{{$t('Add Tags')}}</h3>
                 <ul v-loading="adding_tag" v-if="available_tags.length">
                     <li v-for="tag in available_tags" :key="tag.id" @click="attachTag(tag)">
-                        <span class="el-icon el-icon-plus"></span>
+                        <el-icon> <Plus/> </el-icon>
                         {{tag.title}}
                     </li>
                 </ul>
