@@ -465,6 +465,11 @@ img.tk_customer_avatar {
             padding: 0;
         }
     }
+
+    .dashicons, .dashicons-before:before {
+        text-decoration: none;
+        font-size: 14px;
+    }
 }
 
 .fs_tk_preview {

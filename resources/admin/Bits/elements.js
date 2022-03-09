@@ -96,7 +96,8 @@ import {
     ChatLineRound,
     PriceTag,
     Finished,
-    Box
+    Box,
+    More
 } from '@element-plus/icons-vue/dist/es';
 
 const app = createApp({});
@@ -187,7 +188,8 @@ const components = [
     ChatLineRound,
     PriceTag,
     Finished,
-    Box
+    Box,
+    More
 ];
 
 components.forEach(component => {

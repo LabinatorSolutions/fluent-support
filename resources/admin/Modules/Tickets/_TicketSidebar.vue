@@ -7,7 +7,10 @@
                         <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
                     </router-link>
                 </div>
-                <i v-if="appVars.me.permissions.includes('fst_sensitive_data')" class="el-icon-more" style="float:right;" @click="customerManagement"></i>
+                <el-icon v-if="appVars.me.permissions.includes('fst_sensitive_data')" style="float:right;" @click="customerManagement">
+                    <More />
+                </el-icon>
+<!--                <i v-if="appVars.me.permissions.includes('fst_sensitive_data')" class="el-icon-more" style="float:right;" @click="customerManagement"></i>-->
             </div>
             <div class="fs_tk_card_body">
                 <div class="fs_tk_line">
