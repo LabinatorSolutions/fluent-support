@@ -14,8 +14,9 @@
 }
 
 .fframe_pagination_wrapper {
+    display: flex;
+    flex-direction: row-reverse;
     margin-top: 15px;
-    float: right;
 }
 
 #wpcontent, .fframe_app {
