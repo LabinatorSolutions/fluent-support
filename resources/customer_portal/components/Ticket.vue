@@ -42,19 +42,21 @@
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
-                             :class="(conversation.person.title!=='' && conversation.person.person_type !== 'customer') ? 'fs_agent' : getTicketClasses(conversation)">
+                             :class="(conversation.person.title!=='' && conversation.person.person_type !== 'customer'
+                             && conversation.conversation_type!='ticket_merge_activity')
+                             ? 'fs_agent' : getTicketClasses(conversation)">
 
                         <span class="agent_title"
-                              v-if="conversation.person.title"> {{ conversation.person.title }} </span>
+                              v-if="conversation.conversation_type!='ticket_merge_activity' && conversation.person.title"> {{ conversation.person.title }} </span>
 
                         <div class="fs_thread_content">
-                            <section class="fs_avatar">
+                            <section class="fs_avatar" v-if="conversation.conversation_type!='ticket_merge_activity'">
                                 <img v-if="conversation.person" :src="conversation.person.photo"
                                      :alt="conversation.person.full_name"/>
                             </section>
                             <section class="fs_thread_wrap">
                                 <section class="fs_thread_message">
-                                    <div class="fs_thread_head">
+                                    <div class="fs_thread_head" v-if="conversation.conversation_type!='ticket_merge_activity'">
                                         <div class="fs_thread_title">
                                             <strong v-if="conversation.person">{{
                                                     getHumanName(conversation.person)

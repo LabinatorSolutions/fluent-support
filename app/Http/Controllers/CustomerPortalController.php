@@ -250,7 +250,7 @@ class CustomerPortalController extends Controller
                 },
                 'attachments'
             ])
-            ->filterByType('response')
+            ->filterByType(['response', 'ticket_merge_activity'])
             ->orderBy('id', 'DESC')
             ->get();
 
