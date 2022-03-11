@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Services\Helper;
 
 class TicketService
 {
@@ -80,5 +81,19 @@ class TicketService
         ]);
 
         return $person;
+    }
+
+    public function onTicketMerge($ticket, $mergedTicket)
+    {
+        do_action('fluent_support/ticket_merge', $ticket, $mergedTicket);
+        $message = sprintf(__('Ticket #%s has been merged with this ticket at %s', 'fluent-support'),  $mergedTicket->id, current_time('mysql'));
+        Conversation::create([
+            'ticket_id'         => $ticket->id,
+            'person_id'         => Helper::getCurrentAgent()->id,
+            'conversation_type' => 'ticket_merge_activity',
+            'content'           => $message
+        ]);
+
+        return $ticket;
     }
 }

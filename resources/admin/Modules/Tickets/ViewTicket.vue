@@ -101,6 +101,43 @@
                         <span v-else class="fs_business_name" style="margin-right: 10px;">
                             <el-icon style="vertical-align: middle;"><office-building /></el-icon> {{ticket.mailbox?.name}}
                         </span>
+
+                        <el-dropdown style="vertical-align: middle;">
+                            <span class="el-dropdown-link">
+                              <el-icon style="transform: rotate(90deg)"><More /></el-icon>
+                            </span>
+                            <template #dropdown>
+                                <el-dropdown-menu>
+                                    <el-dropdown-item @click='(show_merge_modal=true) && (customerTickets())'>
+                                        <i class="dashicons dashicons-randomize"></i> Merge Ticket
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
+
+                        <el-dialog
+                            v-model="show_merge_modal"
+                            v-if="show_merge_modal"
+                            title="Merge Tickets"
+                        >
+                            <div class="fs_box_body">
+                                <el-table :data="customer_tickets" style="width: 100%">
+                                    <el-table-column prop="id" label="ID" width="130"></el-table-column>
+                                    <el-table-column prop="title" label="Title" width="250"></el-table-column>
+                                    <el-table-column prop="status" label="Status" width="130"></el-table-column>
+                                    <el-table-column label="Action">
+                                        <template #default="scope">
+                                            <el-button size="small" type="primary" @click="mergeTickets(scope.row.id)">
+                                                Merge
+                                            </el-button>
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                                <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                                    <pagination @fetch="customerTickets" :pagination="pagination" />
+                                </div>
+                            </div>
+                        </el-dialog>
                     </div>
                 </div>
                 <div class="fs_th_header">
@@ -365,11 +402,13 @@ import ActiveAgents from './_active_agents';
 import TicketTags from './parts/_Tags';
 import CustomFieldForm from './parts/_CustomFieldForm';
 import WorkFlowSelector from './parts/_WorkFlowSelector';
+import Pagination from "../../Pieces/Pagination";
 
 export default {
     name: 'ViewTicket',
     props: ['ticket_id'],
     components: {
+        Pagination,
         CreateResponse,
         TicketSidebar,
         EditResponse,
@@ -394,7 +433,14 @@ export default {
             editing_response: false,
             showCustomDataEditForm: false,
             fluentcrm_profile: false,
-            mailboxes: this.appVars.mailboxes
+            mailboxes: this.appVars.mailboxes,
+            customer_tickets: [],
+            show_merge_modal: false,
+            pagination: {
+                current_page: 1,
+                total: 0,
+                per_page: 10
+            },
         }
     },
     watch: {
@@ -582,6 +628,49 @@ export default {
                     this.loading = false;
                 });
         },
+        customerTickets(){
+            this.$get('tickets', {
+                search: 'customer_id:'+this.ticket.customer_id,
+                page: this.pagination.current_page,
+                per_page: this.pagination.per_page,
+            })
+                .then(response => {
+                    this.customer_tickets = response.tickets.data;
+                    this.pagination.total = response.tickets.total;
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                })
+        },
+        mergeTickets(ticketToMerge){
+            this.$confirm('Are you sure you want to merge these tickets?', 'Merge Tickets', {
+                confirmButtonText: 'Merge',
+                cancelButtonText: 'Cancel',
+                type: 'warning'
+            }).then(() => {
+                this.loading = true;
+                this.$post('tickets/' + this.ticket_id +'/merge_tickets', {
+                    ticket_to_merge: ticketToMerge,
+                })
+                    .then(response => {
+                        this.$notify.success({
+                            message: response.message,
+                            position: 'bottom-right'
+                        });
+                        this.customerTickets();
+                        this.fetchTicket();
+                    })
+                    .catch((error) => {
+                        this.$handleError(error);
+                    })
+                    .always(() => {
+                        this.loading = false;
+                    });
+            });
+        },
         santizeContent(content) {
             if (!content) {
                 return content;
@@ -623,5 +712,8 @@ export default {
 
 .fs_conv_type_note {
     border-left: 0px solid #e6a23c;
+}
+i.dashicons.dashicons-randomize {
+    transform: rotate(90deg);
 }
 </style>

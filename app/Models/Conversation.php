@@ -68,7 +68,7 @@ class Conversation extends Model
      */
     public function scopeFilterByType($query, $type)
     {
-        $query->where('conversation_type', $type);
+        $query->whereIn('conversation_type', $type);
 
         return $query;
     }

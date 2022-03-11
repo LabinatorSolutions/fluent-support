@@ -197,6 +197,26 @@
                     }
                 }
             }
+            &.fs_conv_type_ticket_merge_activity{
+                background: #fbfaf9;
+
+                .fs_avatar {
+                    display: none;
+                }
+
+                .fs_thread_wrap {
+                    margin: 0;
+                    padding: 10px 20px;
+
+                    .fs_thread_head {
+                        min-height: auto;
+
+                        .fs_thread_title {
+                            margin-bottom: 0;
+                        }
+                    }
+                }
+            }
         }
 
         .fs_thread_wrap {

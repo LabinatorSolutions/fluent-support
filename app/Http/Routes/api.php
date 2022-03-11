@@ -62,6 +62,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->post('sync-fluentcrm-tags', 'TicketController@syncFluentCrmTags');
 
+    $router->post('/{ticket_id}/merge_tickets', 'TicketController@mergeCustomerTickets')->int('ticket_id');
+
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
