@@ -854,6 +854,40 @@ class TicketController extends Controller
         ];
     }
 
+    public function mergeCustomerTickets(Request $request, $ticketId)
+    {
+        $ticketIDToMerge = $request->get('ticket_to_merge');
+
+        $parentTicket = Ticket::findOrFail($ticketId);
+        $ticket = Ticket::findOrFail($ticketIDToMerge);
+
+        Conversation::create(
+            [
+                'ticket_id'  => $ticketId,
+                'content'    => $ticket->content,
+                'source'     => $ticket->source,
+                'person_id'  => $parentTicket->agent_id,
+            ]
+        );
+
+        Conversation::where('ticket_id', $ticketIDToMerge)
+            ->update([
+                'ticket_id' => $ticketId
+            ]);
+
+        Attachment::where('ticket_id', $ticketIDToMerge)
+            ->update([
+                'ticket_id' => $ticketId
+            ]);
+
+        (new TicketService())->onTicketMerge($parentTicket, $ticket);
+        $ticket->deleteTicket();
+
+        return [
+            'message' => __('Tickets has been merged', 'fluent-support')
+        ];
+    }
+
     /**
      * syncFluentCrmTags method will synchronize the tags with Fluent CRM by contact id
      *This function will get contact id and tags as parameter, get existing tags from crm and updated added/removed tags
