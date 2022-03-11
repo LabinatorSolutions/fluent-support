@@ -854,6 +854,12 @@ class TicketController extends Controller
         ];
     }
 
+    /**
+     * mergeCustomerTickets will merge tickets into one
+     * @param Request $request
+     * @param $ticketId //ticket id where the tickets will be merged
+     * @return array|array[]
+     */
     public function mergeCustomerTickets(Request $request, $ticketId)
     {
         $ticketIDToMerge = $request->get('ticket_to_merge');
