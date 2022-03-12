@@ -389,11 +389,18 @@ class TicketController extends Controller
         }
 
         //Get last 10 tickets of this customer except this
+        /*
+         * Filter ticket limit to show ticket in view ticket page sidebar
+         * @since 1.5.6
+         * @param int $limit
+         */
+        $limit = apply_filters('fluent_support/previous_ticket_widgets_limit', 10);
+        
         $otherTickets = Ticket::where('id', '!=', $ticketId)
             ->select(['id', 'title', 'status', 'created_at'])
             ->where('customer_id', $ticket->customer_id)
             ->orderBy('id', 'DESC')
-            ->limit(10)
+            ->limit($limit)
             ->get();
 
         return [
