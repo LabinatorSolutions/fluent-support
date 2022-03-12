@@ -83,10 +83,17 @@ class CustomerController extends Controller
         }
 
         if (in_array('tickets', $with)) {
+            /*
+             * Filter ticket limit to show ticket in customer page sidebar
+             * @since 1.5.6
+             * @param int $limit
+             */
+            $limit = apply_filters('fluent_support/customer_page_ticket_widgets_limit', 20);
+
             $data['tickets'] = Ticket::select(['id', 'title', 'status', 'customer_id', 'created_at'])
                 ->where('customer_id', $customer->id)
                 ->orderBy('id', 'DESC')
-                ->limit(20)
+                ->limit($limit)
                 ->get();
         }
 
