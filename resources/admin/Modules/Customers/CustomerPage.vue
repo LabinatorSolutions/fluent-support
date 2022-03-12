@@ -174,10 +174,10 @@ export default {
             });
         },
         showIcon() {
-            document.querySelector('.avatar-uploader-icon').style.display = 'initial';
+            document.querySelector('.el-upload-dragger>i').style.display = 'initial';
         },
         hideIcon() {
-            document.querySelector('.avatar-uploader-icon').style.display = 'none';
+            document.querySelector('.el-upload-dragger>i').style.display = 'none';
         }
     },
     mounted() {
@@ -193,12 +193,12 @@ export default {
     top: -0.8em;
     left: 1.9em;
     .fs-avatar-uploader{
-        .avatar-uploader-icon {
+        .el-upload-dragger>i {
             display: none;
             font-size: 2.9em;
             color: #fafafa;
             position: absolute;
-            top: -0.4em;
+            top: 0.8em;
             left: 0.8em;
         }
         .el-upload-dragger {
