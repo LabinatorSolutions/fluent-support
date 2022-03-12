@@ -120,7 +120,7 @@
                             v-if="show_merge_modal"
                             title="Merge Tickets"
                         >
-                            <div class="fs_box_body">
+                            <div class="fs_box_body" v-if="customer_tickets.length">
                                 <el-table :data="customer_tickets" style="width: 100%">
                                     <el-table-column prop="id" label="ID" width="130"></el-table-column>
                                     <el-table-column prop="title" label="Title" width="250"></el-table-column>
@@ -136,6 +136,9 @@
                                 <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
                                     <pagination @fetch="customerTickets" :pagination="pagination" />
                                 </div>
+                            </div>
+                            <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                                <el-skeleton :rows="5" animated/>
                             </div>
                         </el-dialog>
                     </div>

@@ -11,7 +11,7 @@
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders" style="margin-right: 0.7em;">
-                    <el-input @keyup.enter="fetch" clearable @clear="fetch" :disabled="!has_pro" size="mini"
+                    <el-input @keyup.enter="fetch" clearable @clear="fetch" :disabled="!has_pro" size="small"
                               :placeholder="$t('Search Replies')" v-model="search">
                         <template #append>
                             <el-button @click="fetch" :disabled="!has_pro" icon="Search"></el-button>
