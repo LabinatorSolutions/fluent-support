@@ -1,21 +1,3 @@
-<script>
-export default {
-    name: "Modal",
-    props: {
-        show: {
-            type: Boolean,
-
-        },
-        title: {
-            type: String,
-            default() {
-                return '';
-            }
-        },
-    }
-}
-</script>
-
 <template>
     <Transition name="fs-modal">
         <div v-if="show" class="fs-modal-mask">
@@ -40,6 +22,24 @@ export default {
         </div>
     </Transition>
 </template>
+
+<script>
+export default {
+    name: "Modal",
+    props: {
+        show: {
+            type: Boolean,
+
+        },
+        title: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
+    }
+}
+</script>
 
 <style>
 .fs-modal-mask {
@@ -115,6 +115,12 @@ export default {
     transform: scale(1.1);
 }
 
+/* Media queries
+ *
+ * For mobile devices, we adjust the modal's position and size.
+ *
+ * As we won't be using this modal everywhere in project so we did the media queries here.
+ */
 @media (max-width: 768px) {
     .fs-modal-container {
         min-width: unset;
