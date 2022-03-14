@@ -97,7 +97,8 @@ import {
     PriceTag,
     Finished,
     Box,
-    More
+    More,
+    Close
 } from '@element-plus/icons-vue/dist/es';
 
 const app = createApp({});
@@ -189,7 +190,8 @@ const components = [
     PriceTag,
     Finished,
     Box,
-    More
+    More,
+    Close
 ];
 
 components.forEach(component => {
