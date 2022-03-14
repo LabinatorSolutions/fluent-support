@@ -16,55 +16,94 @@
             </el-table-column>
         </el-table>
     </div>
-    <el-dialog v-if="active_email_settings"
-               :append-to-body=true
-               width="60%"
-               :title="active_email_settings.title"
-               v-model="edit_modal"
-    >
-        <h3>{{active_email_settings.description}}</h3>
-        <el-form :data="active_email_settings" label-position="top">
-            <el-form-item :label="$t('Email Subject')">
-                <el-input :disabled="active_email_settings.can_edit_subject == 'no'"
-                          v-model="active_email_settings.email_subject" :placeholder="$t('Email Subject')"/>
-                <p v-if="active_email_settings.can_edit_subject == 'no'">{{$t('can_not_edit_subject')}}</p>
-            </el-form-item>
-            <el-form-item :label="$t('Email Body')">
-                <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body"/>
-            </el-form-item>
-            <el-row :gutter="20">
-                <el-col :sm="24" :md="12">
-                    <el-form-item>
-                        <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">
-                            {{$t('enable_email')}}
-                        </el-checkbox>
-                        <el-checkbox true-label="yes" false-label="no" v-if="active_email_settings.status=='yes' && allowed_mails_for_attachments.includes(active_email_settings.key)" v-model="active_email_settings.send_attachments">
-                            {{$t('Send Attachments')}}
-                        </el-checkbox>
+<!--    <el-dialog v-if="active_email_settings"-->
+<!--               :append-to-body=true-->
+<!--               width="60%"-->
+<!--               :title="active_email_settings.title"-->
+<!--               v-model="edit_modal"-->
+<!--    >-->
+<!--        <h3>{{active_email_settings.description}}</h3>-->
+<!--        <el-form :data="active_email_settings" label-position="top">-->
+<!--            <el-form-item :label="$t('Email Subject')">-->
+<!--                <el-input :disabled="active_email_settings.can_edit_subject == 'no'"-->
+<!--                          v-model="active_email_settings.email_subject" :placeholder="$t('Email Subject')"/>-->
+<!--                <p v-if="active_email_settings.can_edit_subject == 'no'">{{$t('can_not_edit_subject')}}</p>-->
+<!--            </el-form-item>-->
+<!--            <el-form-item :label="$t('Email Body')">-->
+<!--                <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body"/>-->
+<!--            </el-form-item>-->
+<!--            <el-row :gutter="20">-->
+<!--                <el-col :sm="24" :md="12">-->
+<!--                    <el-form-item>-->
+<!--                        <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">-->
+<!--                            {{$t('enable_email')}}-->
+<!--                        </el-checkbox>-->
+<!--                        <el-checkbox true-label="yes" false-label="no" v-if="active_email_settings.status=='yes' && allowed_mails_for_attachments.includes(active_email_settings.key)" v-model="active_email_settings.send_attachments">-->
+<!--                            {{$t('Send Attachments')}}-->
+<!--                        </el-checkbox>-->
+<!--                    </el-form-item>-->
+<!--                    <el-button @click="saveSettings" :disabled="saving" v-loading="saving" type="success">{{$t('Save Settings')}}</el-button>-->
+<!--                </el-col>-->
+<!--                <el-col :sm="24" :md="12">-->
+<!--                    <h3>{{$t('Available Smartcodes')}}</h3>-->
+<!--                    <ul class="fs_listed">-->
+<!--                        <li v-for="(codeName, code) in currentSmartCodes" :key="code"><b>{{codeName}}:</b> {{code}}-->
+<!--                        </li>-->
+<!--                    </ul>-->
+<!--                </el-col>-->
+<!--            </el-row>-->
+<!--        </el-form>-->
+<!--    </el-dialog>-->
+
+    <Teleport to="body">
+        <modal :show="edit_modal" :title="active_email_settings.title" @close="edit_modal = false">
+            <template #body>
+                <h3>{{active_email_settings.description}}</h3>
+                <el-form :data="active_email_settings" label-position="top">
+                    <el-form-item :label="$t('Email Subject')">
+                        <el-input :disabled="active_email_settings.can_edit_subject == 'no'"
+                                  v-model="active_email_settings.email_subject" :placeholder="$t('Email Subject')"/>
+                        <p v-if="active_email_settings.can_edit_subject == 'no'">{{$t('can_not_edit_subject')}}</p>
                     </el-form-item>
-                    <el-button @click="saveSettings" :disabled="saving" v-loading="saving" type="success">{{$t('Save Settings')}}</el-button>
-                </el-col>
-                <el-col :sm="24" :md="12">
-                    <h3>{{$t('Available Smartcodes')}}</h3>
-                    <ul class="fs_listed">
-                        <li v-for="(codeName, code) in currentSmartCodes" :key="code"><b>{{codeName}}:</b> {{code}}
-                        </li>
-                    </ul>
-                </el-col>
-            </el-row>
-        </el-form>
-    </el-dialog>
+                    <el-form-item :label="$t('Email Body')">
+                        <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body"/>
+                    </el-form-item>
+                    <el-row :gutter="20">
+                        <el-col :sm="24" :md="12">
+                            <el-form-item>
+                                <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">
+                                    {{$t('enable_email')}}
+                                </el-checkbox>
+                                <el-checkbox true-label="yes" false-label="no" v-if="active_email_settings.status=='yes' && allowed_mails_for_attachments.includes(active_email_settings.key)" v-model="active_email_settings.send_attachments">
+                                    {{$t('Send Attachments')}}
+                                </el-checkbox>
+                            </el-form-item>
+                            <el-button @click="saveSettings" :disabled="saving" v-loading="saving" type="success">{{$t('Save Settings')}}</el-button>
+                        </el-col>
+                        <el-col :sm="24" :md="12">
+                            <h3>{{$t('Available Smartcodes')}}</h3>
+                            <ul class="fs_listed">
+                                <li v-for="(codeName, code) in currentSmartCodes" :key="code"><b>{{codeName}}:</b> {{code}}
+                                </li>
+                            </ul>
+                        </el-col>
+                    </el-row>
+                </el-form>
+            </template>
+        </modal>
+    </Teleport>
 
 </template>
 
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
-
+import Modal from "../../Pieces/Modal";
 
 export default {
     name: 'BoxEmailSettings',
     components: {
-        WpEditor
+        WpEditor,
+        Modal
     },
     props: ['box_id','mailbox'],
     data() {
