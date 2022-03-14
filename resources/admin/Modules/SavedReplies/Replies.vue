@@ -75,46 +75,42 @@
             </div>
         </div>
 
-        <el-dialog
-            :append-to-body=true
-            :title="(editing_reply && editing_reply.id) ? $t('Edit Reply') : $t('Create New Reply')"
-            v-model="edit_modal"
-            v-if="edit_modal"
-            width="60%">
-
-            <el-form label-position="top" :data="editing_reply">
-                <el-form-item :label="$t('Title')">
-                    <el-input type="text" :placeholder="$t('Reply Title')" v-model="editing_reply.title"/>
-                </el-form-item>
-                <el-form-item :label="$t('Content')">
-                    <div class="fc_template_box">
-                        <el-dropdown type="primary" trigger="click">
-                            <el-button size="small" type="primary" style="margin-right: .3em;">
-                                {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
-                            </el-button>
-                            <template #dropdown>
-                                <el-dropdown-menu>
-                                    <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
-                                        {{value}}
-                                    </el-dropdown-item>
-                                </el-dropdown-menu>
-                            </template>
-                        </el-dropdown>
-                    </div>
-                    <wp-editor v-model="editing_reply.content"/>
-                </el-form-item>
-                <el-form-item :label="$t('Prefered Product')">
-                    <el-select :placeholder="$t('Select Product')" v-model="editing_reply.product_id" clearable size="small">
-                        <el-option v-for="product in products" :key="product.id" :label="product.title" :value="product.id"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <span class="dialog-footer">
-                  <el-button v-loading="saving" :disabled="saving" type="success" @click="createOrUpdate()">{{$t('Save')}}</el-button>
-                </span>
-            </template>
-        </el-dialog>
+        <Teleport to="body">
+            <modal :show="showModal" @close="showModal = false" :title="'Saved Replies'">
+                <template #body>
+                    <el-form label-position="top" :data="editing_reply">
+                        <el-form-item :label="$t('Title')">
+                            <el-input type="text" :placeholder="$t('Reply Title')" v-model="editing_reply.title"/>
+                        </el-form-item>
+                        <el-form-item :label="$t('Content')">
+                            <div class="fc_template_box">
+                                <el-dropdown type="primary" trigger="click">
+                                    <el-button size="small" type="primary" style="margin-right: .3em;">
+                                        {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
+                                    </el-button>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
+                                                {{value}}
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </div>
+                            <wp-editor v-model="editing_reply.content"/>
+                        </el-form-item>
+                        <el-form-item :label="$t('Preferred Product')">
+                            <el-select :placeholder="$t('Select Product')" v-model="editing_reply.product_id" clearable size="small">
+                                <el-option v-for="product in products" :key="product.id" :label="product.title" :value="product.id"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                </template>
+                <template #footer>
+                    <el-button v-loading="saving" :disabled="saving" type="success" @click="createOrUpdate()">{{$t('Save')}}</el-button>
+                </template>
+            </modal>
+        </Teleport>
 
     </div>
 </template>
@@ -122,12 +118,14 @@
 <script title="text/babel">
 import Pagination from '../../Pieces/Pagination'
 import WpEditor from '../../Pieces/_wp_editor';
+import Modal from "../../Pieces/Modal";
 
 export default {
     name: 'SavedReplies',
     components: {
         WpEditor,
         Pagination,
+        Modal,
     },
     data() {
         return {
@@ -140,7 +138,6 @@ export default {
             loading: false,
             saving: false,
             editing_reply: false,
-            edit_modal: false,
             products: this.appVars.support_products,
             search: '',
             shortcodes: {
@@ -156,7 +153,7 @@ export default {
                 '{{agent.email}}' : 'Agent Email',
                 '{{agent.title}}' : 'Agent Title'
             },
-            open: false
+            showModal: false
         }
     },
     methods: {
@@ -197,7 +194,7 @@ export default {
                         type: 'success',
                         position: 'bottom-right'
                     });
-                    this.edit_modal = false;
+                    this.showModal = false;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -209,7 +206,7 @@ export default {
         },
         editModal(reply) {
             this.editing_reply = JSON.parse(JSON.stringify(reply));
-            this.edit_modal = true;
+            this.showModal = true;
         },
         createModal() {
             this.editing_reply = {
@@ -217,15 +214,9 @@ export default {
                 content: '',
                 product_id: ''
             }
-            this.edit_modal = true;
+            this.showModal = true;
         },
         deleteReply(reply) {
-            // const r = confirm(this.$t("Are you sure, You want to delete this?"));
-            //
-            // if (!r) {
-            //     return ;
-            // }
-
             this.$del(`saved-replies/${reply.id}`)
                 .then(response => {
                     this.$notify({
@@ -238,11 +229,8 @@ export default {
                 });
         },
         insertShortcode(content) {
-            this.edit_modal = false;
-            this.editing_reply.content = this.editing_reply.content.concat(content.target._value);
-            this.$nextTick(() => {
-                this.edit_modal = true;
-            });
+            let tinyInstance = tinyMCE.editors[wpActiveEditor];
+            this.editing_reply.content = tinyInstance.setContent(this.editing_reply.content + content.target._value);
         }
     },
     mounted() {
