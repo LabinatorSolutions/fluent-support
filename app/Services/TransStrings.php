@@ -465,6 +465,8 @@ class TransStrings
             'Today Stats' => __('Today Stats', 'fluent-support'),
             'Shortcodes' => __('Shortcodes', 'fluent-support'),
             'move_ticket_by_selecting'    => __('Filter and select specific ticket and move these to another mailbox easily', 'fluent-support'),
+            'Merge'    => __('Merge', 'fluent-support'),
+            'Merge Tickets'    => __('Merge Tickets', 'fluent-support'),
         ];
     }
 }
