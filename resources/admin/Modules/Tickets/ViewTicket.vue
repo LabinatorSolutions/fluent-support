@@ -102,7 +102,7 @@
                             <el-icon style="vertical-align: middle;"><office-building /></el-icon> {{ticket.mailbox?.name}}
                         </span>
 
-                        <el-dropdown style="vertical-align: middle;">
+                        <el-dropdown style="vertical-align: middle;" trigger="click">
                             <span class="el-dropdown-link">
                               <el-icon style="transform: rotate(90deg)"><More /></el-icon>
                             </span>
@@ -118,7 +118,7 @@
                         <el-dialog
                             v-model="show_merge_modal"
                             v-if="show_merge_modal"
-                            title="Merge Tickets"
+                            :title="$t('Merge Tickets')"
                         >
                             <div class="fs_box_body" v-if="customer_tickets.length">
                                 <el-table :data="customer_tickets" style="width: 100%">
@@ -128,7 +128,7 @@
                                     <el-table-column label="Action">
                                         <template #default="scope">
                                             <el-button size="small" type="primary" @click="mergeTickets(scope.row.id)">
-                                                Merge
+                                                {{$t('Merge')}}
                                             </el-button>
                                         </template>
                                     </el-table-column>

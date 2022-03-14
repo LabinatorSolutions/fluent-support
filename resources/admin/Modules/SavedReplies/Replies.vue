@@ -76,7 +76,7 @@
         </div>
 
         <Teleport to="body">
-            <modal :show="showModal" @close="showModal = false" :title="'Saved Replies'">
+            <modal :show="showModal" @close="showModal = false" :title="(editing_reply && editing_reply.id) ? $t('Edit Reply') : $t('Create New Reply')">
                 <template #body>
                     <el-form label-position="top" :data="editing_reply">
                         <el-form-item :label="$t('Title')">

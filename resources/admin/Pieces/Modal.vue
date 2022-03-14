@@ -24,7 +24,7 @@ export default {
                     <div class="fs-modal-header">
                         <slot name="header">
                             <h3 class="fs-modal-title">{{ title }}</h3>
-                            <el-button type="danger" icon="Close" @click="$emit('close')"/>
+                            <el-button style="color:red; border: none; font-size: 20px;" icon="Close" @click="$emit('close')"/>
                         </slot>
                     </div>
 
