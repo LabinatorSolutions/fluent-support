@@ -5,6 +5,21 @@
     margin: 15px 0;
 }
 
+.alignleft {
+    float: left;
+}
+.alignright {
+    float: right;
+}
+.aligncenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.alignnone {
+    margin: 0;
+}
+
 p {
     font-size: 16px;
     line-height: 25px;
