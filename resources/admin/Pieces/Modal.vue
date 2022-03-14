@@ -33,12 +33,7 @@ export default {
                     </div>
 
                     <div class="fs-modal-footer">
-                        <slot name="footer">
-                            <button
-                                class="fs-modal-default-button"
-                                @click="$emit('close')"
-                            >Cancel</button>
-                        </slot>
+                        <slot name="footer"></slot>
                     </div>
                 </div>
             </div>
