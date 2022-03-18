@@ -462,6 +462,11 @@ class Helper
         return Person::where('user_id', get_current_user_id())->first();
     }
 
+    public static function getCustomerByID($customerid)
+    {
+        return Customer::where('id', $customerid)->first();
+    }
+
     public static function getFluentCRMTagConfig()
     {
         if (!defined('FLUENTCRM')) {

@@ -467,6 +467,8 @@ class TransStrings
             'move_ticket_by_selecting'    => __('Filter and select specific ticket and move these to another mailbox easily', 'fluent-support'),
             'Merge'    => __('Merge', 'fluent-support'),
             'Merge Tickets'    => __('Merge Tickets', 'fluent-support'),
+            'Includes In'    => __('Includes In', 'fluent-support'),
+            'Not Includes In'    => __('Not Includes In', 'fluent-support'),
         ];
     }
 }
