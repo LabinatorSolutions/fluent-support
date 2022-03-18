@@ -12,9 +12,6 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
     $router->delete('/{id}', 'MailBoxController@delete')->int('id');
     $router->put('/{id}/move_tickets', 'MailBoxController@moveTickets')->int('id');
 
-    /*
-     * @todo: Needs to refactor
-     */
     $router->get('/{id}/tickets', 'MailBoxController@getTickets')->int('id');
 
     $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
