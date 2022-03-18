@@ -346,7 +346,8 @@ export default {
         }
     }
 }
-.el-table .cell{
-    min-height: 52px;
+
+.el-table__row {
+    height: 5em;
 }
 </style>
