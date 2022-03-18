@@ -203,7 +203,7 @@ class Menu
          *
          * @param array $secondayItems
          */
-        $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems);
+        isset($secondayItems) ? $secondayItems = apply_filters('fluent_support/secondary_menu_items', $secondayItems) : [];
 
 
         if (!defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
@@ -220,7 +220,7 @@ class Menu
             'base_url'       => $baseUrl,
             'logo'           => $assets . 'images/logo.svg',
             'menuItems'      => $menuItems,
-            'secondaryItems' => $secondayItems
+            'secondaryItems' => isset($secondayItems) ? $secondayItems : [],
         ]);
     }
 
