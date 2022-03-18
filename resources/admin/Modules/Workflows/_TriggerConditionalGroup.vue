@@ -31,6 +31,12 @@
                                 <el-option value="equal" :label="$t('Equal')"></el-option>
                                 <el-option value="not_equal" :label="$t('Not Equal')"></el-option>
                             </template>
+
+                            <template v-if="all_conditions[setting.data_key].data_type == 'multiple_select'">
+                                <el-option value="includes_in" :label="$t('Includes In')"></el-option>
+                                <el-option value="not_includes_in" :label="$t('Not Includes In')"></el-option>
+                            </template>
+
                             <template
                                 v-else-if="all_conditions[setting.data_key].data_type == 'yes_no'">
                                 <el-option v-for="(option, optionKey) in all_conditions[setting.data_key].options"
@@ -50,6 +56,10 @@
                     <div v-if="setting.data_operator" class="fs_cond_block fc_cond_value">
                         <el-input v-if="all_conditions[setting.data_key].data_type == 'string'" type="text" v-model="setting.data_value" placeholder="Condition Value" />
                         <el-select v-if="all_conditions[setting.data_key].data_type == 'single_dropdown'" v-model="setting.data_value" >
+                            <el-option v-for="(option, optionKey) in all_conditions[setting.data_key].options"
+                                       :value="optionKey" :key="optionKey" :label="option"></el-option>
+                        </el-select>
+                        <el-select v-if="all_conditions[setting.data_key].data_type == 'multiple_select'" v-model="setting.data_value" multiple collapse-tags>
                             <el-option v-for="(option, optionKey) in all_conditions[setting.data_key].options"
                                        :value="optionKey" :key="optionKey" :label="option"></el-option>
                         </el-select>
