@@ -180,12 +180,11 @@
                 </div>
             </div>
         </div>
-        <el-dialog
-            :title="$t('Create a Ticket')"
-            v-model="add_ticket_modal"
-            width="60%">
-            <add-ticket v-if="add_ticket_modal"></add-ticket>
-        </el-dialog>
+        <modal :show="add_ticket_modal" @close="add_ticket_modal = false" :title="$t('Create a Ticket')">
+            <template #body>
+                <add-ticket v-if="add_ticket_modal"></add-ticket>
+            </template>
+        </modal>
 
         <ticket-bulk-actions v-if="appReady" @fetchTickets="fetchTickets()" :ticket_selections="ticket_selections"/>
 
@@ -200,6 +199,7 @@ import TicketTags from './parts/_Tags';
 import TicketFilters from "./parts/TicketFilters";
 import TicketBulkActions from './_BulkActions';
 import RichFilter from "./parts/RichFilters/RichFilter";
+import Modal from "../../Pieces/Modal";
 
 const isEmpty = require('lodash/isEmpty');
 const isArray = require('lodash/isArray');
@@ -207,6 +207,7 @@ const isArray = require('lodash/isArray');
 export default {
     name: 'AllTickets',
     components: {
+        Modal,
         Pagination,
         AddTicket,
         TicketTags,
