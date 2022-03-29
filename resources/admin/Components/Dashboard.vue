@@ -2,10 +2,46 @@
     <div class="dashboard fs_box_wrapper">
 
         <div v-html="dashboard_notice"></div>
-        <div class="fs_dash_suggested_ticket">
+        <div class="fs_dash_mentioned_ticket" v-if="mentioned_tickets.length">
             <div class="fs_box fs_dashboard_box">
                 <div class="fs_box_header">
                     {{$t('Good')}} {{greetingTime}} {{me.full_name}},
+                    <span style="font-weight: normal;">
+                    {{$t('dashboard_sub_heading2')}}
+                </span>
+                </div>
+                <div class="fs_box_body">
+                    <template v-if="!loading">
+                        <ul v-if="mentioned_tickets.length" class="fs_card_list">
+                            <li v-for="ticket in mentioned_tickets" :key="ticket.id">
+                                <div class="fs_suggested_ticket">
+                                    <div class="fs_ticket_info">
+                                        <router-link tag="li" :to="{ name: 'view_ticket', params: { ticket_id: ticket.id } }">
+                                            <img class="fs_inline_photo_40" :src="ticket.customer.photo" />
+                                            <span style="color: #3C434A; font-size: 15px; font-weight: 400;">{{ticket.title}}</span>
+                                        </router-link>
+                                    </div>
+                                    <div class="fs_ticket_status">
+                                    <span style="padding: 3px 6px;line-height: 100%;margin-left: 5px;margin-top: 7px;font-weight: 500;font-size:14px;"
+                                          class="fs_badge" :class="'fs_badge_'+ticket.status">
+                                        {{ticket.status}}
+                                    </span>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </template>
+                    <div class="fs_padded_20" v-else>
+                        <el-skeleton :rows="3" animated/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="fs_dash_suggested_ticket">
+            <div class="fs_box fs_dashboard_box">
+                <div class="fs_box_header">
+                    <span v-if="mentioned_tickets.length <= 0">{{$t('Good')}} {{greetingTime}} {{me.full_name}},</span>
                     <span style="font-weight: normal;">
                     {{$t('dashboard_sub_heading')}}
                 </span>
@@ -82,6 +118,7 @@ export default {
             loading: false,
             stats: {},
             suggested_tickets: [],
+            mentioned_tickets: [],
             overall_stats: false,
             individual_stat: false,
             dashboard_notice: ''
@@ -115,7 +152,7 @@ export default {
         fetchStat() {
             this.loading = true;
             this.$get('tickets/my_stats', {
-                with: ['suggested_tickets', 'overall_stats', 'individual_stat']
+                with: ['suggested_tickets', 'overall_stats', 'individual_stat', 'mentioned_tickets']
             })
                 .then(response => {
                     this.stats = response.stats;
@@ -123,6 +160,7 @@ export default {
                     this.overall_stats = response.overall_stats;
                     this.individual_stat = response.individual_stat;
                     this.dashboard_notice = response.dashboard_notice;
+                    this.mentioned_tickets = response.mentioned_tickets;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

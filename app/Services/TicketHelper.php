@@ -139,4 +139,32 @@ class TicketHelper
         return $tickets;
 
     }
+
+    public static function getMentionedTickets($agentId, $limit = 5){
+        $mentioned  = Meta::where('object_type', 'ticket_meta')
+            ->where('key', '_mentioned_agent_to_ticket')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        $tickets = [];
+        $count  = 0;
+        if(!empty($mentioned)){
+            foreach ($mentioned as $row){
+                if($count < $limit){
+                    if(!empty($row->value) && !empty($row->object_id)){
+                        $val = maybe_unserialize($row->value);
+
+                        if(is_array($val) && in_array($agentId, $val)){
+                            $tickets[] = Ticket::with('customer')->find($row->object_id);
+                            $count++;
+                        }
+                    }
+                }else {
+                    break;
+                }
+            }
+        }
+
+        return $tickets;
+    }
 }
