@@ -44,7 +44,7 @@ export default {
 <style>
 .fs-modal-mask {
     position: fixed;
-    z-index: 12;
+    z-index: 9999;
     top: 0;
     left: 0;
     width: 100%;
@@ -57,7 +57,7 @@ export default {
 }
 
 .fs-modal-container {
-    min-width: 760px;
+    min-width: 100%;
     height: calc(100% - 10%);
     overflow: auto;
     margin: 5% auto;
