@@ -7,6 +7,7 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
@@ -395,7 +396,7 @@ class TicketController extends Controller
          * @param int $limit
          */
         $limit = apply_filters('fluent_support/previous_ticket_widgets_limit', 10);
-        
+
         $otherTickets = Ticket::where('id', '!=', $ticketId)
             ->select(['id', 'title', 'status', 'created_at'])
             ->where('customer_id', $ticket->customer_id)
@@ -745,6 +746,35 @@ class TicketController extends Controller
 
         $response->content = wp_unslash(wp_kses_post($data['content']));
         $response->save();
+
+        $mentionedAgent = ResponseService::get_mentioned_agent($response->content);
+        $_data = Meta::where('object_type', 'ticket_meta')
+            ->where('key', '_mentioned_agent_to_ticket')
+            ->where('object_id', $ticketId)
+            ->first();
+        //Agent mentioned in note or response
+        if($mentionedAgent){
+            $agentSerialize = maybe_serialize($mentionedAgent);
+            //Previously mentioned agent in this response
+            if($_data){
+                $_data->value = $agentSerialize;
+                $_data->save();
+            }else{
+                //Create new record for ticket_meta
+                $_mentionedData = [
+                    'object_type' => 'ticket_meta',
+                    'object_id' => $ticketId,
+                    'key' => '_mentioned_agent_to_ticket',
+                    'value' => $agentSerialize
+                ];
+
+                Meta::create($_mentionedData);
+            }
+        }else{
+            if($_data){
+                $_data->delete();
+            }
+        }
 
         return [
             'message'  => __('Selected response has been updated', 'fluent-support'),
