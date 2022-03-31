@@ -27,7 +27,7 @@ class ResponseService
 
         $content = wp_unslash(wp_kses_post($data['content']));
 
-        $mentionedAgent = $this->get_mentioned_agent($content);
+        $mentionedAgent = self::get_mentioned_agent($content);
 
         $response = [
             'person_id'         => $person->id,
@@ -193,8 +193,9 @@ class ResponseService
         ];
     }
 
-    public function get_mentioned_agent($content){
+    public static function get_mentioned_agent($content){
         $mentionedAgent = [];
+        $content = str_replace("'", '"', $content);
         $tempArr = explode("\"#", $content);
 
         if(is_array($tempArr) && !empty($tempArr)){
