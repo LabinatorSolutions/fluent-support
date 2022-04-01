@@ -12,7 +12,7 @@
                     <router-link :class="{router_not_exactly_matched: isUnassigned }" :to="{ name: 'tickets', query: { agent_id: 'unassigned' } }"><el-icon> <View/> </el-icon>{{$t('Unassigned')}}</router-link>
                 </li>
                 <li>
-                    <router-link :class="{router_not_exactly_matched: isMentioned }" :to="{ name: 'tickets', query: { agent_id: appVars.me.id, mentioned: 'mentioned' } }"><el-icon> <View/> </el-icon>{{$t('Mentioned')}}</router-link>
+                    <router-link :class="{router_not_exactly_matched: isMentioned }" :to="{ name: 'tickets', query: { agent_id: appVars.me.id, mentioned: 'mentioned' } }"><el-icon> <Aim/> </el-icon>{{$t('Mentioned')}}</router-link>
                 </li>
             </ul>
         </div>
