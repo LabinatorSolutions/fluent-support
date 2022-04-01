@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <el-dialog v-model="popup" title="Support Stuff" width="18%" center top="45%">
+    <el-dialog v-model="popup" :title="$t('Support Staff')" width="18%" center top="45%">
         <el-form-item>
             <el-input v-model="agent_id" placeholder="Type to search"
                       @keyup="searchAgent" />
