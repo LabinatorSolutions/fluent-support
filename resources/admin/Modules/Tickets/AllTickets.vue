@@ -6,13 +6,13 @@
                     <h3>{{ $t('Tickets') }} <span class="fs_badge">{{ pagination.total }}</span></h3>
                     <el-button
                         @click="add_ticket_modal = true"
-                        size="mini"
+                        size="small"
                         icon="Plus">{{ $t('Add Ticket') }}
                     </el-button>
                     <el-button
                         @click="fetchTickets()"
                         icon="Refresh"
-                        size="mini"></el-button>
+                        size="small"></el-button>
                     <el-switch
                         v-model="filter_type"
                         active-value="advanced"
@@ -23,7 +23,7 @@
                     />
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
-                    <el-select filterable @change="fetchTickets()" v-model="order_by" size="mini">
+                    <el-select filterable @change="fetchTickets()" v-model="order_by" size="small">
                         <el-option
                             v-for="(column, columnName) in filterColumns"
                             :key="columnName"
@@ -31,7 +31,7 @@
                             :label="column"
                         ></el-option>
                     </el-select>
-                    <el-button @click="changeOrderType()" size="mini">
+                    <el-button @click="changeOrderType()" size="small">
                         <el-icon v-if="order_type == 'DESC'"> <CaretBottom/> </el-icon>
                         <el-icon v-else> <CaretTop/> </el-icon>
                     </el-button>
@@ -78,7 +78,7 @@
                             @searchChange="(s) => { search = s; }"
                             :reset-filters="resetFilters"/>
                     </div>
-                    <el-button size="mini" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
+                    <el-button size="small" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
                     </el-button>
                 </template>
 

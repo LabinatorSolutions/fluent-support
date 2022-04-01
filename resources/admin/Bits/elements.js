@@ -98,7 +98,8 @@ import {
     Finished,
     Box,
     More,
-    Close
+    Close,
+    Aim
 } from '@element-plus/icons-vue/dist/es';
 
 const app = createApp({});
@@ -191,7 +192,8 @@ const components = [
     Finished,
     Box,
     More,
-    Close
+    Close,
+    Aim
 ];
 
 components.forEach(component => {
