@@ -383,7 +383,7 @@
             </div>
         </template>
 
-        <modal :show="edit_response_modal" @close="edit_response_modal = false" :title="$t('Edit Response')">
+        <modal :show="edit_response_modal" @close="edit_response_modal=false" :title="$t('Edit Response')">
             <template #body>
                 <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response"
                                :response="editing_response"/>
@@ -406,11 +406,13 @@ import TicketTags from './parts/_Tags';
 import CustomFieldForm from './parts/_CustomFieldForm';
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
+import Modal from "../../Pieces/Modal";
 
 export default {
     name: 'ViewTicket',
     props: ['ticket_id'],
     components: {
+        Modal,
         Pagination,
         CreateResponse,
         TicketSidebar,
@@ -464,20 +466,20 @@ export default {
             this.$get(`tickets/${this.ticket_id}`, {
                 with_data: ['fluentcrm_profile']
             })
-                .then(response => {
-                    this.ticket = response.ticket;
-                    this.$setTitle(response.ticket.title);
-                    this.conversations = response.responses;
-                    if (this.appVars.fluentcrm_config) {
-                        this.fluentcrm_profile = response.fluentcrm_profile;
-                    }
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                });
+            .then(response => {
+                this.ticket = response.ticket;
+                this.$setTitle(response.ticket.title);
+                this.conversations = response.responses;
+                if (this.appVars.fluentcrm_config) {
+                    this.fluentcrm_profile = response.fluentcrm_profile;
+                }
+            })
+            .catch((errors) => {
+                this.$handleError(errors);
+            })
+            .always(() => {
+                this.loading = false;
+            });
         },
         getTicketClasses(conversation) {
             const classes = [
