@@ -51,7 +51,7 @@
         <div class="fs_dash_mentioned_ticket" v-if="mentioned_tickets.length">
             <div class="fs_box fs_dashboard_box">
                 <div class="fs_box_header">
-                    <span style="font-weight: normal;">{{$t('dashboard_sub_heading2')}}</span>
+                    <span style="font-weight: normal;">{{$t('dashboard_mention_heading')}}</span>
                 </div>
                 <div class="fs_box_body">
                     <template v-if="!loading">
