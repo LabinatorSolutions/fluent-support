@@ -406,7 +406,6 @@ import TicketTags from './parts/_Tags';
 import CustomFieldForm from './parts/_CustomFieldForm';
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
-import Modal from "../../Pieces/Modal";
 
 export default {
     name: 'ViewTicket',
@@ -419,8 +418,7 @@ export default {
         ActiveAgents,
         TicketTags,
         CustomFieldForm,
-        WorkFlowSelector,
-        Modal
+        WorkFlowSelector
     },
     data() {
         return {
