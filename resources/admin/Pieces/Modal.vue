@@ -58,7 +58,7 @@ export default {
 
 .fs-modal-container {
     min-width: 100%;
-    height: calc(100% - 10%);
+    max-height: calc(100% - 10%);
     overflow: auto;
     margin: 5% auto;
     padding: 15px 40px;
