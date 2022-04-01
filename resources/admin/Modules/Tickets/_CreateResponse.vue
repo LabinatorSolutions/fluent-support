@@ -166,12 +166,4 @@ export default {
         padding: 18px 0;
         cursor: pointer;
     }
-
-    .box-card {
-        width: 300px;
-    }
-
-    .el-dialog .el-dialog__header {
-        display: none !important;
-    }
 </style>

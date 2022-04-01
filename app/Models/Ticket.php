@@ -220,12 +220,9 @@ class Ticket extends Model
                 if ($filterValue == 'unassigned') {
                     $query->whereNull($filterKey);
                 } else {
-                    if (isset($filters['mentioned'])){
+                    if (isset($filters['mentioned']) && $filters['mentioned'] == 'mentioned'){
                         $mentionedTickets = TicketHelper::getMentionedTicketIds($filterValue);
-
-                        if(!empty($mentionedTickets)){
-                            $query->whereIn('id', $mentionedTickets);
-                        }
+                        $query->whereIn('id', $mentionedTickets);
                     }else {
                         //Apply filter, get only assigned ticket
                         $query->where($filterKey, $filterValue);
