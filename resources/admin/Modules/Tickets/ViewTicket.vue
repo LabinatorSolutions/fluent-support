@@ -383,13 +383,13 @@
             </div>
         </template>
 
-        <el-dialog
-            :title="$t('Edit Response')"
-            v-model="edit_response_modal"
-            width="60%">
-            <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response"
-                           :response="editing_response"/>
-        </el-dialog>
+        <modal :show="edit_response_modal" @close="edit_response_modal = false" :title="$t('Edit Response')">
+            <template #body>
+                <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response"
+                               :response="editing_response"/>
+            </template>
+        </modal>
+
         <active-agents :ticket="ticket" v-if="ticket && ticket.id"/>
     </div>
 </template>
@@ -406,6 +406,7 @@ import TicketTags from './parts/_Tags';
 import CustomFieldForm from './parts/_CustomFieldForm';
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
+import Modal from "../../Pieces/Modal";
 
 export default {
     name: 'ViewTicket',
@@ -418,7 +419,8 @@ export default {
         ActiveAgents,
         TicketTags,
         CustomFieldForm,
-        WorkFlowSelector
+        WorkFlowSelector,
+        Modal
     },
     data() {
         return {
