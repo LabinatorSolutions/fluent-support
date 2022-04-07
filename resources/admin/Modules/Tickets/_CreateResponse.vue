@@ -134,7 +134,7 @@ export default {
                 this.editor_ready = true;
             });
         },
-        showSuggestion(replaceText){console.log("type "+ this.type);
+        showSuggestion(replaceText){
             if(this.type == 'note'){
                 this.replaceText = replaceText;
                 this.popup = true;
