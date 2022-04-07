@@ -22,7 +22,7 @@ import WpEditor from '../../Pieces/_wp_editor';
 
 export default {
     name: 'EditResponse',
-    props: ['response'],
+    props: ['response', 'type', 'conversation_type'],
     data() {
         return {
             saving: false,
@@ -56,9 +56,11 @@ export default {
                     this.saving = false;
                 });
         },
-        showSuggestion(replaceText){
-            this.replaceText = replaceText;
-            this.popup = true;
+        showSuggestion(replaceText){console.log("Type", this.conversation_type);
+            if(this.type != 'response' && this.conversation_type == 'note') {
+                this.replaceText = replaceText;
+                this.popup = true;
+            }
         },
         searchAgent(){
             this.filteredAgents = this.agents.filter(

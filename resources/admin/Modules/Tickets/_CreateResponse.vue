@@ -134,9 +134,11 @@ export default {
                 this.editor_ready = true;
             });
         },
-        showSuggestion(replaceText){
-            this.replaceText = replaceText;
-            this.popup = true;
+        showSuggestion(replaceText){console.log("type "+ this.type);
+            if(this.type == 'note'){
+                this.replaceText = replaceText;
+                this.popup = true;
+            }
         },
         searchAgent(){
             this.filteredAgents = this.agents.filter(

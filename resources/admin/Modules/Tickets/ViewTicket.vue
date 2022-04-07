@@ -386,7 +386,7 @@
         <modal :show="edit_response_modal" @close="edit_response_modal=false" :title="$t('Edit Response')">
             <template #body>
                 <edit-response @updated="edit_response_modal = false; editing_response = false" v-if="editing_response"
-                               :response="editing_response"/>
+                               :response="editing_response" :type="show_response_box" :conversation_type="conversation_type"/>
             </template>
         </modal>
 
@@ -420,7 +420,7 @@ export default {
         ActiveAgents,
         TicketTags,
         CustomFieldForm,
-        WorkFlowSelector
+        WorkFlowSelector,
     },
     data() {
         return {
@@ -446,6 +446,7 @@ export default {
                 total: 0,
                 per_page: 10
             },
+            conversation_type: ''
         }
     },
     watch: {
@@ -610,6 +611,7 @@ export default {
                 }
                 this.editing_response = conversation;
                 this.edit_response_modal = true;
+                this.conversation_type = conversation.conversation_type;
             }
         },
         changeMailbox(mailbox) {
