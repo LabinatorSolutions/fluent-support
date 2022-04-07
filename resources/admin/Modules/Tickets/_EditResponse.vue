@@ -56,7 +56,7 @@ export default {
                     this.saving = false;
                 });
         },
-        showSuggestion(replaceText){console.log("Type", this.conversation_type);
+        showSuggestion(replaceText){
             if(this.type != 'response' && this.conversation_type == 'note') {
                 this.replaceText = replaceText;
                 this.popup = true;
