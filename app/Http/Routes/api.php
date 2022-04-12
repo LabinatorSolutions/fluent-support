@@ -61,6 +61,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->post('/{ticket_id}/merge_tickets', 'TicketController@mergeCustomerTickets')->int('ticket_id');
 
+    $router->get('customer_tickets/{customer_id}', 'TicketController@getCustomerTickets')->int('customer_id');
+
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
