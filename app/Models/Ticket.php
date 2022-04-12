@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Models;
 
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Support\Arr;
 
 class Ticket extends Model
@@ -219,8 +220,13 @@ class Ticket extends Model
                 if ($filterValue == 'unassigned') {
                     $query->whereNull($filterKey);
                 } else {
-                    //Apply filter, get only assigned ticket
-                    $query->where($filterKey, $filterValue);
+                    if (isset($filters['mentioned']) && $filters['mentioned'] == 'mentioned'){
+                        $mentionedTickets = TicketHelper::getMentionedTicketIds($filterValue);
+                        $query->whereIn('id', $mentionedTickets);
+                    }else {
+                        //Apply filter, get only assigned ticket
+                        $query->where($filterKey, $filterValue);
+                    }
                 }
             } else if ($filterKey == 'ticket_tags') {
                 if (!$filterValue) {

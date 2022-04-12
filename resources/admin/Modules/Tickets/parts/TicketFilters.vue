@@ -70,7 +70,7 @@
         </div>
         <div class="fs_tk_filter">
             <label>{{$t('Search')}}</label>
-            <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="mini"
+            <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="small"
                       :placeholder="$t('Please input')" v-model="searchInput">
                 <template #append>
                     <el-button @click="fetchTickets()" icon="Search"></el-button>
