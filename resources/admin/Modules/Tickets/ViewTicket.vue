@@ -109,7 +109,7 @@
                             <template #dropdown>
                                 <el-dropdown-menu>
                                     <el-dropdown-item @click='(show_merge_modal=true) && (customerTickets())'>
-                                        <i class="dashicons dashicons-randomize"></i> Merge Ticket
+                                        <i class="dashicons dashicons-randomize"></i> {{ $t('Merge Tickets') }}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -636,8 +636,8 @@ export default {
                 });
         },
         customerTickets(){
-            this.$get('tickets', {
-                search: 'customer_id:'+this.ticket.customer_id,
+            this.$get('tickets/customer_tickets/' + this.ticket.customer_id, {
+                exclude_ticket_id: this.ticket_id,
                 page: this.pagination.current_page,
                 per_page: this.pagination.per_page,
             })
@@ -650,7 +650,7 @@ export default {
                 })
                 .always(() => {
                     this.loading = false;
-                })
+                });
         },
         mergeTickets(ticketToMerge){
             this.$confirm('Are you sure you want to merge these tickets?', 'Merge Tickets', {
