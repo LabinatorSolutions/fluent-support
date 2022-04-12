@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
 Tested up to: 5.9
-Stable tag: 1.5.4
+Stable tag: 1.5.5
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -16,11 +16,13 @@ The Fastest & Most Feature Rich Support and Customer Ticketing System for WordPr
 Fluent Support is the most versatile and feature-rich help desk and support plugin for WordPress. Provide awesome support and manage customer queries right from your WordPress dashboard.
 Fluent Support is the perfect helpdesk & support ticketing plugin that can match the premium features of SAAS solutions like Zendesk or Helpscout or FreshDesk.
 
-[youtube https://www.youtube.com/watch?v=29NRuKkVSSI]
+[youtube https://www.youtube.com/watch?v=gOqWrWeXeWM]
 
 👉 Official Website Link: [Official Website](https://fluentsupport.com/)
 👉 Join Our FB Community: [FluentSupport Facebook Group](https://facebook.com/groups/fluentsupport)
 👉 Official 5 Minutes Guide: [Getting started in 5 minutes](https://fluentsupport.com/fluent-support-101/)
+
+[youtube https://www.youtube.com/watch?v=29NRuKkVSSI]
 
 = Your Self Hosted Customer Support Solution in WordPress  =
 
