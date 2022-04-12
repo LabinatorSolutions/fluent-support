@@ -17,8 +17,9 @@ class AgentTicketPolicy extends Policy
     {
         $permissions = PermissionManager::currentUserPermissions();
         $acceptedPermissions = ['fst_manage_own_tickets', 'fst_manage_unassigned_tickets', 'fst_manage_other_tickets'];
+        $status = !!array_intersect($permissions, $acceptedPermissions);
 
-        return !!array_intersect($permissions, $acceptedPermissions);
+        return apply_filters('fluent_support/agent_has_access', $status, $request);
     }
 
     public function doBulkActions(Request $request)
