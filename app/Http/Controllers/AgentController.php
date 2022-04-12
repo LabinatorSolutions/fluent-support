@@ -278,6 +278,12 @@ class AgentController extends Controller
             $data['suggested_tickets'] = TicketHelper::getSuggestedTickets($agent->id);
         }
 
+        //If the request come with mentioned_tickets
+        if (in_array('mentioned_tickets', $with)) {
+            //Get the overall statistics by the agent
+            $data['mentioned_tickets'] = TicketHelper::getMentionedTickets($agent->id);
+        }
+
         //If the request come with overall_stats
         if (in_array('overall_stats', $with)) {
             //Get overall status

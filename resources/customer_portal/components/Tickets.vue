@@ -48,7 +48,7 @@
                         <span class="fs_thread_count">{{ ticket.response_count }}</span>
                     </td>
                     <td class="fs_tk_status">
-                        <el-tag size="mini" :type="getStatus(ticket.status)" :effect="getEffect(ticket.status)">
+                        <el-tag size="small" :type="getStatus(ticket.status)" :effect="getEffect(ticket.status)">
                             {{ ticket.status }}
                         </el-tag>
                     </td>
