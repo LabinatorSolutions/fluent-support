@@ -364,7 +364,7 @@
                 </div>
             </div>
             <div class="fs_ticket_sidebar">
-                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket"/>
+                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket" @refresh="fetchTicket"/>
             </div>
         </template>
         <template v-else>

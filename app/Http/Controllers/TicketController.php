@@ -9,6 +9,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\EmailNotification\Settings;
@@ -275,6 +276,8 @@ class TicketController extends Controller
             //Get and set customer profile url
             $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
         }
+
+        $ticket->watchers = TicketHelper::getMentionedAgents($ticketId);
 
         //If user do not have permission in this ticket
         if (!PermissionManager::hasTicketPermission($ticket)) {
@@ -747,34 +750,39 @@ class TicketController extends Controller
         $response->content = wp_unslash(wp_kses_post($data['content']));
         $response->save();
 
-        $mentionedAgent = ResponseService::get_mentioned_agent($response->content);
-        $_data = Meta::where('object_type', 'ticket_meta')
-            ->where('key', '_mentioned_agent_to_ticket')
-            ->where('object_id', $ticketId)
-            ->first();
-        //Agent mentioned in note or response
-        if($mentionedAgent){
-            $agentSerialize = maybe_serialize($mentionedAgent);
-            //Previously mentioned agent in this response
-            if($_data){
-                $_data->value = $agentSerialize;
-                $_data->save();
-            }else{
-                //Create new record for ticket_meta
-                $_mentionedData = [
-                    'object_type' => 'ticket_meta',
-                    'object_id' => $ticketId,
-                    'key' => '_mentioned_agent_to_ticket',
-                    'value' => $agentSerialize
-                ];
+        $mentionedAgents = ResponseService::get_mentioned_agent($response->content);
 
-                Meta::create($_mentionedData);
-            }
-        }else{
-            if($_data){
-                $_data->delete();
+        $this->watcherUpdate($mentionedAgents, $ticketId);
+
+        /*$_data = TagPivot::where('source_type', '_mentioned_agent_to_ticket')
+            ->where('tag_id', $ticketId)
+            ->get();
+
+        foreach ($_data as $tag){
+            if(in_array($tag->source_id, $mentionedAgents)){
+                $arrIndex = array_search($tag->source_id, $mentionedAgents);
+
+                if($arrIndex != ''){
+                    unset($mentionedAgents[$arrIndex]);
+                }
+
+            }else{
+                $tag->delete();
             }
         }
+
+        //Agent mentioned in note or response
+        if(!empty($mentionedAgents)){
+            foreach ($mentionedAgents as $mentionedAgentID){
+                $_mentionedData = [
+                    'tag_id' => $ticketId,
+                    'source_id' => $mentionedAgentID,
+                    'source_type' => '_mentioned_agent_to_ticket'
+                ];
+
+                TagPivot::create($_mentionedData);
+            }
+        }*/
 
         return [
             'message'  => __('Selected response has been updated', 'fluent-support'),
@@ -988,5 +996,61 @@ class TicketController extends Controller
             'message' => __('FluentCRM contact tags has been updated', 'fluent-support')
         ];
 
+    }
+
+
+    public function updateWatcher( Request $request, $ticketId){
+        $mentionedAgents = $request->get('sources', []);
+
+        $this->watcherUpdate($mentionedAgents, $ticketId);
+
+        return [
+            'message' => __('Watcher has been updated from this ticket', 'fluent-support')
+        ];
+    }
+
+    public function deleteWatcher($ticketId, $sourceId){
+        TagPivot::where('source_type', '_mentioned_agent_to_ticket')
+            ->where('tag_id', $ticketId)
+            ->where('source_id', $sourceId)
+            ->delete();
+
+        return [
+            'message' => __('Watcher has been removed from this ticket', 'fluent-support')
+        ];
+    }
+
+    public function watcherUpdate($mentionedAgents, $ticketId){
+        $_data = TagPivot::where('source_type', '_mentioned_agent_to_ticket')
+            ->where('tag_id', $ticketId)
+            ->get();
+
+        foreach ($_data as $tag){
+            if(in_array($tag->source_id, $mentionedAgents)){
+                $arrIndex = array_search($tag->source_id, $mentionedAgents);
+
+                if($arrIndex != ''){
+                    unset($mentionedAgents[$arrIndex]);
+                }
+
+            }else{
+                $tag->delete();
+            }
+        }
+
+        //Agent mentioned in note or response
+        if(!empty($mentionedAgents)){
+            foreach ($mentionedAgents as $mentionedAgentID){
+                $_mentionedData = [
+                    'tag_id' => $ticketId,
+                    'source_id' => $mentionedAgentID,
+                    'source_type' => '_mentioned_agent_to_ticket'
+                ];
+
+                TagPivot::create($_mentionedData);
+            }
+        }
+
+        return true;
     }
 }
