@@ -42,6 +42,54 @@
             <el-skeleton :rows="1" animated/>
         </div>
 
+      <div v-if="ticket.watchers && ticket.watchers.length" class="fs_tk_card fs_tk_watchers_card">
+        <div class="fs_tk_card_header">
+          <h3>{{ $t('Watcher') }} ({{ ticket.watchers.length }})</h3>
+        </div>
+        <div class="fs_tk_card_body">
+          <el-tag
+              v-for="(watcher,watcher_key) in ticket.watchers"
+              :key="watcher_key"
+              class="mx-1"
+              size="large"
+              closable
+              :disable-transitions="false"
+              @close="handleClose(watcher.id)"
+          >
+            {{ watcher.first_name+' '+ watcher.last_name}}
+          </el-tag>
+
+          <el-popover
+              placement="bottom"
+              :width="400"
+              v-model:visible="add_watcher"
+              trigger="manual"
+          >
+            <template #reference>
+                    <span @click="add_watcher = !add_watcher" style="cursor: pointer"
+                          class="fs_add_tag_icon el-tag el-tag--mini el-tag--plain"><el-icon style="vertical-align: middle;"><Plus /></el-icon>
+                    </span>
+            </template>
+
+            <h4>{{$t('Add watcher')}}</h4>
+
+            <el-select :multiple="true" v-model="watchers"
+                       size="small">
+              <el-option
+                  v-for="(agent,agent_key) in agents"
+                  :key="agent_key" :value="agent.id"
+                  :label="agent.first_name+' '+agent.last_name"></el-option>
+            </el-select>
+
+            <el-button @click="updateWatcher()" type="primary" size="small"
+                       style="margin-top: 20px">{{$t('Update')}}
+            </el-button>
+
+          </el-popover>
+
+        </div>
+      </div>
+
         <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key"
              :class="'fs_tk_widget_' + widget_key" class="fs_tk_card fs_tk_extra_card">
             <div class="fs_tk_card_header">
@@ -118,14 +166,18 @@ export default {
         FluentCrmProfile
     },
     props: ['ticket_id', 'ticket', 'fluentcrm_profile'],
+    emits: ['refresh'],
     data() {
         return {
             loading: true,
             extra_widgets: false,
             other_tickets: [],
+            watchers: [],
             customerManagementModal: false,
             changing: false,
-            activeTabName: 'update_customer_data'
+            activeTabName: 'update_customer_data',
+            add_watcher: false,
+            agents: this.appVars.support_agents,
         }
     },
     methods: {
@@ -188,10 +240,53 @@ export default {
             });
 
             return address.join(', ');
+        },
+        handleClose(watcherId){
+          this.$confirm(this.$t('response_delete_warning'), 'Warning', {
+            confirmButtonText: this.$t('Delete'),
+            cancelButtonText: this.$t('Cancel'),
+            type: 'warning'
+          }).then(() => {
+            this.$del(`tickets/${this.ticket.id}/delete_watcher/${watcherId}`)
+                .then(response => {
+                  this.$emit('refresh');
+                  this.$notify.success({
+                    message: response.message,
+                    position: 'bottom-right',
+                    type: 'success'
+                  });
+                })
+          });
+        },
+        updateWatcher(){
+          this.saving = true;
+          this.$put(`tickets/${this.ticket.id}/update_watcher`, {
+            sources: this.watchers
+          })
+          .then(response => {
+            this.$notify.success({
+              message: response.message,
+              position: 'bottom-right'
+            });
+
+            this.$emit('refresh');
+
+            this.add_watcher = false;
+          })
+          .catch((errors) => {
+            this.$handleError(errors);
+          })
+          .always(() => {
+            this.saving = false;
+          });
         }
     },
     mounted() {
         this.fetchWidgets();
+        let that = this;
+        this.ticket.watchers.map(function(value, key) {
+          that.watchers.push(value.id.toString());
+        });
     }
 }
 </script>

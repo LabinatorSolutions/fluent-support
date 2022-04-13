@@ -5,6 +5,7 @@ namespace FluentSupport\App\Services\Tickets;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 
@@ -27,7 +28,7 @@ class ResponseService
 
         $content = wp_unslash(wp_kses_post($data['content']));
 
-        $mentionedAgent = self::get_mentioned_agent($content);
+        $mentionedAgents = self::get_mentioned_agent($content);
 
         $response = [
             'person_id'         => $person->id,
@@ -113,26 +114,15 @@ class ResponseService
         /*
          * If support staff mentioned
          * */
-        if(!empty($mentionedAgent)) {
-            $agentSerialize = maybe_serialize($mentionedAgent);
-
-            $_data = Meta::where('object_type', 'ticket_meta')
-                ->where('key', '_mentioned_agent_to_ticket')
-                ->where('object_id', $ticket->id)
-                ->first();
-
-            if ($_data) {
-                $_data->value = $agentSerialize;
-                $_data->save();
-            } else {
+        if(!empty($mentionedAgents)) {
+            foreach ($mentionedAgents as $mentionedAgentID){
                 $_mentionedData = [
-                    'object_type' => 'ticket_meta',
-                    'object_id' => $ticket->id,
-                    'key' => '_mentioned_agent_to_ticket',
-                    'value' => $agentSerialize
+                    'tag_id' => $ticket->id,
+                    'source_id' => $mentionedAgentID,
+                    'source_type' => '_mentioned_agent_to_ticket'
                 ];
 
-                Meta::create($_mentionedData);
+                TagPivot::create($_mentionedData);
             }
         }
 

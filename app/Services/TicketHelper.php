@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
 
@@ -138,6 +139,25 @@ class TicketHelper
 
         return $tickets;
 
+    }
+
+    public static function getMentionedAgents($ticketId){
+        $mentioned  = TagPivot::select('source_id')->where('tag_id', $ticketId)
+            ->where('source_type', '_mentioned_agent_to_ticket')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        $agentIds = [];
+
+        if($mentioned){
+            foreach ($mentioned as $id){
+                $agentIds[] = $id->source_id;
+            }
+        }
+
+        return Agent::select(['id','email', 'first_name', 'last_name'])
+            ->whereIn('id', $agentIds)
+            ->get();
     }
 
     public static function getMentionedTicketIds($agentId){
