@@ -7,7 +7,6 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
@@ -753,36 +752,6 @@ class TicketController extends Controller
         $mentionedAgents = ResponseService::get_mentioned_agent($response->content);
 
         $this->watcherUpdate($mentionedAgents, $ticketId);
-
-        /*$_data = TagPivot::where('source_type', '_mentioned_agent_to_ticket')
-            ->where('tag_id', $ticketId)
-            ->get();
-
-        foreach ($_data as $tag){
-            if(in_array($tag->source_id, $mentionedAgents)){
-                $arrIndex = array_search($tag->source_id, $mentionedAgents);
-
-                if($arrIndex != ''){
-                    unset($mentionedAgents[$arrIndex]);
-                }
-
-            }else{
-                $tag->delete();
-            }
-        }
-
-        //Agent mentioned in note or response
-        if(!empty($mentionedAgents)){
-            foreach ($mentionedAgents as $mentionedAgentID){
-                $_mentionedData = [
-                    'tag_id' => $ticketId,
-                    'source_id' => $mentionedAgentID,
-                    'source_type' => '_mentioned_agent_to_ticket'
-                ];
-
-                TagPivot::create($_mentionedData);
-            }
-        }*/
 
         return [
             'message'  => __('Selected response has been updated', 'fluent-support'),
