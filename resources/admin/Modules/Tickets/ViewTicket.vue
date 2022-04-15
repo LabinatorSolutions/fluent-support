@@ -111,6 +111,10 @@
                                     <el-dropdown-item @click='(show_merge_modal=true) && (customerTickets())'>
                                         <i class="dashicons dashicons-randomize"></i> Merge Ticket
                                     </el-dropdown-item>
+
+                                    <el-dropdown-item v-if="!watchers.length" @click='(show_watcher_modal=true)'>
+                                        <i class="dashicons dashicons-randomize"></i> Add Watcher
+                                    </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
@@ -139,6 +143,27 @@
                             </div>
                             <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
                                 <el-skeleton :rows="5" animated/>
+                            </div>
+                        </el-dialog>
+
+                        <el-dialog
+                            v-model="show_watcher_modal"
+                            v-if="show_watcher_modal"
+                            :title="$t('Add watcher')"
+                        >
+                            <div class="fs_box_body">
+
+                                <el-select :multiple="true" v-model="watchers"
+                                           size="small">
+                                    <el-option
+                                        v-for="(agent,agent_key) in agents"
+                                        :key="agent_key" :value="agent.id"
+                                        :label="agent.first_name+' '+agent.last_name"></el-option>
+                                </el-select>
+
+                                <el-button  type="primary" size="small"
+                                           style="margin-top: 20px" @click="updateWatcher">{{$t('Add')}}
+                                </el-button>
                             </div>
                         </el-dialog>
                     </div>
@@ -430,6 +455,7 @@ export default {
             show_response_box: '',
             products: this.appVars.support_products,
             agents: this.appVars.support_agents,
+            filteredAgents: this.appVars.support_agents,
             admin_priorities: this.appVars.admin_priorities,
             client_priorities: this.appVars.client_priorities,
             updating: false,
@@ -441,6 +467,8 @@ export default {
             mailboxes: this.appVars.mailboxes,
             customer_tickets: [],
             show_merge_modal: false,
+            show_watcher_modal: false,
+            watchers: [],
             pagination: {
                 current_page: 1,
                 total: 0,
@@ -468,12 +496,18 @@ export default {
                 with_data: ['fluentcrm_profile']
             })
             .then(response => {
+                let that = this;
                 this.ticket = response.ticket;
+
                 this.$setTitle(response.ticket.title);
                 this.conversations = response.responses;
                 if (this.appVars.fluentcrm_config) {
                     this.fluentcrm_profile = response.fluentcrm_profile;
                 }
+
+                this.ticket.watchers.map(function(value, key) {
+                    that.watchers.push(value.id.toString());
+                });
             })
             .catch((errors) => {
                 this.$handleError(errors);
@@ -689,6 +723,29 @@ export default {
         syncCustomData(data) {
             this.ticket.custom_fields = data;
             this.showCustomDataEditForm = false;
+        },
+
+        updateWatcher(){
+            this.saving = true;
+            this.$put(`tickets/${this.ticket.id}/update_watcher`, {
+                sources: this.watchers
+            })
+            .then(response => {
+                this.$notify.success({
+                    message: response.message,
+                    position: 'bottom-right'
+                });
+
+                this.fetchTicket()
+
+                this.show_watcher_modal = false;
+            })
+            .catch((errors) => {
+                this.$handleError(errors);
+            })
+            .always(() => {
+                this.saving = false;
+            });
         }
     },
     mounted() {

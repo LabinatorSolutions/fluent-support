@@ -263,7 +263,7 @@ export default {
         }
     },
     watch: {
-        '$route.query.agent_id'() {
+        '$route.query'() {
             if (this.app_ready) {
                 this.filters.agent_id = this.$route.query.agent_id;
                 this.filters.mentioned = this.$route.query.mentioned;
@@ -491,6 +491,7 @@ export default {
         this.setFromSaveFilters();
         if (this.$route.query.agent_id) {
             this.filters.agent_id = this.$route.query.agent_id;
+            this.filters.mentioned = this.$route.query.mentioned;
         }
 
         if (this.$route.query.tags) {
