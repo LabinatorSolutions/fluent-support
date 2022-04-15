@@ -867,6 +867,24 @@ class TicketController extends Controller
             'rendered_fields' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields($ticket->customer)
         ];
     }
+    /**
+     * getCustomerTickets method will return customer tickets by customer id
+     * @param Request $request
+     * @param int $customerId
+     * @return array|array[]
+     */
+    public function getCustomerTickets(Request $request, $customerId)
+    {
+        $tickets = Ticket::where('customer_id', $customerId)
+            ->where('id', '!=', $request->get('exclude_ticket_id'))
+            ->orderBy('id', 'desc')
+            ->paginate();
+
+        return [
+            'tickets' => $tickets
+        ];
+    }
+
 
     /**
      * mergeCustomerTickets will merge tickets into one

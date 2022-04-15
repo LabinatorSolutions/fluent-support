@@ -63,6 +63,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->put('/{ticket_id}/update_watcher', 'TicketController@updateWatcher')->int('ticket_id');
     $router->delete('/{ticket_id}/delete_watcher/{watcher_id}', 'TicketController@deleteWatcher')->int('ticket_id')->int('watcher_id');
 
+    $router->get('customer_tickets/{customer_id}', 'TicketController@getCustomerTickets')->int('customer_id');
+
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
