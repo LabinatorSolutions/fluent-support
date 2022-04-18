@@ -10,7 +10,7 @@
                 </el-button>
             </div>
             <div class="fs_box_actions fs_ticket_orders">
-                <el-input @keyup.enter="fetchAgents" clearable @clear="fetchAgents" size="mini"
+                <el-input @keyup.enter="fetchAgents" clearable @clear="fetchAgents" size="small"
                           :placeholder="$t('Search Agents')" v-model="search">
                     <template #append>
                         <el-button @click="fetchAgents" icon="Search"></el-button>
@@ -63,8 +63,8 @@
                 <el-table-column :label="$t('Interactions')" prop="interactions_count" width="120"/>
                 <el-table-column :label="$t('Actions')" width="100">
                     <template #default="scope">
-                        <el-button @click="initEdit(scope.row)" size="medium" type="text" icon="EditPen" />
-                        <el-button @click="deleteAgent(scope.row.id)" size="medium" type="text" icon="Delete" style="color:red;"/>
+                        <el-button @click="initEdit(scope.row)" type="text" icon="EditPen" />
+                        <el-button @click="deleteAgent(scope.row.id)" type="text" icon="Delete" style="color:red;"/>
                     </template>
                 </el-table-column>
             </el-table>

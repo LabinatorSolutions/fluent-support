@@ -8,7 +8,6 @@
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-button
                         type="text"
-                        size="medium"
                         icon="Refresh"
                         @click="fetchLicense()">
                     </el-button>

@@ -10,7 +10,7 @@
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
-                    <el-input @keyup.enter="getProducts" clearable @clear="getProducts" size="mini"
+                    <el-input @keyup.enter="getProducts" clearable @clear="getProducts" size="small"
                               :placeholder="$t('Search Products')" v-model="search">
                         <template #append>
                             <el-button @click="getProducts" icon="Search"></el-button>
@@ -25,7 +25,7 @@
                     <el-table-column prop="description" :label="$t('Description')"></el-table-column>
                     <el-table-column width="120" :label="$t('Action')">
                         <template #default="scope">
-                            <el-button @click="editProductModal(scope.row)" size="medium" type="text"
+                            <el-button @click="editProductModal(scope.row)" type="text"
                                        icon="EditPen"></el-button>
                             <el-popconfirm
                                 :confirm-button-text="$t('Yes, Delete this')"
@@ -37,7 +37,6 @@
                             >
                                 <template #reference>
                                     <el-button v-loading="fetching" style="margin-left: 10px; color: red;" type="text"
-                                               size="medium"
                                                icon="Delete"></el-button>
                                 </template>
                             </el-popconfirm>
