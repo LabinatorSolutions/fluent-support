@@ -51,7 +51,7 @@
               v-for="(watcher,watcher_key) in ticket.watchers"
               :key="watcher_key"
               class="mx-1"
-              size="large"
+              size="small"
               closable
               :disable-transitions="false"
               @close="handleClose(watcher.id)"
@@ -66,9 +66,9 @@
               trigger="manual"
           >
             <template #reference>
-                    <span @click="add_watcher = !add_watcher" style="cursor: pointer"
-                          class="fs_add_tag_icon el-tag el-tag--mini el-tag--plain"><el-icon style="vertical-align: middle;"><Plus /></el-icon>
-                    </span>
+                <el-button @click="add_watcher = !add_watcher" style="height: 20px; width: 8px">
+                    <el-icon style="vertical-align: middle; font-size: 10px;"><Plus /></el-icon>
+                </el-button>
             </template>
 
             <h4>{{$t('Add watcher')}}</h4>
