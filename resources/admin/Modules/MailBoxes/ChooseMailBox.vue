@@ -6,7 +6,7 @@
                     <h3>{{ $t('Business Inboxes') }}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button size="medium" @click="showNewBusinessModal()" type="primary">
+                    <el-button @click="showNewBusinessModal()" type="primary">
                         {{ $t('Add New Business Inbox') }}
                     </el-button>
                 </div>

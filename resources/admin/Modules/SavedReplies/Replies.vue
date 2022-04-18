@@ -6,7 +6,7 @@
                     <h3>{{$t('Saved Replies')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="Plus" size="medium">
+                    <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="Plus">
                         {{$t('Create New')}}
                     </el-button>
                 </div>
@@ -41,7 +41,7 @@
                         </el-table-column>
                         <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
-                                <el-button @click="editModal(scope.row)" size="medium"
+                                <el-button @click="editModal(scope.row)"
                                            icon="EditPen" type="text" ></el-button>
                               <el-popconfirm
                                   :confirm-button-text="$t('Yes, Delete this')"
@@ -53,7 +53,6 @@
                               >
                                 <template #reference>
                                   <el-button v-loading="loading" style="margin-left: 10px; color: red;" type="text"
-                                             size="medium"
                                              icon="Delete"></el-button>
                                 </template>
                               </el-popconfirm>

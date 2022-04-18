@@ -6,14 +6,14 @@
                     <h3>{{ $t('All Customers') }}</h3>
                     <el-button
                         @click="showEditCustomerModal({})"
-                        size="mini"
+                        size="small"
                         icon="Plus">{{ $t('Add Customer') }}
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_customer_filters">
                     <div class="fs_cs_status_filter">
                         <label>{{ $t('Status') }}</label>
-                        <el-select filterable @change="fetchCustomers()" v-model="status" size="mini"
+                        <el-select filterable @change="fetchCustomers()" v-model="status" size="small"
                                    style="padding-right: 0.7em;">
                             <el-option
                                 v-for="(statusKey, statusName) in statusFilters"
@@ -23,7 +23,7 @@
                             ></el-option>
                         </el-select>
                     </div>
-                    <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="mini"
+                    <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="small"
                               :placeholder="$t('Search Customers')" v-model="search">
                         <template #append>
                             <el-button @click="fetchCustomers()" icon="Search"></el-button>

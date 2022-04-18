@@ -6,7 +6,7 @@
                     <h3>{{ $t('All Workflows') }}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions fs_ticket_orders">
-                    <el-button type="primary" @click="showAddModal = true" size="medium" icon="Plus">{{
+                    <el-button type="primary" @click="showAddModal = true" icon="Plus">{{
                             $t('Add New WorkFlow')
                         }}
                     </el-button>
@@ -42,7 +42,7 @@
                                 >
                                     <template #reference>
                                         <el-button v-loading="deleting" style="margin-left: 10px; color: red;" type="text"
-                                                   size="mini"
+                                                   size="small"
                                                    icon="Delete"></el-button>
                                     </template>
                                 </el-popconfirm>

@@ -143,7 +143,7 @@
 
                     <el-form-item>
                         <el-button @click="changeCustomer(ticket.customer_id)" :disabled="changing" v-loading="changing"
-                                   type="primary" size="mini">
+                                   type="primary" size="small">
                             {{ $t('Change Customer') }}
                         </el-button>
                     </el-form-item>

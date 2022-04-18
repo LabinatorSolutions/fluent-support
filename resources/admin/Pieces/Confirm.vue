@@ -9,7 +9,7 @@
 
         <div class="action-buttons">
             <el-button
-                size="mini"
+                size="small"
                 type="text"
                 @click="cancel()">
                 {{$t('cancel')}}
@@ -17,7 +17,7 @@
 
             <el-button
                 type="primary"
-                size="mini"
+                size="small"
                 @click="confirm()">
                 {{$t('confirm')}}
             </el-button>

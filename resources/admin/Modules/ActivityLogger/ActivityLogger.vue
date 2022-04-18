@@ -8,7 +8,7 @@
                 <el-button v-loading="loading"
                            @click="fetchActivities()"
                            icon="Refresh"
-                           size="mini"></el-button>
+                           size="small"></el-button>
                 <el-button v-if="me.permissions.indexOf('fst_manage_settings') != -1" @click="showSettingsModal = true" size="small" type="default" icon="Setting"></el-button>
             </div>
         </div>
