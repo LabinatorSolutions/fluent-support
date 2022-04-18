@@ -11,7 +11,7 @@
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
-                    <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="mini"
+                    <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="small"
                               :placeholder="$t('Search Tags')" v-model="search">
                         <template #append>
                             <el-button @click="fetchTags" :disabled="!has_pro" icon="Search"></el-button>
@@ -34,7 +34,7 @@
                         </el-table-column>
                         <el-table-column width="120" :label="$t('Action')">
                             <template #default="scope">
-                                <el-button @click="editTagModal(scope.row)" size="medium" type="text"
+                                <el-button @click="editTagModal(scope.row)" type="text"
                                            icon="EditPen"></el-button>
                                 <el-popconfirm
                                     :confirm-button-text="$t('Yes, Delete this')"
@@ -47,7 +47,6 @@
                                     <template #reference>
                                         <el-button v-loading="fetching" style="margin-left: 10px; color: red;"
                                                    type="text"
-                                                   size="medium"
                                                    icon="Delete"></el-button>
                                     </template>
                                 </el-popconfirm>

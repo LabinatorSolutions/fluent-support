@@ -25,20 +25,20 @@
                         <el-table-column :label="$t('Type')" prop="type"></el-table-column>
                         <el-table-column width="160" :label="$t('Actions')">
                             <template #default="scope">
-                                <el-button type="text" @click="updateFieldModal(scope.$index)" size="medium"
+                                <el-button type="text" @click="updateFieldModal(scope.$index)"
                                            icon="EditPen"></el-button>
                                 <el-popconfirm :title="$t('custom_ticket_field_delete')"
                                                @confirm="deleteField(scope.$index)">
                                     <template #reference>
-                                        <el-button type="text" size="medium" icon="Delete" style="color: red; margin-right: .3em;"></el-button>
+                                        <el-button type="text" icon="Delete" style="color: red; margin-right: .3em;"></el-button>
                                     </template>
                                 </el-popconfirm>
 
                                 <el-button-group>
                                     <el-button @click="movePosition(scope.$index, 'up')" :disabled="scope.$index == 0"
-                                               size="mini" icon="ArrowUp"></el-button>
+                                               size="small" icon="ArrowUp"></el-button>
                                     <el-button @click="movePosition(scope.$index, 'down')"
-                                               :disabled="scope.$index == (fields.length - 1)" size="mini"
+                                               :disabled="scope.$index == (fields.length - 1)" size="small"
                                                icon="ArrowDown"></el-button>
                                 </el-button-group>
                             </template>
