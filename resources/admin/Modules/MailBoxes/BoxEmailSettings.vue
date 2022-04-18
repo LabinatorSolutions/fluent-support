@@ -11,7 +11,7 @@
             </el-table-column>
             <el-table-column :label="$t('Manage')">
                 <template #default="scope">
-                    <el-button @click="editEmail(scope.row)" size="medium" type="text" icon="EditPen" />
+                    <el-button @click="editEmail(scope.row)" type="text" icon="EditPen" />
                 </template>
             </el-table-column>
         </el-table>

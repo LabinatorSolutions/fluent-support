@@ -48,7 +48,7 @@
             </template>
         </td>
         <td style="width: 50px; text-align: right;">
-            <el-button @click="removeItem()" type="danger" size="mini" plain icon="Delete"></el-button>
+            <el-button @click="removeItem()" type="danger" size="small" plain icon="Delete"></el-button>
         </td>
     </tr>
 </template>
