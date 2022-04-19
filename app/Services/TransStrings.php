@@ -470,6 +470,9 @@ class TransStrings
             'Merge Tickets'    => __('Merge Tickets', 'fluent-support'),
             'Includes In'    => __('Includes In', 'fluent-support'),
             'Not Includes In'    => __('Not Includes In', 'fluent-support'),
+            'Mentioned'    => __('Mentioned', 'fluent-support'),
+            'Watcher'    => __('Watcher', 'fluent-support'),
+            'Add watcher'    => __('Add watcher', 'fluent-support'),
         ];
     }
 }
