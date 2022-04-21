@@ -39,7 +39,6 @@ export default {
                 settings_key: this.settings_key
             })
                 .then((response) => {
-                    console.log(response);
                     this.settings = response.settings;
                     this.fields = response.fields;
                     this.app_ready = true;

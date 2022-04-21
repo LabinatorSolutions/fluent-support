@@ -33,7 +33,6 @@ export default {
             this.show_adder = false;
             action.workflow_id = this.workflow_id;
             this.actions.push(action);
-            console.log(this.actions);
         },
         triggerUpdate() {
             this.$emit('update');

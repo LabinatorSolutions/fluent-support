@@ -94,7 +94,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.action);
         if (!this.action.settings) {
             this.action.settings = {};
         }
