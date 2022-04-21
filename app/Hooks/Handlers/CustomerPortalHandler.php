@@ -134,7 +134,7 @@ class CustomerPortalHandler
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
             'view_tickets_url'           => '#/',
             'i18n'                       => $i18ns,
-            'fallback_image'             => $assets . 'images/file.png',
+            'fallback_image'             => $assets . 'images/icons/file.svg',
             'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
             'has_rich_text_editor'       => true
         ];

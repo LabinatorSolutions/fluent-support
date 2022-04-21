@@ -69,7 +69,7 @@ export default {
 
             if(file.raw.type.includes('application')) {
                 if(this.appVars.asset_url) {
-                    return file.url = this.appVars.asset_url+'images/file.png';
+                    return file.url = this.appVars.asset_url+'images/icons/file.svg';
                 }
                 return file.url = this.appVars.fallback_image;
             }
