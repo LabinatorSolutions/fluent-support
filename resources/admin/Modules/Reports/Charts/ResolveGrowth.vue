@@ -98,7 +98,6 @@ export default {
                 backgroundColor: '#0cbe7e',
                 data: statData
             });
-            console.log(chartData);
             this.chartData = chartData;
         }
     },
