@@ -706,8 +706,8 @@ export default {
                             message: response.message,
                             position: 'bottom-right'
                         });
-                        this.customerTickets();
                         this.fetchTicket();
+                        this.customerTickets();
                     })
                     .catch((error) => {
                         this.$handleError(error);

@@ -83,7 +83,7 @@ class TicketService
         return $person;
     }
 
-    public function onTicketMerge($ticket, $mergedTicket)
+    public function addNoteOnMerge($ticket, $mergedTicket)
     {
         do_action('fluent_support/ticket_merge', $ticket, $mergedTicket);
         $message = sprintf(__('Ticket #%s has been merged with this ticket at %s', 'fluent-support'),  $mergedTicket->id, current_time('mysql'));
