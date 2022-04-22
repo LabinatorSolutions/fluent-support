@@ -899,14 +899,17 @@ class TicketController extends Controller
         $parentTicket = Ticket::findOrFail($ticketId);
         $ticket = Ticket::findOrFail($ticketIDToMerge);
 
-        Conversation::create(
+        $conversation =  Conversation::create(
             [
                 'ticket_id'  => $ticketId,
                 'content'    => $ticket->content,
                 'source'     => $ticket->source,
-                'person_id'  => $parentTicket->agent_id,
+                'person_id'  => $parentTicket->customer_id
             ]
         );
+        $conversation->created_at = $ticket->created_at;
+        $conversation->save();
+
 
         Conversation::where('ticket_id', $ticketIDToMerge)
             ->update([
@@ -918,7 +921,7 @@ class TicketController extends Controller
                 'ticket_id' => $ticketId
             ]);
 
-        (new TicketService())->onTicketMerge($parentTicket, $ticket);
+        (new TicketService())->addNoteOnMerge($parentTicket, $ticket);
         $ticket->deleteTicket();
 
         return [
