@@ -19,7 +19,7 @@
                 </div>
 
                 <template v-if="!loading">
-                    <ul class="fs_activities">
+                    <ul v-if="activities.length > 0" class="fs_activities">
                         <li v-for="activity in activities" @click.prevent="handleClick(activity, $event)" :key="activity.id"
                             :class="activity.person_type=='agent' ? 'fs_agent_activity' : 'fs_customer_activity'">
                             <div class="fs_activity">
@@ -34,6 +34,9 @@
                             </div>
                         </li>
                     </ul>
+                    <div v-else class="text-align-center">
+                        <h3>{{$t('activity_not_found')}}</h3>
+                    </div>
                     <div style="padding-bottom: 20px" class="fframe_pagination_wrapper">
                         <pagination @fetch="fetchActivities()" :pagination="pagination"/>
                     </div>
