@@ -894,39 +894,14 @@ class TicketController extends Controller
      */
     public function mergeCustomerTickets(Request $request, $ticketId)
     {
+        if (!PermissionManager::currentUserCan('fst_merge_tickets')) {
+            return $this->sendError([
+                'message' => __('You do not have permission to merge tickets', 'fluent-support')
+            ]);
+        }
+
         $ticketIDToMerge = $request->get('ticket_to_merge');
-
-        $parentTicket = Ticket::findOrFail($ticketId);
-        $ticket = Ticket::findOrFail($ticketIDToMerge);
-
-        $conversation =  Conversation::create(
-            [
-                'ticket_id'  => $ticketId,
-                'content'    => $ticket->content,
-                'source'     => $ticket->source,
-                'person_id'  => $parentTicket->customer_id
-            ]
-        );
-        $conversation->created_at = $ticket->created_at;
-        $conversation->save();
-
-
-        Conversation::where('ticket_id', $ticketIDToMerge)
-            ->update([
-                'ticket_id' => $ticketId
-            ]);
-
-        Attachment::where('ticket_id', $ticketIDToMerge)
-            ->update([
-                'ticket_id' => $ticketId
-            ]);
-
-        (new TicketService())->addNoteOnMerge($parentTicket, $ticket);
-        $ticket->deleteTicket();
-
-        return [
-            'message' => __('Tickets has been merged', 'fluent-support')
-        ];
+        return (new TicketService())->mergeCustomerTickets($ticketIDToMerge, $ticketId);
     }
 
     /**

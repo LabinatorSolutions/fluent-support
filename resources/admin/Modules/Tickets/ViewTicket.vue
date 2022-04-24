@@ -146,6 +146,9 @@
                                     <pagination @fetch="customerTickets" :pagination="pagination" />
                                 </div>
                             </div>
+                            <div class="fs_box_body" v-else-if="customer_tickets.length == 0">
+                                <h3>{{$t('customer_has_one_tk')}}</h3>
+                            </div>
                             <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
                                 <el-skeleton :rows="5" animated/>
                             </div>
