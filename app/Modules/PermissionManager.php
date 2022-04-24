@@ -31,7 +31,8 @@ class PermissionManager
             'fst_run_workflows',
             'fst_view_all_reports',
             'fst_manage_saved_replies',
-            'fst_view_activity_logs'
+            'fst_view_activity_logs',
+            'fst_merge_tickets'
         ];
     }
 
@@ -203,6 +204,7 @@ class PermissionManager
                     'fst_manage_unassigned_tickets' => __('Manage Unassigned Tickets', 'fluent-support'),
                     'fst_manage_other_tickets'      => __('Manage Others Tickets', 'fluent-support'),
                     'fst_delete_tickets'            => __('Delete Tickets', 'fluent-support'),
+                    'fst_merge_tickets'             => __('Merge Tickets', 'fluent-support'),
                 ]
             ],
             [

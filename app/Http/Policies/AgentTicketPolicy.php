@@ -16,7 +16,7 @@ class AgentTicketPolicy extends Policy
     public function verifyRequest(Request $request)
     {
         $permissions = PermissionManager::currentUserPermissions();
-        $acceptedPermissions = ['fst_manage_own_tickets', 'fst_manage_unassigned_tickets', 'fst_manage_other_tickets'];
+        $acceptedPermissions = ['fst_manage_own_tickets', 'fst_manage_unassigned_tickets', 'fst_manage_other_tickets', 'fst_merge_tickets'];
         $status = !!array_intersect($permissions, $acceptedPermissions);
 
         return apply_filters('fluent_support/agent_has_access', $status, $request);

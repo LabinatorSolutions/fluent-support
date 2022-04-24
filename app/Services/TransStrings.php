@@ -473,6 +473,8 @@ class TransStrings
             'Mentioned'    => __('Mentioned', 'fluent-support'),
             'Watcher'    => __('Watcher', 'fluent-support'),
             'Add watcher'    => __('Add watcher', 'fluent-support'),
+            'activity_not_found'    => __('No activities found at this moment', 'fluent-support'),
+            'customer_has_one_tk'    => __('Sorry, this customer has one ticket only', 'fluent-support'),
         ];
     }
 }
