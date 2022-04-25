@@ -15,7 +15,9 @@
             </el-dropdown>
             <template-inserter v-if="appVars.has_pro" @insert="insertTemplate"/>
         </div>
-        <wp-editor :autofocus="true" @showSuggestion=showSuggestion v-if="editor_ready" v-model="response_body"/>
+
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body"/>
+
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
@@ -34,17 +36,6 @@
             </div>
         </div>
     </div>
-
-    <el-dialog v-model="popup" :title="$t('Support Staff')" width="18%" center top="45%">
-        <el-form-item>
-            <el-input v-model="agent_id" placeholder="Type to search"
-                      @keyup="searchAgent" />
-        </el-form-item>
-
-        <div class="text item"
-             v-for="agent in filteredAgents"
-             :key="agent.id" @click="tagMe(agent)">{{ agent.full_name }}</div>
-    </el-dialog>
 </template>
 
 <script type="text/babel">
@@ -63,11 +54,6 @@ export default {
     },
     data() {
         return {
-            agents: this.appVars.support_agents,
-            filteredAgents: this.appVars.support_agents,
-            replaceText: '',
-            agent_id: '',
-            popup: false,
             response_body: '',
             creating: false,
             close_ticket: 'no',
@@ -133,39 +119,7 @@ export default {
             this.$nextTick(() => {
                 this.editor_ready = true;
             });
-        },
-        showSuggestion(replaceText){
-            if(this.type == 'note'){
-                this.replaceText = replaceText;
-                this.popup = true;
-            }
-        },
-        searchAgent(){
-            this.filteredAgents = this.agents.filter(
-                (data) => !this.agent_id || (this.agent_id && (data.full_name.toLowerCase().includes(this.agent_id.toLowerCase())))
-            )
-        },
-        tagMe(agent){
-            this.editor_ready = false;
-            let newText = "@<a href='#"+agent.id+"'>"+agent.first_name+'-'+agent.last_name+"</a>";
-            let RegX = new RegExp(this.replaceText+"([^"+this.replaceText+"]*)$");
-            this.response_body = this.response_body.replace(RegX, newText + '$1');
-            this.popup = false;
-            this.$nextTick(() => {
-                this.editor_ready = true;
-            });
         }
     }
 }
 </script>
-
-<style scoped>
-    .text {
-        font-size: 14px;
-    }
-
-    .item {
-        padding: 18px 0;
-        cursor: pointer;
-    }
-</style>

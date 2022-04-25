@@ -749,10 +749,6 @@ class TicketController extends Controller
         $response->content = wp_unslash(wp_kses_post($data['content']));
         $response->save();
 
-        $mentionedAgents = ResponseService::get_mentioned_agent($response->content);
-
-        $this->watcherUpdate($mentionedAgents, $ticketId);
-
         return [
             'message'  => __('Selected response has been updated', 'fluent-support'),
             'response' => $response

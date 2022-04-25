@@ -51,7 +51,7 @@ export default {
             }
         }
     },
-    emits: ['update:modelValue', 'showSuggestion'],
+    emits: ['update:modelValue'],
     data() {
         return {
             showButtonDesigner: false,
@@ -61,8 +61,7 @@ export default {
             cursorPos: (this.modelValue) ? this.modelValue.length : 0,
             app_ready: false,
             buttonInitiated: false,
-            currentEditor: false,
-            atIndex: 0,
+            currentEditor: false
         }
     },
     watch: {
@@ -71,20 +70,6 @@ export default {
         }
     },
     methods: {
-        findAt(text) {
-            let replaceTxt = '';
-            let at = text.lastIndexOf("@");
-
-            if(at > -1){
-                let nextText = text.substring(at+1, at+3);
-                if(nextText !== "<a"){
-                    let end = text.length-4;
-                    replaceTxt = text.substring(at, end);
-                }
-            }
-
-            return replaceTxt;
-        },
         initEditor() {
             if (!this.hasWpEditor) {
                 return;
@@ -98,15 +83,6 @@ export default {
                 setup(editor) {
                     editor.on('change', function (ed, l) {
                         that.changeContentEvent();
-                    });
-
-                    editor.on('keyup', function(e) {
-                        let content = editor.getContent();
-                        let text = that.findAt(content, that.atIndex);
-
-                        if(text.length > 0){
-                            that.$emit("showSuggestion", text);
-                        }
                     });
                 }
             };
