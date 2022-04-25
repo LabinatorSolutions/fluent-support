@@ -4,8 +4,6 @@ namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\Meta;
-use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 
@@ -27,8 +25,6 @@ class ResponseService
         $convoType = Arr::get($data, 'conversation_type', 'response');
 
         $content = wp_unslash(wp_kses_post($data['content']));
-
-        $mentionedAgents = self::get_mentioned_agent($content);
 
         $response = [
             'person_id'         => $person->id,
@@ -111,21 +107,6 @@ class ResponseService
 
         $ticket->save();
 
-        /*
-         * If support staff mentioned
-         * */
-        if(!empty($mentionedAgents)) {
-            foreach ($mentionedAgents as $mentionedAgentID){
-                $_mentionedData = [
-                    'tag_id' => $ticket->id,
-                    'source_id' => $mentionedAgentID,
-                    'source_type' => '_mentioned_agent_to_ticket'
-                ];
-
-                TagPivot::create($_mentionedData);
-            }
-        }
-
         if ($agentAdded) {
             $assigner = Helper::getCurrentAgent();
             $ticket->load('agent');
@@ -181,23 +162,5 @@ class ResponseService
             'ticket'      => $ticket,
             'update_data' => $updateData
         ];
-    }
-
-    public static function get_mentioned_agent($content){
-        $mentionedAgent = [];
-        $content = str_replace("'", '"', $content);
-        $tempArr = explode("\"#", $content);
-
-        if(is_array($tempArr) && !empty($tempArr)){
-            foreach ($tempArr as $arr){
-                $newArr = explode("\"", $arr);
-
-                if(isset($newArr[0]) && is_numeric($newArr[0])){
-                    $mentionedAgent[] = $newArr[0];
-                }
-            }
-        }
-
-        return $mentionedAgent;
     }
 }
