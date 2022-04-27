@@ -219,8 +219,9 @@ class Ticket extends Model
                 //Apply filter where ticket is not assigned
                 if ($filterValue == 'unassigned') {
                     $query->whereNull($filterKey);
-                } else {
-                    if (isset($filters['mentioned']) && $filters['mentioned'] == 'mentioned'){
+                }
+                else {
+                    if (isset($filters['watcher']) && $filters['watcher'] == 'watcher'){
                         $mentionedTickets = TicketHelper::getMentionedTicketIds($filterValue);
                         $query->whereIn('id', $mentionedTickets);
                     }else {
@@ -228,7 +229,8 @@ class Ticket extends Model
                         $query->where($filterKey, $filterValue);
                     }
                 }
-            } else if ($filterKey == 'ticket_tags') {
+            }
+            else if ($filterKey == 'ticket_tags') {
                 if (!$filterValue) {
                     continue;
                 }
@@ -582,6 +584,14 @@ class Ticket extends Model
         )->wherePivot('source_type', 'ticket_tag');
     }
 
+    public function watchers()
+    {
+        $class = __NAMESPACE__ . '\TagPivot';
+
+        return $this->hasMany($class, 'source_id', 'id')
+            ->where('source_type', 'ticket_watcher')
+            ->select([ 'tag_id']);
+    }
 
     /**
      * One2one: Customer has to many Click Tickets

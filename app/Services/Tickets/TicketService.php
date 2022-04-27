@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
 
@@ -131,6 +132,45 @@ class TicketService
 
         return [
             'message' => __('Tickets has been merged', 'fluent-support')
+        ];
+    }
+
+    public function syncTicketWatchers($watchers, $ticketId)
+    {
+        $addWatchers = []; //array of watchers to add
+
+        // Existing watchers
+        $existingWatchers = TagPivot::where('source_type', 'ticket_watcher')
+            ->where('source_id', $ticketId)
+            ->get(['tag_id']);
+
+        // Remove watchers that are not in the list
+        // and add watchers that are not in the existing watchers
+        foreach ($existingWatchers as $watcher) {
+            if (!in_array($watcher->tag_id, $watchers)) {
+                TagPivot::where('source_type', 'ticket_watcher')
+                    ->where('source_id', $ticketId)
+                    ->where('tag_id', $watcher->tag_id)
+                    ->delete();
+            } else {
+                $getExWatcherIds = array_column($existingWatchers->toArray(), 'tag_id');
+                $addWatchers = array_diff($watchers, $getExWatcherIds);
+            }
+        }
+
+        // Add watchers that are not in the existing watchers
+        if ($addWatchers) {
+            foreach ($addWatchers as $watcherId) {
+                TagPivot::create([
+                    'tag_id' => $watcherId,
+                    'source_id' => $ticketId,
+                    'source_type' => 'ticket_watcher'
+                ]);
+            }
+        }
+
+        return [
+            'message' => __('Watchers has been updated', 'fluent-support')
         ];
     }
 }
