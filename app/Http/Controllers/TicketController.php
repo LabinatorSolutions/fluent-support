@@ -276,8 +276,6 @@ class TicketController extends Controller
             $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
         }
 
-        $ticket->watchers = TicketHelper::getMentionedAgents($ticketId);
-
         //If user do not have permission in this ticket
         if (!PermissionManager::hasTicketPermission($ticket)) {
             return $this->sendError([
@@ -314,6 +312,10 @@ class TicketController extends Controller
             'responses' => $responses,
             'agent_id'  => $agent->id
         ];
+
+        if($ticket->watchers){
+            $data['watchers'] = TicketHelper::getWatchers($ticket->watchers);
+        }
 
         //Is request come with fluentcrm_profile, get fluent crm contack information
         if (in_array('fluentcrm_profile', $request->get('with_data', [])) && defined('FLUENTCRM')) {
@@ -959,59 +961,37 @@ class TicketController extends Controller
 
     }
 
-
-    public function updateWatcher( Request $request, $ticketId){
-        $mentionedAgents = $request->get('sources', []);
-
-        $this->watcherUpdate($mentionedAgents, $ticketId);
-
-        return [
-            'message' => __('Watcher has been updated from this ticket', 'fluent-support')
-        ];
-    }
-
-    public function deleteWatcher($ticketId, $sourceId){
-        TagPivot::where('source_type', '_mentioned_agent_to_ticket')
-            ->where('tag_id', $ticketId)
-            ->where('source_id', $sourceId)
-            ->delete();
-
-        return [
-            'message' => __('Watcher has been removed from this ticket', 'fluent-support')
-        ];
-    }
-
-    public function watcherUpdate($mentionedAgents, $ticketId){
-        $_data = TagPivot::where('source_type', '_mentioned_agent_to_ticket')
-            ->where('tag_id', $ticketId)
-            ->get();
-
-        foreach ($_data as $tag){
-            if(in_array($tag->source_id, $mentionedAgents)){
-                $arrIndex = array_search($tag->source_id, $mentionedAgents);
-
-                if($arrIndex != ''){
-                    unset($mentionedAgents[$arrIndex]);
-                }
-
-            }else{
-                $tag->delete();
-            }
+    public function syncTicketWatchers(Request $request, $ticketId)
+    {
+        $watchers = $request->get('watchers', []);
+        $agentIds = [];
+        foreach($watchers as $watcher){
+            is_array($watcher) ? $agentIds[] = $watcher['id'] : $agentIds[] = $watcher;
         }
 
-        //Agent mentioned in note or response
-        if(!empty($mentionedAgents)){
-            foreach ($mentionedAgents as $mentionedAgentID){
-                $_mentionedData = [
-                    'tag_id' => $ticketId,
-                    'source_id' => $mentionedAgentID,
-                    'source_type' => '_mentioned_agent_to_ticket'
-                ];
+        return (new TicketService())->syncTicketWatchers($agentIds, $ticketId);
+    }
 
-                TagPivot::create($_mentionedData);
-            }
+    public function addTicketWatchers(Request $request, $tickedId)
+    {
+        $watchers = $request->get('watchers', []);
+
+        if(!$watchers){
+            return $this->sendError([
+                'message' => __('Watchers is required', 'fluent-support')
+            ]);
         }
 
-        return true;
+        foreach ($watchers as $watcher){
+            TagPivot::create([
+                'source_type' => 'ticket_watcher',
+                'source_id' => $tickedId,
+                'tag_id' => absint($watcher)
+            ]);
+        }
+
+        return [
+            'message' => __('Watchers has been added to this ticket', 'fluent-support')
+        ];
     }
 }

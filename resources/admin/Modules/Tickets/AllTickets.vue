@@ -233,7 +233,7 @@ export default {
                 waiting_for_reply: '',
                 ticket_tags: [],
                 mailbox_id: '',
-                mentioned: '',
+                watcher: '',
             },
             search: '',
             order_by: 'last_customer_response',
@@ -266,7 +266,7 @@ export default {
         '$route.query'() {
             if (this.app_ready) {
                 this.filters.agent_id = this.$route.query.agent_id;
-                this.filters.mentioned = this.$route.query.mentioned;
+                this.filters.watcher = this.$route.query.watcher;
                 this.fetchTickets();
             }
         }

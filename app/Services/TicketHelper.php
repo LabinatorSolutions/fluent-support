@@ -141,61 +141,43 @@ class TicketHelper
 
     }
 
-    public static function getMentionedAgents($ticketId){
-        $mentioned  = TagPivot::select('source_id')->where('tag_id', $ticketId)
-            ->where('source_type', '_mentioned_agent_to_ticket')
+    // This method will return all tagged/mentioned/watcher ticket's ids for filtering
+    public static function getMentionedTicketIds($agentId)
+    {
+        $mentioned  = TagPivot::where('source_type', 'ticket_watcher')
+            ->where('tag_id', $agentId)
             ->orderBy('id', 'DESC')
-            ->get();
+            ->get(['source_id']);
 
-        $agentIds = [];
-
-        if($mentioned){
-            foreach ($mentioned as $id){
-                $agentIds[] = $id->source_id;
-            }
-        }
-
-        return Agent::select(['id','email', 'first_name', 'last_name'])
-            ->whereIn('id', $agentIds)
-            ->get();
-    }
-
-    public static function getMentionedTicketIds($agentId){
-        $mentioned  = TagPivot::select('tag_id')->where('source_id', $agentId)
-            ->where('source_type', '_mentioned_agent_to_ticket')
-            ->orderBy('id', 'DESC')
-            ->get();
-
-        $ticketIds = [];
-
-        if($mentioned){
-            foreach ($mentioned as $id){
-                $ticketIds[] = $id->tag_id;
-            }
-        }
-
+        $ticketIds = array_column($mentioned->toArray(), 'source_id');
         return $ticketIds;
     }
 
-    public static function getMentionedTickets($agentId, $limit = 5){
-        $mentioned  = TagPivot::where('source_id', $agentId)
-            ->where('source_type', '_mentioned_agent_to_ticket')
-            ->orderBy('id', 'DESC')
+    // This method will return all tagged/mentioned/watcher tickets of logged in agent
+    public static function getMentionedTickets()
+    {
+        $agent = Helper::getCurrentAgent();
+
+        $tickets = Ticket::with('customer')
+            ->limit(5)
+            ->join('fs_tag_pivot', 'fs_tag_pivot.source_id', '=', 'fs_tickets.id')
+            ->where('fs_tag_pivot.source_type', '=', 'ticket_watcher')
+            ->where('fs_tag_pivot.tag_id', '=', $agent->id)
+            ->select(['fs_tickets.*'])
             ->get();
 
-        $tickets = [];
-        $count  = 0;
-        if(!empty($mentioned)){
-            foreach ($mentioned as $row){
-                if($count < $limit){
-                    $tickets[] = Ticket::with('customer')->find($row->tag_id);
-                    $count++;
-                }else {
-                    break;
-                }
-            }
+        return $tickets;
+    }
+
+    // This method will return all ticket watcher inside a ticket
+    public static function getWatchers($watchers)
+    {
+        $watcherAgents = [];
+
+        foreach ($watchers as $watcher) {
+            $watcherAgents[] = Agent::where('id', absint($watcher->tag_id))->select(['id', 'first_name', 'last_name'])->first();
         }
 
-        return $tickets;
+        return $watcherAgents;
     }
 }

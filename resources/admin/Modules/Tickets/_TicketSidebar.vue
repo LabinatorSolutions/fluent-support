@@ -10,7 +10,7 @@
                 <el-icon v-if="appVars.me.permissions.includes('fst_sensitive_data')" style="float:right;" @click="customerManagement">
                     <More />
                 </el-icon>
-<!--                <i v-if="appVars.me.permissions.includes('fst_sensitive_data')" class="el-icon-more" style="float:right;" @click="customerManagement"></i>-->
+
             </div>
             <div class="fs_tk_card_body">
                 <div class="fs_tk_line">
@@ -42,13 +42,13 @@
             <el-skeleton :rows="1" animated/>
         </div>
 
-      <div v-if="ticket.watchers && ticket.watchers.length" class="fs_tk_card fs_tk_watchers_card">
+      <div v-if="watchers.length" class="fs_tk_card fs_tk_watchers_card">
         <div class="fs_tk_card_header">
-          <h3>{{ $t('Watcher') }} ({{ ticket.watchers.length }})</h3>
+          <h3>{{ $t('Watcher') }} ({{ watchers.length }})</h3>
         </div>
         <div class="fs_tk_card_body">
           <el-tag
-              v-for="(watcher,watcher_key) in ticket.watchers"
+              v-for="(watcher,watcher_key) in watchers"
               :key="watcher_key"
               class="mx-1"
               size="small"
@@ -56,7 +56,7 @@
               :disable-transitions="false"
               @close="handleClose(watcher.id)"
           >
-            {{ watcher.first_name+' '+ watcher.last_name}}
+            {{ watcher.full_name}}
           </el-tag>
 
           <el-popover
@@ -73,12 +73,12 @@
 
             <h4>{{$t('Add watcher')}}</h4>
 
-            <el-select :multiple="true" v-model="watchers"
+            <el-select multiple v-model="that_watchers"
                        size="small">
               <el-option
                   v-for="(agent,agent_key) in agents"
                   :key="agent_key" :value="agent.id"
-                  :label="agent.first_name+' '+agent.last_name"></el-option>
+                  :label="agent.full_name"></el-option>
             </el-select>
 
             <el-button @click="updateWatcher()" type="primary" size="small"
@@ -165,14 +165,14 @@ export default {
         RemoteSelector,
         FluentCrmProfile
     },
-    props: ['ticket_id', 'ticket', 'fluentcrm_profile'],
+    props: ['ticket_id', 'ticket', 'fluentcrm_profile', 'watchers'],
     emits: ['refresh'],
     data() {
         return {
             loading: true,
             extra_widgets: false,
             other_tickets: [],
-            watchers: [],
+            that_watchers: [],
             customerManagementModal: false,
             changing: false,
             activeTabName: 'update_customer_data',
@@ -242,26 +242,27 @@ export default {
             return address.join(', ');
         },
         handleClose(watcherId){
-          this.$confirm(this.$t('response_delete_warning'), 'Warning', {
+          this.$confirm(this.$t('watcher_remove_warning'), 'Warning', {
             confirmButtonText: this.$t('Delete'),
             cancelButtonText: this.$t('Cancel'),
             type: 'warning'
-          }).then(() => {
-            this.$del(`tickets/${this.ticket.id}/delete_watcher/${watcherId}`)
-                .then(response => {
-                  this.$emit('refresh');
-                  this.$notify.success({
-                    message: response.message,
-                    position: 'bottom-right',
-                    type: 'success'
-                  });
-                })
-          });
+          })
+              .then(() => {
+                  const index = this.that_watchers.indexOf(watcherId.toString());
+                  if (index > -1) {
+                      this.that_watchers.splice(index, 1);
+                  }
+                  this.saving = true;
+                  this.updateWatcher();
+              })
+              .catch(errors => {
+                this.$handleError(errors)
+              })
         },
         updateWatcher(){
           this.saving = true;
-          this.$put(`tickets/${this.ticket.id}/update_watcher`, {
-            sources: this.watchers
+          this.$post(`tickets/${this.ticket.id}/sync-watchers`, {
+            watchers: this.that_watchers,
           })
           .then(response => {
             this.$notify.success({
@@ -276,16 +277,12 @@ export default {
           .catch((errors) => {
             this.$handleError(errors);
           })
-          .always(() => {
-            this.saving = false;
-          });
         }
     },
     mounted() {
         this.fetchWidgets();
-        let that = this;
-        this.ticket.watchers.map(function(value, key) {
-          that.watchers.push(value.id.toString());
+        this.that_watchers = this.watchers.map(function(watcher){
+          return watcher.id.toString();
         });
     }
 }
