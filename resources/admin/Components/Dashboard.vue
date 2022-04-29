@@ -48,15 +48,15 @@
             </div>
         </div>
 
-        <div class="fs_dash_mentioned_ticket" v-if="mentioned_tickets.length">
+        <div class="fs_dash_mentioned_ticket" v-if="ticket_to_watch.length">
             <div class="fs_box fs_dashboard_box">
                 <div class="fs_box_header">
-                    <span style="font-weight: normal;">{{$t('dashboard_mention_heading')}}</span>
+                    <span style="font-weight: normal;">{{$t('dashboard_watcher_heading')}}</span>
                 </div>
                 <div class="fs_box_body">
                     <template v-if="!loading">
-                        <ul v-if="mentioned_tickets.length" class="fs_card_list">
-                            <li v-for="ticket in mentioned_tickets" :key="ticket.id">
+                        <ul v-if="ticket_to_watch.length" class="fs_card_list">
+                            <li v-for="ticket in ticket_to_watch" :key="ticket.id">
                                 <div class="fs_suggested_ticket">
                                     <div class="fs_ticket_info">
                                         <router-link tag="li" :to="{ name: 'view_ticket', params: { ticket_id: ticket.id } }">
@@ -116,7 +116,7 @@ export default {
             loading: false,
             stats: {},
             suggested_tickets: [],
-            mentioned_tickets: [],
+            ticket_to_watch: [],
             overall_stats: false,
             individual_stat: false,
             dashboard_notice: ''
@@ -150,7 +150,7 @@ export default {
         fetchStat() {
             this.loading = true;
             this.$get('tickets/my_stats', {
-                with: ['suggested_tickets', 'overall_stats', 'individual_stat', 'mentioned_tickets']
+                with: ['suggested_tickets', 'overall_stats', 'individual_stat', 'ticket_to_watch']
             })
                 .then(response => {
                     this.stats = response.stats;
@@ -158,7 +158,7 @@ export default {
                     this.overall_stats = response.overall_stats;
                     this.individual_stat = response.individual_stat;
                     this.dashboard_notice = response.dashboard_notice;
-                    this.mentioned_tickets = response.mentioned_tickets;
+                    this.ticket_to_watch = response.ticket_to_watch;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
