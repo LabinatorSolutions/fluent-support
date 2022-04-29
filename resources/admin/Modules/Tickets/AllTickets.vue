@@ -491,7 +491,7 @@ export default {
         this.setFromSaveFilters();
         if (this.$route.query.agent_id) {
             this.filters.agent_id = this.$route.query.agent_id;
-            this.filters.mentioned = this.$route.query.mentioned;
+            this.filters.watcher = this.$route.query.watcher;
         }
 
         if (this.$route.query.tags) {

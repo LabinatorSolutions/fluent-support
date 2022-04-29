@@ -222,8 +222,8 @@ class Ticket extends Model
                 }
                 else {
                     if (isset($filters['watcher']) && $filters['watcher'] == 'watcher'){
-                        $mentionedTickets = TicketHelper::getMentionedTicketIds($filterValue);
-                        $query->whereIn('id', $mentionedTickets);
+                        $watcherTickets = TicketHelper::getWatcherTicketIds($filterValue);
+                        $query->whereIn('id', $watcherTickets);
                     }else {
                         //Apply filter, get only assigned ticket
                         $query->where($filterKey, $filterValue);

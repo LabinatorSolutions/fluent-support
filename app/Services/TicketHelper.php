@@ -142,7 +142,7 @@ class TicketHelper
     }
 
     // This method will return all tagged/mentioned/watcher ticket's ids for filtering
-    public static function getMentionedTicketIds($agentId)
+    public static function getWatcherTicketIds($agentId)
     {
         $mentioned  = TagPivot::where('source_type', 'ticket_watcher')
             ->where('tag_id', $agentId)
@@ -154,7 +154,7 @@ class TicketHelper
     }
 
     // This method will return all tagged/mentioned/watcher tickets of logged in agent
-    public static function getMentionedTickets()
+    public static function getTicketsToWatch()
     {
         $agent = Helper::getCurrentAgent();
 
