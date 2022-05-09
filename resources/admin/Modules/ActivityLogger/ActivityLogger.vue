@@ -34,14 +34,14 @@
                             </div>
                         </li>
                     </ul>
-                    <div v-else class="text-align-center">
+                    <div v-if="settings.disable_logs == 'no' && activities.length < 1" class="text-align-center">
                         <h3>{{$t('activity_not_found')}}</h3>
                     </div>
                     <div style="padding-bottom: 20px" class="fframe_pagination_wrapper">
                         <pagination @fetch="fetchActivities()" :pagination="pagination"/>
                     </div>
                 </template>
-                <div class="fs_padded_20" v-else>
+                <div v-if="loading" class="fs_padded_20">
                     <el-skeleton :rows="3" animated/>
                 </div>
             </div>
