@@ -476,6 +476,7 @@ class TransStrings
             'activity_not_found'    => __('No activities found at this moment', 'fluent-support'),
             'customer_has_one_tk'    => __('Sorry, this customer has one ticket only', 'fluent-support'),
             'watcher_remove_warning'    => __('Are you sure to remove this watcher?', 'fluent-support'),
+            'add_cs_from_crm'    => __('Add Customer From FluentCRM', 'fluent-support'),
         ];
     }
 }
