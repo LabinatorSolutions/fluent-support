@@ -15,7 +15,19 @@
 
             <el-form-item>
                 <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">{{$t('Create New Customer')}}</el-checkbox>
+                <el-checkbox v-if="has_pro" true-label="yes" false-label="no" v-model="ticket.add_from_crm">{{$t('add_cs_from_crm')}}</el-checkbox>
             </el-form-item>
+
+            <div class="fs_add_cs_from_crm" v-if="ticket.add_from_crm=='yes'">
+                <el-select v-model="customer_from_crm" filterable placeholder="Select">
+                    <el-option
+                        v-for="contact in fluentcrm_contacts"
+                        :key="contact.id"
+                        :label=" labelMaker(contact.full_name, contact.email)"
+                        :value="contact.email"
+                    />
+                </el-select>
+            </div>
 
             <div class="fs_tk_create_customer" v-if="ticket.create_customer=='yes'">
 
@@ -138,9 +150,12 @@ export default {
                 client_priority: 'normal',
                 custom_fields: CustomFieldForm.data(),
                 create_customer: 'no',
-                create_wp_user: 'no'
+                create_wp_user: 'no',
+                add_from_crm: 'no',
             },
-            new_customer:{}
+            new_customer:{},
+            customer_from_crm:{},
+            fluentcrm_contacts: (this.appVars.fluentcrm_config.contacts !== 'undefined') ? this.appVars.fluentcrm_config.contacts : {},
         }
     },
     methods: {
@@ -149,7 +164,8 @@ export default {
             this.creating = true;
             this.$post('tickets', {
                 ticket: this.ticket,
-                newCustomer: this.new_customer
+                newCustomer: this.new_customer,
+                customerFromCrm: this.customer_from_crm,
             })
                 .then((response) => {
                     this.$notify.success({
@@ -165,7 +181,10 @@ export default {
                 .always(() => {
                     this.creating = false;
                 });
-        }
+        },
+        labelMaker(name, email) {
+            return `${name} - ${email}`;
+        },
     }
 }
 </script>

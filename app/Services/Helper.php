@@ -486,12 +486,18 @@ class Helper
             $crmTags = \FluentCrm\App\Models\Tag::select(['id', 'title'])->orderBy('title', 'ASC')->get();
         }
 
-        return [
+        $crmConfigs = [
             'can_add_tags' => $canAddTags,
             'tags'         => $crmTags,
             'logo'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg',
             'icon'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluent-crm-icon.png',
         ];
+
+        if (defined('FLUENTCRM')){
+            $crmConfigs['contacts'] = (new \FluentCrm\App\Models\Subscriber)->get();
+        }
+
+        return $crmConfigs;
 
     }
 
