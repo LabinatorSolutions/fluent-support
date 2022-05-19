@@ -106,7 +106,7 @@
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
-                                <span style="font-size: 10px;"> by {{ scope.row.customer.first_name }}</span>
+                                <span style="font-size: 10px;"> {{$t('by')}}} {{ scope.row.customer.first_name }}</span>
                                 <span style="margin-left: 5px; font-size: 10px;"
                                       v-if="scope.row.product && !filters.product_id"
                                       class="fs_badge">

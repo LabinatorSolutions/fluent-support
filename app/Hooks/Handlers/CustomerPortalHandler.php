@@ -122,7 +122,9 @@ class CustomerPortalHandler
             'submit_heading'    => __('Submit a Support Ticket', 'fluent-support-pro'),
             'create_ticket_cta' => __('Create a New Ticket', 'fluent-support'),
             'Reopen This ticket' => __('Reopen This ticket', 'fluent-support'),
-            'by'                => __('by', 'fluent-support')
+            'by'                => __('by', 'fluent-support'),
+            'Unknown error. Please reload this page' => __('Unknown error. Please reload this page', 'fluent-support'),
+            'View Your Tickets' => __('View Your Tickets', 'fluent-support')
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
