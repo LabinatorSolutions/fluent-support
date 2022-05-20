@@ -188,6 +188,9 @@ export default {
 
 
 <style lang="scss">
+.fs_tk_contact_details{
+    word-break: break-all;
+}
 .fs_cs_profile_picture{
     position: absolute;
     top: -0.8em;
