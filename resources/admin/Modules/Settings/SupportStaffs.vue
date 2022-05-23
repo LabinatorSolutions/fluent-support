@@ -331,6 +331,7 @@ export default {
             height: unset;
             background: transparent;
             border: none;
+            padding: unset;
         }
         img {
             border: none;
