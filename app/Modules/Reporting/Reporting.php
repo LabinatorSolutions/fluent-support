@@ -221,13 +221,16 @@ class Reporting
             ->get();
 
         foreach ($agents as $agent) {
-            $report = wp_parse_args($reports[$agent->id], [
-                'interactions' => 0,
-                'responses' => 0,
-                'opens' => 0,
-                'closed' => 0,
-                'waiting_tickets' => 0
-            ]);
+            $report = NULL;
+            if(isset($reports[$agent->id])) {
+                $report = wp_parse_args($reports[$agent->id], [
+                    'interactions' => 0,
+                    'responses' => 0,
+                    'opens' => 0,
+                    'closed' => 0,
+                    'waiting_tickets' => 0
+                ]);
+            }
             $agent->stats = $report;
             $agent->active_stat = $this->getActiveStatByAgent($agent->id);
         }
