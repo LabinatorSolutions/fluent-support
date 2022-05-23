@@ -2,6 +2,8 @@
 
 namespace FluentSupport\App\Services\Tickets;
 
+use FluentSupport\App\Services\TicketHelper;
+
 class TicketStats
 {
     public function getQuickLinks()
@@ -15,19 +17,19 @@ class TicketStats
             [
                 'title' => __('Total Tickets', 'fluent-support'),
                 'url'   => $urlBase . 'tickets',
-                'number'=> 50,
+                'number'=> TicketHelper::countAllTickets(),
                 'icon'  => 'el-icon-user'
             ],
             [
                 'title' => __('Un-Assigned', 'fluent-support'),
                 'url'   => $urlBase . 'tickets?agent_id=unassigned',
-                'number'=> 20,
+                'number'=> TicketHelper::countUnassignedTickets(),
                 'icon'  => 'el-icon-folder'
             ],
             [
                 'title' => __('Closed', 'fluent-support'),
-                'url'   => $urlBase . 'tickets?agent_id=unassigned',
-                'number'=> 15,
+                'url'   => $urlBase . 'tickets?filter_type=simple&filters%5Bstatus_type%5D=closed',
+                'number'=> TicketHelper::countClosedTickets(),
                 'icon'  => 'el-icon-message'
             ]
         ]);
