@@ -11,7 +11,7 @@ mix
     .js('resources/customer_portal/portal.js', 'assets/portal/js/app.js').vue({ version: 3 })
     .js('resources/admin/firebase_notify.js', 'assets/admin/js/firebase_notify.js')
     .js('resources/admin/global_admin.js', 'assets/admin/js/global_admin.js')
-    .js('resources/admin/global-summary.js', 'assets/admin/js/global_summary.js')
+    .js('resources/admin/global_summary.js', 'assets/admin/js/global_summary.js')
     .js('resources/customer_portal/login_helper.js', 'assets/portal/js/login_helper.js')
     .sass('resources/customer_portal/app.scss', 'assets/portal/css/app.css')
     .sass('resources/scss/alpha-admin.scss', 'assets/admin/css/alpha-admin.css')
