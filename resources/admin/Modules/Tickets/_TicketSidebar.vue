@@ -281,9 +281,6 @@ export default {
     },
     mounted() {
         this.fetchWidgets();
-        this.that_watchers = this.watchers.map(function(watcher){
-          return watcher.id.toString();
-        });
     }
 }
 </script>
