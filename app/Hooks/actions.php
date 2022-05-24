@@ -111,3 +111,5 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 // Register the WordPress personal data exporter and eraser
 (new \FluentSupport\App\Hooks\Handlers\PrivacyHandler())->init();
 
+// Action will be triggered when a support customer update their profile in wp
+$app->addAction('profile_update', '\FluentSupport\App\Services\ProfileInfoService@onWPProfileUpdate', 10, 3);
