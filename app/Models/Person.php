@@ -54,28 +54,30 @@ class Person extends Model
      * @param string $search
      * @return ModelQueryBuilder
      */
-    public function scopeSearchBy($query, $search)
+    public function scopeSearchBy($query, $search = '')
     {
-        if ($search) {
-            $fields = $this->searchable;
-            $query->where(function ($query) use ($fields, $search) {
-                $query->where(array_shift($fields), 'LIKE', "%$search%");
-
-                $nameArray = explode(' ', $search);
-                if (count($nameArray) >= 2) {
-                    $query->orWhere(function ($q) use ($nameArray) {
-                        $fname = array_shift($nameArray);
-                        $lastName = implode(' ', $nameArray);
-                        $q->where('first_name', 'LIKE', "$fname%");
-                        $q->where('last_name', 'LIKE', "$lastName%");
-                    });
-                }
-
-                foreach ($fields as $field) {
-                    $query->orWhere($field, 'LIKE', "$search%");
-                }
-            });
+        if (!$search) {
+            return $query;
         }
+
+        $fields = $this->searchable;
+        $query->where(function ($query) use ($fields, $search) {
+            $query->where(array_shift($fields), 'LIKE', "%$search%");
+
+            $nameArray = explode(' ', $search);
+            if (count($nameArray) >= 2) {
+                $query->orWhere(function ($q) use ($nameArray) {
+                    $fname = array_shift($nameArray);
+                    $lastName = implode(' ', $nameArray);
+                    $q->where('first_name', 'LIKE', "$fname%");
+                    $q->where('last_name', 'LIKE', "$lastName%");
+                });
+            }
+
+            foreach ($fields as $field) {
+                $query->orWhere($field, 'LIKE', "$search%");
+            }
+        });
 
         return $query;
     }
