@@ -507,13 +507,17 @@ export default {
 
                 this.$setTitle(response.ticket.title);
                 this.conversations = response.responses;
+
                 if (this.appVars.fluentcrm_config) {
                     this.fluentcrm_profile = response.fluentcrm_profile;
                 }
-                this.watchers = response.watchers;
-                this.filteredWatchers = response.watchers.map((watcher, key) => {
-                    return watcher.id.toString();
-                });
+
+                if (this.has_pro) {
+                    this.watchers = response.watchers;
+                    this.filteredWatchers = response.watchers.map((watcher, key) => {
+                        return watcher.tag_id;
+                    });
+                }
             })
             .catch((errors) => {
                 this.$handleError(errors);
