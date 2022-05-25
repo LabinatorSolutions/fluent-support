@@ -178,10 +178,13 @@ class PermissionManager
     public static function hasTicketPermission($ticket)
     {
         $permissionLevel = self::currentUserTicketsPermissionLevel();
+        
         if ($permissionLevel == 'all') {
             return true;
         }
+        
         $agent = Helper::getAgentByUserId();
+
         if ($ticket->agent_id == $agent->id) {
             return true;
         }

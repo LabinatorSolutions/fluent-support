@@ -16,6 +16,7 @@ use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\Framework\Support\Arr;
+use FluentSupport\App\Http\Requests\AgentCreateRequest;
 
 /**
  *  AgentController class for REST API
@@ -27,27 +28,10 @@ use FluentSupport\Framework\Support\Arr;
  */
 class AgentController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, Agent $agent)
     {
-        $agents = Agent::orderBy('id', 'DESC')
-            ->searchBy($request->get('search'))
-            ->paginate();
-
-        foreach ($agents as $agent) {
-            $agent->permissions = PermissionManager::getUserPermissions($agent->user_id);
-            if ($agent->user_id) {
-                $agent->user_profile = admin_url('user-edit.php?user_id=' . $agent->user_id);
-            }
-            $agent->replies_count = Conversation::where('person_id', $agent->id)->count();
-            $agent->interactions_count = Conversation::where('person_id', $agent->id)->groupBy('ticket_id')->get()->count();
-
-            $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
-            $agent->slack_user_id = $agent->getMeta('slack_user_id');
-            $agent->whatsapp_number = $agent->getMeta('whatsapp_number');
-        }
-
         return [
-            'agents'      => $agents,
+            'agents' => $agent->getAgents($request->get('search')),
             'permissions' => PermissionManager::getReadablePermissionGroups()
         ];
     }
@@ -58,65 +42,19 @@ class AgentController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function addAgent(Request $request)
+    public function addAgent(AgentCreateRequest $request, Agent $agent)
     {
-        $data = $request->all();
-        $this->validate($data, [
-            'email' => 'required|email'
-        ]);
+        try {
+            return [
+                'message' => __('Support Staff has been added', 'fluent-support'),
+                'agent'   => $agent->createAgent($request->all())
+            ];
 
-        $email = $data['email'];
-
-        $user = get_user_by('email', $email);
-
-        if (!$user || is_wp_error($user)) {
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __('Sorry, Connected user could not be found with the provided email address', 'fluent-support')
+                'message' => __($e->getMessage(), 'fluent-support')
             ]);
         }
-
-        if (empty($data['first_name'])) {
-            $data['first_name'] = $user->first_name;
-        }
-
-        if (empty($data['last_name'])) {
-            $data['last_name'] = $user->last_name;
-        }
-
-        // check if another agent has same email address
-        $exist = Person::where('email', $email)->first();
-        if ($exist) {
-            return $this->sendError([
-                'message' => __('Sorry, Another agent/person exist with the same email address. Please use a different email address', 'fluent-support')
-            ]);
-        }
-
-        $data['user_id'] = $user->ID;
-        $agent = Agent::create($data);
-        PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
-
-        if (!empty($data['telegram_chat_id'])) {
-            $chatId = sanitize_text_field($data['telegram_chat_id']);
-            $agent->updateMeta('telegram_chat_id', $chatId);
-            $agent->telegram_chat_id = $chatId;
-        }
-
-        if (!empty($data['slack_user_id'])) {
-            $chatId = sanitize_text_field($data['slack_user_id']);
-            $agent->updateMeta('slack_user_id', $chatId);
-            $agent->slack_user_id = $chatId;
-        }
-
-        if (!empty($data['whatsapp_number'])) {
-            $whatsappNumber = sanitize_text_field($data['whatsapp_number']);
-            $agent->updateMeta('whatsapp_number', $whatsappNumber);
-            $agent->whatsapp_number = $whatsappNumber;
-        }
-
-        return [
-            'message' => __('Support Staff has been added', 'fluent-support'),
-            'agent'   => $agent
-        ];
     }
 
     /**
