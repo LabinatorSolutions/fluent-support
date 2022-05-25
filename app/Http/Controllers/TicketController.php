@@ -8,7 +8,6 @@ use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\EmailNotification\Settings;
@@ -941,39 +940,5 @@ class TicketController extends Controller
             'message' => __('FluentCRM contact tags has been updated', 'fluent-support')
         ];
 
-    }
-
-    public function syncTicketWatchers(Request $request, $ticketId)
-    {
-        $watchers = $request->get('watchers', []);
-        $agentIds = [];
-        foreach($watchers as $watcher){
-            is_array($watcher) ? $agentIds[] = $watcher['id'] : $agentIds[] = $watcher;
-        }
-
-        return (new TicketService())->syncTicketWatchers($agentIds, $ticketId);
-    }
-
-    public function addTicketWatchers(Request $request, $tickedId)
-    {
-        $watchers = $request->get('watchers', []);
-
-        if(!$watchers){
-            return $this->sendError([
-                'message' => __('Watchers is required', 'fluent-support')
-            ]);
-        }
-
-        foreach ($watchers as $watcher){
-            TagPivot::create([
-                'source_type' => 'ticket_watcher',
-                'source_id' => $tickedId,
-                'tag_id' => absint($watcher)
-            ]);
-        }
-
-        return [
-            'message' => __('Watchers has been added to this ticket', 'fluent-support')
-        ];
     }
 }
