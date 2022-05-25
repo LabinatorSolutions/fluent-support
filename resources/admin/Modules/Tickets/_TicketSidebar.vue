@@ -42,7 +42,7 @@
             <el-skeleton :rows="1" animated/>
         </div>
 
-      <div v-if="watchers.length" class="fs_tk_card fs_tk_watchers_card">
+      <div v-if="has_pro && watchers.length" class="fs_tk_card fs_tk_watchers_card">
         <div class="fs_tk_card_header">
           <h3>{{ $t('Watcher') }} ({{ watchers.length }})</h3>
         </div>
@@ -281,6 +281,9 @@ export default {
     },
     mounted() {
         this.fetchWidgets();
+        this.that_watchers = this.ticket.watchers.map((watcher) => {
+            return watcher.tag_id.toString();
+        });
     }
 }
 </script>
