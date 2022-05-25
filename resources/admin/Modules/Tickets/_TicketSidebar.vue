@@ -281,9 +281,11 @@ export default {
     },
     mounted() {
         this.fetchWidgets();
-        this.that_watchers = this.ticket.watchers.map((watcher) => {
-            return watcher.tag_id.toString();
-        });
+        if (this.has_pro) {
+            this.that_watchers = this.ticket.watchers.map((watcher) => {
+                return watcher.tag_id.toString();
+            });
+        }
     }
 }
 </script>
