@@ -2,11 +2,8 @@
 
 namespace FluentSupport\App\Services\Tickets;
 
-use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\TagPivot;
-use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Services\Helper;
 
 class TicketService
 {
@@ -84,55 +81,6 @@ class TicketService
         ]);
 
         return $person;
-    }
-
-    public function addNoteOnMerge($ticket, $mergedTicket)
-    {
-        do_action('fluent_support/ticket_merge', $ticket, $mergedTicket);
-        $message = sprintf(__('Ticket #%s has been merged with this ticket at %s', 'fluent-support'),  $mergedTicket->id, current_time('mysql'));
-        Conversation::create([
-            'ticket_id'         => $ticket->id,
-            'person_id'         => Helper::getCurrentAgent()->id,
-            'conversation_type' => 'ticket_merge_activity',
-            'content'           => $message
-        ]);
-
-        return $ticket;
-    }
-
-    public function mergeCustomerTickets($ticketIDToMerge, $currentTicketId)
-    {
-        $parentTicket = Ticket::findOrFail($currentTicketId);
-        $ticket = Ticket::findOrFail($ticketIDToMerge);
-
-        $conversation =  Conversation::create(
-            [
-                'ticket_id'  => $currentTicketId,
-                'content'    => $ticket->content,
-                'source'     => $ticket->source,
-                'person_id'  => $parentTicket->customer_id
-            ]
-        );
-        $conversation->created_at = $ticket->created_at;
-        $conversation->save();
-
-
-        Conversation::where('ticket_id', $ticketIDToMerge)
-            ->update([
-                'ticket_id' => $currentTicketId
-            ]);
-
-        Attachment::where('ticket_id', $ticketIDToMerge)
-            ->update([
-                'ticket_id' => $currentTicketId
-            ]);
-
-        $this->addNoteOnMerge($parentTicket, $ticket);
-        $ticket->deleteTicket();
-
-        return [
-            'message' => __('Tickets has been merged', 'fluent-support')
-        ];
     }
 
     public function syncTicketWatchers($watchers, $ticketId)
