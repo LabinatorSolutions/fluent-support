@@ -153,7 +153,7 @@ class TicketController extends Controller
     {
         $ticketData = $request->get('ticket', []);
         $maybeNewCustomer = $request->get('newCustomer');
-        $customerFromCrm = $request->get('customerFromCrm');
+//        $customerFromCrm = $request->get('customerFromCrm');
 
         //If user select create WP user during ticket creation
         if ($ticketData['create_wp_user'] == 'yes'){
@@ -180,22 +180,24 @@ class TicketController extends Controller
             }
         }
 
-        //If user select create customer from crm during ticket creation
-        if($ticketData['add_from_crm'] == 'yes'){
-            //Check user already exist as customer, if not create new
-            $isCustomerExist = Customer::where('email', $customerFromCrm['email'])->first();
 
-            if (!empty($customerFromCrm) && is_null($isCustomerExist)){
-                $customerData = (new \FluentCrm\App\Models\Subscriber)->where('email', $customerFromCrm)->first()->toArray();
-                $createCustomer = Customer::create($customerData);
-                if ($createCustomer){
-                    $ticketData['customer_id'] = $createCustomer->id;
-                }
-            }
-            else{
-                return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
-            }
-        }
+        // todo: We will build a email checker wizard for this whole process
+        //If user select create customer from crm during ticket creation
+//        if($ticketData['add_from_crm'] == 'yes'){
+//            //Check user already exist as customer, if not create new
+//            $isCustomerExist = Customer::where('email', $customerFromCrm['email'])->first();
+//
+//            if (!empty($customerFromCrm) && is_null($isCustomerExist)){
+//                $customerData = (new \FluentCrm\App\Models\Subscriber)->where('email', $customerFromCrm)->first()->toArray();
+//                $createCustomer = Customer::create($customerData);
+//                if ($createCustomer){
+//                    $ticketData['customer_id'] = $createCustomer->id;
+//                }
+//            }
+//            else{
+//                return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
+//            }
+//        }
 
         $this->validate($ticketData, [
             'customer_id' => 'required',
