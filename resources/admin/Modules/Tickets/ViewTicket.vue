@@ -480,7 +480,7 @@ export default {
                 per_page: 10
             },
             conversation_type: '',
-            filteredWatchers: []
+            filteredWatchersIds: []
         }
     },
     watch: {
@@ -514,7 +514,7 @@ export default {
 
                 if (this.has_pro) {
                     this.watchers = response.watchers;
-                    this.filteredWatchers = response.watchers.map((watcher, key) => {
+                    this.filteredWatchersIds = response.watchers.map((watcher, key) => {
                         return watcher.tag_id;
                     });
                 }
@@ -757,7 +757,7 @@ export default {
         updateWatcher(){
             this.saving = true;
             this.$post(`tickets/${this.ticket.id}/sync-watchers`, {
-                watchers: this.filteredWatchers
+                watchers: this.filteredWatchersIds
             })
                 .then(response => {
                     this.$notify.success({
