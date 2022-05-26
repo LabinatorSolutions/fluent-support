@@ -44,7 +44,7 @@
 
       <div v-if="has_pro && watchers.length" class="fs_tk_card fs_tk_watchers_card">
         <div class="fs_tk_card_header">
-          <h3>{{ $t('Watcher') }} ({{ watchers.length }})</h3>
+          <h3>{{ $t('Bookmarks') }} ({{ watchers.length }})</h3>
         </div>
         <div class="fs_tk_card_body">
           <el-tag
@@ -66,12 +66,12 @@
               trigger="manual"
           >
             <template #reference>
-                <el-button @click="add_watcher = !add_watcher" style="height: 20px; width: 8px">
+                <el-button @click="add_watcher = !add_watcher" style="height: 20px; width: 8px; margin-left: 3px;">
                     <el-icon style="vertical-align: middle; font-size: 10px;"><Plus /></el-icon>
                 </el-button>
             </template>
 
-            <h4>{{$t('Add watcher')}}</h4>
+            <h4>{{$t('Add Bookmark')}}</h4>
 
             <el-select multiple v-model="watcherIds"
                        size="small">
