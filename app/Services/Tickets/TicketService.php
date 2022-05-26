@@ -3,7 +3,6 @@
 namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\TagPivot;
 
 class TicketService
 {

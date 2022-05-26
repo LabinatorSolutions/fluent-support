@@ -330,7 +330,7 @@ class TicketController extends Controller
             'agent_id'  => $agent->id
         ];
 
-        if($ticket->watchers){
+        if(defined('FLUENT_SUPPORT_PRO_DIR_FILE') && $ticket->watchers){
             $data['watchers'] = TicketHelper::getWatchers($ticket->watchers);
         }
 
