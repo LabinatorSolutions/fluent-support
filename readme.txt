@@ -1,6 +1,6 @@
 === Fluent Support - WordPress Helpdesk and Customer Support Ticket Plugin ===
-Contributors: techjewel, wpmanageninja, adreastrian
-Tags: support, ticketing, fluent support
+Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
+Tags: support, ticketing, fluent support, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.0
 Stable tag: 1.5.6
@@ -163,8 +163,8 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Improvement - Code Base
 * Fixed - Image alignment issue in email template
 * Fixed - Editor issue inside modal popup
-* Fixed - Customer avatar doesn’t display in customer portal
-* Fixed - Customer WP Profile Update doesn’t Reflect in Fluent Support Customer Profile
+* Fixed - Customer avatar doesn't display in customer portal
+* Fixed - Customer WP Profile Update doesn't Reflect in Fluent Support Customer Profile
 
 = 1.5.5 (Date: March 02, 2022) =
 * Added - GDPR compliance and WordPress Data-Export API

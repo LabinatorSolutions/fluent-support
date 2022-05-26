@@ -1,5 +1,4 @@
 <?php defined('ABSPATH') or die;
-
 /*
 Plugin Name: Fluent Support
 Description: The Ultimate Support Plugin For Your WordPress.
