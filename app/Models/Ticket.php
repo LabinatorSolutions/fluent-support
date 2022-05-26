@@ -221,7 +221,7 @@ class Ticket extends Model
                     $query->whereNull($filterKey);
                 }
                 else {
-                    if(defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
+                    if(defined('FLUENTSUPPORTPRO')) {
                         if (isset($filters['watcher']) && $filters['watcher'] == 'watcher'){
                             $watcherTickets = TicketHelper::getWatcherTicketIds($filterValue);
                             $query->whereIn('id', $watcherTickets);
