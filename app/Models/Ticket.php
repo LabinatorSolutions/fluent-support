@@ -221,12 +221,14 @@ class Ticket extends Model
                     $query->whereNull($filterKey);
                 }
                 else {
-                    if (isset($filters['watcher']) && $filters['watcher'] == 'watcher'){
-                        $watcherTickets = TicketHelper::getWatcherTicketIds($filterValue);
-                        $query->whereIn('id', $watcherTickets);
-                    }else {
-                        //Apply filter, get only assigned ticket
-                        $query->where($filterKey, $filterValue);
+                    if(defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
+                        if (isset($filters['watcher']) && $filters['watcher'] == 'watcher'){
+                            $watcherTickets = TicketHelper::getWatcherTicketIds($filterValue);
+                            $query->whereIn('id', $watcherTickets);
+                        }else {
+                            //Apply filter, get only assigned ticket
+                            $query->where($filterKey, $filterValue);
+                        }
                     }
                 }
             }

@@ -217,7 +217,7 @@ class AgentController extends Controller
         }
 
         //If the request come with mentioned_tickets
-        if (in_array('ticket_to_watch', $with)) {
+        if (defined('FLUENT_SUPPORT_PRO_DIR_FILE') && in_array('ticket_to_watch', $with)) {
             //Get the overall statistics by the agent
             $data['ticket_to_watch'] = TicketHelper::getTicketsToWatch();
         }
