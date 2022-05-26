@@ -49,7 +49,7 @@ class Agents
      * @return mixed
      */
 
-    public function getAgent(int $agentId)
+    public function getAgent($agentId)
     {
         if (is_numeric($agentId)) {
             return Agent::findOrFail($agentId);
@@ -65,7 +65,7 @@ class Agents
      * @return mixed
      */
 
-    public function updateAgent(array $data, int $agentId)
+    public function updateAgent(array $data, $agentId)
     {
         if (!$agentId) {
             return false;
@@ -87,7 +87,7 @@ class Agents
      * @return mixed
      */
 
-    public function createAgentWithOrWithoutWpUser(array $data, bool $createWpUser = false)
+    public function createAgentWithOrWithoutWpUser(array $data, $createWpUser = false)
     {
         if (!$createWpUser) {
             $isExist = Agent::where('email', $data['email'])->first();
@@ -115,7 +115,7 @@ class Agents
      * deleteAgent method will delete agent by id
      * @param int $id
      */
-    public function deleteAgent(int $id)
+    public function deleteAgent($id)
     {
         if (!$id) {
             return;
