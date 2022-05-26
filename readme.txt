@@ -2,8 +2,8 @@
 Contributors: techjewel, wpmanageninja, adreastrian
 Tags: support, ticketing, fluent support
 Requires at least: 5.6
-Tested up to: 5.9
-Stable tag: 1.5.5
+Tested up to: 6.0
+Stable tag: 1.5.6
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -159,6 +159,13 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+= 1.5.6 (Date: May 26, 2022) =
+* Improvement - Code Base
+* Fixed - Image alignment issue in email template
+* Fixed - Editor issue inside modal popup
+* Fixed - Customer avatar doesn’t display in customer portal
+* Fixed - Customer WP Profile Update doesn’t Reflect in Fluent Support Customer Profile
+
 = 1.5.5 (Date: March 02, 2022) =
 * Added - GDPR compliance and WordPress Data-Export API
 * Added - Today's stats of tickets
