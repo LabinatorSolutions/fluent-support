@@ -114,7 +114,7 @@ class Settings
             'login_message'         => [
                 'type'        => 'wp-editor',
                 'label'       => __('Message for non logged in users', 'fluent-support'),
-                'inline_help' => 'Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form. For the user registration use this shortcode <code>[fluent_support_signup]</code> and for both form please use <code>[fluent_support_auth]</code>'
+                'inline_help' => __('Please provide message for not logged in users. You can place login shortcode too Use shortcode <code>[fluent_support_login]</code> to show built-in login form. For the user registration use this shortcode <code>[fluent_support_signup]</code> and for both form please use <code>[fluent_support_auth]</code>', 'fluent-support')
             ],
             'disable_public_ticket' => [
                 'type'           => 'inline-checkbox',
@@ -133,7 +133,7 @@ class Settings
                 'wrapper_class' => 'fs_half_field',
                 'type'    => 'input-text',
                 'data_type' => 'number',
-                'label'   => 'Max File Size (in MegaByte)',
+                'label'   => __('Max File Size (in MegaByte)', 'fluent-support'),
             ],
             'del_files_on_close' => [
                 'type'           => 'inline-checkbox',

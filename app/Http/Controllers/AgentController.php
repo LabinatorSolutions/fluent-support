@@ -4,7 +4,6 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Person;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
@@ -15,7 +14,6 @@ use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
-use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Http\Requests\AgentCreateRequest;
 
 /**
@@ -38,7 +36,7 @@ class AgentController extends Controller
 
     /**
      * addAgent method will add new agent in person table
-     * @param Request $request
+     * @param AgentCreateRequest $request
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
@@ -59,63 +57,29 @@ class AgentController extends Controller
 
     /**
      * updateAgent method will update the information of an exiting agent
-     * @param Request $request
+     * @param AgentCreateRequest $request
+     * @param Agent $agent
      * @param $agentId
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function updateAgent(Request $request, $agentId)
+    public function updateAgent(AgentCreateRequest $request, Agent $agent, $agentId)
     {
-        $agent = Agent::findOrFail($agentId);
-        $data = $request->all();
-        $this->validate($data, [
-            'email'      => 'required|email',
-            'first_name' => 'required',
-            'last_name'  => 'required',
-        ]);
+        $agent = $agent::findOrFail($agentId);
 
-        $user = get_user_by('ID', $agent->user_id);
-
-        if (!$user || is_wp_error($user)) {
-            return $this->sendError([
-                'message' => __('Sorry, Connected user could not be found with the provided email address', 'fluent-support')
-            ]);
+        if ($agent) {
+            try {
+                return [
+                    'message' => __('Support Staff has been updated', 'fluent-support'),
+                    'agent'   => $agent->updateAgent($request->all(), $agent)
+                ];
+            } catch (\Exception $e) {
+                return $this->sendError([
+                    'message' => __($e->getMessage(), 'fluent-support')
+                ]);
+            }
         }
 
-        PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
-
-        $updateData = Arr::only($data, ['first_name', 'last_name', 'title']);
-        $updateData['email'] = $user->user_email;
-
-        Agent::where('id', $agent->id)
-            ->update($updateData);
-
-        PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
-
-        $agent = Agent::findOrFail($agentId);
-
-        if (isset($data['telegram_chat_id'])) {
-            $chatId = sanitize_text_field($data['telegram_chat_id']);
-            $agent->updateMeta('telegram_chat_id', $chatId);
-            $agent->telegram_chat_id = $chatId;
-        }
-
-        if (isset($data['slack_user_id'])) {
-            $chatId = sanitize_text_field($data['slack_user_id']);
-            $agent->updateMeta('slack_user_id', $chatId);
-            $agent->slack_user_id = $chatId;
-        }
-
-        if (isset($data['whatsapp_number'])) {
-            $whatsappNumber = sanitize_text_field($data['whatsapp_number']);
-            $agent->updateMeta('whatsapp_number', $whatsappNumber);
-            $agent->whatsapp_number = $whatsappNumber;
-        }
-
-        return [
-            'message' => __('Support Staff has been updated', 'fluent-support'),
-            'agent'   => $agent
-        ];
     }
 
     /**
