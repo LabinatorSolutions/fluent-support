@@ -3,9 +3,6 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
-use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
@@ -68,10 +65,16 @@ class AgentController extends Controller
         $agent = $agent::findOrFail($agentId);
 
         if ($agent) {
+            $data = $this->validate($request->all(), [
+                'email'      => 'required|email',
+                'first_name' => 'required',
+                'last_name'  => 'required',
+            ]);
+
             try {
                 return [
                     'message' => __('Support Staff has been updated', 'fluent-support'),
-                    'agent'   => $agent->updateAgent($request->all(), $agent)
+                    'agent'   => $agent->updateAgent($data, $agent)
                 ];
             } catch (\Exception $e) {
                 return $this->sendError([
@@ -85,48 +88,27 @@ class AgentController extends Controller
     /**
      * deleteAgent will delete an exiting agent and add an alternative agent as replacement
      * @param Request $request
+     * @param Agent $agent
      * @param $agentId
      * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function deleteAgent(Request $request, $agentId)
+    public function deleteAgent(Request $request, Agent $agent, $agentId)
     {
         $fallBackAgentId = $request->get('fallback_agent_id');
 
-        if ($fallBackAgentId == $agentId) {
+        try {
+            $agent->deleteAgent($fallBackAgentId, $agentId);
+
+            return [
+                'message' => __('Support Staff has been deleted', 'fluent-support')
+            ];
+
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __('Old Agent and New agent is same person', 'fluent-support')
+                'message' => __($e->getMessage(), 'fluent-support')
             ]);
         }
-
-        $agent = Agent::findOrFail($agentId);
-
-        PermissionManager::attachPermissions($agent->user_id, []);
-
-        $newAgent = Agent::findOrFail($fallBackAgentId);
-
-        Attachment::where('person_id', $agentId)->update([
-            'person_id' => $newAgent->id
-        ]);
-
-        Conversation::where('person_id', $agentId)->update([
-            'person_id' => $newAgent->id
-        ]);
-
-        Product::where('created_by', $agentId)->update([
-            'created_by' => $newAgent->id
-        ]);
-
-        Ticket::where('agent_id', $agentId)->update([
-            'agent_id' => $newAgent->id
-        ]);
-
-        $agent->deleteAllMeta();
-
-        Agent::where('id', $agentId)->delete();
-
-        return [
-            'message' => __('Selected support staff has been deleted', 'fluent-support')
-        ];
 
     }
 
