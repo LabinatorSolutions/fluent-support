@@ -3,12 +3,9 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
-use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
-use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Http\Requests\AgentCreateRequest;
@@ -139,53 +136,12 @@ class AgentController extends Controller
      */
     public function getAgentStat(Request $request, $agentId)
     {
-        $agent = Agent::findOrFail($agentId);//Get agent information
-        $stats = StatModule::getAgentStat($agentId);//Get ticket statistics
 
-        //If the logged-in user has permission to manage unassigned tickets, get number of unassigned tickets
-        if (PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
-            $stats['unassigned_tickets'] = [
-                'title' => __('Unassigned Tickets', 'fluent-support'),
-                'count' => Ticket::whereNull('agent_id')->where('status', '!=', 'closed')->count()
-            ];
-        }
-
-        $data = [
-            'stats' => $stats
-        ];
+        $stats = StatModule::getAgentStat($agentId); //Get ticket statistics
 
         $with = $request->get('with', []);
 
-        //If the request come with suggested_tickets
-        if (in_array('suggested_tickets', $with)) {
-            //Get suggested tickets from ticketHelper
-            $data['suggested_tickets'] = TicketHelper::getSuggestedTickets($agent->id);
-        }
-
-        //If the request come with mentioned_tickets
-        if (defined('FLUENTSUPPORTPRO') && in_array('ticket_to_watch', $with)) {
-            //Get the overall statistics by the agent
-            $data['ticket_to_watch'] = TicketHelper::getTicketsToWatch();
-        }
-
-        //If the request come with overall_stats
-        if (in_array('overall_stats', $with)) {
-            //Get overall status
-            $data['overall_stats'] = (new Reporting())->getActiveStats();
-        }
-
-        //If the request come with individual_stat
-        if (in_array('individual_stat', $with)) {
-            //get overall statistics by agent id
-            $data['individual_stat'] = (new Reporting())->getActiveStatByAgent($agent->id);
-        }
-        //If the request come with my_overall_stats
-        if (in_array('my_overall_stats', $with)) {
-            //Get the overall statistics by the agent
-            $data['my_overall_stats'] = StatModule::getAgentOverallStats($agent->id);
-        }
-
-        return $data;
+        return (new Agent())->getAgentStat($stats, $with, $agentId);
     }
 
     /**
