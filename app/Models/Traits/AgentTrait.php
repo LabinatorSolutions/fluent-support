@@ -2,9 +2,15 @@
 
 namespace FluentSupport\App\Models\Traits;
 
+use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Product;
+use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Models\Person;
+use FluentSupport\App\Modules\Reporting\Reporting;
+use FluentSupport\App\Modules\StatModule;
+use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Support\Arr;
 use Exception;
 
@@ -59,6 +65,7 @@ trait AgentTrait
     }
 
     /**
+     * Method to update agent info
      * @param array $data
      * @param $agent
      * @return object
@@ -83,6 +90,104 @@ trait AgentTrait
         return $agent;
     }
 
+
+    /**
+     * This method will delete an agent by agent id
+     * @param int $fallBackAgentId
+     * @param int $agentId
+     * @return void
+     * @throws Exception
+     */
+    public function deleteAgent($fallBackAgentId, $agentId)
+    {
+        if ($fallBackAgentId == $agentId) {
+            throw new Exception('Old Agent and New agent is same person');
+        }
+
+        $agent = static::findOrFail($agentId);
+
+        PermissionManager::attachPermissions($agent->user_id, []);
+
+        $newAgent = static::findOrFail($fallBackAgentId);
+
+        $this->assignDataToFallbackAgent($agent->id, $newAgent);
+
+        $agent->deleteAllMeta();
+
+        static::where('id', $agentId)->delete();
+    }
+
+    /**
+     * This method will assign data to fallback agent
+     * @param int $agentId
+     * @param object $newAgent
+     * @return void
+     */
+    private function assignDataToFallbackAgent($agentId, $newAgent)
+    {
+        Attachment::where('person_id', $agentId)->update([
+            'person_id' => $newAgent->id
+        ]);
+
+        Conversation::where('person_id', $agentId)->update([
+            'person_id' => $newAgent->id
+        ]);
+
+        Product::where('created_by', $agentId)->update([
+            'created_by' => $newAgent->id
+        ]);
+
+        Ticket::where('agent_id', $agentId)->update([
+            'agent_id' => $newAgent->id
+        ]);
+    }
+
+    public function getAgentStat($data, $with, $agentId)
+    {
+        $data = $this->agentDashboardWidgets($data, $with, $agentId);
+
+        return $data;
+
+    }
+
+    private function agentDashboardWidgets($data, $with, $agentId)
+    {
+        //If the request come with suggested_tickets
+        if (in_array('suggested_tickets', $with)) {
+            //Get suggested tickets from ticketHelper
+            $data['suggested_tickets'] = TicketHelper::getSuggestedTickets($agentId);
+        }
+
+        //If the request come with mentioned_tickets
+        if (defined('FLUENTSUPPORTPRO') && in_array('ticket_to_watch', $with)) {
+            //Get the overall statistics by the agent
+            $data['ticket_to_watch'] = TicketHelper::getTicketsToWatch();
+        }
+
+        //If the request come with overall_stats
+        if (in_array('overall_stats', $with)) {
+            //Get overall status
+            $data['overall_stats'] = (new Reporting())->getActiveStats();
+        }
+
+        //If the request come with individual_stat
+        if (in_array('individual_stat', $with)) {
+            //get overall statistics by agent id
+            $data['individual_stat'] = (new Reporting())->getActiveStatByAgent($agentId);
+        }
+        //If the request come with my_overall_stats
+        if (in_array('my_overall_stats', $with)) {
+            //Get the overall statistics by the agent
+            $data['my_overall_stats'] = StatModule::getAgentOverallStats($agentId);
+        }
+    }
+
+    /**
+     * Method to set agent info
+     * @param array $data
+     * @param $user
+     * @return array
+     */
     private function setAgentInfo(array $data, $user)
     {
     	$data['user_id'] = $user->ID;
@@ -98,6 +203,13 @@ trait AgentTrait
         return $data;
     }
 
+    /**
+     * Method to set agent meta data
+     * @param $user
+     * @param array $data
+     * @param object $agent
+     * @return object
+     */
     private function setAgentMeta($user, $data, $agent)
     {
     	PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
