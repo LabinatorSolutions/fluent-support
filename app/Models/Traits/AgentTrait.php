@@ -142,12 +142,20 @@ trait AgentTrait
         ]);
     }
 
-    public function getAgentStat($data, $with, $agentId)
+    public function getAgentStat($stats, $with, $agentId)
     {
-        $data = $this->agentDashboardWidgets($data, $with, $agentId);
+        if (PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
+            $stats['unassigned_tickets'] = [
+                'title' => __('Unassigned Tickets', 'fluent-support'),
+                'count' => Ticket::whereNull('agent_id')->where('status', '!=', 'closed')->count()
+            ];
+        }
 
-        return $data;
+        $data = [
+            'stats' => $stats
+        ];
 
+        return $this->agentDashboardWidgets($data, $with, $agentId);
     }
 
     private function agentDashboardWidgets($data, $with, $agentId)
@@ -180,6 +188,8 @@ trait AgentTrait
             //Get the overall statistics by the agent
             $data['my_overall_stats'] = StatModule::getAgentOverallStats($agentId);
         }
+
+        return $data;
     }
 
     /**
