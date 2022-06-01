@@ -4,9 +4,11 @@ namespace FluentSupport\App\Models;
 
 use FluentSupport\Framework\Database\Orm\Builder;
 use FluentSupport\Framework\Support\Arr;
+use FluentSupport\App\Models\Traits\CustomerTrait;
 
 class Customer extends Person
 {
+    use CustomerTrait;
     protected static $type = 'customer';
 
     protected $searchable = [
