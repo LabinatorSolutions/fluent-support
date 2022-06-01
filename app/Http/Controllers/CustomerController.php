@@ -2,13 +2,9 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
-use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Support\Arr;
 
@@ -24,39 +20,13 @@ class CustomerController extends Controller
     /**
      * index method will return the list of customers
      * @param Request $request
+     * @param Customer $customer
      * @return array
      */
-    public function index(Request $request)
+    public function index(Request $request, Customer $customer)
     {
-        //Add order by selected by suer
-        $customersQuery = Customer::orderBy('id', 'DESC')
-            ->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
-
-        //Filter query based on the search item
-        if ($request->get('search')) {
-            $customersQuery->searchBy($request->get('search'));
-        }
-
-        $status = $request->get('status');
-        //Filter customer by selected status
-        if ($status && $status != 'all') {
-            $customersQuery->filterByStatues([$status]);
-        }
-
-        $customers = $customersQuery->paginate();
-
-        //Get total ticket and responses in ticket by individual customer
-        foreach ($customers as $customer) {
-            $customer->total_tickets = $customer->getTicketCounts();
-            $customer->total_responses = $customer->getResponseCounts();
-            if ($customer->user_id) {
-                //Get profile link, if they are WP user
-                $customer->user_profile = admin_url('user-edit.php?user_id=' . $customer->user_id);
-            }
-        }
-
         return [
-            'customers' => $customers,
+            'customers' => $customer->getCustomers($request->get('search'), $request->get('status')),
         ];
     }
 
@@ -65,44 +35,13 @@ class CustomerController extends Controller
      * getCustomer method will return individual customer information by customer id
      * This function will also get information about extra widgets, tickets and Fluent CRM
      * @param Request $request
+     * @param Customer $customer
      * @param $customerId
      * @return array
      */
-    public function getCustomer(Request $request, $customerId)
+    public function getCustomer(Request $request, Customer $customer, $customerId)
     {
-        $customer = Customer::findOrFail($customerId);
-
-        $data = [
-            'customer' => $customer
-        ];
-
-        $with = $request->get('with', []);
-
-        if (in_array('widgets', $with)) {
-            $data['widgets'] = ProfileInfoService::getProfileExtraWidgets($customer);
-        }
-
-        if (in_array('tickets', $with)) {
-            /*
-             * Filter ticket limit to show ticket in customer page sidebar
-             * @since 1.5.6
-             * @param int $limit
-             */
-            $limit = apply_filters('fluent_support/customer_page_ticket_widgets_limit', 20);
-
-            $data['tickets'] = Ticket::select(['id', 'title', 'status', 'customer_id', 'created_at'])
-                ->where('customer_id', $customer->id)
-                ->orderBy('id', 'DESC')
-                ->limit($limit)
-                ->get();
-        }
-
-        if(in_array('fluentcrm_profile', $with)) {
-            $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($customer);
-        }
-
-        return $data;
-
+        return $customer->getCustomer($customerId, $request->get('with', []));
     }
 
     /**
