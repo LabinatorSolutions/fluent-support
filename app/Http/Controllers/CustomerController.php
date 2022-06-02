@@ -47,86 +47,52 @@ class CustomerController extends Controller
     /**
      * Create method will create new customer
      * @param Request $request
+     * @param Customer $customer
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function create(Request $request)
+    public function create(Request $request, Customer $customer)
     {
-        $data = $request->all();
-        $this->validate($data, [
+        $this->validate($request->all(), [
             'email' => 'required|email|unique:fs_persons'
         ]);
 
-        $email = $data['email'];
-
-        $data = Arr::only($data, (new Customer)->getFillable());
-
-        $user = get_user_by('email', $email);
-
-        if ($user) {
-            $data['user_id'] = $user->ID;
-            if (empty($data['first_name'])) {
-                $data['first_name'] = $user->first_name;
-            }
-            if (empty($data['last_name'])) {
-                $data['last_name'] = $user->last_name;
-            }
-        }
-
-        $customer = Customer::create($data);
-
         return [
             'message'  => __('Customer has been added', 'fluent-support'),
-            'customer' => $customer
+            'customer' => $customer->createCustomer($request->all())
         ];
     }
 
     /**
      * update method will update existing customer by customer id
      * @param Request $request
+     * @param Customer $customer
      * @param $customerId
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function update(Request $request, $customerId)
+    public function update(Request $request, Customer $customer, $customerId)
     {
-        $customer = Customer::findOrFail($customerId);
-        $data = $request->all();
-        $this->validate($data, [
+        $data = $this->validate($request->all(), [
             'email'      => 'required|email',
             'first_name' => 'required'
         ]);
 
-        if ($otherCustomer = Customer::where('id', '!=', $customerId)->where('email', $data['email'])->first()) {
+        try {
+            return [
+                'message'  => __('Customer has been updated', 'fluent-support'),
+                'customer' => $customer->updateCustomer($customerId, $data)
+            ];
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __('Another Customer has same email address', 'fluent-support'),
+                'message' => __($e->getMessage(), 'fluent-support'),
                 'errors'  => [
                     'email' => [
-                        'unique' => __('Email address has been assigned to other customer', 'fluent-support')
+                        'unique' => __('Email address has been assigned to other customer', 'fluent-support'),
                     ]
                 ]
             ], 423);
         }
-
-        $validKeys = (new Customer)->getFillable();
-        unset($validKeys['hash']);
-        unset($validKeys['user_id']);
-
-        $updateData = Arr::only($data, $validKeys);
-
-        $user = get_user_by('email', $data['email']);
-
-        if ($user) {
-            $updateData['user_id'] = $user->ID;
-        }
-
-        Customer::where('id', $customer->id)
-            ->update($updateData);
-
-        return [
-            'message'  => __('Customer has been updated', 'fluent-support'),
-            'customer' => Customer::findOrFail($customerId)
-        ];
     }
 
     /**
