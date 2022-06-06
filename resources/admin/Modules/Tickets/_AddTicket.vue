@@ -14,10 +14,10 @@
             </el-form-item>
 
 <!--            Will make a wizard for this-->
-<!--            <el-form-item>-->
-<!--                <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">{{$t('Create New Customer')}}</el-checkbox>-->
+            <el-form-item>
+                <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">{{$t('Create New Customer')}}</el-checkbox>
 <!--                <el-checkbox v-if="has_pro && fluentcrm_contacts.length" true-label="yes" false-label="no" v-model="ticket.add_from_crm">{{$t('add_cs_from_crm')}}</el-checkbox>-->
-<!--            </el-form-item>-->
+            </el-form-item>
 
 <!--            <div class="fs_add_cs_from_crm" v-if="ticket.add_from_crm=='yes'">-->
 <!--                <el-select v-model="customer_from_crm" filterable placeholder="Select">-->
