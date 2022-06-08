@@ -514,4 +514,24 @@ class CustomerPortalController extends Controller
         }
         return null;
     }
+
+
+    /**
+     * logout method will logout the customer
+     * @return mixed
+     */
+    public function logout()
+    {
+        wp_logout();
+
+        if(is_wp_error(wp_logout())) {
+            return $this->sendError([
+                'message' => __('Sorry! Something went wrong', 'fluent-support')
+            ]);
+        } else {
+            return $this->sendSuccess([
+                'message' => __('You have been logged out', 'fluent-support')
+            ]);
+        }
+    }
 }

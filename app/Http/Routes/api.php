@@ -143,6 +143,8 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
     $router->post('ticket_file_upload','UploaderController@uploadTicketFiles');
 
     $router->get('me', 'TicketController@me');
+
+    $router->post('logout', 'CustomerPortalController@logout');
 });
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {

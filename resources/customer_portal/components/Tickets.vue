@@ -15,6 +15,7 @@
                 </div>
             </div>
             <div class="fs_tk_right">
+                <button @click="logout" class="fs_btn fs_btn_logout"> {{$t('Logout')}} </button>
                 <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">
                     {{ $t('create_ticket_cta') }}
                 </button>
@@ -169,6 +170,15 @@ export default {
         pagiAction(number) {
             this.pagination.current_page += number;
             this.fetchTickets();
+        },
+        logout() {
+            this.$post('logout')
+                .then(response => {
+                    window.location.reload()
+                })
+                .catch((errors) => {
+                    console.log(errors);
+                });
         }
     },
     mounted() {
