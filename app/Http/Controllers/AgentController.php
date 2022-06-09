@@ -4,6 +4,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Modules\StatModule;
+use FluentSupport\App\Services\AvatarUploder;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Request\Request;
@@ -92,10 +93,8 @@ class AgentController extends Controller
      */
     public function deleteAgent(Request $request, Agent $agent, $agentId)
     {
-        $fallBackAgentId = $request->get('fallback_agent_id');
-
         try {
-            $agent->deleteAgent($fallBackAgentId, $agentId);
+            $agent->deleteAgent($request->get('fallback_agent_id'), $agentId);
 
             return [
                 'message' => __('Support Staff has been deleted', 'fluent-support')
@@ -146,44 +145,18 @@ class AgentController extends Controller
 
     /**
      * addOrUpdateProfileImage method will upload profile picture for a given agent id
+     * For a successful upload it's required to send file object, agent id and the user type(agent)
      * @param Request $request
+     * @param AvatarUploder $avatarUploder
      * @return array
      */
-    public function addOrUpdateProfileImage(Request $request)
+    public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
-        $allowExtension = [
-            'jpeg', 'jpe', 'jpg', 'png'
-        ];
-
-        $agent_id = $request->get('agent_id');
-        $file = $request->files();
-
-        $ext = $file['file']->getClientOriginalExtension();
-
-        if(!in_array($ext, $allowExtension)){
+        try {
+            return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->get('agent_id'), 'agent');
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __('Unsupported file submitted, please select an image file', 'fluent-support')
-            ]);
-        }
-
-        $agent = Agent::findOrFail($agent_id);
-
-        $uploadedImage = FileSystem::setSubDir('agents_avatars')->put($file);
-
-        if($avatar = $uploadedImage[0]['url']){
-            $agent->avatar = $avatar;
-            $agent->save();
-
-            return[
-                'message' => __('Profile picture has been updated successfully', 'fluent-support'),
-                'image'   => $agent->avatar,
-                'agent' => $agent
-            ];
-        }
-
-        else{
-            return $this->sendError([
-                'message' => __('Something went wrong while updating the profile picture', 'fluent-support')
+                'message' => __($e->getMessage(), 'fluent-support')
             ]);
         }
     }

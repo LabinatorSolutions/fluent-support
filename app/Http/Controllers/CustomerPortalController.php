@@ -205,7 +205,7 @@ class CustomerPortalController extends Controller
         $ticket = Ticket::where('id', $ticketId)
             ->with([
                 'customer' => function ($query) {
-                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id']);
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'avatar']);
                 }, 'agent' => function ($query) {
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
                 },
