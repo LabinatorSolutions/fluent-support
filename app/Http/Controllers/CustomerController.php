@@ -2,11 +2,10 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Services\Includes\FileSystem;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\Framework\Request\Request;
-use FluentSupport\Framework\Support\Arr;
+use FluentSupport\App\Services\AvatarUploder;
 
 /**
  * CustomerController class for REST API
@@ -120,44 +119,17 @@ class CustomerController extends Controller
 
     /**
      * addOrUpdateProfileImage method will update a customer avatar
+     * For a successful upload it's required to send file object, customer id and the user type(customer)
      * @param Request $request
      * @return array
      */
-    public function addOrUpdateProfileImage(Request $request)
+    public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
-        $allowExtension = [
-            'jpeg', 'jpe', 'jpg', 'png'
-        ];
-
-        $customer_id = $request->get('customer_id');
-        $file = $request->files();
-
-        $ext = $file['file']->getClientOriginalExtension();
-
-        if(!in_array($ext, $allowExtension)){
+        try {
+           return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->get('customer_id'), 'customer' );
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __('Unsupported file submitted, please select an image file', 'fluent-support')
-            ]);
-        }
-
-        $customer = Customer::findOrFail($customer_id);
-
-        $uploadedImage = FileSystem::setSubDir('customer_avatars')->put($file);
-
-        if($avatar = $uploadedImage[0]['url']){
-            $customer->avatar = $avatar;
-            $customer->save();
-
-            return[
-                'message' => __('Profile picture has been updated successfully', 'fluent-support'),
-                'image'   => $customer->avatar,
-                'customer' => $customer
-            ];
-        }
-
-        else{
-            return $this->sendError([
-                'message' => __('Something went wrong while updating the profile picture', 'fluent-support')
+                'message' => __($e->getMessage(), 'fluent-support')
             ]);
         }
     }
