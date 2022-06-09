@@ -3,7 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Activity;
-use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Request\Request;
 
 /**
  *  ActivityLoggerController class for REST API
@@ -18,62 +18,45 @@ class ActivityLoggerController extends Controller
      * getActivities method will get information regarding all activity with users(agent/customer) and activity settings
      * @return array
      */
-    public function getActivities()
+
+    public function getActivities (Activity $activity)
     {
-        $activities = Activity::with([
-            'person' => function ($query) {
-                $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
-            }
-        ])->orderBy('id', 'DESC')->paginate();
-
-        $settings = $this->getSettings();
-
-        return [
-            'activities' => $activities,
-            'settings'   => $settings['activity_settings']
-        ];
-    }
-
-    /**
-     * getSettings method will get the list of activity settings and return
-     * @return array
-     */
-    public function getSettings()
-    {
-        $settings = Helper::getOption('_activity_settings', []);
-
-        $defaults = [
-            'delete_days'  => 14,
-            'disable_logs' => 'no'
-        ];
-
-        $settings = wp_parse_args($settings, $defaults);
-
-        return [
-            'activity_settings' => $settings
-        ];
-
+        try {
+            return $activity->getActivities();
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => __($e->getMessage(), 'fluent-support')
+            ]);
+        }
     }
 
     /**
      * updateSettings method will update existing activity settings
      * @return array
      */
-    public function updateSettings()
+    public function updateSettings (Request $request, Activity $activity)
     {
-        $settings = $this->request->get('activity_settings', []);
-        $defaults = [
-            'delete_days'  => 14,
-            'disable_logs' => 'no'
-        ];
-        $settings = wp_parse_args($settings, $defaults);
-        $settings['delete_days'] = (int)$settings['delete_days'];
+        try {
+            return $activity->updateSettings($request->get('activity_settings', []));
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => __($e->getMessage(), 'fluent-support')
+            ]);
+        }
+    }
 
-        Helper::updateOption('_activity_settings', $settings);
-
-        return [
-            'message' => __('Activity settings has been updated', 'fluent-support')
-        ];
-
+    /**
+     * getSettings method will get the list of activity settings and return
+     * @return array
+     */
+    public function getSettings(Activity $activity)
+    {
+        try {
+            return $activity->getSettings();
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => __($e->getMessage(), 'fluent-support')
+            ]);
+        }
     }
 }
