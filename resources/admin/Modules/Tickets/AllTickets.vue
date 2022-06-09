@@ -122,8 +122,11 @@
                                         </span>
                                     </span>
                                 </span>
-                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'"><i
-                                    class="el-icon-message"></i></span>
+                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'">
+                                    <el-icon>
+                                      <Message />
+                                    </el-icon>
+                                </span>
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
                                 <div class="prev_text_parent">
                                     <p class="fs_tk_preview_text" v-html="getExcerpt(scope.row)"></p>
