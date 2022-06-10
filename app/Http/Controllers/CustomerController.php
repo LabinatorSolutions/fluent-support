@@ -95,26 +95,15 @@ class CustomerController extends Controller
     }
 
     /**
-     * delete method will delete a customer and all ticket by that customer
+     * delete method will delete a customer and all tickets by that customer
      * @param Request $request
-     * @param $customerId
+     * @param Customer $customer
+     * @param int $customerId
      * @return array
      */
-    public function delete(Request $request, $customerId)
+    public function delete(Request $request, Customer $customer, $customerId)
     {
-        $customer = Customer::findOrFail($customerId);
-
-        $tickets = Ticket::where('customer_id', $customer->id)->get();
-
-        foreach ($tickets as $ticket) {
-            $ticket->deleteTicket();
-        }
-
-        $customer->delete();
-
-        return [
-            'message' => __('Customer Deleted Successfully', 'fluent-support')
-        ];
+        return $customer->deleteCustomer($customerId);
     }
 
     /**

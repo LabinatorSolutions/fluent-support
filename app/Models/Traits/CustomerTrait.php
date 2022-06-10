@@ -75,6 +75,7 @@ trait CustomerTrait
 
     /**
      * This updateCustomer method will update a customer
+     * @since 1.5.7
      * @param int $customerId
      * @param array $data
      * @return object
@@ -103,7 +104,32 @@ trait CustomerTrait
     }
 
     /**
+     * deleteCustomer method will delete a customer and all tickets by that customer
+     * @since 1.5.7
+     * @param int $customerId
+     * @return array
+     */
+
+    public function deleteCustomer($customerId)
+    {
+        $customer = static::findOrFail($customerId);
+
+        $tickets = Ticket::where('customer_id', $customer->id)->get();
+
+        foreach ($tickets as $ticket) {
+            $ticket->deleteTicket();
+        }
+
+        $customer->delete();
+
+        return [
+            'message' => __('Customer Deleted Successfully', 'fluent-support')
+        ];
+    }
+
+    /**
      * This attachCustomersMetaData method will attach meta data to customers
+     * @since 1.5.7
      * @param object $customers
      * @return object
      */
@@ -123,6 +149,7 @@ trait CustomerTrait
 
     /**
      * This getCustomerAdditionalData method will return additional data for a customer
+     * @since 1.5.7
      * @param array $with
      * @param object $customer
      * @param array $data
@@ -159,6 +186,7 @@ trait CustomerTrait
 
     /**
      * This customerExists method will check if customer exists
+     * @since 1.5.7
      * @param int $customerId
      * @param string $email
      * @return mixed
@@ -176,6 +204,7 @@ trait CustomerTrait
 
     /**
      * This takeValidKeysForUpdate method will take valid keys data for update
+     * @since 1.5.7
      * @param array $data
      * @return array
      */
