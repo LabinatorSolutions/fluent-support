@@ -15,7 +15,7 @@ class HandleTelegramEvent
      * handleEvent method is responsible for handling telegram events
      * @param array $payload
      * @param string $token
-     * @return array|void
+     * @return array
      * @throws Exception
      */
     public function handleEvent ($payload, $token)
