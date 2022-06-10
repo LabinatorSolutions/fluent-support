@@ -10,6 +10,14 @@ use FluentSupport\App\Services\Tickets\ResponseService;
 class HandleTelegramEvent
 {
 
+
+    /**
+     * handleEvent method is responsible for handling telegram events
+     * @param array $payload
+     * @param string $token
+     * @return array|void
+     * @throws Exception
+     */
     public function handleEvent ($payload, $token)
     {
 
