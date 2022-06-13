@@ -2,9 +2,9 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Services\ThirdParty\HandleTelegramEvent;
 use FluentSupport\Framework\Request\Request;
-use FluentSupportPro\App\Services\Integrations\Slack\SlackNotification;
+use FluentSupport\App\Services\ThirdParty\HandleSlackEvent;
+use FluentSupport\App\Services\ThirdParty\HandleTelegramEvent;
 
 /**
  *  ChatMessageParserController class is responsible for getting information from integrated 3rd party request and response
@@ -40,39 +40,24 @@ class ChatMessageParserController extends Controller
     }
 
     /**
-     * handleSlackEvent will get content from slack,check the data validity and create response in a ticket
+     * handleSlackEvent responsible for getting information from integrated slack request and response
      * @param Request $request
+     * @param HandleSlackEvent $handler
      * @param $token
-     * @return array|\ArrayAccess|mixed
+     * @return array
      */
-    public function handleSlackEvent(Request $request, $token)
+    public function handleSlackEvent(Request $request, HandleSlackEvent $handler, $token)
     {
-        if (!defined('FLUENTSUPPORTPRO')) {
-            return $this->sendSuccess([
-                'message' => __('Slack Integration requires pro version of Fluent Support', 'fluent-support'),
+        try{
+            $this->sendSuccess([
+                'message' => 'received',
+                'result' => $handler->handleEvent($token)
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => __($e->getMessage(), 'fluent-support'),
                 'status'  => false
             ]);
         }
-
-        // Validate Token
-        if (\FluentSupportPro\App\Services\Integrations\Slack\SlackHelper::getWebhookToken() != $token) {
-            return $this->sendSuccess([
-                'message' => __('Bot Token could not be verified', 'fluent-support'),
-                'status'  => false
-            ]);
-        }
-
-        if ($request->get('type') == 'url_verification') {
-            return $request->get('challenge');
-        }
-
-        $event = $request->get('event');
-
-        $result = (new SlackNotification())->processSlackEvent($event);
-
-        return $this->sendSuccess([
-            'message' => 'received',
-            'result' => $result
-        ]);
     }
 }
