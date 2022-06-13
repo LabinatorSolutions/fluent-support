@@ -41,12 +41,11 @@ class ChatMessageParserController extends Controller
 
     /**
      * handleSlackEvent responsible for getting information from integrated slack request and response
-     * @param Request $request
      * @param HandleSlackEvent $handler
      * @param $token
      * @return array
      */
-    public function handleSlackEvent(Request $request, HandleSlackEvent $handler, $token)
+    public function handleSlackEvent(HandleSlackEvent $handler, $token)
     {
         try{
             $this->sendSuccess([
