@@ -440,6 +440,9 @@
 
             li {
                 margin-bottom: 10px;
+                svg {
+                    width: calc(100% - 97%);
+                }
             }
         }
     }
