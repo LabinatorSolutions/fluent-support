@@ -8,6 +8,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\App\Services\Tickets\ResponseService;
@@ -28,60 +29,23 @@ class CustomerPortalController extends Controller
     /**
      * getTickets will generate ticket information with customer and agents by customer
      * @param Request $request
+     * @param CustomerPortalService $customerPortalService
      * @return array
+     * @throws Exception
      */
-    public function getTickets(Request $request)
+    public function getTickets(Request $request, CustomerPortalService $customerPortalService)
     {
-        //Get customer information
-        $customer = $this->resolveCustomer($request);
-
-        if (!$customer) {
+        try {
+            $customer = $this->resolveCustomer($request);
+            return [
+                'tickets' => $customerPortalService->getTickets($customer,  $request->get('filter_type', ''))
+            ];
+        } catch (Exception $e) {
             return $this->sendError([
-                'message'    => __('No Customer Found', 'fluent-support'),
-                'error_type' => 'no_customer'
+                'message' => $e->getMessage(),
+                'error_type' => $e->getCode()
             ]);
         }
-
-        if($customer->status == 'inactive') {
-            return $this->sendError([
-                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
-                'error_type' => 'inactive_customer'
-            ]);
-        }
-
-        $statuses = Arr::get([
-            'open'   => ['new', 'active', 'on-hold'],
-            'all'    => [],
-            'closed' => ['closed']
-        ], $request->get('filter_type', ''));
-
-        //get tickets with customer and agent
-        $ticketsQuery = Ticket::with([
-            'customer' => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
-            }, 'agent' => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
-            }
-        ])
-            ->where('customer_id', $customer->id)
-            ->orderBy('id', 'DESC');
-
-        $ticketsQuery->where('customer_id', $customer->id);
-
-        if ($statuses) {
-            $ticketsQuery->whereIn('status', $statuses);
-        }
-
-        $tickets = $ticketsQuery->paginate();
-
-        foreach ($tickets as $ticket) {
-            $ticket->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($ticket->created_at), current_time('timestamp')));
-            $ticket->preview_response = $ticket->getLastResponse();
-        }
-
-        return [
-            'tickets' => $tickets
-        ];
     }
 
     /**
@@ -90,107 +54,25 @@ class CustomerPortalController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createTicket(Request $request)
+    public function createTicket(Request $request, CustomerPortalService $customerPortalService)
     {
-        $data = $request->all();
-
-        $this->validate($data, [
+        $this->validate($request->all(), [
             'title'   => 'required',
             'content' => 'required'
         ]);
 
-        $data['title'] = sanitize_text_field(wp_unslash($data['title']));
-
-        $data['content'] = wp_unslash(wp_kses_post($data['content']));
-
-        $customer = $this->resolveCustomer($request, true);
-
-        if($customer->status == 'inactive') {
+        try {
+            $customer = $this->resolveCustomer($request, true);
+            return [
+                'message' => __('Ticket has been created successfully', 'fluent-support'),
+                'ticket'  => $customerPortalService->createTicket($customer, $request->all(), $this->resolveMailboxId($request))
+            ];
+        } catch (Exception $e) {
             return $this->sendError([
-                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
-                'error_type' => 'inactive_customer'
+                'message' => __($e->getMessage(), 'fluent-support'),
+                'error_type' => $e->getCode()
             ]);
         }
-
-        if (!$customer) {
-            return $this->sendError([
-                'message'    => __('No Customer Found', 'fluent-support'),
-                'error_type' => 'no_customer'
-            ]);
-        }
-
-        $data['customer_id'] = $customer->id;
-        $data['product_source'] = 'local';
-        $data['mailbox_id'] = $this->resolveMailboxId($request);
-
-        $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
-
-        if(!in_array('priority', $disabledFields)) {
-            $data['priority'] = sanitize_text_field($data['client_priority']);
-            $data['client_priority'] = sanitize_text_field($data['client_priority']);
-        }
-
-        if(in_array('product_services', $disabledFields)) {
-            unset($data['product_id']);
-        }
-
-        $data['source'] = 'web';
-
-        /*
-         * Filter ticket data
-         *
-         * @since v1.0.0
-         * @param array  $data
-         * @param object $customer
-         */
-        $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
-
-        /*
-         * Action before ticket create
-         *
-         * @since v1.0.0
-         * @param array  $data
-         * @param object $customer
-         */
-        do_action('fluent_support/before_ticket_create', $data, $customer);
-        $ticket = Ticket::create($data);
-
-        if (($attachments = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
-
-            Attachment::whereNull('ticket_id')
-                ->whereIn('file_hash', $attachments)
-                ->whereNull('ticket_id')
-                ->update([
-                    'ticket_id' => $ticket->id,
-                    'person_id' => $customer->id,
-                    'status'    => 'active'
-                ]);
-
-            $ticket->load('attachments');
-        }
-
-
-        if(defined('FLUENTSUPPORTPRO')) {
-            $customData = Arr::get($data, 'custom_data');
-            if($customData) {
-                $customData = wp_unslash($customData);
-                $ticket->syncCustomFields($customData);
-            }
-        }
-
-        /*
-         * Action on ticket create
-         *
-         * @since v1.0.0
-         * @param object $ticket
-         * @param object $customer
-         */
-        do_action('fluent_support/ticket_created', $ticket, $customer);
-
-        return [
-            'message' => __('Ticket has been created successfully', 'fluent-support'),
-            'ticket'  => $ticket
-        ];
     }
 
     /**
