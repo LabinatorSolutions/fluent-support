@@ -2,9 +2,11 @@
 namespace FluentSupport\App\Services;
 
 use Exception;
-use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\Framework\Support\Arr;
+use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Conversation;
 
 class CustomerPortalService
 {
@@ -25,6 +27,31 @@ class CustomerPortalService
         return $this->ticketsAdditionalData( $customer, $statuses );
     }
 
+    /**
+     * getTicket method will get the ticket information with customer and agent as well as response in a ticket by ticket id
+     * @param object $request
+     * @param int $ticketId
+     * @since 1.5.7
+     * @return array
+     */
+    public function getTicket ($request, $ticketId)
+    {
+        $ticket = $this->getTicketByID($ticketId);
+
+        $customer = $this->getCustomer( $request, $ticket );
+
+        $this->checkCustomerTicketAccess($customer, $ticket);
+
+        $responses = $this->getResponses($ticketId);
+
+        $ticket = $this->syncTicketAdditionData($ticket);
+
+        return [
+            'ticket' => $ticket,
+            'responses' => $responses,
+            'sign_on_id' => $ticket->customer_id
+        ];
+    }
 
     /**
      * This `createTicket` method is responsible for creating ticket for customer
@@ -172,6 +199,25 @@ class CustomerPortalService
     }
 
     /**
+     * This `getCustomer` method is responsible for getting customer
+     * @param object $request
+     * @param object $ticket
+     * @since 1.5.7
+     * @return object $customer
+     * @throws Exception
+     *
+     */
+    private function getCustomer ( $request, $ticket )
+    {
+        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+            $customer = $ticket->customer;
+        } else {
+            $customer = $this->resolveCustomer( $request );
+        }
+        return $customer;
+    }
+
+    /**
      * This `getTicketStatues` method is responsible for getting ticket statuses
      * @param array $requestedStatus
      * @since 1.5.7
@@ -220,4 +266,144 @@ class CustomerPortalService
 
         return $tickets;
     }
+
+    /**
+     * `resolveCustomer` method will create and return or only return existing customer
+     * This method will get customer id or customer info or option to force create as parameter.
+     * @param object $request
+     * @param bool $forceCreate Default: false // If true, it will create a new customer
+     * @return Customer // Collection
+     */
+    public function resolveCustomer($request, $forceCreate = false)
+    {
+        $onBehalf = $request->get('on_behalf');
+
+        if (!$onBehalf) {
+            $user = get_user_by('ID', get_current_user_id());
+            if (!$user) {
+                return false;
+            }
+            $onBehalf = [
+                'user_id'         => $user->ID,
+                'email'           => $user->user_email,
+                'last_ip_address' => $request->getIp()
+            ];
+        }
+
+        if ($forceCreate) {
+            return Customer::maybeCreateCustomer($onBehalf);
+        }
+
+        return Customer::getCustomerFromData($onBehalf);
+    }
+
+
+    // Supportive methods for getTicket
+
+    /**
+     * This `getTicketByID` method is responsible for getting a ticket by id
+     * @param $ticketId
+     * @return object $ticket
+     */
+    private function getTicketByID ( $ticketId )
+    {
+        $ticket = Ticket::where('id', $ticketId)
+            ->with([
+                'customer' => function ($query) {
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'avatar']);
+                }, 'agent' => function ($query) {
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
+                },
+                'product',
+                'attachments'
+            ])
+            ->first();
+
+        return $ticket;
+    }
+
+    /**
+     * This `checkCustomerTicketAccess` method is responsible for checking customer ticket access
+     * @param object $customer
+     * @param object $ticket
+     * @return bool true if access is granted
+     * @throws Exception
+     */
+    private function checkCustomerTicketAccess ($customer, $ticket)
+    {
+        if (!$customer) {
+            throw new Exception('Sorry, You do not have permission to this support ticket', 'no_customer');
+        }
+
+        if($customer->status == 'inactive') {
+            throw new Exception('Sorry, You do not have access to customer portal', 'inactive_customer');
+        }
+
+        if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
+            throw new Exception('You do not have permission to view this support ticket', 'permission_error');
+        }
+
+        return true;
+    }
+
+
+    /**
+     * This `getResponses` method is responsible for getting a ticket's responses by ticket id
+     * @param int $ticketId
+     * @return mixed
+     */
+    private function getResponses ( $ticketId )
+    {
+        $responses = Conversation::where('ticket_id', $ticketId)
+            ->with([
+                'person' => function ($query) {
+                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
+                },
+                'attachments'
+            ])
+            ->filterByType(['response', 'ticket_merge_activity'])
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        foreach ($responses as $response) {
+            $response->content = make_clickable($response->content);
+            if ($response->person) {
+                $response->person->setHidden(['email']);
+            }
+        }
+
+        return $responses;
+    }
+
+    /**
+     * This `syncTicketAdditionData` method is responsible for syncing ticket additional data
+     * @param object $ticket
+     * @return object $ticket
+     */
+    private function syncTicketAdditionData ($ticket )
+    {
+        $ticket->content = make_clickable( $ticket->content );
+
+        if ( $ticket->customer ) {
+            $ticket->customer->setHidden(['email']);
+        }
+
+        if ( $ticket->agent ) {
+            $ticket->agent->setHidden(['email']);
+        }
+
+        if ($ticket->status == 'closed') {
+            $ticket->load('closed_by_person');
+            if ($ticket->closed_by_person) {
+                $ticket->closed_by_person->setVisible(['first_name', 'last_name', 'id', 'full_name', 'photo']);
+            }
+        }
+
+        if( defined('FLUENTSUPPORTPRO') ) {
+            $ticket->custom_fields = $ticket->customData( 'public', true );
+        }
+
+        return $ticket;
+    }
+
 }
