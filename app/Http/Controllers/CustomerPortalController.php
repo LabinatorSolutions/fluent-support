@@ -112,45 +112,21 @@ class CustomerPortalController extends Controller
     }
 
     /**
-     * closeTicket method will close a ticket by customer using ticket id
+     * This `closeTicket` is responsible for closing ticket by ticket id
      * @param Request $request
      * @param $ticketId
      * @return array
      */
-    public function closeTicket(Request $request, $ticketId)
+    public function closeTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
-
-        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
-            $customer = $ticket->customer;
-        } else {
-            $customer = $this->resolveCustomer($request);
-        }
-
-        if (!$customer) {
+        try {
+            return $customerPortalService->closeTicket( $request, $ticketId );
+        } catch (Exception $e) {
             return $this->sendError([
-                'message' => __('Sorry! No customer found', 'fluent-support')
+                'message' => $e->getMessage(),
+                'error_type' => $e->getCode()
             ]);
         }
-
-        if($customer->status == 'inactive') {
-            return $this->sendError([
-                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
-                'error_type' => 'inactive_customer'
-            ]);
-        }
-
-
-        if ($customer->id != $ticket->customer_id) {
-            return $this->sendError([
-                'message' => __('Sorry! You can not close this ticket', 'fluent-support')
-            ]);
-        }
-
-        return [
-            'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close($ticket, $customer)
-        ];
     }
 
     /**

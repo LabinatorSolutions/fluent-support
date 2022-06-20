@@ -5,6 +5,7 @@ use Exception;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Services\Tickets\ResponseService;
+use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
@@ -100,6 +101,27 @@ class CustomerPortalService
             'message'  => __('Reply has been added', 'fluent-support'),
             'response' => $responseData['response'],
             'ticket'   => $responseData['ticket']
+        ];
+    }
+
+
+    /**
+     * This `closeTicket` is responsible for closing ticket by ticket id
+     * @param $request
+     * @param $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function closeTicket ( $request, $ticketId )
+    {
+        $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
+        $customer = $this->getCustomer( $request, $ticket );
+
+        $this->checkCustomerTicketAccess( $customer, $ticket, 'close' );
+
+        return [
+            'message' => __('Ticket has been closed', 'fluent_support'),
+            'ticket'  => (new TicketService())->close( $ticket, $customer )
         ];
     }
 
@@ -373,11 +395,15 @@ class CustomerPortalService
         }
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
-            if ($action == 'response') {
+            if ( $action == 'response' ) {
                 throw new Exception('Sorry! You can not reply to this ticket', 'no_customer');
-            } else{
-                throw new Exception('You do not have permission to view this support ticket', 'permission_error');
             }
+            if ( $action == 'close' ) {
+                throw new Exception('Sorry! You can not close this ticket', 'no_customer');
+            }
+
+            throw new Exception('You do not have permission to view this support ticket', 'permission_error');
+
         }
 
         return true;
