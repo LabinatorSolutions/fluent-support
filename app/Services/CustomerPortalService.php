@@ -2,6 +2,7 @@
 namespace FluentSupport\App\Services;
 
 use Exception;
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Services\Tickets\ResponseService;
@@ -59,7 +60,7 @@ class CustomerPortalService
      * @return Ticket
      * @throws Exception
      */
-    public function createTicket ( $customer, $data, $mailbox )
+    public function createTicket ( $customer, $data, $request )
     {
         $this->validateCustomer( $customer );
 
@@ -67,7 +68,7 @@ class CustomerPortalService
         $data['content'] = wp_unslash( wp_kses_post( $data['content'] ) );
         $data['customer_id'] = $customer->id;
         $data['product_source'] = 'local';
-        $data['mailbox_id'] =  $mailbox;
+        $data['mailbox_id'] =  $this->resolveMailboxId( $request );
         $data['source'] = 'web';
 
         $disabledFields = apply_filters( 'fluent_support/disabled_ticket_fields', [] );
@@ -122,6 +123,19 @@ class CustomerPortalService
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
             'ticket'  => (new TicketService())->close( $ticket, $customer )
+        ];
+    }
+
+    public function reOpenTicket ( $request, $ticketId )
+    {
+        $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
+        $customer = $this->getCustomer( $request, $ticket );
+
+        $this->checkCustomerTicketAccess( $customer, $ticket, 'reopen' );
+
+        return [
+            'message' => __('Ticket has been opened again', 'fluent_support'),
+            'ticket'  => (new TicketService())->reopen($ticket, $customer)
         ];
     }
 
@@ -352,6 +366,27 @@ class CustomerPortalService
         return Customer::getCustomerFromData($onBehalf);
     }
 
+    /**
+     * resolveMailboxId method will either get information of the mailbox added by user or default and return the id
+     * @param $request
+     * @return null
+     */
+    private function resolveMailboxId( $request )
+    {
+        if ($mailboxId = $request->get('mailbox_id')) {
+            $mailbox = MailBox::find($mailboxId);
+            if ($mailbox) {
+                return $mailbox->id;
+            }
+        }
+
+        $mailbox = Helper::getDefaultMailBox();
+
+        if ($mailbox) {
+            return $mailbox->id;
+        }
+        return null;
+    }
 
     // Supportive methods for getTicket
 
@@ -395,15 +430,11 @@ class CustomerPortalService
         }
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
-            if ( $action == 'response' ) {
-                throw new Exception('Sorry! You can not reply to this ticket', 'no_customer');
+            if ( $action ) {
+                throw new Exception("Sorry! You can not {$action} to this ticket", 'permission_error');
+            } else {
+                throw new Exception('You do not have permission to view this support ticket', 'permission_error');
             }
-            if ( $action == 'close' ) {
-                throw new Exception('Sorry! You can not close this ticket', 'no_customer');
-            }
-
-            throw new Exception('You do not have permission to view this support ticket', 'permission_error');
-
         }
 
         return true;

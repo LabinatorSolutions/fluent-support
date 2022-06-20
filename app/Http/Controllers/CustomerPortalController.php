@@ -3,13 +3,9 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use Exception;
-use FluentSupport\App\Models\Customer;
-use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
 
 /**
@@ -61,7 +57,7 @@ class CustomerPortalController extends Controller
             $customer = $customerPortalService->resolveCustomer($request, true);
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
-                'ticket'  => $customerPortalService->createTicket($customer, $request->all(), $this->resolveMailboxId($request))
+                'ticket'  => $customerPortalService->createTicket( $customer, $request->all(), $request )
             ];
         } catch (Exception $e) {
             return $this->sendError([
@@ -135,73 +131,16 @@ class CustomerPortalController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function reOpenTicket(Request $request, $ticketId)
+    public function reOpenTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
-
-        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
-            $customer = $ticket->customer;
-        } else {
-            $customer = $this->resolveCustomer($request);
-        }
-
-        if($customer->status == 'inactive') {
+        try {
+            return $customerPortalService->reOpenTicket( $request, $ticketId );
+        } catch (Exception $e) {
             return $this->sendError([
-                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
-                'error_type' => 'inactive_customer'
+                'message' => $e->getMessage(),
+                'error_type' => $e->getCode()
             ]);
         }
-
-
-        if (!$customer) {
-            return $this->sendError([
-                'message' => __('Sorry! No customer found', 'fluent-support')
-            ]);
-        }
-
-        if ($customer->id != $ticket->customer_id) {
-            return $this->sendError([
-                'message' => __('Sorry! You can not close this ticket', 'fluent-support')
-            ]);
-        }
-
-
-        return [
-            'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket'  => (new TicketService())->reopen($ticket, $customer)
-        ];
-
-
-    }
-
-    /**
-     * resolveCustomer method will create and return or only return existing customer
-     * This method will get customer id or customer info or option to force create as parameter.
-     * @param $request
-     * @param false $forceCreate
-     * @return false|Customer
-     */
-    private function resolveCustomer($request, $forceCreate = false)
-    {
-        $onBehalf = $request->get('on_behalf');
-
-        if (!$onBehalf) {
-            $user = get_user_by('ID', get_current_user_id());
-            if (!$user) {
-                return false;
-            }
-            $onBehalf = [
-                'user_id'         => $user->ID,
-                'email'           => $user->user_email,
-                'last_ip_address' => $request->getIp()
-            ];
-        }
-
-        if ($forceCreate) {
-            return Customer::maybeCreateCustomer($onBehalf);
-        }
-
-        return Customer::getCustomerFromData($onBehalf);
     }
 
     /**
@@ -234,28 +173,6 @@ class CustomerPortalController extends Controller
             'custom_fields_rendered' =>  \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields()
         ];
 
-    }
-
-    /**
-     * resolveMailboxId method will either get information of the mailbox added by user or default and return the id
-     * @param $request
-     * @return null
-     */
-    private function resolveMailboxId($request)
-    {
-        if ($mailboxId = $request->get('mailbox_id')) {
-            $mailbox = MailBox::find($mailboxId);
-            if ($mailbox) {
-                return $mailbox->id;
-            }
-        }
-
-        $mailbox = Helper::getDefaultMailBox();
-
-        if ($mailbox) {
-            return $mailbox->id;
-        }
-        return null;
     }
 
 
