@@ -377,11 +377,7 @@ class TicketController extends Controller
                 'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
             ]);
         }
-        // Adding support for shortcode in agent response
-        $data = apply_filters('fluent_support/parse_smartcode_data', $data, [
-            'customer'  => $ticket->customer,
-            'agent'     => Helper::getAgentByUserId(get_current_user_id())
-        ]);
+
         $responseData = (new ResponseService())->createResponse($data, $agent, $ticket);
 
         $responseData['response']->content = make_clickable(wpautop($responseData['response']->content, false));

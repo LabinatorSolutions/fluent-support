@@ -22,6 +22,14 @@ class ResponseService
             return false;
         }
 
+        // Adding support for shortcode in agent response
+        if ( $person->person_type == 'agent' ) {
+            $data = apply_filters('fluent_support/parse_smartcode_data', $data, [
+                'customer'  => $ticket->customer,
+                'agent'     => $person
+            ]);
+        }
+
         $convoType = Arr::get($data, 'conversation_type', 'response');
 
         $content = wp_unslash(wp_kses_post($data['content']));
