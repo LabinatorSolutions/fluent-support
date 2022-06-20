@@ -2,19 +2,16 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Attachment;
+use Exception;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
-use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
-use FluentSupport\Framework\Support\Arr;
 
 /**
  * CustomerPortalController class for REST API
@@ -36,7 +33,7 @@ class CustomerPortalController extends Controller
     public function getTickets(Request $request, CustomerPortalService $customerPortalService)
     {
         try {
-            $customer = $this->resolveCustomer($request);
+            $customer = $customerPortalService->resolveCustomer($request);
             return [
                 'tickets' => $customerPortalService->getTickets($customer,  $request->get('filter_type', ''))
             ];
@@ -62,7 +59,7 @@ class CustomerPortalController extends Controller
         ]);
 
         try {
-            $customer = $this->resolveCustomer($request, true);
+            $customer = $customerPortalService->resolveCustomer($request, true);
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
                 'ticket'  => $customerPortalService->createTicket($customer, $request->all(), $this->resolveMailboxId($request))
@@ -81,94 +78,16 @@ class CustomerPortalController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function getTicket(Request $request, $ticketId)
+    public function getTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        //Get ticket by id with customer, agent, product and attachments
-        $ticket = Ticket::where('id', $ticketId)
-            ->with([
-                'customer' => function ($query) {
-                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'avatar']);
-                }, 'agent' => function ($query) {
-                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
-                },
-                'product',
-                'attachments'
-            ])
-            ->first();
-
-        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
-            $customer = $ticket->customer;
-        } else {
-            $customer = $this->resolveCustomer($request);
-        }
-
-        if (!$customer) {
+        try {
+            return $customerPortalService->getTicket( $request, $ticketId );
+        } catch (Exception $e) {
             return $this->sendError([
-                'message'    => __('Sorry, You do not have permission to this support ticket', 'fluent-support'),
-                'error_type' => 'no_customer'
+                'message' => $e->getMessage(),
+                'error_type' => $e->getCode()
             ]);
         }
-
-        if($customer->status == 'inactive') {
-            return $this->sendError([
-                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
-                'error_type' => 'inactive_customer'
-            ]);
-        }
-
-
-        if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
-            return $this->sendError([
-                'message'    => __('You do not have permission to view this support ticket', 'fluent-support'),
-                'error_type' => 'permission_error'
-            ]);
-        }
-
-        //Get responses in a ticket by
-        $responses = Conversation::where('ticket_id', $ticketId)
-            ->with([
-                'person' => function ($query) {
-                    $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
-                },
-                'attachments'
-            ])
-            ->filterByType(['response', 'ticket_merge_activity'])
-            ->orderBy('id', 'DESC')
-            ->get();
-
-        foreach ($responses as $response) {
-            $response->content = make_clickable($response->content);
-            if ($response->person) {
-                $response->person->setHidden(['email']);
-            }
-        }
-
-        $ticket->content = make_clickable($ticket->content);
-
-        if ($ticket->customer) {
-            $ticket->customer->setHidden(['email']);
-        }
-
-        if ($ticket->agent) {
-            $ticket->agent->setHidden(['email']);
-        }
-
-        if ($ticket->status == 'closed') {
-            $ticket->load('closed_by_person');
-            if ($ticket->closed_by_person) {
-                $ticket->closed_by_person->setVisible(['first_name', 'last_name', 'id', 'full_name', 'photo']);
-            }
-        }
-
-        if(defined('FLUENTSUPPORTPRO')) {
-            $ticket->custom_fields = $ticket->customData('public', true);
-        }
-
-        return [
-            'ticket'     => $ticket,
-            'responses'  => $responses,
-            'sign_on_id' => $ticket->customer_id
-        ];
     }
 
     /**
@@ -315,7 +234,7 @@ class CustomerPortalController extends Controller
 
     /**
      * resolveCustomer method will create and return or only return existing customer
-     * This method will het customer id or customer info or option to force create as parameter.
+     * This method will get customer id or customer info or option to force create as parameter.
      * @param $request
      * @param false $forceCreate
      * @return false|Customer
