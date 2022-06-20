@@ -9,7 +9,6 @@ use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
 
@@ -97,52 +96,19 @@ class CustomerPortalController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createResponse(Request $request, $ticketId)
+    public function createResponse(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $data = $request->all();
-        $this->validate($data, [
-            'content' => 'required'
-        ]);
-
-        $data['content'] = wp_unslash(wp_kses_post($data['content']));
-
-
-        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
-
-        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
-            $customer = $ticket->customer;
-        } else {
-            $customer = $this->resolveCustomer($request);
-        }
-
-        if (!$customer) {
+        try {
+            $this->validate($request->all(), [
+                'content' => 'required'
+            ]);
+            return $customerPortalService->createResponse( $request, $ticketId, $request->all() );
+        } catch (Exception $e) {
             return $this->sendError([
-                'message' => __('Sorry! No customer found', 'fluent-support')
+                'message' => $e->getMessage(),
+                'error_type' => $e->getCode()
             ]);
         }
-
-        if($customer->status == 'inactive') {
-            return $this->sendError([
-                'message'    => __('Sorry, You do not have access to customer portal', 'fluent-support'),
-                'error_type' => 'inactive_customer'
-            ]);
-        }
-
-
-        if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
-            return $this->sendError([
-                'message' => __('Sorry! You can not reply to this ticket', 'fluent-support')
-            ]);
-        }
-
-        $data['conversation_type'] = 'response';
-        $responseData = (new ResponseService())->createResponse($data, $customer, $ticket);
-
-        return [
-            'message'  => __('Reply has been added', 'fluent-support'),
-            'response' => $responseData['response'],
-            'ticket'   => $responseData['ticket']
-        ];
     }
 
     /**

@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services;
 use Exception;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Customer;
+use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
@@ -42,13 +43,9 @@ class CustomerPortalService
 
         $this->checkCustomerTicketAccess($customer, $ticket);
 
-        $responses = $this->getResponses($ticketId);
-
-        $ticket = $this->syncTicketAdditionData($ticket);
-
         return [
-            'ticket' => $ticket,
-            'responses' => $responses,
+            'ticket' => $this->syncTicketAdditionData($ticket),
+            'responses' => $this->getResponses($ticketId),
             'sign_on_id' => $ticket->customer_id
         ];
     }
@@ -79,9 +76,38 @@ class CustomerPortalService
 
 
     /**
+     * This `createResponse` method is responsible for creating response by customer in a ticket by ticket id, and data
+     * @param object $request
+     * @param int $ticketId
+     * @param array $data
+     * @since 1.5.7
+     * @return array
+     * @throws Exception
+     */
+    public function createResponse ($request, $ticketId, $data )
+    {
+        $data['content'] = wp_unslash(wp_kses_post($data['content']));
+        $data['conversation_type'] = 'response';
+
+        $ticket = Ticket::with( ['customer'] )->findOrFail( $ticketId );
+        $customer = $this->getCustomer( $request, $ticket );
+
+        $this->checkCustomerTicketAccess( $customer, $ticket, 'response' );
+
+        $responseData = (new ResponseService())->createResponse($data, $customer, $ticket);
+
+        return [
+            'message'  => __('Reply has been added', 'fluent-support'),
+            'response' => $responseData['response'],
+            'ticket'   => $responseData['ticket']
+        ];
+    }
+
+    /**
      * This `validateDisabledFields` method is responsible for validating disabled fields
      * @param array $data
      * @param array $disabledFields
+     * @since 1.5.7
      * @return array $data
      */
     private function validateDisabledFields ( $data, $disabledFields )
@@ -104,6 +130,7 @@ class CustomerPortalService
      * @param array $data
      * @param object $customer
      * @param array $disabledFields
+     * @since 1.5.7
      * @return Ticket
      */
     private function storeTicket ( $data, $customer, $disabledFields )
@@ -142,6 +169,7 @@ class CustomerPortalService
      * @param array $disabledFields
      * @param object $ticket
      * @param object $customer
+     * @since 1.5.7
      * @return Ticket
      */
     private function addTicketAttachments ( $data, $disabledFields, $ticket, $customer )
@@ -214,6 +242,11 @@ class CustomerPortalService
         } else {
             $customer = $this->resolveCustomer( $request );
         }
+
+        if ( !$customer ) {
+            throw new Exception('Sorry! No customer found', 'no_customer');
+        }
+
         return $customer;
     }
 
@@ -329,7 +362,7 @@ class CustomerPortalService
      * @return bool true if access is granted
      * @throws Exception
      */
-    private function checkCustomerTicketAccess ($customer, $ticket)
+    private function checkCustomerTicketAccess ($customer, $ticket, $action = false)
     {
         if (!$customer) {
             throw new Exception('Sorry, You do not have permission to this support ticket', 'no_customer');
@@ -340,7 +373,11 @@ class CustomerPortalService
         }
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
-            throw new Exception('You do not have permission to view this support ticket', 'permission_error');
+            if ($action == 'response') {
+                throw new Exception('Sorry! You can not reply to this ticket', 'no_customer');
+            } else{
+                throw new Exception('You do not have permission to view this support ticket', 'permission_error');
+            }
         }
 
         return true;
