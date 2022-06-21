@@ -5,8 +5,6 @@ namespace FluentSupport\App\Http\Controllers;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\EmailNotification\Settings;
-use FluentSupport\App\Services\TicketHelper;
-use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\Framework\Request\Request;
 
 class MailBoxController extends Controller
@@ -16,17 +14,9 @@ class MailBoxController extends Controller
      * @param Request $request
      * @return array
      */
-    public function index(Request $request)
+    public function index( MailBox $mailBox )
     {
-        $mailboxes = MailBox::all();
-
-        foreach ($mailboxes as $mailbox) {
-            $mailbox->tickets_count = Ticket::where('mailbox_id', $mailbox->id)->count();
-        }
-
-        return [
-            'mailboxes' => $mailboxes
-        ];
+        return $mailBox->getMailBoxes();
     }
 
     /**
@@ -35,13 +25,12 @@ class MailBoxController extends Controller
      * @param $id
      * @return mixed
      */
-    public function get(Request $request, $id)
+    public function get( MailBox $mailBox, $id )
     {
-        $mailbox = MailBox::findOrFail($id);
+        return [
+            'mailbox' => $mailBox->getMailBox( $id )
+        ];
 
-        return $this->sendSuccess([
-            'mailbox' => $mailbox
-        ]);
     }
 
 
@@ -51,35 +40,18 @@ class MailBoxController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function save(Request $request)
+    public function save(Request $request, MailBox $mailBox)
     {
-        $data = $request->get('business');
-        $data = wp_unslash($data);
+        $data = wp_unslash( $request->get('business') );
 
         $this->validate($data, [
             'name' => 'required',
             'email' => 'required'
         ]);
 
-        if ($data['box_type'] == 'email') {
-            $data['settings'] = [
-                'admin_email_address' => ''
-            ];
-        } else {
-            $data['settings'] = [
-                'admin_email_address' => $data['email']
-            ];
-        }
-
-        if (!MailBox::first()) {
-            $data['is_default'] = 'yes';
-        }
-
-        $mailbox = MailBox::create($data);
-
         return [
             'message' => __('Mailbox has been created successfully', 'fluent-support'),
-            'mailbox' => $mailbox
+            'mailbox' => $mailBox->createMailBox( $data )
         ];
     }
 
@@ -90,31 +62,25 @@ class MailBoxController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function update(Request $request, $mailBoxId)
+    public function update(Request $request, MailBox $mailBox, $mailBoxId)
     {
-        $data = $request->get('business');
-        $data = wp_unslash($data);
+        try{
+            $data = wp_unslash( $request->get('business') );
 
-        $this->validate($data, [
-            'name' => 'required',
-            'email' => 'required'
-        ]);
-
-        $mailbox = MailBox::findOrFail($mailBoxId);
-
-        if ($data['box_type'] == 'email' && empty($data['mapped_email'])) {
-            return $this->sendError([
-                'message' => __('Mapped Email Address is required', 'fluent-support')
+            $this->validate($data, [
+                'name' => 'required',
+                'email' => 'required'
             ]);
+
+            return [
+                'message' => __( 'Mailbox has been saved', 'fluent-support' ),
+                'mailbox' => $mailBox->updateMailBox( $data, $mailBoxId )
+            ];
+        }catch (\Exception $e){
+            return [
+                'message' => __( $e->getMessage(), 'fluent-support' ),
+            ];
         }
-
-        $mailbox->fill($data);
-        $mailbox->save();
-
-        return [
-            'message' => __('Mailbox has been saved', 'fluent-support'),
-            'mailbox' => $mailbox
-        ];
     }
 
     /**
@@ -123,87 +89,27 @@ class MailBoxController extends Controller
      * @param $mailBoxId
      * @return array
      */
-    public function delete(Request $request, $mailBoxId)
+    public function delete(Request $request, MailBox $mailBox, $mailBoxId)
     {
-        $fallbackId = $request->get('fallback_id');
-
-        if ($fallbackId == $mailBoxId) {
-            return $this->sendError([
-                'message' => __('Fallback Box can not be the same as MailBox ID', 'fluent-support')
-            ]);
+        try {
+            return $mailBox->deleteMailBox( $mailBoxId, $request->get('fallback_id') );
+        } catch (\Exception $e) {
+            return [
+                'message' => __( $e->getMessage(), 'fluent-support' ),
+            ];
         }
-
-        $box = MailBox::findOrFail($mailBoxId);
-        $fallbackBox = MailBox::findOrFail($fallbackId);
-
-        /*
-         * Action before delete a mailbox
-         *
-         * @since v1.0.0
-         * @param object $box           Mailbox
-         * @param object $fallbackBox   Fallback mailbox
-         */
-        do_action('fluent_support/before_delete_email_box', $box, $fallbackBox);
-        $box->deleteAllMeta();
-        MailBox::where('id', $mailBoxId)->delete();
-
-        // lets transfer the tickets now
-        Ticket::where('mailbox_id', $mailBoxId)
-            ->update([
-                'mailbox_id' => $fallbackBox->id
-            ]);
-
-        /*
-         * Action on mailbox delete
-         *
-         * @since v1.0.0
-         * @param integer $mailBoxId
-         * @param object $fallbackBox   Fallback mailbox
-         */
-        do_action('fluent_support/mailbox_deleted', $mailBoxId, $fallbackBox);
-
-        return [
-            'message' => __('Selected Business has been deleted', 'fluent-support')
-        ];
-
     }
 
-    public function moveTickets(Request $request, $mailBoxId)
+    public function moveTickets(Request $request, MailBox $mailBox, $mailBoxId)
     {
-        $newBoxId = $request->get('new_box_id');
-        $ticketIds = $request->get('ticket_ids', []);
-        $move_type = $request->get('move_type');
-
-        if ($newBoxId == $mailBoxId) {
-            return $this->sendError([
-                'message' => __('New Box can not be the same as MailBox ID', 'fluent-support')
-            ]);
+        try {
+            $data = $request->only(['ticket_ids', 'new_box_id', 'move_type']);
+            return $mailBox->moveTickets( $data, $mailBoxId );
+        } catch (\Exception $e) {
+            return [
+                'message' => __( $e->getMessage(), 'fluent-support' ),
+            ];
         }
-
-        if ($move_type == 'Custom' && empty($ticketIds)) {
-            return $this->sendError([
-                'message' => __('Invalid request submitted, Select ticket first', 'fluent-support')
-            ]);
-        }
-
-        $newBox = MailBox::findOrFail($newBoxId);
-
-        if (!empty($ticketIds)) {
-            Ticket::whereIn('id', $ticketIds)
-                ->update([
-                    'mailbox_id' => $newBox->id
-                ]);
-        } else {
-            // Move all ticket for the MailBox
-            Ticket::where('mailbox_id', $mailBoxId)
-                ->update([
-                    'mailbox_id' => $newBox->id
-                ]);
-        }
-
-        return [
-            'message' => __('All ticket moves to the selected Business', 'fluent-support')
-        ];
     }
 
     /**
