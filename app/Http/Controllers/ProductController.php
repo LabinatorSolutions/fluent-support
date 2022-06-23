@@ -14,92 +14,71 @@ class ProductController extends Controller
     /**
      * index method will return the list of product
      * @param Request $request
+     * @param Product $product
      * @return array
      */
-    public function index(Request $request)
+    public function index(Request $request, Product $product)
     {
-        $products = Product::orderBy('id', 'DESC')->searchBy($request->get('search'))->paginate();
-
-        return [
-            'products' => $products
-        ];
+      return $product->getProducts( $request->get('search') );
     }
 
     /**
      * get method will get product by id and return
      * @param Request $request
+     * @param Product $product
      * @param $productId
      * @return array
      */
-    public function get(Request $request, $productId)
+    public function get(Request $request, Product $product, $productId)
     {
-        $product = Product::findOrFail($productId);
-        return [
-            'product' => $product
-        ];
+        return $product->getProduct( $productId );
     }
 
     /**
      * creare method will create new product
      * @param Request $request
+     * @param Product $product
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function create(Request $request)
+    public function create( Request $request, Product $product )
     {
         $data = $request->all();
         $this->validate($data, [
             'title' => 'required'
         ]);
 
-        $data = wp_unslash($data);
-        $product = Product::create($data);
-
-        return [
-            'message' => __('Product has been successfully created', 'fluent-support'),
-            'product' => $product
-        ];
+        return $product->createProduct( $data );
     }
 
 
     /**
      * update methd will update an exiting product by id
      * @param Request $request
-     * @param $productId
+     * @param Product $product
+     * @param int $productId
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function update(Request $request, $productId)
+    public function update ( Request $request, Product $product, $productId )
     {
         $data = $request->all();
         $this->validate($data, [
             'title' => 'required'
         ]);
 
-        $product = Product::findOrFail($productId);
-        $product->fill($data);
-        $product->save();
-
-        return [
-            'message' => __('Product has been updated', 'fluent-support'),
-            'product' => Product::find($productId)
-        ];
+        return $product->updateProduct( $productId, $data );
     }
 
     /**
      * delete method will delete an existing product by id
      * @param Request $request
-     * @param $productId
+     * @param Product $product
+     * @param int $productId
      * @return array
      */
-    public function delete(Request $request, $productId)
+    public function delete(Request $request, Product $product, $productId)
     {
-        Product::where('id', $productId)
-            ->delete();
-
-        return [
-            'message' => __('Product has been deleted', 'fluent-support')
-        ];
+        return $product->deleteProduct( $productId );
     }
-
 }
