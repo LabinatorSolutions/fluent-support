@@ -3,7 +3,6 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\MailBox;
-use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Request\Request;
 
@@ -37,6 +36,7 @@ class MailBoxController extends Controller
     /**
      * Save method will create new business box
      * @param Request $request
+     * @param MailBox $mailBox
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
@@ -56,11 +56,12 @@ class MailBoxController extends Controller
     }
 
     /**
-     * Update method will update existing information for a business by mailbox id
+     * This `update` method will update existing information for a business by mailbox id
      * @param Request $request
-     * @param $mailBoxId
+     * @param MailBox $mailBox
+     * @param int $mailBoxId
      * @return array
-     * @throws \FluentSupport\Framework\Validator\ValidationException
+     * @throws \Exception
      */
     public function update(Request $request, MailBox $mailBox, $mailBoxId)
     {
@@ -84,9 +85,11 @@ class MailBoxController extends Controller
     }
 
     /**
-     * delete method will delete a business from mailbox and replaced with alternative
+     * This `delete` method will delete a business from mailbox and replaced with alternative
      * @param Request $request
-     * @param $mailBoxId
+     * @param MailBox $mailBox
+     * @param int $mailBoxId
+     * @throws \Exception
      * @return array
      */
     public function delete(Request $request, MailBox $mailBox, $mailBoxId)
@@ -100,6 +103,15 @@ class MailBoxController extends Controller
         }
     }
 
+
+    /**
+     * This `moveTickets` method will move tickets from one mailbox to another
+     * @param Request $request
+     * @param MailBox $mailBox
+     * @param int $mailBoxId
+     * @throws \Exception
+     * @return array
+     */
     public function moveTickets(Request $request, MailBox $mailBox, $mailBoxId)
     {
         try {
@@ -113,7 +125,7 @@ class MailBoxController extends Controller
     }
 
     /**
-     * getEmailSettings method will get and return the mailbox email settings
+     * This `getEmailSettings` method will get and return the mailbox email settings
      * @param Request $request
      * @param Settings $settings
      * @param $boxId
@@ -130,92 +142,39 @@ class MailBoxController extends Controller
     }
 
     /**
-     * getEmailsSetups method will return email settings for a business box by box id
-     * @param Request $request
-     * @param Settings $settings
+     * This `getEmailsSetups` method will return email settings for a business box by box id
+     * @param MailBox $mailBox
      * @param $boxId
      * @return array
      */
-    public function getEmailsSetups(Request $request, Settings $settings, $boxId)
+    public function getEmailsSetups( MailBox $mailBox, $boxId )
     {
-        $box = MailBox::findOrFail($boxId);
-
-        $types = $settings->getEmailSettingsKeys();
-
-        $req = [];
-        foreach ($types as $type) {
-            $req[] = $settings->getBoxEmailSettings($box, $type);
-        }
-
-        return [
-            'email_configs' => $req,
-            'email_keys' => $types
-        ];
+       return $mailBox->getEmailsSetups($boxId);
     }
 
     /**
-     * saveEmailSettings method will save the email settings for a business box using box id
+     * This `saveEmailSettings` method will save the email settings for a business box using box id
      * @param Request $request
      * @param Settings $settings
      * @param $boxId
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function saveEmailSettings(Request $request, Settings $settings, $boxId)
+    public function saveEmailSettings( Request $request, MailBox $mailBox, $boxId )
     {
-        $data = wp_unslash($request->get('email_settings'));
-        $this->validate($data, [
-            'email_subject' => 'required',
-            'email_body' => 'required'
-        ]);
-
-        $data['email_body'] = wp_kses_post($data['email_body']);
-
-        $box = MailBox::findOrFail($boxId);
-        $emailType = $request->get('email_type');
-
-        $settings->saveBoxEmailSettings($box, $emailType, $data);
-
-        return [
-            'message' => __('Settings has been updated', 'fluent-support')
-        ];
+        return $mailBox->saveEmailSettings( $request, $boxId );
     }
 
-    public function getTickets(Request $request, $mailbox_id)
+
+    /**
+     * This `getTickets` method will return the list of tickets for a business box
+     * @param Request $request
+     * @param MailBox $mailBox
+     * @param int $boxId
+     * @return array
+     */
+    public function getTickets(Request $request, MailBox $mailBox, $boxId)
     {
-        $customer_id = $request->get('filters.customer_id');
-        $product_id = $request->get('filters.product_id');
-        $ticket_title = $request->get('filters.ticket_title');
-
-        $ticketsQuery = (new Ticket())->with([
-            'customer' => function ($query) use ($customer_id) {
-                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent' => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
-            },
-            'product',
-            'tags',
-            'preview_response' => function ($query) {
-                $query->orderBy('id', 'desc');
-            }
-        ])->where('mailbox_id', $mailbox_id);
-
-        if ($customer_id) {
-            $ticketsQuery->where('customer_id', $customer_id);
-        }
-
-        if ($product_id) {
-            $ticketsQuery->where('product_id', $product_id);
-        }
-
-        if ($ticket_title) {
-            $ticketsQuery->where('title', 'LIKE', "%$ticket_title%");
-        }
-
-        $tickets = $ticketsQuery->paginate();
-
-        return [
-            'tickets' => $tickets
-        ];
+        return $mailBox->getTickets( $request->get('filters'), $boxId );
     }
 }

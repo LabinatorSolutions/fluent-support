@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Models;
 
 use Exception;
+use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
 
 class MailBox extends Model
@@ -135,6 +136,10 @@ class MailBox extends Model
             ->delete();
     }
 
+    /**
+     * This `getMailBoxes` method is used to get all mailboxes.
+     * @return array
+     */
     public function getMailBoxes ()
     {
         $mailboxes = MailBox::all();
@@ -148,11 +153,22 @@ class MailBox extends Model
         ];
     }
 
-    public function getMailBox ( $id )
+
+    /**
+     * This `getMailBox` method is used to get a mailbox by id.
+     * @param int $id
+     * @return MailBox
+     */
+    public function getMailBox ($id )
     {
         return MailBox::findOrFail($id);
     }
 
+    /**
+     * This `createMailBox` method is used to create a new MailBox.
+     * @param array $data
+     * @return MailBox
+     */
     public function createMailBox ( $data )
     {
         if ($data['box_type'] == 'email') {
@@ -172,7 +188,14 @@ class MailBox extends Model
         return MailBox::create($data);
     }
 
-    public function updateMailBox ( $data, $mailBoxId )
+
+    /**
+     * This `updateMailBox` method is used to update a mailbox.
+     * @param array $data
+     * @param int $mailBoxId
+     * @return object $mailbox
+     */
+    public function updateMailBox ($data, $mailBoxId )
     {
 
         $mailbox = MailBox::findOrFail($mailBoxId);
@@ -187,7 +210,13 @@ class MailBox extends Model
         return $mailbox;
     }
 
-    public function deleteMailBox ( $mailBoxId, $fallbackId )
+    /**
+     * This `deleteMailBox` method is used to delete a mailbox.
+     * @param int $mailBoxId The id of the mailbox to be deleted.
+     * @param int $fallbackId The id of the fallback mailbox to be used.
+     * @return array
+     */
+    public function deleteMailBox ($mailBoxId, $fallbackId )
     {
         if ( $mailBoxId == $fallbackId ) {
             throw new Exception('Fallback Box can not be the same as MailBox ID');
@@ -232,11 +261,28 @@ class MailBox extends Model
         do_action('fluent_support/mailbox_deleted', $mailBoxId, $fallbackBox);
     }
 
-    public function moveTickets ( $data, $mailBoxId )
+
+    /**
+     * This `moveTickets` method is used to move tickets from one mailbox to another.
+     * @param array $data
+     * @param int $mailBoxId
+     * @return array
+     */
+    public function moveTickets ($data, $mailBoxId )
     {
         $this->validateTicketMoving( $data, $mailBoxId );
 
         $newBox = MailBox::findOrFail($data['new_box_id']);
+        $oldBox = MailBox::findOrFail($mailBoxId);
+
+        /**
+         * Action before tickets moved
+         * @since v1.5.7
+         * @param array $data
+         * @param object $oldBox Current mailbox
+         * @param object $newBox Mailbox where selected tickets will be moved
+         */
+        do_action( 'fluent_support/before_move_tickets', $data, $oldBox, $newBox );
 
         if (!empty($data['ticket_ids'])) {
             Ticket::whereIn('id', $data['ticket_ids'])
@@ -250,6 +296,14 @@ class MailBox extends Model
                     'mailbox_id' => $newBox->id
                 ]);
         }
+        /**
+         * Action after tickets moved
+         * @since v1.5.7
+         * @param array $data
+         * @param object $oldBox Mailbox where selected tickets were moved from
+         * @param object $newBox Mailbox where selected tickets were moved to
+         */
+        do_action( 'fluent_support/tickets_moved', $data, $oldBox, $newBox );
 
         return [
             'message' => __('All ticket moves to the selected Business', 'fluent-support')
@@ -269,5 +323,103 @@ class MailBox extends Model
         }
 
         return true;
+    }
+
+    /**
+     * This `getEmailSetups` method is used to get the email setups
+     * @param int $boxId
+     * @return array
+     */
+    public function getEmailsSetups ( $boxId )
+    {
+        $settings = new Settings();
+        $box = MailBox::findOrFail( $boxId );
+
+        $types = $settings->getEmailSettingsKeys();
+
+        $req = [];
+        foreach ( $types as $type ) {
+            $req[] = $settings->getBoxEmailSettings( $box, $type );
+        }
+
+        return [
+            'email_configs' => $req,
+            'email_keys' => $types
+        ];
+    }
+
+
+    /**
+     * This `saveEmailSettings` method is used to save the email settings for the mailbox
+     * @param object $request
+     * @param int $boxId
+     * @return array
+     */
+    public function saveEmailSettings ($request, $boxId )
+    {
+        $settings = new Settings();
+
+        $data = wp_unslash($request->get('email_settings'));
+        $this->validate($data, [
+            'email_subject' => 'required',
+            'email_body' => 'required'
+        ]);
+
+        $data['email_body'] = wp_kses_post($data['email_body']);
+
+        $box = MailBox::findOrFail($boxId);
+        $emailType = $request->get('email_type');
+
+        $settings->saveBoxEmailSettings($box, $emailType, $data);
+
+        return [
+            'message' => __('Settings has been updated', 'fluent-support')
+        ];
+    }
+
+    /**
+     * This `getTickets` method is used to get the tickets for the given mailbox
+     * @param array $filters
+     * @param int $boxId
+     * @return array
+     */
+    public function getTickets ($filters, $boxId )
+    {
+
+        $ticketsQuery = $this->getTicketsQuery( $filters['customer_id'], $boxId );
+
+        if ( $filters['customer_id'] ) {
+            $ticketsQuery->where('customer_id', $filters['customer_id']);
+        }
+
+        if ( $filters['product_id'] ) {
+            $ticketsQuery->where('product_id', $filters['product_id']);
+        }
+
+        if ( $filters['ticket_title']  ) {
+            $ticketsQuery->where('title', 'LIKE', "%". $filters['ticket_title'] ."%");
+        }
+
+        return [
+            'tickets' => $ticketsQuery->paginate()
+        ];
+    }
+
+    private function getTicketsQuery ( $customerID, $boxId )
+    {
+        $ticketsQuery = (new Ticket())->with([
+            'customer' => function ($query) use ( $customerID ) {
+                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
+            }, 'agent' => function ($query) {
+                $query->select(['first_name', 'last_name', 'id']);
+            },
+            'product',
+            'tags',
+            'preview_response' => function ($query) {
+                $query->orderBy('id', 'desc');
+            }
+        ])->where('mailbox_id', $boxId);
+
+        return $ticketsQuery;
     }
 }
