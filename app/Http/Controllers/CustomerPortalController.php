@@ -28,9 +28,9 @@ class CustomerPortalController extends Controller
     public function getTickets(Request $request, CustomerPortalService $customerPortalService)
     {
         try {
-            $customer = $customerPortalService->resolveCustomer($request);
+            $customer = $customerPortalService->resolveCustomer( $request );
             return [
-                'tickets' => $customerPortalService->getTickets($customer,  $request->get('filter_type', ''))
+                'tickets' => $customerPortalService->getTickets( $customer,  $request->get('filter_type', '') )
             ];
         } catch (Exception $e) {
             return $this->sendError([
@@ -94,10 +94,11 @@ class CustomerPortalController extends Controller
      */
     public function createResponse(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
+        $this->validate($request->all(), [
+            'content' => 'required'
+        ]);
+
         try {
-            $this->validate($request->all(), [
-                'content' => 'required'
-            ]);
             return $customerPortalService->createResponse( $request, $ticketId, $request->all() );
         } catch (Exception $e) {
             return $this->sendError([
