@@ -81,74 +81,13 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function getTicket(Request $request, $ticketId)
+    public function getTicket(Request $request, Ticket $ticket, $ticketId)
     {
-        //Get logged in agent information
-        $agent = Helper::getAgentByUserId();
-
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
-            $q->whereIn('status', ['active', 'inline']);
-        }]);
-        $responseWith = $request->get('response_with', ['person', 'attachments']);
-
-        //Get ticket by id
-        $ticket = Ticket::with($ticketWith)
-            ->findOrFail($ticketId);
-
-        //If ticket has customer
-        if ($ticket->customer) {
-            //Get and set customer profile url
-            $ticket->customer->profile_edit_url = $ticket->customer->getUserProfileEditUrl();
+        try {
+            return $ticket->getTicket( $request, $ticketId );
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
-
-        //If user do not have permission in this ticket
-        if (!PermissionManager::hasTicketPermission($ticket)) {
-            return $this->sendError([
-                'message' => __('Sorry, You do not have permission to this ticket', 'fluent-support')
-            ]);
-        }
-
-
-        if ($ticket->status == 'closed') {
-            $ticket->load('closed_by_person');
-        }
-
-        //Get ticket responses
-        $responses = Conversation::where('ticket_id', $ticketId)
-            ->with($responseWith)
-            ->orderBy('id', 'DESC')
-            ->get();
-
-        foreach ($responses as $response) {
-            $response->content = make_clickable(wpautop($response->content, false));
-        }
-
-        $ticket->content = make_clickable(wpautop($ticket->content, false));
-
-        //Get last activity by agent
-        $ticket->live_activity = TicketHelper::getActivity($ticketId, $agent->id);
-
-        if (defined('FLUENTSUPPORTPRO')) {
-            $ticket->custom_fields = $ticket->customData('admin', true);
-        }
-
-        $data = [
-            'ticket'    => $ticket,
-            'responses' => $responses,
-            'agent_id'  => $agent->id
-        ];
-
-        if(defined('FLUENTSUPPORTPRO') && $ticket->watchers){
-            $data['watchers'] = TicketHelper::getWatchers($ticket->watchers);
-        }
-
-        //Is request come with fluentcrm_profile, get fluent crm contack information
-        if (in_array('fluentcrm_profile', $request->get('with_data', [])) && defined('FLUENTCRM')) {
-            $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($ticket->customer);
-        }
-
-        return $data;
-
     }
 
     /**
