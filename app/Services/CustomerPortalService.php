@@ -56,7 +56,7 @@ class CustomerPortalService
      * This `createTicket` method is responsible for creating ticket for customer
      * @param object $customer
      * @param array $data
-     * @param int $mailbox
+     * @param \FluentSupport\Framework\Request\Request $request
      * @return Ticket
      * @throws Exception
      */
@@ -79,7 +79,7 @@ class CustomerPortalService
 
     /**
      * This `createResponse` method is responsible for creating response by customer in a ticket by ticket id, and data
-     * @param object $request
+     * @param \FluentSupport\Framework\Request\Request $request
      * @param int $ticketId
      * @param array $data
      * @since 1.5.7
@@ -108,8 +108,8 @@ class CustomerPortalService
 
     /**
      * This `closeTicket` is responsible for closing ticket by ticket id
-     * @param $request
-     * @param $ticketId
+     * @param \FluentSupport\Framework\Request\Request $request
+     * @param int $ticketId
      * @return array
      * @throws Exception
      */

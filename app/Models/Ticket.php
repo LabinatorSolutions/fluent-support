@@ -2,8 +2,11 @@
 
 namespace FluentSupport\App\Models;
 
+use Exception;
+use FluentSupport\App\Http\Controllers\AuthController;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TicketHelper;
+use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\Framework\Support\Arr;
 
 class Ticket extends Model
@@ -868,5 +871,206 @@ class Ticket extends Model
             }
         }
         return $result;
+    }
+
+    /**
+     * This `getTickets` method will return the all tickets
+     * @param \FluentSupport\Framework\Request\Request $request
+     * @param string $filterType
+     * @return array $tickets
+     */
+    public function getTickets ( $request, $filterType )
+    {
+        $queryArgs = $this->prepareQuery( $request, $filterType );
+        $tickets = $this->getTicketsByQuery( $queryArgs );
+
+        foreach ($tickets as $ticket) {
+            if ( $request->get('per_page') < 15 ) {
+                if ($ticket->status != 'closed') {
+                    $ticket->live_activity = TicketHelper::getActivity( $ticket->id );
+                } else {
+                    $ticket->live_activity = [];
+                }
+            }
+        }
+
+        return [
+            'tickets' => $tickets
+        ];
+    }
+
+    // This is a supporting method for getTickets method
+    // it prepare the query arguments for tickets filtering
+    private function prepareQuery ( $request, $filterType )
+    {
+        $queryArgs = [
+            'with' => [],
+            'filter_type' => $filterType,
+            'sort_by' => $request->get('order_by', 'id'),
+            'sort_type' => $request->get('order_type', 'DESC'),
+        ];
+
+        if( $filterType == 'advanced' ){
+            //Get the selected query params for advanced filter
+            $queryArgs['filters_groups_raw'] = json_decode( $request->get( 'advanced_filters' ), true );
+        } else {
+            //Selected filter type is simple
+            $queryArgs['simple_filters'] = $request->get('filters', []);
+            $queryArgs['search'] = trim( sanitize_text_field( $request->get('search', '') ) );
+            if ( $customerId = $request->get( 'customer_id' ) ) {
+                $queryArgs['customer_id'] = intval( $customerId );
+            }
+        }
+
+        return $queryArgs;
+    }
+
+    // This is a supporting method for getTickets method
+    // it returns the tickets by query arguments
+    private function getTicketsByQuery ( $queryArgs )
+    {
+        $ticketsModel = (new TicketQueryService($queryArgs))->getModel();
+
+        $ticketsModel = $ticketsModel->with([
+            'customer'         => function ($query) {
+                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
+            }, 'agent'         => function ($query) {
+                $query->select(['first_name', 'last_name', 'id']);
+            },
+            'product',
+            'tags',
+            'preview_response' => function ($query) {
+                $query->orderBy('id', 'desc');
+            }
+        ]);
+
+
+        // apply filters by access level
+        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsModel, false]);
+
+        return $ticketsModel->paginate();
+    }
+
+
+    /**
+     * This `createTicket` method will create a new ticket and it will also create a new customer or
+     * a customer with WP profile if given.
+     * @param array $ticketData
+     * @param array $maybeNewCustomer
+     * @return array
+     */
+
+    public function createTicket ($ticketData, $maybeNewCustomer )
+    {
+        $ticketData = $this->maybeCreateNewCustomer( $ticketData, $maybeNewCustomer );
+        $customer = Customer::findOrFail($ticketData['customer_id']);
+        $ticketData = $this->buildTicketData( $ticketData, $customer );
+
+        return [
+            'message' => __('Ticket has been created successfully', 'fluent-support'),
+            'ticket'  => $this->storeTicket( $ticketData, $customer )
+        ];
+    }
+
+    // This is a supporting method for createTicket method
+    // it will create ticket data array for ticket creation
+    private function buildTicketData ( $ticketData, $customer )
+    {
+        if (empty($ticketData['mailbox_id'])) {
+            $mailbox = Helper::getDefaultMailBox();
+            $ticketData['mailbox_id'] = $mailbox->id;
+        } else {
+            $mailbox = MailBox::findOrFail($ticketData['mailbox_id']); // just for validation
+        }
+
+        if (!empty($ticketData['product_id'])) {
+            $ticketData['product_source'] = 'local';
+        }
+
+        $ticketData['title'] = sanitize_text_field( wp_unslash ( $ticketData['title'] ) );
+
+        $ticketData['content'] = wp_unslash ( wp_kses_post ( $ticketData['content'] ) );
+
+        if (!empty($ticketData['priority'])) {
+            $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
+        }
+
+        $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
+
+        /*
+         * Filter ticket data
+         *
+         * @since v1.0.0
+         * @param array  $ticketData
+         * @param object $customer
+         */
+        $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
+
+        return $ticketData;
+    }
+
+    // This is a supporting method for createTicket method
+    // it will store the ticket and return the ticket object
+    private function storeTicket ( $ticketData, $customer )
+    {
+        /*
+         * Action before ticket create
+         *
+         * @since v1.0.0
+         * @param array  $ticketData
+         * @param object $customer
+         */
+        do_action('fluent_support/before_ticket_create', $ticketData, $customer);
+
+        $createdTicket = Ticket::create($ticketData);
+
+        if (defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
+            $createdTicket->syncCustomFields($ticketData['custom_fields']);
+        }
+
+        /*
+         * Action on ticket create
+         *
+         * @since v1.0.0
+         * @param object $createdTicket
+         * @param object $customer
+         */
+        do_action('fluent_support/ticket_created', $createdTicket, $customer);
+
+        return $createdTicket;
+    }
+
+    // This is a supporting method for createTicket method
+    // it will create a new customer or a customer with WP profile if given
+    // and after creating a new user it will store customer_id
+    // inside $ticketData array as we only need customer_id to create ticket
+    private function maybeCreateNewCustomer ( $ticketData, $maybeNewCustomer )
+    {
+        if ($ticketData['create_wp_user'] == 'yes'){
+            // Check if username already in use, if not create a wp new user
+            if(!username_exists($maybeNewCustomer['username'])){
+                $authController = new AuthController();
+                $createdUser = $authController->createUser($maybeNewCustomer);
+                $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
+            }else{
+                throw new Exception('This username is already exist in WordPress');
+            }
+        }
+
+        // If user select create customer during ticket creation
+        if($ticketData['create_customer'] == 'yes'){
+            // Check if user already exist as customer, if not create one
+            if ( !empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first()) ){
+                $createCustomer = Customer::create($maybeNewCustomer);
+                if ($createCustomer){
+                    $ticketData['customer_id'] = $createCustomer->id;
+                }
+            }
+            else{
+                throw new Exception('Customer with this email already exist');
+            }
+        }
+
+        return $ticketData;
     }
 }

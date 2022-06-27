@@ -4,17 +4,12 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Customer;
-use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Modules\PermissionManager;
-use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
-use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Request\Request;
@@ -29,45 +24,15 @@ use FluentSupport\Framework\Request\Request;
 
 class TicketController extends Controller
 {
-    public function me(Request $request)
+    /**
+     * This `me` method will return the current user profile info
+     * @param Request $request
+     * @param ProfileInfoService $profileInfoService
+     * @return array
+     */
+    public function me(Request $request, ProfileInfoService $profileInfoService)
     {
-        $user = wp_get_current_user();
-
-        $settings = [
-            'user_id'     => $user->ID,
-            'email'       => $user->user_email,
-            'person'      => Helper::getAgentByUserId($user->ID),
-            'permissions' => PermissionManager::currentUserPermissions(),
-            'request'     => $request->all()
-        ];
-
-        if ($request->get('with_portal_settings')) {
-
-            $mimeHeadings = Helper::getAcceptedMimeHeadings();
-            $businessSettings = (new Settings())->globalBusinessSettings();
-            $maxFileSize = absint($businessSettings['max_file_size']);
-
-            $portalSettings = [
-                'support_products'           => Product::select(['id', 'title'])->get(),
-                'customer_ticket_priorities' => Helper::customerTicketPriorities(),
-                'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
-                'has_rich_text_editor'       => true,
-                'max_file_size' => $maxFileSize,
-                'mime_headings' => $mimeHeadings
-            ];
-            /**
-             * Filter customer portal settings
-             *
-             * @since v1.0.0
-             * @param array $portalSettings
-             */
-            $portalSettings = apply_filters('fluent_support/customer_portal_vars', $portalSettings);
-
-            $settings['portal_settings'] = $portalSettings;
-        }
-
-
-        return $settings;
+        return $profileInfoService->me( $request, wp_get_current_user() );
     }
 
     /**
@@ -75,198 +40,39 @@ class TicketController extends Controller
      * @param Request $request
      * @return array
      */
-    public function index(Request $request)
+    public function index(Request $request, Ticket $ticket)
     {
         //Selected filter type, either simple or Advanced
         $filterType = $request->get('filter_type', 'simple');
 
-        /*Prepare Query Arguments*/
-        $queryArgs = [
-            'with' => [],
-            'filter_type' => $filterType,
-            'sort_by' => $request->get('order_by', 'id'),
-            'sort_type' => $request->get('order_type', 'DESC'),
-        ];
-
-
-        //If the selected filter type is advanced
-        if($request->get('filter_type')=='advanced'){
-            //Get the selected query params for advanced filter
-            $queryArgs['filters_groups_raw'] = json_decode($this->request->get('advanced_filters'), true);
-        } else {
-            //Selected filter type is simple
-            $queryArgs['simple_filters'] = $request->get('filters', []);
-            $queryArgs['search'] = trim(sanitize_text_field($request->get('search', '')));
-            if ($customerId = $request->get('customer_id')) {
-                $queryArgs['customer_id'] = intval($customerId);
-            }
-        }
-
-        /*End Prepare Query Arguments*/
-
-        $ticketsModel = (new TicketQueryService($queryArgs))->getModel();
-
-        $ticketsModel = $ticketsModel->with([
-            'customer'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
-            },
-            'product',
-            'tags',
-            'preview_response' => function ($query) {
-                $query->orderBy('id', 'desc');
-            }
-        ]);
-
-
-        // apply filters by access level
-        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsModel, false]);
-
-
-        $tickets = $ticketsModel->paginate();
-
-        $perPage = $request->get('per_page');
-
-        foreach ($tickets as $ticket) {
-            if ($perPage < 15) {
-                if ($ticket->status != 'closed') {
-                    $ticket->live_activity = TicketHelper::getActivity($ticket->id);
-                } else {
-                    $ticket->live_activity = [];
-                }
-            }
-        }
-
-        return [
-            'tickets' => $tickets
-        ];
+        return $ticket->getTickets( $request, $filterType );
     }
 
     /**
      * createTicket method will create new ticket as well as customer or WP user
      * @param Request $request
+     * @param Ticket $ticket
      * @return array
-     * @throws \FluentSupport\Framework\Validator\ValidationException
+     * @throws \Exception
      */
-    public function createTicket(Request $request)
+    public function createTicket( Request $request, Ticket $ticket )
     {
         $ticketData = $request->get('ticket', []);
         $maybeNewCustomer = $request->get('newCustomer');
-//        $customerFromCrm = $request->get('customerFromCrm');
 
-        //If user select create WP user during ticket creation
-        if ($ticketData['create_wp_user'] == 'yes'){
-            //Check if username already in use, if not create new user
-            if(!username_exists($maybeNewCustomer['username'])){
-                $authController = new AuthController();
-                $createdUser = $authController->createUser($maybeNewCustomer);
-                $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
-            }else{
-                return $this->sendError(__('This username is already exist in WordPress', 'fluent-support'));
-            }
-        }
-        //If user select create customer during ticket creation
-        if($ticketData['create_customer'] == 'yes'){
-            //Check user already exist as customer, if not create new
-            if (!empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first())){
-                $createCustomer = Customer::create($maybeNewCustomer);
-                if ($createCustomer){
-                    $ticketData['customer_id'] = $createCustomer->id;
-                }
-            }
-            else{
-                return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
-            }
+        if( empty($maybeNewCustomer) ){
+            $this->validate($ticketData, [
+                'customer_id' => 'required',
+                'title'       => 'required',
+                'content'     => 'required'
+            ]);
         }
 
-
-        // todo: We will build a email checker wizard for this whole process
-        //If user select create customer from crm during ticket creation
-//        if($ticketData['add_from_crm'] == 'yes'){
-//            //Check user already exist as customer, if not create new
-//            $isCustomerExist = Customer::where('email', $customerFromCrm['email'])->first();
-//
-//            if (!empty($customerFromCrm) && is_null($isCustomerExist)){
-//                $customerData = (new \FluentCrm\App\Models\Subscriber)->where('email', $customerFromCrm)->first()->toArray();
-//                $createCustomer = Customer::create($customerData);
-//                if ($createCustomer){
-//                    $ticketData['customer_id'] = $createCustomer->id;
-//                }
-//            }
-//            else{
-//                return $this->sendError(__('Customer with this email already exist', 'fluent-support'));
-//            }
-//        }
-
-        $this->validate($ticketData, [
-            'customer_id' => 'required',
-            'title'       => 'required',
-            'content'     => 'required'
-        ]);
-
-        //Get customer information from db
-        $customer = Customer::findOrFail($ticketData['customer_id']);
-
-        if (empty($ticketData['mailbox_id'])) {
-            $mailbox = Helper::getDefaultMailBox();
-            $ticketData['mailbox_id'] = $mailbox->id;
-        } else {
-            $mailbox = MailBox::findOrFail($ticketData['mailbox_id']); // just for validation
+        try {
+            return $ticket->createTicket( $ticketData, $maybeNewCustomer );
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
-
-        if (!empty($ticketData['product_id'])) {
-            $data['product_source'] = 'local';
-        }
-
-        $ticketData['title'] = sanitize_text_field(wp_unslash($ticketData['title']));
-
-        $ticketData['content'] = wp_unslash(wp_kses_post($ticketData['content']));
-
-        if (!empty($ticketData['priority'])) {
-            $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
-        }
-
-        $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
-
-        /*
-         * Filter ticket data
-         *
-         * @since v1.0.0
-         * @param array  $ticketData
-         * @param object $customer
-         */
-        $ticketData = apply_filters('fluent_support/create_ticket_data', $ticketData, $customer);
-
-        /*
-         * Action before ticket create
-         *
-         * @since v1.0.0
-         * @param array  $ticketData
-         * @param object $customer
-         */
-        do_action('fluent_support/before_ticket_create', $ticketData, $customer);
-
-        $createdTicket = Ticket::create($ticketData);
-
-        if (defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
-            $createdTicket->syncCustomFields($ticketData['custom_fields']);
-        }
-
-        /*
-         * Action on ticket create
-         *
-         * @since v1.0.0
-         * @param object $createdTicket
-         * @param object $customer
-         */
-        do_action('fluent_support/ticket_created', $createdTicket, $customer);
-
-        return [
-            'message' => __('Ticket has been created successfully', 'fluent-support'),
-            'ticket'  => $createdTicket
-        ];
-
     }
 
     /**
