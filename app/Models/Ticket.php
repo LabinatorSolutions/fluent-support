@@ -4,6 +4,7 @@ namespace FluentSupport\App\Models;
 
 use Exception;
 use FluentSupport\App\Http\Controllers\AuthController;
+use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\App\Services\TicketQueryService;
@@ -568,7 +569,8 @@ class Ticket extends Model
 
         return $this->hasMany(
             $class, 'ticket_id', 'id'
-        );
+        )->with('person', 'attachments')
+        ->orderBy('id', 'DESC');
     }
 
     public function preview_response()
@@ -1072,5 +1074,84 @@ class Ticket extends Model
         }
 
         return $ticketData;
+    }
+
+
+    public function getTicket ( $request, $ticketId )
+    {
+        $agent = Helper::getAgentByUserId();
+
+        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
+            $q->whereIn('status', ['active', 'inline']);
+        }]);
+
+        $ticket = $this->with( $ticketWith )->findOrFail($ticketId);
+
+        $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl ( $ticket->customer ); //Get and set customer profile url
+        $this->checkAgentPermission ( $ticket ); // Check Agent Permission
+        $this->checkIfClosedTicket ( $ticket );  // Check if ticket is closed, if closed then load ticket with closed data
+
+
+        if ( in_array('fluentcrm_profile', $request->query('with_data', []) )  ){
+            return $this->getTicketAdditionalData($agent, $ticket->responses, $ticket, true);
+        } else {
+            return $this->getTicketAdditionalData($agent, $ticket->responses, $ticket);
+        }
+    }
+
+    private function checkAgentPermission ( $ticket )
+    {
+        if ( !PermissionManager::hasTicketPermission($ticket) ) {
+            throw new Exception('Sorry, You do not have permission to this ticket');
+        } else {
+            return true;
+        }
+    }
+
+    private function checkIfClosedTicket ( $ticket )
+    {
+        if ($ticket->status == 'closed') {
+            $ticket->load('closed_by_person');
+        } else {
+            return true;
+        }
+    }
+
+    private function getCustomerProfileUrl ( $customer )
+    {
+        return $customer->getUserProfileEditUrl();
+    }
+
+    private function getTicketAdditionalData( $agent, $responses, $ticket, $isCrmProfileRequested = false )
+    {
+        foreach ($responses as $response) {
+            $response->content = make_clickable(wpautop($response->content, false));
+        }
+
+        $ticket->content = make_clickable(wpautop($ticket->content, false));
+
+        //Get last activity by agent
+        $ticket->live_activity = TicketHelper::getActivity($ticket->id, $agent->id);
+
+        if (defined('FLUENTSUPPORTPRO')) {
+            $ticket->custom_fields = $ticket->customData('admin', true);
+        }
+
+        $data = [
+            'ticket'    => $ticket,
+            'responses' => $responses,
+            'agent_id'  => $agent->id
+        ];
+
+        if(defined('FLUENTSUPPORTPRO') && $ticket->watchers){
+            $data['watchers'] = TicketHelper::getWatchers($ticket->watchers);
+        }
+
+        if ( defined('FLUENTCRM') && $isCrmProfileRequested ) {
+            $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($ticket->customer);
+        }
+
+        return $data;
+
     }
 }
