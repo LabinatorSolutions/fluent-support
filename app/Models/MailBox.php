@@ -355,15 +355,9 @@ class MailBox extends Model
      * @param int $boxId
      * @return array
      */
-    public function saveEmailSettings ($request, $boxId )
+    public function saveEmailSettings ($request, $boxId, $data )
     {
         $settings = new Settings();
-
-        $data = wp_unslash($request->get('email_settings'));
-        $this->validate($data, [
-            'email_subject' => 'required',
-            'email_body' => 'required'
-        ]);
 
         $data['email_body'] = wp_kses_post($data['email_body']);
 

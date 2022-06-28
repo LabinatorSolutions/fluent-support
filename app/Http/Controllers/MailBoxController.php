@@ -162,7 +162,14 @@ class MailBoxController extends Controller
      */
     public function saveEmailSettings( Request $request, MailBox $mailBox, $boxId )
     {
-        return $mailBox->saveEmailSettings( $request, $boxId );
+        $data = wp_unslash($request->get('email_settings'));
+
+        $this->validate($data, [
+            'email_subject' => 'required',
+            'email_body' => 'required'
+        ]);
+
+        return $mailBox->saveEmailSettings( $request, $boxId, $data );
     }
 
 
