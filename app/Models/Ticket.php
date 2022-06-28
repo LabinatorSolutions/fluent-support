@@ -6,8 +6,11 @@ use Exception;
 use FluentSupport\App\Http\Controllers\AuthController;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\App\Services\TicketQueryService;
+use FluentSupport\App\Services\Tickets\ResponseService;
+use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupport\Framework\Support\Arr;
 
 class Ticket extends Model
@@ -1077,6 +1080,13 @@ class Ticket extends Model
     }
 
 
+    /**
+     * This `getTicket` will load a ticket with all its data
+     * @param \FluentSupport\Framework\Request\Request $request
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
     public function getTicket ( $request, $ticketId )
     {
         $agent = Helper::getAgentByUserId();
@@ -1099,15 +1109,7 @@ class Ticket extends Model
         }
     }
 
-    private function checkAgentPermission ( $ticket )
-    {
-        if ( !PermissionManager::hasTicketPermission($ticket) ) {
-            throw new Exception('Sorry, You do not have permission to this ticket');
-        } else {
-            return true;
-        }
-    }
-
+    // This checkIfClosedTicket method will validate if ticket is closed, if closed then load ticket with closed data
     private function checkIfClosedTicket ( $ticket )
     {
         if ($ticket->status == 'closed') {
@@ -1117,11 +1119,13 @@ class Ticket extends Model
         }
     }
 
+    // This getCustomerProfileUrl method will return customer profile url
     private function getCustomerProfileUrl ( $customer )
     {
         return $customer->getUserProfileEditUrl();
     }
 
+    // This getTicketAdditionalData method will load ticket with additional data
     private function getTicketAdditionalData( $agent, $responses, $ticket, $isCrmProfileRequested = false )
     {
         foreach ($responses as $response) {
@@ -1153,5 +1157,302 @@ class Ticket extends Model
 
         return $data;
 
+    }
+
+
+    /**
+     * This `createResponse` will create a response for a ticket
+     * @param array $data
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function createResponse ( $data, $ticketId )
+    {
+        $agent = Helper::getAgentByUserId( get_current_user_id() );
+        $this->checkIfValidAgent( $agent );
+
+        $ticket = static::findOrFail( $ticketId );
+        $this->checkAgentPermission( $ticket );
+
+        $responseData = (new ResponseService())->createResponse( $data, $agent, $ticket );
+
+        $responseData['response']->content = make_clickable( wpautop( $responseData['response']->content, false ) );
+
+        return [
+            'message'     => __( 'Response has been added', 'fluent-support' ),
+            'response'    => $responseData['response'],
+            'ticket'      => $responseData['ticket'],
+            'update_data' => $responseData['update_data']
+        ];
+    }
+
+    // This checkIfValidAgent method will check if agent is valid or not
+    private function checkIfValidAgent ($agent)
+    {
+        if ( !$agent ) {
+            throw new Exception('Sorry, You do not have permission. Please add yourself as support agent first');
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * This `closeTicket` will close a ticket by ticket id
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function closeTicket ( $ticketId )
+    {
+        $agent = Helper::getAgentByUserId( get_current_user_id() );
+
+        $ticket = static::findOrFail( $ticketId );
+        $this->checkAgentPermission( $ticket );
+
+        return [
+            'message' => __('Ticket has been closed', 'fluent_support'),
+            'ticket'  => (new TicketService())->close( $ticket, $agent )
+        ];
+    }
+
+    /**
+     * This `reopenTicket` will reopen a ticket by ticket id
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function reOpenTicket ($ticketId )
+    {
+        $agent = Helper::getAgentByUserId( get_current_user_id() );
+
+        $ticket = static::findOrFail( $ticketId );
+        $this->checkAgentPermission( $ticket );
+
+
+        return [
+            'message' => __('Ticket has been opened again', 'fluent_support'),
+            'ticket'  => (new TicketService())->reopen( $ticket, $agent )
+        ];
+    }
+
+
+    /**
+     * This `getTicketWidgets` will load all ticket widgets
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function getTicketWidgets ( $ticketId )
+    {
+        $ticket = static::with('customer')->findOrFail($ticketId);
+        $this->checkAgentPermission( $ticket );
+
+        //Get last 10 tickets of this customer except this
+        /*
+         * Filter ticket limit to show ticket in view ticket page sidebar
+         * @since 1.5.6
+         * @param int $limit
+         */
+        $limit = apply_filters('fluent_support/previous_ticket_widgets_limit', 10);
+
+        $otherTickets = static::where('id', '!=', $ticketId)
+            ->select(['id', 'title', 'status', 'created_at'])
+            ->where('customer_id', $ticket->customer_id)
+            ->orderBy('id', 'DESC')
+            ->limit($limit)
+            ->get();
+
+        return [
+            'other_tickets' => $otherTickets,
+            'extra_widgets' => ProfileInfoService::getProfileExtraWidgets($ticket->customer)
+        ];
+    }
+
+    /**
+     * This `updateTicketProperty` will update tickets properties
+     * @param \FluentSupport\Framework\Request\Request $request
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function updateTicketProperty ( $request, $ticketId )
+    {
+        $assigner = Helper::getAgentByUserId( get_current_user_id() );
+        $ticket = static::findOrFail( $ticketId );
+        $propName = $request->get( 'prop_name' );
+        $propValue = $request->get( 'prop_value' );
+
+        $this->checkAgentPermission( $ticket );
+
+        return [
+            'message'     => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
+            'update_data' => $this->handlePropertyUpdate( $propName, $propValue, $ticket, $assigner )
+        ];
+    }
+
+    // This will handle ticket property update
+    private function handlePropertyUpdate ( $propName, $propValue, $ticket, $assigner )
+    {
+        $prevValue = $ticket->{$propName};
+        if ($propName && $propValue && $prevValue != $propValue) {
+            $ticket->{$propName} = $propValue;
+            $ticket->save();
+        }
+
+        $updateData = [];
+
+        if ($propName == 'product_id') {
+            $ticket->load('product');
+            $updateData['product'] = $ticket->product;
+        } else if ($propName == 'agent_id') {
+            $ticket->load('agent');
+            $updateData['agent'] = $ticket->agent;
+            $updateData['assigner'] = (new TicketService())->onAgentChange( $ticket, $assigner );
+            if ($prevValue != $ticket->{$propName}) {
+                do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $assigner);
+            }
+        }
+         return $updateData;
+    }
+
+    /**
+     * This `handleBulkActions` will handle bulk actions
+     * @param \FluentSupport\Framework\Request\Request $request
+     * @param array $ticketIds
+     * @return array
+     * @throws Exception
+     */
+    public function handleBulkActions ( $request, $ticketIds )
+    {
+        $action = $request->get('bulk_action');//get action
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+        $agent = Helper::getAgentByUserId();
+        $query = Ticket::whereIn('id', $ticketIds);
+
+        if ( !$hasAllPermission ) {
+            //Filter ticket by agent_id
+            $query->where('agent_id', $agent->id);
+        }
+
+        return $this->handleAction( $action, $query, $agent );
+    }
+
+    // This will handle ticket bulk action
+    private function handleAction ( $action, $query, $agent  )
+    {
+        if ( $action == 'close_tickets' ) {
+            return $this->bulkCloseTickets ( $query->get(), $agent );
+        } else if ( $action == 'delete_tickets' ) {
+            return $this->bulkDeleteTickets ( $query->get() );
+        } else if ( $action == 'assign_agent' ) {
+            return $this->bulkAssignAgent ( $query );
+        } else if ( $action == 'assign_tags' ) {
+            return $this->bulkAssignTag ( $query->get() );
+        } else {
+            throw new Exception('Sorry no action found as available');
+        }
+    }
+
+    /**
+     * This `bulkCloseTickets` will close all given or selected tickets
+     * @param object $tickets
+     * @param object $agent
+     * @return array
+     */
+    public function bulkCloseTickets ( $tickets, $agent )
+    {
+        $tickets->each( function ( $ticket ) use ( $agent ) {
+            (new TicketService())->close( $ticket, $agent );
+        });
+
+        return [
+            'message' => sprintf(__('%d tickets have been closed', 'fluent-support'), count($tickets))
+        ];
+    }
+
+    /**
+     * This `bulkDeleteTickets` will delete all given or selected tickets
+     * @param object $tickets
+     * @return array
+     */
+    public function bulkDeleteTickets ( $tickets )
+    {
+        $tickets->each(function ($ticket) {
+            $ticket->deleteTicket();
+        });
+
+        return [
+            'message' => __(count($tickets) . ' tickets have been deleted', 'fluent-support')
+        ];
+    }
+
+    /**
+     * This `bulkAssignAgent` will assign all given or selected tickets to given agent
+     * @param object $tickets
+     * @return array
+     */
+    public function bulkAssignAgent ( $query )
+    {
+        $request = \FluentSupport\App\App::getInstance('request');
+
+        if ( !$request->has('agent_id') ) {
+            throw new Exception('agent_id param is required');
+        }
+
+        $agent = Agent::findOrFail( $request->get('agent_id') );
+
+        $query->where(function ($q) use ($agent) {
+            $q->where('agent_id', '!=', $agent->id)
+                ->orWhereNull('agent_id');
+        });
+
+        $tickets = $query->get();
+
+        $tickets->each(function ($ticket) use ($agent) {
+            $assigner = Helper::getCurrentAgent();
+            $ticket->agent_id = $agent->id;
+            $ticket->save();
+            do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket, $assigner);
+        });
+
+        return [
+            'message' => __(count($tickets) . ' tickets has been assigned to', 'fluent-support') . ' ' . $agent->full_name
+        ];
+    }
+
+    /**
+     * This `bulkAssignTag` will assign all given or selected tickets to given tag
+     * @param object $tickets
+     * @return array
+     */
+    public function bulkAssignTag ( $query )
+    {
+        $request = \FluentSupport\App\App::getInstance('request');
+
+        if ( ! $request->has('tag_ids') ) {
+            throw new Exception('tag_ids param is required');
+        }
+
+        $tags = array_filter(array_map('absint', $request->get('tag_ids', [])));
+
+        $query->each(function ($ticket) use ($tags) {
+            $ticket->applyTags($tags);
+        });
+
+        return [
+            'message' => __('Selected tags has been added to tickets', 'fluent-support')
+        ];
+    }
+
+
+    // This checkAgentPermission method will validate if agent has permission to view ticket
+    private function checkAgentPermission ( $ticket )
+    {
+        if ( !PermissionManager::hasTicketPermission($ticket) ) {
+            throw new Exception('Sorry, You do not have permission to this ticket');
+        } else {
+            return true;
+        }
     }
 }
