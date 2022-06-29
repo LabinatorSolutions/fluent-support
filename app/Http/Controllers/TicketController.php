@@ -293,11 +293,7 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($ticketId);
 
-        $tagId = intval($request->get('tag_id'));
-
-        if (!$ticket->hasTag($tagId)) {
-            $ticket->tags()->attach($tagId, ['source_type' => 'ticket_tag']);
-        }
+        $ticket->applyTags( intval($request->get('tag_id')) );
 
         return [
             'message' => __('Tag has been added to this ticket', 'fluent-support'),
@@ -314,7 +310,7 @@ class TicketController extends Controller
     public function detachTag($ticketId, $tagId)
     {
         $ticket = Ticket::findOrFail($ticketId);
-        $ticket->tags()->detach($tagId);
+        $ticket->detachTags($tagId);
 
         return [
             'message' => __('Tag has been removed from this ticket', 'fluent-support'),

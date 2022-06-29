@@ -61,6 +61,10 @@ export default {
             this.$del(`tickets/${this.ticket_id}/tags/${tag.id}`)
                 .then(response => {
                     this.tags.splice(tagIndex, 1);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -76,6 +80,10 @@ export default {
             })
                 .then(response => {
                     this.tags.push(tag);
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

@@ -835,6 +835,11 @@ class Ticket extends Model
     public function applyTags($tagIds)
     {
         $result = false;
+
+        if ( !is_array($tagIds) ) {
+            $tagIds = array( $tagIds );
+        }
+
         foreach ($tagIds as $tagId) {
             if (!$this->hasTag($tagId)) {
                 $this->tags()->attach($tagId, ['source_type' => 'ticket_tag']);
@@ -860,6 +865,11 @@ class Ticket extends Model
     public function detachTags($tagIds)
     {
         $result = false;
+
+        if ( !is_array($tagIds) ) {
+            $tagIds = array( $tagIds );
+        }
+
         foreach ($tagIds as $tagId) {
             if ($this->hasTag($tagId)) {
                 $this->tags()->detach($tagId);
