@@ -1445,7 +1445,6 @@ class Ticket extends Model
         ];
     }
 
-
     // This checkAgentPermission method will validate if agent has permission to view ticket
     private function checkAgentPermission ( $ticket )
     {

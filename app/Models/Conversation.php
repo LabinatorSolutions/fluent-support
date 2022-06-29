@@ -2,6 +2,13 @@
 
 namespace FluentSupport\App\Models;
 
+use Exception;
+use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Services\Tickets\ResponseService;
+use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\Helper;
+
 class Conversation extends Model
 {
     protected $table = 'fs_conversations';
@@ -113,6 +120,148 @@ class Conversation extends Model
     {
         $class = __NAMESPACE__ . '\Attachment';
         return $this->hasMany($class, 'conversation_id', 'id');
+    }
+
+
+    /**
+     * This `doBulkReplies` will handle bulk replies
+     * @param array $data
+     * @return array
+     * @throws Exception
+     */
+    public function doBulkReplies ( $data )
+    {
+        $agent = Helper::getAgentByUserId();
+        $tickets = $this->getTicketsToForBulkReply( $data, $agent );
+
+        $responseData = [
+            'content'           => $data['content'],
+            'conversation_type' => sanitize_text_field('response'),
+            'close_ticket'      => $data['close_ticket'] ?? 'no',
+        ];
+
+        $attachments = $data['attachments'];
+        $attachments = $this->getAttachsForBulkReplies( $attachments );
+
+        foreach ( $tickets as $ticket ) {
+            if ( $attachments ) {
+                $responseData['attachments'] = [];
+                foreach ( $attachments as $attachment ) {
+                    $responseData['attachments'][] = $this->handleAttachmentOnBulkReplies ( $attachment, $ticket );
+                }
+            }
+            (new ResponseService())->createResponse( $responseData, $agent, $ticket );
+        }
+
+        return [
+            'message' => __( 'Response has been added to the selected tickets', 'fluent-support' )
+        ];
+    }
+
+    // This is a supporting method of `doBulkReplies` it will return all selected tickets
+    // Also it will check all check permission
+    // @param array $data
+    // @param object $agent
+    private function getTicketsToForBulkReply( $data, $agent )
+    {
+        $ticketIds = array_filter($data['ticket_ids'], 'absint');
+
+        //Get logged in agent information
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+        $query = Ticket::whereIn('id', $ticketIds)->where('status', '!=', 'closed');
+
+        //If the agent does not have permission
+        if ( !$hasAllPermission ) {
+            $query->where('agent_id', $agent->id); //Filter ticket by agent_id
+        }
+
+        $tickets = $query->get();
+
+        //if not ticket found
+        if ( $tickets->isEmpty() ) {
+            throw new Exception( 'Sorry no tickets found based on your filter and bulk actions');
+        }
+
+        return $tickets;
+    }
+
+    // This is a supporting method of `doBulkReplies` it will return it will return attachments
+    // if agent add attachments to bulk replies if there is no attachments then it will return false
+    // @param array $attachments
+    private function getAttachsForBulkReplies ( $attachments )
+    {
+        if ( $attachments ) {
+            $attachs = Attachment::whereNull('ticket_id')
+                ->orderBy('id', 'asc')
+                ->whereIn('file_hash', $attachments)
+                ->get();
+            return $attachs;
+        }
+        return false;
+    }
+
+    // This is a supporting method of `doBulkReplies` this method will prepare the uploaded attachments
+    // for adding in response
+    // @param object $attachment
+    // @param object $ticket
+    private function handleAttachmentOnBulkReplies ( $attachment, $ticket )
+    {
+        $attachedFile = $attachment->replicate();
+        $attachedFile->ticket_id = $ticket->id;
+        $attachedFile->save();
+        return $attachedFile->file_hash;
+    }
+
+
+    /**
+     * This `deleteResponse` is responsible for deleting response
+     * @param int $ticketId
+     * @param int $responseId
+     * @return array
+     * @throws Exception
+     */
+    public function deleteResponse ( $ticketId, $responseId )
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $response = static::findOrFail($responseId);
+        $agent = Helper::getAgentByUserId();
+
+        $this->checkUserTaskPermission( $ticket->agent_id, $agent->id, 'delete' );
+
+        static::where('id', $response->id)->delete();
+
+        return [
+            'message' => __('Selected response has been deleted', 'fluent-support')
+        ];
+    }
+
+    public function updateResponse ( $data, $ticketId, $responseId )
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $response = static::findOrFail($responseId);
+        $agent = Helper::getAgentByUserId();
+
+        $this->checkUserTaskPermission( $ticket->agent_id, $agent->id, 'update' );
+
+        $response->content = wp_unslash(wp_kses_post($data['content']));
+        $response->save();
+
+        return [
+            'message'  => __('Selected response has been updated', 'fluent-support'),
+            'response' => $response
+        ];
+    }
+
+    // This function will check agent permission to specific task regarding response response
+    private function checkUserTaskPermission ( $ticketAgentId, $agentId, $task )
+    {
+        if ( !PermissionManager::currentUserCan('fst_manage_other_tickets') ) {
+            if ( $ticketAgentId != $agentId ) {
+                throw new Exception("Sorry, You do not have permission to {$task} this response");
+            }
+        } else {
+            return true;
+        }
     }
 
 }
