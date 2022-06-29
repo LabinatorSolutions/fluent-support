@@ -2,14 +2,11 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
-use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\Framework\Request\Request;
 
 /**
@@ -69,7 +66,7 @@ class TicketController extends Controller
         try {
             return $ticket->createTicket( $ticketData, $maybeNewCustomer );
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -84,7 +81,7 @@ class TicketController extends Controller
         try {
             return $ticket->getTicket( $request, $ticketId );
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -107,7 +104,7 @@ class TicketController extends Controller
         try {
             return $ticket->createResponse( $data, $ticketId );
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -122,7 +119,7 @@ class TicketController extends Controller
         try {
             return $ticket->getTicketWidgets( $ticketId );
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -138,7 +135,7 @@ class TicketController extends Controller
         try {
             return $ticket->updateTicketProperty( $request, $ticketId );
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -153,7 +150,7 @@ class TicketController extends Controller
         try {
             return $ticket->closeTicket( $ticketId );
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -163,12 +160,12 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function reOpenTicket( Ticket $ticket, $ticketId )
+    public function reOpenTicket ( Ticket $ticket, $ticketId )
     {
         try {
             return $ticket->reOpenTicket( $ticketId );
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -180,14 +177,14 @@ class TicketController extends Controller
      * @return array|string[]|void
      * @throws \Exception
      */
-    public function doBulkActions(Request $request, Ticket $ticket)
+    public function doBulkActions ( Request $request, Ticket $ticket )
     {
         $ticketIds = $request->get('ticket_ids', []);
 
         try {
             return $ticket->handleBulkActions( $request, $ticketIds );
         } catch ( \Exception $e ) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
     }
 
@@ -195,10 +192,11 @@ class TicketController extends Controller
      * doBulkReplies method will create response for bulk tickets
      * This function will get ticket ids, content, attachment etc and create response for tickets
      * @param Request $request
+     * @param Conversation $conversation
      * @return array
-     * @throws \FluentSupport\Framework\Validator\ValidationException
+     * @throws \Exception
      */
-    public function doBulkReplies(Request $request)
+    public function doBulkReplies ( Request $request, Conversation $conversation )
     {
         $data = $request->all();
         $this->validate($data, [
@@ -206,113 +204,40 @@ class TicketController extends Controller
             'ticket_ids' => 'required|array'
         ]);
 
-        //get all ticket ids
-        $ticketIds = $request->get('ticket_ids');
-        $ticketIds = array_filter($ticketIds, 'absint');
-
-        //Get logged in agent information
-        $agent = Helper::getAgentByUserId();
-
-        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
-
-        $query = Ticket::whereIn('id', $ticketIds)->where('status', '!=', 'closed');
-
-        //If the agent does not have permission
-        if (!$hasAllPermission) {
-            //Filter ticket by agent_id
-            $query->where('agent_id', $agent->id);
+        try {
+            return $conversation->doBulkReplies( $data );
+        } catch ( \Exception $e ) {
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
-
-        $tickets = $query->get();
-
-        //if not ticket found
-        if ($tickets->isEmpty()) {
-            $this->sendError([
-                'message' => __('Sorry no tickets found based on your filter and bulk actions', 'fluent-support')
-            ]);
-        }
-
-        //get response data
-        $responseData = [
-            'content'           => $request->get('content'),
-            'conversation_type' => $request->get('conversation_type', 'response'),
-            'close_ticket'      => $request->get('close_ticket', 'no')
-        ];
-
-        $attachments = $request->get('attachments', []);
-
-        //If request with file
-        if ($attachments) {
-            $attachments = Attachment::whereNull('ticket_id')
-                ->orderBy('id', 'asc')
-                ->whereIn('file_hash', $attachments)
-                ->get();
-        }
-
-
-        $responseService = new ResponseService();
-
-        foreach ($tickets as $ticket) {
-            if ($attachments) {
-                $responseData['attachments'] = [];
-                foreach ($attachments as $attachment) {
-                    $attachedFile = $attachment->replicate();
-                    $attachedFile->ticket_id = $ticket->id;
-                    $attachedFile->save();
-                    $responseData['attachments'][] = $attachedFile->file_hash;
-                }
-            }
-
-            $responseService->createResponse($responseData, $agent, $ticket);
-        }
-
-
-        return [
-            'message' => __('Response has been added to the selected tickets', 'fluent-support')
-        ];
-
     }
 
     /**
      * deleteResponse method will remove a response from ticket by ticket id and response id
      * @param Request $request
+     * @param Conversation $conversation
      * @param $ticketId
      * @param $responseId
      * @return array
      */
-    public function deleteResponse(Request $request, $ticketId, $responseId)
+    public function deleteResponse ( Conversation $conversation, $ticketId, $responseId )
     {
-        $ticket = Ticket::findOrFail($ticketId);
-        $response = Conversation::findOrFail($responseId);
-        $agent = Helper::getAgentByUserId();
-
-        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
-
-        if (!$hasAllPermission) {
-            if ($ticket->agent_id != $agent->id) {
-                return $this->sendError([
-                    'message' => __('Sorry, You do not have permission to delete this response', 'fluent-support')
-                ]);
-            }
+        try {
+            return $conversation->deleteResponse( $ticketId, $responseId );
+        } catch (\Exception $e) {
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
-
-        Conversation::where('id', $response->id)->delete();
-
-        return [
-            'message' => __('Selected response has been deleted', 'fluent-support')
-        ];
-
     }
 
     /**
      * updateResponse method will update ticket response using ticket and response id
      * @param Request $request
-     * @param $ticketId
-     * @param $responseId
+     * @param Conversation $conversation
+     * @param int $ticketId
+     * @param int $responseId
      * @return array
-     * @throws \FluentSupport\Framework\Validator\ValidationException
+     * @throws \Exception
      */
-    public function updateResponse(Request $request, $ticketId, $responseId)
+    public function updateResponse ( Request $request, Conversation $conversation, $ticketId, $responseId )
     {
         $data = $request->all();
 
@@ -320,27 +245,11 @@ class TicketController extends Controller
             'content' => 'required'
         ]);
 
-        $ticket = Ticket::findOrFail($ticketId);
-        $response = Conversation::findOrFail($responseId);
-        $agent = Helper::getAgentByUserId();
-
-        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
-
-        if (!$hasAllPermission) {
-            if ($ticket->agent_id != $agent->id) {
-                return $this->sendError([
-                    'message' => __('Sorry, You do not have permission to delete this response', 'fluent-support')
-                ]);
-            }
+        try {
+            return $conversation->updateResponse( $data, $ticketId, $responseId );
+        } catch (\Exception $e) {
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
-
-        $response->content = wp_unslash(wp_kses_post($data['content']));
-        $response->save();
-
-        return [
-            'message'  => __('Selected response has been updated', 'fluent-support'),
-            'response' => $response
-        ];
     }
 
     /**
