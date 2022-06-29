@@ -4,6 +4,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\FluentCRMServices;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
@@ -361,58 +362,16 @@ class TicketController extends Controller
      * syncFluentCrmTags method will synchronize the tags with Fluent CRM by contact id
      *This function will get contact id and tags as parameter, get existing tags from crm and updated added/removed tags
      * @param Request $request
+     * @param FluentCRMServices $fluentCRMServices
      * @return array
      */
-    public function syncFluentCrmTags(Request $request)
+    public function syncFluentCrmTags(Request $request, FluentCRMServices $fluentCRMServices)
     {
-
-        if (!defined('FLUENTCRM')) {
-            return $this->sendError([
-                'message' => __('FluentCRM is not installed', 'fluent-support')
-            ]);
+        $data = $request->only(['contact_id', 'tags']);
+        try {
+            return $fluentCRMServices->syncCrmTags( $data );
+        } catch (\Exception $e) {
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }
-
-        $contactId = absint($request->get('contact_id'));
-
-        if (!$contactId) {
-            return $this->sendError([
-                'message' => __('Contact could not be found', 'fluent-support')
-            ]);
-        }
-
-        $tagIds = array_filter($request->get('tags', []), 'absint');
-        $canAddTags = \FluentCrm\App\Services\PermissionManager::currentUserCan('fcrm_manage_contacts');
-        $canAddTags = apply_filters('fluent_support/can_user_add_tags_to_customer', $canAddTags);
-
-        if (!$canAddTags) {
-            return $this->sendError([
-                'message' => __('Sorry you do not have permission to add contact tags', 'fluent-support')
-            ]);
-        }
-
-        $contact = \FluentCrm\App\Models\Subscriber::findOrFail($contactId);
-
-        $existingTags = $contact->tags;
-        $existingTagIds = [];
-        foreach ($existingTags as $tag) {
-            $existingTagIds[] = $tag->id;
-        }
-        $newTagIds = array_diff($tagIds, $existingTagIds);
-        $removedTagIds = array_diff($existingTagIds, $tagIds);
-
-        if ($newTagIds) {
-            $contact->attachTags($newTagIds);
-        }
-
-        if ($removedTagIds) {
-            $contact->detachTags($removedTagIds);
-        }
-
-
-        return [
-            'tags'    => $contact->tags,
-            'message' => __('FluentCRM contact tags has been updated', 'fluent-support')
-        ];
-
     }
 }
