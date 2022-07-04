@@ -19,7 +19,11 @@ trait CustomerTrait
      */
     public function getCustomers($search, $status=false)
     {
-        $customersQuery = static::latest()->searchBy($search);
+        $customersQuery = static::latest();
+
+        if ( $search ) {
+            $customersQuery = $customersQuery->searchBy($search);
+        }
 
         if ($status && $status != 'all') {
             $customersQuery->filterByStatues([$status]);
@@ -27,7 +31,31 @@ trait CustomerTrait
 
         $customers = $customersQuery->paginate();
 
-        return $this->attachCustomersMetaData($customers);
+        if ( defined('FLUENT_SUPPORT_PRO_DIR_FILE') && $customers->isEmpty() ) {
+            $customers = static::findUserInWP( $search );
+        }
+
+        return $this->attachCustomersMetaData( $customers );
+    }
+
+
+    public static function findUserInWP ( $search )
+    {
+        if ( is_email( $search ) ){
+            $user = get_user_by( 'email', $search );
+
+            if( $user ) {
+                unset( $user->user_pass );
+                $customerData = [
+                    'user_id' => $user->ID,
+                    'email' => $user->user_email,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name
+                ];
+                $customer = static::maybeCreateCustomer( $customerData );
+                return static::where('email', $user->user_email)->paginate();
+            }
+        }
     }
 
     /**
