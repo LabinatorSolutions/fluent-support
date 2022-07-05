@@ -98,6 +98,7 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
     $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
     $router->post('/{agent_id}/avatar', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
+    $router->post('/{agent_id}/reset_avatar', 'AgentController@resetAvatar')->int('agent_id');
 });
 
 $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router) {
@@ -124,6 +125,7 @@ $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function
     $router->delete('/{customer_id}', 'CustomerController@delete')->int('customer_id');
 
     $router->post('/profile_image/{customer_id}', 'CustomerController@addOrUpdateProfileImage')->int('customer_id');
+    $router->post('/reset_avatar/{customer_id}', 'CustomerController@resetAvatar')->int('customer_id');
 });
 
 $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function ($router) {

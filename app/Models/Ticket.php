@@ -952,6 +952,7 @@ class Ticket extends Model
             }, 'agent'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
+            'mailbox',
             'product',
             'tags',
             'preview_response' => function ($query) {

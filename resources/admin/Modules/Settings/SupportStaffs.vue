@@ -24,6 +24,19 @@
                 <el-table-column :label="$t('Avatar')" width="90">
                     <template #default="scope">
                         <div class="fs_as_profile_picture" @mouseover="showIcon(scope.row.id)" @mouseout="hideIcon(scope.row.id)">
+                            <template v-if="scope.row.avatar">
+                                <el-popconfirm
+                                    confirm-button-text="Yes"
+                                    cancel-button-text="No"
+                                    title="Reset to gravatar?"
+                                    @confirm="confirmResetProfile(scope.row)"
+                                >
+                                    <template #reference>
+                                        <el-icon class="fs_pf_remove" :id='"fs_pf_remove_"+scope.row.id'> <Delete /> </el-icon>
+                                    </template>
+                                </el-popconfirm>
+                            </template>
+
                             <el-upload
                                 class="fs-avatar-uploader"
                                 :action='upload_url+scope.row.id+`/avatar`'
@@ -298,9 +311,35 @@ export default {
         },
         showIcon(id) {
             document.querySelector('.avatar-uploader-icon-'+id).style.display = 'initial';
+            let remove_picture = document.querySelector('i#fs_pf_remove_'+id);
+            if(remove_picture){
+                remove_picture.style.display = 'inline-flex';
+            }
         },
         hideIcon(id) {
             document.querySelector('.avatar-uploader-icon-'+id).style.display = 'none';
+            let remove_picture = document.querySelector('i#fs_pf_remove_'+id);
+            if(remove_picture){
+                remove_picture.style.display = 'none';
+            }
+        },
+        confirmResetProfile(row){
+            this.loading = !this.loading;
+            this.$post('agents/' + row.id+'/reset_avatar')
+                .then(response => {
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
+
+                    this.fetchAgents();
+                })
+                .catch(errors => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = !this.loading;
+                })
         }
     },
     mounted() {
@@ -350,5 +389,18 @@ export default {
 
 .el-table__row {
     height: 5em;
+}
+i.fs_pf_remove {
+    display: none;
+    color: #f10909;
+    right: 20px;
+    bottom: 15px;
+    cursor: pointer;
+    z-index: 10000;
+    font-size: 20px;
+    position: absolute;
+    background-color: #d2d2d2;
+    border-radius: 32%;
+    padding: 3px;
 }
 </style>

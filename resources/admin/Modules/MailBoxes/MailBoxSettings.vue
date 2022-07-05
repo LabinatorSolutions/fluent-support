@@ -38,6 +38,10 @@
                 </div>
             </el-form-item>
 
+            <el-form-item :label="$t('Inbox Color')">
+                <el-input type="color" v-model="mailbox.settings.color"></el-input>
+            </el-form-item>
+
             <el-form-item>
                 <el-button v-loading="saving" :disabled="saving" @click="saveSettings()" type="success">
                     {{$t('Save Settings')}}

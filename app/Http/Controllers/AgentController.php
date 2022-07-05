@@ -159,4 +159,25 @@ class AgentController extends Controller
             ]);
         }
     }
+
+    /**
+     * resetAvatar method will restore a Support Staff avatar
+     * For a successful upload it's required to send file object, Support Staff id and the user type(Support Staff)
+     * @param Request $request
+     * @param $id
+     * @return array
+     */
+    public function resetAvatar(Agent $agent, $id){
+        try {
+            $agent->restoreAvatar($agent, $id);
+
+            return [
+                'message'  => __('Support Staff avatar reset to gravatar default', 'fluent-support')
+            ];
+        } catch (\Exception $e) {
+            return [
+                'message'  => __($e->getMessage(), 'fluent-support')
+            ];
+        }
+    }
 }

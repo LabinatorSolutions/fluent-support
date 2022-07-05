@@ -19,6 +19,19 @@
                     <el-col :sm="12" :md="18" :xs="24">
                         <div style="padding: 20px; margin-top: 2.3em;" class="fs_box_body">
                             <div class="fs_cs_profile_picture" @mouseover="showIcon" @mouseout="hideIcon">
+                                <template v-if="customer.avatar">
+                                    <el-popconfirm
+                                        confirm-button-text="Yes"
+                                        cancel-button-text="No"
+                                        title="Reset to gravatar?"
+                                        @confirm="confirmResetProfile"
+                                    >
+                                        <template #reference>
+                                            <el-icon id="fs_pf_remove"> <Delete /> </el-icon>
+                                        </template>
+                                    </el-popconfirm>
+                                </template>
+
                                 <el-upload
                                     class="fs-avatar-uploader"
                                     :action="upload_url"
@@ -174,10 +187,36 @@ export default {
             });
         },
         showIcon() {
-            document.querySelector('.el-upload-dragger>i').style.display = 'initial';
+            document.querySelector('.el-upload-dragger>i.el-icon').style.display = 'initial';
+            let remove_picture = document.querySelector('i#fs_pf_remove');
+            if(remove_picture){
+                remove_picture.style.display = 'inline-flex';
+            }
         },
         hideIcon() {
             document.querySelector('.el-upload-dragger>i').style.display = 'none';
+            let remove_picture = document.querySelector('i#fs_pf_remove');
+            if(remove_picture){
+                remove_picture.style.display = 'none';
+            }
+        },
+        confirmResetProfile(){
+            this.loading = !this.loading;
+            this.$post('customers/reset_avatar/' + this.customer_id)
+                .then(response => {
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
+
+                    this.fetchCustomer();
+                })
+                .catch(errors => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = !this.loading;
+                })
         }
     },
     mounted() {
@@ -224,5 +263,19 @@ export default {
             overflow: hidden;
         }
     }
+}
+
+i#fs_pf_remove {
+    display: none;
+    color: #f10909;
+    right: 20px;
+    bottom: 5px;
+    cursor: pointer;
+    z-index: 10000;
+    font-size: 20px;
+    position: absolute;
+    background-color: #d2d2d2;
+    border-radius: 32%;
+    padding: 3px;
 }
 </style>
