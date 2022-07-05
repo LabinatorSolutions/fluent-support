@@ -31,15 +31,25 @@ trait CustomerTrait
 
         $customers = $customersQuery->paginate();
 
-        if ( defined('FLUENT_SUPPORT_PRO_DIR_FILE') && $customers->isEmpty() ) {
-            $customers = static::findUserInWP( $search );
+        if ( defined( 'FLUENTCRM' ) && $customers->isEmpty() && !$status ) {
+            $customers = $this->findInCrmAndMakeCustomer ( $search );
+            ! is_null( $customers ) ? $customers : $customers = $customersQuery->paginate();
+        }
+
+        if ( defined('FLUENT_SUPPORT_PRO_DIR_FILE') && $customers->isEmpty() && !$status ) {
+            $customers = $this->findUserInWPAndMakeCustomer( $search );
+            ! is_null( $customers ) ? $customers : $customers = $customersQuery->paginate();
         }
 
         return $this->attachCustomersMetaData( $customers );
     }
 
-
-    public static function findUserInWP ( $search )
+    /**
+     * This `findUserInWPAndMakeCustomer` method will find customer in WP Users and make it as a customer
+     * @param string $search
+     * @return object
+     */
+    public function findUserInWPAndMakeCustomer ( $search )
     {
         if ( is_email( $search ) ){
             $user = get_user_by( 'email', $search );
@@ -55,6 +65,25 @@ trait CustomerTrait
                 $customer = static::maybeCreateCustomer( $customerData );
                 return static::where('email', $user->user_email)->paginate();
             }
+        }
+    }
+
+    /**
+     * This `findInCrmAndMakeCustomer` method will find customer in Fluent CRM and make it as a customer
+     * @param string $search
+     * @return object
+     */
+    public function findInCrmAndMakeCustomer ( $search )
+    {
+        $customer = \FluentCrm\App\Models\Subscriber::where( 'email', $search )->first();
+        if( $customer ) {
+            $customerData = [
+                'email' => $customer->email,
+                'first_name' => $customer->first_name,
+                'last_name' => $customer->last_name
+            ];
+            $customer = static::maybeCreateCustomer( $customerData );
+            return static::where('email', $customer->email)->paginate();
         }
     }
 
