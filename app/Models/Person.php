@@ -219,4 +219,12 @@ class Person extends Model
             ->where('object_type', 'person_meta')
             ->delete();
     }
+
+    public function restoreAvatar($person, $id){
+        $person->where('id', $id)->update([
+            'avatar' => null
+        ]);
+
+        return $person;
+    }
 }

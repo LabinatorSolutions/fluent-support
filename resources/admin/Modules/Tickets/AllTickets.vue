@@ -122,6 +122,16 @@
                                         </span>
                                     </span>
                                 </span>
+
+                                <el-tooltip
+                                    class="box-item"
+                                    effect="dark"
+                                    :content="scope.row.mailbox.name"
+                                    placement="top"
+                                >
+                                    <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox.settings.color}" v-html="getExcerptBox(scope.row.mailbox.name)"></span>
+                                </el-tooltip>
+
                                 <span style="margin-right: 5px;" v-if="scope.row.source == 'email'">
                                     <el-icon>
                                       <Message />
@@ -488,7 +498,10 @@ export default {
             this.search = '';
             this.pagination.current_page = 1;
             this.fetchTickets();
-        }
+        },
+        getExcerptBox(text) {
+            return text.substring(0, 3).padEnd(6, '.');
+        },
     },
     mounted() {
         this.setFromSaveFilters();
@@ -541,5 +554,17 @@ export default {
     li.el-dropdown-menu__item {
         margin: 10px 0px;
     }
+}
+
+.fs_inbox_identifier{
+    min-width: 45px;
+    height: 20px;
+    padding: 5px;
+    color: #fff;
+    border-radius: 3px;
+    opacity: 0.8;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 </style>

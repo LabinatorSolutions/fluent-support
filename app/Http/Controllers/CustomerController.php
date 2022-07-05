@@ -122,4 +122,25 @@ class CustomerController extends Controller
             ]);
         }
     }
+
+    /**
+     * resetAvatar method will restore a customer avatar
+     * For a successful upload it's required to send file object, customer id and the user type(customer)
+     * @param Request $request
+     * @param $id
+     * @return array
+     */
+    public function resetAvatar(Customer $customer, $id){
+        try {
+            $customer->restoreAvatar($customer, $id);
+
+            return [
+                'message'  => __('Customer avatar reset to gravatar default', 'fluent-support'),
+            ];
+        } catch (\Exception $e) {
+            return [
+                'message'  => __($e->getMessage(), 'fluent-support')
+            ];
+        }
+    }
 }
