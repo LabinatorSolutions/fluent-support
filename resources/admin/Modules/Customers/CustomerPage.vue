@@ -19,7 +19,13 @@
                     <el-col :sm="12" :md="18" :xs="24">
                         <div style="padding: 20px; margin-top: 2.3em;" class="fs_box_body">
                             <div class="fs_cs_profile_picture" @mouseover="showIcon" @mouseout="hideIcon">
-                                <template v-if="customer.avatar">
+                                <div class="fs_customer_avatar">
+                                    <el-icon class="fs_customer_avatar_upload"> <UploadFilled /> </el-icon>
+                                    <img v-if="customer.photo" :src="customer.photo" class="avatar"/>
+                                </div>
+
+
+<!--                                <template v-if="customer.avatar">
                                     <el-popconfirm
                                         confirm-button-text="Yes"
                                         cancel-button-text="No"
@@ -43,7 +49,7 @@
                                 >
                                     <img v-if="customer.photo" :src="customer.photo" class="avatar"/>
                                     <el-icon> <UploadFilled /> </el-icon>
-                                </el-upload>
+                                </el-upload>-->
                             </div>
                             <customer-form v-if="customer.id" :customer="customer" style="margin-top: 4em;"/>
                         </div>
@@ -187,18 +193,10 @@ export default {
             });
         },
         showIcon() {
-            document.querySelector('.el-upload-dragger>i.el-icon').style.display = 'initial';
-            let remove_picture = document.querySelector('i#fs_pf_remove');
-            if(remove_picture){
-                remove_picture.style.display = 'inline-flex';
-            }
+            document.querySelector('i.fs_customer_avatar_upload').style.display = 'inline-flex';
         },
         hideIcon() {
-            document.querySelector('.el-upload-dragger>i').style.display = 'none';
-            let remove_picture = document.querySelector('i#fs_pf_remove');
-            if(remove_picture){
-                remove_picture.style.display = 'none';
-            }
+            document.querySelector('i.fs_customer_avatar_upload').style.display = 'none';
         },
         confirmResetProfile(){
             this.loading = !this.loading;
@@ -234,6 +232,28 @@ export default {
     position: absolute;
     top: -0.8em;
     left: 1.9em;
+
+    .fs_customer_avatar{
+        img {
+            border: none;
+            width: 7.3em;
+            height: 7.3em;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
+        }
+        .fs_customer_avatar_upload{
+            display: none;
+            left: 41px;
+            top: 43px;
+            cursor: pointer;
+            z-index: 10000;
+            font-size: 22px;
+            position: absolute;
+            background-color: #f5f7fa;
+            border-radius: 32%;
+            padding: 3px;
+        }
+    }
     .fs-avatar-uploader{
         .el-upload-dragger>i {
             display: none;
