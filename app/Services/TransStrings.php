@@ -477,6 +477,8 @@ class TransStrings
             'customer_has_one_tk'    => __('Sorry, this customer has one ticket only', 'fluent-support'),
             'watcher_remove_warning'    => __('Are you sure to remove this watcher?', 'fluent-support'),
             'add_cs_from_crm'    => __('Add Customer From FluentCRM', 'fluent-support'),
+            'Inbox Color'       => __('Inbox Color', 'fluent-support'),
+            'Inbox'       => __('Inbox', 'fluent-support'),
         ];
     }
 }

@@ -39,7 +39,7 @@
             </el-form-item>
 
             <el-form-item :label="$t('Inbox Color')">
-                <el-input type="color" v-model="mailbox.settings.color"></el-input>
+                <el-color-picker v-model="mailbox.settings.color" size="large" />
             </el-form-item>
 
             <el-form-item>
@@ -113,6 +113,11 @@ export default {
                 .always(() => {
                     this.saving = false;
                 });
+        }
+    },
+    mounted() {
+        if ( !this.mailbox.settings.color ) {
+            this.mailbox.settings.color = '#0CBE7E';
         }
     }
 }
