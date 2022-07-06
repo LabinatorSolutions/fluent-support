@@ -126,7 +126,7 @@
                                 <el-tooltip
                                     class="box-item"
                                     effect="dark"
-                                    :content="scope.row.mailbox.name"
+                                    :content="$t('Inbox - ') + scope.row.mailbox.name"
                                     placement="top"
                                 >
                                     <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox.settings.color}" v-html="getExcerptBox(scope.row.mailbox.name)"></span>
@@ -500,7 +500,7 @@ export default {
             this.fetchTickets();
         },
         getExcerptBox(text) {
-            return text.substring(0, 3).padEnd(6, '.');
+            return text.substring(0, 3).padEnd(5, '.');
         },
     },
     mounted() {
@@ -558,13 +558,14 @@ export default {
 
 .fs_inbox_identifier{
     min-width: 45px;
-    height: 20px;
-    padding: 5px;
+    height: 19px;
+    padding: 9px;
     color: #fff;
     border-radius: 3px;
     opacity: 0.8;
     display: inline-flex;
     flex-direction: column;
     justify-content: space-evenly;
+    margin-right: 6px;
 }
 </style>
