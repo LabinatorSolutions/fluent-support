@@ -267,11 +267,23 @@ class AuthController extends Controller
         $user = get_user_by_email($request->get('email'));
 
         if ( $user ) {
+            /*
+             * Filter reset password link text
+             *
+             * @since v1.5.7
+             * @param string $linkText
+             */
             $linkText = apply_filters("fluent_support/reset_password_link", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
 
             $passwordResetKey = get_password_reset_key( $user );
             $resetLink = '<a href="' . wp_login_url()."?action=rp&key=$passwordResetKey&login=" . rawurlencode($user->user_login) . '">'. $linkText .'</a>';
 
+            /*
+             * Filter reset password email subject
+             *
+             * @since v1.5.7
+             * @param string $mailSubject
+             */
             $mailSubject = apply_filters("fluent_support/reset_password_mail_subject", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
             $headers = [];
 
@@ -280,6 +292,14 @@ class AuthController extends Controller
                 sprintf(__('<p>%s</p>', 'fluent-support'), $resetLink) .
                 sprintf(__('<p>If you did not request to reset your password, please ignore this email.</p>', 'fluent-support'));
 
+            /*
+             * Filter reset password email body text
+             *
+             * @since v1.5.7
+             * @param string $message
+             * @param object $user
+             * @param string $resetLink
+             */
             $message = apply_filters('fluent_support/reset_password_message', $message, $user, $resetLink);
 
             add_filter( 'wp_mail_content_type', function( $contentType ) {return 'text/html';});
