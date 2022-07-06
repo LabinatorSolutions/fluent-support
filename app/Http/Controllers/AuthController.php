@@ -254,6 +254,47 @@ class AuthController extends Controller
     }
 
 
+    public function resetPassword ( Request $request )
+    {
+        if (!wp_verify_nonce($request->get('_fsupport_reset_pass_nonce'), 'fluent_support_reset_pass_nonce')) {
+            return $this->sendError([
+                'message' => __('Security verification failed. Please try again', 'fluent-support')
+            ]);
+        }
+
+        $fields = AuthHandler::resetPasswordFields();
+
+        $user = get_user_by_email($request->get('email'));
+
+        if ( $user ) {
+            $linkText = apply_filters("fluent_support/reset_password_link", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
+
+            $passwordResetKey = get_password_reset_key( $user );
+            $resetLink = '<a href="' . wp_login_url()."?action=rp&key=$passwordResetKey&login=" . rawurlencode($user->user_login) . '">'. $linkText .'</a>';
+
+            $mailSubject = apply_filters("fluent_support/reset_password_mail_subject", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
+            $headers = [];
+
+            $message = sprintf(__('<p>Hi %s,</p>', 'fluent-support'), $user->first_name) .
+                sprintf(__('<p>You have requested to reset your password. Please click on the link below to reset your password.</p>', 'fluent-support')) .
+                sprintf(__('<p>%s</p>', 'fluent-support'), $resetLink) .
+                sprintf(__('<p>If you did not request to reset your password, please ignore this email.</p>', 'fluent-support'));
+
+            $message = apply_filters('fluent_support/reset_password_message', $message, $user, $resetLink);
+
+            add_filter( 'wp_mail_content_type', function( $contentType ) {return 'text/html';});
+
+            wp_mail( $user->user_email, $mailSubject, $message, $headers);
+
+            remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+
+            return $this->sendSuccess([
+                'message' => __('Please check your email for the reset link', 'fluent-support')
+            ]);
+        }
+
+    }
+
     /**
      * getMessages message will return the validation message regarding sign up or sign in
      * @param array $rules
