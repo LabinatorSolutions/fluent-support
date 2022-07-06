@@ -107,6 +107,79 @@
     }
 }
 
+.fst_reset_pass_wrapper {
+    max-width: 500px;
+    .fs_reset_pass_form {
+        display: grid;
+
+        .fst_field_group {
+            display: block;
+            margin-bottom: 15px;
+
+            .fst_field_label {
+                &.is-required {
+                    label:after {
+                        content: " *";
+                        color: #f56c6c;
+                        margin-left: 3px;
+                    }
+                }
+            }
+
+            &.is-error {
+                input {
+                    border-color: #f56c6c;
+                }
+            }
+        }
+
+        input {
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        #fst_reset_pass {
+            width: 100%;
+            padding: 15px;
+            background: #0275ff;
+            color: white;
+            border: 0;
+            border-radius: 5px;
+
+            span {
+                transition: all 1s;
+                opacity: 1;
+            }
+
+            svg {
+                display: none;
+                margin: 0 auto;
+                transition: all 1s;
+
+                path, rect {
+                    fill: white;
+                    transition: initial;
+                }
+            }
+
+            &.loading {
+                background: #0275ff91;
+
+                span {
+                    display: none;
+                    opacity: 0;
+                }
+
+                svg {
+                    display: block;
+                    opacity: 1;
+                }
+            }
+        }
+    }
+}
+
 .error.text-danger {
     font-size: 12px;
     margin-top: 4px;

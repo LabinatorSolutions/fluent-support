@@ -163,3 +163,5 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
+
+$router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');

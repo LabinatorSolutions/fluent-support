@@ -1,71 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('fstRegistrationForm');
+    const registrationForm = document.getElementById('fstRegistrationForm');
+    const resetPasswordForm = document.getElementById('fstResetPasswordForm');
 
     function toggleLoading(submitBtn) {
         submitBtn.classList.toggle('loading');
         submitBtn.disabled = !submitBtn.disabled;
     }
 
-    if (form) {
-        form.addEventListener('submit', (event) => {
+    if (registrationForm) {
+        registrationForm.addEventListener('submit', (event) => {
             event.preventDefault();
-
-            const submitBtn = document.getElementById('fst_submit');
-            toggleLoading(submitBtn);
-
-            document.querySelectorAll('.error.text-danger').forEach(e => {
-                e.parentNode.parentNode.classList.remove('is-error');
-                e.remove();
-            })
-
-            const data = new FormData(form);
-
-            const request = new XMLHttpRequest();
-
-            request.open('POST', window.fluentSupportPublic.signup, true);
-            request.responseType = 'json';
-            request.setRequestHeader('X-WP-Nonce', window.fluentSupportPublic.nonce);
-
-            request.onload = function () {
-                if (this.status === 200) {
-                    if (this.response.redirect) {
-                        window.location.replace(this.response.redirect);
-                    } else {
-                        window.location.reload();
-                    }
-                } else {
-                    let genericError = this.response.error;
-
-                    if (this.response.data && this.response.data.status === 403) {
-                        genericError = this.response.message;
-                    }
-
-                    if (genericError) {
-                        let el = document.createElement("div");
-                        el.classList.add('error', 'text-danger');
-                        el.innerHTML = genericError;
-
-                        form.appendChild(el);
-                    } else {
-                        for (const property in this.response) {
-                            const field = document.getElementById('fst_' + property);
-
-                            if (field) {
-                                let el = document.createElement("div");
-                                el.classList.add('error', 'text-danger');
-                                el.innerHTML = Object.values(this.response[property])[0];
-                                field.parentNode.insertBefore(el, field.nextSibling);
-                                field.parentNode.parentNode.classList.add('is-error');
-                            }
-                        }
-                    }
-                }
-
-                toggleLoading(submitBtn);
-            };
-
-            request.send(data);
+            handleFormSubmission( registrationForm, 'fst_submit', window.fluentSupportPublic.signup );
         });
+    }
+
+    if (resetPasswordForm) {
+        resetPasswordForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            handleFormSubmission( resetPasswordForm, 'fst_reset_pass', window.fluentSupportPublic.resetPass );
+        } );
     }
 
     if(document.getElementById('fs_show_signup')) {
@@ -74,10 +27,74 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    if(document.getElementById('fs_show_reset_password')) {
+        document.getElementById('fs_show_reset_password').addEventListener('click', function (event) {
+            fsToggleForms(event, this, '.fst_reset_pass_wrapper');
+        });
+    }
+
     if(document.getElementById('fs_show_login')) {
         document.getElementById('fs_show_login').addEventListener('click', function (event) {
             fsToggleForms(event, this, '.fst_login_wrapper');
         });
+    }
+
+    function handleFormSubmission( form, submitBtnId, reqUrl ) {
+        const submitBtn = document.getElementById( submitBtnId );
+        toggleLoading(submitBtn);
+
+        document.querySelectorAll('.error.text-danger').forEach(e => {
+            e.parentNode.parentNode.classList.remove('is-error');
+            e.remove();
+        })
+
+        const data = new FormData(form);
+
+        const request = new XMLHttpRequest();
+
+        request.open('POST', reqUrl, true);
+        request.responseType = 'json';
+        request.setRequestHeader('X-WP-Nonce', window.fluentSupportPublic.nonce);
+
+        request.onload = function () {
+            if (this.status === 200) {
+                if (this.response.redirect) {
+                    window.location.replace(this.response.redirect);
+                } else {
+                    window.location.reload();
+                }
+            } else {
+                let genericError = this.response.error;
+
+                if (this.response.data && this.response.data.status === 403) {
+                    genericError = this.response.message;
+                }
+
+                if (genericError) {
+                    let el = document.createElement("div");
+                    el.classList.add('error', 'text-danger');
+                    el.innerHTML = genericError;
+
+                    form.appendChild(el);
+                } else {
+                    for (const property in this.response) {
+                        const field = document.getElementById('fst_' + property);
+
+                        if (field) {
+                            let el = document.createElement("div");
+                            el.classList.add('error', 'text-danger');
+                            el.innerHTML = Object.values(this.response[property])[0];
+                            field.parentNode.insertBefore(el, field.nextSibling);
+                            field.parentNode.parentNode.classList.add('is-error');
+                        }
+                    }
+                }
+            }
+
+            toggleLoading(submitBtn);
+        };
+
+        request.send(data);
     }
 
     function fsToggleForms(event, that, target) {
