@@ -20,36 +20,45 @@
                         <div style="padding: 20px; margin-top: 2.3em;" class="fs_box_body">
                             <div class="fs_cs_profile_picture" @mouseover="showIcon" @mouseout="hideIcon">
                                 <div class="fs_customer_avatar">
-                                    <el-icon class="fs_customer_avatar_upload"> <UploadFilled /> </el-icon>
+
+                                    <el-dropdown trigger="click" placement="bottom-start">
+                                        <el-icon class="fs_customer_avatar_upload"> <Camera /> </el-icon>
+                                        <template #dropdown>
+                                            <el-dropdown-menu class="fs-cs-avatar-actions">
+                                                <el-dropdown-item>
+                                                    <el-upload
+                                                        class="fs-avatar-uploader"
+                                                        :action="upload_url"
+                                                        :on-success ="handleAvatarSuccess"
+                                                        :on-error="handleAvatarError"
+                                                        :headers="requestHeaders"
+                                                        :show-file-list="false"
+                                                        drag
+                                                    >
+                                                        Upload a Custom Picture
+                                                    </el-upload>
+
+                                                    </el-dropdown-item>
+                                                <el-dropdown-item>
+<!--                                                    Reset To Default Gravatar-->
+                                                    <template v-if="customer.avatar">
+                                                        <el-popconfirm
+                                                            confirm-button-text="Yes"
+                                                            cancel-button-text="No"
+                                                            title="Reset to gravatar?"
+                                                            @confirm="confirmResetProfile"
+                                                        >
+                                                            <template #reference>
+                                                                Reset To Default Gravatar
+                                                            </template>
+                                                        </el-popconfirm>
+                                                    </template>
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </template>
+                                    </el-dropdown>
                                     <img v-if="customer.photo" :src="customer.photo" class="avatar"/>
                                 </div>
-
-
-<!--                                <template v-if="customer.avatar">
-                                    <el-popconfirm
-                                        confirm-button-text="Yes"
-                                        cancel-button-text="No"
-                                        title="Reset to gravatar?"
-                                        @confirm="confirmResetProfile"
-                                    >
-                                        <template #reference>
-                                            <el-icon id="fs_pf_remove"> <Delete /> </el-icon>
-                                        </template>
-                                    </el-popconfirm>
-                                </template>
-
-                                <el-upload
-                                    class="fs-avatar-uploader"
-                                    :action="upload_url"
-                                    :on-success ="handleAvatarSuccess"
-                                    :on-error="handleAvatarError"
-                                    :headers="requestHeaders"
-                                    :show-file-list="false"
-                                    drag
-                                >
-                                    <img v-if="customer.photo" :src="customer.photo" class="avatar"/>
-                                    <el-icon> <UploadFilled /> </el-icon>
-                                </el-upload>-->
                             </div>
                             <customer-form v-if="customer.id" :customer="customer" style="margin-top: 4em;"/>
                         </div>
@@ -263,12 +272,6 @@ export default {
             top: 0.8em;
             left: 0.8em;
         }
-        .el-upload-dragger {
-            width: unset;
-            height: unset;
-            background: transparent;
-            border: none;
-        }
         img {
             border: none;
             width: 7.3em;
@@ -285,17 +288,17 @@ export default {
     }
 }
 
-i#fs_pf_remove {
-    display: none;
-    color: #f10909;
-    right: 20px;
-    bottom: 5px;
-    cursor: pointer;
-    z-index: 10000;
-    font-size: 20px;
-    position: absolute;
-    background-color: #d2d2d2;
-    border-radius: 32%;
-    padding: 3px;
+.fs-avatar-uploader .el-upload-dragger {
+    background-color: unset;
+    border: unset;
+    border-radius: unset;
+    width: unset;
+    height: unset;
+    text-align: unset;
 }
+.fs-cs-avatar-actions {
+    display: flex;
+    flex-direction: column;
+}
+
 </style>
