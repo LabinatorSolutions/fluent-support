@@ -101,6 +101,7 @@ import {
     Close,
     Aim,
     CircleClose,
+    Camera
 } from '@element-plus/icons-vue/dist/es';
 
 const app = createApp({});
@@ -196,6 +197,7 @@ const components = [
     Close,
     Aim,
     CircleClose,
+    Camera
 ];
 
 components.forEach(component => {
