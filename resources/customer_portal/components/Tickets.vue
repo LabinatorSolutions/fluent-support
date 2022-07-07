@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="fs_tk_right">
-                <button @click="logout" class="fs_btn fs_btn_logout"> {{$t('Logout')}} </button>
+                <button v-if="appVars.show_logout" @click="logout" class="fs_btn fs_btn_logout"> {{$t('Logout')}} </button>
                 <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">
                     {{ $t('create_ticket_cta') }}
                 </button>

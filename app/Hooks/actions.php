@@ -24,7 +24,18 @@ $app->addCustomAction('handle_exception', 'ExceptionHandler@handle');
 $app->addAction('admin_menu', 'Menu@add');
 $app->addAction('admin_enqueue_scripts', 'Menu@maybeEnqueueAssets');
 
-add_shortcode('fluent_support_portal', function () {
+add_shortcode('fluent_support_portal', function ($args) {
+    $args = shortcode_atts( array(
+        'show_logout' => 'no'
+    ), $args );
+
+    if($args['show_logout'] == 'yes') {
+        add_filter('fluent_support/customer_portal_vars', function ($vars) {
+            $vars['show_logout'] = true;
+            return $vars;
+        });
+    }
+
     return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
 });
 
