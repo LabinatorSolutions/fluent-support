@@ -13,25 +13,11 @@
                 <error :error="errors.get('customer_id')"/>
             </el-form-item>
 
-<!--            Will make a wizard for this-->
             <el-form-item>
                 <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">{{$t('Create New Customer')}}</el-checkbox>
-<!--                <el-checkbox v-if="has_pro && fluentcrm_contacts.length" true-label="yes" false-label="no" v-model="ticket.add_from_crm">{{$t('add_cs_from_crm')}}</el-checkbox>-->
             </el-form-item>
 
-<!--            <div class="fs_add_cs_from_crm" v-if="ticket.add_from_crm=='yes'">-->
-<!--                <el-select v-model="customer_from_crm" filterable placeholder="Select">-->
-<!--                    <el-option-->
-<!--                        v-for="contact in fluentcrm_contacts"-->
-<!--                        :key="contact.id"-->
-<!--                        :label=" labelMaker(contact.full_name, contact.email)"-->
-<!--                        :value="contact.email"-->
-<!--                    />-->
-<!--                </el-select>-->
-<!--            </div>-->
-
             <div class="fs_tk_create_customer" v-if="ticket.create_customer=='yes'">
-
                 <el-row :gutter="30">
                     <el-col :md="12" :xs="24">
                         <el-form-item :label="$t('First Name')">
@@ -83,7 +69,12 @@
                 <error :error="errors.get('title')"/>
             </el-form-item>
             <el-form-item :label="$t('Ticket Details')">
-                <wp-editor :height="150" :media-buttons="false" v-model="ticket.content"/>
+                <el-row :gutter="20" style="position: absolute;right: 86px;z-index: 2;">
+                    <el-col :span="6" :offset="20">
+                        <template-inserter v-if="appVars.has_pro" @insert="insertTemplate" />
+                    </el-col>
+                </el-row>
+                <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" v-if="editor_ready"/>
                 <error :error="errors.get('content')"/>
             </el-form-item>
 
@@ -126,6 +117,7 @@ import RemoteSelector from '../../Pieces/RemoteSelector';
 import Error from '../../../admin/Pieces/Error';
 import Errors from '../../../admin/Bits/Errors';
 import CustomFieldForm from './parts/_CustomFieldForm';
+import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateTicketForm',
@@ -133,11 +125,13 @@ export default {
         WpEditor,
         RemoteSelector,
         Error,
-        CustomFieldForm
+        CustomFieldForm,
+        TemplateInserter
     },
     data() {
         return {
             creating: false,
+            editor_ready: true,
             products: this.appVars.support_products,
             priorities: this.appVars.client_priorities,
             mailboxes: this.appVars.mailboxes,
@@ -152,11 +146,8 @@ export default {
                 custom_fields: CustomFieldForm.data(),
                 create_customer: 'no',
                 create_wp_user: 'no',
-                // add_from_crm: 'no',
             },
             new_customer:{},
-            // customer_from_crm:{},
-            // fluentcrm_contacts: this.appVars.fluentcrm_config ? this.appVars.fluentcrm_config.contacts : {}
         }
     },
     methods: {
@@ -185,6 +176,13 @@ export default {
         },
         labelMaker(name, email) {
             return `${name} - ${email}`;
+        },
+        insertTemplate(content) {
+            this.editor_ready = false;
+            this.ticket.content = this.ticket.content + content;
+            this.$nextTick(() => {
+                this.editor_ready = true;
+            });
         },
     }
 }
