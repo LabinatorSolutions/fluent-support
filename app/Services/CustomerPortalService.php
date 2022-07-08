@@ -65,7 +65,7 @@ class CustomerPortalService
         $this->validateCustomer( $customer );
 
         $data['title'] = sanitize_text_field( wp_unslash( $data['title'] ) );
-        $data['content'] = wp_unslash( wp_kses_post( $data['content'] ) );
+        $data['content'] = wp_specialchars_decode( wp_unslash( wp_kses_post( $data['content'] ) ) );
         $data['customer_id'] = $customer->id;
         $data['product_source'] = 'local';
         $data['mailbox_id'] =  $this->resolveMailboxId( $request );
@@ -88,7 +88,7 @@ class CustomerPortalService
      */
     public function createResponse ($request, $ticketId, $data )
     {
-        $data['content'] = wp_unslash(wp_kses_post($data['content']));
+        $data['content'] = wp_specialchars_decode( wp_unslash( wp_kses_post( $data['content'] ) ) );
         $data['conversation_type'] = 'response';
 
         $ticket = Ticket::with( ['customer'] )->findOrFail( $ticketId );
