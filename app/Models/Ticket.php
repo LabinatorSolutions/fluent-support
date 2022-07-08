@@ -1005,7 +1005,7 @@ class Ticket extends Model
 
         $ticketData['title'] = sanitize_text_field( wp_unslash ( $ticketData['title'] ) );
 
-        $ticketData['content'] = wp_unslash ( wp_kses_post ( $ticketData['content'] ) );
+        $ticketData['content'] = wp_specialchars_decode( wp_unslash ( wp_kses_post ( $ticketData['content'] ) ) );
 
         if (!empty($ticketData['priority'])) {
             $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
@@ -1188,7 +1188,7 @@ class Ticket extends Model
 
         $responseData = (new ResponseService())->createResponse( $data, $agent, $ticket );
 
-        $responseData['response']->content = make_clickable( wpautop( $responseData['response']->content, false ) );
+        $responseData['response']->content = wp_specialchars_decode( make_clickable( wpautop( $responseData['response']->content, false ) ) );
 
         return [
             'message'     => __( 'Response has been added', 'fluent-support' ),
