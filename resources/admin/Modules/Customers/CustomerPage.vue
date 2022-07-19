@@ -39,20 +39,18 @@
                                                     </el-upload>
 
                                                     </el-dropdown-item>
-                                                <el-dropdown-item>
+                                                <el-dropdown-item v-if="customer.avatar">
 <!--                                                    Reset To Default Gravatar-->
-                                                    <template v-if="customer.avatar">
-                                                        <el-popconfirm
-                                                            confirm-button-text="Yes"
-                                                            cancel-button-text="No"
-                                                            title="Reset to gravatar?"
-                                                            @confirm="confirmResetProfile"
-                                                        >
-                                                            <template #reference>
-                                                                Reset To Default Gravatar
-                                                            </template>
-                                                        </el-popconfirm>
-                                                    </template>
+                                                    <el-popconfirm
+                                                        confirm-button-text="Yes"
+                                                        cancel-button-text="No"
+                                                        title="Reset to gravatar?"
+                                                        @confirm="confirmResetProfile"
+                                                    >
+                                                        <template #reference>
+                                                            Reset To Default Gravatar
+                                                        </template>
+                                                    </el-popconfirm>
                                                 </el-dropdown-item>
                                             </el-dropdown-menu>
                                         </template>

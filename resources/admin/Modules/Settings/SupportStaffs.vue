@@ -24,30 +24,43 @@
                 <el-table-column :label="$t('Avatar')" width="90">
                     <template #default="scope">
                         <div class="fs_as_profile_picture" @mouseover="showIcon(scope.row.id)" @mouseout="hideIcon(scope.row.id)">
-                            <template v-if="scope.row.avatar">
-                                <el-popconfirm
-                                    confirm-button-text="Yes"
-                                    cancel-button-text="No"
-                                    title="Reset to gravatar?"
-                                    @confirm="confirmResetProfile(scope.row)"
-                                >
-                                    <template #reference>
-                                        <el-icon class="fs_pf_remove" :id='"fs_pf_remove_"+scope.row.id'> <Delete /> </el-icon>
-                                    </template>
-                                </el-popconfirm>
-                            </template>
+                            <div class="fs_agent_avatar">
+                                <el-dropdown trigger="click" placement="bottom-start">
+                                    <el-icon :class='"fs_agent_avatar_upload fs_agent_avatar_upload-"+scope.row.id'> <Camera /> </el-icon>
+                                    <template #dropdown>
+                                        <el-dropdown-menu class="fs-as-avatar-actions">
+                                            <el-dropdown-item>
+                                                <el-upload
+                                                    class="fs-avatar-uploader"
+                                                    :action='upload_url+scope.row.id+`/avatar`'
+                                                    :on-success ="handleAvatarSuccess"
+                                                    :on-error="handleAvatarError"
+                                                    :headers="requestHeaders"
+                                                    :show-file-list="false"
+                                                    drag
+                                                >
+                                                    Upload a Custom Picture
+                                                </el-upload>
 
-                            <el-upload
-                                class="fs-avatar-uploader"
-                                :action='upload_url+scope.row.id+`/avatar`'
-                                :on-success ="handleAvatarSuccess"
-                                :on-error="handleAvatarError"
-                                :headers="requestHeaders"
-                                :show-file-list="false"
-                                drag>
-                                <img :src='scope.row.photo' class="custom-avatar" :alt='scope.row.full_name'/>
-                                <el-icon :class='"avatar-uploader-icon avatar-uploader-icon-"+scope.row.id'><upload-filled /></el-icon>
-                            </el-upload>
+                                            </el-dropdown-item>
+                                            <el-dropdown-item v-if="scope.row.avatar">
+                                                <!--                                                    Reset To Default Gravatar-->
+                                                <el-popconfirm
+                                                    confirm-button-text="Yes"
+                                                    cancel-button-text="No"
+                                                    title="Reset to gravatar?"
+                                                    @confirm="confirmResetProfile(scope.row)"
+                                                >
+                                                    <template #reference>
+                                                        Reset To Default Gravatar
+                                                    </template>
+                                                </el-popconfirm>
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                                <img v-if="scope.row.photo" :src="scope.row.photo" class="avatar"/>
+                            </div>
                         </div>
                     </template>
                 </el-table-column>
@@ -310,18 +323,10 @@ export default {
             });
         },
         showIcon(id) {
-            document.querySelector('.avatar-uploader-icon-'+id).style.display = 'initial';
-            let remove_picture = document.querySelector('i#fs_pf_remove_'+id);
-            if(remove_picture){
-                remove_picture.style.display = 'inline-flex';
-            }
+            document.querySelector('i.fs_agent_avatar_upload-'+id).style.display = 'inline-flex';
         },
         hideIcon(id) {
-            document.querySelector('.avatar-uploader-icon-'+id).style.display = 'none';
-            let remove_picture = document.querySelector('i#fs_pf_remove_'+id);
-            if(remove_picture){
-                remove_picture.style.display = 'none';
-            }
+            document.querySelector('i.fs_agent_avatar_upload-'+id).style.display = 'none';
         },
         confirmResetProfile(row){
             this.loading = !this.loading;
@@ -354,29 +359,44 @@ export default {
 <style lang="scss">
 .fs_as_profile_picture{
     position: absolute;
-    top: 0.5em;
-    left: -0.7em;
-    .fs-avatar-uploader{
-        .avatar-uploader-icon {
+    top: 0.3em;
+
+    .fs_agent_avatar{
+        img {
+            border: none;
+            width: 4.3em;
+            height: 4.3em;
+            border-radius: 50%;
+            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
+        }
+        .fs_agent_avatar_upload{
             display: none;
-            font-size: 2.2em;
+            left: 20px;
+            top: 23px;
+            cursor: pointer;
+            z-index: 10000;
+            font-size: 22px;
+            position: absolute;
+            background-color: #f5f7fa;
+            border-radius: 32%;
+            padding: 3px;
+        }
+    }
+    .fs-avatar-uploader{
+        .el-upload-dragger>i {
+            display: none;
+            font-size: 2.9em;
             color: #fafafa;
             position: absolute;
-            top: 0.2em;
-            left: 1.1em;
-        }
-        .el-upload-dragger {
-            width: unset;
-            height: unset;
-            background: transparent;
-            border: none;
-            padding: unset;
+            top: 0.8em;
+            left: 0.8em;
         }
         img {
             border: none;
+            width: 7.3em;
+            height: 7.3em;
             border-radius: 50%;
-            width: 50%;
-            //box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
+            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
         }
         .avatar-uploader .el-upload {
             border-radius: 6px;
@@ -386,21 +406,20 @@ export default {
         }
     }
 }
-
+.fs-avatar-uploader .el-upload-dragger {
+    background-color: unset;
+    border: unset;
+    border-radius: unset;
+    width: unset;
+    height: unset;
+    text-align: unset;
+}
 .el-table__row {
     height: 5em;
 }
-i.fs_pf_remove {
-    display: none;
-    color: #f10909;
-    right: 20px;
-    bottom: 15px;
-    cursor: pointer;
-    z-index: 10000;
-    font-size: 20px;
-    position: absolute;
-    background-color: #d2d2d2;
-    border-radius: 32%;
-    padding: 3px;
+.fs-as-avatar-actions {
+    display: flex;
+    flex-direction: column;
 }
+
 </style>
