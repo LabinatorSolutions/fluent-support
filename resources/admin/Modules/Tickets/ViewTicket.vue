@@ -302,6 +302,10 @@
                                                             icon="EditPen"> {{$t('Edit')}}
                                                         </el-dropdown-item>
                                                         <el-dropdown-item
+                                                            :command="{ type: 'split_ticket', conversation: conversation }"
+                                                            icon="TopLeft"> {{$t('Split Ticket')}}
+                                                        </el-dropdown-item>
+                                                        <el-dropdown-item
                                                             :command="{ type: 'delete', conversation: conversation }"
                                                             icon="Delete"> {{$t('Delete')}}
                                                         </el-dropdown-item>
@@ -421,6 +425,11 @@
             </template>
         </modal>
 
+        <modal :show="split_ticket_modal" @close="split_ticket_modal=false" :title="$t('Split Ticket')">
+            <template #body>
+                <split-ticket :ticket_data="split_ticket" @split-ticket="splitToNewTicket" :spliting="loading"/>
+            </template>
+        </modal>
         <active-agents :ticket="ticket" v-if="ticket && ticket.id"/>
     </div>
 </template>
@@ -438,6 +447,7 @@ import CustomFieldForm from './parts/_CustomFieldForm';
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import Modal from "../../Pieces/Modal";
+import SplitTicket from "./_SplitTicket"
 
 export default {
     name: 'ViewTicket',
@@ -452,6 +462,7 @@ export default {
         TicketTags,
         CustomFieldForm,
         WorkFlowSelector,
+        SplitTicket
     },
     data() {
         return {
@@ -480,7 +491,9 @@ export default {
                 per_page: 10
             },
             conversation_type: '',
-            filteredWatchersIds: []
+            filteredWatchersIds: [],
+            split_ticket_modal: false,
+            split_ticket: {}
         }
     },
     watch: {
@@ -656,6 +669,18 @@ export default {
                 this.editing_response = conversation;
                 this.edit_response_modal = true;
                 this.conversation_type = conversation.conversation_type;
+            } else if ( actionType == 'split_ticket' ) {
+                this.split_ticket = {
+                  conversation_id: conversation.id,
+                  content: conversation.content,
+                  customer_id: parseInt(this.ticket.customer_id),
+                  mailbox_id: parseInt(this.ticket.mailbox_id),
+                  product_id: this.ticket.product?.id,
+                  client_priority: this.ticket.priority,
+                  create_wp_user: 'no',
+                  create_customer: 'no',
+                };
+                this.split_ticket_modal = true;
             }
         },
         changeMailbox(mailbox) {
@@ -775,7 +800,28 @@ export default {
                 .always(() => {
                     this.saving = false;
                 });
-        }
+        },
+        splitToNewTicket (){
+            this.loading = true;
+            this.$post('tickets/' + this.ticket.id +'/split_ticket', {
+                split_ticket: this.split_ticket,
+            })
+                .then(response => {
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
+                    this.customerTickets();
+                    this.fetchTicket();
+                    this.split_ticket_modal = false;
+                })
+                .catch((error) => {
+                    this.$handleError(error);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+        },
     },
     mounted() {
         this.fetchTicket();
