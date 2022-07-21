@@ -455,7 +455,7 @@ class CustomerPortalService
                 },
                 'attachments'
             ])
-            ->filterByType(['response', 'ticket_merge_activity'])
+            ->filterByType(['response', 'ticket_merge_activity', 'ticket_split_activity'])
             ->orderBy('id', 'DESC')
             ->get();
 
