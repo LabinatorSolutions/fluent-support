@@ -976,7 +976,7 @@ class Ticket extends Model
      * @return array
      */
 
-    public function createTicket ($ticketData, $maybeNewCustomer )
+    public function createTicket ( $ticketData, $maybeNewCustomer = false )
     {
         $ticketData = $this->maybeCreateNewCustomer( $ticketData, $maybeNewCustomer );
         $customer = Customer::findOrFail($ticketData['customer_id']);

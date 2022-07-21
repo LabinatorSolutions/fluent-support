@@ -479,6 +479,7 @@ class TransStrings
             'add_cs_from_crm'    => __('Add Customer From FluentCRM', 'fluent-support'),
             'Inbox Color'       => __('Inbox Color', 'fluent-support'),
             'Inbox'       => __('Inbox', 'fluent-support'),
+            'Split Ticket'       => __('Split Ticket', 'fluent-support'),
         ];
     }
 }
