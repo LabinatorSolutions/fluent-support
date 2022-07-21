@@ -264,7 +264,7 @@
                              :class="(conversation.person.title && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) ">
 
                         <span class="agent_title"
-                              v-if="conversation.person.title"> {{ conversation.person.title }} </span>
+                              v-if="conversation.person.title && !['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)"> {{ conversation.person.title }} </span>
 
                         <div class="fs_thread_content">
                             <section class="fs_avatar">

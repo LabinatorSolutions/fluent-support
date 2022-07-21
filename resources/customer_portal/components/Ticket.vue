@@ -43,20 +43,22 @@
                              :key="conversation.id"
                              class="fs_thread"
                              :class="(conversation.person.title!=='' && conversation.person.person_type !== 'customer'
-                             && conversation.conversation_type!='ticket_merge_activity')
+                             && !['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type))
                              ? 'fs_agent' : getTicketClasses(conversation)">
 
                         <span class="agent_title"
-                              v-if="conversation.conversation_type!='ticket_merge_activity' && conversation.person.title"> {{ conversation.person.title }} </span>
+                              v-if="!['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type) && conversation.person.title">
+                            {{ conversation.person.title }}
+                        </span>
 
                         <div class="fs_thread_content">
-                            <section class="fs_avatar" v-if="conversation.conversation_type!='ticket_merge_activity'">
+                            <section class="fs_avatar" v-if="!['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)">
                                 <img v-if="conversation.person" :src="conversation.person.photo"
                                      :alt="conversation.person.full_name"/>
                             </section>
                             <section class="fs_thread_wrap">
                                 <section class="fs_thread_message">
-                                    <div class="fs_thread_head" v-if="conversation.conversation_type!='ticket_merge_activity'">
+                                    <div class="fs_thread_head" v-if="!['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)">
                                         <div class="fs_thread_title">
                                             <strong v-if="conversation.person">{{
                                                     getHumanName(conversation.person)

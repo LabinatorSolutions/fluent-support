@@ -197,7 +197,7 @@
                     }
                 }
             }
-            &.fs_conv_type_ticket_merge_activity{
+            &.fs_conv_type_ticket_merge_activity, &.fs_conv_type_ticket_split_activity {
                 background: #fbfaf9;
 
                 .fs_avatar {
