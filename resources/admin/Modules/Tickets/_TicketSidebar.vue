@@ -42,9 +42,9 @@
             <el-skeleton :rows="1" animated/>
         </div>
 
-      <div v-if="watchers.length" class="fs_tk_card fs_tk_watchers_card">
+      <div v-if="has_pro && watchers.length" class="fs_tk_card fs_tk_watchers_card">
         <div class="fs_tk_card_header">
-          <h3>{{ $t('Watcher') }} ({{ watchers.length }})</h3>
+          <h3>{{ $t('Bookmarks') }} ({{ watchers.length }})</h3>
         </div>
         <div class="fs_tk_card_body">
           <el-tag
@@ -66,14 +66,14 @@
               trigger="manual"
           >
             <template #reference>
-                <el-button @click="add_watcher = !add_watcher" style="height: 20px; width: 8px">
+                <el-button @click="add_watcher = !add_watcher" style="height: 20px; width: 8px; margin-left: 3px;">
                     <el-icon style="vertical-align: middle; font-size: 10px;"><Plus /></el-icon>
                 </el-button>
             </template>
 
-            <h4>{{$t('Add watcher')}}</h4>
+            <h4>{{$t('Add Bookmark')}}</h4>
 
-            <el-select multiple v-model="that_watchers"
+            <el-select multiple v-model="watcherIds"
                        size="small">
               <el-option
                   v-for="(agent,agent_key) in agents"
@@ -172,7 +172,7 @@ export default {
             loading: true,
             extra_widgets: false,
             other_tickets: [],
-            that_watchers: [],
+            watcherIds: [],
             customerManagementModal: false,
             changing: false,
             activeTabName: 'update_customer_data',
@@ -248,9 +248,9 @@ export default {
             type: 'warning'
           })
               .then(() => {
-                  const index = this.that_watchers.indexOf(watcherId.toString());
+                  const index = this.watcherIds.indexOf(watcherId.toString());
                   if (index > -1) {
-                      this.that_watchers.splice(index, 1);
+                      this.watcherIds.splice(index, 1);
                   }
                   this.saving = true;
                   this.updateWatcher();
@@ -262,7 +262,7 @@ export default {
         updateWatcher(){
           this.saving = true;
           this.$post(`tickets/${this.ticket.id}/sync-watchers`, {
-            watchers: this.that_watchers,
+            watchers: this.watcherIds,
           })
           .then(response => {
             this.$notify.success({
@@ -281,9 +281,11 @@ export default {
     },
     mounted() {
         this.fetchWidgets();
-        this.that_watchers = this.watchers.map(function(watcher){
-          return watcher.id.toString();
-        });
+        if (this.has_pro) {
+            this.watcherIds = this.ticket.watchers.map((watcher) => {
+                return watcher.tag_id.toString();
+            });
+        }
     }
 }
 </script>

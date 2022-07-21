@@ -48,7 +48,7 @@
             </div>
         </div>
 
-        <div class="fs_dash_mentioned_ticket" v-if="ticket_to_watch.length">
+        <div class="fs_dash_mentioned_ticket" v-if="has_pro && ticket_to_watch.length">
             <div class="fs_box fs_dashboard_box">
                 <div class="fs_box_header">
                     <span style="font-weight: normal;">{{$t('dashboard_watcher_heading')}}</span>

@@ -45,6 +45,10 @@ class ComponentBinder
         }
 
         $this->extendBindings($this);
+
+        $this->app->resolving(RequestGuard::class, function($request) {
+            $request->validate($this->app->make('validator'));
+        });
     }
 
     protected function bindRequest()

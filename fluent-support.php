@@ -1,9 +1,8 @@
 <?php defined('ABSPATH') or die;
-
 /*
 Plugin Name: Fluent Support
 Description: The Ultimate Support Plugin For Your WordPress.
-Version: 1.5.5
+Version: 1.5.7
 Author: WPManageNinja LLC
 Author URI: https://wpmanageninja.com
 Plugin URI: https://fluentsupport.com
@@ -12,7 +11,7 @@ Text Domain: fluent-support
 Domain Path: /language
 */
 
-define('FLUENT_SUPPORT_VERSION', '1.5.5');
+define('FLUENT_SUPPORT_VERSION', '1.5.7');
 define('FLUENT_SUPPORT_UPLOAD_DIR', 'fluent-support');
 define('FLUENT_SUPPORT_PLUGIN_URL', plugin_dir_url(__FILE__));
 

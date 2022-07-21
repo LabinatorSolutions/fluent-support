@@ -102,7 +102,7 @@
                             <el-icon style="vertical-align: middle;"><office-building /></el-icon> {{ticket.mailbox?.name}}
                         </span>
 
-                        <el-dropdown style="vertical-align: middle;" trigger="click">
+                        <el-dropdown v-if="has_pro" style="vertical-align: middle;" trigger="click">
                             <span class="el-dropdown-link">
                               <el-icon style="transform: rotate(90deg)"><More /></el-icon>
                             </span>
@@ -118,7 +118,7 @@
                                         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M10.5 1.16634C9.21115 1.16634 8.16634 2.21115 8.16634 3.49999C8.16634 4.78882 9.21115 5.83362 10.5 5.83362C10.982 5.83362 11.4262 5.69291 11.796 5.44517C11.9298 5.35553 12.111 5.39134 12.2006 5.52517C12.2903 5.659 12.2545 5.84015 12.1206 5.92981C11.6548 6.24184 11.0978 6.41695 10.5 6.41695C8.88897 6.41695 7.58301 5.11099 7.58301 3.49999C7.58301 1.88899 8.88897 0.583008 10.5 0.583008C12.111 0.583008 13.417 1.88899 13.417 3.49999L13.4169 3.50571V3.93748C13.4169 4.50127 12.9599 4.95832 12.3961 4.95832C12.0449 4.95832 11.7351 4.78094 11.5514 4.51087C11.2861 4.78669 10.9132 4.95833 10.5003 4.95833C9.69485 4.95833 9.04192 4.30541 9.04192 3.49999C9.04192 2.69458 9.69485 2.04166 10.5003 2.04166C10.8286 2.04166 11.1315 2.15014 11.3753 2.33322C11.3753 2.17219 11.5059 2.04166 11.6669 2.04166C11.828 2.04166 11.9586 2.17225 11.9586 2.33333V3.93748C11.9586 4.17911 12.1545 4.37498 12.3961 4.37498C12.6377 4.37498 12.8336 4.17911 12.8336 3.93748V3.49687L12.8336 3.49191C12.8293 2.20679 11.7862 1.16634 10.5 1.16634ZM9.62526 3.49999C9.62526 3.98325 10.017 4.37499 10.5003 4.37499C10.9835 4.37499 11.3753 3.98325 11.3753 3.49999C11.3753 3.01674 10.9835 2.62499 10.5003 2.62499C10.017 2.62499 9.62526 3.01674 9.62526 3.49999Z" fill="currentColor"/>
                                             <path d="M12.8334 8.60417V6.10878C12.5737 6.34124 12.2791 6.53543 11.9584 6.68267V8.60417C11.9584 9.16796 11.5014 9.625 10.9376 9.625H7.29962L4.375 11.8128L4.37438 9.625H3.06258C2.49879 9.625 2.04175 9.16796 2.04175 8.60417V3.64583C2.04175 3.08204 2.49879 2.625 3.06258 2.625H7.11033C7.19025 2.31457 7.31164 2.02082 7.46832 1.75H3.06258C2.01554 1.75 1.16675 2.59879 1.16675 3.64583V8.60417C1.16675 9.65119 2.01554 10.5 3.06258 10.5H3.49962L3.50008 12.1041C3.50008 12.2614 3.55104 12.4146 3.64534 12.5407C3.88654 12.8632 4.34349 12.9291 4.66598 12.6879L7.59071 10.5H10.9376C11.9846 10.5 12.8334 9.65119 12.8334 8.60417Z" fill="currentColor"/>
-                                        </svg> {{ $t('Add Watcher')}}
+                                        </svg> {{ $t('Add Bookmark')}}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -126,7 +126,7 @@
 
                         <el-dialog
                             v-model="show_merge_modal"
-                            v-if="show_merge_modal"
+                            v-if="has_pro && show_merge_modal"
                             :title="$t('Merge Tickets')"
                         >
                             <div class="fs_box_body" v-if="customer_tickets.length">
@@ -156,8 +156,8 @@
 
                         <el-dialog
                             v-model="show_watcher_modal"
-                            v-if="show_watcher_modal"
-                            :title="$t('Add watcher')"
+                            v-if="has_pro && show_watcher_modal"
+                            :title="$t('Add Bookmark')"
                         >
                             <div class="fs_box_body">
                                 <el-select :multiple="true" v-model="watchers">
@@ -302,6 +302,10 @@
                                                             icon="EditPen"> {{$t('Edit')}}
                                                         </el-dropdown-item>
                                                         <el-dropdown-item
+                                                            :command="{ type: 'split_ticket', conversation: conversation }"
+                                                            icon="TopLeft"> {{$t('Split Ticket')}}
+                                                        </el-dropdown-item>
+                                                        <el-dropdown-item
                                                             :command="{ type: 'delete', conversation: conversation }"
                                                             icon="Delete"> {{$t('Delete')}}
                                                         </el-dropdown-item>
@@ -421,6 +425,11 @@
             </template>
         </modal>
 
+        <modal :show="split_ticket_modal" @close="split_ticket_modal=false" :title="$t('Split Ticket')">
+            <template #body>
+                <split-ticket :ticket_data="split_ticket" @split-ticket="splitToNewTicket" :spliting="loading"/>
+            </template>
+        </modal>
         <active-agents :ticket="ticket" v-if="ticket && ticket.id"/>
     </div>
 </template>
@@ -438,6 +447,7 @@ import CustomFieldForm from './parts/_CustomFieldForm';
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import Modal from "../../Pieces/Modal";
+import SplitTicket from "./_SplitTicket"
 
 export default {
     name: 'ViewTicket',
@@ -452,6 +462,7 @@ export default {
         TicketTags,
         CustomFieldForm,
         WorkFlowSelector,
+        SplitTicket
     },
     data() {
         return {
@@ -480,7 +491,9 @@ export default {
                 per_page: 10
             },
             conversation_type: '',
-            filteredWatchers: []
+            filteredWatchersIds: [],
+            split_ticket_modal: false,
+            split_ticket: {}
         }
     },
     watch: {
@@ -507,13 +520,17 @@ export default {
 
                 this.$setTitle(response.ticket.title);
                 this.conversations = response.responses;
+
                 if (this.appVars.fluentcrm_config) {
                     this.fluentcrm_profile = response.fluentcrm_profile;
                 }
-                this.watchers = response.watchers;
-                this.filteredWatchers = response.watchers.map((watcher, key) => {
-                    return watcher.id.toString();
-                });
+
+                if (this.has_pro) {
+                    this.watchers = response.watchers;
+                    this.filteredWatchersIds = response.watchers.map((watcher, key) => {
+                        return watcher.tag_id;
+                    });
+                }
             })
             .catch((errors) => {
                 this.$handleError(errors);
@@ -652,6 +669,18 @@ export default {
                 this.editing_response = conversation;
                 this.edit_response_modal = true;
                 this.conversation_type = conversation.conversation_type;
+            } else if ( actionType == 'split_ticket' ) {
+                this.split_ticket = {
+                  conversation_id: conversation.id,
+                  content: conversation.content,
+                  customer_id: parseInt(this.ticket.customer_id),
+                  mailbox_id: parseInt(this.ticket.mailbox_id),
+                  product_id: this.ticket.product?.id,
+                  client_priority: this.ticket.priority,
+                  create_wp_user: 'no',
+                  create_customer: 'no',
+                };
+                this.split_ticket_modal = true;
             }
         },
         changeMailbox(mailbox) {
@@ -753,7 +782,7 @@ export default {
         updateWatcher(){
             this.saving = true;
             this.$post(`tickets/${this.ticket.id}/sync-watchers`, {
-                watchers: this.filteredWatchers
+                watchers: this.filteredWatchersIds
             })
                 .then(response => {
                     this.$notify.success({
@@ -771,7 +800,28 @@ export default {
                 .always(() => {
                     this.saving = false;
                 });
-        }
+        },
+        splitToNewTicket (){
+            this.loading = true;
+            this.$post('tickets/' + this.ticket.id +'/split_ticket', {
+                split_ticket: this.split_ticket,
+            })
+                .then(response => {
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
+                    this.customerTickets();
+                    this.fetchTicket();
+                    this.split_ticket_modal = false;
+                })
+                .catch((error) => {
+                    this.$handleError(error);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+        },
     },
     mounted() {
         this.fetchTicket();

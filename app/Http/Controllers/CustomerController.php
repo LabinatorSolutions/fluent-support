@@ -2,15 +2,10 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Conversation;
-use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\Includes\FileSystem;
-use FluentSupport\App\Services\ProfileInfoService;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\Framework\Request\Request;
-use FluentSupport\Framework\Support\Arr;
+use FluentSupport\App\Services\AvatarUploder;
 
 /**
  * CustomerController class for REST API
@@ -24,39 +19,13 @@ class CustomerController extends Controller
     /**
      * index method will return the list of customers
      * @param Request $request
+     * @param Customer $customer
      * @return array
      */
-    public function index(Request $request)
+    public function index(Request $request, Customer $customer)
     {
-        //Add order by selected by suer
-        $customersQuery = Customer::orderBy('id', 'DESC')
-            ->orderBy($request->get('order_by', 'id'), $request->get('order_type', 'ASC'));
-
-        //Filter query based on the search item
-        if ($request->get('search')) {
-            $customersQuery->searchBy($request->get('search'));
-        }
-
-        $status = $request->get('status');
-        //Filter customer by selected status
-        if ($status && $status != 'all') {
-            $customersQuery->filterByStatues([$status]);
-        }
-
-        $customers = $customersQuery->paginate();
-
-        //Get total ticket and responses in ticket by individual customer
-        foreach ($customers as $customer) {
-            $customer->total_tickets = $customer->getTicketCounts();
-            $customer->total_responses = $customer->getResponseCounts();
-            if ($customer->user_id) {
-                //Get profile link, if they are WP user
-                $customer->user_profile = admin_url('user-edit.php?user_id=' . $customer->user_id);
-            }
-        }
-
         return [
-            'customers' => $customers,
+            'customers' => $customer->getCustomers($request->get('search'), $request->get('status')),
         ];
     }
 
@@ -65,195 +34,113 @@ class CustomerController extends Controller
      * getCustomer method will return individual customer information by customer id
      * This function will also get information about extra widgets, tickets and Fluent CRM
      * @param Request $request
+     * @param Customer $customer
      * @param $customerId
      * @return array
      */
-    public function getCustomer(Request $request, $customerId)
+    public function getCustomer(Request $request, Customer $customer, $customerId)
     {
-        $customer = Customer::findOrFail($customerId);
-
-        $data = [
-            'customer' => $customer
-        ];
-
-        $with = $request->get('with', []);
-
-        if (in_array('widgets', $with)) {
-            $data['widgets'] = ProfileInfoService::getProfileExtraWidgets($customer);
-        }
-
-        if (in_array('tickets', $with)) {
-            /*
-             * Filter ticket limit to show ticket in customer page sidebar
-             * @since 1.5.6
-             * @param int $limit
-             */
-            $limit = apply_filters('fluent_support/customer_page_ticket_widgets_limit', 20);
-
-            $data['tickets'] = Ticket::select(['id', 'title', 'status', 'customer_id', 'created_at'])
-                ->where('customer_id', $customer->id)
-                ->orderBy('id', 'DESC')
-                ->limit($limit)
-                ->get();
-        }
-
-        if(in_array('fluentcrm_profile', $with)) {
-            $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($customer);
-        }
-
-        return $data;
-
+        return $customer->getCustomer($customerId, $request->get('with', []));
     }
 
     /**
      * Create method will create new customer
      * @param Request $request
+     * @param Customer $customer
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function create(Request $request)
+    public function create(Request $request, Customer $customer)
     {
-        $data = $request->all();
-        $this->validate($data, [
+        $this->validate($request->all(), [
             'email' => 'required|email|unique:fs_persons'
         ]);
 
-        $email = $data['email'];
-
-        $data = Arr::only($data, (new Customer)->getFillable());
-
-        $user = get_user_by('email', $email);
-
-        if ($user) {
-            $data['user_id'] = $user->ID;
-            if (empty($data['first_name'])) {
-                $data['first_name'] = $user->first_name;
-            }
-            if (empty($data['last_name'])) {
-                $data['last_name'] = $user->last_name;
-            }
-        }
-
-        $customer = Customer::create($data);
-
         return [
             'message'  => __('Customer has been added', 'fluent-support'),
-            'customer' => $customer
+            'customer' => $customer->createCustomer($request->all())
         ];
     }
 
     /**
      * update method will update existing customer by customer id
      * @param Request $request
+     * @param Customer $customer
      * @param $customerId
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function update(Request $request, $customerId)
+    public function update(Request $request, Customer $customer, $customerId)
     {
-        $customer = Customer::findOrFail($customerId);
-        $data = $request->all();
-        $this->validate($data, [
+        $data = $this->validate($request->all(), [
             'email'      => 'required|email',
             'first_name' => 'required'
         ]);
 
-        if ($otherCustomer = Customer::where('id', '!=', $customerId)->where('email', $data['email'])->first()) {
+        try {
+            return [
+                'message'  => __('Customer has been updated', 'fluent-support'),
+                'customer' => $customer->updateCustomer($customerId, $data)
+            ];
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __('Another Customer has same email address', 'fluent-support'),
+                'message' => __($e->getMessage(), 'fluent-support'),
                 'errors'  => [
                     'email' => [
-                        'unique' => __('Email address has been assigned to other customer', 'fluent-support')
+                        'unique' => __('Email address has been assigned to other customer', 'fluent-support'),
                     ]
                 ]
             ], 423);
         }
-
-        $validKeys = (new Customer)->getFillable();
-        unset($validKeys['hash']);
-        unset($validKeys['user_id']);
-
-        $updateData = Arr::only($data, $validKeys);
-
-        $user = get_user_by('email', $data['email']);
-
-        if ($user) {
-            $updateData['user_id'] = $user->ID;
-        }
-
-        Customer::where('id', $customer->id)
-            ->update($updateData);
-
-        return [
-            'message'  => __('Customer has been updated', 'fluent-support'),
-            'customer' => Customer::findOrFail($customerId)
-        ];
     }
 
     /**
-     * delete method will delete a customer and all ticket by that customer
+     * delete method will delete a customer and all tickets by that customer
      * @param Request $request
-     * @param $customerId
+     * @param Customer $customer
+     * @param int $customerId
      * @return array
      */
-    public function delete(Request $request, $customerId)
+    public function delete(Request $request, Customer $customer, $customerId)
     {
-        $customer = Customer::findOrFail($customerId);
-
-        $tickets = Ticket::where('customer_id', $customer->id)->get();
-
-        foreach ($tickets as $ticket) {
-            $ticket->deleteTicket();
-        }
-
-        $customer->delete();
-
-        return [
-            'message' => __('Customer Deleted Successfully', 'fluent-support')
-        ];
+        return $customer->deleteCustomer($customerId);
     }
 
     /**
      * addOrUpdateProfileImage method will update a customer avatar
+     * For a successful upload it's required to send file object, customer id and the user type(customer)
      * @param Request $request
      * @return array
      */
-    public function addOrUpdateProfileImage(Request $request)
+    public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
-        $allowExtension = [
-            'jpeg', 'jpe', 'jpg', 'png'
-        ];
-
-        $customer_id = $request->get('customer_id');
-        $file = $request->files();
-
-        $ext = $file['file']->getClientOriginalExtension();
-
-        if(!in_array($ext, $allowExtension)){
+        try {
+           return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->get('customer_id'), 'customer' );
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __('Unsupported file submitted, please select an image file', 'fluent-support')
+                'message' => __($e->getMessage(), 'fluent-support')
             ]);
         }
+    }
 
-        $customer = Customer::findOrFail($customer_id);
+    /**
+     * resetAvatar method will restore a customer avatar
+     * For a successful upload it's required to send file object, customer id and the user type(customer)
+     * @param Request $request
+     * @param $id
+     * @return array
+     */
+    public function resetAvatar(Customer $customer, $id){
+        try {
+            $customer->restoreAvatar($customer, $id);
 
-        $uploadedImage = FileSystem::setSubDir('customer_avatars')->put($file);
-
-        if($avatar = $uploadedImage[0]['url']){
-            $customer->avatar = $avatar;
-            $customer->save();
-
-            return[
-                'message' => __('Profile picture has been updated successfully', 'fluent-support'),
-                'image'   => $customer->avatar,
-                'customer' => $customer
+            return [
+                'message'  => __('Customer avatar reset to gravatar default', 'fluent-support'),
             ];
-        }
-
-        else{
-            return $this->sendError([
-                'message' => __('Something went wrong while updating the profile picture', 'fluent-support')
-            ]);
+        } catch (\Exception $e) {
+            return [
+                'message'  => __($e->getMessage(), 'fluent-support')
+            ];
         }
     }
 }

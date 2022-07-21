@@ -28,7 +28,18 @@ $app->addAction('admin_enqueue_scripts', 'Menu@maybeEnqueueAssets');
  */
 $app->addAction('admin_bar_menu', 'AdminBarHandler@init');
 
-add_shortcode('fluent_support_portal', function () {
+add_shortcode('fluent_support_portal', function ($args) {
+    $args = shortcode_atts( array(
+        'show_logout' => 'no'
+    ), $args );
+
+    if($args['show_logout'] == 'yes') {
+        add_filter('fluent_support/customer_portal_vars', function ($vars) {
+            $vars['show_logout'] = true;
+            return $vars;
+        });
+    }
+
     return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
 });
 
@@ -115,3 +126,5 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 // Register the WordPress personal data exporter and eraser
 (new \FluentSupport\App\Hooks\Handlers\PrivacyHandler())->init();
 
+// Action will be triggered when a support customer update their profile in wp
+$app->addAction('profile_update', '\FluentSupport\App\Services\ProfileInfoService@onWPProfileUpdate', 10, 3);

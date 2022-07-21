@@ -9,7 +9,7 @@ class TransStrings
     {
         return [
             'dashboard_sub_heading' => __('Here are a few tickets you may want to take a look at', 'fluent-support'),
-            'dashboard_watcher_heading' => __('You were set as an watcher in some tickets', 'fluent-support'),
+            'dashboard_watcher_heading' => __('You have some bookmarked tickets', 'fluent-support'),
             'dashboard_all_catch_up' => __('Looks like you have caught up everything for now.', 'fluent-support'),
             'Your Overview for Today' => __('Your Overview for Today', 'fluent-support'),
             'Your Business Details' => __('Your Business Details', 'fluent-support'),
@@ -471,12 +471,15 @@ class TransStrings
             'Includes In'    => __('Includes In', 'fluent-support'),
             'Not Includes In'    => __('Not Includes In', 'fluent-support'),
             'Mentioned'    => __('Mentioned', 'fluent-support'),
-            'Watcher'    => __('Watcher', 'fluent-support'),
-            'Add watcher'    => __('Add watcher', 'fluent-support'),
+            'Bookmarks'    => __('Bookmarks', 'fluent-support'),
+            'Add Bookmark'    => __('Add Bookmark', 'fluent-support'),
             'activity_not_found'    => __('No activities found at this moment', 'fluent-support'),
             'customer_has_one_tk'    => __('Sorry, this customer has one ticket only', 'fluent-support'),
             'watcher_remove_warning'    => __('Are you sure to remove this watcher?', 'fluent-support'),
             'add_cs_from_crm'    => __('Add Customer From FluentCRM', 'fluent-support'),
+            'Inbox Color'       => __('Inbox Color', 'fluent-support'),
+            'Inbox'       => __('Inbox', 'fluent-support'),
+            'Split Ticket'       => __('Split Ticket', 'fluent-support'),
         ];
     }
 }
