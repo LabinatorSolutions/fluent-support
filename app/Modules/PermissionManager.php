@@ -32,7 +32,8 @@ class PermissionManager
             'fst_view_all_reports',
             'fst_manage_saved_replies',
             'fst_view_activity_logs',
-            'fst_merge_tickets'
+            'fst_merge_tickets',
+            'fst_split_ticket'
         ];
     }
 
@@ -178,11 +179,11 @@ class PermissionManager
     public static function hasTicketPermission($ticket)
     {
         $permissionLevel = self::currentUserTicketsPermissionLevel();
-        
+
         if ($permissionLevel == 'all') {
             return true;
         }
-        
+
         $agent = Helper::getAgentByUserId();
 
         if ($ticket->agent_id == $agent->id) {
@@ -208,6 +209,7 @@ class PermissionManager
                     'fst_manage_other_tickets'      => __('Manage Others Tickets', 'fluent-support'),
                     'fst_delete_tickets'            => __('Delete Tickets', 'fluent-support'),
                     'fst_merge_tickets'             => __('Merge Tickets', 'fluent-support'),
+                    'fst_split_ticket'              => __('Split Ticket', 'fluent-support'),
                 ]
             ],
             [
