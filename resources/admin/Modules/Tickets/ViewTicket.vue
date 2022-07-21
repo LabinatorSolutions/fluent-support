@@ -301,7 +301,7 @@
                                                             :command="{ type: 'edit', conversation: conversation }"
                                                             icon="EditPen"> {{$t('Edit')}}
                                                         </el-dropdown-item>
-                                                        <el-dropdown-item
+                                                        <el-dropdown-item v-if="has_pro"
                                                             :command="{ type: 'split_ticket', conversation: conversation }"
                                                             icon="TopLeft"> {{$t('Split Ticket')}}
                                                         </el-dropdown-item>

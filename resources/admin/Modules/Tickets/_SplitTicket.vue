@@ -32,7 +32,7 @@
         </el-row>
 
         <el-form-item>
-            <el-button @click="splitTicket" :disabled="spliting" v-loading="spliting" type="primary">
+            <el-button @click="splitTicket" :disabled=" spliting || !ticket_data.title " v-loading="spliting" type="primary">
                 {{ $t('Split Ticket') }}
             </el-button>
         </el-form-item>
