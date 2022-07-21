@@ -494,11 +494,10 @@ class Helper
         ];
 
         if (defined('FLUENTCRM')){
-            $crmConfigs['contacts'] = (new \FluentCrm\App\Models\Subscriber)->get();
+            $crmConfigs['contacts'] = []; //(new \FluentCrm\App\Models\Subscriber)->get();
         }
 
         return $crmConfigs;
-
     }
 
     /**

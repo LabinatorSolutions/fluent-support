@@ -16,6 +16,7 @@ class AuthHandler
         add_shortcode('fluent_support_login', array($this, 'loginForm'));
         add_shortcode('fluent_support_signup', array($this, 'registrationForm'));
         add_shortcode('fluent_support_auth', array($this, 'authForm'));
+        add_shortcode('fluent_support_reset_password', array($this, 'restPasswordForm'));
     }
 
     /**
@@ -26,7 +27,7 @@ class AuthHandler
     public function loginForm($attributes)
     {
         if (get_current_user_id()) {
-            return '';
+            return '<p>' . __('You are already logged in.', 'fluent-support') . '</p>';
         }
 
         $this->loadAssets();
@@ -59,6 +60,14 @@ class AuthHandler
                 . '</a></p>';
         }
 
+        if ( $attributes['show-reset-password'] == 'true' ) {
+            $return .= '<p style="text-align: center">'
+                . __('Forgot your password?', 'fluent-support')
+                . ' <a href="#" id="fs_show_reset_password">'
+                . __('Reset Password', 'fluent-support')
+                . '</a></p>';
+        }
+
         $return .= '</div>';
         return $return;
     }
@@ -71,7 +80,7 @@ class AuthHandler
     public function registrationForm($attributes)
     {
         if (get_current_user_id()) {
-            return '';
+            return '<p>' . __('You are already logged in.', 'fluent-support') . '</p>';
         }
 
         $attributes = $this->getShortcodes($attributes);
@@ -82,6 +91,11 @@ class AuthHandler
 
         $this->loadAssets($hide);
 
+        return $this->buildRegistrationForm( $registrationFields, $hide, $attributes );
+    }
+
+    // This method `buildRegistrationForm` will generate html for sign up form
+    private function buildRegistrationForm ( $registrationFields, $hide, $attributes ) {
         $registrationForm = '<div class="fst_registration_wrapper ' . $hide . '"><form id="fstRegistrationForm" class="fs_registration_form" method="post" name="fs_registration_form">';
 
         foreach ($registrationFields as $fieldName => $registrationField) {
@@ -107,6 +121,43 @@ class AuthHandler
         return $registrationForm;
     }
 
+    public function restPasswordForm ( $attributes )
+    {
+        if (get_current_user_id()) {
+            return '<p>' . __('You are already logged in.', 'fluent-support') . '</p>';
+        }
+
+        $attributes = $this->getShortcodes($attributes);
+        $this->handleAlreadyLoggedIn($attributes);
+
+        $resetPasswordFields = static::resetPasswordFields();
+        $hide = $attributes['hide'] == 'true' ? 'hide' : '';
+
+        $this->loadAssets($hide);
+
+        return $this->buildResetPassForm( $resetPasswordFields, $hide, $attributes );
+    }
+
+    // This method `buildResetPassForm` will generate html for password reset form
+    private function buildResetPassForm ( $resetPasswordFields, $hide, $attributes )
+    {
+        $restePasswordForm = '<div class="fst_reset_pass_wrapper ' . $hide . '"><form id="fstResetPasswordForm" class="fs_reset_pass_form" method="post" name="fs_reset_pass_form">';
+
+        foreach ($resetPasswordFields as $fieldName => $resetPasswordField) {
+            $restePasswordForm .= $this->renderField($fieldName, $resetPasswordField);
+        }
+
+        $restePasswordForm .= '<input type="hidden" name="__redirect_to" value="' . $attributes['redirect-to'] . '">';
+        $restePasswordForm .= '<input type="hidden" name="_fsupport_reset_pass_nonce" value="' . wp_create_nonce('fluent_support_reset_pass_nonce') . '">';
+        $restePasswordForm .= '<button type="submit" id="fst_reset_pass">' . $this->submitBtnLoadingSvg() . '<span>' . __('Reset Password', 'fluent-support') . '</span></button>';
+
+        $restePasswordForm .= '</form>';
+
+        $restePasswordForm .= '</div>';
+
+        return $restePasswordForm;
+    }
+
     /**
      * authForm will render the login form html
      * @param $attributes
@@ -116,8 +167,9 @@ class AuthHandler
     {
         $authForm = '<div class="fst_auth_wrapper">';
 
-        $authForm .= do_shortcode('[fluent_support_login show-signup=true]');
+        $authForm .= do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
         $authForm .= do_shortcode('[fluent_support_signup hide=true]');
+        $authForm .= do_shortcode('[fluent_support_reset_password hide=true]');
 
         $authForm .= '</div>';
 
@@ -221,6 +273,26 @@ class AuthHandler
         ]);
     }
 
+    public static function resetPasswordFields ()
+    {
+        /*
+         * Filter reset password form field
+         *
+         * @since v1.5.7
+         *
+         * @param array $fields Form fields
+         */
+        return apply_filters('fluent_support/reset_password_form', [
+            'email' => [
+                'required'    => true,
+                'type'        => 'email',
+                'label'       => __('Email Address', 'fluent-support'),
+                'id'          => 'fst_email',
+                'placeholder' => __('Your Email Address', 'fluent-support')
+            ]
+        ]);
+    }
+
     protected function submitBtnLoadingSvg()
     {
         $loadingIcon = '<svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -259,7 +331,8 @@ class AuthHandler
             'auto-redirect' => false,
             'redirect-to'   => Helper::getPortalBaseUrl(),
             'hide'          => false,
-            'show-signup'   => false
+            'show-signup'   => false,
+            'show-reset-password' => false,
         ]);
 
         return shortcode_atts($shortCodeDefaults, $attributes);
@@ -300,7 +373,8 @@ class AuthHandler
             'login'  => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
             'nonce'  => wp_create_nonce('wp_rest'),
             'hide'   => $hide,
-            'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce')
+            'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce'),
+            'resetPass' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
         ]);
 
 

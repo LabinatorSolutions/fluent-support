@@ -58,15 +58,6 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->post('bulk-reply', 'TicketController@doBulkReplies');
 
     $router->post('sync-fluentcrm-tags', 'TicketController@syncFluentCrmTags');
-
-    $router->post('/{ticket_id}/merge_tickets', 'TicketController@mergeCustomerTickets')->int('ticket_id');
-    $router->put('/{ticket_id}/update_watcher', 'TicketController@updateWatcher')->int('ticket_id');
-    $router->delete('/{ticket_id}/delete_watcher/{watcher_id}', 'TicketController@deleteWatcher')->int('ticket_id')->int('watcher_id');
-    $router->post('/{ticket_id}/sync-watchers', 'TicketController@syncTicketWatchers')->int('ticket_id');
-    $router->post('/{ticket_id}/add_watchers', 'TicketController@addTicketWatchers')->int('ticket_id');
-
-    $router->get('customer_tickets/{customer_id}', 'TicketController@getCustomerTickets')->int('customer_id');
-
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
@@ -107,6 +98,7 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
     $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
     $router->post('/{agent_id}/avatar', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
+    $router->post('/{agent_id}/reset_avatar', 'AgentController@resetAvatar')->int('agent_id');
 });
 
 $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router) {
@@ -133,6 +125,7 @@ $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function
     $router->delete('/{customer_id}', 'CustomerController@delete')->int('customer_id');
 
     $router->post('/profile_image/{customer_id}', 'CustomerController@addOrUpdateProfileImage')->int('customer_id');
+    $router->post('/reset_avatar/{customer_id}', 'CustomerController@resetAvatar')->int('customer_id');
 });
 
 $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function ($router) {
@@ -152,6 +145,8 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
     $router->post('ticket_file_upload','UploaderController@uploadTicketFiles');
 
     $router->get('me', 'TicketController@me');
+
+    $router->post('logout', 'CustomerPortalController@logout');
 });
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
@@ -168,3 +163,5 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
+
+$router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');

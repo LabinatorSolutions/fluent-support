@@ -38,6 +38,10 @@
                 </div>
             </el-form-item>
 
+            <el-form-item :label="$t('Inbox Color')">
+                <el-color-picker v-model="mailbox.settings.color" size="large" />
+            </el-form-item>
+
             <el-form-item>
                 <el-button v-loading="saving" :disabled="saving" @click="saveSettings()" type="success">
                     {{$t('Save Settings')}}
@@ -109,6 +113,11 @@ export default {
                 .always(() => {
                     this.saving = false;
                 });
+        }
+    },
+    mounted() {
+        if ( !this.mailbox.settings.color ) {
+            this.mailbox.settings.color = '#0CBE7E';
         }
     }
 }

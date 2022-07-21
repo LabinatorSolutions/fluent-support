@@ -2,9 +2,12 @@
 
 namespace FluentSupport\App\Models;
 
+use FluentSupport\App\Models\Traits\AgentTrait;
 
 class Agent extends Person
 {
+    use AgentTrait;
+
     protected static $type = 'agent';
 
     protected $searchable = [

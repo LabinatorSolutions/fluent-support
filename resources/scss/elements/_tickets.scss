@@ -619,7 +619,7 @@ span.fs_agent_photo_icon img {
 }
 
 .fc_custom_data_wrap {
-    padding: 0 30px 20px;
+    padding: 30px 30px 20px;
     border-top: 1px solid #e5e9ec;
     background: #fffff4;
 
@@ -682,6 +682,7 @@ ul.fs_tk_actions {
     color: white;
     border-radius: 6px;
     left: 45%;
+    z-index: 100;
 
     ul {
         li {

@@ -106,7 +106,7 @@
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
-                                <span style="font-size: 10px;"> by {{ scope.row.customer.first_name }}</span>
+                                <span style="font-size: 10px;"> {{$t(' by')}} {{ scope.row.customer.first_name }}</span>
                                 <span style="margin-left: 5px; font-size: 10px;"
                                       v-if="scope.row.product && !filters.product_id"
                                       class="fs_badge">
@@ -122,8 +122,21 @@
                                         </span>
                                     </span>
                                 </span>
-                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'"><i
-                                    class="el-icon-message"></i></span>
+
+                                <el-tooltip
+                                    class="box-item"
+                                    effect="dark"
+                                    :content="$t('Inbox - ') + scope.row.mailbox.name"
+                                    placement="top"
+                                >
+                                    <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox.settings.color}" v-html="getExcerptBox(scope.row.mailbox.name)"></span>
+                                </el-tooltip>
+
+                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'">
+                                    <el-icon>
+                                      <Message />
+                                    </el-icon>
+                                </span>
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
                                 <div class="prev_text_parent">
                                     <p class="fs_tk_preview_text" v-html="getExcerpt(scope.row)"></p>
@@ -485,7 +498,10 @@ export default {
             this.search = '';
             this.pagination.current_page = 1;
             this.fetchTickets();
-        }
+        },
+        getExcerptBox(text) {
+            return text.substring(0, 3).padEnd(5, '.');
+        },
     },
     mounted() {
         this.setFromSaveFilters();
@@ -538,5 +554,18 @@ export default {
     li.el-dropdown-menu__item {
         margin: 10px 0px;
     }
+}
+
+.fs_inbox_identifier{
+    min-width: 45px;
+    height: 19px;
+    padding: 9px;
+    color: #fff;
+    border-radius: 3px;
+    opacity: 0.8;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-right: 6px;
 }
 </style>
