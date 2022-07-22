@@ -278,8 +278,11 @@ export default {
     watch: {
         '$route.query'() {
             if (this.app_ready) {
+                this.resetWithOutFetch();
                 this.filters.agent_id = this.$route.query.agent_id;
                 this.filters.watcher = this.$route.query.watcher;
+                this.filter_type = this.$route.query.filter_type;
+                this.filters.status_type = this.$route.query.status_type;
                 this.fetchTickets();
             }
         }
@@ -499,6 +502,19 @@ export default {
             this.pagination.current_page = 1;
             this.fetchTickets();
         },
+        resetWithOutFetch(){
+            this.filters = {
+                status_type: 'open',
+                product_id: '',
+                agent_id: '',
+                priority: '',
+                client_priority: '',
+                waiting_for_reply: '',
+                ticket_tags: []
+            };
+            this.search = '';
+            this.pagination.current_page = 1;
+        },
         getExcerptBox(text) {
             return text.substring(0, 3).padEnd(5, '.');
         },
@@ -523,6 +539,12 @@ export default {
 
         if (this.$route.query.search) {
             this.search = this.$route.query.search;
+        }
+
+        if(this.$route.query.filter_type){
+            this.resetWithOutFetch();
+            this.filter_type = this.$route.query.filter_type;
+            this.filters.status_type = this.$route.query.status_type;
         }
 
         this.app_ready = true;

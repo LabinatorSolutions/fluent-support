@@ -23,6 +23,10 @@ $app->addCustomAction('handle_exception', 'ExceptionHandler@handle');
 
 $app->addAction('admin_menu', 'Menu@add');
 $app->addAction('admin_enqueue_scripts', 'Menu@maybeEnqueueAssets');
+/*
+ * Admin Bar
+ */
+$app->addAction('admin_bar_menu', 'AdminBarHandler@init');
 
 add_shortcode('fluent_support_portal', function ($args) {
     $args = shortcode_atts( array(
