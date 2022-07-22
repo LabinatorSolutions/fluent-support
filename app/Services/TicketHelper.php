@@ -180,4 +180,32 @@ class TicketHelper
 
         return $watcherAgents;
     }
+
+    // This method will count total tickets
+    public static function countAllTickets()
+    {
+        return (new Ticket())->count();
+    }
+    // This method will count all un-assigned tickets
+    public static function countUnassignedTickets()
+    {
+        return Ticket::whereNull('agent_id')->count();
+    }
+    // This method will count all closed tickets
+    public static function countClosedTickets()
+    {
+        return Ticket::where('status', 'closed')->count();
+    }
+
+    // This method will count all New tickets
+    public static function countNewTickets()
+    {
+        return Ticket::where('status', 'new')->count();
+    }
+
+    // This method will count all Active tickets
+    public static function countActiveTickets()
+    {
+        return Ticket::where('status', 'active')->count();
+    }
 }
