@@ -91,7 +91,7 @@ const FsGlobalSummary = {
     },
     getQuickLinks() {
         const linkDoms = [];
-        jQuery.each(window.fst_bar_vars.links, (index, link) => {console.log(link);
+        jQuery.each(window.fst_bar_vars.links, (index, link) => {
             linkDoms.push(elem('li', {}, [
                 elem('a', {href: link.url}, link.title+': ' + link.number)
             ]));
