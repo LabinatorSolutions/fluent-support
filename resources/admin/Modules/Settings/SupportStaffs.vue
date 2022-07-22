@@ -25,7 +25,7 @@
                     <template #default="scope">
                         <div class="fs_as_profile_picture" @mouseover="showIcon(scope.row.id)" @mouseout="hideIcon(scope.row.id)">
                             <div class="fs_agent_avatar">
-                                <el-dropdown trigger="click" placement="bottom-start">
+                                <el-dropdown trigger="click" :hide-on-click="false" placement="bottom-start">
                                     <el-icon :class='"fs_agent_avatar_upload fs_agent_avatar_upload-"+scope.row.id'> <Camera /> </el-icon>
                                     <template #dropdown>
                                         <el-dropdown-menu class="fs-as-avatar-actions">

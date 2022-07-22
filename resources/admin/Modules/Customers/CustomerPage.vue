@@ -21,7 +21,7 @@
                             <div class="fs_cs_profile_picture" @mouseover="showIcon" @mouseout="hideIcon">
                                 <div class="fs_customer_avatar">
 
-                                    <el-dropdown trigger="click" placement="bottom-start">
+                                    <el-dropdown trigger="click" :hide-on-click="false" placement="bottom-start">
                                         <el-icon class="fs_customer_avatar_upload"> <Camera /> </el-icon>
                                         <template #dropdown>
                                             <el-dropdown-menu class="fs-cs-avatar-actions">
