@@ -58,6 +58,11 @@ export default {
                     type: 'Text'
                 },
                 {
+                    field: 'Ticket Priority',
+                    field_key: 'priority',
+                    type: 'Text'
+                },
+                {
                     field: 'Customer First Name',
                     field_key: 'sender[first_name]',
                     type: 'Text'
