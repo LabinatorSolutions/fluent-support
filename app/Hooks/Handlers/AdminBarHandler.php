@@ -26,11 +26,6 @@ class AdminBarHandler
         $assets = $app['url.assets'];
         wp_enqueue_script('fst_global_summary', $assets . 'admin/js/global_summary.js', ['jquery'], FLUENT_SUPPORT_VERSION);
 
-        $urlBase = apply_filters(
-            'fst_menu_url_base',
-            admin_url('admin.php?page=fluent-support#/')
-        );
-
         wp_localize_script('fst_global_summary', 'fst_bar_vars', [
             'rest'            => $this->getRestInfo(),
             'links'           => (new TicketStats())->getQuickLinks(),

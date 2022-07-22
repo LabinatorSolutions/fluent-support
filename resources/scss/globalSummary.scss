@@ -23,16 +23,16 @@ li#wp-admin-bar-fst_global_summary {
             position: absolute;
             padding: 10px 20px;
             right: 0;
-            background: white;
+            background: #fff;
             min-width: 300px;
-            border: 1px solid #7757e6;
+            border: 1px solid #15be7c;
             box-shadow: 0px 8px 2px 3px #f1f1f1;
         }
         .fs_quick_links_wrapper {
             margin: 10px -20px -10px !important;
             display: block;
             overflow: hidden;
-            background: #f7f5f5;
+            background: #fff;
             padding: 0px 20px 20px;
             clear: both;
             h4 {
@@ -53,6 +53,7 @@ li#wp-admin-bar-fst_global_summary {
                     display: block;
                     width: 50%;
                     a {
+                        color: #15be7c !important;
                         margin: 0;
                         padding: 0;
                     }

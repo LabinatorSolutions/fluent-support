@@ -16,31 +16,31 @@ class TicketStats
         return apply_filters('fst_quick_links', [
             [
                 'title' => __('Total Tickets', 'fluent-support'),
-                'url'   => $urlBase . 'tickets',
+                'url'   => esc_url($urlBase . 'tickets'),
                 'number'=> TicketHelper::countAllTickets(),
                 'icon'  => 'el-icon-user'
             ],
             [
                 'title' => __('Active Tickets', 'fluent-support'),
-                'url'   => $urlBase . 'tickets?filter_type=simple&status_type=active',
+                'url'   => esc_url($urlBase . 'tickets?filter_type=simple&status_type=active'),
                 'number'=> TicketHelper::countActiveTickets(),
                 'icon'  => 'el-icon-message'
             ],
             [
                 'title' => __('New Tickets', 'fluent-support'),
-                'url'   => $urlBase . 'tickets?filter_type=simple&status_type=new',
+                'url'   => esc_url($urlBase . 'tickets?filter_type=simple&status_type=new'),
                 'number'=> TicketHelper::countNewTickets(),
                 'icon'  => 'el-icon-folder'
             ],
             [
                 'title' => __('Un-Assigned Tickets', 'fluent-support'),
-                'url'   => $urlBase . 'tickets?agent_id=unassigned',
+                'url'   => esc_url($urlBase . 'tickets?agent_id=unassigned'),
                 'number'=> TicketHelper::countUnassignedTickets(),
                 'icon'  => 'el-icon-folder'
             ],
             [
                 'title' => __('Closed Tickets', 'fluent-support'),
-                'url'   => $urlBase . 'tickets?filter_type=simple&status_type=closed',
+                'url'   => esc_url($urlBase . 'tickets?filter_type=simple&status_type=closed'),
                 'number'=> TicketHelper::countClosedTickets(),
                 'icon'  => 'el-icon-message'
             ]
