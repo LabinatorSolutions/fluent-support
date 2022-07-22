@@ -196,4 +196,16 @@ class TicketHelper
     {
         return Ticket::where('status', 'closed')->count();
     }
+
+    // This method will count all New tickets
+    public static function countNewTickets()
+    {
+        return Ticket::where('status', 'new')->count();
+    }
+
+    // This method will count all Active tickets
+    public static function countActiveTickets()
+    {
+        return Ticket::where('status', 'active')->count();
+    }
 }
