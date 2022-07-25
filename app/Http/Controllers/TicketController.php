@@ -259,7 +259,7 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function getLiveActivity(Request $request, $ticketId)
+    public function getLiveActivity( Request $request, $ticketId )
     {
         $agent = Helper::getAgentByUserId();
 
@@ -274,7 +274,7 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function removeLiveActivity(Request $request, $ticketId)
+    public function removeLiveActivity( Request $request, $ticketId )
     {
         $agent = Helper::getAgentByUserId();
 
@@ -290,7 +290,7 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function addTag(Request $request, $ticketId)
+    public function addTag( Request $request, $ticketId )
     {
         $ticket = Ticket::findOrFail($ticketId);
 
@@ -308,7 +308,7 @@ class TicketController extends Controller
      * @param $tagId
      * @return array
      */
-    public function detachTag($ticketId, $tagId)
+    public function detachTag( $ticketId, $tagId )
     {
         $ticket = Ticket::findOrFail($ticketId);
         $ticket->detachTags($tagId);
@@ -325,7 +325,7 @@ class TicketController extends Controller
      * @param Request $request
      * @return array
      */
-    public function changeTicketCustomer(Request $request)
+    public function changeTicketCustomer( Request $request )
     {
         $updateCustomer = Ticket::where('id', $request->get('ticket_id'))
             ->update(['customer_id' => $request->get('customer')]);
@@ -341,7 +341,7 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array|array[]
      */
-    public function getTicketCustomData(Request $request, $ticketId)
+    public function getTicketCustomData( Request $request, $ticketId )
     {
         if (!defined('FLUENTSUPPORTPRO')) {
             return [
@@ -365,11 +365,29 @@ class TicketController extends Controller
      * @param FluentCRMServices $fluentCRMServices
      * @return array
      */
-    public function syncFluentCrmTags(Request $request, FluentCRMServices $fluentCRMServices)
+    public function syncFluentCrmTags ( Request $request, FluentCRMServices $fluentCRMServices )
     {
         $data = $request->only(['contact_id', 'tags']);
         try {
             return $fluentCRMServices->syncCrmTags( $data );
+        } catch (\Exception $e) {
+            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+        }
+    }
+
+    /**
+     * This `syncFluentCrmLists` method will synchronize the lists with Fluent CRM by contact id
+     *  This method will get contact id and lists as parameter, get existing lists from crm and updated added/removed lists
+     * @param Request $request
+     * @param FluentCRMServices $fluentCRMServices
+     * @return array
+     */
+
+    public function syncFluentCrmLists ( Request $request, FluentCRMServices $fluentCRMServices )
+    {
+        $data = $request->only(['contact_id', 'lists']);
+        try {
+            return $fluentCRMServices->syncCrmLists( $data );
         } catch (\Exception $e) {
             return $this->sendError( __($e->getMessage(), 'fluent-support') );
         }

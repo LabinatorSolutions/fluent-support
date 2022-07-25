@@ -473,6 +473,7 @@ class Helper
             return [
                 'can_add_tags' => false,
                 'tags'         => [],
+                'lists'        => [],
                 'logo'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg',
                 'icon'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluent-crm-icon.png',
             ];
@@ -484,11 +485,13 @@ class Helper
         $crmTags = [];
         if ($canAddTags) {
             $crmTags = \FluentCrm\App\Models\Tag::select(['id', 'title'])->orderBy('title', 'ASC')->get();
+            $crmLists = \FluentCrm\App\Models\Lists::select(['id', 'title'])->orderBy('title', 'ASC')->get();
         }
 
         $crmConfigs = [
             'can_add_tags' => $canAddTags,
             'tags'         => $crmTags,
+            'lists'         => $crmLists,
             'logo'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg',
             'icon'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluent-crm-icon.png',
         ];
@@ -514,6 +517,7 @@ class Helper
         $contact = \FluentCrmApi('contacts')->getContactByUserRef($customer->email);
         if ($contact) {
             $tags = $contact->tags;
+            $lists = $contact->lists;
             $urlBase = apply_filters('fluentcrm_menu_url_base', admin_url('admin.php?page=fluentcrm-admin#/'));
             $crmProfileUrl = $urlBase . 'subscribers/' . $contact->id;
 
@@ -525,6 +529,7 @@ class Helper
                 'full_name'     => $contact->full_name,
                 'name_mismatch' => $contact->full_name != $customer->full_name,
                 'tags'          => $tags,
+                'lists'         => $lists,
                 'status'        => $contact->status,
                 'stats'         => $contact->stats(),
                 'view_url'      => $crmProfileUrl

@@ -58,6 +58,7 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->post('bulk-reply', 'TicketController@doBulkReplies');
 
     $router->post('sync-fluentcrm-tags', 'TicketController@syncFluentCrmTags');
+    $router->post('sync-fluentcrm-lists', 'TicketController@syncFluentCrmLists');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
