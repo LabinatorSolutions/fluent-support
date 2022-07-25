@@ -34,6 +34,32 @@ class FluentCRMServices
     }
 
     /**
+     * This `syncCrmLists` method is used to sync lists from FluentCRM to Fluent Support.
+     * @param array $data
+     * @return array
+     * @throws Exception
+     */
+    public function syncCrmLists ( $data )
+    {
+        $this->isCrmEnabled();
+        $this->isContactAvailable( $data['contact_id'] );
+
+        $lists = $data['lists'] ?? [];
+
+        $listIds = array_filter( $lists, 'absint' );
+        $this->checkCrmPermission();
+
+        $contact = \FluentCrm\App\Models\Subscriber::findOrFail( $data['contact_id'] );
+
+        $this->addOrRemoveList( $contact, $listIds );
+
+        return [
+            'lists'    => $contact->lists,
+            'message' => __('FluentCRM contact lists has been updated', 'fluent-support')
+        ];
+    }
+
+    /**
      * This `addOrRemoveTag` method will add or remove tags from FluentCRM contact from Fluent Support.
      * @param array $contact
      * @param array $tagIds
@@ -55,6 +81,34 @@ class FluentCRMServices
 
         if ($removedTagIds) {
             $contact->detachTags($removedTagIds);
+        }
+
+        return $contact;
+    }
+
+    /**
+     * This `addOrRemoveList` method will add or remove lists from FluentCRM contact from Fluent Support.
+     * @param array $contact
+     * @param array $listIds
+     * @return mixed
+     */
+    public function addOrRemoveList ( $contact, $listIds )
+    {
+        $existingLists = $contact->lists;
+        $existingListIds = [];
+
+        foreach ($existingLists as $list) {
+            $existingListIds[] = $list->id;
+        }
+        $newListIds = array_diff($listIds, $existingListIds);
+        $removedListIds = array_diff($existingListIds, $listIds);
+
+        if ($newListIds) {
+            $contact->attachLists( $newListIds );
+        }
+
+        if ($removedListIds) {
+            $contact->detachLists( $removedListIds );
         }
 
         return $contact;
