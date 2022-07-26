@@ -85,3 +85,8 @@ export default {
     }
 }
 </script>
+<style>
+    .el-form-item__content{
+        display: block;
+    }
+</style>

@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Tickets\TicketStats;
+use FluentSupport\App\Services\Helper;
 
 class AdminBarHandler
 {
@@ -22,6 +23,10 @@ class AdminBarHandler
 
     public function showTicketSummary($adminBar)
     {
+        $isHidden = Helper::showTicketSummaryAdminBar();
+        if(!$isHidden)
+            return;
+
         $app = App::getInstance();
         $assets = $app['url.assets'];
         wp_enqueue_script('fst_global_summary', $assets . 'admin/js/global_summary.js', ['jquery'], FLUENT_SUPPORT_VERSION);

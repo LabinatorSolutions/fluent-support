@@ -538,4 +538,19 @@ class Helper
 
         return false;
     }
+
+    public static function showTicketSummaryAdminBar()
+    {
+        $data = self::getOption('global_business_settings');
+
+        if ($data) {
+            if($data->enable_admin_bar_summary == 'yes'){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+        return false;
+    }
 }
