@@ -11,7 +11,7 @@
         <div style="padding: 20px;" v-if="!fetching" v-loading="loading" class="fs_box_body">
             <form-builder v-if="app_ready" :fields="fields" :form-data="settings" label_position="top">
                 <template #form_end>
-                    <el-button size="small" type="success" @click="saveSettings()">{{$t('Save Settings')}}</el-button>
+                    <el-button size="default" type="success" @click="saveSettings()">{{$t('Save Settings')}}</el-button>
                 </template>
             </form-builder>
         </div>

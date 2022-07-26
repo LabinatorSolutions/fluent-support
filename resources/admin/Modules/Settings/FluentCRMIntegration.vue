@@ -9,7 +9,7 @@
             <div v-if="!fetching" class="fs_box_body">
                 <template v-if="is_installed">
                     <form-builder :fields="settings_fields" :formData="settings"/>
-                    <el-button :disabled="saving" size="small" type="success" @click="saveSettings()">
+                    <el-button :disabled="saving" size="default" type="success" @click="saveSettings()">
                         {{ $t('Save Settings') }}
                     </el-button>
                 </template>

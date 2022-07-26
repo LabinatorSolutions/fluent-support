@@ -6,7 +6,7 @@
                     <h3>{{ $t('Ticket Tags') }}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
-                    <el-button @click="createTagModal()" type="primary" icon="Plus" size="small">
+                    <el-button @click="createTagModal()" type="primary" icon="Plus" size="default">
                         {{ $t('Add New') }}
                     </el-button>
                 </div>

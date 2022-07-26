@@ -22,7 +22,7 @@
 
             <div v-else-if="fields" class="fs_box_body">
                 <form-builder :fields="fields.fields" :formData="settings"/>
-                <el-button size="small" @click="saveSettings()" v-loading="saving" :disabled="saving" type="success">
+                <el-button size="default" @click="saveSettings()" v-loading="saving" :disabled="saving" type="success">
                     {{ fields.button_text }}
                 </el-button>
             </div>
