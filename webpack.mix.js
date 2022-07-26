@@ -1,4 +1,35 @@
-const mix = require('./resources/mix');
+let mix = require('laravel-mix');
+const AutoImport = require("unplugin-auto-import/webpack");
+const {ElementPlusResolver} = require("unplugin-vue-components/resolvers");
+const Components = require("unplugin-vue-components/webpack");
+var path = require('path');
+
+mix.webpackConfig({
+    module: {
+        rules: [{
+            test: /\.mjs$/,
+            resolve: {fullySpecified: false},
+            include: /node_modules/,
+            type: "javascript/auto"
+        }]
+
+    },
+    plugins: [
+        AutoImport({
+            resolvers: [ElementPlusResolver()],
+        }),
+        Components({
+            resolvers: [ElementPlusResolver()],
+            directives: false
+        }),
+    ],
+    resolve: {
+        extensions: ['.js', '.vue', '.json'],
+        alias: {
+            '@': path.resolve(__dirname, 'resources/')
+        }
+    }
+});
 
 if (!mix.inProduction()) {
     mix.webpackConfig({
@@ -9,7 +40,6 @@ if (!mix.inProduction()) {
 mix
     .js('resources/admin/start.js', 'assets/admin/js/start.js').vue({ version: 3 })
     .js('resources/customer_portal/portal.js', 'assets/portal/js/app.js').vue({ version: 3 })
-    .js('resources/admin/firebase_notify.js', 'assets/admin/js/firebase_notify.js')
     .js('resources/admin/global_admin.js', 'assets/admin/js/global_admin.js')
     .js('resources/admin/global_summary.js', 'assets/admin/js/global_summary.js')
     .js('resources/customer_portal/login_helper.js', 'assets/portal/js/login_helper.js')

@@ -1,58 +1,5 @@
 import { createApp } from 'vue';
 import {
-    ElMenu,
-    ElMenuItem,
-    ElMain,
-    ElRow,
-    ElCol,
-    ElTable,
-    ElTableColumn,
-    ElPagination,
-    ElButtonGroup,
-    ElButton,
-    ElIcon,
-
-    ElForm,
-    ElFormItem,
-    ElColorPicker,
-    ElInput,
-    ElInputNumber,
-    ElOption,
-    ElOptionGroup,
-    ElRadio,
-    ElRadioButton,
-    ElRadioGroup,
-    ElRate,
-    ElSelect,
-    ElSelectV2,
-    ElCheckbox,
-    ElCheckboxGroup,
-
-    ElSlider,
-    ElSwitch,
-    ElTimePicker,
-    ElDatePicker,
-    ElTimeSelect,
-    ElDialog,
-    ElSkeleton,
-    ElUpload,
-    ElTooltip,
-
-    ElTabs,
-    ElTabPane,
-
-    ElPopover,
-    ElPopconfirm,
-    ElDropdown,
-    ElDropdownMenu,
-    ElDropdownItem,
-    ElBreadcrumb,
-    ElBreadcrumbItem,
-    ElCascader,
-    ElCascaderPanel,
-
-    ElTag,
-
     ElLoading,
     ElMessage,
     ElMessageBox,
@@ -103,60 +50,9 @@ import {
     CircleClose,
     Camera,
     TopLeft
-} from '@element-plus/icons-vue/dist/es';
+} from '@element-plus/icons-vue/dist';
 
-const app = createApp({});
-
-const components = [
-    ElMenu,
-    ElBreadcrumb,
-    ElBreadcrumbItem,
-    ElMenuItem,
-    ElMain,
-    ElRow,
-    ElCol,
-    ElTable,
-    ElTableColumn,
-    ElPagination,
-    ElButtonGroup,
-    ElButton,
-    ElIcon,
-    ElForm,
-    ElFormItem,
-    ElColorPicker,
-    ElInput,
-    ElInputNumber,
-    ElOption,
-    ElOptionGroup,
-    ElRadio,
-    ElRadioButton,
-    ElRadioGroup,
-    ElRate,
-    ElSelect,
-    ElSlider,
-    ElSwitch,
-    ElTimePicker,
-    ElUpload,
-    ElTimeSelect,
-    ElDialog,
-    ElPopover,
-    ElSkeleton,
-    ElTabs,
-    ElTabPane,
-    ElTooltip,
-    ElCheckbox,
-    ElCheckboxGroup,
-    ElPopconfirm,
-    ElDropdown,
-    ElDropdownMenu,
-    ElDropdownItem,
-    ElDatePicker,
-    ElTag,
-    ElSelectV2,
-    ElCascader,
-    ElCascaderPanel,
-
-    // Icons
+const icons = [
     Notebook,
     ChatLineSquare,
     User,
@@ -202,9 +98,7 @@ const components = [
     TopLeft
 ];
 
-components.forEach(component => {
-    app.component(component.name, component)
-})
+const app = createApp({});
 
 const plugins = [
     ElLoading,
@@ -217,5 +111,8 @@ plugins.forEach(plugin => {
     app.use(plugin)
 });
 
+icons.forEach(icon => {
+    app.component(icon.name, icon);
+})
 
 export default app;
