@@ -101,11 +101,13 @@
 
             <custom-field-form :custom_data="ticket.custom_fields" v-if="has_pro" />
 
-            <el-form-item>
-                <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">
-                    {{ $t('Create Ticket') }}
-                </el-button>
-            </el-form-item>
+            <el-col :span="4">
+                <el-form-item>
+                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">
+                        {{ $t('Create Ticket') }}
+                    </el-button>
+                </el-form-item>
+            </el-col>
 
         </el-form>
     </div>
