@@ -141,6 +141,13 @@ class Settings
                 'false-label'    => 'no',
                 'checkbox_label' => __('Delete all attachments on ticket close', 'fluent-support'),
                 'inline_help'    => __('If you enable this then when a ticket get closed it will delete all the attachments associated with the particular ticket.', 'fluent-support')
+            ],
+            'enable_admin_bar_summary' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Enable Fluent Summary In Admin Bar', 'fluent-support'),
+                'inline_help'    => __('If you enable this, logged in user can see the ticket summary from top nav bar.', 'fluent-support')
             ]
         ];
 
