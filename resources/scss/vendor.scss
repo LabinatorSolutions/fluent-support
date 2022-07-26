@@ -164,3 +164,14 @@
 .el-form-item--default .el-form-item__content {
     display: flow-root;
 }
+
+.el-input {
+    .el-input__inner {
+        border: none;
+        &:focus{
+            border-color: unset;
+            box-shadow: unset;
+            outline: none;
+        }
+    }
+}

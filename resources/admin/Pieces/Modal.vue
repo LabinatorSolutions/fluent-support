@@ -41,7 +41,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .fs-modal-mask {
     position: fixed;
     z-index: 12;
@@ -84,6 +84,11 @@ export default {
 }
 
 .fs-modal-body {
+    .el-form-item__content{
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+    }
     margin: 20px 0;
 }
 
