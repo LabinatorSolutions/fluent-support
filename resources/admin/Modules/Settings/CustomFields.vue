@@ -6,7 +6,7 @@
                     <h3>{{$t('Custom Ticket Fields')}}</h3>
                 </div>
                 <div v-if="has_pro" class="fs_box_actions">
-                    <el-button @click="addFieldVisible = true" type="primary" icon="Plus" size="small">
+                    <el-button @click="addFieldVisible = true" type="primary" icon="Plus" size="default">
                         {{$t('Add New Field')}}
                     </el-button>
                 </div>

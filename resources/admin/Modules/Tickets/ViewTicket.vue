@@ -136,7 +136,7 @@
                                     <el-table-column prop="status" label="Status" width="130"></el-table-column>
                                     <el-table-column label="Action">
                                         <template #default="scope">
-                                            <el-button size="small" type="primary" @click="mergeTickets(scope.row.id)">
+                                            <el-button size="default" type="primary" @click="mergeTickets(scope.row.id)">
                                                 {{$t('Merge')}}
                                             </el-button>
                                         </template>

@@ -15,7 +15,7 @@
             :file-list="file_lists"
             list-type="picture"
         >
-            <el-button size="small" type="primary">{{$t('Click to upload')}}</el-button>
+            <el-button size="default" type="primary">{{$t('Click to upload')}}</el-button>
             <template #tip>
                 <div class="el-upload__tip">{{$t('allowed_files_and_size')}}</div>
             </template>

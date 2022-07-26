@@ -5,7 +5,7 @@
                 <h3>{{$t('Support Staff')}}</h3>
             </div>
             <div class="fs_box_actions">
-                <el-button @click="createStaffModal()" type="primary" icon="Plus" size="small">
+                <el-button @click="createStaffModal()" type="primary" icon="Plus" size="default">
                     {{$t('Add New')}}
                 </el-button>
             </div>

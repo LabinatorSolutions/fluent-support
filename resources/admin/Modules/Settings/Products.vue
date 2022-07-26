@@ -6,7 +6,7 @@
                     <h3>{{$t('Products')}}</h3>
                 </div>
                 <div class="fs_box_actions">
-                    <el-button @click="createTicketModal()" type="primary" icon="Plus" size="small">{{$t('Create New')}}
+                    <el-button @click="createTicketModal()" type="primary" icon="Plus" size="default">{{$t('Create New')}}
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
