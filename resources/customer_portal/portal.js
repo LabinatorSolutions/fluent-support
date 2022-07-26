@@ -3,28 +3,14 @@ import Application from './Application';
 import { createWebHashHistory, createRouter } from 'vue-router'
 import routes from "./routes";
 
-
 import {
-    ElUpload,
-    ElLoading,
-    ElSkeleton,
-    ElButton,
-    ElCheckbox,
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElSelect,
-    ElOption,
-    ElRadioGroup,
-    ElCheckboxGroup,
-    ElRadio,
-    ElTag
+    ElLoading
 } from 'element-plus';
 
 import {
     Refresh,
     Paperclip
-} from '@element-plus/icons-vue/dist/es';
+} from '@element-plus/icons-vue/dist';
 
 const app = createApp(Application);
 
@@ -34,21 +20,6 @@ const router = createRouter({
 });
 
 const components = [
-    ElUpload,
-    ElLoading,
-    ElSkeleton,
-    ElButton,
-    ElCheckbox,
-    ElForm,
-    ElFormItem,
-    ElInput,
-    ElSelect,
-    ElOption,
-    ElRadioGroup,
-    ElCheckboxGroup,
-    ElRadio,
-    ElTag,
-
     // Icon component
     Refresh,
     Paperclip
