@@ -544,7 +544,7 @@ class Helper
         $data = self::getOption('global_business_settings');
 
         if ($data) {
-            if($data->enable_admin_bar_summary == 'yes'){
+            if(isset($data["enable_admin_bar_summary"]) && $data["enable_admin_bar_summary"] == 'yes'){
                 return true;
             }else{
                 return false;
