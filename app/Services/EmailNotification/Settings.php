@@ -69,7 +69,8 @@ class Settings
             'disable_public_ticket' => 'no',
             'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
             'max_file_size'         => 2,
-            'del_files_on_close'    => 'no'
+            'del_files_on_close'    => 'no',
+            'enable_admin_bar_summary' => 'no'
         ];
 
         //Get default/existing settings from database using the key global_business_settings
