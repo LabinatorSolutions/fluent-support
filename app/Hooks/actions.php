@@ -27,6 +27,7 @@ $app->addAction('admin_enqueue_scripts', 'Menu@maybeEnqueueAssets');
  * Admin Bar
  */
 $app->addAction('admin_bar_menu', 'AdminBarHandler@init');
+$app->addAction('wp_dashboard_setup', 'AdminBarHandler@initAdminWidget');
 
 add_shortcode('fluent_support_portal', function ($args) {
     $args = shortcode_atts( array(

@@ -65,4 +65,46 @@ class AdminBarHandler
             'version'   => $v
         ];
     }
+
+    public function initAdminWidget ()
+    {
+        // This widget should be displayed for certain high-level users only.
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        $widget_key = 'fluent_support_reports_widget';
+
+        wp_add_dashboard_widget( $widget_key,
+            __('Fluent Support Stats', 'fluent-support'),
+            [$this, 'dashWidgetContent']
+        );
+    }
+
+    public function dashWidgetContent ()
+    {
+        $ticketStats = (new TicketStats())->getQuickLinks();
+
+        ?>
+        <div class="fs_dash_wrapper">
+            <table class="fs_dash_table wp-list-table widefat fixed striped">
+                <thead>
+                <tr>
+                    <th><?php _e('Title', 'fluent-support'); ?></th>
+                    <th><?php _e('Count', 'fluent-support'); ?></th>
+                    <th><?php _e('Action', 'fluent-support'); ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($ticketStats as $stat): ?>
+                    <tr>
+                        <td><?php echo $stat['title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+                        <td><?php echo $stat['number']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+                        <td>  <a href="<?php echo $stat['url']?>"> <?php echo __('View', 'fluent-support') ?> </a> </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
+    }
 }
