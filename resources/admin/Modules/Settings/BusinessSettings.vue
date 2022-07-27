@@ -23,7 +23,7 @@
 
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
-
+import { ElNotification } from 'element-plus'
 export default {
     name: 'BusinessSettings',
     components: {
@@ -60,11 +60,23 @@ export default {
         },
         saveSettings() {
             this.loading = true;
+            const that = this;
             this.$post('settings', {
                 settings_key: this.settings_key,
                 settings: this.settings
             })
                 .then(response => {
+                    let summary_bar = that.settings.enable_admin_bar_summary;
+                    let bar = jQuery("li#wp-admin-bar-fst_global_summary");
+                    if(summary_bar !== undefined && summary_bar === 'yes'){
+                        if(bar.hasClass("fs_ts_hide_me")){
+                            bar.removeClass("fs_ts_hide_me");
+                        }
+                    }else{
+                        if(!bar.hasClass("fs_ts_hide_me")){
+                            bar.addClass("fs_ts_hide_me");
+                        }
+                    }
                     this.$notify({
                         type: 'success',
                         message: response.message,

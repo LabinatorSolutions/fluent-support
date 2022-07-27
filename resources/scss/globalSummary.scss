@@ -3,6 +3,10 @@
     100% { transform: rotate(360deg); }
 }
 
+li.fs_ts_hide_me{
+    display: none;
+}
+
 li#wp-admin-bar-fst_global_summary {
     > a {
         background: #15be7c;

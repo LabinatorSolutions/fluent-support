@@ -23,9 +23,13 @@ class AdminBarHandler
 
     public function showTicketSummary($adminBar)
     {
-        $isHidden = Helper::showTicketSummaryAdminBar();
-        if(!$isHidden)
-            return;
+        $links = [];
+        $hidden =  false;
+        if(Helper::showTicketSummaryAdminBar()){
+            $links = (new TicketStats())->getQuickLinks();
+            $hidden = true;
+        }
+
 
         $app = App::getInstance();
         $assets = $app['url.assets'];
@@ -33,7 +37,8 @@ class AdminBarHandler
 
         wp_localize_script('fst_global_summary', 'fst_bar_vars', [
             'rest'            => $this->getRestInfo(),
-            'links'           => (new TicketStats())->getQuickLinks(),
+            'links'           => $links,
+            'show_summary'    => $hidden,
             'trans' => [
                 'Quick Summary' => __('Quick Summary', 'fluent-support')
             ]
