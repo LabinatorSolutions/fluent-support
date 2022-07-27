@@ -68,8 +68,13 @@ const FsGlobalSummary = {
     current_page: 1,
     initButton() {
         const that = this;
+        let show_summary = window.fst_bar_vars.show_summary;
         const parentElement = document.getElementById('wp-admin-bar-fst_global_summary');
         const $parent = jQuery('#wp-admin-bar-fst_global_summary');
+
+        if(!show_summary){
+            parentElement.classList.add("fs_ts_hide_me");
+        }
 
         const mainDom = this.getSearchDom();
 
