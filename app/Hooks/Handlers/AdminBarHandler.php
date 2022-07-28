@@ -17,27 +17,21 @@ class AdminBarHandler
             return;
         }
 
-        add_action('admin_bar_menu', [$this, 'showTicketSummary'], 999);
+        if( Helper::showTicketSummaryAdminBar() ) {
+            add_action('admin_bar_menu', [$this, 'showTicketSummary'], 999);
+        }
 
     }
 
     public function showTicketSummary($adminBar)
     {
-        $links = [];
-        $hidden =  false;
-        if(Helper::showTicketSummaryAdminBar()){
-            $links = (new TicketStats())->getQuickLinks();
-            $hidden = true;
-        }
-
         $assets = App::getInstance('url.assets');
 
         wp_enqueue_script('fst_global_summary', $assets . 'admin/js/global_summary.js', ['jquery'], FLUENT_SUPPORT_VERSION);
 
         wp_localize_script('fst_global_summary', 'fst_bar_vars', [
             'rest'            => $this->getRestInfo(),
-            'links'           => $links,
-            'show_summary'    => $hidden,
+            'links'           => (new TicketStats())->getQuickLinks(),
             'trans' => [
                 'Quick Summary' => __('Quick Summary', 'fluent-support')
             ]
