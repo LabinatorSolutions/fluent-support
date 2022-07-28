@@ -66,17 +66,6 @@ export default {
                 settings: this.settings
             })
                 .then(response => {
-                    let summary_bar = that.settings.enable_admin_bar_summary;
-                    let bar = jQuery("li#wp-admin-bar-fst_global_summary");
-                    if(summary_bar !== undefined && summary_bar === 'yes'){
-                        if(bar.hasClass("fs_ts_hide_me")){
-                            bar.removeClass("fs_ts_hide_me");
-                        }
-                    }else{
-                        if(!bar.hasClass("fs_ts_hide_me")){
-                            bar.addClass("fs_ts_hide_me");
-                        }
-                    }
                     this.$notify({
                         type: 'success',
                         message: response.message,
