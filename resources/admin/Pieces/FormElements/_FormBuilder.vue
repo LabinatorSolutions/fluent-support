@@ -3,7 +3,7 @@
         <el-form @submit.prevent.native="nativeSave" :data="formData" :label-position="label_position">
             <template v-for="(field,fieldIndex) in fields" :key="fieldIndex">
                 <with-label v-if="dependancyPass(field)" :field="field">
-                    <component :is="field.type" v-model="formData[fieldIndex]" :field="field"/>
+                    <component :is="field.type" v-model="formData[fieldIndex]" :field="field" v-bind="field.props"/>
                 </with-label>
             </template>
             <slot name="form_end"></slot>

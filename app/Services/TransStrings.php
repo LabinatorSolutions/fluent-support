@@ -481,6 +481,7 @@ class TransStrings
             'Inbox'       => __('Inbox', 'fluent-support'),
             'Split Ticket'       => __('Split Ticket', 'fluent-support'),
             'Apply / Remove Lists on FluentCRM Profile' => __('Apply / Remove Lists on FluentCRM Profile', 'fluent-support'),
+            'Additional info' => 'Additional info'
         ];
     }
 }
