@@ -32,7 +32,7 @@
                 </div>
 
                 <el-form-item :label="$t('ticket_details')">
-                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" />
+                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content"/>
                     <p class="fs_tk_help">{{$t('details_help')}}</p>
                     <error :error="errors.get('content')"/>
                 </el-form-item>
