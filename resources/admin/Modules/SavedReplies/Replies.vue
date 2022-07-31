@@ -82,20 +82,6 @@
                             <el-input type="text" :placeholder="$t('Reply Title')" v-model="editing_reply.title"/>
                         </el-form-item>
                         <el-form-item :label="$t('Content')">
-                            <div class="fc_template_box" style=" position:absolute; top:0; right:-4px; z-index:2; ">
-                                <el-dropdown type="primary" trigger="click">
-                                    <el-button size="small" type="primary" style="margin-right: .3em;">
-                                        {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
-                                    </el-button>
-                                    <template #dropdown>
-                                        <el-dropdown-menu>
-                                            <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
-                                                {{value}}
-                                            </el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </template>
-                                </el-dropdown>
-                            </div>
                             <wp-editor v-model="editing_reply.content"/>
                         </el-form-item>
                         <el-form-item :label="$t('Preferred Product')">
@@ -226,10 +212,6 @@ export default {
 
                     this.fetch();
                 });
-        },
-        insertShortcode(content) {
-            let tinyInstance = tinyMCE.editors[wpActiveEditor];
-            this.editing_reply.content = tinyInstance.setContent(this.editing_reply.content + content.target._value);
         }
     },
     mounted() {

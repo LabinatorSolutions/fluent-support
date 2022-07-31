@@ -1,22 +1,12 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
         <div class="fc_template_box">
-            <el-dropdown type="primary" trigger="click">
-                <el-button size="small" type="primary" style="margin-right: .3em;">
-                    {{$t('Shortcodes')}} <el-icon><ArrowDown /></el-icon>
-                </el-button>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
-                            {{value}}
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
-            <template-inserter v-if="appVars.has_pro" @insert="insertTemplate"/>
+            <div class="fs_saved_tempalte" style="margin-right: 8.2em">
+                <template-inserter v-if="appVars.has_pro" @insert="insertTemplate"/>
+            </div>
         </div>
 
-        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body"/>
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"/>
 
         <div class="fs_row">
             <div class="fs_half">
@@ -109,13 +99,6 @@ export default {
         insertTemplate(content) {
             this.editor_ready = false;
             this.response_body = this.response_body + content;
-            this.$nextTick(() => {
-                this.editor_ready = true;
-            });
-        },
-        insertShortcode(content) {
-            this.editor_ready = false;
-            this.response_body = this.response_body.concat(content.target._value);
             this.$nextTick(() => {
                 this.editor_ready = true;
             });

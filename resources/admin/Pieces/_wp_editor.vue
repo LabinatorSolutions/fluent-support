@@ -1,5 +1,19 @@
 <template>
     <div class="wp_vue_editor_wrapper">
+        <div class="fc_shortcode_box" style=" position:absolute; top:0; right:-4px; z-index:10; " v-if="showShortcodes">
+            <el-dropdown type="primary" trigger="click">
+                <el-button size="small" type="primary" style="margin-right: .3em;">
+                    {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
+                </el-button>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                        <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
+                            {{value}}
+                        </el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+            </el-dropdown>
+        </div>
         <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">{{ modelValue }}</textarea>
         <textarea v-else
                   class="wp_vue_editor wp_vue_editor_plain"
@@ -49,7 +63,13 @@ export default {
             default() {
                 return false;
             }
-        }
+        },
+        showShortcodes: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
     },
     emits: ['update:modelValue'],
     data() {
@@ -61,7 +81,20 @@ export default {
             cursorPos: (this.modelValue) ? this.modelValue.length : 0,
             app_ready: false,
             buttonInitiated: false,
-            currentEditor: false
+            currentEditor: false,
+            shortcodes: {
+                '{{customer.first_name}}' : 'Customer First Name',
+                '{{customer.last_name}}' : 'Customer Last Name',
+                '{{customer.full_name}}' : 'Customer Full Name',
+                '{{customer.email}}' : 'Customer Email',
+                '{{customer.title}}' : 'Customer Title',
+                '{{customer.status}}' : 'Customer Status',
+                '{{agent.first_name}}' : 'Agent First Name',
+                '{{agent.last_name}}' : 'Agent Last Name',
+                '{{agent.full_name}}' : 'Agent Full Name',
+                '{{agent.email}}' : 'Agent Email',
+                '{{agent.title}}' : 'Agent Title'
+            },
         }
     },
     watch: {
@@ -124,6 +157,11 @@ export default {
         updateCursorPos() {
             var cursorPos = jQuery('.wp_vue_editor_plain').prop('selectionStart');
             this.cursorPos = cursorPos;
+        },
+
+        insertShortcode(content) {
+            let tinyInstance = tinyMCE.editors[wpActiveEditor];
+            this.modelValue = tinyInstance.setContent(this.modelValue + content.target._value);
         }
     },
     mounted() {
