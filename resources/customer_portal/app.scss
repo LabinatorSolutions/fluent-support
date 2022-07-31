@@ -627,11 +627,18 @@
         }
 
         input.el-input__inner, textarea {
-            border: 1px solid #cbd5e0 !important;
             line-height: 40px;
             padding: 0 15px !important;
             -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
             transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+        }
+
+        input.el-input__inner {
+                border: none;
+        }
+
+        textarea {
+            border: 1px solid #cbd5e0 !important;
         }
 
         .el-button.el-button--success {
