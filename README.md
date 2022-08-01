@@ -12,6 +12,17 @@
 
 #### Run the project
 
-- `npm install --force`
-- `npx mix watch`
+- `npm install`
+- `npx mix watch` or `npm run watch`
 - `npx mix --production`
+
+##### Run the tests
+There's a branch called `unit-testing` that you can use to run the unit tests.
+If you don't have a testing database then please run the following command from your project root:
+- ` bin/install-wp-tests.sh db_name db_user db_pass db_host`
+
+You may need to install `phpunit` package as dev deps. To run the tests,
+just run `phpunit` command in the terminal from project root. You can test
+both free and pro version at the same time. All test file names should start with `test-`.
+Make sure you have all your test file in the `tests` folder. Before start the testing please
+include your files in `phpunit.xml.dist` file.
