@@ -58,6 +58,21 @@ export default {
                     if (response.is_installed) {
                         this.settings = response.settings;
                         this.settings_fields = response.settings_fields;
+                        let tags = this.settings.assigned_tags;
+                        let lists = this.settings.assigned_list;
+
+                        if(Array.isArray(tags)) {
+                            this.settings.assigned_tags = tags.map((item) => !isNaN(item) ? parseInt(item) : item);
+                        }else {
+                            this.settings.assigned_tags = !isNaN(tags) ? parseInt(tags) : tags;
+                        }
+
+                        if(Array.isArray(lists)) {
+                            this.settings.assigned_list = lists.map((list) => !isNaN(list) ? parseInt(list) : list);
+                        }else {
+                            this.settings.assigned_list = !isNaN(lists) ?  parseInt(lists) : lists;
+                        }
+
                         this.fluentcrm_logo = response.fluentcrm_logo;
                         this.is_installed = true
                     } else {
