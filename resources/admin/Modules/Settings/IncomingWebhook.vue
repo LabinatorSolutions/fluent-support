@@ -16,7 +16,7 @@
                         <el-popconfirm title="Are you sure to regenerate the webhook url? If you regenerate the url you have to change all your used webhook"
                                        @confirm="updateWebhook">
                             <template #reference>
-                                <el-button icon="Refresh"></el-button>
+                                <el-button size="default" icon="Refresh"></el-button>
                             </template>
                         </el-popconfirm>
                     </el-form-item>
@@ -163,3 +163,8 @@ export default {
 };
 </script>
 
+<style>
+    .fs_box_wrapper .fs_box_body .el-form-item__content {
+        display: contents;
+    }
+</style>
