@@ -18,18 +18,25 @@ abstract class RequestGuard
         return [];
     }
 
+    public function sanitize()
+    {
+        return [];
+    }
+
     public function validate(Validator $validator)
     {
         try {
-            $rules = (array) $this->rules();
 
-            if (!$rules) return;
+            if (!($rules = (array) $this->rules())) return;
 
-            $validator = $validator->make($this->all(), $rules, (array) $this->messages());
+            $validator = $validator->make($data = $this->all(), $rules, (array) $this->messages());
 
             if ($validator->validate()->fails()) {
                 throw new ValidationException('Unprocessable Entity!', 422, null, $validator->errors());
             }
+
+            return $data;
+
         } catch (ValidationException $e) {
 
             if (defined('REST_REQUEST') && REST_REQUEST) {

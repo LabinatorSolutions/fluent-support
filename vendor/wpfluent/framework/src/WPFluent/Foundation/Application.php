@@ -5,13 +5,16 @@ namespace FluentSupport\Framework\Foundation;
 use InvalidArgumentException;
 use FluentSupport\Framework\Foundation\Config;
 use FluentSupport\Framework\Foundation\Container;
-use FluentSupport\Framework\Foundation\FoundationTrait;
 use FluentSupport\Framework\Foundation\ComponentBinder;
-use FluentSupport\App\Api\Api;
+use FluentSupport\Framework\Foundation\FoundationTrait;
+use FluentSupport\Framework\Foundation\AsyncRequestTrait;
+use FluentSupport\Framework\Foundation\CronTaskSchedulerTrait;
 
 class Application extends Container
 {
     use FoundationTrait;
+    use AsyncRequestTrait;
+    use CronTaskSchedulerTrait;
 
     protected $file = null;
     protected $baseUrl = null;
@@ -37,7 +40,7 @@ class Application extends Container
     protected function pluginFilePath($file)
     {
         $file = $file ?: realpath(__DIR__ . '/../../../plugin.php');
-
+        
         return $file;
     }
 
@@ -50,7 +53,7 @@ class Application extends Container
         $this->handlerNamespace = $psr4['app/'] . 'Hooks\Handlers';
 
         $this->policyNamespace = $psr4['app/'] . 'Http\Policies';
-
+        
         $this->controllerNamespace = $psr4['app/'] . 'Http\Controllers';
     }
 
@@ -68,7 +71,7 @@ class Application extends Container
         $this->bindAppInstance();
         $this->bindPathsAndUrls();
         $this->loadConfigIfExists();
-       // $this->loadTextdomain();
+        $this->loadTextdomain();
         $this->bindComponents($this);
         $this->requireCommonFiles($this);
     }
@@ -101,7 +104,7 @@ class Application extends Container
         $this['path.config'] = $this->basePath . 'config/';
         $this['path.assets'] = $this->basePath . 'assets/';
         $this['path.resources'] = $this->basePath . 'resources/';
-        $this['path.views'] = $this['path.app'] . 'views/';
+        $this['path.views'] = $this['path.app'] . 'Views/';
     }
 
     protected function loadConfigIfExists()
@@ -121,9 +124,14 @@ class Application extends Container
     {
         $this->addAction('init', function() {
             load_plugin_textdomain(
-                $this->config->get('app.text_domain'), false, $this->config->get('app.domain_path')
+                $this->config->get('app.text_domain'), false, $this->textDomainPath()
             );
         });
+    }
+
+    protected function textDomainPath()
+    {
+        return basename($this['path']) . $this->config->get('app.domain_path');
     }
 
     protected function bindComponents($app)
@@ -135,7 +143,12 @@ class Application extends Container
     {
         require_once $this->basePath . 'app/Hooks/actions.php';
         require_once $this->basePath . 'app/Hooks/filters.php';
-        require_once $this->basePath . 'app/Api/FsFunctions.php';
+
+        if (file_exists($includes = $this->basePath . 'app/Hooks/includes.php')) {
+            require_once $includes;
+        }
+
+        $this->registerAsyncActions();
 
         $this->addAction('rest_api_init', function($wpRestServer) use ($app) {
             try {
@@ -143,7 +156,9 @@ class Application extends Container
                 require_once $this->basePath . 'app/Http/Routes/api.php';
                 $router->registerRoutes();
             } catch (InvalidArgumentException $e) {
-                $app->doCustomAction('handle_exception', $e);
+                return $app->response->json([
+                    'message' => $e->getMessage()
+                ], $e->getCode() ?: 500);
             }
         });
     }

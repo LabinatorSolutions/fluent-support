@@ -252,6 +252,53 @@ trait ValidatesAttributes
     }
 
     /**
+     * Validate that an attribute is alphabetic.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    protected function validateAlpha($attribute, $value)
+    {
+        return is_string($value) && preg_match('/^[\pL\pM]+$/u', $value);
+    }
+
+    /**
+     * Validate that an attribute is alphanum.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    protected function validateAlphanum($attribute, $value)
+    {
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+
+        return preg_match('/^[\pL\pM\pN]+$/u', $value) > 0;
+    }
+
+    /**
+     * Validate that an attribute is alphanum and -_.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     *
+     * @return bool
+     */
+    protected function validateAlphadash($attribute, $value)
+    {
+        if (! is_string($value) && ! is_numeric($value)) {
+            return false;
+        }
+
+        return preg_match('/^[\pL\pM\pN_-]+$/u', $value) > 0;
+    }
+
+    /**
      * Validate the guessed extension of a file upload is in a set of file extensions.
      *
      * @param string $attribute
@@ -404,5 +451,22 @@ trait ValidatesAttributes
         }
         
         return is_null($wpdb->get_row($wpdb->prepare($query, $bindings)));
+    }
+
+    /**
+     * Validate that an attribute has a given number of digits.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @param array $parameters
+     * 
+     * @return bool
+     */
+    public function validateDigits($attribute, $value, $parameters)
+    {
+        $this->requireParameterCount(1, $parameters, 'digits');
+
+        return $this->validateNumeric($attribute, $value) 
+                    && strlen((string) $value) == $parameters[0];
     }
 }

@@ -69,7 +69,7 @@ class Str
     public static function contains($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle != '' && mb_strpos($haystack, $needle) !== false) {
+            if ($needle != '' && static::mb_strpos($haystack, $needle) !== false) {
                 return true;
             }
         }
@@ -411,7 +411,7 @@ class Str
     public static function startsWith($haystack, $needles)
     {
         foreach ((array) $needles as $needle) {
-            if ($needle != '' && mb_strpos($haystack, $needle) === 0) {
+            if ($needle != '' && static::mb_strpos($haystack, $needle) === 0) {
                 return true;
             }
         }
@@ -461,6 +461,35 @@ class Str
     {
         return static::upper(static::substr($string, 0, 1)).static::substr($string, 1);
     }
+
+    /**
+     * An alternative for mb_strpos function to overcome some issues in some servers.
+     *
+     * @param  $haystack string
+     * @param  $needle string
+     * @param  $offset int optional
+     * @param  $encoding string optional
+     * @return string mixed
+     */
+    public static function mb_strpos($haystack, $needle, $offset = 0, $encoding = '')
+    {
+        if (function_exists('mb_strpos')) {
+            return mb_strpos($haystack, $needle);
+        }
+
+        $needle = preg_quote( $needle, '/' );
+
+        $ar = array();
+
+        preg_match( '/' . $needle . '/u', $haystack, $ar, PREG_OFFSET_CAPTURE, $offset );
+
+        if (isset( $ar[0][1])) {
+            return $ar[0][1];
+        } else {
+            return false;
+        }
+    }
+
 
     /**
      * Returns the replacements for the ascii method.
@@ -594,12 +623,5 @@ class Str
             'ZH'   => ['Ж'],
             ' '    => ["\xC2\xA0", "\xE2\x80\x80", "\xE2\x80\x81", "\xE2\x80\x82", "\xE2\x80\x83", "\xE2\x80\x84", "\xE2\x80\x85", "\xE2\x80\x86", "\xE2\x80\x87", "\xE2\x80\x88", "\xE2\x80\x89", "\xE2\x80\x8A", "\xE2\x80\xAF", "\xE2\x81\x9F", "\xE3\x80\x80"],
         ];
-    }
-
-    public static function classBasename($class)
-    {
-        $class = is_object($class) ? get_class($class) : $class;
-
-        return basename(str_replace('\\', '/', $class));
     }
 }

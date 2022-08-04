@@ -22,6 +22,8 @@ class Route
     
     protected $name = '';
 
+    protected $meta = [];
+
     protected $handler = null;
 
     protected $method = null;
@@ -60,6 +62,26 @@ class Route
         $this->name .= $name;
 
         return $this;
+    }
+
+    public function meta($meta)
+    {
+        $this->meta = $meta;
+
+        return $this;
+    }
+
+    public function getMeta($key = '')
+    {
+        if ($key) {
+            if (isset($this->meta[$key])) {
+                return $this->meta[$key];
+            }
+
+            return;
+        }
+        
+        return $this->meta;
     }
 
     public function where($identifier, $value = null)
@@ -136,7 +158,9 @@ class Route
     protected function setOptions()
     {
         $this->options = [
-            'args' => [],
+            'args' => [
+                '__meta__' => $this->meta
+            ],
             'methods' => $this->method,
             'callback' => [$this, 'callback'],
             'permission_callback' => [$this, 'permissionCallback']
@@ -192,7 +216,7 @@ class Route
 
             if (in_array($param, $params)) {
                 throw new InvalidArgumentException(
-                    "Duplicate parameter name \"{$param}\" found in {$uri}."
+                    "Duplicate parameter name '{$param}' found in {$uri}.", 500
                 );
             }
             
@@ -270,7 +294,9 @@ class Route
     protected function setRestRequest($request)
     {
         if (!$this->app->bound('wprestrequest')) {
+            unset($this->options['args']['__meta__']);
             $this->app->instance('wprestrequest', $request);
+            $this->app->instance('route', $this);
         }
     }
 

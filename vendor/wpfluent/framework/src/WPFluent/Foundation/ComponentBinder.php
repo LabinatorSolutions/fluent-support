@@ -2,7 +2,6 @@
 
 namespace FluentSupport\Framework\Foundation;
 
-use FluentSupport\App\Api\Api;
 use FluentSupport\Framework\View\View;
 use FluentSupport\Framework\Http\Router;
 use FluentSupport\Framework\Request\Request;
@@ -28,8 +27,7 @@ class ComponentBinder
         'Events',
         'DataBase',
         'Router',
-        'Paginator',
-        'Api'
+        'Paginator'
     ];
 
     public function __construct($app)
@@ -44,10 +42,14 @@ class ComponentBinder
             $this->{$method}();
         }
 
-        $this->extendBindings($this);
+        $this->extendBindings($this->app);
+
+        $this->loadGlobalFunctions($this->app);
 
         $this->app->resolving(RequestGuard::class, function($request) {
-            $request->validate($this->app->make('validator'));
+            $data = $request->validate($this->app->make('validator'));
+
+            $request->merge($request->sanitize());
         });
     }
 
@@ -105,18 +107,8 @@ class ComponentBinder
         });
 
         Model::setEventDispatcher($this->app['events']);
-
+        
         Model::setConnectionResolver(new ConnectionResolver);
-    }
-
-    protected function bindApi()
-    {
-        $this->app->singleton('FluentSupport\App\Api\Api', function ($app) {
-            return new Api($app);
-        });
-
-        $this->app->alias('FluentSupport\App\Api\Api', 'api');
-
     }
 
     protected function bindRouter()
@@ -131,7 +123,7 @@ class ComponentBinder
         AbstractPaginator::currentPathResolver(function () {
             return $this->app['request']->url();
         });
-
+        
         AbstractPaginator::currentPageResolver(function ($pageName = 'page') {
             $page = $this->app['request']->get($pageName);
 
@@ -145,10 +137,19 @@ class ComponentBinder
 
     protected function extendBindings($app)
     {
-        $bindings = $this->app['path'] . 'boot/bindings.php';
+        $bindings = $app['path'] . 'boot/bindings.php';
 
         if (is_readable($bindings)) {
             require_once $bindings;
+        }
+    }
+
+    protected function loadGlobalFunctions($app)
+    {
+        $globals = $app['path'] . 'boot/globals.php';
+        
+        if (is_readable($globals)) {
+            require_once $globals;
         }
     }
 }

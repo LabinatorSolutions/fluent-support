@@ -3,7 +3,6 @@
 namespace FluentSupport\Framework\Database\Orm;
 
 use Closure;
-use DateTime;
 use Exception;
 use ArrayAccess;
 use LogicException;
@@ -14,6 +13,7 @@ use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Foundation\App;
 use FluentSupport\Framework\Support\UrlRoutable;
+use FluentSupport\Framework\Database\Orm\DateTime;
 use FluentSupport\Framework\Foundation\Dispatcher;
 use FluentSupport\Framework\Support\QueueableEntity;
 use FluentSupport\Framework\Support\JsonableInterface;
@@ -351,7 +351,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 	/**
      * Register a new global scope on the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Scope|\Closure|string  $scope
+     * @param  \FluentSupport\Framework\Database\Eloquent\Scope|\Closure|string  $scope
      * @param  \Closure|null  $implementation
      * @return mixed
      *
@@ -377,7 +377,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 	/**
      * Determine if a model has a global scope.
      *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
+     * @param  \FluentSupport\Framework\Database\Eloquent\Scope|string  $scope
      * @return bool
      */
     public static function hasGlobalScope($scope)
@@ -388,8 +388,8 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get a global scope registered with the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
-     * @return \Illuminate\Database\Eloquent\Scope|\Closure|null
+     * @param  \FluentSupport\Framework\Database\Eloquent\Scope|string  $scope
+     * @return \FluentSupport\Framework\Database\Eloquent\Scope|\Closure|null
      */
     public static function getGlobalScope($scope)
     {
@@ -439,7 +439,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  array  $attributes
      * @return $this
      *
-     * @throws \Illuminate\Database\Eloquent\MassAssignmentException
+     * @throws \FluentSupport\Framework\Database\Eloquent\MassAssignmentException
      */
     public function fill(array $attributes)
     {
@@ -536,7 +536,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      *
      * @param  array  $items
      * @param  string|null  $connection
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \FluentSupport\Framework\Database\Eloquent\Collection
      */
     public static function hydrate(array $items, $connection = null)
     {
@@ -555,7 +555,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $query
      * @param  array  $bindings
      * @param  string|null  $connection
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \FluentSupport\Framework\Database\Eloquent\Collection
      */
     public static function hydrateRaw($query, $bindings = [], $connection = null)
     {
@@ -602,7 +602,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Begin querying the model.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder
      */
     public static function query()
     {
@@ -613,7 +613,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * Begin querying the model on a given connection.
      *
      * @param  string|null  $connection
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder
      */
     public static function on($connection = null)
     {
@@ -630,7 +630,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Begin querying the model on the write connection.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \FluentSupport\Framework\Database\Query\Builder
      */
     public static function onWriteConnection()
     {
@@ -643,7 +643,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * Get all of the models from the database.
      *
      * @param  array|mixed  $columns
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @return \FluentSupport\Framework\Database\Eloquent\Collection|static[]
      */
     public static function all($columns = ['*'])
     {
@@ -698,7 +698,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * Begin querying a model with eager loading.
      *
      * @param  array|string  $relations
-     * @return \Illuminate\Database\Eloquent\Builder|static
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder|static
      */
     public static function with($relations)
     {
@@ -736,7 +736,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $related
      * @param  string  $foreignKey
      * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\HasOne
      */
     public function hasOne($related, $foreignKey = null, $localKey = null)
     {
@@ -757,7 +757,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $type
      * @param  string  $id
      * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\MorphOne
      */
     public function morphOne($related, $name, $type = null, $id = null, $localKey = null)
     {
@@ -779,7 +779,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $foreignKey
      * @param  string  $otherKey
      * @param  string  $relation
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\BelongsTo
      */
     public function belongsTo($related, $foreignKey = null, $otherKey = null, $relation = null)
     {
@@ -817,7 +817,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $name
      * @param  string  $type
      * @param  string  $id
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\MorphTo
      */
     public function morphTo($name = null, $type = null, $id = null)
     {
@@ -872,7 +872,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $related
      * @param  string  $foreignKey
      * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\HasMany
      */
     public function hasMany($related, $foreignKey = null, $localKey = null)
     {
@@ -893,7 +893,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string|null  $firstKey
      * @param  string|null  $secondKey
      * @param  string|null  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\HasManyThrough
      */
     public function hasManyThrough($related, $through, $firstKey = null, $secondKey = null, $localKey = null)
     {
@@ -916,7 +916,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $type
      * @param  string  $id
      * @param  string  $localKey
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\MorphMany
      */
     public function morphMany($related, $name, $type = null, $id = null, $localKey = null)
     {
@@ -942,7 +942,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $foreignKey
      * @param  string  $otherKey
      * @param  string  $relation
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\BelongsToMany
      */
     public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $relation = null)
     {
@@ -986,7 +986,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $foreignKey
      * @param  string  $otherKey
      * @param  bool  $inverse
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\MorphToMany
      */
     public function morphToMany($related, $name, $table = null, $foreignKey = null, $otherKey = null, $inverse = false)
     {
@@ -1022,7 +1022,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  string  $table
      * @param  string  $foreignKey
      * @param  string  $otherKey
-     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\MorphToMany
      */
     public function morphedByMany($related, $name, $table = null, $foreignKey = null, $otherKey = null)
     {
@@ -1535,7 +1535,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Perform a model update operation.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \FluentSupport\Framework\Database\Eloquent\Builder  $query
      * @param  array  $options
      * @return bool
      */
@@ -1576,7 +1576,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Perform a model insert operation.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \FluentSupport\Framework\Database\Eloquent\Builder  $query
      * @param  array  $options
      * @return bool
      */
@@ -1624,7 +1624,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Insert the given attributes and set the ID on the model.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  \FluentSupport\Framework\Database\Eloquent\Builder  $query
      * @param  array  $attributes
      * @return void
      */
@@ -1694,8 +1694,8 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Set the keys for a save update query.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  \FluentSupport\Framework\Database\Eloquent\Builder  $query
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder
      */
     protected function setKeysForSaveQuery(Builder $query)
     {
@@ -1801,11 +1801,11 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get a fresh timestamp for the model.
      *
-     * @return string DateTime as Y-m-d H:i:s format as WordPress Timestamp
+     * @return \FluentSupport\Framework\Database\Orm\DateTime
      */
     public function freshTimestamp()
 	{
-		return current_time('mysql');
+		return new DateTime('now', $this->getTimezone());
 	}
 
     /**
@@ -1815,13 +1815,13 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      */
     public function freshTimestampString()
     {
-        return $this->freshTimestamp();
+        return $this->fromDateTime($this->freshTimestamp());
     }
 
     /**
      * Get a new query builder for the model's table.
      *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder
      */
     public function newQuery()
     {
@@ -1837,8 +1837,8 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get a new query instance without a given scope.
      *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  \FluentSupport\Framework\Database\Eloquent\Scope|string  $scope
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder
      */
     public function newQueryWithoutScope($scope)
     {
@@ -1850,7 +1850,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get a new query builder that doesn't have any global scopes.
      *
-     * @return \Illuminate\Database\Eloquent\Builder|static
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder|static
      */
     public function newQueryWithoutScopes()
     {
@@ -1867,8 +1867,8 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Create a new Eloquent query builder for the model.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
-     * @return \Illuminate\Database\Eloquent\Builder|static
+     * @param  \FluentSupport\Framework\Database\Query\Builder  $query
+     * @return \FluentSupport\Framework\Database\Eloquent\Builder|static
      */
     public function newEloquentBuilder($query)
     {
@@ -1878,7 +1878,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get a new query builder instance for the connection.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return \FluentSupport\Framework\Database\Query\Builder
      */
     protected function newBaseQueryBuilder()
     {
@@ -1893,7 +1893,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * Create a new Eloquent Collection instance.
      *
      * @param  array  $models
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \FluentSupport\Framework\Database\Eloquent\Collection
      */
     public function newCollection(array $models = [])
     {
@@ -1903,11 +1903,11 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Create a new pivot model instance.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
+     * @param  \FluentSupport\Framework\Database\Eloquent\Model  $parent
      * @param  array  $attributes
      * @param  string  $table
      * @param  bool  $exists
-     * @return \Illuminate\Database\Eloquent\Relations\Pivot
+     * @return \FluentSupport\Framework\Database\Eloquent\Relations\Pivot
      */
     public function newPivot(Model $parent, array $attributes, $table, $exists)
     {
@@ -2624,7 +2624,6 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
             $values = array_diff_key($values, array_flip($this->getHidden()));
         }
 
-
         return $values;
     }
 
@@ -2670,9 +2669,9 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
         // If the attribute is listed as a date, we will convert it to a DateTime
         // instance on retrieval, which makes it quite convenient to work with
         // date fields without having to create a mutator for each property.
-//        if (in_array($key, $this->getDates()) && ! is_null($value)) {
-//            return $this->asDateTime($value);
-//        }
+        if (in_array($key, $this->getDates()) && ! is_null($value)) {
+            return $this->asDateTime($value);
+        }
 
         return $value;
     }
@@ -2727,7 +2726,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 
         if (! $relations instanceof Relation) {
             throw new LogicException('Relationship method must return an object of type '
-                .'Illuminate\Database\Eloquent\Relations\Relation');
+                .'FluentSupport\Framework\Database\Eloquent\Relations\Relation');
         }
 
         $this->setRelation($method, $results = $relations->getResults());
@@ -2901,9 +2900,9 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
         // If an attribute is listed as a "date", we'll convert it from a DateTime
         // instance into a form proper for storage on the database tables using
         // the connection grammar's date format. We will auto set the values.
-//        elseif ($value && (in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
-//           $value = $this->fromDateTime($value);
-//        }
+        elseif ($value && (in_array($key, $this->getDates()) || $this->isDateCastable($key))) {
+            $value = $this->fromDateTime($value);
+        }
 
         if ($this->isJsonCastable($key) && ! is_null($value)) {
             $value = $this->asJson($value);
@@ -2969,7 +2968,9 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
          // these checks since they will be a waste of time, and hinder performance
          // when checking the field. We will just return the DateTime right away.
         if ($value instanceof DateTimeInterface) {
-            $value->format('Y-m-d H:i:s.u');
+            return new DateTime(
+                $value->format('Y-m-d H:i:s.u'), $value->getTimeZone()
+            );
         }
 
         // If this value is an integer, we will assume it is a UNIX timestamp's value
@@ -3019,16 +3020,6 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     }
 
     /**
-     * Get the format for database stored dates.
-     *
-     * @return string
-     */
-    protected function getDateFormat()
-    {
-        return $this->dateFormat ?: $this->getConnection()->getQueryGrammar()->getDateFormat();
-    }
-
-    /**
      * Set the date format used by the model.
      *
      * @param  string  $format
@@ -3068,7 +3059,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * Clone the model into a new, non-existing instance.
      *
      * @param  array|null  $except
-     * @return \Illuminate\Database\Eloquent\Model
+     * @return \FluentSupport\Framework\Database\Eloquent\Model
      */
     public function replicate(array $except = null)
     {
@@ -3279,7 +3270,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get the database connection for the model.
      *
-     * @return \Illuminate\Database\Connection
+     * @return \FluentSupport\Framework\Database\Connection
      */
     public function getConnection()
     {
@@ -3313,7 +3304,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * Resolve a connection instance.
      *
      * @param  string|null  $connection
-     * @return \Illuminate\Database\Connection
+     * @return \FluentSupport\Framework\Database\Connection
      */
     public static function resolveConnection($connection = null)
     {
@@ -3323,7 +3314,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get the connection resolver instance.
      *
-     * @return \Illuminate\Database\ConnectionResolverInterface
+     * @return \FluentSupport\Framework\Database\ConnectionResolverInterface
      */
     public static function getConnectionResolver()
     {
@@ -3333,7 +3324,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Set the connection resolver instance.
      *
-     * @param  \Illuminate\Database\ConnectionResolverInterface  $resolver
+     * @param  \FluentSupport\Framework\Database\ConnectionResolverInterface  $resolver
      * @return void
      */
     public static function setConnectionResolver(Resolver $resolver)
@@ -3354,7 +3345,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Get the event dispatcher instance.
      *
-     * @return \Illuminate\Contracts\Events\Dispatcher
+     * @return \FluentSupport\Framework\Contracts\Events\Dispatcher
      */
     public static function getEventDispatcher()
     {
@@ -3364,7 +3355,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     /**
      * Set the event dispatcher instance.
      *
-     * @param  \Illuminate\Contracts\Events\Dispatcher  $dispatcher
+     * @param  \FluentSupport\Framework\Foundation\Dispatcher  $dispatcher
      * @return void
      */
     public static function setEventDispatcher(Dispatcher $dispatcher)

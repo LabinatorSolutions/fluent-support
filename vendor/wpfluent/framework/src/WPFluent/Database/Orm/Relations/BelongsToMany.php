@@ -7,10 +7,13 @@ use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Database\Orm\Model;
 use FluentSupport\Framework\Database\Orm\Builder;
 use FluentSupport\Framework\Database\Orm\Collection;
+use FluentSupport\Framework\Database\Orm\ModelHelperTrait;
 use FluentSupport\Framework\Database\Orm\ModelNotFoundException;
 
 class BelongsToMany extends Relation
 {
+    use ModelHelperTrait;
+
     /**
      * The intermediate table for the relation.
      *
@@ -1142,7 +1145,11 @@ class BelongsToMany extends Relation
      */
     protected function guessInverseRelation()
     {
-        return Str::camel(Str::plural(Str::classBasename($this->getParent())));
+        return Str::camel(
+            Str::plural(
+                static::classBasename($this->getParent())
+            )
+        );
     }
 
     /**

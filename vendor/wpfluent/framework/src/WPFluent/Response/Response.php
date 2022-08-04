@@ -13,25 +13,21 @@ class Response
 
     public function json($data = null, $code = 200)
     {
-        nocache_headers();
-        wp_send_json($data, $code);
+        return wp_send_json($data, $code);
     }
 
     public function send($data = null, $code = 200)
     {
-        nocache_headers();
         return new \WP_REST_Response($data, $code);
     }
 
     public function sendSuccess($data = null, $code = 200)
     {
-        nocache_headers();
-        return new \WP_REST_Response($data, $code);
+         return new \WP_REST_Response($data, $code);
     }
 
     public function sendError($data = null, $code = 423)
     {
-        nocache_headers();
-        return new \WP_REST_Response($data, $code);
+         return new \WP_REST_Response($data, $code);
     }
 }
