@@ -8,3 +8,4 @@ package-lock.json
 assets
 svn.php
 svn
+.phpunit.result.cache

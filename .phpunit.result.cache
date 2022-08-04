@@ -1,1 +1,1 @@
-{"version":1,"defects":{"TicketTest::test_create_ticket":3},"times":{"SampleTest::test_sample":0.001,"TicketTest::test_create_ticket":0.013}}
+{"version":1,"defects":{"TicketTest::test_create_ticket":3},"times":{"SampleTest::test_sample":0.002,"TicketTest::test_create_ticket":1.78}}
