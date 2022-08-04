@@ -1,33 +1,36 @@
-<?php return array (
-  'root' => 
-  array (
-    'pretty_version' => '1.0.0+no-version-set',
-    'version' => '1.0.0.0',
-    'aliases' => 
-    array (
+<?php return array(
+    'root' => array(
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'type' => 'project',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(
+            0 => '1.0.x-dev',
+        ),
+        'reference' => 'bad4abf2262e0abe2c34afaa776420c576bfba17',
+        'name' => 'wpfluent/wpfluent',
+        'dev' => true,
     ),
-    'reference' => NULL,
-    'name' => 'wpfluent/wpfluent',
-  ),
-  'versions' => 
-  array (
-    'wpfluent/framework' => 
-    array (
-      'pretty_version' => '1.0.0',
-      'version' => '1.0.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => '1cef1ed086b92fde5e6bb9021b63b084e5397ce8',
+    'versions' => array(
+        'wpfluent/framework' => array(
+            'pretty_version' => '1.0.17',
+            'version' => '1.0.17.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../wpfluent/framework',
+            'aliases' => array(),
+            'reference' => '7eb66c6367b83aa671c1110938be1e29a9a38f05',
+            'dev_requirement' => false,
+        ),
+        'wpfluent/wpfluent' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'type' => 'project',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(
+                0 => '1.0.x-dev',
+            ),
+            'reference' => 'bad4abf2262e0abe2c34afaa776420c576bfba17',
+            'dev_requirement' => false,
+        ),
     ),
-    'wpfluent/wpfluent' => 
-    array (
-      'pretty_version' => '1.0.0+no-version-set',
-      'version' => '1.0.0.0',
-      'aliases' => 
-      array (
-      ),
-      'reference' => NULL,
-    ),
-  ),
 );

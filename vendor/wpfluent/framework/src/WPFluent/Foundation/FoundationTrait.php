@@ -2,8 +2,6 @@
 
 namespace FluentSupport\Framework\Foundation;
 
-use FluentSupport\Framework\Foundation\ForbiddenException;
-
 trait FoundationTrait
 {
     public function env()
@@ -18,22 +16,22 @@ trait FoundationTrait
 
     public function parseRestHandler($handler)
     {
-        if (!$handler) return;
-
-        if ($this->hasNamespace($handler)) {
+        if ($handler instanceof \Closure) {
             return $handler;
         }
 
-        if (is_string($handler)) {
-            $handler = $this->controllerNamespace . '\\' . $handler;
-        } else if (is_array($handler)) {
-            list($class, $method) = $handler;
-            if (is_string($class)) {
-                $handler = $this->controllerNamespace . '\\' . $class . '::' . $method;
+        if (is_array($handler)) {
+
+            if (is_object($handler[0])) {
+                return $handler;
+            }
+
+            if (is_string($handler[0])) {
+                $handler = $handler[0] . '@' . $handler[1];
             }
         }
 
-        return $handler;
+        return $this->getControllerNamespace($handler) . '\\' . $handler;
     }
 
     public function parsePolicyHandler($handler)
@@ -41,11 +39,7 @@ trait FoundationTrait
         if (!$handler) return;
 
         if (is_string($handler)) {
-            if ($this->hasNamespace($handler)) {
-                $handler = $handler;
-            } else {
-                $handler = $this->policyNamespace . '\\' . $handler;
-            }
+            $handler = $this->policyNamespace . '\\' . $handler;
 
             if ($this->isCallableWithAtSign($handler)) {
                 list($class, $method) = explode('@', $handler);
@@ -63,11 +57,7 @@ trait FoundationTrait
             list($class, $method) = $handler;
 
             if (is_string($class)) {
-                if ($this->hasNamespace($handler)) {
-                    $handler = $class . '::' . $method;
-                } else {
-                    $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
-                }
+                $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
             }
         }
 
@@ -142,27 +132,32 @@ trait FoundationTrait
         return call_user_func_array('apply_filters', $args);
     }
 
+    public function addShortcode($action, $handler)
+    {
+        return add_shortcode(
+            $action,
+            $this->parseHookHandler($handler)
+        );
+    }
+
+    public function doShortcode($content, $ignore_html = false)
+    {
+        return do_shortcode($content, $ignore_html);
+    }
+
     public function parseHookHandler($handler)
     {
         if (is_string($handler)) {
             list($class, $method) = preg_split('/::|@/', $handler);
 
-            if ($this->hasNamespace($handler)) {
-                $class = $this->make($class);
-            } else {
-                $class = $this->make($this->handlerNamespace . '\\' . $class);
-            }
+            $class = $this->make($this->handlerNamespace . '\\' . $class);
 
             return [$class, $method];
 
         } else if (is_array($handler)) {
             list($class, $method) = $handler;
             if (is_string($class)) {
-                if ($this->hasNamespace($handler)) {
-                    $class = $this->make($class);
-                } else {
-                    $class = $this->make($this->handlerNamespace . '\\' . $class);
-                }
+                $class = $this->make($this->handlerNamespace . '\\' . $class);
             }
             return [$class, $method];
         }
@@ -177,11 +172,16 @@ trait FoundationTrait
         };
         
         $parts = explode('\\', $handler);
+        
         return count($parts) > 1;
     }
 
-    public function user()
+    public function getControllerNamespace($handler)
     {
-        // dd(get_userdata(get_current_user_id()));
+        if ($this->hasNamespace($handler)) {
+            return '';
+        }
+
+        return $this->controllerNamespace;
     }
 }

@@ -4,6 +4,7 @@ namespace FluentSupport\Framework\Request;
 
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Foundation\Application;
+use FluentSupport\Framework\Validator\ValidationException;
 
 class Request
 {
@@ -255,6 +256,25 @@ class Request
     }
 
     /**
+     * Validate the request.
+     *
+     * @param  string $key
+     * @return mixed
+     */
+    public function validate(array $rules, array $messages = [])
+    {
+        $instance = $this->app->make('validator');
+
+        $validator = $instance->make($this->all(), $rules, $messages);
+
+        if ($validator->validate()->fails()) {
+            throw new ValidationException(
+                'Unprocessable Entity!', 422, null, $validator->errors()
+            );
+        }
+    }
+
+    /**
      * Get an input element from the request.
      *
      * @param  string $key
@@ -275,6 +295,10 @@ class Request
     {
         if ($this->app->bound('wprestrequest')) {
 
+            if ($method == 'route') {
+                return $this->app->route;
+            }
+            
             if (!method_exists($this->app->wprestrequest, $method)) {
                 $method = strtolower(
                     preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1_$2', $method)

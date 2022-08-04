@@ -12,6 +12,9 @@ trait MessageBag
      * @var array
      */
     protected $bag = [
+        'alpha'       => 'The :attribute must contain only alphabetic characters.',
+        'alphanum'       => 'The :attribute must contain only alphanumeric characters.',
+        'alphadash'       => 'The :attribute must contain only alphanumeric and _- characters.',
         'email'       => 'The :attribute must be a valid email address.',
         'max'         => [
             'numeric' => 'The :attribute may not be greater than :max.',
@@ -38,7 +41,8 @@ trait MessageBag
             'array'   => 'The :attribute must contain :size items.',
         ],
         'url'         => 'The :attribute format is invalid.',
-        'unique'         => 'The :attribute attribute is already taken and must be unique.',
+        'unique'      => 'The :attribute attribute is already taken and must be unique.',
+        'digits'      => 'The :attribute must be :digits characters.'
     ];
 
     /**
@@ -90,6 +94,51 @@ trait MessageBag
         $type = $this->deduceType($this->getValue($attribute));
 
         return $rule.'.'.$type;
+    }
+
+    /**
+     * Replace all place-holders for the alpha rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceAlpha($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.alpha', 'alpha');
+
+        return str_replace(':attribute', $attribute, $text);
+    }
+
+    /**
+     * Replace all place-holders for the alphanum rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceAlphanum($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.alphanum', 'alphanum');
+
+        return str_replace(':attribute', $attribute, $text);
+    }
+
+    /**
+     * Replace all place-holders for the alphadash rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceAlphadash($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.alphadash', 'alphadash');
+
+        return str_replace(':attribute', $attribute, $text);
     }
 
     /**
@@ -270,5 +319,20 @@ trait MessageBag
         $text = $this->getReplacementText($attribute.'.unique', 'unique');
 
         return str_replace(':attribute', $attribute, $text);
+    }
+
+    /**
+     * Replace all place-holders for the digits rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceDigits($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.digits', 'digits');
+
+        return str_replace([':attribute', ':digits'], [$attribute, $parameters[0]], $text);
     }
 }

@@ -7,17 +7,17 @@ use FluentSupport\Framework\Support\Arr;
 class Router
 {
     protected $app = null;
-
+    
     protected $name = [];
-
+    
     protected $prefix = [];
 
     protected $routes = [];
 
     protected $routeGroups = [];
-
+    
     protected $groupStack = [];
-
+    
     protected $policyHandler = null;
 
     public function __construct($app)
@@ -57,8 +57,6 @@ class Router
         call_user_func($callback, $this);
         array_pop($this->prefix);
         array_pop($this->name);
-
-        return $this;
     }
 
     public function withPolicy($handler)
@@ -71,7 +69,7 @@ class Router
     public function get($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
-            $uri, $handler, \WP_REST_Server::READABLE
+            $uri, $handler, 'GET'
         );
 
         return $route;
@@ -80,7 +78,7 @@ class Router
     public function post($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
-            $uri, $handler, \WP_REST_Server::CREATABLE
+            $uri, $handler, 'POST'
         );
 
         return $route;
@@ -89,7 +87,7 @@ class Router
     public function put($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
-            $uri, $handler, \WP_REST_Server::EDITABLE
+            $uri, $handler, 'PUT'
         );
 
         return $route;
@@ -98,7 +96,7 @@ class Router
     public function patch($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
-            $uri, $handler, \WP_REST_Server::EDITABLE
+            $uri, $handler, 'PATCH'
         );
 
         return $route;
@@ -107,7 +105,7 @@ class Router
     public function delete($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
-            $uri, $handler, \WP_REST_Server::DELETABLE
+            $uri, $handler, 'DELETE'
         );
 
         return $route;

@@ -33,7 +33,7 @@ class ValidationData
             return $data;
         }
 
-        return static::data_set($data, $attribute, null, true);
+        return static::dataSet($data, $attribute, null, true);
     }
 
     /**
@@ -117,7 +117,7 @@ class ValidationData
      *
      * @return mixed
      */
-    function data_set(&$target, $key, $value, $overwrite = true)
+    public static function dataSet(&$target, $key, $value, $overwrite = true)
     {
         $segments = is_array($key) ? $key : explode('.', $key);
 
@@ -128,7 +128,7 @@ class ValidationData
 
             if ($segments) {
                 foreach ($target as &$inner) {
-                    static::data_set($inner, $segments, $value, $overwrite);
+                    static::dataSet($inner, $segments, $value, $overwrite);
                 }
             } elseif ($overwrite) {
                 foreach ($target as &$inner) {
@@ -141,7 +141,7 @@ class ValidationData
                     $target[$segment] = [];
                 }
 
-                static::data_set($target[$segment], $segments, $value, $overwrite);
+                static::dataSet($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite || ! Arr::exists($target, $segment)) {
                 $target[$segment] = $value;
             }
@@ -151,7 +151,7 @@ class ValidationData
                     $target->{$segment} = [];
                 }
 
-                static::data_set($target->{$segment}, $segments, $value, $overwrite);
+                static::dataSet($target->{$segment}, $segments, $value, $overwrite);
             } elseif ($overwrite || ! isset($target->{$segment})) {
                 $target->{$segment} = $value;
             }
@@ -159,7 +159,7 @@ class ValidationData
             $target = [];
 
             if ($segments) {
-                static::data_set($target[$segment], $segments, $value, $overwrite);
+                static::dataSet($target[$segment], $segments, $value, $overwrite);
             } elseif ($overwrite) {
                 $target[$segment] = $value;
             }
