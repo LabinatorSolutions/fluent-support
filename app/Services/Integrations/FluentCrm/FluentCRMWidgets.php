@@ -1,19 +1,21 @@
 <?php
 
-namespace FluentSupport\App\Services\Integrations;
+namespace FluentSupport\App\Services\Integrations\FluentCrm;
 
 use FluentCrm\App\Models\Subscriber;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
 
-class FluentCRM
+class FluentCRMWidgets
 {
     public function boot()
     {
         add_action('fluent_support/customer_created', array($this, 'maybeCreateContact'), 10, 1);
         add_filter('fluentcrm-support_tickets_providers', array($this, 'pushProvider'));
         add_filter('fluentcrm-get_support_tickets_fluent_support', array($this, 'getSupportTickets'), 10, 2);
+
+        new CreateTicketAction();
     }
 
     public function pushProvider($providers)
