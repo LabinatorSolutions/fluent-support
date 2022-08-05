@@ -36,7 +36,9 @@ class FluentCRMWidgets
             return $data;
         }
 
-        $tickets = Ticket::where('customer_id', $supportPerson->id)->paginate();
+        $tickets = Ticket::where('customer_id', $supportPerson->id)
+            ->orderBy('id', 'DESC')
+            ->paginate();
 
         $formattedTickets = [];
         foreach ($tickets as $ticket) {
@@ -52,7 +54,7 @@ class FluentCRMWidgets
         }
 
         return [
-            'total' => $tickets->total,
+            'total' => $tickets->total(),
             'data'  => $formattedTickets
         ];
     }
