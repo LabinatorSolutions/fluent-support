@@ -448,3 +448,19 @@ p.fs_customer_address {
 .el-dialog__body .el-form-item__label {
     font-weight: bold;
 }
+
+
+.fs_thread_body {
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        text-indent: 0;
+        tr, th {
+            border: 1px solid gray;
+        }
+        td, th {
+            padding: .5rem;
+            text-align: left;
+        }
+    }
+}
