@@ -100,7 +100,7 @@ class CreateTicketAction extends BaseAction
                 ],
                 'priority' => [
                     'options' => $formattedPriorities,
-                    'label' => 'Priory (Admin)',
+                    'label' => 'Priority (Admin)',
                     'placeholder' => 'Select Priority',
                     'type' => 'select'
                 ]
