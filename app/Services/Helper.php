@@ -448,18 +448,33 @@ class Helper
     }
 
     public static function getCurrentAgent()
-    {
-        return Agent::where('user_id', get_current_user_id())->first();
+    {   
+        // If user is logged in then return the agent by user id.
+        // This `get_current_user_id` function is WP function and 
+        // it returns user id if user is logged in.
+        if ( get_current_user_id() ){ 
+            return Agent::where('user_id', get_current_user_id())->first();
+        }
     }
 
     public static function getCurrentCustomer()
     {
-        return Customer::where('user_id', get_current_user_id())->first();
+        // If user is logged in then return the customer by user id.
+        // This `get_current_user_id` function is WP function and 
+        // it returns user id if user is logged in.
+        if ( get_current_user_id() ){ //if user is logged in
+            return Customer::where('user_id', get_current_user_id())->first();
+        }
     }
 
     public static function getCurrentPerson()
     {
-        return Person::where('user_id', get_current_user_id())->first();
+        // If user is logged in then return the person(agent/customer) by user id.
+        // This `get_current_user_id` function is WP function and 
+        // it returns user id if user is logged in.
+        if ( get_current_user_id() ){
+            return Person::where('user_id', get_current_user_id())->first();
+        }
     }
 
     public static function getCustomerByID($customerid)
