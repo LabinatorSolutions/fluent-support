@@ -13,14 +13,36 @@ class CustomerPortalHandler
 {
     public function renderPortal()
     {
-        $invalidPermissionMessage = __('You don\'t have permission to access customer support portal', 'fluent-support');
-
+        /**
+         * This hook filter customer portal customer portal access permission error message.
+         * If a customer has no access to the portal, then the message will be displayed.
+         * @since 1.6.0
+         * @param string $invalidPermissionMessage
+         * @return string
+         */
+        $invalidPermissionMessage = apply_filters(
+            'fluent_support/customer_portal_invalid_permission_message',
+         esc_html__('You don\'t have permission to access customer support portal', 'fluent-support')
+        );
+        
         $person = Helper::getCurrentPerson();
         if ($person && $person->status === 'inactive') {
             return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . $invalidPermissionMessage . '</h3></div>';
         } else if (PermissionManager::currentUserPermissions()) {
             $adminPortalUrl = Helper::getPortalAdminBaseUrl();
-            return '<div style="text-align: center;"><h3>' . __('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support') . '</h3><a href="' . $adminPortalUrl . '">' . __('Go to Support Admin Page', 'fluent-support') . '</a></div>';
+
+            /**
+             * This hook filter is responsible for generating error message
+             * when a support staff try to access customer portal
+             * @since 1.6.0
+             * @param string $agentPermissionErrMessage
+             * @return string
+             */
+            $agentPermissionErrMessage = apply_filters(
+                'fluent_support/customer_portal_agent_permission_error_message',
+                esc_html__('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support')
+            );
+            return '<div style="text-align: center;"><h3>' . $agentPermissionErrMessage . '</h3><a href="' . $adminPortalUrl . '">' . esc_html__('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
 
             /*
