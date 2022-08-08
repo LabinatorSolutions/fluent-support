@@ -229,7 +229,7 @@ trait CustomerTrait
 
             $data['tickets'] = Ticket::select(['id', 'title', 'status', 'customer_id', 'created_at'])
                 ->where('customer_id', $customer->id)
-                ->orderBy('id', 'DESC')
+                ->latest('id')
                 ->limit($limit)
                 ->get();
         }
