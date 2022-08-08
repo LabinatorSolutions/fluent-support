@@ -956,7 +956,7 @@ class Ticket extends Model
             'product',
             'tags',
             'preview_response' => function ($query) {
-                $query->orderBy('id', 'desc');
+                $query->latest('id');
             }
         ]);
 

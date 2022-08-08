@@ -31,7 +31,7 @@ class Helper
      * Get agent information by user id
      * The function will get user id as parameter or get id from session and return agent information
      * @param null $userId
-     * @return false
+     * @return false | Agent
      */
     public static function getAgentByUserId($userId = null)
     {
