@@ -37,7 +37,7 @@ class FluentCRMWidgets
         }
 
         $tickets = Ticket::where('customer_id', $supportPerson->id)
-            ->orderBy('id', 'DESC')
+            ->latest('id')
             ->paginate();
 
         $formattedTickets = [];

@@ -318,7 +318,7 @@ class CustomerPortalService
             }
         ])
             ->where('customer_id', $customer->id)
-            ->orderBy('id', 'DESC');
+            ->latest('id');
 
         $ticketsQuery->where('customer_id', $customer->id);
 
@@ -456,7 +456,7 @@ class CustomerPortalService
                 'attachments'
             ])
             ->filterByType(['response', 'ticket_merge_activity', 'ticket_split_activity'])
-            ->orderBy('id', 'DESC')
+            ->latest('id')
             ->get();
 
         foreach ($responses as $response) {

@@ -424,7 +424,7 @@ class Helper
             ->select(['ID', 'post_title'])
             ->where('post_type', 'page')
             ->where('post_status', 'publish')
-            ->orderBy('ID', 'DESC')
+            ->latest('ID')
             ->get();
         $formattedPages = [];
         foreach ($pages as $page) {
@@ -444,7 +444,7 @@ class Helper
             return $mailbox;
         }
 
-        return MailBox::orderBy('id', 'ASC')->first();
+        return MailBox::oldest('id')->first();
     }
 
     public static function getCurrentAgent()
@@ -499,8 +499,8 @@ class Helper
         $canAddTags = apply_filters('fluent_support/can_user_add_tags_to_customer', $canAddTags);
         $crmTags = [];
         if ($canAddTags) {
-            $crmTags = \FluentCrm\App\Models\Tag::select(['id', 'title'])->orderBy('title', 'ASC')->get();
-            $crmLists = \FluentCrm\App\Models\Lists::select(['id', 'title'])->orderBy('title', 'ASC')->get();
+            $crmTags = \FluentCrm\App\Models\Tag::select(['id', 'title'])->oldest('title')->get();
+            $crmLists = \FluentCrm\App\Models\Lists::select(['id', 'title'])->oldest('title')->get();
         }
 
         $crmConfigs = [

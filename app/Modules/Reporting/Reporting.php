@@ -40,7 +40,7 @@ class Reporting
             ->select($this->prepareSelect($frequency))
             ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
             ->groupBy($groupBy)
-            ->orderBy($orderBy, 'ASC');
+            ->oldest($orderBy);
 
         //If filter by product or agent or status selected
         if ($filters) {
@@ -85,7 +85,7 @@ class Reporting
             ->whereBetween('resolved_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
             ->where('status', 'closed')
             ->groupBy($groupBy)
-            ->orderBy($orderBy, 'ASC');
+            ->oldest($orderBy);
 
         //If filter by product or agent is selected
         if ($filters) {
@@ -125,7 +125,7 @@ class Reporting
             ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
             ->where('conversation_type', 'response')
             ->groupBy($groupBy)
-            ->orderBy($orderBy, 'ASC');
+            ->oldest($orderBy);
 
         if ($filters) {
             if (!empty($filters['person_id'])) {

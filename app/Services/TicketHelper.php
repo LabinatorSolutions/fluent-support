@@ -117,7 +117,7 @@ class TicketHelper
             ->applyFilters([
                 'waiting_for_reply' => 'yes'
             ])
-            ->orderBy('last_customer_response', 'ASC')
+            ->oldest('last_customer_response')
             ->limit($limit)
             ->with('customer')
             ->get();
@@ -126,7 +126,7 @@ class TicketHelper
         if($tickets->isEmpty() && PermissionManager::currentUserCan('fst_manage_unassigned_tickets')) {
             //Get the ticket list which status is not closed and agent id is null or 0
             $tickets = Ticket::where('status', '!=', 'closed')
-                ->orderBy('id', 'ASC')
+                ->oldest('id')
                 ->where(function ($q) {
                     $q->whereNull('agent_id');
                     $q->orWhere('agent_id', '0');
@@ -146,7 +146,7 @@ class TicketHelper
     {
         $mentioned  = TagPivot::where('source_type', 'ticket_watcher')
             ->where('tag_id', $agentId)
-            ->orderBy('id', 'DESC')
+            ->latest('id')
             ->get(['source_id']);
 
         $ticketIds = array_column($mentioned->toArray(), 'source_id');

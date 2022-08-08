@@ -573,7 +573,7 @@ class Ticket extends Model
         return $this->hasMany(
             $class, 'ticket_id', 'id'
         )->with('person', 'attachments')
-        ->orderBy('id', 'DESC');
+        ->latest('id');
     }
 
     public function preview_response()
@@ -823,7 +823,7 @@ class Ticket extends Model
         return \FluentSupport\App\App::db()->table('fs_conversations')
             ->where('ticket_id', $this->id)
             ->where('conversation_type', 'response')
-            ->orderBy('id', 'DESC')
+            ->latest('id')
             ->first();
     }
 
@@ -1270,7 +1270,7 @@ class Ticket extends Model
         $otherTickets = static::where('id', '!=', $ticketId)
             ->select(['id', 'title', 'status', 'created_at'])
             ->where('customer_id', $ticket->customer_id)
-            ->orderBy('id', 'DESC')
+            ->latest('id')
             ->limit($limit)
             ->get();
 

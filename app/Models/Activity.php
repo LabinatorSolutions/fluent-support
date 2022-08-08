@@ -27,7 +27,7 @@ class Activity extends Model
             'person' => function ($query) {
                 $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
             }
-        ])->orderBy('id', 'DESC')->paginate();
+        ])->latest('id')->paginate();
 
         if (!$activities) {
             throw new Exception('No activities found');
