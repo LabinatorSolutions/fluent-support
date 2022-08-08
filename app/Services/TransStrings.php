@@ -84,7 +84,6 @@ class TransStrings
             'Inbox Name'    => __('Inbox Name', 'fluent-support'),
             'Support Channel'    => __('Support Channel', 'fluent-support'),
             'Web Based'    => __('Web Based', 'fluent-support'),
-            'email'    => __('email', 'fluent-support'),
             'Email Based (MailBox)'    => __('Email Based (MailBox)', 'fluent-support'),
             'Mapped Email'    => __('Mapped Email', 'fluent-support'),
             'mapped_webhook_email'    => __('Please forward your emails from "Support Inbox Email" so it can auto-sync the tickets', 'fluent-support'),
