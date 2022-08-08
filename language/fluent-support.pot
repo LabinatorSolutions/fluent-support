@@ -871,10 +871,6 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:87
-msgid "email"
-msgstr ""
-
 #: app/Hooks/Handlers/AuthHandler.php:210
 msgid "Email Address"
 msgstr ""
