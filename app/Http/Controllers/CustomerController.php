@@ -25,7 +25,7 @@ class CustomerController extends Controller
     public function index(Request $request, Customer $customer)
     {
         return [
-            'customers' => $customer->getCustomers($request->get('search'), $request->get('status')),
+            'customers' => $customer->getCustomers($request->getSafe('search'), $request->getSafe('status')),
         ];
     }
 
@@ -40,7 +40,7 @@ class CustomerController extends Controller
      */
     public function getCustomer(Request $request, Customer $customer, $customerId)
     {
-        return $customer->getCustomer($customerId, $request->get('with', []));
+        return $customer->getCustomer($customerId, $request->getSafe('with'));
     }
 
     /**
@@ -52,13 +52,13 @@ class CustomerController extends Controller
      */
     public function create(Request $request, Customer $customer)
     {
-        $this->validate($request->all(), [
+        $this->validate($request->getSafe(), [
             'email' => 'required|email|unique:fs_persons'
         ]);
 
         return [
             'message'  => __('Customer has been added', 'fluent-support'),
-            'customer' => $customer->createCustomer($request->all())
+            'customer' => $customer->createCustomer($request->getSafe())
         ];
     }
 
@@ -72,7 +72,7 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer, $customerId)
     {
-        $data = $this->validate($request->all(), [
+        $data = $this->validate($request->getSafe(), [
             'email'      => 'required|email',
             'first_name' => 'required'
         ]);
@@ -115,7 +115,7 @@ class CustomerController extends Controller
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
         try {
-           return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->get('customer_id'), 'customer' );
+           return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('customer_id', 'int'), 'customer' );
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')
