@@ -73,6 +73,47 @@ class Request
         return Arr::get($this->inputs(), $key, $default);
     }
 
+    public function getSafe($key = null, $sanitizeFunc = 'text', $default = null)
+    {
+        $value = $this->get($key);
+        if(!$value) {
+            return $default;
+        }
+
+        return $this->sanitize($value, $sanitizeFunc);
+    }
+
+
+    public function sanitize($value, $callback)
+    {
+        $sanitizeMaps = [
+            'text' => 'sanitize_text_field',
+            'textarea' => 'sanitize_textarea_field',
+            'html' => 'wp_kses_post',
+            'url' => 'sanitize_url',
+            'email' => 'sanitize_email',
+            'int' => 'intval',
+            'key' => 'sanitize_key'
+        ];
+
+        if(is_array($value)) {
+            foreach ($value as $valueKey => $valueItem) {
+                $value[$valueKey] = $this->sanitize($valueItem, $callback);
+            }
+            return $value;
+        }
+
+        if(isset($sanitizeMaps[$callback])) {
+            return $sanitizeMaps[$callback]($value);
+        }
+
+        if(function_exists($callback)) {
+            return $callback($value);
+        }
+
+        return false;
+    }
+
     /**
      * Get the files from the request.
      *
@@ -298,7 +339,7 @@ class Request
             if ($method == 'route') {
                 return $this->app->route;
             }
-            
+
             if (!method_exists($this->app->wprestrequest, $method)) {
                 $method = strtolower(
                     preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1_$2', $method)

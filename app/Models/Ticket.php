@@ -921,8 +921,8 @@ class Ticket extends Model
         $queryArgs = [
             'with' => [],
             'filter_type' => $filterType,
-            'sort_by' => $request->get('order_by', 'id'),
-            'sort_type' => $request->get('order_type', 'DESC'),
+            'sort_by' => sanitize_sql_orderby($request->getSafe('order_by', 'text', 'id')),
+            'sort_type' => sanitize_sql_orderby($request->getSafe('order_type', 'text', 'DESC')),
         ];
 
         if( $filterType == 'advanced' ){
@@ -931,8 +931,8 @@ class Ticket extends Model
         } else {
             //Selected filter type is simple
             $queryArgs['simple_filters'] = $request->get('filters', []);
-            $queryArgs['search'] = trim( sanitize_text_field( $request->get('search', '') ) );
-            if ( $customerId = $request->get( 'customer_id' ) ) {
+            $queryArgs['search'] = trim( sanitize_text_field( $request->getSafe('search', 'text', '') ) );
+            if ( $customerId = $request->getSafe( 'customer_id', 'int' ) ) {
                 $queryArgs['customer_id'] = intval( $customerId );
             }
         }
