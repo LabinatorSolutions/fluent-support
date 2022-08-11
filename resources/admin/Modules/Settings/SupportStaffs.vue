@@ -21,7 +21,7 @@
         <div v-if="!loading" class="fs_box_body">
             <el-table stripe :data="agents">
                 <el-table-column :label="$t('ID')" prop="id" width="90"/>
-                <el-table-column :label="$t('Avatar')" width="90">
+                <el-table-column :label="$t('Avatar')" width="150">
                     <template #default="scope">
                         <div class="fs_as_profile_picture" @mouseover="showIcon(scope.row.id)" @mouseout="hideIcon(scope.row.id)">
                             <div class="fs_agent_avatar">
@@ -69,12 +69,12 @@
                         <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('Title')" width="140">
+                <el-table-column :label="$t('Title')">
                     <template #default="scope">
                         <span  style="font-size: 14px; color: #56c288;">{{scope.row.title}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('Permissions')" width="140">
+                <el-table-column :label="$t('Permissions')" width="160">
                     <template #default="scope">
                         <el-tooltip placement="top">
                             <template #content>
@@ -87,7 +87,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('Replies')" prop="replies_count" width="120"/>
                 <el-table-column :label="$t('Interactions')" prop="interactions_count" width="120"/>
-                <el-table-column :label="$t('Actions')" width="100">
+                <el-table-column :label="$t('Actions')">
                     <template #default="scope">
                         <el-button @click="initEdit(scope.row)" type="text" icon="EditPen" />
                         <el-button @click="deleteAgent(scope.row.id)" type="text" icon="Delete" style="color:red;"/>
