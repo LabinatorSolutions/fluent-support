@@ -96,14 +96,13 @@ class Request
             'key' => 'sanitize_key'
         ];
 
-        if(is_array($value)) {
+        if( $value && is_array($value) ) {
             foreach ($value as $valueKey => $valueItem) {
                 $value[$valueKey] = $this->sanitize($valueItem, $callback);
             }
             return $value;
         }
-
-        if(isset($sanitizeMaps[$callback])) {
+        if( $sanitizeMaps[$callback] || isset($sanitizeMaps[$callback]) ) {
             return $sanitizeMaps[$callback]($value);
         }
 
