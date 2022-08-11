@@ -14,7 +14,7 @@ class IntegrationController extends Controller
      */
     public function getSettings(Request $request)
     {
-        $settingsKey = $request->get('integration_key');
+        $settingsKey = $request->getSafe('integration_key');
 
         return IntegrationSettingsModule::getSettings($settingsKey, true);
     }
@@ -26,8 +26,8 @@ class IntegrationController extends Controller
      */
     public function saveSettings(Request $request)
     {
-        $settingsKey = $request->get('integration_key');
-        $settings = wp_unslash($request->get('settings'));
+        $settingsKey = $request->getSafe('integration_key');
+        $settings = wp_unslash($request->getSafe('settings'));
 
         $settings = IntegrationSettingsModule::saveSettings($settingsKey, $settings);
 

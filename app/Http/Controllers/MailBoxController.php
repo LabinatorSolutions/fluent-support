@@ -66,7 +66,7 @@ class MailBoxController extends Controller
     public function update(Request $request, MailBox $mailBox, $mailBoxId)
     {
         try{
-            $data = wp_unslash( $request->get('business') );
+            $data = wp_unslash( $request->getSafe('business') );
 
             $this->validate($data, [
                 'name' => 'required',
@@ -95,7 +95,7 @@ class MailBoxController extends Controller
     public function delete(Request $request, MailBox $mailBox, $mailBoxId)
     {
         try {
-            return $mailBox->deleteMailBox( $mailBoxId, $request->get('fallback_id') );
+            return $mailBox->deleteMailBox( $mailBoxId, $request->getSafe('fallback_id', 'int') );
         } catch (\Exception $e) {
             return [
                 'message' => __( $e->getMessage(), 'fluent-support' ),
@@ -134,7 +134,7 @@ class MailBoxController extends Controller
     public function getEmailSettings(Request $request, Settings $settings, $boxId)
     {
         $box = MailBox::findOrFail($boxId);
-        $emailType = $request->get('email_type');
+        $emailType = $request->getSafe('email_type');
 
         return [
             'email_settings' => $settings->getBoxEmailSettings($box, $emailType)
@@ -162,7 +162,7 @@ class MailBoxController extends Controller
      */
     public function saveEmailSettings( Request $request, MailBox $mailBox, $boxId )
     {
-        $data = wp_unslash($request->get('email_settings'));
+        $data = wp_unslash($request->getSafe('email_settings'));
 
         $this->validate($data, [
             'email_subject' => 'required',
@@ -182,6 +182,6 @@ class MailBoxController extends Controller
      */
     public function getTickets(Request $request, MailBox $mailBox, $boxId)
     {
-        return $mailBox->getTickets( $request->get('filters'), $boxId );
+        return $mailBox->getTickets( $request->getSafe('filters'), $boxId );
     }
 }

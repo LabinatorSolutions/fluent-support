@@ -30,7 +30,7 @@ class CustomerPortalController extends Controller
         try {
             $customer = $customerPortalService->resolveCustomer( $request );
             return [
-                'tickets' => $customerPortalService->getTickets( $customer,  $request->get('filter_type', '') )
+                'tickets' => $customerPortalService->getTickets( $customer,  $request->getSafe('filter_type', 'text', '') )
             ];
         } catch (Exception $e) {
             return $this->sendError([
@@ -48,7 +48,7 @@ class CustomerPortalController extends Controller
      */
     public function createTicket(Request $request, CustomerPortalService $customerPortalService)
     {
-        $this->validate($request->all(), [
+        $this->validate($request->getSafe(), [
             'title'   => 'required',
             'content' => 'required'
         ]);
@@ -57,7 +57,7 @@ class CustomerPortalController extends Controller
             $customer = $customerPortalService->resolveCustomer($request, true);
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
-                'ticket'  => $customerPortalService->createTicket( $customer, $request->all(), $request )
+                'ticket'  => $customerPortalService->createTicket( $customer, $request->getSafe(), $request )
             ];
         } catch (Exception $e) {
             return $this->sendError([
@@ -94,12 +94,12 @@ class CustomerPortalController extends Controller
      */
     public function createResponse(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $this->validate($request->all(), [
+        $this->validate($request->getSafe(), [
             'content' => 'required'
         ]);
 
         try {
-            return $customerPortalService->createResponse( $request, $ticketId, $request->all() );
+            return $customerPortalService->createResponse( $request, $ticketId, $request->getSafe() );
         } catch (Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
