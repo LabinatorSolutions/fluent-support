@@ -15,7 +15,7 @@ class ProductController extends Controller
      */
     public function index ( Request $request, Product $product )
     {
-      return $product->getProducts( $request->get('search') );
+      return $product->getProducts( $request->getSafe('search') );
     }
 
     /**
@@ -38,7 +38,7 @@ class ProductController extends Controller
      */
     public function create ( Request $request, Product $product )
     {
-        $data = $request->all();
+        $data = $request->getSafe();
         $this->validate($data, [
             'title' => 'required'
         ]);
@@ -57,7 +57,7 @@ class ProductController extends Controller
      */
     public function update ( Request $request, Product $product, $productId )
     {
-        $data = $request->all();
+        $data = $request->getSafe();
         $this->validate($data, [
             'title' => 'required'
         ]);
