@@ -25,7 +25,7 @@ class SettingsController extends Controller
      */
     public function getSettings(Request $request)
     {
-        $settingsKey = $request->get('settings_key');
+        $settingsKey = $request->getSafe('settings_key');
 
         return (new Settings)->get($settingsKey);
     }
@@ -55,8 +55,8 @@ class SettingsController extends Controller
      */
     public function saveSettings(Request $request)
     {
-        $settingsKey = $request->get('settings_key');
-        $settings = wp_unslash($request->get('settings'));
+        $settingsKey = $request->getSafe('settings_key');
+        $settings = wp_unslash($request->getSafe('settings'));
 
         (new Settings)->save($settingsKey, $settings);
 
@@ -84,14 +84,14 @@ class SettingsController extends Controller
      */
     public function setupPortal(Request $request)
     {
-        $mailbox = $request->get('mailbox');
+        $mailbox = $request->getSafe('mailbox');
         $this->validate($mailbox, [
             'name'     => 'required',
             'email'    => 'required|email',
             'box_type' => 'required'
         ]);
 
-        $settings = $request->get('global_settings');
+        $settings = $request->getSafe('global_settings');
 
         $createPage = $settings['create_portal_page'] == 'yes';
 
@@ -235,18 +235,18 @@ class SettingsController extends Controller
 
     public function setupInstallation(Request $request)
     {
-        $installFluentForm = $request->get('install_fluentform', 'no');
+        $installFluentForm = $request->getSafe('install_fluentform', 'text', 'no');
 
         if ($installFluentForm == 'yes' && !defined('FLUENTFORM')) {
             $this->installFluentForm();
         }
 
-        $optinEmail = $request->get('optin_email', 'no');
+        $optinEmail = $request->getSafe('optin_email', 'text','no');
         if ($optinEmail && is_email($optinEmail)) {
             $this->shareEmail($optinEmail);
         }
 
-        $shareEssential = $request->get('share_essentials', 'no');
+        $shareEssential = $request->getSafe('share_essentials', 'text','no');
         if ($shareEssential == 'yes') {
             Helper::updateOption('_share_essential', $shareEssential);
         }
