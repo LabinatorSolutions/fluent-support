@@ -1102,7 +1102,7 @@ class Ticket extends Model
     {
         $agent = Helper::getAgentByUserId();
 
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
+        $ticketWith = $request->getSafe('with', 'text', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
             $q->whereIn('status', ['active', 'inline']);
         }]);
 
@@ -1291,8 +1291,8 @@ class Ticket extends Model
     {
         $assigner = Helper::getAgentByUserId( get_current_user_id() );
         $ticket = static::findOrFail( $ticketId );
-        $propName = $request->get( 'prop_name' );
-        $propValue = $request->get( 'prop_value' );
+        $propName = $request->getSafe( 'prop_name' );
+        $propValue = $request->getSafe( 'prop_value' );
 
         $this->checkAgentPermission( $ticket );
 
@@ -1336,7 +1336,7 @@ class Ticket extends Model
      */
     public function handleBulkActions ( $request, $ticketIds )
     {
-        $action = $request->get('bulk_action');//get action
+        $action = $request->getSafe('bulk_action');//get action
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
