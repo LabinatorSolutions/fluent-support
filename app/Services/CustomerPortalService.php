@@ -273,7 +273,7 @@ class CustomerPortalService
      */
     private function getCustomer ( $request, $ticket )
     {
-        if ($request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+        if ($request->getSafe('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $customer = $ticket->customer;
         } else {
             $customer = $this->resolveCustomer( $request );
@@ -345,7 +345,7 @@ class CustomerPortalService
      */
     public function resolveCustomer($request, $forceCreate = false)
     {
-        $onBehalf = $request->get('on_behalf');
+        $onBehalf = $request->getSafe('on_behalf', 'int');
 
         if (!$onBehalf) {
             $user = get_user_by('ID', get_current_user_id());
