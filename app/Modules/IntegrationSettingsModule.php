@@ -36,7 +36,7 @@ class IntegrationSettingsModule
      * saveSettings save integration settings by integration_key
      * @param $integrationKey
      * @param $settings
-     * @return false
+     * @return false || object
      */
     public static function saveSettings($integrationKey, $settings)
     {
