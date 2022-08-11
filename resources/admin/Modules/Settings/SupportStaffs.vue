@@ -127,14 +127,8 @@
                 <el-form-item :label="$t('Permissions')">
                     <el-checkbox-group class="fs_permission_groups" v-model="editing_agent.permissions">
                         <div  v-for="permissionSet in permissions" class="fs_each_permission_set">
-                            <ul>
-                                <li><h4 style="font-size: 15px;">{{permissionSet.title}}</h4></li>
-                                <li>
-                                    <ul>
-                                        <li v-for="(permissionLabel, permissionkey) in permissionSet.permissions"><el-checkbox :label="permissionkey" :key="permissionkey">{{permissionLabel}}</el-checkbox></li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            <h4 style="font-size: 15px;">{{permissionSet.title}}</h4>
+                            <el-checkbox v-for="(permissionLabel, permissionkey) in permissionSet.permissions" :label="permissionkey" :key="permissionkey">{{permissionLabel}}</el-checkbox>
                         </div>
                     </el-checkbox-group>
                 </el-form-item>
