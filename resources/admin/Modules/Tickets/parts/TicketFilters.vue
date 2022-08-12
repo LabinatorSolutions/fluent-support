@@ -2,7 +2,7 @@
     <div class="fs_tk_filters">
         <div class="fs_tk_filter">
             <label>{{$t('Status')}}</label>
-            <el-radio-group size="small" @change="fetchTickets()" v-model="filters.status_type">
+            <el-radio-group size="medium" @change="fetchTickets()" v-model="filters.status_type">
                 <el-radio-button label="open">{{$t('Open')}}</el-radio-button>
                 <el-radio-button label="active">{{$t('Active')}}</el-radio-button>
                 <el-radio-button label="new">{{$t('New')}}</el-radio-button>

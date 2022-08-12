@@ -7,7 +7,7 @@
 
         <el-button @click="updateCustomer()" type="success" v-if="customer.id">{{ $t('Update Customer') }}</el-button>
 
-        <el-button @click="createCustomer()" type="success" v-else>{{ $t('Create Customer') }}</el-button>
+        <el-button @click="createCustomer()" type="primary" v-else>{{ $t('Create Customer') }}</el-button>
     </div>
 </template>
 <script type="text/babel">
