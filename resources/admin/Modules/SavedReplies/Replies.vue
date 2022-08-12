@@ -5,18 +5,19 @@
                 <div class="fs_box_head">
                     <h3>{{$t('Saved Replies')}}</h3>
                 </div>
-                <div class="fs_box_actions">
+                <div class="fs_box_actions" style="display: flex;">
                     <el-button :disabled="!has_pro" @click="createModal()" type="primary" icon="Plus">
                         {{$t('Create New')}}
                     </el-button>
-                </div>
-                <div class="fs_box_actions fs_ticket_orders" style="margin-right: 0.7em;">
-                    <el-input @keyup.enter="fetch" clearable @clear="fetch" :disabled="!has_pro" size="small"
-                              :placeholder="$t('Search Replies')" v-model="search">
-                        <template #append>
-                            <el-button @click="fetch" :disabled="!has_pro" icon="Search"></el-button>
-                        </template>
-                    </el-input>
+
+                    <div class="fs_ticket_orders" style="margin-left: 0.7em;">
+                        <el-input @keyup.enter="fetch" clearable @clear="fetch" :disabled="!has_pro" size="medium"
+                                  :placeholder="$t('Search Replies')" v-model="search">
+                            <template #append>
+                                <el-button @click="fetch" :disabled="!has_pro" icon="Search"></el-button>
+                            </template>
+                        </el-input>
+                    </div>
                 </div>
             </div>
             <template v-if="has_pro">
@@ -44,6 +45,7 @@
                                 <el-button @click="editModal(scope.row)"
                                            icon="EditPen" type="text" ></el-button>
                               <el-popconfirm
+                                  confirm-button-type="danger"
                                   :confirm-button-text="$t('Yes, Delete this')"
                                   :cancel-button-text="$t('No')"
                                   icon="InfoFilled"

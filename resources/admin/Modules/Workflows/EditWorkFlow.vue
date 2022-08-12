@@ -16,7 +16,7 @@
                         <el-switch @change="updateWorkFlow()" active-value="published" inactive-value="draft"
                                    v-model="workflow.status"/>
                     </span>
-                    <el-button :disabled="saving" v-loading="saving" size="small" type="success"
+                    <el-button :disabled="saving" v-loading="saving" size="mesium" type="success"
                                @click="updateWorkFlow()">{{$t('Update Workflow')}}
                     </el-button>
                 </div>

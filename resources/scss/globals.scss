@@ -100,7 +100,7 @@
     overflow: hidden;
 
     .fs_box_header {
-        display: block;
+        //display: block;
         width: auto;
         border-bottom: 1px solid #e3e8ee;
         clear: both;
@@ -111,14 +111,34 @@
         font-weight: 500;
         color: #3C434A;
 
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .fs_header_title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .fs_box_actions {
+            display: flex;
+        }
+
         .fs_box_head {
-            float: left;
+            display: flex;
+            align-items: center;
 
             h3 {
-                display: inline-block;
+                display: inline-flex;
                 margin: 8px 20px 8px 0;
                 padding: 0;
                 font-size: 20px;
+                align-items: center;
+
+                .fs_badge {
+                    margin: 0 0 0 4px;
+                }
             }
         }
 

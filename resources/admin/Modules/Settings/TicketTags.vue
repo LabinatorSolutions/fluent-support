@@ -5,18 +5,20 @@
                 <div class="fs_box_head">
                     <h3>{{ $t('Ticket Tags') }}</h3>
                 </div>
-                <div v-if="has_pro" class="fs_box_actions">
-                    <el-button @click="createTagModal()" type="primary" icon="Plus" size="default">
+                <div class="fs_box_actions">
+
+                    <el-button v-if="has_pro" @click="createTagModal()" type="primary" icon="Plus" size="medium">
                         {{ $t('Add New') }}
                     </el-button>
-                </div>
-                <div class="fs_box_actions fs_ticket_orders">
-                    <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="small"
-                              :placeholder="$t('Search Tags')" v-model="search">
-                        <template #append>
-                            <el-button @click="fetchTags" :disabled="!has_pro" icon="Search"></el-button>
-                        </template>
-                    </el-input>
+
+                    <div class="fs_ticket_orders" style="margin-left: 10px;">
+                        <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="medium"
+                                  :placeholder="$t('Search Tags')" v-model="search">
+                            <template #append>
+                                <el-button size="medium" @click="fetchTags" :disabled="!has_pro" icon="Search"></el-button>
+                            </template>
+                        </el-input>
+                    </div>
                 </div>
             </div>
             <template v-if="has_pro">

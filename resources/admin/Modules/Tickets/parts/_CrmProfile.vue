@@ -7,7 +7,7 @@
             </a>
         </div>
         <span style="color: #f06060;" v-if="crm_profile.name_mismatch">{{ crm_profile.full_name }}</span>
-        <div class="fs_taggables" style="margin-bottom: 3px">
+        <div class="fs_taggables" style="margin-bottom: 15px">
             <i class="dashicons dashicons-tag" style="vertical-align: middle"></i>
             <span class="el-tag el-tag--mini el-tag--plain" v-for="tag in crm_profile.tags" :key="tag.id">{{
                     tag.title
@@ -26,7 +26,7 @@
                     </span>
                 </template>
 
-                <h4>{{$t('Apply / Remove Tags on FluentCRM Profile')}}</h4>
+                <h4 style="margin: 0 0 10px 0;">{{$t('Apply / Remove Tags on FluentCRM Profile')}}</h4>
 
                 <el-select :multiple="true" v-model="attachedTags"
                            size="small">
@@ -36,8 +36,8 @@
                         :label="tag.title"></el-option>
                 </el-select>
 
-                <el-button v-loading="saving" @click="syncTags()" :disabled="saving" type="primary" size="small"
-                           style="margin-top: 20px">{{$t('Update Settings')}}
+                <el-button v-loading="saving" @click="syncTags()" :disabled="saving" type="success" size="small"
+                           style="margin-top: 10px">{{$t('Update Settings')}}
                 </el-button>
 
             </el-popover>
@@ -63,7 +63,7 @@
                     </span>
                 </template>
 
-                <h4>{{$t('Apply / Remove Lists on FluentCRM Profile')}}</h4>
+                <h4 style="margin: 0 0 10px 0;">{{$t('Apply / Remove Lists on FluentCRM Profile')}}</h4>
 
                 <el-select :multiple="true" v-model="attachedLists"
                            size="small">
@@ -73,8 +73,8 @@
                         :label="list.title"></el-option>
                 </el-select>
 
-                <el-button v-loading="saving" @click="syncLists()" :disabled="saving" type="primary" size="small"
-                           style="margin-top: 20px">{{$t('Update Settings')}}
+                <el-button v-loading="saving" @click="syncLists()" :disabled="saving" type="success" size="small"
+                           style="margin-top: 10px">{{$t('Update Settings')}}
                 </el-button>
             </el-popover>
         </div>

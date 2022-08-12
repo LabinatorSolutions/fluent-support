@@ -33,6 +33,7 @@
                                     <el-icon> <EditPen /> </el-icon>
                                 </router-link>
                                 <el-popconfirm
+                                    confirm-button-type="danger"
                                     :confirm-button-text="$t('Yes, Delete this')"
                                     :cancel-button-text="$t('No')"
                                     icon="InfoFilled"

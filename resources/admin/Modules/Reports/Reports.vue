@@ -24,14 +24,14 @@
                                     </template>
                                 </el-dropdown>
                                 <div class="fs_agent_report_rh_filter">
-                                    <el-select clearable filterable size="small" placeholder="All Agent" @change="filterReport" v-model="agent"
+                                    <el-select clearable filterable size="medium" placeholder="All Agent" @change="filterReport" v-model="agent"
                                                class="fs_report_by_agent">
                                         <el-option v-for="agent in appVars.support_agents" :key="agent.id" :value="agent.id"
                                                    :label="agent.full_name"></el-option>
                                     </el-select>
 
                                     <el-date-picker
-                                        size="small"
+                                        size="medium"
                                         v-model="date_range"
                                         type="daterange"
                                         :range-separator="$t('To')"
@@ -167,7 +167,8 @@ export default {
 
 <style lang="scss">
 .fs_agent_report_rh_filter{
-    float: right;
+    display: flex;
+    align-items: center;
     .fs_report_by_agent{
         width: auto;
         margin-right: 0.3em;

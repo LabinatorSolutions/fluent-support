@@ -13,6 +13,9 @@
         padding: 20px;
         background: #ffffff;
         border-bottom: 1px solid gray;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
 
         .fs_tk_filter {
             display: inline-block;
@@ -732,11 +735,21 @@ ul.fs_tk_actions {
         display: block;
     }
 
-    .fs_taggables .dashicons {
-        font-size: 15px;
-        margin-right: 5px;
-        color: #e1e2e5;
-        margin-top: 1px;
+    .fs_taggables {
+        .el-tag {
+            word-break: break-all;
+            white-space: break-spaces;
+            height: inherit;
+            padding: 5px 9px;
+            line-height: 16px;
+            margin-bottom: 5px;
+        }
+        .dashicons {
+            font-size: 15px;
+            margin-right: 5px;
+            color: #e1e2e5;
+            margin-top: 1px;
+        }
     }
 }
 
