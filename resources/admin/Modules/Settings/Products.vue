@@ -8,15 +8,17 @@
                 <div class="fs_box_actions">
                     <el-button @click="createTicketModal()" type="primary" icon="Plus" size="default">{{$t('Create New')}}
                     </el-button>
+
+                    <div class="fs_ticket_orders" style="margin-left: 10px;">
+                        <el-input @keyup.enter="getProducts" clearable @clear="getProducts" size="small"
+                                  :placeholder="$t('Search Products')" v-model="search">
+                            <template #append>
+                                <el-button @click="getProducts" icon="Search"></el-button>
+                            </template>
+                        </el-input>
+                    </div>
                 </div>
-                <div class="fs_box_actions fs_ticket_orders">
-                    <el-input @keyup.enter="getProducts" clearable @clear="getProducts" size="small"
-                              :placeholder="$t('Search Products')" v-model="search">
-                        <template #append>
-                            <el-button @click="getProducts" icon="Search"></el-button>
-                        </template>
-                    </el-input>
-                </div>
+
             </div>
             <div v-if="!fetching" class="fs_box_body">
                 <el-table stripe :data="products">
