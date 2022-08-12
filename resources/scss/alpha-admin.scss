@@ -45,10 +45,13 @@
                     text-decoration: none;
                     color: #303133;
                     font-size: 14px;
-                    display: block;
+                    //display: block;
                     padding: 17px 20px;
                     border-radius: 0;
                     transition: border-color .3s, background-color .3s, color .3s;
+
+                    display: flex;
+                    align-items: center;
 
                     &.router-link-exact-active {
                         border: 1px solid #e3e6ef;
@@ -63,6 +66,7 @@
                         background: transparent;
                     }
 
+                    >svg,
                     i {
                         margin-right: 8px;
                     }

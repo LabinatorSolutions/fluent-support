@@ -24,7 +24,7 @@
                                     </template>
                                 </el-dropdown>
                                 <el-date-picker
-                                    size="small"
+                                    size="medium"
                                     v-model="date_range"
                                     type="daterange"
                                     :range-separator="$t('To')"
@@ -33,7 +33,7 @@
                                     :unlink-panels=true
                                     @change="filterReport"
                                     value-format="YYYY-MM-DD"
-                                    style="float: right;"
+                                    style="max-width: 350px;"
                                 >
                                 </el-date-picker>
                             </div>

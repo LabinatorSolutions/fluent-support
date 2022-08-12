@@ -23,7 +23,7 @@
                     />
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
-                    <el-select filterable @change="fetchTickets()" v-model="order_by" size="small">
+                    <el-select filterable @change="fetchTickets()" v-model="order_by" size="small" style="padding-right: 10px;">
                         <el-option
                             v-for="(column, columnName) in filterColumns"
                             :key="columnName"
@@ -31,7 +31,7 @@
                             :label="column"
                         ></el-option>
                     </el-select>
-                    <el-button @click="changeOrderType()" size="small">
+                    <el-button @click="changeOrderType()" size="medium">
                         <el-icon v-if="order_type == 'DESC'"> <CaretBottom/> </el-icon>
                         <el-icon v-else> <CaretTop/> </el-icon>
                     </el-button>
@@ -55,9 +55,9 @@
                                 style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> OR</em>
                         </div>
 
-                        <el-button type="primary" size="small" @click="fetchTickets()">{{ $t('Filter') }}
+                        <el-button type="primary" size="medium" @click="fetchTickets()">{{ $t('Filter') }}
                         </el-button>
-                        <el-button size="small" @click="advanced_filters = [[]]; fetchTickets()">
+                        <el-button size="medium" @click="advanced_filters = [[]]; fetchTickets()">
                             {{ $t('Clear Filters') }}
                         </el-button>
                     </div>

@@ -71,6 +71,7 @@
 
                                 <el-popconfirm
                                     v-loading="deleting"
+                                    confirm-button-type="danger"
                                     :confirm-button-text="$t('Yes, Delete this Customer')"
                                     :cancel-button-text="$t('No')"
                                     icon-color="red"

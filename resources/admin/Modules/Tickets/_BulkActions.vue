@@ -27,12 +27,12 @@
                                     :value="agent.id"
                                     :label="agent.full_name"></el-option>
                             </el-select>
-                            <el-button @click="assignAgent()" style="margin-top: 20px;" :disabled="!agent_id"
+                            <el-button @click="assignAgent()" style="margin-top: 10px;" :disabled="!agent_id"
                                        size="small"
                                        type="danger">
                                 {{$t('Assign Agent')}}
                             </el-button>
-                            <el-button @click="assignAgentPop = false" size="small" type="default" style="margin-top: 20px;">{{$t('Close')}}</el-button>
+                            <el-button @click="assignAgentPop = false" size="small" type="default" style="margin-top: 10px;">{{$t('Close')}}</el-button>
                         </div>
                     </el-popover>
                 </li>
@@ -59,10 +59,10 @@
                                     :value="agent.id"
                                     :label="agent.title"></el-option>
                             </el-select>
-                            <el-button style="margin-top: 20px;" size="small" type="success"
+                            <el-button style="margin-top: 10px;" size="small" type="success"
                                        @click="assignTags()">Apply Tags
                             </el-button>
-                            <el-button @click="addTagPop = false" size="small" type="default">{{$t('Close')}}</el-button>
+                            <el-button style="margin-top: 10px;" @click="addTagPop = false" size="small" type="default">{{$t('Close')}}</el-button>
                         </div>
                     </el-popover>
                 </li>
@@ -75,8 +75,8 @@
                         <template #reference>
                             <el-icon @click="togglePop()"> <Finished /> </el-icon>
                         </template>
-                        <p>{{$t('close_selected_ticket_warning')}}</p>
-                        <el-button style="margin-top: 20px;" size="small" type="success"
+                        <p style="margin: 0 0 1em 0;">{{$t('close_selected_ticket_warning')}}</p>
+                        <el-button style="margin-top: 0;" size="small" type="success"
                                    @click="closeTickets()">{{$t('Close Selected Tickets')}}
                         </el-button>
                     </el-popover>
@@ -90,8 +90,8 @@
                         <template #reference>
                             <el-icon @click="togglePop()"> <Delete /> </el-icon>
                         </template>
-                        <p>{{$t('delete_selected_ticket_warning')}}</p>
-                        <el-button style="margin-top: 20px;" size="small" type="danger"
+                        <p style="margin: 0 0 1em 0;">{{$t('delete_selected_ticket_warning')}}</p>
+                        <el-button style="margin-top: 0;" size="small" type="danger"
                                    @click="deleteTickets()">{{$t('Yes, Delete Selected Tickets')}}
                         </el-button>
                     </el-popover>

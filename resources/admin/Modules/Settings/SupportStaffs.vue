@@ -8,14 +8,14 @@
                 <el-button @click="createStaffModal()" type="primary" icon="Plus" size="default">
                     {{$t('Add New')}}
                 </el-button>
-            </div>
-            <div class="fs_box_actions fs_ticket_orders">
-                <el-input @keyup.enter="fetchAgents" clearable @clear="fetchAgents" size="small"
-                          :placeholder="$t('Search Agents')" v-model="search">
-                    <template #append>
-                        <el-button @click="fetchAgents" icon="Search"></el-button>
-                    </template>
-                </el-input>
+                <div class="fs_ticket_orders" style="margin-left: 10px;">
+                    <el-input @keyup.enter="fetchAgents" clearable @clear="fetchAgents" size="small"
+                              :placeholder="$t('Search Agents')" v-model="search">
+                        <template #append>
+                            <el-button @click="fetchAgents" icon="Search"></el-button>
+                        </template>
+                    </el-input>
+                </div>
             </div>
         </div>
         <div v-if="!loading" class="fs_box_body">
