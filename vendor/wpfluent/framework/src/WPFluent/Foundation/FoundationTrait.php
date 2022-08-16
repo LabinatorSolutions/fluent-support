@@ -39,7 +39,14 @@ trait FoundationTrait
         if (!$handler) return;
 
         if (is_string($handler)) {
-            $handler = $this->policyNamespace . '\\' . $handler;
+
+            if ($this->hasNamespace($handler)) {
+                $handler = $handler;
+            } else {
+                $handler = $this->policyNamespace . '\\' . $handler;
+            }
+
+            // $handler = $this->policyNamespace . '\\' . $handler;
 
             if ($this->isCallableWithAtSign($handler)) {
                 list($class, $method) = explode('@', $handler);
@@ -57,7 +64,13 @@ trait FoundationTrait
             list($class, $method) = $handler;
 
             if (is_string($class)) {
-                $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
+                if ($this->hasNamespace($handler)) {
+                    $handler = $class . '::' . $method;
+                } else {
+                    $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
+                }
+
+                // $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
             }
         }
 
@@ -150,14 +163,26 @@ trait FoundationTrait
         if (is_string($handler)) {
             list($class, $method) = preg_split('/::|@/', $handler);
 
-            $class = $this->make($this->handlerNamespace . '\\' . $class);
+            if ($this->hasNamespace($handler)) {
+                $class = $this->make($class);
+            } else {
+                $class = $this->make($this->handlerNamespace . '\\' . $class);
+            }
+
+            // $class = $this->make($this->handlerNamespace . '\\' . $class);
 
             return [$class, $method];
 
         } else if (is_array($handler)) {
             list($class, $method) = $handler;
             if (is_string($class)) {
-                $class = $this->make($this->handlerNamespace . '\\' . $class);
+                
+                if ($this->hasNamespace($handler)) {
+                    $class = $this->make($class);
+                } else {
+                    $class = $this->make($this->handlerNamespace . '\\' . $class);
+                }
+                // $class = $this->make($this->handlerNamespace . '\\' . $class);
             }
             return [$class, $method];
         }
