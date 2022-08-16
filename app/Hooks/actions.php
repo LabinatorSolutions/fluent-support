@@ -128,5 +128,4 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 (new \FluentSupport\App\Hooks\Handlers\PrivacyHandler())->init();
 
 // Action will be triggered when a support customer update their profile in wp
-$app->addAction('profile_update', [$app[\FluentSupport\App\Services\ProfileInfoService::class], 'onWPProfileUpdate'], 10, 3);
-
+$app->addAction('profile_update', '\FluentSupport\App\Services\ProfileInfoService@onWPProfileUpdate', 10, 3);
