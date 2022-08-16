@@ -67,7 +67,7 @@ export default {
             this.error_message = '';
             this.attachments.push(...response.attachments);
 
-            if(file.raw.type.includes('application')) {
+            if(file.raw.type.includes('application') || file.raw.type.includes('text')) {
                 if(this.appVars.asset_url) {
                     return file.url = this.appVars.asset_url+'images/icons/file.svg';
                 }
