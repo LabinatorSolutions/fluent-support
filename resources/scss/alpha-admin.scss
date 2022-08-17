@@ -238,3 +238,32 @@ ul.el-upload-list.el-upload-list--picture {
     }
 }
 
+span.fs_purchase_status {
+    display: inline-block;
+    font-size: 10px;
+    border: 1px solid gray;
+    padding: 2px 3px;
+    line-height: 10px;
+    border-radius: 3px;
+    background: #ecedec;
+    span {
+        font-size: 10px !important;
+        height: 10px;
+        width: 10px;
+    }
+    &.fs_license_status_active {
+        border-color: #4caf50;
+    }
+    &.fs_license_status_expired {
+        border-color: red;
+        color: white;
+        background: red;
+    }
+}
+
+.fs_product_line {
+    display: inline;
+}
+.fs_multi_product .fs_product_line {
+    display: block;
+}
