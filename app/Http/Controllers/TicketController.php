@@ -39,7 +39,7 @@ class TicketController extends Controller
     public function index(Request $request, Ticket $ticket)
     {
         //Selected filter type, either simple or Advanced
-        $filterType = $request->get('filter_type', 'simple');
+        $filterType = $request->getSafe('filter_type', 'text','simple');
 
         return $ticket->getTickets( $request, $filterType );
     }
@@ -53,8 +53,9 @@ class TicketController extends Controller
      */
     public function createTicket( Request $request, Ticket $ticket )
     {
-        $ticketData = $request->get('ticket', []);
-        $maybeNewCustomer = $request->get('newCustomer');
+        $ticketData = $request->getSafe('ticket');
+
+        $maybeNewCustomer = $request->getSafe('newCustomer');
 
         if( empty($maybeNewCustomer) ){
             $this->validate($ticketData, [
@@ -96,7 +97,7 @@ class TicketController extends Controller
      */
     public function createResponse ( Request $request, Ticket $ticket, $ticketId )
     {
-        $data = $request->all();
+        $data = $request->getSafe();
 
         $this->validate($data, [
             'content' => 'required'
@@ -180,7 +181,7 @@ class TicketController extends Controller
      */
     public function doBulkActions ( Request $request, Ticket $ticket )
     {
-        $ticketIds = $request->get('ticket_ids', []);
+        $ticketIds = $request->getSafe('ticket_ids', 'int', []);
 
         try {
             return $ticket->handleBulkActions( $request, $ticketIds );
@@ -199,7 +200,7 @@ class TicketController extends Controller
      */
     public function doBulkReplies ( Request $request, Conversation $conversation )
     {
-        $data = $request->all();
+        $data = $request->getSafe();
         $this->validate($data, [
             'content'    => 'required',
             'ticket_ids' => 'required|array'
@@ -240,7 +241,7 @@ class TicketController extends Controller
      */
     public function updateResponse ( Request $request, Conversation $conversation, $ticketId, $responseId )
     {
-        $data = $request->all();
+        $data = $request->getSafe();
 
         $this->validate($data, [
             'content' => 'required'
@@ -294,7 +295,7 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($ticketId);
 
-        $ticket->applyTags( intval($request->get('tag_id')) );
+        $ticket->applyTags( intval($request->getSafe('tag_id', 'int')) );
 
         return [
             'message' => __('Tag has been added to this ticket', 'fluent-support'),
@@ -327,8 +328,8 @@ class TicketController extends Controller
      */
     public function changeTicketCustomer( Request $request )
     {
-        $updateCustomer = Ticket::where('id', $request->get('ticket_id'))
-            ->update(['customer_id' => $request->get('customer')]);
+        $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', 'int'))
+            ->update(['customer_id' => $request->getSafe('customer')]);
         return [
             'message'         => __('Customer has been updated', 'fluent-support'),
             'updatedCustomer' => $updateCustomer

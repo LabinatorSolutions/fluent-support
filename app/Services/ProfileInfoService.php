@@ -72,7 +72,7 @@ class ProfileInfoService
             'request'     => $request->all()
         ];
 
-        if ( $request->get('with_portal_settings') ) {
+        if ( $request->getSafe('with_portal_settings') ) {
             $this->portalSettings(  $settings );
         }
 

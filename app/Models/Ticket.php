@@ -921,8 +921,8 @@ class Ticket extends Model
         $queryArgs = [
             'with' => [],
             'filter_type' => $filterType,
-            'sort_by' => $request->get('order_by', 'id'),
-            'sort_type' => $request->get('order_type', 'DESC'),
+            'sort_by' => sanitize_sql_orderby($request->getSafe('order_by', 'text', 'id')),
+            'sort_type' => sanitize_sql_orderby($request->getSafe('order_type', 'text', 'DESC')),
         ];
 
         if( $filterType == 'advanced' ){
@@ -931,8 +931,8 @@ class Ticket extends Model
         } else {
             //Selected filter type is simple
             $queryArgs['simple_filters'] = $request->get('filters', []);
-            $queryArgs['search'] = trim( sanitize_text_field( $request->get('search', '') ) );
-            if ( $customerId = $request->get( 'customer_id' ) ) {
+            $queryArgs['search'] = trim( sanitize_text_field( $request->getSafe('search', 'text', '') ) );
+            if ( $customerId = $request->getSafe( 'customer_id', 'int' ) ) {
                 $queryArgs['customer_id'] = intval( $customerId );
             }
         }
@@ -1102,7 +1102,7 @@ class Ticket extends Model
     {
         $agent = Helper::getAgentByUserId();
 
-        $ticketWith = $request->get('with', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
+        $ticketWith = $request->getSafe('with', 'text', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
             $q->whereIn('status', ['active', 'inline']);
         }]);
 
@@ -1291,8 +1291,8 @@ class Ticket extends Model
     {
         $assigner = Helper::getAgentByUserId( get_current_user_id() );
         $ticket = static::findOrFail( $ticketId );
-        $propName = $request->get( 'prop_name' );
-        $propValue = $request->get( 'prop_value' );
+        $propName = $request->getSafe( 'prop_name' );
+        $propValue = $request->getSafe( 'prop_value' );
 
         $this->checkAgentPermission( $ticket );
 
@@ -1336,7 +1336,7 @@ class Ticket extends Model
      */
     public function handleBulkActions ( $request, $ticketIds )
     {
-        $action = $request->get('bulk_action');//get action
+        $action = $request->getSafe('bulk_action');//get action
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);

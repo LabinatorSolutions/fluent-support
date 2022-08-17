@@ -23,7 +23,7 @@ class AgentController extends Controller
     public function index(Request $request, Agent $agent)
     {
         return [
-            'agents' => $agent->getAgents($request->get('search')),
+            'agents' => $agent->getAgents($request->getSafe('search')),
             'permissions' => PermissionManager::getReadablePermissionGroups()
         ];
     }
@@ -39,7 +39,7 @@ class AgentController extends Controller
         try {
             return [
                 'message' => __('Support Staff has been added', 'fluent-support'),
-                'agent'   => $agent->createAgent($request->all())
+                'agent'   => $agent->createAgent($request->getSafe())
             ];
 
         } catch (\Exception $e) {
@@ -62,7 +62,7 @@ class AgentController extends Controller
         $agent = $agent::findOrFail($agentId);
 
         if ($agent) {
-            $data = $this->validate($request->all(), [
+            $data = $this->validate($request->getSafe(), [
                 'email'      => 'required|email',
                 'first_name' => 'required',
                 'last_name'  => 'required',
@@ -93,7 +93,7 @@ class AgentController extends Controller
     public function deleteAgent(Request $request, Agent $agent, $agentId)
     {
         try {
-            $agent->deleteAgent($request->get('fallback_agent_id'), $agentId);
+            $agent->deleteAgent($request->getSafe('fallback_agent_id'), $agentId);
 
             return [
                 'message' => __('Support Staff has been deleted', 'fluent-support')
@@ -137,7 +137,7 @@ class AgentController extends Controller
 
         $stats = StatModule::getAgentStat($agentId); //Get ticket statistics
 
-        $with = $request->get('with', []);
+        $with = $request->getSafe('with', 'text', []);
 
         return (new Agent())->getAgentStat($stats, $with, $agentId);
     }
@@ -152,7 +152,7 @@ class AgentController extends Controller
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
         try {
-            return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->get('agent_id'), 'agent');
+            return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('agent_id'), 'agent');
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')
