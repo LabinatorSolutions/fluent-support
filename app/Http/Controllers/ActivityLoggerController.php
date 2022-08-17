@@ -37,7 +37,7 @@ class ActivityLoggerController extends Controller
     public function updateSettings (Request $request, Activity $activity)
     {
         try {
-            return $activity->updateSettings($request->get('activity_settings', []));
+            return $activity->updateSettings($request->getSafe('activity_settings', 'text' []));
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')

@@ -42,14 +42,14 @@ class UploaderController extends Controller
 
 
         //get ticket by ticket id
-        $ticketId = $request->get('ticket_id');
+        $ticketId = $request->getSafe('ticket_id', 'int');
 
         if ($ticketId == 'undefined') {
             $ticketId = NULL;
         }
 
         //Get customer or agent
-        if ($ticketId && $request->get('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+        if ($ticketId && $request->getSafe('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
             $person = $ticket->customer;
         } else {
@@ -78,7 +78,7 @@ class UploaderController extends Controller
                 'file_type' => $file['type'],
                 'file_path' => $file['file_path'],
                 'full_url'  => $file['url'],
-                'title'     => $file['name'],
+                'title'     => sanitize_file_name($file['name']),
                 'driver'    => 'local',
                 'status'    => 'in-active'
             ];

@@ -357,6 +357,11 @@ export default {
 
 
 <style lang="scss">
+table.el-table__header,
+table.el-table__body {
+    width: 100%!important;
+}
+
 .fs_as_profile_picture{
     position: absolute;
     top: 0.3em;
