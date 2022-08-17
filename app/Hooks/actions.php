@@ -44,44 +44,6 @@ add_shortcode('fluent_support_portal', function ($args) {
     return (new \FluentSupport\App\Hooks\Handlers\CustomerPortalHandler())->renderPortal();
 });
 
-add_shortcode('fluent_support_admin_portal', function () {
-    $app = App::getInstance();
-    $assets = $app['url.assets'];
-    wp_enqueue_style('fluent_support_login_style', $assets.'admin/css/all_public.css');
-    if (!get_current_user_id()) {
-        $return = '<div class="fst_login"><h3>'.__('Please Login', 'fluent-support').'</h3>';
-        $return .= do_shortcode('[fluent_support_login]');
-        $return .= '</div>';
-        return $return;
-    }
-
-    $currentUserPermissions = \FluentSupport\App\Modules\PermissionManager::currentUserPermissions();
-    if (!$currentUserPermissions) {
-        return __('Sorry, You do not have permission to this page', 'fluent-support');
-    }
-
-    add_filter('fluent_support/base_url', function ($url) {
-        global $wp;
-        return home_url(add_query_arg(array(), $wp->request)) . '/#/';
-    });
-
-    add_filter('fluent_support/secondary_menu_items', function ($items) {
-        global $wp;
-        $items[] = [
-            'key'       => 'logout',
-            'label'     => __('Logout', 'fluent-support'),
-            'permalink' => wp_logout_url(home_url(add_query_arg(array(), $wp->request)))
-        ];
-        return $items;
-    });
-
-    ob_start();
-    echo '<div class="fst_front">';
-    (new \FluentSupport\App\Hooks\Handlers\Menu())->renderApp();
-    echo '</div>';
-    return ob_get_clean();
-});
-
 // init integrations
 (new \FluentSupport\App\Services\Integrations\IntegrationInit())->init();
 
