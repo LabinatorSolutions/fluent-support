@@ -5,11 +5,11 @@
 
         <div class="fs_dash_suggested_ticket">
             <div class="fs_box fs_dashboard_box">
-                <div class="fs_box_header">
+                <div class="fs_box_header" style="justify-content:unset">
                     {{$t('Good')}} {{greetingTime}} {{me.full_name}},
                     <span style="font-weight: normal;">
-                    {{$t('dashboard_sub_heading')}}
-                </span>
+                        {{$t('dashboard_sub_heading')}}
+                    </span>
                 </div>
                 <div class="fs_box_body">
                     <template v-if="!loading">
