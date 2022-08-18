@@ -17,3 +17,9 @@
 add_filter('fluent_support/parse_smartcode_data', function ($string, $data) {
     return (new \FluentSupport\App\Services\Parser\Parser())->parse($string, $data);
 }, 10, 2);
+
+add_filter('mime_types', function($mimes) {
+    $mimes['json'] = 'application/json';
+
+    return $mimes;
+});
