@@ -17,7 +17,6 @@
 - `npx mix --production`
 
 ##### Run the tests
-There's a branch called `unit-testing` that you can use to run the unit tests.
 If you don't have a testing database then please run the following command from your project root:
 - ` bin/install-wp-tests.sh db_name db_user db_pass db_host`
 
