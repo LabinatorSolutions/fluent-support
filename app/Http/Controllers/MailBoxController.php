@@ -42,7 +42,7 @@ class MailBoxController extends Controller
      */
     public function save(Request $request, MailBox $mailBox)
     {
-        $data = wp_unslash( $request->get('business') );
+        $data = wp_unslash( $request->getSafe('business') );
 
         $this->validate($data, [
             'name' => 'required',
