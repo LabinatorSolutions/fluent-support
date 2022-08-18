@@ -18,6 +18,12 @@ add_filter('fluent_support/parse_smartcode_data', function ($string, $data) {
     return (new \FluentSupport\App\Services\Parser\Parser())->parse($string, $data);
 }, 10, 2);
 
+
+/*
+ * In the WP core wp-includes/functions.php file, where the filter is defined for the list of mime types and file extensions
+ * In the list the JSON file type/extension is missing. So we had to add this application/JSON type to the list by the hooks
+ */
+
 add_filter('mime_types', function($mimes) {
     $mimes['json'] = 'application/json';
 
