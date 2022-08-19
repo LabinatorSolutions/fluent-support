@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, fluent support, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.0
-Stable tag: 1.5.7
+Stable tag: 1.6.0
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -159,6 +159,16 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+= 1.6.0 (Date: August 19, 2022) =
+* Added - Ticket create action in FluentCRM
+* Added - FluentCRM list on ticket sidebar
+* Added - Fluent Support ticket summary in WP Dashboard toolbar
+* Added - Fluent Support ticket summary in WP Dashboard toolbar
+* Added - Fluent Support summary WP Dashboard Widget
+* Fixed - Customer ticket creatation page disappear on page reload
+* Improvement - Security
+* Improvement - Code Base
+
 = 1.5.7 (Date: July 07, 2022) =
 * Added - Customer Logout Feature
 * Added - Customer Password Reset Feature
