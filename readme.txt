@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, fluent support, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.0
-Stable tag: 1.6.0
+Stable tag: 1.6.1
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -159,7 +159,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
-= 1.6.0 (Date: August 19, 2022) =
+= 1.6.1 (Date: August 19, 2022) =
 * Added - Ticket create action in FluentCRM
 * Added - FluentCRM list on ticket sidebar
 * Added - Fluent Support ticket summary in WP Dashboard toolbar
