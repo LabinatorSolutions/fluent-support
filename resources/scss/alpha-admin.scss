@@ -267,3 +267,16 @@ span.fs_purchase_status {
 .fs_multi_product .fs_product_line {
     display: block;
 }
+
+.fst_front {
+    .el-table__header {
+        border-spacing: 0;
+        border-width: inherit;
+        margin: 0;
+    }
+    .el-table__body {
+        a {
+            text-decoration: none !important;
+        }
+    }
+}
