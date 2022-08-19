@@ -23,3 +23,7 @@ router.afterEach((to, from) => {
         jQuery('.fframe_main-menu-items').find('li[data-key='+active+']').addClass('fs_active');
     }
 });
+
+if(window.fluentSupportAdmin.is_frontend) {
+    jQuery('body').addClass('has_fluent_support');
+}

@@ -279,4 +279,30 @@ span.fs_purchase_status {
             text-decoration: none !important;
         }
     }
+    input[type=email], input[type=number], input[type=password], input[type=reset], input[type=search], input[type=tel], input[type=text], input[type=url], select, textarea {
+        color: #666;
+        padding: inherit;
+        height: auto;
+        border-width: inherit;
+        border-style: inherit;
+        border-color: inherit;
+        border-radius: inherit;
+        background: inherit;
+        box-shadow: none;
+        box-sizing: border-box;
+        transition: all .2s linear;
+    }
+}
+
+body.has_fluent_support {
+    .el-popper, .el-overlay {
+        h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    }
 }
