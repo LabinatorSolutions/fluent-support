@@ -376,6 +376,10 @@ table.fs_table {
         }
     }
 
+    & ul.fs_activities {
+        list-style: none;
+    }
+
     & a.fs_link_trans {
         text-decoration: none;
         color: #1273cb;
