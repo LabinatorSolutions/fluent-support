@@ -6,6 +6,7 @@ use Exception;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Tickets\ResponseService;
+use FluentSupport\App\Services\Tickets\TicketService;
 
 class HandleTelegramEvent
 {
@@ -27,8 +28,13 @@ class HandleTelegramEvent
         // Check if the token is valid or not
         $this->validateToken($token);
 
-        // Build the response or throw error
-        $responseData = $this->parseResponseData($payload);
+        try {
+            // Build the response or throw error
+            $responseData = $this->parseResponseData($payload);
+
+        } catch (\Exception $exception) {
+            return false;
+        }
 
         $data = [
             'conversation_type' => 'response',
@@ -36,10 +42,24 @@ class HandleTelegramEvent
             'source'            => 'telegram'
         ];
 
-        // Create the response
-        $response =  $this->createResponse($data, $responseData['ticket_id'], $responseData['agent_id']);
+        if(!empty($data['response_text'])) {
+            // Create the response
+            $this->createResponse($data, $responseData['ticket_id'], $responseData['agent_id']);
+        }
 
-        if ($response) return $data;
+        if(!empty($responseData['command'])) {
+            $command = $responseData['command'];
+
+            if($command == 'close_ticket') {
+                $ticket = Ticket::find($responseData['ticket_id']);
+                $agent = Agent::find($responseData['agent_id']);
+                if($ticket && $agent) {
+                    (new TicketService())->close( $ticket, $agent );
+                }
+            }
+        }
+
+        return $data;
     }
 
 
