@@ -286,11 +286,10 @@
                                                 }}</span>
                                         </div>
                                         <div class="fs_thread_actions">
-                                            <span style="margin-right: 5px" v-if="conversation.source == 'email'"
-                                                  :title="$t('Added By Email')"><el-icon style="vertical-align: middle;"><message /></el-icon></span>
-                                            <span :title="conversation.created_at">{{
-                                                    $timeDiff(conversation.created_at)
-                                                }}</span>
+                                            <span :title="'Source: ' + conversation.source" :class="'fc_source_icon fc_source_icon_'+conversation.source"><span>{{conversation.source}}</span></span>
+                                            <span :title="conversation.created_at">
+                                                {{ $timeDiff(conversation.created_at) }}
+                                            </span>
                                             <el-dropdown @command="handleResponseActionCommand" trigger="click">
                                                 <span class="el-dropdown-link">
                                                     <el-icon><arrow-down /></el-icon>
@@ -346,8 +345,7 @@
                                             <strong>{{ ticket.customer?.full_name }}</strong> {{$t('started the conversation')}}
                                         </div>
                                         <div class="fs_thread_actions">
-                                            <span style="margin-right: 5px" v-if="ticket.source == 'email'"
-                                                  :title="$t('Added By Email')"><el-icon style="vertical-align: middle;"><message /></el-icon></span>
+                                            <span :title="'Source: ' + ticket.source" :class="'fc_source_icon fc_source_icon_'+ticket.source"><span>{{ticket.source}}</span></span>
                                             <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
                                         </div>
                                     </div>

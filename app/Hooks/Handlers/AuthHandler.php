@@ -36,6 +36,12 @@ class AuthHandler
 
         $return = '<div id="fst_login_form" class="fst_login_wrapper">';
 
+        if(!empty($attributes['redirect-to'])) {
+            $redirect = $attributes['redirect-to'];
+        } else {
+            $redirect = Helper::getPortalBaseUrl();
+        }
+
         /*
          * Filter login form
          *
@@ -45,7 +51,7 @@ class AuthHandler
          */
         $loginArgs = apply_filters('fluent_support/login_form_args', [
             'echo'           => false,
-            'redirect'       => Helper::getPortalBaseUrl(),
+            'redirect'       => $redirect,
             'remember'       => true,
             'value_remember' => true,
         ]);
@@ -352,7 +358,6 @@ class AuthHandler
                 </script>
                 <?php
             }
-
             die();
         }
     }
