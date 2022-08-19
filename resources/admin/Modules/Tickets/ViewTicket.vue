@@ -286,7 +286,7 @@
                                                 }}</span>
                                         </div>
                                         <div class="fs_thread_actions">
-                                            <span :title="'Source: ' + conversation.source" :class="'fc_source_icon fc_source_icon_'+conversation.source"><span>{{conversation.source}}</span></span>
+                                            <span v-if="conversation.source" :title="'Source: ' + conversation.source" :class="'fc_source_icon fc_source_icon_'+conversation.source"><span>{{conversation.source}}</span></span>
                                             <span :title="conversation.created_at">
                                                 {{ $timeDiff(conversation.created_at) }}
                                             </span>
@@ -345,7 +345,7 @@
                                             <strong>{{ ticket.customer?.full_name }}</strong> {{$t('started the conversation')}}
                                         </div>
                                         <div class="fs_thread_actions">
-                                            <span :title="'Source: ' + ticket.source" :class="'fc_source_icon fc_source_icon_'+ticket.source"><span>{{ticket.source}}</span></span>
+                                            <span v-if="ticket.source" :title="'Source: ' + ticket.source" :class="'fc_source_icon fc_source_icon_'+ticket.source"><span>{{ticket.source}}</span></span>
                                             <span :title="ticket.created_at">{{ $timeDiff(ticket.created_at) }}</span>
                                         </div>
                                     </div>

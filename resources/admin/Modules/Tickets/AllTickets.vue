@@ -129,14 +129,11 @@
                                     :content="$t('Inbox - ') + scope.row.mailbox.name"
                                     placement="top"
                                 >
-                                    <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox.settings.color}" v-html="getExcerptBox(scope.row.mailbox.name)"></span>
+                                    <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox.settings.color || '#a3b2bd'}" v-html="getExcerptBox(scope.row.mailbox.name)"></span>
                                 </el-tooltip>
 
-                                <span style="margin-right: 5px;" v-if="scope.row.source == 'email'">
-                                    <el-icon>
-                                      <Message />
-                                    </el-icon>
-                                </span>
+                                <span v-if="scope.row.source" style="margin-right: 5px;" :title="'Source: ' + scope.row.source" :class="'fc_source_icon fc_source_icon_'+scope.row.source"></span>
+
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
                                 <div class="prev_text_parent">
                                     <p class="fs_tk_preview_text" v-html="getExcerpt(scope.row)"></p>
