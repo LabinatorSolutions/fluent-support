@@ -112,8 +112,12 @@ class AuthController extends Controller
                 'message' => __('Email and Password is required', 'fluent-support')
             ], 403);
         }
-
         $redirectUrl = Helper::getPortalBaseUrl();
+        if($redirect = $request->get('redirect_to')) {
+            if ( filter_var( $redirect, FILTER_VALIDATE_URL ) ) {
+                $redirectUrl = sanitize_url($redirect);
+            }
+        }
 
         if (get_current_user_id()) { // user already registered
             return $this->sendSuccess([

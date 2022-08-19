@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         request.onload = function () {
             if (this.status === 200) {
                 if (this.response.redirect) {
-                    window.location.replace(this.response.redirect);
+                    window.location.href = this.response.redirect;
                 } else {
                     window.location.reload();
                 }
@@ -130,7 +130,10 @@ document.addEventListener('DOMContentLoaded', () => {
             request.onload = function () {
                 if (this.status === 200) {
                     if (this.response.redirect) {
-                        window.location.replace(this.response.redirect);
+                        window.location.href = this.response.redirect;
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1500);
                     } else {
                         window.location.reload();
                     }
