@@ -921,8 +921,8 @@ class Ticket extends Model
         $queryArgs = [
             'with' => [],
             'filter_type' => $filterType,
-            'sort_by' => sanitize_sql_orderby($request->getSafe('order_by', 'text', 'id')),
-            'sort_type' => sanitize_sql_orderby($request->getSafe('order_type', 'text', 'DESC')),
+            'sort_by' => $request->getSafe('order_by', 'id', 'sanitize_sql_orderby'),
+            'sort_type' => $request->getSafe('order_type', 'DESC', 'sanitize_sql_orderby'),
         ];
 
         if( $filterType == 'advanced' ){
@@ -931,9 +931,9 @@ class Ticket extends Model
         } else {
             //Selected filter type is simple
             $queryArgs['simple_filters'] = $request->get('filters', []);
-            $queryArgs['search'] = trim( sanitize_text_field( $request->getSafe('search', 'text', '') ) );
-            if ( $customerId = $request->getSafe( 'customer_id', 'int' ) ) {
-                $queryArgs['customer_id'] = intval( $customerId );
+            $queryArgs['search'] = trim( $request->getSafe('search', '') );
+            if ( $customerId = $request->getSafe( 'customer_id', '', 'intval' ) ) {
+                $queryArgs['customer_id'] = $customerId;
             }
         }
 
@@ -979,6 +979,7 @@ class Ticket extends Model
     public function createTicket ( $ticketData, $maybeNewCustomer = false )
     {
         $ticketData = $this->maybeCreateNewCustomer( $ticketData, $maybeNewCustomer );
+        
         $customer = Customer::findOrFail($ticketData['customer_id']);
         $ticketData = $this->buildTicketData( $ticketData, $customer );
 
@@ -1068,7 +1069,7 @@ class Ticket extends Model
                 $authController = new AuthController();
                 $createdUser = $authController->createUser($maybeNewCustomer);
                 $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
-            }else{
+            } else{
                 throw new Exception('This username is already exist in WordPress');
             }
         }
@@ -1102,9 +1103,12 @@ class Ticket extends Model
     {
         $agent = Helper::getAgentByUserId();
 
-        $ticketWith = $request->getSafe('with', 'text', ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
-            $q->whereIn('status', ['active', 'inline']);
-        }]);
+        $ticketWith = $request->getSafe('with', []);
+        if(!$ticketWith) {
+            $ticketWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
+                $q->whereIn('status', ['active', 'inline']);
+            }];
+        }
 
         $ticket = $this->with( $ticketWith )->findOrFail($ticketId);
 
@@ -1113,11 +1117,9 @@ class Ticket extends Model
         $this->checkIfClosedTicket ( $ticket );  // Check if ticket is closed, if closed then load ticket with closed data
 
 
-        if ( in_array('fluentcrm_profile', $request->query('with_data', []) )  ){
-            return $this->getTicketAdditionalData($agent, $ticket->responses, $ticket, true);
-        } else {
-            return $this->getTicketAdditionalData($agent, $ticket->responses, $ticket);
-        }
+        $withCrmData = in_array('fluentcrm_profile', $request->query('with_data', []));
+
+        return $this->getTicketAdditionalData($agent, $ticket->responses, $ticket, $withCrmData);
     }
 
     // This checkIfClosedTicket method will validate if ticket is closed, if closed then load ticket with closed data

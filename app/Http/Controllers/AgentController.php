@@ -137,7 +137,7 @@ class AgentController extends Controller
 
         $stats = StatModule::getAgentStat($agentId); //Get ticket statistics
 
-        $with = $request->getSafe('with', 'text', []);
+        $with = $request->getSafe('with', []);
 
         return (new Agent())->getAgentStat($stats, $with, $agentId);
     }

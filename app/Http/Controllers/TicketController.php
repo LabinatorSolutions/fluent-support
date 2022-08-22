@@ -40,7 +40,7 @@ class TicketController extends Controller
     public function index(Request $request, Ticket $ticket)
     {
         //Selected filter type, either simple or Advanced
-        $filterType = $request->getSafe('filter_type', 'text','simple');
+        $filterType = $request->getSafe('filter_type','simple');
 
         return $ticket->getTickets( $request, $filterType );
     }
@@ -178,7 +178,7 @@ class TicketController extends Controller
      */
     public function doBulkActions ( Request $request, Ticket $ticket )
     {
-        $ticketIds = $request->getSafe('ticket_ids', 'int', []);
+        $ticketIds = $request->getSafe('ticket_ids', [], 'intval');
 
         try {
             return $ticket->handleBulkActions( $request, $ticketIds );
@@ -288,7 +288,7 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($ticketId);
 
-        $ticket->applyTags( intval($request->getSafe('tag_id', 'int')) );
+        $ticket->applyTags( $request->getSafe('tag_id', '', 'intval'));
 
         return [
             'message' => __('Tag has been added to this ticket', 'fluent-support'),
@@ -321,7 +321,7 @@ class TicketController extends Controller
      */
     public function changeTicketCustomer( Request $request )
     {
-        $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', 'int'))
+        $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', '', 'intval'))
             ->update(['customer_id' => $request->getSafe('customer')]);
         return [
             'message'         => __('Customer has been updated', 'fluent-support'),

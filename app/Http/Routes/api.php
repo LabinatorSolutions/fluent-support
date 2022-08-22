@@ -59,6 +59,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->post('sync-fluentcrm-tags', 'TicketController@syncFluentCrmTags');
     $router->post('sync-fluentcrm-lists', 'TicketController@syncFluentCrmLists');
+
+    $router->get('search-contact', 'CustomerController@searchContact');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
