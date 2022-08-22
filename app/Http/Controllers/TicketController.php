@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Http\Requests\TicketRequest;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
@@ -52,20 +53,11 @@ class TicketController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function createTicket( Request $request, Ticket $ticket )
+    public function createTicket( TicketRequest $request, Ticket $ticket )
     {
-        $ticketData = $request->getSafe('ticket');
+        $ticketData = $request->get('ticket');
 
-        $maybeNewCustomer = $request->getSafe('newCustomer');
-
-        if( empty($maybeNewCustomer) ){
-            $this->validate($ticketData, [
-                'customer_id' => 'required',
-                'title'       => 'required',
-                'content'     => 'required'
-            ]);
-        }
-
+        $maybeNewCustomer = $request->get('newCustomer');
         try {
             return $ticket->createTicket( $ticketData, $maybeNewCustomer );
         } catch (\Exception $e) {
