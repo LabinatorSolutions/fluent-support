@@ -1008,7 +1008,9 @@ class Ticket extends Model
             $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
         }
 
-        $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
+        if(!empty($ticketData['client_priority'])) {
+            $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
+        }
 
         /*
          * Filter ticket data
