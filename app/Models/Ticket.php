@@ -744,7 +744,7 @@ class Ticket extends Model
                 }
             }
 
-            $formattedData[$dataKey] = $value;
+            $formattedData[$dataKey] = make_clickable($value);
         }
 
         return $formattedData;
