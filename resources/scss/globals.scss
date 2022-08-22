@@ -488,3 +488,28 @@ p.fs_customer_address {
         }
     }
 }
+
+.fs_all_tickets_table {
+    .el-table__body {
+        .el-table__row {
+            cursor: pointer;
+        }
+    }
+}
+
+ul.fs_contact_results {
+    margin: 0;
+    padding: 0;
+    border: 1px solid #dbdfe5;
+    list-style: none;
+    border-radius: 4px;
+    li {
+        padding: 10px 15px;
+        border-bottom: 1px solid #dbdfe5;
+        margin: 0;
+        cursor: pointer;
+        &:hover {
+            background: #dbdfe5;
+        }
+    }
+}

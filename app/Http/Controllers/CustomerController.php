@@ -2,7 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Ticket;
+use FluentCrm\App\Models\Subscriber;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Services\AvatarUploder;
@@ -40,7 +40,7 @@ class CustomerController extends Controller
      */
     public function getCustomer(Request $request, Customer $customer, $customerId)
     {
-        return $customer->getCustomer($customerId, $request->getSafe('with'));
+        return $customer->getCustomer($customerId, $request->getSafe('with', []));
     }
 
     /**
@@ -115,7 +115,7 @@ class CustomerController extends Controller
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
         try {
-           return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('customer_id', 'int'), 'customer' );
+            return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id', ''), 'customer');
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')
@@ -130,17 +130,111 @@ class CustomerController extends Controller
      * @param $id
      * @return array
      */
-    public function resetAvatar(Customer $customer, $id){
+    public function resetAvatar(Customer $customer, $id)
+    {
         try {
             $customer->restoreAvatar($customer, $id);
 
             return [
-                'message'  => __('Customer avatar reset to gravatar default', 'fluent-support'),
+                'message' => __('Customer avatar reset to gravatar default', 'fluent-support'),
             ];
         } catch (\Exception $e) {
             return [
-                'message'  => __($e->getMessage(), 'fluent-support')
+                'message' => __($e->getMessage(), 'fluent-support')
             ];
         }
+    }
+
+    public function searchContact(Request $request)
+    {
+        $search = $request->getSafe('search');
+        if (!$search) {
+            return $this->sendError([
+                'message' => 'Please provide search string'
+            ]);
+        }
+
+        $isEmail = is_email($search);
+
+        // search the existing customers first
+        if ($isEmail) {
+            $customers = Customer::select(['first_name', 'last_name', 'email', 'id', 'user_id'])
+                ->where('email', $search)
+                ->get();
+        } else {
+            $customers = Customer::select(['first_name', 'last_name', 'email', 'id', 'user_id'])
+                ->searchBy($search)
+                ->limit(10)
+                ->get();
+        }
+
+        if (!$customers->isEmpty()) {
+            return [
+                'type'     => 'search_result',
+                'provider' => 'fluent_support',
+                'data'     => $customers,
+                'is_email' => $isEmail,
+                'search' => $search
+            ];
+        }
+
+        // If FluentCRM exist then let's search for
+        if (defined('FLUENTCRM')) {
+
+            if ($isEmail) {
+                $contacts = \FluentCrm\App\Models\Subscriber::where('email', $search)
+                    ->select(['first_name', 'last_name', 'email', 'id', 'user_id'])
+                    ->get();
+            } else {
+
+                $contacts = \FluentCrm\App\Models\Subscriber::searchBy($search)
+                     ->select(['first_name', 'last_name', 'email', 'id', 'user_id'])
+                    ->limit(10)
+                    ->get();
+            }
+
+            if (!$contacts->isEmpty()) {
+                return [
+                    'type'     => 'search_result',
+                    'provider' => 'fluent_crm',
+                    'data'     => $contacts,
+                    'is_email' => $isEmail
+                ];
+            }
+        }
+
+        // let's search from user's database
+        $user_query = new \WP_User_Query(array('search' => $search, 'number' => 10));
+
+        $users = $user_query->get_results();
+
+        if ($users) {
+            $formattedUsers = [];
+
+            foreach ($users as $user) {
+                $formattedUsers[] = [
+                    'id'         => $user->ID,
+                    'first_name' => $user->first_name,
+                    'last_name'  => $user->last_name,
+                    'user_id'    => $user->ID,
+                    'email'      => $user->email
+                ];
+            }
+
+            return [
+                'type'     => 'search_result',
+                'provider' => 'wp_users',
+                'data'     => $formattedUsers,
+                'is_email' => $isEmail
+            ];
+        }
+
+        return [
+            'type'     => 'none',
+            'provider' => 'none',
+            'data'     => [],
+            'is_email' => $isEmail
+        ];
+
     }
 }
