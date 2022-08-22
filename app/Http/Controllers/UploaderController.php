@@ -42,7 +42,7 @@ class UploaderController extends Controller
 
 
         //get ticket by ticket id
-        $ticketId = $request->getSafe('ticket_id', 'int');
+        $ticketId = $request->getSafe('ticket_id', '', 'intval');
 
         if ($ticketId == 'undefined') {
             $ticketId = NULL;

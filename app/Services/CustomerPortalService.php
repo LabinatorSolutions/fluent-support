@@ -345,7 +345,7 @@ class CustomerPortalService
      */
     public function resolveCustomer($request, $forceCreate = false)
     {
-        $onBehalf = $request->getSafe('on_behalf', 'int');
+        $onBehalf = $request->getSafe('on_behalf', '', 'intval');
 
         if (!$onBehalf) {
             $user = get_user_by('ID', get_current_user_id());
