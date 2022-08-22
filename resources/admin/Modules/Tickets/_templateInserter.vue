@@ -57,7 +57,6 @@ export default {
             this.loading = true;
             this.$get('saved-replies', {
                 page: this.pagination.current_page,
-                per_page: this.pagination.per_page,
                 product_id: this.selected_product,
                 search: this.search
             })
