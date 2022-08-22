@@ -88,7 +88,7 @@ class CustomerPortalService
      */
     public function createResponse ($request, $ticketId, $data )
     {
-        $data['content'] = wp_specialchars_decode( wp_unslash( wp_kses_post( $data['content'] ) ) );
+        $data['content'] = wp_specialchars_decode( wp_unslash($data['content'] ));
         $data['conversation_type'] = 'response';
 
         $ticket = Ticket::with( ['customer'] )->findOrFail( $ticketId );

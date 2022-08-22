@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use Exception;
+use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
@@ -92,14 +93,10 @@ class CustomerPortalController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createResponse(Request $request, CustomerPortalService $customerPortalService, $ticketId)
+    public function createResponse(TicketResponseRequest $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $this->validate($request->getSafe(), [
-            'content' => 'required'
-        ]);
-
         try {
-            return $customerPortalService->createResponse( $request, $ticketId, $request->getSafe() );
+            return $customerPortalService->createResponse( $request, $ticketId, $request->get() );
         } catch (Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
