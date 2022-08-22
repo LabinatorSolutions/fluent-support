@@ -62,7 +62,7 @@
                             </el-col>
                             <el-col :md="12" :xs="24">
                                 <el-form-item :label="$t('Password')">
-                                    <el-input :placeholder="$t('Password')" type="password" show-password
+                                    <el-input :placeholder="$t('Password (Leave blank for auto generated email)')" type="password" show-password
                                               v-model="new_customer.password"></el-input>
                                 </el-form-item>
                             </el-col>
