@@ -32,7 +32,7 @@ class CustomerPortalController extends Controller
         try {
             $customer = $customerPortalService->resolveCustomer( $request );
             return [
-                'tickets' => $customerPortalService->getTickets( $customer,  $request->getSafe('filter_type', 'text', '') )
+                'tickets' => $customerPortalService->getTickets( $customer,  $request->getSafe('filter_type', '') )
             ];
         } catch (Exception $e) {
             return $this->sendError([

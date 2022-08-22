@@ -235,18 +235,18 @@ class SettingsController extends Controller
 
     public function setupInstallation(Request $request)
     {
-        $installFluentForm = $request->getSafe('install_fluentform', 'text', 'no');
+        $installFluentForm = $request->get('install_fluentform', 'no');
 
         if ($installFluentForm == 'yes' && !defined('FLUENTFORM')) {
             $this->installFluentForm();
         }
 
-        $optinEmail = $request->getSafe('optin_email', 'text','no');
+        $optinEmail = $request->getSafe('optin_email', 'no');
         if ($optinEmail && is_email($optinEmail)) {
             $this->shareEmail($optinEmail);
         }
 
-        $shareEssential = $request->getSafe('share_essentials', 'text','no');
+        $shareEssential = $request->getSafe('share_essentials','no');
         if ($shareEssential == 'yes') {
             Helper::updateOption('_share_essential', $shareEssential);
         }

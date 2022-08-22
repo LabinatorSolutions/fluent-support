@@ -73,15 +73,30 @@ class Request
         return Arr::get($this->inputs(), $key, $default);
     }
 
-    public function getSafe($key = null, $sanitizeFunc = 'text', $default = null)
+
+    public function getSafe($key, $default = null, $callback = 'sanitize_text_field')
     {
-        $value = $this->get($key);
-        if(!$value) {
-            return $default;
+        $value = $this->get($key, $default);
+        if($value || $default == $value) {
+            return $value;
         }
 
-        return $this->sanitize($value, $sanitizeFunc);
+        if(is_array($value)) {
+            return map_deep($value, $callback);
+        }
+
+        return call_user_func($callback, $value);
     }
+
+//    public function getSafe($key = null, $sanitizeFunc = 'text', $default = null)
+//    {
+//        $value = $this->get($key);
+//        if(!$value) {
+//            return $default;
+//        }
+//
+//        return $this->sanitize($value, $sanitizeFunc);
+//    }
 
 
     public function sanitize($value, $callback)
@@ -102,7 +117,7 @@ class Request
             }
             return $value;
         }
-        if( $sanitizeMaps[$callback] || isset($sanitizeMaps[$callback]) ) {
+        if( isset($sanitizeMaps[$callback]) ) {
             return $sanitizeMaps[$callback]($value);
         }
 

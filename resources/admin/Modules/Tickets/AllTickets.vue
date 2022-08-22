@@ -87,6 +87,7 @@
                     v-if="app_ready && !first_time_loading"
                     :data="tickets"
                     stripe
+                    class="fs_all_tickets_table"
                     @row-click="gotToTicket"
                     @selection-change="handleSelectionChange"
                     style="width: 100%">
