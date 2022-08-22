@@ -104,7 +104,7 @@
                     </el-table-column>
                     <el-table-column min-width="300" :label="$t('Title')">
                         <template #default="scope">
-                            <router-link target="_blank" class="fs_tk_preview"
+                            <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
                                 <span style="font-size: 10px;"> {{$t(' by')}} {{ scope.row.customer.first_name }}</span>
@@ -276,7 +276,6 @@ export default {
     watch: {
         '$route.query'() {
             if (this.app_ready) {
-                this.resetWithOutFetch();
                 this.filters.agent_id = this.$route.query.agent_id;
                 this.filters.watcher = this.$route.query.watcher;
                 this.filter_type = this.$route.query.filter_type;
@@ -353,15 +352,15 @@ export default {
             }
         },
         gotToTicket(row) {
-            this.$router.resolve({
+            this.$router.push({
                 name: 'view_ticket',
                 params: {ticket_id: row.id}
             });
         },
         setFromSaveFilters(callback) {
             this.filter_type = this.$getData('tickets_filter_type', 'simple');
-
             const filters = this.$getData('tickets_filter', {});
+            
             each(filters, (filter, filterKey) => {
                 this.filters[filterKey] = filter;
             });
