@@ -104,7 +104,7 @@
                     </el-table-column>
                     <el-table-column min-width="300" :label="$t('Title')">
                         <template #default="scope">
-                            <router-link class="fs_tk_preview"
+                            <router-link target="_blank" class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
                                 <span style="font-size: 10px;"> {{$t(' by')}} {{ scope.row.customer.first_name }}</span>
@@ -353,7 +353,7 @@ export default {
             }
         },
         gotToTicket(row) {
-            this.$router.push({
+            this.$router.resolve({
                 name: 'view_ticket',
                 params: {ticket_id: row.id}
             });
