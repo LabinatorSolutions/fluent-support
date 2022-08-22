@@ -738,7 +738,7 @@ class Ticket extends Model
                 }
             }
 
-            $formattedData[$dataKey] = make_clickable($value);
+            $formattedData[$dataKey] = links_add_target(make_clickable($value));
         }
 
         return $formattedData;
@@ -1153,10 +1153,10 @@ class Ticket extends Model
     private function getTicketAdditionalData($agent, $responses, $ticket, $isCrmProfileRequested = false)
     {
         foreach ($responses as $response) {
-            $response->content = make_clickable(wpautop($response->content, false));
+            $response->content = links_add_target(make_clickable(wpautop($response->content, false)));
         }
 
-        $ticket->content = make_clickable(wpautop($ticket->content, false));
+        $ticket->content = links_add_target(make_clickable(wpautop($ticket->content, false)));
 
         //Get last activity by agent
         $ticket->live_activity = TicketHelper::getActivity($ticket->id, $agent->id);
@@ -1201,7 +1201,7 @@ class Ticket extends Model
 
         $responseData = (new ResponseService())->createResponse($data, $agent, $ticket);
 
-        $responseData['response']->content = wp_specialchars_decode(make_clickable(wpautop($responseData['response']->content, false)));
+        $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
 
         return [
             'message'     => __('Response has been added', 'fluent-support'),

@@ -97,7 +97,7 @@
                     </el-table-column>
                     <el-table-column width="70" label="">
                         <template #default="scope">
-                            <img v-if="scope.row.customer" :title="scope.row.customer.full_name"
+                            <img v-if="scope.row.customer" :title="scope.row.customer.email +' - '+ scope.row.customer.full_name"
                                  :alt="scope.row.customer.full_name"
                                  class="tk_customer_avatar" :src="scope.row.customer.photo"/>
                         </template>
@@ -360,7 +360,7 @@ export default {
         setFromSaveFilters(callback) {
             this.filter_type = this.$getData('tickets_filter_type', 'simple');
             const filters = this.$getData('tickets_filter', {});
-            
+
             each(filters, (filter, filterKey) => {
                 this.filters[filterKey] = filter;
             });
