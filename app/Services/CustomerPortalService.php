@@ -460,7 +460,7 @@ class CustomerPortalService
             ->get();
 
         foreach ($responses as $response) {
-            $response->content = make_clickable($response->content);
+            $response->content = links_add_target(make_clickable($response->content));
             if ($response->person) {
                 $response->person->setHidden(['email']);
             }
@@ -476,7 +476,7 @@ class CustomerPortalService
      */
     private function syncTicketAdditionData ($ticket )
     {
-        $ticket->content = make_clickable( $ticket->content );
+        $ticket->content = links_add_target(make_clickable( $ticket->content ));
 
         if ( $ticket->customer ) {
             $ticket->customer->setHidden(['email']);
