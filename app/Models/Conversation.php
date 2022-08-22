@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Services\Tickets\ResponseService;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Support\Arr;
 
 class Conversation extends Model
 {
@@ -135,9 +136,9 @@ class Conversation extends Model
         $tickets = $this->getTicketsToForBulkReply( $data, $agent );
 
         $responseData = [
-            'content'           => $data['content'],
-            'conversation_type' => sanitize_text_field('response'),
-            'close_ticket'      => $data['close_ticket'] ?? 'no',
+            'content'           => wp_kses_post(Arr::get($data, 'content', '')),
+            'conversation_type' => 'response',
+            'close_ticket'      => Arr::get($data, 'close_ticket'),
         ];
 
         $attachments = $data['attachments'];
