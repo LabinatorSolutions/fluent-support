@@ -19,7 +19,6 @@ use FluentSupport\Framework\Request\Request;
  *
  * @version 1.0.0
  */
-
 class TicketController extends Controller
 {
     /**
@@ -30,7 +29,7 @@ class TicketController extends Controller
      */
     public function me(Request $request, ProfileInfoService $profileInfoService)
     {
-        return $profileInfoService->me( $request, wp_get_current_user() );
+        return $profileInfoService->me($request, wp_get_current_user());
     }
 
     /**
@@ -41,9 +40,9 @@ class TicketController extends Controller
     public function index(Request $request, Ticket $ticket)
     {
         //Selected filter type, either simple or Advanced
-        $filterType = $request->getSafe('filter_type','simple');
+        $filterType = $request->getSafe('filter_type', 'simple');
 
-        return $ticket->getTickets( $request, $filterType );
+        return $ticket->getTickets($request, $filterType);
     }
 
     /**
@@ -53,16 +52,30 @@ class TicketController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function createTicket( TicketRequest $request, Ticket $ticket )
+    public function createTicket(Request $request, Ticket $ticket)
     {
-        $ticketData = $request->get('ticket');
+        $ticketData = $request->getSafe('ticket', [], 'wp_kses_post');
 
-        $maybeNewCustomer = $request->get('newCustomer');
-        try {
-            return $ticket->createTicket( $ticketData, $maybeNewCustomer );
-        } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+        $maybeNewCustomer = $request->getSafe('newCustomer');
+
+        $this->validate($ticketData, [
+            'title'   => 'required',
+            'content' => 'required'
+        ]);
+
+
+        $createdTicket = $ticket->createTicket($ticketData, $maybeNewCustomer);
+
+        if (is_wp_error($createdTicket)) {
+            return $this->sendError([
+                'message' => $createdTicket->get_error_message()
+            ]);
         }
+
+        return [
+            'message' => 'Ticket has been successfully created',
+            'ticket'  => $createdTicket
+        ];
     }
 
     /**
@@ -74,9 +87,9 @@ class TicketController extends Controller
     public function getTicket(Request $request, Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->getTicket( $request, $ticketId );
+            return $ticket->getTicket($request, $ticketId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -88,14 +101,14 @@ class TicketController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createResponse ( TicketResponseRequest $request, Ticket $ticket, $ticketId )
+    public function createResponse(TicketResponseRequest $request, Ticket $ticket, $ticketId)
     {
-        $data = $request->get();
+        $data = $request->getSafe(null, [], 'wp_kses_post');
 
         try {
-            return $ticket->createResponse( $data, $ticketId );
+            return $ticket->createResponse($data, $ticketId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -105,12 +118,12 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function getTicketWidgets( Ticket $ticket, $ticketId )
+    public function getTicketWidgets(Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->getTicketWidgets( $ticketId );
+            return $ticket->getTicketWidgets($ticketId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -124,9 +137,9 @@ class TicketController extends Controller
     public function updateTicketProperty(Request $request, Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->updateTicketProperty( $request, $ticketId );
+            return $ticket->updateTicketProperty($request, $ticketId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -136,12 +149,12 @@ class TicketController extends Controller
      * @param int $ticketId
      * @return array
      */
-    public function closeTicket ( Ticket $ticket, $ticketId )
+    public function closeTicket(Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->closeTicket( $ticketId );
+            return $ticket->closeTicket($ticketId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -151,12 +164,12 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function reOpenTicket ( Ticket $ticket, $ticketId )
+    public function reOpenTicket(Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->reOpenTicket( $ticketId );
+            return $ticket->reOpenTicket($ticketId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -168,14 +181,14 @@ class TicketController extends Controller
      * @return array|string[]|void
      * @throws \Exception
      */
-    public function doBulkActions ( Request $request, Ticket $ticket )
+    public function doBulkActions(Request $request, Ticket $ticket)
     {
         $ticketIds = $request->getSafe('ticket_ids', [], 'intval');
 
         try {
-            return $ticket->handleBulkActions( $request, $ticketIds );
-        } catch ( \Exception $e ) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $ticket->handleBulkActions($request, $ticketIds);
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -187,18 +200,18 @@ class TicketController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function doBulkReplies ( Request $request, Conversation $conversation )
+    public function doBulkReplies(Request $request, Conversation $conversation)
     {
-        $data = $request->getSafe();
+        $data = $request->get();
         $this->validate($data, [
             'content'    => 'required',
             'ticket_ids' => 'required|array'
         ]);
 
         try {
-            return $conversation->doBulkReplies( $data );
-        } catch ( \Exception $e ) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $conversation->doBulkReplies($data);
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -210,12 +223,12 @@ class TicketController extends Controller
      * @param $responseId
      * @return array
      */
-    public function deleteResponse ( Conversation $conversation, $ticketId, $responseId )
+    public function deleteResponse(Conversation $conversation, $ticketId, $responseId)
     {
         try {
-            return $conversation->deleteResponse( $ticketId, $responseId );
+            return $conversation->deleteResponse($ticketId, $responseId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -228,14 +241,14 @@ class TicketController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function updateResponse ( TicketResponseRequest $request, Conversation $conversation, $ticketId, $responseId )
+    public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticketId, $responseId)
     {
         $data = $request->get();
 
         try {
-            return $conversation->updateResponse( $data, $ticketId, $responseId );
+            return $conversation->updateResponse($data, $ticketId, $responseId);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -245,7 +258,7 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function getLiveActivity( Request $request, $ticketId )
+    public function getLiveActivity(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
 
@@ -260,7 +273,7 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function removeLiveActivity( Request $request, $ticketId )
+    public function removeLiveActivity(Request $request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
 
@@ -276,11 +289,11 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array
      */
-    public function addTag( Request $request, $ticketId )
+    public function addTag(Request $request, $ticketId)
     {
         $ticket = Ticket::findOrFail($ticketId);
 
-        $ticket->applyTags( $request->getSafe('tag_id', '', 'intval'));
+        $ticket->applyTags($request->getSafe('tag_id', '', 'intval'));
 
         return [
             'message' => __('Tag has been added to this ticket', 'fluent-support'),
@@ -294,7 +307,7 @@ class TicketController extends Controller
      * @param $tagId
      * @return array
      */
-    public function detachTag( $ticketId, $tagId )
+    public function detachTag($ticketId, $tagId)
     {
         $ticket = Ticket::findOrFail($ticketId);
         $ticket->detachTags($tagId);
@@ -311,7 +324,7 @@ class TicketController extends Controller
      * @param Request $request
      * @return array
      */
-    public function changeTicketCustomer( Request $request )
+    public function changeTicketCustomer(Request $request)
     {
         $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', '', 'intval'))
             ->update(['customer_id' => $request->getSafe('customer')]);
@@ -327,7 +340,7 @@ class TicketController extends Controller
      * @param $ticketId
      * @return array|array[]
      */
-    public function getTicketCustomData( Request $request, $ticketId )
+    public function getTicketCustomData(Request $request, $ticketId)
     {
         if (!defined('FLUENTSUPPORTPRO')) {
             return [
@@ -351,13 +364,13 @@ class TicketController extends Controller
      * @param FluentCRMServices $fluentCRMServices
      * @return array
      */
-    public function syncFluentCrmTags ( Request $request, FluentCRMServices $fluentCRMServices )
+    public function syncFluentCrmTags(Request $request, FluentCRMServices $fluentCRMServices)
     {
         $data = $request->only(['contact_id', 'tags']);
         try {
-            return $fluentCRMServices->syncCrmTags( $data );
+            return $fluentCRMServices->syncCrmTags($data);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
@@ -369,13 +382,13 @@ class TicketController extends Controller
      * @return array
      */
 
-    public function syncFluentCrmLists ( Request $request, FluentCRMServices $fluentCRMServices )
+    public function syncFluentCrmLists(Request $request, FluentCRMServices $fluentCRMServices)
     {
         $data = $request->only(['contact_id', 'lists']);
         try {
-            return $fluentCRMServices->syncCrmLists( $data );
+            return $fluentCRMServices->syncCrmLists($data);
         } catch (\Exception $e) {
-            return $this->sendError( __($e->getMessage(), 'fluent-support') );
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 }

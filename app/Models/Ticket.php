@@ -120,42 +120,42 @@ class Ticket extends Model
         foreach ($search as $s) {
             $operator = $s['operator'];
             //If selected item for ticket either title or content
-            if(in_array($s['property'], ['title','content' ])){
+            if (in_array($s['property'], ['title', 'content'])) {
                 //If the selected condition is contains, query operator id LIKE
                 if ($operator == 'contains') {
                     $query = $query->where(function ($query) use ($s) {
-                        $query->where($s['property'], 'LIKE', "%".$s['value']."%");
+                        $query->where($s['property'], 'LIKE', "%" . $s['value'] . "%");
                     });
                 } elseif ($operator == 'not_contains') {
                     //If the selected condition is not_contains, query operator id NOT LIKE
-                    $query = $query->where(function ($query) use ($s){
-                        $query->where($s['property'], 'NOT LIKE', '%'.$s['value'].'%');
+                    $query = $query->where(function ($query) use ($s) {
+                        $query->where($s['property'], 'NOT LIKE', '%' . $s['value'] . '%');
                     });
                 }
             }
 
             //If selected item is Ticket Conversation Content
-            if($s['property'] == 'conversation_content'){
+            if ($s['property'] == 'conversation_content') {
                 $operator = $s['operator'];
-                if($operator == 'contains') {
+                if ($operator == 'contains') {
                     $query = $query->whereHas('responses', function ($q) use ($s) {
-                        $q->where('content', 'LIKE', "%".$s['value']."%");
+                        $q->where('content', 'LIKE', "%" . $s['value'] . "%");
                     });
 
                 } else if ($operator == 'not_contains') {
                     $query = $query->whereHas('responses', function ($q) use ($s) {
-                        $q->where('content', 'NOT LIKE', "%".$s['value']."%");
+                        $q->where('content', 'NOT LIKE', "%" . $s['value'] . "%");
                     });
                 }
             }
 
             //If selected item is Ticket created or Last Response or Customer Waiting For, or Last Agent Response or Last Customer Response
-            if(in_array($s['property'], ['created_at', 'updated_at', 'waiting_since', 'last_agent_response', 'last_customer_response'])){
+            if (in_array($s['property'], ['created_at', 'updated_at', 'waiting_since', 'last_agent_response', 'last_customer_response'])) {
                 $query = (new \FluentSupport\App\Models\Ticket())->buildDateBaseFilterQuery($query, $s);
             }
 
             //If selected item is Ticket Status or Client Priority or Agent Priority or Tags or Product or Waiting For Reply
-            if(in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply', 'agent_id', 'mailbox_id'])){
+            if (in_array($s['property'], ['status', 'client_priority', 'priority', 'tags', 'product', 'waiting_for_reply', 'agent_id', 'mailbox_id'])) {
                 $query = (new \FluentSupport\App\Models\Ticket())->buildPropertiesFilterQuery($query, $s);
             }
         }
@@ -184,8 +184,8 @@ class Ticket extends Model
      */
     public function scopeWaitingOnly($query)
     {
-        $query->where(function ($q){
-            $q->whereColumn('last_agent_response', '<' ,'last_customer_response')
+        $query->where(function ($q) {
+            $q->whereColumn('last_agent_response', '<', 'last_customer_response')
                 ->orWhereNull('last_agent_response')
                 ->orWhere('status', 'new');
         });
@@ -226,20 +226,18 @@ class Ticket extends Model
                 //Apply filter where ticket is not assigned
                 if ($filterValue == 'unassigned') {
                     $query->whereNull($filterKey);
-                }
-                else {
-                    if(defined('FLUENTSUPPORTPRO')) {
-                        if (isset($filters['watcher']) && $filters['watcher'] == 'watcher'){
+                } else {
+                    if (defined('FLUENTSUPPORTPRO')) {
+                        if (isset($filters['watcher']) && $filters['watcher'] == 'watcher') {
                             $watcherTickets = TicketHelper::getWatcherTicketIds($filterValue);
                             $query->whereIn('id', $watcherTickets);
-                        }else {
+                        } else {
                             //Apply filter, get only assigned ticket
                             $query->where($filterKey, $filterValue);
                         }
                     }
                 }
-            }
-            else if ($filterKey == 'ticket_tags') {
+            } else if ($filterKey == 'ticket_tags') {
                 if (!$filterValue) {
                     continue;
                 }
@@ -381,9 +379,9 @@ class Ticket extends Model
                 break;
             case 'date_range':
                 $filter['operator'] = 'BETWEEN';
-                if(isset($filter['value'][0]))
-                    $filter['value'][0] .=  ' 00:00:00';
-                if(isset($filter['value'][1]))
+                if (isset($filter['value'][0]))
+                    $filter['value'][0] .= ' 00:00:00';
+                if (isset($filter['value'][1]))
                     $filter['value'][1] .= ' 23:59:59';
                 break;
         }
@@ -457,25 +455,21 @@ class Ticket extends Model
             $subField = $filter['property'] == 'tags' ? 'tag_id' : 'product_id';
             list($method, $subMethod) = static::parseRelationalFilterQueryMethods($filter);
             $query = static::buildRelationFilterQuery($filter['property'], $query, $method, $subMethod, $subField, $filter);
-        }
-
-        elseif ($filter['property'] == 'waiting_for_reply'){
-            if (($filter['value'] == 'yes' && $filter['operator'] == '=') || ($filter['value'] == 'no' && $filter['operator'] == '!=')){
-                $query = $query->where(function ($q){
-                    $q->whereColumn('last_agent_response', '<' ,'last_customer_response')
+        } elseif ($filter['property'] == 'waiting_for_reply') {
+            if (($filter['value'] == 'yes' && $filter['operator'] == '=') || ($filter['value'] == 'no' && $filter['operator'] == '!=')) {
+                $query = $query->where(function ($q) {
+                    $q->whereColumn('last_agent_response', '<', 'last_customer_response')
                         ->orWhereNull('last_agent_response')
                         ->orWhere('status', 'new');
                 });
             } else {
                 $query = $query->where(function ($q) {
-                    $q->whereColumn('last_customer_response', '<' ,'last_agent_response');
+                    $q->whereColumn('last_customer_response', '<', 'last_agent_response');
                 });
             }
-        }
-
-        else {
+        } else {
             $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
-            $query = $query->{$method}($filter['property'], (array) $filter['value']);
+            $query = $query->{$method}($filter['property'], (array)$filter['value']);
         }
         return $query;
     }
@@ -524,14 +518,13 @@ class Ticket extends Model
      */
     public function filterTicketByUser($provider, $query, $filters)
     {
-        foreach ($filters as $index=>$filter) {
-            if ($filter['operator']=='in' || $filter['operator']=='not_in') {
+        foreach ($filters as $index => $filter) {
+            if ($filter['operator'] == 'in' || $filter['operator'] == 'not_in') {
                 $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
                 $query = $query->whereHas($provider, function ($q) use ($method, $filter) {
-                        $q->{$method}($filter['property'], $filter['value']);
+                    $q->{$method}($filter['property'], $filter['value']);
                 });
-            }
-            elseif ($filter['operator'] == 'contains') {
+            } elseif ($filter['operator'] == 'contains') {
                 $operator = 'LIKE';
                 $searchTerm = '%' . $filter['value'] . '%';
                 $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
@@ -543,25 +536,26 @@ class Ticket extends Model
 
             if ($filter['operator'] == '=') {
                 $query->whereHas($provider, function ($q) use ($index, $filter) {
-                    if ($index == 0){
+                    if ($index == 0) {
                         $q->where($filter['property'], '=', $filter['value']);
-                    }else{
+                    } else {
                         $q->orWhere($filter['property'], '=', $filter['value']);
                     }
                 });
             } elseif ($filter['operator'] == '!=') {
-                    $query->whereHas($provider, function ($q) use ($index, $filter) {
-                        if ($index == 0){
-                            $q->where($filter['property'], '!=', $filter['value']);
-                        }else{
-                            $q->orWhere($filter['property'], '!=', $filter['value']);
-                        }
-                    });
+                $query->whereHas($provider, function ($q) use ($index, $filter) {
+                    if ($index == 0) {
+                        $q->where($filter['property'], '!=', $filter['value']);
+                    } else {
+                        $q->orWhere($filter['property'], '!=', $filter['value']);
+                    }
+                });
 
             }
             return $query;
         }
     }
+
     /**
      * One2Many: Customer has to many Click Tickets
      * @return Model Collection
@@ -573,7 +567,7 @@ class Ticket extends Model
         return $this->hasMany(
             $class, 'ticket_id', 'id'
         )->with('person', 'attachments')
-        ->latest('id');
+            ->latest('id');
     }
 
     public function preview_response()
@@ -600,7 +594,7 @@ class Ticket extends Model
 
         return $this->hasMany($class, 'source_id', 'id')
             ->where('source_type', 'ticket_watcher')
-            ->select([ 'tag_id']);
+            ->select(['tag_id']);
     }
 
     /**
@@ -807,7 +801,7 @@ class Ticket extends Model
 
     public function getLastAgentResponse()
     {
-        $query =  \FluentSupport\App\App::db()->table('fs_conversations')
+        $query = \FluentSupport\App\App::db()->table('fs_conversations')
             ->select(['fs_conversations.*'])
             ->where('fs_conversations.conversation_type', 'response')
             ->where('fs_conversations.ticket_id', $this->id)
@@ -836,8 +830,8 @@ class Ticket extends Model
     {
         $result = false;
 
-        if ( !is_array($tagIds) ) {
-            $tagIds = array( $tagIds );
+        if (!is_array($tagIds)) {
+            $tagIds = array($tagIds);
         }
 
         foreach ($tagIds as $tagId) {
@@ -857,6 +851,7 @@ class Ticket extends Model
         }
         return $result;
     }
+
     /**
      * This method will remove tags from ticket
      * @param $tagIds This is the array of tag ids that will be removed from the ticket
@@ -866,8 +861,8 @@ class Ticket extends Model
     {
         $result = false;
 
-        if ( !is_array($tagIds) ) {
-            $tagIds = array( $tagIds );
+        if (!is_array($tagIds)) {
+            $tagIds = array($tagIds);
         }
 
         foreach ($tagIds as $tagId) {
@@ -894,15 +889,15 @@ class Ticket extends Model
      * @param string $filterType
      * @return array $tickets
      */
-    public function getTickets ( $request, $filterType )
+    public function getTickets($request, $filterType)
     {
-        $queryArgs = $this->prepareQuery( $request, $filterType );
-        $tickets = $this->getTicketsByQuery( $queryArgs );
+        $queryArgs = $this->prepareQuery($request, $filterType);
+        $tickets = $this->getTicketsByQuery($queryArgs);
 
         foreach ($tickets as $ticket) {
-            if ( $request->get('per_page') < 15 ) {
+            if ($request->get('per_page') < 15) {
                 if ($ticket->status != 'closed') {
-                    $ticket->live_activity = TicketHelper::getActivity( $ticket->id );
+                    $ticket->live_activity = TicketHelper::getActivity($ticket->id);
                 } else {
                     $ticket->live_activity = [];
                 }
@@ -916,23 +911,23 @@ class Ticket extends Model
 
     // This is a supporting method for getTickets method
     // it prepare the query arguments for tickets filtering
-    private function prepareQuery ( $request, $filterType )
+    private function prepareQuery($request, $filterType)
     {
         $queryArgs = [
-            'with' => [],
+            'with'        => [],
             'filter_type' => $filterType,
-            'sort_by' => $request->getSafe('order_by', 'id', 'sanitize_sql_orderby'),
-            'sort_type' => $request->getSafe('order_type', 'DESC', 'sanitize_sql_orderby'),
+            'sort_by'     => $request->getSafe('order_by', 'id', 'sanitize_sql_orderby'),
+            'sort_type'   => $request->getSafe('order_type', 'DESC', 'sanitize_sql_orderby'),
         ];
 
-        if( $filterType == 'advanced' ){
+        if ($filterType == 'advanced') {
             //Get the selected query params for advanced filter
-            $queryArgs['filters_groups_raw'] = json_decode( $request->get( 'advanced_filters' ), true );
+            $queryArgs['filters_groups_raw'] = json_decode($request->get('advanced_filters'), true);
         } else {
             //Selected filter type is simple
             $queryArgs['simple_filters'] = $request->get('filters', []);
-            $queryArgs['search'] = trim( $request->getSafe('search', '') );
-            if ( $customerId = $request->getSafe( 'customer_id', '', 'intval' ) ) {
+            $queryArgs['search'] = trim($request->getSafe('search', ''));
+            if ($customerId = $request->getSafe('customer_id', '', 'intval')) {
                 $queryArgs['customer_id'] = $customerId;
             }
         }
@@ -942,7 +937,7 @@ class Ticket extends Model
 
     // This is a supporting method for getTickets method
     // it returns the tickets by query arguments
-    private function getTicketsByQuery ( $queryArgs )
+    private function getTicketsByQuery($queryArgs)
     {
         $ticketsModel = (new TicketQueryService($queryArgs))->getModel();
 
@@ -973,25 +968,26 @@ class Ticket extends Model
      * a customer with WP profile if given.
      * @param array $ticketData
      * @param array $maybeNewCustomer
-     * @return array
+     * @return $this | \WP_Error
      */
 
-    public function createTicket ( $ticketData, $maybeNewCustomer = false )
+    public function createTicket($ticketData, $maybeNewCustomer = false)
     {
-        $ticketData = $this->maybeCreateNewCustomer( $ticketData, $maybeNewCustomer );
-        
-        $customer = Customer::findOrFail($ticketData['customer_id']);
-        $ticketData = $this->buildTicketData( $ticketData, $customer );
+        $ticketData = $this->maybeCreateNewCustomer($ticketData, $maybeNewCustomer);
 
-        return [
-            'message' => __('Ticket has been created successfully', 'fluent-support'),
-            'ticket'  => $this->storeTicket( $ticketData, $customer )
-        ];
+        if(!$ticketData) {
+            return new \WP_Error('error', 'Ticket could not be created');
+        }
+
+        $customer = Customer::findOrFail($ticketData['customer_id']);
+        $ticketData = $this->buildTicketData($ticketData, $customer);
+
+        return $this->storeTicket($ticketData, $customer);
     }
 
     // This is a supporting method for createTicket method
     // it will create ticket data array for ticket creation
-    private function buildTicketData ( $ticketData, $customer )
+    private function buildTicketData($ticketData, $customer)
     {
         if (empty($ticketData['mailbox_id'])) {
             $mailbox = Helper::getDefaultMailBox();
@@ -1004,9 +1000,9 @@ class Ticket extends Model
             $ticketData['product_source'] = 'local';
         }
 
-        $ticketData['title'] = sanitize_text_field( wp_unslash ( $ticketData['title'] ) );
+        $ticketData['title'] = sanitize_text_field(wp_unslash($ticketData['title']));
 
-        $ticketData['content'] = wp_specialchars_decode( wp_unslash ( wp_kses_post ( $ticketData['content'] ) ) );
+        $ticketData['content'] = wp_specialchars_decode(wp_unslash(wp_kses_post($ticketData['content'])));
 
         if (!empty($ticketData['priority'])) {
             $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
@@ -1028,7 +1024,7 @@ class Ticket extends Model
 
     // This is a supporting method for createTicket method
     // it will store the ticket and return the ticket object
-    private function storeTicket ( $ticketData, $customer )
+    private function storeTicket($ticketData, $customer)
     {
         /*
          * Action before ticket create
@@ -1061,33 +1057,48 @@ class Ticket extends Model
     // it will create a new customer or a customer with WP profile if given
     // and after creating a new user it will store customer_id
     // inside $ticketData array as we only need customer_id to create ticket
-    private function maybeCreateNewCustomer ( $ticketData, $maybeNewCustomer )
+    private function maybeCreateNewCustomer($ticketData, $maybeNewCustomer)
     {
-        if ($ticketData['create_wp_user'] == 'yes'){
+        if (!empty($ticketData['customer_id'])) {
+            return $ticketData;
+        }
+
+        $createdUserId = false;
+
+        if (Arr::get($ticketData, 'create_wp_user') == 'yes' && !empty($maybeNewCustomer['username'])) {
             // Check if username already in use, if not create a wp new user
-            if(!username_exists($maybeNewCustomer['username'])){
+            if (!username_exists($maybeNewCustomer['username'])) {
                 $authController = new AuthController();
-                $createdUser = $authController->createUser($maybeNewCustomer);
-                $authController->maybeUpdateUser($createdUser, $maybeNewCustomer);
-            } else{
-                throw new Exception('This username is already exist in WordPress');
+                $createdUserId = $authController->createUser($maybeNewCustomer);
+                $authController->maybeUpdateUser($createdUserId, $maybeNewCustomer);
             }
         }
 
-        // If user select create customer during ticket creation
-        if($ticketData['create_customer'] == 'yes'){
-            // Check if user already exist as customer, if not create one
-            if ( !empty($maybeNewCustomer) && is_null(Customer::where('email', $maybeNewCustomer['email'])->first()) ){
-                $createCustomer = Customer::create($maybeNewCustomer);
-                if ($createCustomer){
-                    $ticketData['customer_id'] = $createCustomer->id;
-                }
-            }
-            else{
-                throw new Exception('Customer with this email already exist');
-            }
+        $email = Arr::get($maybeNewCustomer, 'email');
+        if (!$email || !is_email($email)) {
+            return false;
         }
 
+        $existingCustomer = Customer::where('email', $email)->first();
+
+        if($existingCustomer) {
+            $ticketData['customer_id'] = $existingCustomer->id;
+            return $ticketData;
+        }
+
+        // create the customer now
+        $customerData = Arr::only($maybeNewCustomer, (new Customer())->getFillable());
+        $customerData['user_id'] = $createdUserId;
+
+        $customerData = array_filter($customerData);
+
+        $createCustomer = Customer::create($customerData);
+
+        if (!$createCustomer) {
+            return false;
+        }
+
+        $ticketData['customer_id'] = $createCustomer->id;
         return $ticketData;
     }
 
@@ -1099,22 +1110,22 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function getTicket ( $request, $ticketId )
+    public function getTicket($request, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
 
         $ticketWith = $request->getSafe('with', []);
-        if(!$ticketWith) {
+        if (!$ticketWith) {
             $ticketWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
                 $q->whereIn('status', ['active', 'inline']);
             }];
         }
 
-        $ticket = $this->with( $ticketWith )->findOrFail($ticketId);
+        $ticket = $this->with($ticketWith)->findOrFail($ticketId);
 
-        $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl ( $ticket->customer ); //Get and set customer profile url
-        $this->checkAgentPermission ( $ticket ); // Check Agent Permission
-        $this->checkIfClosedTicket ( $ticket );  // Check if ticket is closed, if closed then load ticket with closed data
+        $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl($ticket->customer); //Get and set customer profile url
+        $this->checkAgentPermission($ticket); // Check Agent Permission
+        $this->checkIfClosedTicket($ticket);  // Check if ticket is closed, if closed then load ticket with closed data
 
 
         $withCrmData = in_array('fluentcrm_profile', $request->query('with_data', []));
@@ -1123,7 +1134,7 @@ class Ticket extends Model
     }
 
     // This checkIfClosedTicket method will validate if ticket is closed, if closed then load ticket with closed data
-    private function checkIfClosedTicket ( $ticket )
+    private function checkIfClosedTicket($ticket)
     {
         if ($ticket->status == 'closed') {
             $ticket->load('closed_by_person');
@@ -1133,13 +1144,13 @@ class Ticket extends Model
     }
 
     // This getCustomerProfileUrl method will return customer profile url
-    private function getCustomerProfileUrl ( $customer )
+    private function getCustomerProfileUrl($customer)
     {
         return $customer->getUserProfileEditUrl();
     }
 
     // This getTicketAdditionalData method will load ticket with additional data
-    private function getTicketAdditionalData( $agent, $responses, $ticket, $isCrmProfileRequested = false )
+    private function getTicketAdditionalData($agent, $responses, $ticket, $isCrmProfileRequested = false)
     {
         foreach ($responses as $response) {
             $response->content = make_clickable(wpautop($response->content, false));
@@ -1160,11 +1171,11 @@ class Ticket extends Model
             'agent_id'  => $agent->id
         ];
 
-        if(defined('FLUENTSUPPORTPRO') && $ticket->watchers){
+        if (defined('FLUENTSUPPORTPRO') && $ticket->watchers) {
             $data['watchers'] = TicketHelper::getWatchers($ticket->watchers);
         }
 
-        if ( defined('FLUENTCRM') && $isCrmProfileRequested ) {
+        if (defined('FLUENTCRM') && $isCrmProfileRequested) {
             $data['fluentcrm_profile'] = Helper::getFluentCrmContactData($ticket->customer);
         }
 
@@ -1180,20 +1191,20 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function createResponse ( $data, $ticketId )
+    public function createResponse($data, $ticketId)
     {
-        $agent = Helper::getAgentByUserId( get_current_user_id() );
-        $this->checkIfValidAgent( $agent );
+        $agent = Helper::getAgentByUserId(get_current_user_id());
+        $this->checkIfValidAgent($agent);
 
-        $ticket = static::findOrFail( $ticketId );
-        $this->checkAgentPermission( $ticket );
+        $ticket = static::findOrFail($ticketId);
+        $this->checkAgentPermission($ticket);
 
-        $responseData = (new ResponseService())->createResponse( $data, $agent, $ticket );
+        $responseData = (new ResponseService())->createResponse($data, $agent, $ticket);
 
-        $responseData['response']->content = wp_specialchars_decode( make_clickable( wpautop( $responseData['response']->content, false ) ) );
+        $responseData['response']->content = wp_specialchars_decode(make_clickable(wpautop($responseData['response']->content, false)));
 
         return [
-            'message'     => __( 'Response has been added', 'fluent-support' ),
+            'message'     => __('Response has been added', 'fluent-support'),
             'response'    => $responseData['response'],
             'ticket'      => $responseData['ticket'],
             'update_data' => $responseData['update_data']
@@ -1201,9 +1212,9 @@ class Ticket extends Model
     }
 
     // This checkIfValidAgent method will check if agent is valid or not
-    private function checkIfValidAgent ($agent)
+    private function checkIfValidAgent($agent)
     {
-        if ( !$agent ) {
+        if (!$agent) {
             throw new Exception('Sorry, You do not have permission. Please add yourself as support agent first');
         } else {
             return true;
@@ -1216,16 +1227,16 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function closeTicket ( $ticketId )
+    public function closeTicket($ticketId)
     {
-        $agent = Helper::getAgentByUserId( get_current_user_id() );
+        $agent = Helper::getAgentByUserId(get_current_user_id());
 
-        $ticket = static::findOrFail( $ticketId );
-        $this->checkAgentPermission( $ticket );
+        $ticket = static::findOrFail($ticketId);
+        $this->checkAgentPermission($ticket);
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close( $ticket, $agent )
+            'ticket'  => (new TicketService())->close($ticket, $agent)
         ];
     }
 
@@ -1235,17 +1246,17 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function reOpenTicket ($ticketId )
+    public function reOpenTicket($ticketId)
     {
-        $agent = Helper::getAgentByUserId( get_current_user_id() );
+        $agent = Helper::getAgentByUserId(get_current_user_id());
 
-        $ticket = static::findOrFail( $ticketId );
-        $this->checkAgentPermission( $ticket );
+        $ticket = static::findOrFail($ticketId);
+        $this->checkAgentPermission($ticket);
 
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket'  => (new TicketService())->reopen( $ticket, $agent )
+            'ticket'  => (new TicketService())->reopen($ticket, $agent)
         ];
     }
 
@@ -1256,10 +1267,10 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function getTicketWidgets ( $ticketId )
+    public function getTicketWidgets($ticketId)
     {
         $ticket = static::with('customer')->findOrFail($ticketId);
-        $this->checkAgentPermission( $ticket );
+        $this->checkAgentPermission($ticket);
 
         //Get last 10 tickets of this customer except this
         /*
@@ -1289,23 +1300,23 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function updateTicketProperty ( $request, $ticketId )
+    public function updateTicketProperty($request, $ticketId)
     {
-        $assigner = Helper::getAgentByUserId( get_current_user_id() );
-        $ticket = static::findOrFail( $ticketId );
-        $propName = $request->getSafe( 'prop_name' );
-        $propValue = $request->getSafe( 'prop_value' );
+        $assigner = Helper::getAgentByUserId(get_current_user_id());
+        $ticket = static::findOrFail($ticketId);
+        $propName = $request->getSafe('prop_name');
+        $propValue = $request->getSafe('prop_value');
 
-        $this->checkAgentPermission( $ticket );
+        $this->checkAgentPermission($ticket);
 
         return [
             'message'     => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
-            'update_data' => $this->handlePropertyUpdate( $propName, $propValue, $ticket, $assigner )
+            'update_data' => $this->handlePropertyUpdate($propName, $propValue, $ticket, $assigner)
         ];
     }
 
     // This will handle ticket property update
-    private function handlePropertyUpdate ( $propName, $propValue, $ticket, $assigner )
+    private function handlePropertyUpdate($propName, $propValue, $ticket, $assigner)
     {
         $prevValue = $ticket->{$propName};
         if ($propName && $propValue && $prevValue != $propValue) {
@@ -1321,12 +1332,12 @@ class Ticket extends Model
         } else if ($propName == 'agent_id') {
             $ticket->load('agent');
             $updateData['agent'] = $ticket->agent;
-            $updateData['assigner'] = (new TicketService())->onAgentChange( $ticket, $assigner );
+            $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
             if ($prevValue != $ticket->{$propName}) {
                 do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $assigner);
             }
         }
-         return $updateData;
+        return $updateData;
     }
 
     /**
@@ -1336,32 +1347,32 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function handleBulkActions ( $request, $ticketIds )
+    public function handleBulkActions($request, $ticketIds)
     {
         $action = $request->getSafe('bulk_action');//get action
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
 
-        if ( !$hasAllPermission ) {
+        if (!$hasAllPermission) {
             //Filter ticket by agent_id
             $query->where('agent_id', $agent->id);
         }
 
-        return $this->handleAction( $action, $query, $agent );
+        return $this->handleAction($action, $query, $agent);
     }
 
     // This will handle ticket bulk action
-    private function handleAction ( $action, $query, $agent  )
+    private function handleAction($action, $query, $agent)
     {
-        if ( $action == 'close_tickets' ) {
-            return $this->bulkCloseTickets ( $query->get(), $agent );
-        } else if ( $action == 'delete_tickets' ) {
-            return $this->bulkDeleteTickets ( $query->get() );
-        } else if ( $action == 'assign_agent' ) {
-            return $this->bulkAssignAgent ( $query );
-        } else if ( $action == 'assign_tags' ) {
-            return $this->bulkAssignTag ( $query->get() );
+        if ($action == 'close_tickets') {
+            return $this->bulkCloseTickets($query->get(), $agent);
+        } else if ($action == 'delete_tickets') {
+            return $this->bulkDeleteTickets($query->get());
+        } else if ($action == 'assign_agent') {
+            return $this->bulkAssignAgent($query);
+        } else if ($action == 'assign_tags') {
+            return $this->bulkAssignTag($query->get());
         } else {
             throw new Exception('Sorry no action found as available');
         }
@@ -1373,10 +1384,10 @@ class Ticket extends Model
      * @param object $agent
      * @return array
      */
-    public function bulkCloseTickets ( $tickets, $agent )
+    public function bulkCloseTickets($tickets, $agent)
     {
-        $tickets->each( function ( $ticket ) use ( $agent ) {
-            (new TicketService())->close( $ticket, $agent );
+        $tickets->each(function ($ticket) use ($agent) {
+            (new TicketService())->close($ticket, $agent);
         });
 
         return [
@@ -1389,7 +1400,7 @@ class Ticket extends Model
      * @param object $tickets
      * @return array
      */
-    public function bulkDeleteTickets ( $tickets )
+    public function bulkDeleteTickets($tickets)
     {
         $tickets->each(function ($ticket) {
             $ticket->deleteTicket();
@@ -1405,15 +1416,15 @@ class Ticket extends Model
      * @param object $tickets
      * @return array
      */
-    public function bulkAssignAgent ( $query )
+    public function bulkAssignAgent($query)
     {
         $request = \FluentSupport\App\App::getInstance('request');
 
-        if ( !$request->has('agent_id') ) {
+        if (!$request->has('agent_id')) {
             throw new Exception('agent_id param is required');
         }
 
-        $agent = Agent::findOrFail( $request->get('agent_id') );
+        $agent = Agent::findOrFail($request->get('agent_id'));
 
         $query->where(function ($q) use ($agent) {
             $q->where('agent_id', '!=', $agent->id)
@@ -1439,11 +1450,11 @@ class Ticket extends Model
      * @param object $tickets
      * @return array
      */
-    public function bulkAssignTag ( $query )
+    public function bulkAssignTag($query)
     {
         $request = \FluentSupport\App\App::getInstance('request');
 
-        if ( ! $request->has('tag_ids') ) {
+        if (!$request->has('tag_ids')) {
             throw new Exception('tag_ids param is required');
         }
 
@@ -1459,9 +1470,9 @@ class Ticket extends Model
     }
 
     // This checkAgentPermission method will validate if agent has permission to view ticket
-    private function checkAgentPermission ( $ticket )
+    private function checkAgentPermission($ticket)
     {
-        if ( !PermissionManager::hasTicketPermission($ticket) ) {
+        if (!PermissionManager::hasTicketPermission($ticket)) {
             throw new Exception('Sorry, You do not have permission to this ticket');
         } else {
             return true;
