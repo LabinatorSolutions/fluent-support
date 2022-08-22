@@ -106,7 +106,7 @@ class Tickets
 
     public function createTicket(array $data)
     {
-        if (!$data['customer_id'] || !Customer::findOrFail($data['customer_id'])) {
+        if (!$data['customer_id'] || !Customer::find($data['customer_id'])) {
             return false;
         }
 
