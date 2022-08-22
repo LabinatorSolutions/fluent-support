@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\FluentCRMServices;
@@ -95,13 +96,9 @@ class TicketController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createResponse ( Request $request, Ticket $ticket, $ticketId )
+    public function createResponse ( TicketResponseRequest $request, Ticket $ticket, $ticketId )
     {
-        $data = $request->getSafe();
-
-        $this->validate($data, [
-            'content' => 'required'
-        ]);
+        $data = $request->get();
 
         try {
             return $ticket->createResponse( $data, $ticketId );
@@ -239,13 +236,9 @@ class TicketController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function updateResponse ( Request $request, Conversation $conversation, $ticketId, $responseId )
+    public function updateResponse ( TicketResponseRequest $request, Conversation $conversation, $ticketId, $responseId )
     {
-        $data = $request->getSafe();
-
-        $this->validate($data, [
-            'content' => 'required'
-        ]);
+        $data = $request->get();
 
         try {
             return $conversation->updateResponse( $data, $ticketId, $responseId );
