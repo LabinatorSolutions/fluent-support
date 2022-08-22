@@ -113,8 +113,8 @@ class AuthController extends Controller
             ], 403);
         }
         $redirectUrl = Helper::getPortalBaseUrl();
-        if($redirect = $request->get('redirect_to')) {
-            if ( filter_var( $redirect, FILTER_VALIDATE_URL ) ) {
+        if ($redirect = $request->get('redirect_to')) {
+            if (filter_var($redirect, FILTER_VALIDATE_URL)) {
                 $redirectUrl = sanitize_url($redirect);
             }
         }
@@ -258,7 +258,7 @@ class AuthController extends Controller
     }
 
 
-    public function resetPassword ( Request $request )
+    public function resetPassword(Request $request)
     {
         if (!wp_verify_nonce($request->get('_fsupport_reset_pass_nonce'), 'fluent_support_reset_pass_nonce')) {
             return $this->sendError([
@@ -270,7 +270,7 @@ class AuthController extends Controller
 
         $user = get_user_by_email($request->get('email'));
 
-        if ( $user ) {
+        if ($user) {
             /*
              * Filter reset password link text
              *
@@ -279,8 +279,8 @@ class AuthController extends Controller
              */
             $linkText = apply_filters("fluent_support/reset_password_link", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
 
-            $passwordResetKey = get_password_reset_key( $user );
-            $resetLink = '<a href="' . wp_login_url()."?action=rp&key=$passwordResetKey&login=" . rawurlencode($user->user_login) . '">'. $linkText .'</a>';
+            $passwordResetKey = get_password_reset_key($user);
+            $resetLink = '<a href="' . wp_login_url() . "?action=rp&key=$passwordResetKey&login=" . rawurlencode($user->user_login) . '">' . $linkText . '</a>';
 
             /*
              * Filter reset password email subject
@@ -306,11 +306,13 @@ class AuthController extends Controller
              */
             $message = apply_filters('fluent_support/reset_password_message', $message, $user, $resetLink);
 
-            add_filter( 'wp_mail_content_type', function( $contentType ) {return 'text/html';});
+            add_filter('wp_mail_content_type', function ($contentType) {
+                return 'text/html';
+            });
 
-            wp_mail( $user->user_email, $mailSubject, $message, $headers);
+            wp_mail($user->user_email, $mailSubject, $message, $headers);
 
-            remove_filter( 'wp_mail_content_type', 'set_html_content_type' );
+            remove_filter('wp_mail_content_type', 'set_html_content_type');
 
             return $this->sendSuccess([
                 'message' => __('Please check your email for the reset link', 'fluent-support')
@@ -383,7 +385,14 @@ class AuthController extends Controller
          */
         do_action('fluent_support/before_creating_user', $userName, $password, $email);
 
-        return wp_create_user($userName, $password, $email);
+        $userId = wp_create_user($userName, $password, $email);
+
+        if (is_wp_error($userId)) {
+            return false;
+        }
+
+        return $userId;
+
     }
 
     /**

@@ -49,16 +49,19 @@ class CustomerPortalController extends Controller
      */
     public function createTicket(Request $request, CustomerPortalService $customerPortalService)
     {
-        $this->validate($request->getSafe(), [
+        $data = $this->validate($request->get(), [
             'title'   => 'required',
             'content' => 'required'
         ]);
+
+        $data['title'] = sanitize_text_field($data['title']);
+        $data['content'] = wp_kses_post($data['content']);
 
         try {
             $customer = $customerPortalService->resolveCustomer($request, true);
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
-                'ticket'  => $customerPortalService->createTicket( $customer, $request->getSafe(), $request )
+                'ticket'  => $customerPortalService->createTicket( $customer, $data, $request )
             ];
         } catch (Exception $e) {
             return $this->sendError([
@@ -96,7 +99,7 @@ class CustomerPortalController extends Controller
     public function createResponse(TicketResponseRequest $request, CustomerPortalService $customerPortalService, $ticketId)
     {
         try {
-            return $customerPortalService->createResponse( $request, $ticketId, $request->get() );
+            return $customerPortalService->createResponse( $request, $ticketId, $request->getSafe(null, [], 'wp_kses_post') );
         } catch (Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
@@ -170,7 +173,6 @@ class CustomerPortalController extends Controller
         return [
             'custom_fields_rendered' =>  \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields()
         ];
-
     }
 
 
@@ -182,14 +184,8 @@ class CustomerPortalController extends Controller
     {
         wp_logout();
 
-        if(is_wp_error(wp_logout())) {
-            return $this->sendError([
-                'message' => __('Sorry! Something went wrong', 'fluent-support')
-            ]);
-        } else {
-            return $this->sendSuccess([
-                'message' => __('You have been logged out', 'fluent-support')
-            ]);
-        }
+        return $this->sendSuccess([
+            'message' => __('You have been logged out', 'fluent-support')
+        ]);
     }
 }
