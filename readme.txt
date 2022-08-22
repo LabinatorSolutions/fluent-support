@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, fluent support, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.0
-Stable tag: 1.6.1
+Stable tag: 1.6.2
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -159,6 +159,14 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.6.2 (Date: August 22, 2022) =
+* Fixed fiw minor bugs regarding data sanitizations
+* Saved Replies issues Fixed
+* All external links are will open in new tab
+* Auto Linking linkable contents
+* Create new ticket flow improved from agent side
+
 = 1.6.1 (Date: August 19, 2022) =
 * Added - Ticket create action in FluentCRM
 * Added - FluentCRM list on ticket sidebar
