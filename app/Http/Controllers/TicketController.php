@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Http\Requests\TicketRequest;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
@@ -201,7 +202,7 @@ class TicketController extends Controller
      */
     public function doBulkReplies(Request $request, Conversation $conversation)
     {
-        $data = $request->getSafe();
+        $data = $request->get();
         $this->validate($data, [
             'content'    => 'required',
             'ticket_ids' => 'required|array'
