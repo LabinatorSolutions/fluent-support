@@ -3,7 +3,7 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use Exception;
-use FluentSupport\App\Http\Requests\TicketRequest;
+use FluentSupport\App\Http\Requests\TicketCreateCustomerPortalRequest;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Services\CustomerPortalService;
@@ -48,18 +48,13 @@ class CustomerPortalController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createTicket(TicketRequest $request, CustomerPortalService $customerPortalService)
+    public function createTicket(TicketCreateCustomerPortalRequest $request, CustomerPortalService $customerPortalService)
     {
-        $this->validate($request->getSafe(), [
-            'title'   => 'required',
-            'content' => 'required'
-        ]);
-
         try {
             $customer = $customerPortalService->resolveCustomer($request, true);
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
-                'ticket'  => $customerPortalService->createTicket( $customer, $request->getSafe(), $request )
+                'ticket'  => $customerPortalService->createTicket( $customer, $request->get(), $request )
             ];
         } catch (Exception $e) {
             return $this->sendError([
