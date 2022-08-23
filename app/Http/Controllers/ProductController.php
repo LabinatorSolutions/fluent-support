@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Http\Requests\ProductRequest;
 use FluentSupport\App\Models\Product;
 use FluentSupport\Framework\Request\Request;
 
@@ -36,12 +37,9 @@ class ProductController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function create ( Request $request, Product $product )
+    public function create ( ProductRequest $request, Product $product )
     {
-        $data = $request->getSafe();
-        $this->validate($data, [
-            'title' => 'required'
-        ]);
+        $data = $request->all();
 
         return $product->createProduct( $data );
     }
@@ -55,12 +53,9 @@ class ProductController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function update ( Request $request, Product $product, $productId )
+    public function update ( ProductRequest  $request, Product $product, $productId )
     {
-        $data = $request->getSafe();
-        $this->validate($data, [
-            'title' => 'required'
-        ]);
+        $data = $request->all();
 
         return $product->updateProduct( $productId, $data );
     }
