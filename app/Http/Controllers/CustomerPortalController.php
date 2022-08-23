@@ -48,7 +48,7 @@ class CustomerPortalController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createTicket(TicketCreateCustomerPortalRequest $request, CustomerPortalService $customerPortalService)
+    public function createTicket(Request $request, CustomerPortalService $customerPortalService)
     {
         $data = $this->validate($request->get(), [
             'title'   => 'required',
