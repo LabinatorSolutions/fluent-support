@@ -43,7 +43,7 @@
             </el-form-item>
 
             <el-form-item>
-                <el-checkbox class="fs_close_checkbox" v-model="mailbox.settings.show_in_tickets" true-label="yes" false-label="no">Show Badge In Tickets</el-checkbox>
+                <el-checkbox class="fs_show_hide_box_badge" v-model="mailbox.settings.show_in_tickets" true-label="yes" false-label="no">Show Badge In Tickets</el-checkbox>
             </el-form-item>
 
             <el-form-item>
