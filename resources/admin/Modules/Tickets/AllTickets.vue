@@ -125,6 +125,7 @@
                                 </span>
 
                                 <el-tooltip
+                                    v-if="scope.row.mailbox.settings.show_in_tickets==='yes'"
                                     class="box-item"
                                     effect="dark"
                                     :content="$t('Inbox - ') + scope.row.mailbox.name"
