@@ -67,7 +67,7 @@
                 <el-form-item :label="$t('Support Channel')">
                     <el-radio-group v-model="new_business.box_type">
                         <el-radio label="web">{{ $t('Web Based') }}</el-radio>
-                        <el-radio :disabled="!appVars.has_email_parser" :label="email">
+                        <el-radio :disabled="!appVars.has_email_parser" label="email">
                             {{ $t('Email Based (MailBox)') }}
                         </el-radio>
                     </el-radio-group>
@@ -76,7 +76,9 @@
             <div class="fs_narrow_promo" style="background: white;" v-else>
                 <h3>Create Multiple Shared inbox and connect your email inbox with Fluent Support</h3>
                 <p>{{$t('pro_promo')}}</p>
-                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
+                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">
+                    {{$t('Upgrade To Pro')}}
+                </a>
             </div>
 
             <template #footer>
