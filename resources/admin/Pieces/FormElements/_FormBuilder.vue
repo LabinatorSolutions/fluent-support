@@ -16,6 +16,7 @@
 import WithLabel from './_WithLabel';
 import InputText from './_InputText';
 import WpEditor from '../_wp_editor'
+import WpEditorField from './_WpEditorField'
 import ImageRadio from './_ImageRadio'
 import InputRadio from './_InputRadio'
 import InputOptions from './_InputOptions'
@@ -34,6 +35,7 @@ export default {
         WithLabel,
         InputText,
         WpEditor,
+        WpEditorField,
         ImageRadio,
         InputRadio,
         InputOptions,

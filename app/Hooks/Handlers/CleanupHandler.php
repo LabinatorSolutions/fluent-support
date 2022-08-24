@@ -25,7 +25,7 @@ class CleanupHandler
     protected function cleanLiveActivities()
     {
         // Delete All Live Activity older than 24 hours
-        $oldDateTime = date('Y-m-d H:i:s', strtotime(current_time('mysql')) - 86400);
+        $oldDateTime = date('Y-m-d H:i:s', current_time('timestamp') - 86400);
 
         Meta::where('key', '_live_activity')
             ->where('object_type', 'ticket_meta')
@@ -41,7 +41,7 @@ class CleanupHandler
             $settings['delete_days'] = 14;
         }
 
-        $oldDateTime = date('Y-m-d H:i:s', strtotime(current_time('mysql')) - ($settings['delete_days'] * 86400));
+        $oldDateTime = date('Y-m-d H:i:s', current_time('timestamp') - ($settings['delete_days'] * 86400));
 
         Activity::where('created_at', '<', $oldDateTime)->delete();
     }

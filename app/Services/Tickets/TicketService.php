@@ -11,9 +11,10 @@ class TicketService
      * @param $ticket
      * @param $person
      * @param string $internalNote
+     * @param bool $silently
      * @return mixed
      */
-    public function close($ticket, $person, $internalNote = '')
+    public function close($ticket, $person, $internalNote = '', $silently = false)
     {
         if ($ticket->status != 'closed') {
             $ticket->status = 'closed';
@@ -21,21 +22,23 @@ class TicketService
             $ticket->closed_by = $person->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $ticket->save();
-            do_action('fluent_support/ticket_closed', $ticket, $person);
-            do_action('fluent_support/ticket_closed_by_' . $person->person_type, $ticket, $person);
 
-            if(!$internalNote) {
+            if (!$silently) {
+                do_action('fluent_support/ticket_closed', $ticket, $person);
+                do_action('fluent_support/ticket_closed_by_' . $person->person_type, $ticket, $person);
+            }
+
+            if (!$internalNote) {
                 $internalNote = __('Ticket has been closed', 'fluent-support');
             }
 
             //Keep track in conversation
             Conversation::create([
-                'ticket_id' => $ticket->id,
-                'person_id' => $person->id,
+                'ticket_id'         => $ticket->id,
+                'person_id'         => $person->id,
                 'conversation_type' => 'internal_info',
-                'content' => $internalNote
+                'content'           => $internalNote
             ]);
-
         }
 
         return $ticket;
@@ -58,29 +61,30 @@ class TicketService
             do_action('fluent_support/ticket_reopen', $ticket, $person);
             do_action('fluent_support/ticket_reopen_by_' . $person->person_type, $ticket, $person);
             Conversation::create([
-                'ticket_id' => $ticket->id,
-                'person_id' => $person->id,
+                'ticket_id'         => $ticket->id,
+                'person_id'         => $person->id,
                 'conversation_type' => 'internal_info',
-                'content' => __('Ticket has been reopened', 'fluent-support')
+                'content'           => __('Ticket has been reopened', 'fluent-support')
             ]);
         }
 
         return $person;
     }
 
-    public function onAgentChange($ticket, $person){
+    public function onAgentChange($ticket, $person)
+    {
         do_action('fluent_support/ticket_agent_change', $ticket, $person);
         Conversation::create([
-            'ticket_id' => $ticket->id,
-            'person_id' => $person->id,
+            'ticket_id'         => $ticket->id,
+            'person_id'         => $person->id,
             'conversation_type' => 'internal_info',
-            'content' => $ticket->agent->user_id !== $person->user_id ?
-                         __($person->full_name .' assign '. $ticket->agent->full_name .' in this ticket' , 'fluent-support') :
-                         __($person->full_name. ' assign this ticket to self', 'fluent-support')
+            'content'           => $ticket->agent->user_id !== $person->user_id ?
+                __($person->full_name . ' assign ' . $ticket->agent->full_name . ' in this ticket', 'fluent-support') :
+                __($person->full_name . ' assign this ticket to self', 'fluent-support')
         ]);
 
         return $person;
     }
 
-    
+
 }
