@@ -15,6 +15,7 @@ import TicketFormConfig from "./Modules/Settings/TicketFormConfig";
 import CustomFields from "./Modules/Settings/CustomFields";
 import LicenseManagement from "./Modules/Settings/LicenseManagement";
 import FluentCRMIntegration from "./Modules/Settings/FluentCRMIntegration";
+import AutoCloseSettings from "./Modules/Settings/AutoCloseSettings";
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -133,6 +134,11 @@ export default [
                 path: 'incoming-webhook',
                 name: 'incoming-webhook',
                 component: IncomingWebhook
+            },
+            {
+                path: 'auto-close',
+                name: 'auto_close',
+                component: AutoCloseSettings
             }
         ]
     },

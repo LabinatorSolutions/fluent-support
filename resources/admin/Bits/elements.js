@@ -49,7 +49,8 @@ import {
     Aim,
     CircleClose,
     Camera,
-    TopLeft
+    TopLeft,
+    Timer
 } from '@element-plus/icons-vue/dist';
 
 const icons = [
@@ -95,7 +96,8 @@ const icons = [
     Aim,
     CircleClose,
     Camera,
-    TopLeft
+    TopLeft,
+    Timer
 ];
 
 const app = createApp({});

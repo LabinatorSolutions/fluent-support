@@ -73,6 +73,11 @@ export default {
                     title: this.$t('Notification Integrations'),
                     route_name: 'integration',
                     icon: 'AlarmClock'
+                },
+                {
+                    title: this.$t('Auto Close Settings'),
+                    route_name: 'auto_close',
+                    icon: 'Timer'
                 }
             ]
         }
