@@ -72,6 +72,7 @@ export default {
                 .then(response => {
                     window.fst_last_replies = response.replies;
                     window.fst_last_replies.product_id = this.selected_product;
+                    window.fst_last_replies.search = this.search;
                     this.replies = response.replies.data;
                     this.pagination.total = response.replies.total;
                 })
@@ -108,7 +109,8 @@ export default {
             this.replies = window.fst_last_replies.data;
             this.pagination.total = parseInt(window.fst_last_replies.total);
             this.pagination.current_page = parseInt(window.fst_last_replies.current_page);
-            this.this.this.selected_product = parseInt(window.fst_last_replies.product_id);
+            this.selected_product = parseInt(window.fst_last_replies.product_id);
+            this.search = window.fst_last_replies.search;
         }
     }
 }
