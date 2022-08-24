@@ -42,7 +42,7 @@ class HandleTelegramEvent
             'source'            => 'telegram'
         ];
 
-        if(!empty($data['response_text'])) {
+        if(!empty($data['content'])) {
             // Create the response
             $this->createResponse($data, $responseData['ticket_id'], $responseData['agent_id']);
         }
