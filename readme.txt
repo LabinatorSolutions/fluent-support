@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, fluent support, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.0
-Stable tag: 1.6.2
+Stable tag: 1.6.5
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -159,6 +159,12 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.6.5 (Date: August 24, 2022) =
+* Added Auto Close Ticket Module based on ticket inactivity days (Pro)
+* Improved Saved Replies. Now you can add more replies (Pro)
+* Styling Improvements
+* Fixed Few minor issues on integrations
 
 = 1.6.2 (Date: August 22, 2022) =
 * Fixed fiw minor bugs regarding data sanitizations
