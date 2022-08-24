@@ -327,3 +327,19 @@ ul.fs_saved_replies {
         }
     }
 }
+
+.el-select {
+    .el-select__input {
+        min-height: auto;
+        padding: 0;
+        outline: 0;
+        border: none;
+        background: 0 0;
+        box-sizing: border-box;
+        &:focus {
+            border-color: inherit;
+            box-shadow: none;
+            outline: inherit;
+        }
+    }
+}

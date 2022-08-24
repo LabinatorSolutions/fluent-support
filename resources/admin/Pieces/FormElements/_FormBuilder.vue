@@ -1,6 +1,7 @@
 <template>
     <div class="fc_global_form_builder">
         <el-form @submit.prevent.native="nativeSave" :data="formData" :label-position="label_position">
+            <slot name="form_start"></slot>
             <template v-for="(field,fieldIndex) in fields" :key="fieldIndex">
                 <with-label v-if="dependancyPass(field)" :field="field">
                     <component :is="field.type" v-model="formData[fieldIndex]" :field="field" v-bind="field.props"/>
