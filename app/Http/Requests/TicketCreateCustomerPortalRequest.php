@@ -7,7 +7,7 @@ use FluentSupport\Framework\Foundation\RequestGuard;
 class TicketCreateCustomerPortalRequest extends RequestGuard
 {
     /**
-     * @return Array
+     * @return array
      */
     public function rules()
     {
@@ -18,7 +18,7 @@ class TicketCreateCustomerPortalRequest extends RequestGuard
     }
 
     /**
-     * @return Array
+     * @return array
      */
     public function messages()
     {
