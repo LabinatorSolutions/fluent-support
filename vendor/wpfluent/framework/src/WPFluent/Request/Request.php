@@ -74,7 +74,7 @@ class Request
     }
 
 
-    public function getSafe($key, $default = null, $callback = 'sanitize_text_field')
+    public function getSafe($key = null, $default = null, $callback = 'sanitize_text_field')
     {
         $value = $this->get($key, $default);
         if($value || $default == $value) {
