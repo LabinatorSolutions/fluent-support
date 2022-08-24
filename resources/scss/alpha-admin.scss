@@ -306,3 +306,24 @@ body.has_fluent_support {
         }
     }
 }
+
+.fs_saved_blocks {
+    max-height: 300px;
+    overflow: scroll;
+}
+
+ul.fs_saved_replies {
+    margin: 0 auto;
+    list-style: none;
+    padding: 0;
+    border: 1px solid #e1e2e5;
+    max-width: 99%;
+    li {
+        padding: 7px 15px;
+        margin: 0;
+        border-bottom: 1px solid #e1e2e5;
+        &:hover {
+            background: #f5f7fb;
+        }
+    }
+}

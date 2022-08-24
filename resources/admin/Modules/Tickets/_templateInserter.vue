@@ -1,9 +1,9 @@
 <template>
     <el-popover
-        placement="left"
-        :width="700"
+        placement="bottom"
+        :width="600"
         trigger="manual"
-        v-model:visible="visible"
+        :visible="visible"
     >
         <template #reference>
             <el-button @click="initModal()" size="small" type="default">{{$t('Templates')}}</el-button>
@@ -24,18 +24,26 @@
                 </div>
             </div>
 
-            <div class="doc_blocks">
-                <ul>
-                    <li @click="insertReply(reply)" v-for="reply in replies" :key="reply.id">{{reply.title}} - {{ reply.product?.title }}</li>
+            <div v-loading="loading" class="doc_blocks fs_saved_blocks">
+                <ul class="fs_saved_replies">
+                    <li @click="insertReply(reply)" v-for="reply in replies" :key="reply.id">
+                        <b>{{reply.title}} - {{ reply.product?.title }}</b>
+                        <p>{{getExcerpt(reply.content)}}</p>
+                    </li>
                 </ul>
+                <pagination @fetch="searchTemplates()" :pagination="pagination"/>
             </div>
         </div>
     </el-popover>
 </template>
 
 <script type="text/babel">
+import Pagination from '../../Pieces/Pagination'
 export default {
     name: 'TemplateInserter',
+    components: {
+        Pagination
+    },
     data() {
         return {
             selected_product: '',
@@ -58,10 +66,12 @@ export default {
             this.$get('saved-replies', {
                 page: this.pagination.current_page,
                 product_id: this.selected_product,
-                search: this.search
+                search: this.search,
+                per_page: this.pagination.per_page
             })
                 .then(response => {
-                    window.fst_last_replies = response.replies.data;
+                    window.fst_last_replies = response.replies;
+                    window.fst_last_replies.product_id = this.selected_product;
                     this.replies = response.replies.data;
                     this.pagination.total = response.replies.total;
                 })
@@ -85,11 +95,20 @@ export default {
         insertReply(reply) {
             this.$emit('insert', reply.content);
             this.visible = false;
+        },
+        getExcerpt(content, limit = 200) {
+            if (!content) {
+                return '';
+            }
+            return content.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "").substring(0, limit) + '...';
         }
     },
     mounted() {
         if(window.fst_last_replies) {
-            this.replies = window.fst_last_replies;
+            this.replies = window.fst_last_replies.data;
+            this.pagination.total = parseInt(window.fst_last_replies.total);
+            this.pagination.current_page = parseInt(window.fst_last_replies.current_page);
+            this.this.this.selected_product = parseInt(window.fst_last_replies.product_id);
         }
     }
 }
