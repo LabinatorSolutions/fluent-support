@@ -405,7 +405,9 @@ class CustomerPortalService
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
                 },
                 'product',
-                'attachments'
+                'attachments' => function ($q) {
+                    $q->whereIn('status', ['active', 'inline']);
+                }
             ])
             ->first();
 

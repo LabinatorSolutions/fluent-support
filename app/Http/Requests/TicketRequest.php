@@ -73,8 +73,11 @@ class TicketRequest extends RequestGuard
         if( $ticketData && is_array($ticketData) ) {
             foreach ($ticketData as $dataKey => $dataItem) {
                 $sanitizeFunc = isset($sanitizeRules[$dataKey]) ? $sanitizeRules[$dataKey]: 'sanitize_text_field';
-
-                $ticketData[$dataKey] = $sanitizeFunc($dataItem);
+                if(is_array($dataItem)) {
+                    $ticketData[$dataKey] = map_deep($dataItem, $sanitizeFunc);
+                } else {
+                    $ticketData[$dataKey] = $sanitizeFunc($dataItem);
+                }
             }
 
             $data["ticket"] = $ticketData;
@@ -86,10 +89,15 @@ class TicketRequest extends RequestGuard
             foreach ($newCustomer as $dataKey => $dataItem) {
                 $sanitizeFunc = isset($sanitizeRules[$dataKey]) ? $sanitizeRules[$dataKey]: 'sanitize_text_field';
 
-                $newCustomer[$dataKey] = $sanitizeFunc($dataItem);
+                if(is_array($dataItem)) {
+                    $newCustomer[$dataKey] = map_deep($dataItem, $sanitizeFunc);
+                } else {
+                    $newCustomer[$dataKey] = $sanitizeFunc($dataItem);
+                }
+
             }
 
-            $data["newCustomer"] = $newCustomer;
+            $data['newCustomer'] = $newCustomer;
         }
 
         return $data;
