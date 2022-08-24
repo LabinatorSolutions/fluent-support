@@ -48,7 +48,7 @@ class MailBoxController extends Controller
             'name' => 'required',
             'email' => 'required'
         ]);
-
+        
         return [
             'message' => __('Mailbox has been created successfully', 'fluent-support'),
             'mailbox' => $mailBox->createMailBox( $data )
