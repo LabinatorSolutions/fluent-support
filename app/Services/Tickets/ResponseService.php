@@ -16,17 +16,17 @@ class ResponseService
      * @param $ticket
      * @return array|false
      */
-    public function createResponse($data, $person, $ticket)
+    public function createResponse($data, $person, $ticket, $silently = false)
     {
         if (empty($data['content'])) {
             return false;
         }
 
         // Adding support for shortcode in agent response
-        if ( $person->person_type == 'agent' ) {
-            $data = apply_filters('fluent_support/parse_smartcode_data', $data, [
-                'customer'  => $ticket->customer,
-                'agent'     => $person
+        if ($person->person_type == 'agent') {
+            $data['content'] = apply_filters('fluent_support/parse_smartcode_data', $data['content'], [
+                'customer' => $ticket->customer,
+                'agent'    => $person
             ]);
         }
 
@@ -43,7 +43,7 @@ class ResponseService
             'content_hash'      => md5($content)
         ];
 
-        if(!empty($data['message_id'])) {
+        if (!empty($data['message_id'])) {
             $response['message_id'] = sanitize_text_field($data['message_id']);
         }
 
@@ -105,15 +105,30 @@ class ResponseService
             $ticket->closed_by = $person->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $closed = true;
-            Conversation::create([
-                'ticket_id'         => $ticket->id,
-                'person_id'         => $person->id,
-                'conversation_type' => 'internal_info',
-                'content'           => __('Ticket has been closed', 'fluent-support')
-            ]);
+
+            $internalNote = __('Ticket has been closed', 'fluent-support');
+
+            $internalNote = apply_filters('fluent_support/ticket_close_internal_note', $internalNote, $ticket);
+
+            if($internalNote) {
+                Conversation::create([
+                    'ticket_id'         => $ticket->id,
+                    'person_id'         => $person->id,
+                    'conversation_type' => 'internal_info',
+                    'content'           => $internalNote
+                ]);
+            }
         }
 
         $ticket->save();
+
+        if ($silently) {
+            return [
+                'response'    => $createdResponse,
+                'ticket'      => $ticket,
+                'update_data' => $updateData
+            ];
+        }
 
         if ($agentAdded) {
             $assigner = Helper::getCurrentAgent();
