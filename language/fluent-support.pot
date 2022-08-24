@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-19 14:46+0000\n"
+"POT-Creation-Date: 2022-08-24 14:17+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -16,23 +16,23 @@ msgstr ""
 "X-Loco-Version: 2.5.5; wp-5.8.2\n"
 "X-Domain: fluent-support"
 
-#: app/Services/Tickets/TicketService.php:79
+#: app/Services/Tickets/TicketService.php:83
 msgid " assign this ticket to self"
 msgstr ""
 
-#: app/Models/Ticket.php:1300
+#: app/Models/Ticket.php:1315
 msgid " has been updated"
 msgstr ""
 
-#: app/Services/Tickets/TicketService.php:78
+#: app/Services/Tickets/TicketService.php:82
 msgid " in this ticket"
 msgstr ""
 
-#: app/Models/Ticket.php:1431
+#: app/Models/Ticket.php:1446
 msgid " tickets has been assigned to"
 msgstr ""
 
-#: app/Models/Ticket.php:1397
+#: app/Models/Ticket.php:1412
 msgid " tickets have been deleted"
 msgstr ""
 
@@ -43,7 +43,7 @@ msgid ""
 "Portal%2s [fluent_support_auth]"
 msgstr ""
 
-#: app/Models/Ticket.php:1381
+#: app/Models/Ticket.php:1396
 #, php-format
 msgid "%d tickets have been closed"
 msgstr ""
@@ -741,7 +741,7 @@ msgstr ""
 msgid "Custom Ticket Fields"
 msgstr ""
 
-#: app/Http/Controllers/CustomerController.php:138
+#: app/Http/Controllers/CustomerController.php:139
 msgid "Customer avatar reset to gravatar default"
 msgstr ""
 
@@ -769,7 +769,7 @@ msgstr ""
 msgid "Customer has been added"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:334
+#: app/Http/Controllers/TicketController.php:332
 #: app/Http/Controllers/CustomerController.php:82
 msgid "Customer has been updated"
 msgstr ""
@@ -1657,7 +1657,7 @@ msgstr ""
 msgid "Pick a day"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:316
+#: app/Http/Controllers/AuthController.php:318
 msgid "Please check your email for the reset link"
 msgstr ""
 
@@ -1939,11 +1939,11 @@ msgstr ""
 msgid "Response Count"
 msgstr ""
 
-#: app/Models/Ticket.php:1194
+#: app/Models/Ticket.php:1209
 msgid "Response has been added"
 msgstr ""
 
-#: app/Models/Conversation.php:157
+#: app/Models/Conversation.php:158
 msgid "Response has been added to the selected tickets"
 msgstr ""
 
@@ -2089,15 +2089,15 @@ msgstr ""
 msgid "Selected Business has been deleted"
 msgstr ""
 
-#: app/Models/Conversation.php:234
+#: app/Models/Conversation.php:235
 msgid "Selected response has been deleted"
 msgstr ""
 
-#: app/Models/Conversation.php:250
+#: app/Models/Conversation.php:251
 msgid "Selected response has been updated"
 msgstr ""
 
-#: app/Models/Ticket.php:1455
+#: app/Models/Ticket.php:1470
 msgid "Selected tags has been added to tickets"
 msgstr ""
 
@@ -2172,10 +2172,6 @@ msgstr ""
 
 #: app/Http/Controllers/SettingsController.php:330
 msgid "Sorry! FluentCRM could not be installed. Please install manually"
-msgstr ""
-
-#: app/Http/Controllers/CustomerPortalController.php:190
-msgid "Sorry! Something went wrong"
 msgstr ""
 
 #: app/Services/TransStrings.php:476
@@ -2290,11 +2286,11 @@ msgstr ""
 msgid "Tag Description"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:301
+#: app/Http/Controllers/TicketController.php:299
 msgid "Tag has been added to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:318
+#: app/Http/Controllers/TicketController.php:316
 msgid "Tag has been removed from this ticket"
 msgstr ""
 
@@ -2462,17 +2458,16 @@ msgstr ""
 msgid "Ticket Form Settings"
 msgstr ""
 
-#: app/Services/Tickets/ResponseService.php:112
-#: app/Services/Tickets/TicketService.php:28
+#: app/Services/Tickets/ResponseService.php:109
+#: app/Services/Tickets/TicketService.php:32
 msgid "Ticket has been closed"
 msgstr ""
 
-#: app/Models/Ticket.php:986
-#: app/Http/Controllers/CustomerPortalController.php:59
+#: app/Http/Controllers/CustomerPortalController.php:64
 msgid "Ticket has been created successfully"
 msgstr ""
 
-#: app/Services/Tickets/TicketService.php:64
+#: app/Services/Tickets/TicketService.php:67
 msgid "Ticket has been reopened"
 msgstr ""
 
@@ -2857,7 +2852,7 @@ msgstr ""
 msgid "You don't have permission to access customer support portal"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:194
+#: app/Http/Controllers/CustomerPortalController.php:189
 msgid "You have been logged out"
 msgstr ""
 
