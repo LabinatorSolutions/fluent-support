@@ -58,21 +58,13 @@ class ProfileInfoService
 
     /**
      * This `me` method will return the current user profile info
-     * @param object $request
-     * @param object $user
+     * @param array $settings
+     * @param arrau withPortalSettings
      * @return array $settings
      */
-    public function me($request, $user )
+    public function me( $settings, $withPortalSettings )
     {
-        $settings = [
-            'user_id'     => $user->ID,
-            'email'       => $user->user_email,
-            'person'      => Helper::getAgentByUserId($user->ID),
-            'permissions' => PermissionManager::currentUserPermissions(),
-            'request'     => $request->all()
-        ];
-
-        if ( $request->getSafe('with_portal_settings') ) {
+        if ( $withPortalSettings ) {
             $this->portalSettings(  $settings );
         }
 
