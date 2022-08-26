@@ -114,33 +114,41 @@ class AgentController extends Controller
     public function myStats(Request $request)
     {
         $agent = Helper::getAgentByUserId();//Get logged in agent information
-        //Get the statistics and responses by the agent
-        $response = $this->getAgentStat($request, $agent->id);
 
-        if (defined('FLUENTSUPPORTPRO')) {
-            $response['dashboard_notice'] = apply_filters('fluent_support/dashboard_notice', '', $agent);
+        try {
+            $stats = StatModule::getAgentStat($agent->id); //Get ticket statistics
+
+            $with = $request->getSafe('with', []);
+
+            $response = (new Agent())->getAgentStat($stats, $with, $agent->id);
+
+            if (defined('FLUENTSUPPORTPRO')) {
+                $response['dashboard_notice'] = apply_filters('fluent_support/dashboard_notice', '', $agent);
+            }
+            return $response;
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => __($e->getMessage(), 'fluent-support')
+            ]);
         }
-
-        return $response;
-
     }
 
-    /**
-     * getAgentStat method will return ticket statistics by an agent id
-     *
-     * @param Request $request
-     * @param $agentId
-     * @return array
-     */
-    public function getAgentStat(Request $request, $agentId)
-    {
+    // /**
+    //  * getAgentStat method will return ticket statistics by an agent id
+    //  *
+    //  * @param Request $request
+    //  * @param $agentId
+    //  * @return array
+    //  */
+    // public function getAgentStat(Request $request, $agentId)
+    // {
 
-        $stats = StatModule::getAgentStat($agentId); //Get ticket statistics
+    //     $stats = StatModule::getAgentStat($agentId); //Get ticket statistics
 
-        $with = $request->getSafe('with', []);
+    //     $with = $request->getSafe('with', []);
 
-        return (new Agent())->getAgentStat($stats, $with, $agentId);
-    }
+    //     return (new Agent())->getAgentStat($stats, $with, $agentId);
+    // }
 
     /**
      * addOrUpdateProfileImage method will upload profile picture for a given agent id
