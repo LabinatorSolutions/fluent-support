@@ -37,11 +37,11 @@ class CustomerPortalService
      * @since 1.5.7
      * @return array
      */
-    public function getTicket ($request, $ticketId)
+    public function getTicket ($customerArr, $ticketId)
     {
         $ticket = $this->getTicketByID($ticketId);
 
-        $customer = $this->getCustomer( $request, $ticket );
+        $customer = $this->getCustomer( $customerArr, $ticket );
 
         $this->checkCustomerTicketAccess($customer, $ticket);
 
@@ -56,11 +56,11 @@ class CustomerPortalService
      * This `createTicket` method is responsible for creating ticket for customer
      * @param object $customer
      * @param array $data
-     * @param \FluentSupport\Framework\Request\Request $request
+     * @param int $mailboxId
      * @return Ticket
      * @throws Exception
      */
-    public function createTicket ( $customer, $data, $request )
+    public function createTicket ( $customer, $data, $mailboxId )
     {
         $this->validateCustomer( $customer );
 
@@ -68,7 +68,7 @@ class CustomerPortalService
         $data['content'] = wp_specialchars_decode( wp_unslash( wp_kses_post( $data['content'] ) ) );
         $data['customer_id'] = $customer->id;
         $data['product_source'] = 'local';
-        $data['mailbox_id'] =  $this->resolveMailboxId( $request );
+        $data['mailbox_id'] =  $this->resolveMailboxId( $mailboxId );
         $data['source'] = 'web';
 
         $disabledFields = apply_filters( 'fluent_support/disabled_ticket_fields', [] );
@@ -79,20 +79,20 @@ class CustomerPortalService
 
     /**
      * This `createResponse` method is responsible for creating response by customer in a ticket by ticket id, and data
-     * @param \FluentSupport\Framework\Request\Request $request
+     * @param array $customerArr
      * @param int $ticketId
      * @param array $data
      * @since 1.5.7
      * @return array
      * @throws Exception
      */
-    public function createResponse ($request, $ticketId, $data )
+    public function createResponse ($customerArr, $ticketId, $data )
     {
         $data['content'] = wp_specialchars_decode( wp_unslash($data['content'] ));
         $data['conversation_type'] = 'response';
 
         $ticket = Ticket::with( ['customer'] )->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $request, $ticket );
+        $customer = $this->getCustomer( $customerArr, $ticket );
 
         $this->checkCustomerTicketAccess( $customer, $ticket, 'response' );
 
@@ -108,33 +108,33 @@ class CustomerPortalService
 
     /**
      * This `closeTicket` is responsible for closing ticket by ticket id
-     * @param \FluentSupport\Framework\Request\Request $request
+     * @param array $customerArr
      * @param int $ticketId
      * @return array
      * @throws Exception
      */
-    public function closeTicket ( $request, $ticketId )
+    public function closeTicket ( $customerArr, $ticketId )
     {
         $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $request, $ticket );
+        $customer = $this->getCustomer( $customerArr, $ticket );
 
         $this->checkCustomerTicketAccess( $customer, $ticket, 'close' );
 
         return [
-            'message' => __('Ticket has been closed', 'fluent_support'),
+            'message' => __('Ticket has been closed', 'fluent-support'),
             'ticket'  => (new TicketService())->close( $ticket, $customer )
         ];
     }
 
-    public function reOpenTicket ( $request, $ticketId )
+    public function reOpenTicket ( $customerArr, $ticketId )
     {
         $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $request, $ticket );
+        $customer = $this->getCustomer( $customerArr, $ticket );
 
         $this->checkCustomerTicketAccess( $customer, $ticket, 'reopen' );
 
         return [
-            'message' => __('Ticket has been opened again', 'fluent_support'),
+            'message' => __('Ticket has been opened again', 'fluent-support'),
             'ticket'  => (new TicketService())->reopen($ticket, $customer)
         ];
     }
@@ -264,19 +264,19 @@ class CustomerPortalService
 
     /**
      * This `getCustomer` method is responsible for getting customer
-     * @param object $request
+     * @param array $customerArr
      * @param object $ticket
      * @since 1.5.7
      * @return object $customer
      * @throws Exception
      *
      */
-    private function getCustomer ( $request, $ticket )
+    private function getCustomer ( $customerArr, $ticket )
     {
-        if ($request->getSafe('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+        if (Arr::get($customerArr, 'intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $customer = $ticket->customer;
         } else {
-            $customer = $this->resolveCustomer( $request );
+            $customer = $this->resolveCustomer( Arr::get($customerArr, 'on_behalf'), Arr::get($customerArr, 'user_ip') );
         }
 
         if ( !$customer ) {
@@ -339,14 +339,13 @@ class CustomerPortalService
     /**
      * `resolveCustomer` method will create and return or only return existing customer
      * This method will get customer id or customer info or option to force create as parameter.
-     * @param object $request
+     * @param array $onBehalf 
+     * @param string $userIp // IP address of user
      * @param bool $forceCreate Default: false // If true, it will create a new customer
      * @return Customer // Collection
      */
-    public function resolveCustomer($request, $forceCreate = false)
+    public function resolveCustomer($onBehalf, $userIp, $forceCreate = false)
     {
-        $onBehalf = $request->getSafe('on_behalf', '', 'intval');
-
         if (!$onBehalf) {
             $user = get_user_by('ID', get_current_user_id());
             if (!$user) {
@@ -355,7 +354,7 @@ class CustomerPortalService
             $onBehalf = [
                 'user_id'         => $user->ID,
                 'email'           => $user->user_email,
-                'last_ip_address' => $request->getIp()
+                'last_ip_address' => $userIp
             ];
         }
 
@@ -368,12 +367,12 @@ class CustomerPortalService
 
     /**
      * resolveMailboxId method will either get information of the mailbox added by user or default and return the id
-     * @param $request
+     * @param int $mailboxId
      * @return null
      */
-    private function resolveMailboxId( $request )
+    private function resolveMailboxId( $mailboxId )
     {
-        if ($mailboxId = $request->get('mailbox_id')) {
+        if ( $mailboxId ) {
             $mailbox = MailBox::find($mailboxId);
             if ($mailbox) {
                 return $mailbox->id;
