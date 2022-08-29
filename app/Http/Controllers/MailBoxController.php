@@ -4,6 +4,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Services\EmailNotification\Settings;
+use FluentSupport\App\Services\MailerInbox\MailBoxService;
 use FluentSupport\Framework\Request\Request;
 
 class MailBoxController extends Controller
@@ -13,9 +14,9 @@ class MailBoxController extends Controller
      * @param Request $request
      * @return array
      */
-    public function index( MailBox $mailBox )
+    public function index(MailBoxService $mailboxService)
     {
-        return $mailBox->getMailBoxes();
+        return $mailboxService->getMailBoxes();
     }
 
     /**
@@ -48,7 +49,7 @@ class MailBoxController extends Controller
             'name' => 'required',
             'email' => 'required'
         ]);
-        
+
         return [
             'message' => __('Mailbox has been created successfully', 'fluent-support'),
             'mailbox' => $mailBox->createMailBox( $data )
@@ -87,15 +88,15 @@ class MailBoxController extends Controller
     /**
      * This `delete` method will delete a business from mailbox and replaced with alternative
      * @param Request $request
-     * @param MailBox $mailBox
+     * @param MailBoxService $mailBoxService
      * @param int $mailBoxId
      * @throws \Exception
      * @return array
      */
-    public function delete(Request $request, MailBox $mailBox, $mailBoxId)
+    public function delete(Request $request, MailBoxService $mailBoxService, $mailBoxId)
     {
         try {
-            return $mailBox->deleteMailBox( $mailBoxId, $request->getSafe('fallback_id', '', 'intval') );
+            return $mailBoxService->deleteMailBox( $mailBoxId, $request->getSafe('fallback_id', '', 'intval') );
         } catch (\Exception $e) {
             return [
                 'message' => __( $e->getMessage(), 'fluent-support' ),
@@ -107,16 +108,16 @@ class MailBoxController extends Controller
     /**
      * This `moveTickets` method will move tickets from one mailbox to another
      * @param Request $request
-     * @param MailBox $mailBox
+     * @param MailBoxService $mailBoxService
      * @param int $mailBoxId
      * @throws \Exception
      * @return array
      */
-    public function moveTickets(Request $request, MailBox $mailBox, $mailBoxId)
+    public function moveTickets(Request $request, MailBoxService $mailBoxService, $mailBoxId)
     {
         try {
             $data = $request->only(['ticket_ids', 'new_box_id', 'move_type']);
-            return $mailBox->moveTickets( $data, $mailBoxId );
+            return $mailBoxService->moveTickets( $data, $mailBoxId );
         } catch (\Exception $e) {
             return [
                 'message' => __( $e->getMessage(), 'fluent-support' ),
@@ -143,13 +144,13 @@ class MailBoxController extends Controller
 
     /**
      * This `getEmailsSetups` method will return email settings for a business box by box id
-     * @param MailBox $mailBox
+     * @param MailBoxService $mailBoxService
      * @param $boxId
      * @return array
      */
-    public function getEmailsSetups( MailBox $mailBox, $boxId )
+    public function getEmailsSetups( MailBoxService $mailBoxService, $boxId )
     {
-       return $mailBox->getEmailsSetups($boxId);
+       return $mailBoxService->getEmailsSetups($boxId);
     }
 
     /**
@@ -160,16 +161,17 @@ class MailBoxController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function saveEmailSettings( Request $request, MailBox $mailBox, $boxId )
+    public function saveEmailSettings( Request $request, MailBoxService $mailBoxService, $boxId )
     {
         $data = wp_unslash($request->getSafe('email_settings'));
+        $emailType = $request->getSafe('email_type');
 
         $this->validate($data, [
             'email_subject' => 'required',
             'email_body' => 'required'
         ]);
 
-        return $mailBox->saveEmailSettings( $request, $boxId, $data );
+        return $mailBoxService->saveEmailSettings( $emailType, $boxId, $data );
     }
 
 
