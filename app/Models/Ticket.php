@@ -1469,4 +1469,17 @@ class Ticket extends Model
             return true;
         }
     }
+
+    public static function countTicketByMailBoxId($mailbox_id)
+    {
+        return self::where('mailbox_id', $mailbox_id)->count();
+    }
+
+    public static function syncMailBoxId($mailbox_id, $fallback_id)
+    {
+        return self::where('mailbox_id', $mailbox_id)
+            ->update([
+                'mailbox_id' => $fallback_id
+            ]);
+    }
 }
