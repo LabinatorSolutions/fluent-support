@@ -9,7 +9,8 @@ class AgentCreateRequest extends RequestGuard
     public function rules()
     {
         return [
-        	'email' => 'required|email'
+        	'email' => 'required|email',
+            'first_name' => 'required'
         ];
     }
 
@@ -17,6 +18,7 @@ class AgentCreateRequest extends RequestGuard
     {
         return [
             'email.required' => 'Email is required',
+            'first_name.required' => 'First name is required'
         ];
     }
 }
