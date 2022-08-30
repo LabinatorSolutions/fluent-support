@@ -62,16 +62,10 @@ class AgentController extends Controller
         $agent = $agent::findOrFail($agentId);
 
         if ($agent) {
-            $data = $this->validate($request->getSafe(), [
-                'email'      => 'required|email',
-                'first_name' => 'required',
-                'last_name'  => 'required',
-            ]);
-
             try {
                 return [
                     'message' => __('Support Staff has been updated', 'fluent-support'),
-                    'agent'   => $agent->updateAgent($data, $agent)
+                    'agent'   => $agent->updateAgent($request->getSafe(), $agent)
                 ];
             } catch (\Exception $e) {
                 return $this->sendError([
@@ -93,7 +87,7 @@ class AgentController extends Controller
     public function deleteAgent(Request $request, Agent $agent, $agentId)
     {
         try {
-            $agent->deleteAgent($request->getSafe('fallback_agent_id'), $agentId);
+            $agent->deleteAgent($request->getSafe('fallback_agent_id', '', 'intval'), $agentId);
 
             return [
                 'message' => __('Support Staff has been deleted', 'fluent-support')
@@ -160,7 +154,7 @@ class AgentController extends Controller
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
         try {
-            return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('agent_id'), 'agent');
+            return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('agent_id', '', 'intval'), 'agent');
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')
