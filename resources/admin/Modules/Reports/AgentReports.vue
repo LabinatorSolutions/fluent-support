@@ -11,7 +11,7 @@
                             @change="getReport()"
                             v-model="date_range"
                             type="daterange"
-                            size="mini"
+                            size="small"
                             :range-separator="$t('To')"
                             :disabledDate="onlyPastDates"
                             :start-placeholder="$t('Start')"

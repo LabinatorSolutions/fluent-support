@@ -7,15 +7,15 @@
                 </div>
                 <div class="fs_box_actions">
 
-                    <el-button v-if="has_pro" @click="createTagModal()" type="primary" icon="Plus" size="medium">
+                    <el-button v-if="has_pro" @click="createTagModal()" type="primary" icon="Plus">
                         {{ $t('Add New') }}
                     </el-button>
 
                     <div class="fs_ticket_orders" style="margin-left: 10px;">
-                        <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro" size="medium"
+                        <el-input @keyup.enter="fetchTags" clearable @clear="fetchTags" :disabled="!has_pro"
                                   :placeholder="$t('Search Tags')" v-model="search">
                             <template #append>
-                                <el-button size="medium" @click="fetchTags" :disabled="!has_pro" icon="Search"></el-button>
+                                <el-button @click="fetchTags" :disabled="!has_pro" icon="Search"></el-button>
                             </template>
                         </el-input>
                     </div>

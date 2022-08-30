@@ -31,7 +31,7 @@
 
 
                     <div style="display: block; margin-top: 10px;">
-                        <el-button @click="emitSave()" size="medium" type="success">{{ $t('Save') }}</el-button>
+                        <el-button @click="emitSave()" type="success">{{ $t('Save') }}</el-button>
                         <div style="text-align: right; display: inline-block; float: right;">
                             <el-popconfirm
                                 confirm-button-type="danger"
@@ -42,7 +42,7 @@
                                 :title="$t('delete_action_warning')"
                             >
                                 <template #reference>
-                                    <el-button type="danger" plain size="medium" icon="Delete"></el-button>
+                                    <el-button type="danger" plain icon="Delete"></el-button>
                                 </template>
                             </el-popconfirm>
                         </div>

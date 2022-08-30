@@ -31,7 +31,7 @@
                             :label="column"
                         ></el-option>
                     </el-select>
-                    <el-button @click="changeOrderType()" size="medium">
+                    <el-button @click="changeOrderType()">
                         <el-icon v-if="order_type == 'DESC'"> <CaretBottom/> </el-icon>
                         <el-icon v-else> <CaretTop/> </el-icon>
                     </el-button>
@@ -55,9 +55,9 @@
                                 style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> OR</em>
                         </div>
 
-                        <el-button type="primary" size="medium" @click="fetchTickets()">{{ $t('Filter') }}
+                        <el-button type="primary" @click="fetchTickets()">{{ $t('Filter') }}
                         </el-button>
-                        <el-button size="medium" @click="advanced_filters = [[]]; fetchTickets()">
+                        <el-button @click="advanced_filters = [[]]; fetchTickets()">
                             {{ $t('Clear Filters') }}
                         </el-button>
                     </div>
