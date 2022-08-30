@@ -167,6 +167,39 @@ class MailBoxService
         ];
     }
 
+    /**
+     * This `getTickets` method is used to get the tickets for the given mailbox
+     * @param array $filters
+     * @param int $boxId
+     * @return array
+     */
+    public function getTickets ($filters, $boxId )
+    {
+        if (!$boxId) {
+            throw new Exception('MailBox ID must be provided');
+        }
+
+        $ticketsQuery = Ticket::getTicketsQuery();
+
+        $ticketsQuery->where('mailbox_id', $boxId);
+
+        if ( $filters['customer_id'] ) {
+            $ticketsQuery->where('customer_id', $filters['customer_id']);
+        }
+
+        if ( $filters['product_id'] ) {
+            $ticketsQuery->where('product_id', $filters['product_id']);
+        }
+
+        if ( $filters['ticket_title']  ) {
+            $ticketsQuery->where('title', 'LIKE', "%". $filters['ticket_title'] ."%");
+        }
+
+        return [
+            'tickets' => $ticketsQuery->paginate()
+        ];
+    }
+
     private function validateTicketMoving ( $data, $mailBoxId )
     {
 

@@ -127,6 +127,14 @@ class MailBox extends Model
             ->delete();
     }
 
+    public function deleteAllMeta()
+    {
+        $class = __NAMESPACE__ . '\MailBox';
+
+        $meta = Meta::where('object_type', $class)
+            ->where('object_id', $this->id)
+            ->delete();
+    }
     /**
      * This `getMailBox` method is used to get a mailbox by id.
      * @param int $id
@@ -181,51 +189,5 @@ class MailBox extends Model
         $mailbox->save();
 
         return $mailbox;
-    }
-
-    /**
-     * This `getTickets` method is used to get the tickets for the given mailbox
-     * @param array $filters
-     * @param int $boxId
-     * @return array
-     */
-    public function getTickets ($filters, $boxId )
-    {
-
-        $ticketsQuery = $this->getTicketsQuery( $filters['customer_id'], $boxId );
-
-        if ( $filters['customer_id'] ) {
-            $ticketsQuery->where('customer_id', $filters['customer_id']);
-        }
-
-        if ( $filters['product_id'] ) {
-            $ticketsQuery->where('product_id', $filters['product_id']);
-        }
-
-        if ( $filters['ticket_title']  ) {
-            $ticketsQuery->where('title', 'LIKE', "%". $filters['ticket_title'] ."%");
-        }
-
-        return [
-            'tickets' => $ticketsQuery->paginate()
-        ];
-    }
-
-    private function getTicketsQuery ( $customerID, $boxId )
-    {
-        $ticketsQuery = (new Ticket())->with([
-            'customer' => function ($query) use ( $customerID ) {
-                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent' => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
-            },
-            'product',
-            'tags',
-            'preview_response' => function ($query) {
-                $query->latest('id');
-            }
-        ])->where('mailbox_id', $boxId);
-
-        return $ticketsQuery;
     }
 }
