@@ -24,7 +24,6 @@
                                     </template>
                                 </el-dropdown>
                                 <el-date-picker
-                                    size="medium"
                                     v-model="date_range"
                                     type="daterange"
                                     :range-separator="$t('To')"
