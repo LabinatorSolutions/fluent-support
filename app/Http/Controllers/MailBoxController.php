@@ -182,8 +182,8 @@ class MailBoxController extends Controller
      * @param int $boxId
      * @return array
      */
-    public function getTickets(Request $request, MailBox $mailBox, $boxId)
+    public function getTickets(Request $request, MailBoxService $mailBoxService, $boxId)
     {
-        return $mailBox->getTickets( $request->getSafe('filters'), $boxId );
+        return $mailBoxService->getTickets( $request->getSafe('filters'), $boxId );
     }
 }

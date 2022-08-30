@@ -1482,4 +1482,20 @@ class Ticket extends Model
                 'mailbox_id' => $fallback_id
             ]);
     }
+
+    public static function getTicketsQuery()
+    {
+        return self::with([
+            'customer' => function ($query) {
+                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
+            }, 'agent' => function ($query) {
+                $query->select(['first_name', 'last_name', 'id']);
+            },
+            'product',
+            'tags',
+            'preview_response' => function ($query) {
+                $query->latest('id');
+            }
+        ]);
+    }
 }
