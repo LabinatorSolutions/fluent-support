@@ -85,14 +85,14 @@ class CustomerPortalController extends Controller
      */
     public function getTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $customerArr = [
+        $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
             'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
             'user_ip' => $request->getIp()
         ];
 
         try {
-            return $customerPortalService->getTicket( $customerArr , $ticketId );
+            return $customerPortalService->getTicket( $customerAdditionalData , $ticketId );
         } catch (Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
@@ -110,14 +110,14 @@ class CustomerPortalController extends Controller
      */
     public function createResponse(TicketResponseRequest $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $customerArr = [
+        $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
             'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
             'user_ip' => $request->getIp()
         ];
 
         try {
-            return $customerPortalService->createResponse( $customerArr, $ticketId, $request->getSafe(null, [], 'wp_kses_post') );
+            return $customerPortalService->createResponse( $customerAdditionalData, $ticketId, $request->getSafe(null, [], 'wp_kses_post') );
         } catch (Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
@@ -134,13 +134,13 @@ class CustomerPortalController extends Controller
      */
     public function closeTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $customerArr = [
+        $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
             'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
             'user_ip' => $request->getIp()
         ];
         try {
-            return $customerPortalService->closeTicket( $customerArr, $ticketId );
+            return $customerPortalService->closeTicket( $customerAdditionalData, $ticketId );
         } catch (Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
@@ -157,13 +157,13 @@ class CustomerPortalController extends Controller
      */
     public function reOpenTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
-        $customerArr = [
+        $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
             'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
             'user_ip' => $request->getIp()
         ];
         try {
-            return $customerPortalService->reOpenTicket( $customerArr, $ticketId );
+            return $customerPortalService->reOpenTicket( $customerAdditionalData, $ticketId );
         } catch (Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
