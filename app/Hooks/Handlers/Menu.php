@@ -343,6 +343,7 @@ class Menu
             'support_products'          => Product::select(['id', 'title'])->get(),
             'client_priorities'         => Helper::customerTicketPriorities(),
             'ticket_statuses'           => Helper::ticketStatuses(),
+            'ticket_statuses_group'     => Helper::ticketStatusGroups(),
             'admin_priorities'          => Helper::adminTicketPriorities(),
             'mailboxes'                 => MailBox::select(['id', 'name', 'settings'])->get(),
             'me'                        => $me,
