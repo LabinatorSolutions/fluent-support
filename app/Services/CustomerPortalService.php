@@ -32,16 +32,16 @@ class CustomerPortalService
 
     /**
      * getTicket method will get the ticket information with customer and agent as well as response in a ticket by ticket id
-     * @param object $request
+     * @param array $customerAdditionalData
      * @param int $ticketId
      * @since 1.5.7
      * @return array
      */
-    public function getTicket ($customerArr, $ticketId)
+    public function getTicket ($customerAdditionalData, $ticketId)
     {
         $ticket = $this->getTicketByID($ticketId);
 
-        $customer = $this->getCustomer( $customerArr, $ticket );
+        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
 
         $this->checkCustomerTicketAccess($customer, $ticket);
 
@@ -79,20 +79,20 @@ class CustomerPortalService
 
     /**
      * This `createResponse` method is responsible for creating response by customer in a ticket by ticket id, and data
-     * @param array $customerArr
+     * @param array $customerAdditionalData
      * @param int $ticketId
      * @param array $data
      * @since 1.5.7
      * @return array
      * @throws Exception
      */
-    public function createResponse ($customerArr, $ticketId, $data )
+    public function createResponse ($customerAdditionalData, $ticketId, $data )
     {
         $data['content'] = wp_specialchars_decode( wp_unslash($data['content'] ));
         $data['conversation_type'] = 'response';
 
         $ticket = Ticket::with( ['customer'] )->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $customerArr, $ticket );
+        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
 
         $this->checkCustomerTicketAccess( $customer, $ticket, 'response' );
 
@@ -108,15 +108,15 @@ class CustomerPortalService
 
     /**
      * This `closeTicket` is responsible for closing ticket by ticket id
-     * @param array $customerArr
+     * @param array $customerAdditionalData
      * @param int $ticketId
      * @return array
      * @throws Exception
      */
-    public function closeTicket ( $customerArr, $ticketId )
+    public function closeTicket ( $customerAdditionalData, $ticketId )
     {
         $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $customerArr, $ticket );
+        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
 
         $this->checkCustomerTicketAccess( $customer, $ticket, 'close' );
 
@@ -126,10 +126,17 @@ class CustomerPortalService
         ];
     }
 
-    public function reOpenTicket ( $customerArr, $ticketId )
+    /**
+     * This `reOpenTicket` is responsible for reopening ticket by ticket id
+     * @param array $customerAdditionalData
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function reOpenTicket ( $customerAdditionalData, $ticketId )
     {
         $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $customerArr, $ticket );
+        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
 
         $this->checkCustomerTicketAccess( $customer, $ticket, 'reopen' );
 
@@ -264,19 +271,19 @@ class CustomerPortalService
 
     /**
      * This `getCustomer` method is responsible for getting customer
-     * @param array $customerArr
+     * @param array $customerAdditionalData
      * @param object $ticket
      * @since 1.5.7
      * @return object $customer
      * @throws Exception
      *
      */
-    private function getCustomer ( $customerArr, $ticket )
+    private function getCustomer ( $customerAdditionalData, $ticket )
     {
-        if (Arr::get($customerArr, 'intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
+        if (Arr::get($customerAdditionalData, 'intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $customer = $ticket->customer;
         } else {
-            $customer = $this->resolveCustomer( Arr::get($customerArr, 'on_behalf'), Arr::get($customerArr, 'user_ip') );
+            $customer = $this->resolveCustomer( Arr::get($customerAdditionalData, 'on_behalf'), Arr::get($customerAdditionalData, 'user_ip') );
         }
 
         if ( !$customer ) {
@@ -339,7 +346,7 @@ class CustomerPortalService
     /**
      * `resolveCustomer` method will create and return or only return existing customer
      * This method will get customer id or customer info or option to force create as parameter.
-     * @param array $onBehalf 
+     * @param array $onBehalf
      * @param string $userIp // IP address of user
      * @param bool $forceCreate Default: false // If true, it will create a new customer
      * @return Customer // Collection
