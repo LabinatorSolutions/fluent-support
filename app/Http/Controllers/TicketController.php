@@ -11,6 +11,7 @@ use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\Tickets\TicketService;
 
 /**
  *  TicketController class for REST API related to ticket
@@ -48,12 +49,12 @@ class TicketController extends Controller
      * @param Request $request
      * @return array
      */
-    public function index(Request $request, Ticket $ticket)
+    public function index(Request $request, TicketService $ticketService)
     {
         //Selected filter type, either simple or Advanced
         $filterType = $request->getSafe('filter_type', 'simple');
         $data = $request->all();
-        return $ticket->getTickets($data, $filterType);
+        return $ticketService->getTickets($data, $filterType);
     }
 
     /**
