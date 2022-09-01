@@ -4,6 +4,7 @@ namespace FluentSupport\App\Models;
 
 use Exception;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Support\Arr;
 
 class Activity extends Model
 {
@@ -21,13 +22,21 @@ class Activity extends Model
     }
 
     // Get All Activities
-    public function getActivities ()
+    public function getActivities ( $data )
     {
-        $activities = static::with([
+        $agentId = intval( Arr::get($data, 'agent_id') );
+
+        $activitiesQuery = static::with([
             'person' => function ($query) {
                 $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
             }
-        ])->latest('id')->paginate();
+        ])->latest('id');
+
+        if ($agentId) {
+            $activitiesQuery->where('person_id', $agentId);
+        }
+
+        $activities = $activitiesQuery->paginate();
 
         if (!$activities) {
             throw new Exception('No activities found');
