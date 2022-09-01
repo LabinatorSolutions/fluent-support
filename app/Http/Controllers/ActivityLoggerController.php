@@ -19,10 +19,10 @@ class ActivityLoggerController extends Controller
      * @return array
      */
 
-    public function getActivities (Activity $activity)
+    public function getActivities (Request $request, Activity $activity)
     {
         try {
-            return $activity->getActivities();
+            return $activity->getActivities( $request->getSafe('filters', []) );
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')
