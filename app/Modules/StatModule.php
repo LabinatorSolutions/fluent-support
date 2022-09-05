@@ -4,6 +4,7 @@ namespace FluentSupport\App\Modules;
 
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Product;
 /**
  * StatModule class is responsible for getting data related to report
  * @package FluentSupport\App\Modules
@@ -127,7 +128,7 @@ class StatModule
     /**
      * getTodayStats method will return a stats of today's tickets
      * This method will count the ticket number by ticket status and return the array
-     * @param bool $agentId By default value set to false however when it gets an agent id it will fetch
+     * @param bool|int $agentId By default value set to false however when it gets an agent id it will fetch
      * the result by this id
      * @return array result in array format
      */
@@ -198,6 +199,27 @@ class StatModule
                 'count' => $total_closed
             ]
         ];
+    }
+
+    public static function getActiveTicketsByProductStats()
+    {
+        $products = Product::all();
+        $result = [];
+
+        foreach ($products as $product) {
+            $result[$product->id] = [
+                'title' => $product->title,
+                'count' => Ticket::where('product_id', $product->id)
+                    ->where('status', '!=' ,'closed')
+                    ->where( function ($query) {
+                        $query->whereColumn('last_agent_response', '<', 'last_customer_response')
+                            ->orWhereNull('last_agent_response')
+                            ->orWhere('status', 'new');
+                    })->count()
+            ];
+        }
+
+        return $result;
     }
 
 }
