@@ -12,6 +12,7 @@ namespace FluentSupport\App\Modules\Reporting;
 
 trait ReportingHelperTrait
 {
+    protected static $hourly = 'PT1H';
     protected static $daily = 'P1D';
     protected static $weekly = 'P1W';
     protected static $monthly = 'P1M';
@@ -53,7 +54,10 @@ trait ReportingHelperTrait
     {
         $numDays = $to->diff($from)->format("%a");
         //If number of days in the range is greater than 2 month and less than or equal to 3 months
-        if ($numDays > 62 && $numDays <= 181) {
+        if($numDays <= 0) {
+            return static::$hourly;
+        }
+        else if ($numDays > 62 && $numDays <= 181) {
             return static::$weekly;
         } else if ($numDays > 181) {
             //Greater than 3 months
@@ -73,10 +77,13 @@ trait ReportingHelperTrait
     {
         $select = [
             $this->db()->raw('COUNT(id) AS count'),
-            $this->db()->raw('DATE('.$dateField.') AS date')
+            $this->db()->raw('DATE('.$dateField.') AS date'),
+            $this->db()->raw('TIME('.$dateField.') AS time')
         ];
 
-        if ($frequency == static::$weekly) {
+        if ($frequency == static::$hourly) {
+            $select[] = $this->db()->raw('HOUR(created_at) hourly');
+        } else if ($frequency == static::$weekly) {
             $select[] = $this->db()->raw('WEEK(created_at) week');
         } else if ($frequency == static::$monthly) {
             $select[] = $this->db()->raw('MONTH(created_at) month');
@@ -94,7 +101,9 @@ trait ReportingHelperTrait
     {
         $orderBy = $groupBy = 'date';
 
-        if ($frequency == static::$weekly) {
+        if ($frequency == static::$hourly) {
+            $orderBy = $groupBy = 'hourly';
+        } elseif ($frequency == static::$weekly) {
             $orderBy = $groupBy = 'week';
         } else if ($frequency == static::$monthly) {
             $orderBy = $groupBy = 'month';
@@ -127,13 +136,21 @@ trait ReportingHelperTrait
 
         $formatter = 'basicFormatter';
 
-        if ($this->isMonthly($period)) {
+        if ($this->isHourly($period)) {
+            $formatter = 'hourlyFormatter';
+        }
+        else if ($this->isMonthly($period)) {
             $formatter = 'monYearFormatter';
         }
 
         foreach ($items as $item) {
-            $date = $this->{$formatter}($item->date);
-            $range[$date] = (int) $item->count;
+            if($this->isHourly($period)){
+                $time = $this->{$formatter}($item->time);
+                $range[$time] = (int) $item->count;
+            }else{
+                $date = $this->{$formatter}($item->date);
+                $range[$date] = (int) $item->count;
+            }
         }
 
         return $range;
@@ -144,6 +161,11 @@ trait ReportingHelperTrait
         return !!$period->getDateInterval()->m;
     }
 
+    protected function isHourly($period)
+    {
+        return !!$period->getDateInterval()->h;
+    }
+
     protected function basicFormatter($date)
     {
         if (is_string($date)) {
@@ -151,6 +173,15 @@ trait ReportingHelperTrait
         }
 
         return $date->format('Y-m-d');
+    }
+
+    protected function hourlyFormatter($date)
+    {
+        if (is_string($date)) {
+            $date = new \DateTime($date);
+        }
+
+        return $date->format('H').':00' .' - '. $date->format('H').':59';
     }
 
     protected function monYearFormatter($date)
