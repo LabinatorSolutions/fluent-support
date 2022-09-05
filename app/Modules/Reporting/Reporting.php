@@ -36,11 +36,19 @@ class Reporting
         list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
 
         //get all tickets statistics within the date range
-        $query = $this->db()->table('fs_tickets')
-            ->select($this->prepareSelect($frequency))
-            ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
-            ->groupBy($groupBy)
-            ->oldest($orderBy);
+        if($frequency == static::$hourly) {
+            $query = $this->db()->table('fs_tickets')
+                ->select($this->prepareSelect($frequency))
+                ->whereBetween('created_at', [$from->format('Y-m-d')." 00:00:00", $to->format('Y-m-d'). " 23:59:59"])
+                ->groupBy($groupBy)
+                ->oldest($orderBy);
+        } else {
+            $query = $this->db()->table('fs_tickets')
+                ->select($this->prepareSelect($frequency))
+                ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+                ->groupBy($groupBy)
+                ->oldest($orderBy);
+        }
 
         //If filter by product or agent or status selected
         if ($filters) {
