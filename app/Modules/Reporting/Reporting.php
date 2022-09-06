@@ -36,19 +36,11 @@ class Reporting
         list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
 
         //get all tickets statistics within the date range
-        if($frequency == static::$hourly) {
-            $query = $this->db()->table('fs_tickets')
-                ->select($this->prepareSelect($frequency))
-                ->whereBetween('created_at', [$from->format('Y-m-d')." 00:00:00", $to->format('Y-m-d'). " 23:59:59"])
-                ->groupBy($groupBy)
-                ->oldest($orderBy);
-        } else {
-            $query = $this->db()->table('fs_tickets')
-                ->select($this->prepareSelect($frequency))
-                ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
-                ->groupBy($groupBy)
-                ->oldest($orderBy);
-        }
+        $query = $this->db()->table('fs_tickets')
+            ->select($this->prepareSelect($frequency))
+            ->whereBetween('created_at', $this->prepareBetween($frequency, $from, $to))
+            ->groupBy($groupBy)
+            ->oldest($orderBy);
 
         //If filter by product or agent or status selected
         if ($filters) {
@@ -90,12 +82,12 @@ class Reporting
         //get the closed ticket statistics within the date range
         $query = $this->db()->table('fs_tickets')
             ->select($this->prepareSelect($frequency, 'resolved_at'))
-            ->whereBetween('resolved_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+            ->whereBetween('resolved_at', $this->prepareBetween($frequency, $from, $to))
             ->where('status', 'closed')
             ->groupBy($groupBy)
             ->oldest($orderBy);
 
-        //If filter by product or agent is selected
+//If filter by product or agent is selected
         if ($filters) {
             if (!empty($filters['product_id'])) {
                 $query->where('product_id', $filters['product_id']);
@@ -129,8 +121,8 @@ class Reporting
         list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
 
         $query = $this->db()->table('fs_conversations')
-            ->select($this->prepareSelect($frequency, 'created_at'))
-            ->whereBetween('created_at', [$from->format('Y-m-d'), $to->format('Y-m-d')])
+            ->select($this->prepareSelect($frequency))
+            ->whereBetween('created_at', $this->prepareBetween($frequency, $from, $to))
             ->where('conversation_type', 'response')
             ->groupBy($groupBy)
             ->oldest($orderBy);
