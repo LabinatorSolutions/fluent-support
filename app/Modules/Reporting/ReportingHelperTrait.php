@@ -92,6 +92,20 @@ trait ReportingHelperTrait
         return $select;
     }
 
+    protected function prepareBetween($frequency, $from, $to)
+    {
+        if($frequency == static::$hourly){
+            return [
+                $from->format('Y-m-d')." 00:00:00",
+                $to->format('Y-m-d')." 23:59:59"
+            ];
+        }
+        return [
+            $from->format('Y-m-d'),
+            $to->format('Y-m-d')
+        ];
+    }
+
     /**
      * getGroupAndOrder method will return order by and group by value based on frequency
      * @param $frequency
