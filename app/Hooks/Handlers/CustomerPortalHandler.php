@@ -14,7 +14,7 @@ class CustomerPortalHandler
     public function renderPortal()
     {
         /**
-         * This hook filter customer portal customer portal access permission error message.
+         * This hook filter customer portal access permission error message.
          * If a customer has no access to the portal, then the message will be displayed.
          * @since 1.6.0
          * @param string $invalidPermissionMessage
