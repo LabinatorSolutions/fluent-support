@@ -201,6 +201,10 @@ class StatModule
         ];
     }
 
+    /**
+     * This `getActiveTicketsByProductStats` method will count today's tickets by product that are waiting for reply
+     * @return array[]
+     */
     public static function getActiveTicketsByProductStats()
     {
         $products = Product::all();
@@ -209,17 +213,36 @@ class StatModule
         foreach ($products as $product) {
             $result[$product->id] = [
                 'title' => $product->title,
-                'count' => Ticket::where('product_id', $product->id)
-                    ->where('status', '!=' ,'closed')
-                    ->where( function ($query) {
-                        $query->whereColumn('last_agent_response', '<', 'last_customer_response')
-                            ->orWhereNull('last_agent_response')
-                            ->orWhere('status', 'new');
-                    })->count()
+                'count' => static::countAwaitingTickets( 'product_id', $product->id )
             ];
         }
 
         return $result;
+    }
+
+
+    /**
+     * This will count the number of tickets that are waiting for response also it can receive parameters
+     * @param string $whereClause // This is the where clause that will be used in the query
+     * @param string $whereClauseValue // This is the value of the where clause
+     * @return int
+     */
+    public static function countAwaitingTickets($whereClause = null, $whereClauseValue = null )
+    {
+        $ticket = new Ticket;
+
+        if ( $whereClause && $whereClauseValue) {
+            $ticket = $ticket->where( $whereClause, $whereClauseValue );
+        }
+
+        $ticket = $ticket->where('status', '!=' ,'closed')
+            ->where( function ($query) {
+                $query->whereColumn('last_agent_response', '<', 'last_customer_response')
+                    ->orWhereNull('last_agent_response')
+                    ->orWhere('status', 'new');
+            })->count();
+
+        return $ticket;
     }
 
 }
