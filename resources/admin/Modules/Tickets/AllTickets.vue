@@ -277,6 +277,7 @@ export default {
     watch: {
         '$route.query'() {
             if (this.app_ready) {
+                this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
                 this.filters.agent_id = this.$route.query.agent_id;
                 this.filters.watcher = this.$route.query.watcher;
                 this.filter_type = this.$route.query.filter_type;
@@ -522,6 +523,10 @@ export default {
         if (this.$route.query.agent_id) {
             this.filters.agent_id = this.$route.query.agent_id;
             this.filters.watcher = this.$route.query.watcher;
+        }
+
+        if (this.$route.query.waiting_for_reply) {
+            this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
         }
 
         if (this.$route.query.tags) {
