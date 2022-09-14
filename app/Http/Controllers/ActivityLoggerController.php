@@ -22,7 +22,7 @@ class ActivityLoggerController extends Controller
     public function getActivities (Request $request, Activity $activity)
     {
         try {
-            return $activity->getActivities( $request->getSafe('filters', []) );
+            return $activity->getActivities( $request->getSafe() );
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')

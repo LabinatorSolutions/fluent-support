@@ -232,7 +232,7 @@ class StatModule
         $ticket = new Ticket;
 
         if ( $whereClause && $whereClauseValue) {
-            $ticket = $ticket->where( $whereClause, $whereClauseValue );
+            $ticket = $ticket->where( sanitize_text_field($whereClause), sanitize_text_field($whereClauseValue) );
         }
 
         $ticket = $ticket->where('status', '!=' ,'closed')
