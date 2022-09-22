@@ -5,6 +5,8 @@ namespace FluentSupport\App\Modules\Reporting;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Meta;
+use FluentSupport\Framework\Support\Arr;
 
 /**
  * Reporting class is responsible for getting data related to report
@@ -87,7 +89,7 @@ class Reporting
             ->groupBy($groupBy)
             ->oldest($orderBy);
 
-//If filter by product or agent is selected
+        //If filter by product or agent is selected
         if ($filters) {
             if (!empty($filters['product_id'])) {
                 $query->where('product_id', $filters['product_id']);
@@ -211,14 +213,22 @@ class Reporting
         }
 
         $agentIds = array_keys($reports);
-
+        
         if ($agent) {
             $agentIds = array_map('intval', explode(',', $agent));
         }
 
-        $agents = Agent::select(['id', 'first_name', 'last_name'])
-            ->whereIn('id', $agentIds)
-            ->get();
+        $agentQuery = Agent::select(['id', 'first_name', 'last_name']);
+        
+        if ( !$agent && $summarySettings = $this->getSummarySettings() ){
+            $agents = $summarySettings['agents'];
+            $queryType = $summarySettings['type'] == 'include' ? 'whereIn' : 'whereNotIn';
+            $agentQuery->{$queryType}('id', $agents);
+        } else {
+            $agentQuery->whereIn('id', $agentIds);
+        }
+        
+        $agents = $agentQuery->get();
 
         foreach ($agents as $agent) {
             $report = NULL;
@@ -343,6 +353,57 @@ class Reporting
             'average_waiting' => $avgWait,
             'max_waiting' => (intval($waitStat->max_waiting)) ? human_time_diff(intval($waitStat->max_waiting), time()) : 0,
             'waiting_tickets' => $waitStat->total_tickets
+        ];
+    }
+
+    /**
+     * `getSummarySettings` method will get the summary settings
+     * @return array
+     */
+    public function getSummarySettings()
+    {
+        $summarySettings = Meta::where('object_type', 'agent_summary_meta')
+                            ->select(['key', 'value'])
+                            ->first();
+
+        if ( empty($summarySettings) ){
+            return false;
+        }
+    
+        return[
+            'type' => $summarySettings->key,
+            'agents' => \maybe_unserialize(  $summarySettings->value )
+        ];
+    }
+
+    /**
+     * `syncSummary` method will sync the summary data 
+     * @return array
+     */
+    public function syncSummary(array $data)
+    {
+        $agents = Arr::get($data, 'agents', []);
+        $type = Arr::get($data, 'type', 'include');
+
+        return $this->addOrRemoveAgents($agents, $type);
+    }
+
+    // This is a dependent method of syncSummary method
+    // It will add or remove agents from the summary list
+    private function addOrRemoveAgents(array $agents, string $type)
+    {
+        $agentIds = array_map('intval', $agents);
+
+        $agents = Meta::updateOrCreate(['object_type' => 'agent_summary_meta'],
+            [
+                'key' => $type,
+                'value' => maybe_serialize($agentIds)
+            ]
+        );
+
+        return[
+            'agents' => maybe_unserialize($agents->value),
+            'type' => $agents->key
         ];
     }
 }

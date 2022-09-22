@@ -482,6 +482,9 @@ class TransStrings
             'Apply / Remove Lists on FluentCRM Profile' => __('Apply / Remove Lists on FluentCRM Profile', 'fluent-support'),
             'Additional info' => __('Additional info', 'fluent-support'),
             'active_tickets_by_products' => __('Today\'s Active Tickets By Products', 'fluent-support'),
+            'exclude_or_include_in_summary' => __('Include Or Exclude Agents From Summary', 'fluent-support'),
+            'Include' => __('Include', 'fluent-support'),
+            'Exclude' => __('Exclude', 'fluent-support'),
         ];
     }
 }
