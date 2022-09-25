@@ -190,7 +190,10 @@ class ReportingController extends Controller
     public function syncSummary( Reporting $reporting, Request $request )
     {
         $data = $request->getSafe();
-        return $reporting->syncSummary($data);
+        return [
+            'summary' => $reporting->syncSummary($data),
+            'message' => __('Summary settings has been synced successfully', 'fluent-support')
+        ];
     }
 
     /**

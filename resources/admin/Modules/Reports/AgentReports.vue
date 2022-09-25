@@ -7,8 +7,8 @@
                         {{ $t('Individual Performance') }}
                     </div>
                     <div class="fs_box_actions">
-                        <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18"> 
-                            <Setting /> 
+                        <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18">
+                            <Setting />
                         </el-icon>
                         <el-date-picker
                             @change="getReport()"
@@ -80,7 +80,7 @@
                         <template #body>
                             <div class="fs_summary_settings">
 
-                                
+
                                 <el-row :gutter="20">
                                     <el-col :span="18">
                                         <el-select v-model="include_or_exclude">
@@ -95,7 +95,7 @@
                                     :data="sortedAgents"
                                     :titles="['Available Agents', 'Selected Agents']"
                                     filterable
-                                /> 
+                                />
                             </div>
                         </template>
                         <template #footer>
@@ -105,7 +105,7 @@
                     </modal>
                 </Teleport>
 
-            
+
             </div>
         </div>
         <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
@@ -288,9 +288,12 @@ export default {
             })
                 .then(response => {
                     this.open_setting = false;
-                    this.allowed_agents = response.agents;
-                    this.include_or_exclude = response.type;
-                    this.$message.success(response.message);
+                    this.include_or_exclude_agents = response.summary.agents;
+                    this.include_or_exclude = response.summary.type;
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.getReport();
                 })
                 .catch((errors) => {
@@ -337,5 +340,5 @@ export default {
         margin-right: 10px;
         cursor: pointer;
     }
-    
+
 </style>
