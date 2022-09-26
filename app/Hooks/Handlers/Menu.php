@@ -344,6 +344,7 @@ class Menu
             'client_priorities'         => Helper::customerTicketPriorities(),
             'ticket_statuses'           => Helper::ticketStatuses(),
             'ticket_statuses_group'     => Helper::ticketStatusGroups(),
+            'custom_ticket_statuses'    => Helper::customTicketStatus(),
             'admin_priorities'          => Helper::adminTicketPriorities(),
             'mailboxes'                 => MailBox::select(['id', 'name', 'settings'])->get(),
             'me'                        => $me,

@@ -196,6 +196,7 @@
                         </div>
                         <div class="fs_tk_badges">
                             <span class="fs_ticket_id">#{{ ticket.id }} </span>
+
                             <el-popover
                                 placement="bottom"
                                 :width="400"
@@ -217,6 +218,7 @@
                                         :label="priorityLabel"></el-option>
                                 </el-select>
                             </el-popover>
+
                             <el-popover
                                 placement="bottom"
                                 :width="400"
@@ -237,7 +239,25 @@
                                         :label="priorityLabel"></el-option>
                                 </el-select>
                             </el-popover>
-                            <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
+
+                            <el-popover
+                                placement="bottom"
+                                :width="400"
+                                trigger="click"
+                            >
+                                <template #reference>
+                                    <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
+                                </template>
+
+                                <el-select @change="updateTicketAttr('status')" v-model="ticket.status">
+                                    <el-option
+                                        v-for="(status, statusKey) in getTicketStatus"
+                                        :key="statusKey"
+                                        :value="status"
+                                        :label="statusKey">{{statusKey}}</el-option>
+                                </el-select>
+
+                            </el-popover>
                         </div>
                     </div>
                 </div>
@@ -491,7 +511,8 @@ export default {
             conversation_type: '',
             filteredWatchersIds: [],
             split_ticket_modal: false,
-            split_ticket: {}
+            split_ticket: {},
+            custom_ticket_statuses: this.appVars.custom_ticket_statuses,
         }
     },
     watch: {
@@ -820,6 +841,15 @@ export default {
                     this.loading = false;
                 });
         },
+    },
+    computed: {
+       getTicketStatus: function() {
+          const status = {};
+          for (let key in this.custom_ticket_statuses) {
+              status[key] = this.custom_ticket_statuses[key][0];
+          }
+          return status;
+      }
     },
     mounted() {
         this.fetchTicket();
