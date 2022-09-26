@@ -737,8 +737,10 @@ class Ticket extends Model
                     $value = array_values(array_filter(explode('|', $value)));
                 }
             }
-
-            $formattedData[$dataKey] = links_add_target(make_clickable($value));
+            if(!is_array($value) && !is_object($value)) {
+                $formattedData[$dataKey] = links_add_target(make_clickable($value));
+            }
+            else $formattedData[$dataKey] = $value;
         }
 
         return $formattedData;
