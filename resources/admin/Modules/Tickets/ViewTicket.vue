@@ -244,6 +244,7 @@
                                 placement="bottom"
                                 :width="400"
                                 trigger="click"
+                                v-if="has_pro && !isEmpty(custom_ticket_statuses)"
                             >
                                 <template #reference>
                                     <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
@@ -258,6 +259,7 @@
                                 </el-select>
 
                             </el-popover>
+                            <span v-else class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
                         </div>
                     </div>
                 </div>
