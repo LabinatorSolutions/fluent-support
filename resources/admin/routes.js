@@ -35,6 +35,7 @@ import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
 import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
 
 import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
+import TicketImporter from "./Modules/Settings/TicketImporter";
 
 export default [
     {
@@ -139,6 +140,11 @@ export default [
                 path: 'auto-close',
                 name: 'auto_close',
                 component: AutoCloseSettings
+            },
+            {
+                path: 'ticket_importer',
+                name: 'ticket_importer',
+                component: TicketImporter
             }
         ]
     },

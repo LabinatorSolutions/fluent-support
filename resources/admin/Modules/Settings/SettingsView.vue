@@ -78,6 +78,11 @@ export default {
                     title: this.$t('Auto Close Settings'),
                     route_name: 'auto_close',
                     icon: 'Timer'
+                },
+                {
+                    title: this.$t('Ticket Importer'),
+                    route_name: 'ticket_importer',
+                    icon: 'Download'
                 }
             ]
         }

@@ -50,7 +50,8 @@ import {
     CircleClose,
     Camera,
     TopLeft,
-    Timer
+    Timer,
+    Download
 } from '@element-plus/icons-vue/dist';
 
 const icons = [
@@ -97,7 +98,8 @@ const icons = [
     CircleClose,
     Camera,
     TopLeft,
-    Timer
+    Timer,
+    Download
 ];
 
 const app = createApp({});
