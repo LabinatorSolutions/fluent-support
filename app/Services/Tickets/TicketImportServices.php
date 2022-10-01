@@ -1,0 +1,343 @@
+<?php
+
+namespace FluentSupport\App\Services\Tickets;
+
+use FluentSupport\App\Models\Person;
+use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Attachment;
+
+class TicketImportServices
+{
+	private $db;
+	private $mailbox;
+
+	public function __construct()
+    {
+        $this->db = Helper::FluentSupport('db');
+        $this->mailbox = Helper::getDefaultMailBox();
+    }
+
+	public function getStats() : array
+	{
+		$stats = [];
+		if (defined('WPAS_VERSION')) {
+			$stats[] = $this->awesomeSupportStats();
+		}
+
+		return $stats;
+	}
+
+	private function awesomeSupportStats() : array
+	{
+		$ticketsCount = $this->getIntendedCounts();
+
+        $replyCount = $this->db->table('posts')
+            ->where('post_type', 'ticket_reply')
+            ->count();
+
+        return [
+        	'name' => esc_html('Awesome Support'),
+        	'tickets' => (int) $ticketsCount,
+			'replies' => (int) $replyCount,
+			'handler' => 'awesome-support'
+    	];
+	}
+
+    public function doMigration( $page, $maybeDeleteTickets )
+    {
+        $limit = apply_filters('fluent_support/ticket_import_chunk_limit', 100);
+        $allCounts = $this->getIntendedCounts();
+        $totalBach = ceil($allCounts / $limit);
+
+        $tickets = $this->getTickets($limit, $page);
+        $insertIds = [];
+
+        foreach ($tickets as $ticket) {
+            $insertIds[] = $this->insertTicket($ticket);
+        }
+
+        $hasmore = $totalBach > $page ? true : false;
+
+        $returnData = [
+        	'insertred' => $insertIds,
+        	'completed' => (int) count($insertIds),
+        	'has_more'	=> $hasmore,
+        	'imported_page' => (int) $page,
+        	'next_page' => (int) $page+1,
+        	'total_tickets' => (int) $allCounts
+        ];
+
+        if ( !$hasmore ){
+        	$returnData['message'] = __( $allCounts . ' ' . 'Tickets has been imported successfully.' ,'fluent-support');
+
+        	if ( $maybeDeleteTickets == 'yes' ) {
+        		$this->deleteOldData();
+        	}
+
+        	return $returnData;
+        }
+
+        return $returnData;
+    }
+
+
+	public function getTickets( $limit, $page )
+    {
+    	$args = [ 
+    		'posts_per_page' => $limit,
+    		'paged' => $page
+    	];
+
+
+        $tickets = \wpas_get_tickets('any', $args);
+		
+        if ($tickets) {
+        	foreach ($tickets as $ticket) {
+	            $replies = $this->getReplies($ticket->ID);
+	            $ticketStatus = $this->getMeta('_wpas_status', $ticket->ID);
+	            if ($ticketStatus == 'open' && !$replies) {
+	                $ticketStatus = 'new';
+	                $ticket->waiting_since = sanitize_text_field($ticket->post_date);
+	            }
+
+	            if ($replies && $ticketStatus != 'closed') {
+	                $ticketStatus = 'active';
+	            }
+
+	            $ticket->ticket_status = $ticketStatus;
+
+	            $ticket->replies = $replies;
+	            $ticket->customer = $this->getPerson($ticket->post_author, 'customer');
+	            if ($ticketStatus == 'closed') {
+	                $ticket->resolved_at = $this->getMeta('_ticket_closed_on', $ticket->ID);
+	            } else {
+	                $ticket->resolved_at = false;
+	            }
+        	}
+        	return $tickets;
+        }
+    }
+
+    public function insertTicket($ticket)
+    {
+        $ticketData = [
+            'status'         => sanitize_text_field($ticket->ticket_status),
+            'hash'           => sanitize_text_field(md5(time() . wp_generate_uuid4())),
+            'title'          => sanitize_text_field($ticket->post_title),
+            'slug'           => sanitize_title($ticket->post_name),
+            'source'         => sanitize_text_field('awesome-support'),
+            'content'        => sanitize_textarea_field($ticket->post_content),
+            'response_count' => intval(count($ticket->replies)),
+            'mailbox_id'	 => intval($this->mailbox->id),
+            'created_at'     => sanitize_text_field($ticket->post_date),
+            'updated_at'     => sanitize_text_field($ticket->post_date)
+        ];
+
+        if ($ticket->customer) {
+            $ticketData['customer_id'] = intval($ticket->customer->id);
+        }
+
+        if ($ticket->resolved_at) {
+            $ticketData['resolved_at'] = sanitize_text_field($ticket->resolved_at);
+        }
+
+        if ($ticket->agent) {
+            $ticketData['agent_id'] = intval($ticket->agent->id);
+        }
+
+        if ($ticket->waiting_since) {
+        	$ticketData['waiting_since'] = sanitize_text_field($ticket->post_date);
+        }
+
+        // total_close_time
+        $ticketId = Ticket::insertGetId($ticketData);
+        $this->handleAttachments($ticket->ID, $ticketId);
+
+        $firsAgentResponseDate = false;
+        $closingDate = false;
+
+        $repliesCount = count($ticket->replies);
+
+        $ticketUpdateData = [];
+        $agent = false;
+
+        foreach ($ticket->replies as $index => $reply) {
+            if ($reply->post_author == $ticket->post_author) {
+                $person = $this->getPerson($reply->post_author, 'customer');
+            } else {
+                $person = $this->getPerson($reply->post_author, 'agent');
+                if (!$agent) {
+                    $agent = $person;
+                }
+            }
+
+            if ($person) {
+                $personType = $person->person_type;
+                if ($personType == 'agent') {
+                    if (!$firsAgentResponseDate) {
+                        $firsAgentResponseDate = $reply->post_date;
+                    }
+                    $ticketUpdateData['last_agent_response'] = $reply->post_date;
+                } else {
+                    $ticketUpdateData['last_customer_response'] = $reply->post_date;
+                    $ticketUpdateData['waiting_since'] = $reply->post_date;
+                }
+
+                if ($ticketData['status'] == 'closed' && $index == ($repliesCount - 1)) {
+                    // this is the last response
+                    $closingDate = $reply->post_date;
+                    $ticketUpdateData['closed_by'] = $person->id;
+                    $ticketUpdateData['resolved_at'] = $reply->post_date;
+                }
+            }
+
+            $replyData = [
+                'serial'            => intval($index + 1),
+                'ticket_id'         => intval($ticketId),
+                'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId),
+                'conversation_type' => sanitize_text_field('response'),
+                'content'           => sanitize_textarea_field($reply->post_content),
+                'source'            => sanitize_text_field('awesome_support'),
+                'created_at'        => sanitize_text_field($reply->post_date),
+                'updated_at'        => sanitize_text_field($reply->post_date)
+            ];
+
+            $conversationId = Conversation::insertGetId($replyData);
+
+            $this->handleAttachments($reply->ID, $ticketId, $conversationId);
+        }
+
+        if ($firsAgentResponseDate) {
+            $ticketUpdateData['first_response_time'] = sanitize_text_field( strtotime($firsAgentResponseDate) - strtotime($ticketData['created_at']) );
+        }
+
+        if ($closingDate) {
+            $ticketUpdateData['total_close_time'] = sanitize_text_field( strtotime($closingDate) - strtotime($ticketData['created_at']) );
+        }
+
+        if ($agent) {
+            $ticketUpdateData['agent_id'] = intval($agent->id);
+        }
+
+        $ticketUpdateData = array_filter($ticketUpdateData);
+
+        if ($ticketUpdateData) {
+            Ticket::where('id', $ticketId)
+                ->update($ticketUpdateData);
+        }
+
+        Helper::updateTicketMeta($ticketId, 'as_origin_id', $ticket->ID);
+
+        return $ticketId . ' - ' . $ticket->post_title . ' [' . $ticketData['status'] . '] - ' . $ticket->ID;
+    }
+
+    public function getMeta($metaKey, $postId)
+    {
+        return get_post_meta($postId, $metaKey, true);
+    }
+
+    public function getReplies($ticketId)
+    {
+    	// $args = [
+    	// 	'orderby' => 'ID',
+    	// 	'order'	=> 'ASC'
+    	// ];
+
+    	// $replies = \wpas_get_replies($ticketId, 'any', $args);
+        $replies = $this->db->table('posts')
+            ->where('post_type', 'ticket_reply')
+            ->where('post_parent', $ticketId)
+            ->oldest('ID')
+            ->get();
+
+        return $replies;
+    }
+
+    public function getPerson($userId = 0, $type = 'customer')
+    {
+        static $persons = [];
+
+        if (isset($persons[$userId])) {
+            $cachedPerson = $persons[$userId];
+            if ($cachedPerson->person_type == $type) {
+                return $persons[$userId];
+            }
+        }
+
+        $person = Person::where('remote_uid', $userId)
+            ->where('person_type', $type)
+            ->first();
+
+        if ($person) {
+            $persons[$userId] = $person;
+            return $persons[$userId];
+        }
+
+        $user = get_user_by('ID', $userId);
+
+        if (!$user) {
+            $persons[$userId] = false;
+            return $persons[$userId];
+        }
+
+        $personData = [
+            'email'       => $user->user_email,
+            'first_name'  => $user->first_name,
+            'last_name'   => $user->last_name,
+            'remote_uid'  => $userId,
+            'person_type' => $type,
+            'hash'        => md5(time() . wp_generate_uuid4())
+        ];
+
+        if (empty($personData['first_name'])) {
+            $personData['first_name'] = $user->display_name;
+        }
+
+        $person = Person::create($personData);
+
+        $persons[$userId] = $person;
+
+        return $persons[$userId];
+
+    }
+
+    private function handleAttachments($id, $createdTicketId, $conversationId = null)
+    {
+    	$attachments = $this->db->table('posts')
+            ->where('post_type', 'attachment')
+            ->where('post_parent', $id)
+            ->orderBy('ID', 'DESC')
+            ->get();
+
+
+        if ($attachments){
+        	foreach ( $attachments as $attachment ) {
+	        	Attachment::create([
+	        		'ticket_id' => $createdTicketId,
+	        		'conversation_id' => $conversationId,
+	        		'full_url' => sanitize_url($attachment->guid),
+	        		'title' => $attachment->post_title,
+	        		'person_id' => $attachment->post_author,
+	        		'file_path' => get_attached_file($attachment->ID),
+	        		'file_type' => $attachment->post_mime_type
+	        	]);
+        	}
+        }
+    }
+
+    private function deleteOldData( $types )
+    {
+    
+        $this->db->table('posts')
+            ->select(['ID'])
+            ->whereIn('post_type', $types)
+            ->delete();
+    }
+
+    public function getIntendedCounts()
+    {
+    	return count( \wpas_get_tickets( 'any' ) );
+    }
+}
