@@ -1,5 +1,8 @@
 <template>
-	<el-row style="padding: 45px 25px">
+	<div style="background: white;" class="fs_box_body" v-if="loading">
+        <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
+    </div>
+	<el-row style="padding: 45px 25px" v-if="!loading && settings.length">
 	    <el-col v-for="setting in settings" :span="8">
 	    	<div :class="'grid-content fs_'+setting.handler">
 	    		<el-card :body-style="{ padding: '0px' }" :header=setting.name>
@@ -32,6 +35,10 @@
 	    	</div>
 	    </el-col>
   	</el-row>
+  	<div class="fs_no_active_support_system" v-if="!loading && !settings.length">
+  		<h3> {{$t('no_other_support_system_is_activate')}} </h3>
+  	</div>
+
 </template>
 
 <script type="text/babel">
@@ -44,7 +51,8 @@
 	        	import_page: 1,
 	        	total_tickets: 0,
 	        	completedPercentage: 0,
-	        	completed: 0
+	        	completed: 0,
+	        	loading: false
 	    	}
 		},
 
@@ -57,8 +65,10 @@
 
 		methods: {
 			fetchSettings() {
+				this.loading=true;
 				this.$get('ticket_importer').then((response) => {
 					this.settings = response;
+					this.loading=false;
 				}).catch((e) => {
 					this.$handleError(e);
 				});
@@ -97,3 +107,17 @@
     	}
     }
 </script>
+
+<style lang="scss" scoped>
+	.fs_no_active_support_system {
+	    display: flex;
+	    flex-direction: column;
+	    align-items: center;
+	    background: #ffffff;
+	    margin: 35px;
+	    & h3 {
+		    text-align: center;
+	        line-height: 32px;
+		}
+	}
+</style>

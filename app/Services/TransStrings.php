@@ -485,6 +485,7 @@ class TransStrings
             'exclude_or_include_in_summary' => __('Include Or Exclude Agents From Summary', 'fluent-support'),
             'Include' => __('Include', 'fluent-support'),
             'Exclude' => __('Exclude', 'fluent-support'),
+            'no_other_support_system_is_activate' => __('Seems like Awesome Support isn\'t activated in your site. To import tickets from Awesome Support please activate it.', 'fluent-support'),
         ];
     }
 }

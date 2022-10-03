@@ -19,6 +19,9 @@ class TicketImportServices
         $this->mailbox = Helper::getDefaultMailBox();
     }
 
+    /**
+     * This `getStats` method will fetch available other systems data 
+     */
 	public function getStats() : array
 	{
 		$stats = [];
@@ -29,6 +32,7 @@ class TicketImportServices
 		return $stats;
 	}
 
+	// Get stats of Awesome Support
 	private function awesomeSupportStats() : array
 	{
 		$ticketsCount = $this->getIntendedCounts();
@@ -45,6 +49,12 @@ class TicketImportServices
     	];
 	}
 
+	/**
+	 * This `doMigration` method will migrate ticket from other support system
+	 * @param int $page
+	 * @param string $maybeDeleteTickets 
+	 * @return array $returnData
+	 */
     public function doMigration( $page, $maybeDeleteTickets )
     {
         $limit = apply_filters('fluent_support/ticket_import_chunk_limit', 100);
@@ -73,7 +83,8 @@ class TicketImportServices
         	$returnData['message'] = __( $allCounts . ' ' . 'Tickets has been imported successfully.' ,'fluent-support');
 
         	if ( $maybeDeleteTickets == 'yes' ) {
-        		$this->deleteOldData();
+        		$types = ['ticket', 'ticket_reply', 'ticket_history'];
+        		$this->deleteOldData($types);
         	}
 
         	return $returnData;
@@ -82,7 +93,12 @@ class TicketImportServices
         return $returnData;
     }
 
-
+    /**
+	 * This `getTickets` method will get tickets from other support system
+	 * @param int $limit
+	 * @param int $page 
+	 * @return object $tickets
+	 */
 	public function getTickets( $limit, $page )
     {
     	$args = [ 
@@ -120,6 +136,11 @@ class TicketImportServices
         }
     }
 
+    /**
+     * This `insertTicket` method will insert ticket with associated replies and attachments
+     * @param object $ticket
+     * return void
+     */ 
     public function insertTicket($ticket)
     {
         $ticketData = [
@@ -233,19 +254,24 @@ class TicketImportServices
         return $ticketId . ' - ' . $ticket->post_title . ' [' . $ticketData['status'] . '] - ' . $ticket->ID;
     }
 
+    /**
+     * This `getMeta` method will get associated meta data of a ticket
+     * @param string $metaKey
+     * @param int $postId
+     * @return array
+     */ 
     public function getMeta($metaKey, $postId)
     {
         return get_post_meta($postId, $metaKey, true);
     }
 
+    /**
+     * This `getReplies` method will get associated replies with a ticket by it's id
+     * @param int $ticketId
+     * @return object $replies
+     */
     public function getReplies($ticketId)
     {
-    	// $args = [
-    	// 	'orderby' => 'ID',
-    	// 	'order'	=> 'ASC'
-    	// ];
-
-    	// $replies = \wpas_get_replies($ticketId, 'any', $args);
         $replies = $this->db->table('posts')
             ->where('post_type', 'ticket_reply')
             ->where('post_parent', $ticketId)
@@ -255,6 +281,12 @@ class TicketImportServices
         return $replies;
     }
 
+    /**
+     * This `getPerson` method will get associated person with a tickets or conversation
+     * @param int $userId
+     * @param sting $type user type default is `customer`
+     * @return object $person
+     */
     public function getPerson($userId = 0, $type = 'customer')
     {
         static $persons = [];
@@ -303,6 +335,7 @@ class TicketImportServices
 
     }
 
+    // This method will handle attach attachments with a ticket and conversation
     private function handleAttachments($id, $createdTicketId, $conversationId = null)
     {
     	$attachments = $this->db->table('posts')
@@ -327,15 +360,19 @@ class TicketImportServices
         }
     }
 
+    // This method will delete all old data from db after ticket importing
+    // Param: $type
     private function deleteOldData( $types )
     {
-    
         $this->db->table('posts')
             ->select(['ID'])
             ->whereIn('post_type', $types)
             ->delete();
     }
 
+    /**
+     * This `getIntendedCounts` method will count tickets
+     */
     public function getIntendedCounts()
     {
     	return count( \wpas_get_tickets( 'any' ) );
