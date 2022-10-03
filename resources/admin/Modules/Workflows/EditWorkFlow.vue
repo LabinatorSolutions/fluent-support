@@ -16,7 +16,7 @@
                         <el-switch @change="updateWorkFlow()" active-value="published" inactive-value="draft"
                                    v-model="workflow.status"/>
                     </span>
-                    <el-button :disabled="saving" v-loading="saving" size="mesium" type="success"
+                    <el-button :disabled="saving" v-loading="saving" type="success"
                                @click="updateWorkFlow()">{{$t('Update Workflow')}}
                     </el-button>
                 </div>
@@ -59,7 +59,7 @@
                     <div class="fs_box_body fs_padded_20">
 
                         <action-mappers @update="updateWorkFlow()" :actions="actions"
-                                        :all_actions="action_fields"></action-mappers>
+                                        :all_actions="filtred_action_fields"></action-mappers>
 
                     </div>
                 </div>
@@ -96,7 +96,39 @@ export default {
             action_fields: {},
             trigger_fields: {},
             loading: false,
-            saving: false
+            saving: false,
+            filtred_action_fields: {}
+        }
+    },
+    watch: {
+        'workflow.trigger_key'() {
+            this.filtred_action_fields = {};
+
+            if (this.workflow.trigger_key == 'fluent_support/ticket_closed') {
+                const exclude = ['fs_action_create_response', 'fs_action_close_ticket', 'fs_action_assign_agent', 'fs_block_customer', 'fs_delete_ticket'];
+
+                for(let field in this.action_fields){
+                    if (!exclude.includes(field)) {
+                        this.filtred_action_fields[field] = this.action_fields[field];
+                    }
+                }
+            } 
+
+            else if( this.workflow.trigger_key == 'fluent_support/ticket_created' ) {
+                const exclude = ['fs_action_remove_bookmarks', 'fs_action_remove_tags'];
+
+                for(let field in this.action_fields){
+                    if (!exclude.includes(field)) {
+                        this.filtred_action_fields[field] = this.action_fields[field];
+                    }
+                }
+            } 
+
+            else if( this.workflow.trigger_key == 'fluent_support/response_added_by_customer' ) {
+                this.filtred_action_fields = this.action_fields;
+            }
+
+            return this.filtred_action_fields;
         }
     },
     methods: {
