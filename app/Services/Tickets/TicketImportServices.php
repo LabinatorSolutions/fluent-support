@@ -220,7 +220,7 @@ class TicketImportServices
                 'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId),
                 'conversation_type' => sanitize_text_field('response'),
                 'content'           => sanitize_textarea_field($reply->post_content),
-                'source'            => sanitize_text_field('awesome_support'),
+                'source'            => sanitize_text_field('awesome-support'),
                 'created_at'        => sanitize_text_field($reply->post_date),
                 'updated_at'        => sanitize_text_field($reply->post_date)
             ];
