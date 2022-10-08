@@ -135,6 +135,9 @@ class AuthController extends Controller
         }
 
         if (!$user) {
+
+
+
             return $this->response([
                 'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
             ], 403);
