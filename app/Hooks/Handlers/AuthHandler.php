@@ -36,7 +36,7 @@ class AuthHandler
 
         $return = '<div id="fst_login_form" class="fst_login_wrapper">';
 
-        if(!empty($attributes['redirect-to'])) {
+        if (!empty($attributes['redirect-to'])) {
             $redirect = $attributes['redirect-to'];
         } else {
             $redirect = Helper::getPortalBaseUrl();
@@ -66,7 +66,7 @@ class AuthHandler
                 . '</a></p>';
         }
 
-        if ( $attributes['show-reset-password'] == 'true' ) {
+        if ($attributes['show-reset-password'] == 'true') {
             $return .= '<p style="text-align: center">'
                 . __('Forgot your password?', 'fluent-support')
                 . ' <a href="#" id="fs_show_reset_password">'
@@ -97,11 +97,12 @@ class AuthHandler
 
         $this->loadAssets($hide);
 
-        return $this->buildRegistrationForm( $registrationFields, $hide, $attributes );
+        return $this->buildRegistrationForm($registrationFields, $hide, $attributes);
     }
 
     // This method `buildRegistrationForm` will generate html for sign up form
-    private function buildRegistrationForm ( $registrationFields, $hide, $attributes ) {
+    private function buildRegistrationForm($registrationFields, $hide, $attributes)
+    {
         $registrationForm = '<div class="fst_registration_wrapper ' . $hide . '"><form id="fstRegistrationForm" class="fs_registration_form" method="post" name="fs_registration_form">';
 
         foreach ($registrationFields as $fieldName => $registrationField) {
@@ -113,6 +114,8 @@ class AuthHandler
         $registrationForm .= '<button type="submit" id="fst_submit">' . $this->submitBtnLoadingSvg() . '<span>' . __('Signup', 'fluent-support') . '</span></button>';
 
         $registrationForm .= '</form>';
+
+        $registrationForm .= apply_filters('fluent_support/before_registration_form_close', '', $registrationFields, $attributes);
 
         if ($hide) {
             $registrationForm .= '<p style="text-align: center">'
@@ -127,7 +130,7 @@ class AuthHandler
         return $registrationForm;
     }
 
-    public function restPasswordForm ( $attributes )
+    public function restPasswordForm($attributes)
     {
         if (get_current_user_id()) {
             return '<p>' . __('You are already logged in.', 'fluent-support') . '</p>';
@@ -141,11 +144,11 @@ class AuthHandler
 
         $this->loadAssets($hide);
 
-        return $this->buildResetPassForm( $resetPasswordFields, $hide, $attributes );
+        return $this->buildResetPassForm($resetPasswordFields, $hide, $attributes);
     }
 
     // This method `buildResetPassForm` will generate html for password reset form
-    private function buildResetPassForm ( $resetPasswordFields, $hide, $attributes )
+    private function buildResetPassForm($resetPasswordFields, $hide, $attributes)
     {
         $restePasswordForm = '<div class="fst_reset_pass_wrapper ' . $hide . '"><form id="fstResetPasswordForm" class="fs_reset_pass_form" method="post" name="fs_reset_pass_form">';
 
@@ -279,7 +282,7 @@ class AuthHandler
         ]);
     }
 
-    public static function resetPasswordFields ()
+    public static function resetPasswordFields()
     {
         /*
          * Filter reset password form field
@@ -334,10 +337,10 @@ class AuthHandler
          * @param array $shortCodeDefaults
          */
         $shortCodeDefaults = apply_filters('fluent_support/auth_shortcode_defaults', [
-            'auto-redirect' => false,
-            'redirect-to'   => Helper::getPortalBaseUrl(),
-            'hide'          => false,
-            'show-signup'   => false,
+            'auto-redirect'       => false,
+            'redirect-to'         => Helper::getPortalBaseUrl(),
+            'hide'                => false,
+            'show-signup'         => false,
             'show-reset-password' => false,
         ]);
 
@@ -374,12 +377,12 @@ class AuthHandler
         wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js', [], FLUENT_SUPPORT_VERSION);
 
         wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
-            'signup' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
-            'login'  => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
-            'nonce'  => wp_create_nonce('wp_rest'),
-            'hide'   => $hide,
+            'signup'               => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
+            'login'                => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
+            'nonce'                => wp_create_nonce('wp_rest'),
+            'hide'                 => $hide,
             'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce'),
-            'resetPass' => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
+            'resetPass'            => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
         ]);
 
 
