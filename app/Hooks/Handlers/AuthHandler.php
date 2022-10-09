@@ -174,6 +174,10 @@ class AuthHandler
      */
     public function authForm($attributes)
     {
+        if (get_current_user_id()) {
+            return '<p>' . sprintf(__('You are already logged in. <a href="%s">Go to support portal</a>', 'fluent-support'), Helper::getPortalBaseUrl()) . '</p>';
+        }
+
         $authForm = '<div class="fst_auth_wrapper">';
 
         $authForm .= do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
@@ -381,6 +385,7 @@ class AuthHandler
             'login'                => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
             'nonce'                => wp_create_nonce('wp_rest'),
             'hide'                 => $hide,
+            'redirect_fallback'   => Helper::getPortalBaseUrl(),
             'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce'),
             'resetPass'            => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
         ]);

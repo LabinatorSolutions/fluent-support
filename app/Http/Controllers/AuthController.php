@@ -125,8 +125,8 @@ class AuthController extends Controller
             ]);
         }
 
-        $email = $data['log'];
-        $password = $data['pwd'];
+        $email = sanitize_user($data['log']);
+        $password = trim($data['pwd']);
 
         if (is_email($email)) {
             $user = get_user_by('email', $email);
@@ -135,22 +135,27 @@ class AuthController extends Controller
         }
 
         if (!$user) {
+            $user = new \WP_Error('authentication_failed', __('<strong>Error</strong>: Invalid username, email address or incorrect password.', 'fluent-support'));
 
-
+            do_action('wp_login_failed', $email, $user);
 
             return $this->response([
                 'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
             ], 403);
+
         }
 
-        $info = array(
-            'user_login'    => sanitize_text_field(trim($_POST['log'])),
-            'user_password' => trim($_POST['pwd']),
-            'remember'      => isset($_POST['rememberme']),
-        );
-
         if (apply_filters('fluent_support_use_native_login', true)) {
-            return $this->nativeLoginHandler($user, $info, $redirectUrl);
+            $user = wp_signon();
+            if (is_wp_error($user)) {
+                return $this->response([
+                    'message' => $user->get_error_message()
+                ], 403);
+            }
+
+            return $this->sendSuccess([
+                'redirect' => $redirectUrl
+            ]);
         }
 
         if (wp_check_password($password, $user->user_pass, $user->ID)) {
@@ -161,7 +166,7 @@ class AuthController extends Controller
         }
 
         return $this->response([
-            'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
+            'message' => __('<strong>Error</strong>: Invalid username, email address or incorrect password.', 'fluent-support')
         ], 403);
     }
 

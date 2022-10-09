@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             window.location.reload();
                         }, 1500);
                     } else {
-                        window.location.reload();
+                        window.location.href = window.fluentSupportPublic.redirect_fallback;
                     }
                 } else {
                     let genericError = this.response.error;
@@ -145,10 +145,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     if (genericError) {
+
+                        let submitWrapper = document.getElementsByClassName('login-submit');
+                        if(submitWrapper.length) {
+                            submitWrapper = submitWrapper[0];
+                        } else {
+                            submitWrapper = form;
+                        }
+
                         let el = document.createElement("div");
                         el.classList.add('error', 'text-danger');
                         el.innerHTML = genericError;
-                        form.appendChild(el);
+                        
+                        submitWrapper.parentNode.insertBefore(el, submitWrapper.nextSibling);
                     } else {
                         for (const property in this.response) {
                             const field = document.getElementById('fst_' + property);
