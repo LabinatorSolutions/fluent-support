@@ -296,9 +296,9 @@ class AuthHandler
          * @param array $fields Form fields
          */
         return apply_filters('fluent_support/reset_password_form', [
-            'email' => [
+            'user_login' => [
                 'required'    => true,
-                'type'        => 'email',
+                'type'        => 'text',
                 'label'       => __('Email Address', 'fluent-support'),
                 'id'          => 'fst_email',
                 'placeholder' => __('Your Email Address', 'fluent-support')
@@ -385,7 +385,7 @@ class AuthHandler
             'login'                => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
             'nonce'                => wp_create_nonce('wp_rest'),
             'hide'                 => $hide,
-            'redirect_fallback'   => Helper::getPortalBaseUrl(),
+            'redirect_fallback'    => Helper::getPortalBaseUrl(),
             'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce'),
             'resetPass'            => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
         ]);
