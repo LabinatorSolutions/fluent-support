@@ -1142,7 +1142,7 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function closeTicket($ticketId)
+    public function closeTicket($ticketId, $closeSilently=false)
     {
         $agent = Helper::getAgentByUserId(get_current_user_id());
 
@@ -1151,7 +1151,7 @@ class Ticket extends Model
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close($ticket, $agent)
+            'ticket'  => (new TicketService())->close($ticket, $agent, $closeSilently)
         ];
     }
 

@@ -120,6 +120,9 @@
                                             <path d="M12.8334 8.60417V6.10878C12.5737 6.34124 12.2791 6.53543 11.9584 6.68267V8.60417C11.9584 9.16796 11.5014 9.625 10.9376 9.625H7.29962L4.375 11.8128L4.37438 9.625H3.06258C2.49879 9.625 2.04175 9.16796 2.04175 8.60417V3.64583C2.04175 3.08204 2.49879 2.625 3.06258 2.625H7.11033C7.19025 2.31457 7.31164 2.02082 7.46832 1.75H3.06258C2.01554 1.75 1.16675 2.59879 1.16675 3.64583V8.60417C1.16675 9.65119 2.01554 10.5 3.06258 10.5H3.49962L3.50008 12.1041C3.50008 12.2614 3.55104 12.4146 3.64534 12.5407C3.88654 12.8632 4.34349 12.9291 4.66598 12.6879L7.59071 10.5H10.9376C11.9846 10.5 12.8334 9.65119 12.8334 8.60417Z" fill="currentColor"/>
                                         </svg> {{ $t('Add Bookmark')}}
                                     </el-dropdown-item>
+                                    <el-dropdown-item @click='(close_ticket_silently=true) && closeTicket()'>
+                                       <el-icon><MuteNotification /></el-icon> {{$t('Close Ticket Silently')}}
+                                    </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
@@ -515,6 +518,7 @@ export default {
             split_ticket_modal: false,
             split_ticket: {},
             custom_ticket_statuses: this.appVars.custom_ticket_statuses,
+            close_ticket_silently: false
         }
     },
     watch: {
@@ -616,7 +620,7 @@ export default {
         },
         closeTicket() {
             this.updating = true;
-            this.$post(`tickets/${this.ticket.id}/close`)
+            this.$post(`tickets/${this.ticket.id}/close`, {close_ticket_silently: this.close_ticket_silently})
                 .then(response => {
                     this.ticket.status = response.ticket.status;
                     this.$notify.success({

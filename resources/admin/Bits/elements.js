@@ -51,7 +51,8 @@ import {
     Camera,
     TopLeft,
     Timer,
-    Download
+    Download,
+    MuteNotification
 } from '@element-plus/icons-vue/dist';
 
 const icons = [
@@ -99,7 +100,8 @@ const icons = [
     Camera,
     TopLeft,
     Timer,
-    Download
+    Download,
+    MuteNotification
 ];
 
 const app = createApp({});

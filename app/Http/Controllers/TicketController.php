@@ -175,7 +175,7 @@ class TicketController extends Controller
     public function closeTicket(Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->closeTicket($ticketId);
+            return $ticket->closeTicket($ticketId, $this->request->getSafe('close_ticket_silently'));
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
