@@ -1,42 +1,17 @@
-<?php
+<?php 
 
-namespace FluentSupport\App\Services\Tickets;
+namespace FluentSupport\App\Services\Tickets\Importer;
 
-use FluentSupport\App\Models\Person;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Attachment;
+use FluentSupport\App\Models\Conversation;
 
-class TicketImportServices
+class AwesomeSupportTickets extends BaseImporter
 {
-	private $db;
-	private $mailbox;
-
-	public function __construct()
-    {
-        $this->db = Helper::FluentSupport('db');
-        $this->mailbox = Helper::getDefaultMailBox();
-    }
-
-    /**
-     * This `getStats` method will fetch available other systems data 
-     */
-	public function getStats() : array
+	public function awesomeSupportStats() : array
 	{
-		$stats = [];
-		if (defined('WPAS_VERSION')) {
-			$stats[] = $this->awesomeSupportStats();
-		}
-
-		return $stats;
-	}
-
-	// Get stats of Awesome Support
-	private function awesomeSupportStats() : array
-	{
-		$ticketsCount = $this->getIntendedCounts();
-
+		$ticketsCount = $this->countAwesomeSupportTickets();
         $replyCount = $this->db->table('posts')
             ->where('post_type', 'ticket_reply')
             ->count();
@@ -48,20 +23,21 @@ class TicketImportServices
 			'handler' => 'awesome-support'
     	];
 	}
-
+   
 	/**
 	 * This `doMigration` method will migrate ticket from other support system
 	 * @param int $page
 	 * @param string $maybeDeleteTickets 
-	 * @return array $returnData
+	 * @param string $handler
+	 * @return array $respone
 	 */
-    public function doMigration( $page, $maybeDeleteTickets )
+    public function doMigration( $page, $maybeDeleteTickets, $handler )
     {
-        $limit = apply_filters('fluent_support/ticket_import_chunk_limit', 100);
-        $allCounts = $this->getIntendedCounts();
-        $totalBach = ceil($allCounts / $limit);
+    	$this->handler = $handler;
+        $allCounts = $this->countAwesomeSupportTickets();
+        $totalBach = ceil($allCounts / $this->limit);
 
-        $tickets = $this->getTickets($limit, $page);
+        $tickets = $this->getTickets($this->limit, $page);
         $insertIds = [];
 
         foreach ($tickets as $ticket) {
@@ -70,7 +46,7 @@ class TicketImportServices
 
         $hasmore = $totalBach > $page ? true : false;
 
-        $returnData = [
+        $respone = [
         	'insertred' => $insertIds,
         	'completed' => (int) count($insertIds),
         	'has_more'	=> $hasmore,
@@ -80,17 +56,17 @@ class TicketImportServices
         ];
 
         if ( !$hasmore ){
-        	$returnData['message'] = __( $allCounts . ' ' . 'Tickets has been imported successfully.' ,'fluent-support');
+        	$respone['message'] = __( $allCounts . ' ' . 'Tickets has been imported successfully.' ,'fluent-support');
 
         	if ( $maybeDeleteTickets == 'yes' ) {
         		$types = ['ticket', 'ticket_reply', 'ticket_history'];
         		$this->deleteOldData($types);
         	}
 
-        	return $returnData;
+        	return $respone;
         }
 
-        return $returnData;
+        return $respone;
     }
 
     /**
@@ -143,34 +119,7 @@ class TicketImportServices
      */ 
     public function insertTicket($ticket)
     {
-        $ticketData = [
-            'status'         => sanitize_text_field($ticket->ticket_status),
-            'hash'           => sanitize_text_field(md5(time() . wp_generate_uuid4())),
-            'title'          => sanitize_text_field($ticket->post_title),
-            'slug'           => sanitize_title($ticket->post_name),
-            'source'         => sanitize_text_field('awesome-support'),
-            'content'        => sanitize_textarea_field($ticket->post_content),
-            'response_count' => intval(count($ticket->replies)),
-            'mailbox_id'	 => intval($this->mailbox->id),
-            'created_at'     => sanitize_text_field($ticket->post_date),
-            'updated_at'     => sanitize_text_field($ticket->post_date)
-        ];
-
-        if ($ticket->customer) {
-            $ticketData['customer_id'] = intval($ticket->customer->id);
-        }
-
-        if ($ticket->resolved_at) {
-            $ticketData['resolved_at'] = sanitize_text_field($ticket->resolved_at);
-        }
-
-        if ($ticket->agent) {
-            $ticketData['agent_id'] = intval($ticket->agent->id);
-        }
-
-        if ($ticket->waiting_since) {
-        	$ticketData['waiting_since'] = sanitize_text_field($ticket->post_date);
-        }
+        $ticketData = $this->buildTicketData($ticket);
 
         // total_close_time
         $ticketId = Ticket::insertGetId($ticketData);
@@ -217,10 +166,10 @@ class TicketImportServices
             $replyData = [
                 'serial'            => intval($index + 1),
                 'ticket_id'         => intval($ticketId),
-                'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId),
+                'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId()),
                 'conversation_type' => sanitize_text_field('response'),
                 'content'           => sanitize_textarea_field($reply->post_content),
-                'source'            => sanitize_text_field('awesome-support'),
+                'source'            => sanitize_text_field($this->handler),
                 'created_at'        => sanitize_text_field($reply->post_date),
                 'updated_at'        => sanitize_text_field($reply->post_date)
             ];
@@ -281,60 +230,6 @@ class TicketImportServices
         return $replies;
     }
 
-    /**
-     * This `getPerson` method will get associated person with a tickets or conversation
-     * @param int $userId
-     * @param sting $type user type default is `customer`
-     * @return object $person
-     */
-    public function getPerson($userId = 0, $type = 'customer')
-    {
-        static $persons = [];
-
-        if (isset($persons[$userId])) {
-            $cachedPerson = $persons[$userId];
-            if ($cachedPerson->person_type == $type) {
-                return $persons[$userId];
-            }
-        }
-
-        $person = Person::where('remote_uid', $userId)
-            ->where('person_type', $type)
-            ->first();
-
-        if ($person) {
-            $persons[$userId] = $person;
-            return $persons[$userId];
-        }
-
-        $user = get_user_by('ID', $userId);
-
-        if (!$user) {
-            $persons[$userId] = false;
-            return $persons[$userId];
-        }
-
-        $personData = [
-            'email'       => $user->user_email,
-            'first_name'  => $user->first_name,
-            'last_name'   => $user->last_name,
-            'remote_uid'  => $userId,
-            'person_type' => $type,
-            'hash'        => md5(time() . wp_generate_uuid4())
-        ];
-
-        if (empty($personData['first_name'])) {
-            $personData['first_name'] = $user->display_name;
-        }
-
-        $person = Person::create($personData);
-
-        $persons[$userId] = $person;
-
-        return $persons[$userId];
-
-    }
-
     // This method will handle attach attachments with a ticket and conversation
     private function handleAttachments($id, $createdTicketId, $conversationId = null)
     {
@@ -370,11 +265,44 @@ class TicketImportServices
             ->delete();
     }
 
-    /**
-     * This `getIntendedCounts` method will count tickets
-     */
-    public function getIntendedCounts()
+    private function buildTicketData($ticket)
     {
-    	return count( \wpas_get_tickets( 'any' ) );
+    	$ticketData = [
+            'status'         => sanitize_text_field($ticket->ticket_status),
+            'hash'           => sanitize_text_field(md5(time() . wp_generate_uuid4())),
+            'title'          => sanitize_text_field($ticket->post_title),
+            'slug'           => sanitize_title($ticket->post_name),
+            'source'         => sanitize_text_field($this->handler),
+            'content'        => sanitize_textarea_field($ticket->post_content),
+            'response_count' => intval(count($ticket->replies)),
+            'mailbox_id'	 => intval($this->mailbox->id),
+            'created_at'     => sanitize_text_field($ticket->post_date),
+            'updated_at'     => sanitize_text_field($ticket->post_date)
+        ];
+
+        if ($ticket->customer) {
+            $ticketData['customer_id'] = intval($ticket->customer->id);
+        }
+
+        if ($ticket->resolved_at) {
+            $ticketData['resolved_at'] = sanitize_text_field($ticket->resolved_at);
+        }
+
+        if ($ticket->agent) {
+            $ticketData['agent_id'] = intval($ticket->agent->id);
+        }
+
+        if ($ticket->waiting_since) {
+        	$ticketData['waiting_since'] = sanitize_text_field($ticket->post_date);
+        }
+
+        return $ticketData;
     }
+
+    protected function countAwesomeSupportTickets()
+	{
+		return count( \wpas_get_tickets( 'any' ) );
+	}
 }
+
+
