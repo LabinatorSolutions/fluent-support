@@ -16,7 +16,7 @@ class TicketService
      * @param string $internalNote
      * @return mixed
      */
-    public function close($ticket, $person, $internalNote = '')
+    public function close($ticket, $person, $closeSilently=false, $internalNote = '')
     {
         if ($ticket->status != 'closed') {
             $ticket->status = 'closed';
@@ -24,8 +24,11 @@ class TicketService
             $ticket->closed_by = $person->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $ticket->save();
-            do_action('fluent_support/ticket_closed', $ticket, $person);
-            do_action('fluent_support/ticket_closed_by_' . $person->person_type, $ticket, $person);
+            
+            if (!$closeSilently){
+                do_action('fluent_support/ticket_closed', $ticket, $person);
+                do_action('fluent_support/ticket_closed_by_' . $person->person_type, $ticket, $person);
+            }
 
             if(!$internalNote) {
                 $internalNote = __('Ticket has been closed', 'fluent-support');
