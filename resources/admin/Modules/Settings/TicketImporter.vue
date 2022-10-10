@@ -2,7 +2,7 @@
 	<div style="background: white;" class="fs_box_body" v-if="loading">
         <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
     </div>
-	<el-row style="padding: 45px 25px" v-if="!loading && settings.length">
+	<el-row style="padding: 45px 25px" v-if="!loading && settings.length" :gutter="20">
 	    <el-col v-for="setting in settings" :span="8">
 	    	<div :class="'grid-content fs_'+setting.handler">
 	    		<el-card :body-style="{ padding: '0px' }" :header=setting.name>
@@ -10,7 +10,7 @@
 		        		<el-tag class="ml-2" type="info">Tickets: {{setting.tickets}}</el-tag>
 		        		<el-tag class="ml-2" type="info">Replies: {{setting.replies}}</el-tag>
 		        		<el-progress
-		            			v-if="imporing"
+		            			v-if="imporing && currently_importing == setting.handler"
 							      :text-inside="true"
 							      :stroke-width="24"
 							      :percentage="percentage"
@@ -21,9 +21,9 @@
 			          		<el-popconfirm
 							    confirm-button-text="Yes"
 							    cancel-button-text="No"
-							    @confirm="importTickets(setting.handler, 'yes')"
-							    @cancel="importTickets(setting.handler, 'no')"
-							    title="Delete tickets from Awesome Support after import."
+							    @confirm="importTickets(setting.handler,'yes')"
+							    @cancel="importTickets(setting.handler,'no')"
+							    title="Delete tickets from previous system after import."
 							  >
 							    <template #reference>
 							      <el-button type="success" :disabled="imporing">Import Tickets</el-button>
@@ -52,7 +52,8 @@
 	        	total_tickets: 0,
 	        	completedPercentage: 0,
 	        	completed: 0,
-	        	loading: false
+	        	loading: false,
+	        	currently_importing: ''
 	    	}
 		},
 
@@ -75,7 +76,10 @@
 			},
 			importTickets(handler, maybeDeleteTickets) {
 				this.imporing = true;
-
+				this.currently_importing = handler;
+				if (handler == 'support-candy' && !this.total_tickets){
+					this.import_page = 0;
+				}
 				this.$post('ticket_importer/import', {
 					handler: handler,
 					page: this.import_page,
@@ -87,7 +91,7 @@
                         this.total_tickets = response.total_tickets;
                         this.completed += response.completed;
                         this.$nextTick(() => {
-                            this.importTickets();
+                            this.importTickets( handler, maybeDeleteTickets );
                         });
                     } else {
                     	this.imporing = false;
@@ -102,6 +106,7 @@
                 });
 			}
 		},
+
 		mounted() {
         	this.fetchSettings();
     	}

@@ -3,16 +3,19 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Services\Tickets\TicketImportServices;
+use FluentSupport\App\Services\Tickets\Importer\Importer;
+use FluentSupport\App\Services\Tickets\Importer\BaseImporter;
+
 
 class TicketImportController
 {
-	public function getStats ( TicketImportServices $importService )
+	public function getStats ( Importer $importService )
 	{
 		return $importService->getStats();
 	}
 
-	public function importTickets ( TicketImportServices $importService, Request $request )
+	public function importTickets ( Importer $importService, Request $request )
 	{
-		return $importService->doMigration( $request->getSafe('page', '', 'intval'), $request->getSafe('maybeDeleteTickets') );
+		return $importService->handleImport( $request->getSafe('page', '', 'intval'), $request->getSafe('maybeDeleteTickets'), $request->getSafe('handler') );
 	}
 }
