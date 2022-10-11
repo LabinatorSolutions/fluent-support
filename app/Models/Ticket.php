@@ -1151,7 +1151,7 @@ class Ticket extends Model
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close($ticket, $agent, $closeSilently)
+            'ticket'  => (new TicketService())->close($ticket, $agent, '', $closeSilently)
         ];
     }
 
