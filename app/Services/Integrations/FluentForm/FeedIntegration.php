@@ -275,7 +275,6 @@ class FeedIntegration extends IntegrationManager
     {
         $data = $feed['processedValues'];
 
-
         if (!empty($data['email']) && !is_email($data['email'])) {
             $data['email'] = Arr::get($formData, $data['email']);
         }
@@ -375,6 +374,7 @@ class FeedIntegration extends IntegrationManager
 
         if($ticketData['attachments']) {
             $attachments = explode(',', $ticketData['attachments']);
+            $fluentFormUploadDir = wp_upload_dir()['basedir'] . FLUENTFORM_UPLOAD_DIR;
 
             foreach ($attachments as $attachment){
                 $fileName = explode('/', $attachment);
@@ -382,7 +382,7 @@ class FeedIntegration extends IntegrationManager
                 Attachment::create(
                     [
                         'ticket_id' => $ticket->id,
-                        'file_path' => esc_url($attachment),
+                        'file_path' => sanitize_text_field($fluentFormUploadDir . '/' . $fileName),
                         'full_url'  => esc_url($attachment),
                         'title'     => $fileName,
                         'person_id' => $customer->id
