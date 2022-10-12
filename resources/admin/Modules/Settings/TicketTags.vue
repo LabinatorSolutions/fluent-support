@@ -195,6 +195,7 @@ export default {
         if (this.has_pro) {
             this.fetchTags();
         }
+        this.$setTitle('Ticket Tags');
     }
 }
 </script>

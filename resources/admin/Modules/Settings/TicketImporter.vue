@@ -21,6 +21,7 @@
 			          		<el-popconfirm
 							    confirm-button-text="Yes"
 							    cancel-button-text="No"
+							    width="30"
 							    @confirm="importTickets(setting.handler,'yes')"
 							    @cancel="importTickets(setting.handler,'no')"
 							    title="Delete tickets from previous system after import."
@@ -109,6 +110,7 @@
 
 		mounted() {
         	this.fetchSettings();
+        	this.$setTitle('Ticket Importer');
     	}
     }
 </script>
