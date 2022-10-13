@@ -23,10 +23,10 @@ class ResponseService
         }
 
         // Adding support for shortcode in agent response
-        if ( $person->person_type == 'agent' ) {
+        if ($person->person_type == 'agent') {
             $data = apply_filters('fluent_support/parse_smartcode_data', $data, [
-                'customer'  => $ticket->customer,
-                'agent'     => $person
+                'customer' => $ticket->customer,
+                'agent'    => $person
             ]);
         }
 
@@ -43,7 +43,7 @@ class ResponseService
             'content_hash'      => md5($content)
         ];
 
-        if(!empty($data['message_id'])) {
+        if (!empty($data['message_id'])) {
             $response['message_id'] = sanitize_text_field($data['message_id']);
         }
 

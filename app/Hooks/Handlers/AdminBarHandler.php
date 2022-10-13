@@ -95,9 +95,9 @@ class AdminBarHandler
                 <tbody>
                 <?php foreach ($ticketStats as $stat): ?>
                     <tr>
-                        <td><?php echo $stat['title']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-                        <td><?php echo $stat['number']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
-                        <td>  <a href="<?php echo $stat['url']?>"> <?php echo __('View', 'fluent-support') ?> </a> </td>
+                        <td><?php echo esc_html($stat['title']); ?></td>
+                        <td><?php echo esc_html($stat['number']); ?></td>
+                        <td>  <a href="<?php echo esc_url($stat['url']); ?>"> <?php echo __('View', 'fluent-support') ?> </a> </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
