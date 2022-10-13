@@ -57,12 +57,6 @@ class AwesomeSupportTickets extends BaseImporter
 
         if ( !$hasmore ){
         	$respone['message'] = __( $allCounts . ' ' . 'Tickets has been imported successfully.' ,'fluent-support');
-
-        	if ( $maybeDeleteTickets == 'yes' ) {
-        		$types = ['ticket', 'ticket_reply', 'ticket_history'];
-        		$this->deleteOldData($types);
-        	}
-
         	return $respone;
         }
 
@@ -119,88 +113,91 @@ class AwesomeSupportTickets extends BaseImporter
      */ 
     public function insertTicket($ticket)
     {
-        $ticketData = $this->buildTicketData($ticket);
+        $isAlreadyImported = Helper::getTicketMeta($ticket->ID, 'as_origin_id');
 
-        // total_close_time
-        $ticketId = Ticket::insertGetId($ticketData);
-        $this->handleAttachments($ticket->ID, $ticketId);
+        if (!$isAlreadyImported){
+            $ticketData = $this->buildTicketData($ticket);
+            $ticketId = Ticket::insertGetId($ticketData);
+            $this->handleAttachments($ticket->ID, $ticketId);
 
-        $firsAgentResponseDate = false;
-        $closingDate = false;
+            $firsAgentResponseDate = false;
+            $closingDate = false;
 
-        $repliesCount = count($ticket->replies);
+            $repliesCount = count($ticket->replies);
 
-        $ticketUpdateData = [];
-        $agent = false;
+            $ticketUpdateData = [];
+            $agent = false;
 
-        foreach ($ticket->replies as $index => $reply) {
-            if ($reply->post_author == $ticket->post_author) {
-                $person = $this->getPerson($reply->post_author, 'customer');
-            } else {
-                $person = $this->getPerson($reply->post_author, 'agent');
-                if (!$agent) {
-                    $agent = $person;
-                }
-            }
-
-            if ($person) {
-                $personType = $person->person_type;
-                if ($personType == 'agent') {
-                    if (!$firsAgentResponseDate) {
-                        $firsAgentResponseDate = $reply->post_date;
-                    }
-                    $ticketUpdateData['last_agent_response'] = $reply->post_date;
+            foreach ($ticket->replies as $index => $reply) {
+                if ($reply->post_author == $ticket->post_author) {
+                    $person = $this->getPerson($reply->post_author, 'customer');
                 } else {
-                    $ticketUpdateData['last_customer_response'] = $reply->post_date;
-                    $ticketUpdateData['waiting_since'] = $reply->post_date;
+                    $person = $this->getPerson($reply->post_author, 'agent');
+                    if (!$agent) {
+                        $agent = $person;
+                    }
                 }
 
-                if ($ticketData['status'] == 'closed' && $index == ($repliesCount - 1)) {
-                    // this is the last response
-                    $closingDate = $reply->post_date;
-                    $ticketUpdateData['closed_by'] = $person->id;
-                    $ticketUpdateData['resolved_at'] = $reply->post_date;
+                if ($person) {
+                    $personType = $person->person_type;
+                    if ($personType == 'agent') {
+                        if (!$firsAgentResponseDate) {
+                            $firsAgentResponseDate = $reply->post_date;
+                        }
+                        $ticketUpdateData['last_agent_response'] = $reply->post_date;
+                    } else {
+                        $ticketUpdateData['last_customer_response'] = $reply->post_date;
+                        $ticketUpdateData['waiting_since'] = $reply->post_date;
+                    }
+
+                    if ($ticketData['status'] == 'closed' && $index == ($repliesCount - 1)) {
+                        // this is the last response
+                        $closingDate = $reply->post_date;
+                        $ticketUpdateData['closed_by'] = $person->id;
+                        $ticketUpdateData['resolved_at'] = $reply->post_date;
+                    }
                 }
+
+                $replyData = [
+                    'serial'            => intval($index + 1),
+                    'ticket_id'         => intval($ticketId),
+                    'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId()),
+                    'conversation_type' => sanitize_text_field('response'),
+                    'content'           => sanitize_textarea_field($reply->post_content),
+                    'source'            => sanitize_text_field($this->handler),
+                    'created_at'        => sanitize_text_field($reply->post_date),
+                    'updated_at'        => sanitize_text_field($reply->post_date)
+                ];
+
+                $conversationId = Conversation::insertGetId($replyData);
+
+                $this->handleAttachments($reply->ID, $ticketId, $conversationId);
             }
 
-            $replyData = [
-                'serial'            => intval($index + 1),
-                'ticket_id'         => intval($ticketId),
-                'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId()),
-                'conversation_type' => sanitize_text_field('response'),
-                'content'           => sanitize_textarea_field($reply->post_content),
-                'source'            => sanitize_text_field($this->handler),
-                'created_at'        => sanitize_text_field($reply->post_date),
-                'updated_at'        => sanitize_text_field($reply->post_date)
-            ];
+            if ($firsAgentResponseDate) {
+                $ticketUpdateData['first_response_time'] = sanitize_text_field( strtotime($firsAgentResponseDate) - strtotime($ticketData['created_at']) );
+            }
 
-            $conversationId = Conversation::insertGetId($replyData);
+            if ($closingDate) {
+                $ticketUpdateData['total_close_time'] = sanitize_text_field( strtotime($closingDate) - strtotime($ticketData['created_at']) );
+            }
 
-            $this->handleAttachments($reply->ID, $ticketId, $conversationId);
+            if ($agent) {
+                $ticketUpdateData['agent_id'] = intval($agent->id);
+            }
+
+            $ticketUpdateData = array_filter($ticketUpdateData);
+
+            if ($ticketUpdateData) {
+                Ticket::where('id', $ticketId)
+                    ->update($ticketUpdateData);
+            }
+
+            Helper::updateTicketMeta($ticket->ID, 'as_origin_id', $ticketId);
+
+            return $ticketId . ' - ' . $ticket->post_title . ' [' . $ticketData['status'] . '] - ' . $ticket->ID;
         }
 
-        if ($firsAgentResponseDate) {
-            $ticketUpdateData['first_response_time'] = sanitize_text_field( strtotime($firsAgentResponseDate) - strtotime($ticketData['created_at']) );
-        }
-
-        if ($closingDate) {
-            $ticketUpdateData['total_close_time'] = sanitize_text_field( strtotime($closingDate) - strtotime($ticketData['created_at']) );
-        }
-
-        if ($agent) {
-            $ticketUpdateData['agent_id'] = intval($agent->id);
-        }
-
-        $ticketUpdateData = array_filter($ticketUpdateData);
-
-        if ($ticketUpdateData) {
-            Ticket::where('id', $ticketId)
-                ->update($ticketUpdateData);
-        }
-
-        Helper::updateTicketMeta($ticketId, 'as_origin_id', $ticket->ID);
-
-        return $ticketId . ' - ' . $ticket->post_title . ' [' . $ticketData['status'] . '] - ' . $ticket->ID;
     }
 
     /**
@@ -257,7 +254,7 @@ class AwesomeSupportTickets extends BaseImporter
 
     // This method will delete all old data from db after ticket importing
     // Param: $type
-    private function deleteOldData( $types )
+    private function deleteOldData($types)
     {
         $this->db->table('posts')
             ->select(['ID'])
@@ -303,6 +300,51 @@ class AwesomeSupportTickets extends BaseImporter
 	{
 		return count( \wpas_get_tickets( 'any' ) );
 	}
+
+    /**
+     * This `deleteTickets` method will delete tickets with all available data
+     * @param int $page //In some scenario it can be id of ticket
+     * @return array $response
+     */
+    public function deleteTickets($page)
+    {
+        $hasmore = true;
+
+        $args = [ 
+            'posts_per_page' => $this->limit,
+            'paged' => $page
+        ];
+
+        $tickets = \wpas_get_tickets('any', $args);
+
+        if (!$tickets) {
+            $hasmore = false;
+        }
+
+        if ($tickets) {
+            foreach($tickets as $ticket){
+                wp_delete_post($ticket->ID, true);
+
+                $this->db->table('posts')
+                    ->whereIn('post_type', ['ticket_reply', 'ticket_history'])
+                    ->where('post_parent', $ticket->ID)
+                    ->oldest('ID')
+                    ->delete();
+            }
+        }
+
+        $response = [
+            'has_more' => $hasmore,
+            'next_page' => (int) $page + 1
+        ];
+
+        if (!$hasmore) {
+            $response['message'] = __('All tickets has been deleted successfully', 'fluent-support');
+        }
+
+        return $response;
+    }
+    
 }
 
 

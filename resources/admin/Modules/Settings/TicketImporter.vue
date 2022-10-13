@@ -17,20 +17,23 @@
 							      status="success"
 							      style="margin: 5px 0"
 						    />
-			          	<div class="bottom" style="padding: 15px 0">
-			          		<el-popconfirm
-							    confirm-button-text="Yes"
-							    cancel-button-text="No"
-							    width="30"
-							    @confirm="importTickets(setting.handler,'yes')"
-							    @cancel="importTickets(setting.handler,'no')"
-							    title="Delete tickets from previous system after import."
-							  >
-							    <template #reference>
-							      <el-button type="success" :disabled="imporing">Import Tickets</el-button>
-							    </template>
-							  </el-popconfirm>
-			          	</div>
+					    <el-progress v-if="deleting && currently_importing == setting.handler" :percentage="50" status="exception" :indeterminate="true" />
+					    <el-button type="success" :disabled="imporing" @click="importTickets(setting.handler)">
+					    	Import Tickets
+						</el-button>
+
+
+					    <el-dialog v-model="import_done" title="Delete Imported Tickets">
+						    <span> Do you want to delete all imported tickets and its data? </span>
+						    <template #footer>
+						      <span class="dialog-footer">
+						        <el-button @click="import_done = false" type="primary">No</el-button>
+						        <el-button type="danger" @click="deleteOldTicketsWithData(currently_importing)">
+						        	Yes
+					        	</el-button>
+						      </span>
+						    </template>
+					  	</el-dialog>
 			        </div>
 		      	</el-card>
 	    	</div>
@@ -54,7 +57,10 @@
 	        	completedPercentage: 0,
 	        	completed: 0,
 	        	loading: false,
-	        	currently_importing: ''
+	        	currently_importing: '',
+	        	import_done: false,
+	        	deleting: false,
+	        	delete_page: 1
 	    	}
 		},
 
@@ -75,7 +81,7 @@
 					this.$handleError(e);
 				});
 			},
-			importTickets(handler, maybeDeleteTickets) {
+			importTickets(handler) {
 				this.imporing = true;
 				this.currently_importing = handler;
 				if (handler == 'support-candy' && !this.total_tickets){
@@ -84,7 +90,6 @@
 				this.$post('ticket_importer/import', {
 					handler: handler,
 					page: this.import_page,
-					maybeDeleteTickets: maybeDeleteTickets
 				})
 				.then(response => {
                     if (response.has_more) {
@@ -92,7 +97,7 @@
                         this.total_tickets = response.total_tickets;
                         this.completed += response.completed;
                         this.$nextTick(() => {
-                            this.importTickets( handler, maybeDeleteTickets );
+                            this.importTickets(handler);
                         });
                     } else {
                     	this.imporing = false;
@@ -100,11 +105,44 @@
 	                        message: response.message,
 	                        position: 'bottom-right'
 	                    })
+	                    this.import_done = true;
                     }
                 })
                 .catch((error) => {
                     this.$handleError(error);
                 });
+			},
+			deleteOldTicketsWithData(handler){
+				this.deleting = true;
+				this.import_done = false;
+				this.currently_importing = handler;
+
+				if (handler == 'support-candy'){
+					this.delete_page = 0;
+				}
+
+				this.$del('ticket_importer/delete', {
+						page: this.delete_page, 
+						handler: handler
+					})
+				.then(response => {
+					if (response.has_more) {
+                        this.delete_page = response.next_page;
+                        this.$nextTick(() => {
+                            this.deleteOldTicketsWithData(handler);
+                        });
+                    } else {
+                    	this.deleting = false;
+                    	this.$notify.success({
+	                        message: response.message,
+	                        position: 'bottom-right'
+	                    })
+	                    this.fetchSettings();
+                    }
+				})
+				.catch( e => {
+					this.$handleError(e);
+				})
 			}
 		},
 

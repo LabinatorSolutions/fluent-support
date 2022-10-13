@@ -28,13 +28,18 @@ class Importer extends BaseImporter
      * @param string $maybeDeleteTickets // Value is yes or no
      * @param string $handler
      */
-	public function handleImport( $page, $maybeDeleteTickets, $handler )
+	public function handleImport($page, $maybeDeleteTickets, $handler)
 	{
 		return $this->mapClassWithHandler($handler)->doMigration($page, $maybeDeleteTickets, $handler);
 	}
 
+	public function deleteTickets($page, $handler)
+	{
+		return $this->mapClassWithHandler($handler)->deleteTickets($page);
+	}
+
 	// This method is a helper method of `handleImport` method it's responsible for calling a class by $handler
-	private function mapClassWithHandler( $handler )
+	private function mapClassWithHandler($handler)
 	{
 		$namespace = "FluentSupport\App\Services\Tickets\Importer\\";
 
