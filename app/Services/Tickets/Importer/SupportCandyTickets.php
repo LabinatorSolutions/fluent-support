@@ -347,8 +347,7 @@ class SupportCandyTickets extends BaseImporter
 		];
 
 		if (!$hasmore){
-			$data['has_more'] = false;
-			$data['message'] = __('All tickets has been deleted successfully. Please delete other ticket & reply realated data manually', 'fluent-support');
+			$response['message'] = __('All tickets has been deleted successfully. Please delete other ticket & reply realated data manually', 'fluent-support');
 			return $response;
 		}
 
