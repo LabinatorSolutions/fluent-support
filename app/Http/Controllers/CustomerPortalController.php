@@ -5,6 +5,7 @@ namespace FluentSupport\App\Http\Controllers;
 use Exception;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
@@ -16,7 +17,6 @@ use FluentSupport\Framework\Request\Request;
  *
  * @version 1.0.0
  */
-
 class CustomerPortalController extends Controller
 {
     /**
@@ -32,13 +32,13 @@ class CustomerPortalController extends Controller
         $userIP = $request->getIp();
 
         try {
-            $customer = $customerPortalService->resolveCustomer( $onBehalf, $userIP );
+            $customer = $customerPortalService->resolveCustomer($onBehalf, $userIP);
             return [
-                'tickets' => $customerPortalService->getTickets( $customer,  $request->getSafe('filter_type', '') )
+                'tickets' => $customerPortalService->getTickets($customer, $request->getSafe('filter_type', ''))
             ];
         } catch (Exception $e) {
             return $this->sendError([
-                'message' => $e->getMessage(),
+                'message'    => $e->getMessage(),
                 'error_type' => $e->getCode()
             ]);
         }
@@ -64,14 +64,28 @@ class CustomerPortalController extends Controller
         $userIP = $request->getIp();
 
         try {
-            $customer = $customerPortalService->resolveCustomer( $onBehalf, $userIP, true );
+            $customer = $customerPortalService->resolveCustomer($onBehalf, $userIP, true);
+
+            $canCreateTicket = apply_filters('fluent_support/can_customer_create_ticket', true, $customer, $data);
+
+            if (!$canCreateTicket || is_wp_error($canCreateTicket)) {
+                $isWpError = is_wp_error($canCreateTicket);
+
+                $message = ($isWpError) ? $canCreateTicket->get_error_message() : __('Sorry you can not create ticket', 'fluent-support');
+                $errorCode = ($isWpError) ? $canCreateTicket->get_error_code() : 'general_error';
+
+                throw new \Exception($message, $errorCode);
+            }
+
+            $ticket = $customerPortalService->createTicket($customer, $data, $request->getSafe('mailbox_id', '', 'intval'));
+
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
-                'ticket'  => $customerPortalService->createTicket( $customer, $data, $request->getSafe('mailbox_id', '', 'intval') )
+                'ticket'  => $ticket
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support'),
+                'message'    => __($e->getMessage(), 'fluent-support'),
                 'error_type' => $e->getCode()
             ]);
         }
@@ -87,15 +101,15 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
-            'user_ip' => $request->getIp()
+            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'user_ip'              => $request->getIp()
         ];
 
         try {
-            return $customerPortalService->getTicket( $customerAdditionalData , $ticketId );
+            return $customerPortalService->getTicket($customerAdditionalData, $ticketId);
         } catch (Exception $e) {
             return $this->sendError([
-                'message' => $e->getMessage(),
+                'message'    => $e->getMessage(),
                 'error_type' => $e->getCode()
             ]);
         }
@@ -112,15 +126,27 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
-            'user_ip' => $request->getIp()
+            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'user_ip'              => $request->getIp()
         ];
 
+        $ticket = Ticket::findOrFail($ticketId);
+        $data = $request->getSafe(null, [], 'wp_kses_post');
+
+        $canCreateResponse = apply_filters('fluent_support/can_customer_create_response', true, $ticket->customer, $ticket, $data);
+
+        if (!$canCreateResponse || is_wp_error($canCreateResponse)) {
+            return [
+                'type'    => 'error',
+                'message' => (is_wp_error($canCreateResponse)) ? $canCreateResponse->get_error_message() : __('Sorry you can not create response', 'fluent-support')
+            ];
+        }
+
         try {
-            return $customerPortalService->createResponse( $customerAdditionalData, $ticketId, $request->getSafe(null, [], 'wp_kses_post') );
+            return $customerPortalService->createResponse($customerAdditionalData, $ticketId, $data);
         } catch (Exception $e) {
             return $this->sendError([
-                'message' => $e->getMessage(),
+                'message'    => $e->getMessage(),
                 'error_type' => $e->getCode()
             ]);
         }
@@ -136,14 +162,14 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
-            'user_ip' => $request->getIp()
+            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'user_ip'              => $request->getIp()
         ];
         try {
-            return $customerPortalService->closeTicket( $customerAdditionalData, $ticketId );
+            return $customerPortalService->closeTicket($customerAdditionalData, $ticketId);
         } catch (Exception $e) {
             return $this->sendError([
-                'message' => $e->getMessage(),
+                'message'    => $e->getMessage(),
                 'error_type' => $e->getCode()
             ]);
         }
@@ -159,14 +185,14 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf' => $request->getSafe('on_behalf', '', 'intval'),
-            'user_ip' => $request->getIp()
+            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'user_ip'              => $request->getIp()
         ];
         try {
-            return $customerPortalService->reOpenTicket( $customerAdditionalData, $ticketId );
+            return $customerPortalService->reOpenTicket($customerAdditionalData, $ticketId);
         } catch (Exception $e) {
             return $this->sendError([
-                'message' => $e->getMessage(),
+                'message'    => $e->getMessage(),
                 'error_type' => $e->getCode()
             ]);
         }
@@ -192,14 +218,14 @@ class CustomerPortalController extends Controller
      */
     public function getCustomFieldsRender()
     {
-        if(!defined('FLUENTSUPPORTPRO')) {
+        if (!defined('FLUENTSUPPORTPRO')) {
             return [
                 'custom_fields_rendered' => []
             ];
         }
 
         return [
-            'custom_fields_rendered' =>  \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields()
+            'custom_fields_rendered' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields()
         ];
     }
 

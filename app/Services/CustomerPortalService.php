@@ -1,4 +1,5 @@
 <?php
+
 namespace FluentSupport\App\Services;
 
 use Exception;
@@ -17,37 +18,37 @@ class CustomerPortalService
      * This `getTickets` method is responsible for getting tickets for customer
      * @param object $customer
      * @param array $requestedStatus
-     * @since 1.5.7
      * @return object
      * @throws Exception
+     * @since 1.5.7
      */
-    public function getTickets ($customer, $requestedStatus )
+    public function getTickets($customer, $requestedStatus)
     {
         $this->validateCustomer($customer);
 
-        $statuses = $this->getTicketStatues( $requestedStatus );
+        $statuses = $this->getTicketStatues($requestedStatus);
 
-        return $this->ticketsAdditionalData( $customer, $statuses );
+        return $this->ticketsAdditionalData($customer, $statuses);
     }
 
     /**
      * getTicket method will get the ticket information with customer and agent as well as response in a ticket by ticket id
      * @param array $customerAdditionalData
      * @param int $ticketId
-     * @since 1.5.7
      * @return array
+     * @since 1.5.7
      */
-    public function getTicket ($customerAdditionalData, $ticketId)
+    public function getTicket($customerAdditionalData, $ticketId)
     {
         $ticket = $this->getTicketByID($ticketId);
 
-        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
+        $customer = $this->getCustomer($customerAdditionalData, $ticket);
 
         $this->checkCustomerTicketAccess($customer, $ticket);
 
         return [
-            'ticket' => $this->syncTicketAdditionData($ticket),
-            'responses' => $this->getResponses($ticketId),
+            'ticket'     => $this->syncTicketAdditionData($ticket),
+            'responses'  => $this->getResponses($ticketId),
             'sign_on_id' => $ticket->customer_id
         ];
     }
@@ -60,20 +61,20 @@ class CustomerPortalService
      * @return Ticket
      * @throws Exception
      */
-    public function createTicket ( $customer, $data, $mailboxId )
+    public function createTicket($customer, $data, $mailboxId)
     {
-        $this->validateCustomer( $customer );
+        $this->validateCustomer($customer);
 
-        $data['title'] = sanitize_text_field( wp_unslash( $data['title'] ) );
-        $data['content'] = wp_specialchars_decode( wp_unslash( wp_kses_post( $data['content'] ) ) );
+        $data['title'] = sanitize_text_field(wp_unslash($data['title']));
+        $data['content'] = wp_specialchars_decode(wp_unslash(wp_kses_post($data['content'])));
         $data['customer_id'] = $customer->id;
         $data['product_source'] = 'local';
-        $data['mailbox_id'] =  $this->resolveMailboxId( $mailboxId );
+        $data['mailbox_id'] = $this->resolveMailboxId($mailboxId);
         $data['source'] = 'web';
 
-        $disabledFields = apply_filters( 'fluent_support/disabled_ticket_fields', [] );
-        $this->validateDisabledFields( $data, $disabledFields );
-        return $this->storeTicket( $data, $customer, $disabledFields );
+        $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
+        $this->validateDisabledFields($data, $disabledFields);
+        return $this->storeTicket($data, $customer, $disabledFields);
     }
 
 
@@ -82,19 +83,19 @@ class CustomerPortalService
      * @param array $customerAdditionalData
      * @param int $ticketId
      * @param array $data
-     * @since 1.5.7
      * @return array
      * @throws Exception
+     * @since 1.5.7
      */
-    public function createResponse ($customerAdditionalData, $ticketId, $data )
+    public function createResponse($customerAdditionalData, $ticketId, $data)
     {
-        $data['content'] = wp_specialchars_decode( wp_unslash($data['content'] ));
+        $data['content'] = wp_specialchars_decode(wp_unslash($data['content']));
         $data['conversation_type'] = 'response';
 
-        $ticket = Ticket::with( ['customer'] )->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
+        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
+        $customer = $this->getCustomer($customerAdditionalData, $ticket);
 
-        $this->checkCustomerTicketAccess( $customer, $ticket, 'response' );
+        $this->checkCustomerTicketAccess($customer, $ticket, 'response');
 
         $responseData = (new ResponseService())->createResponse($data, $customer, $ticket);
 
@@ -113,16 +114,16 @@ class CustomerPortalService
      * @return array
      * @throws Exception
      */
-    public function closeTicket ( $customerAdditionalData, $ticketId )
+    public function closeTicket($customerAdditionalData, $ticketId)
     {
-        $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
+        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
+        $customer = $this->getCustomer($customerAdditionalData, $ticket);
 
-        $this->checkCustomerTicketAccess( $customer, $ticket, 'close' );
+        $this->checkCustomerTicketAccess($customer, $ticket, 'close');
 
         return [
             'message' => __('Ticket has been closed', 'fluent-support'),
-            'ticket'  => (new TicketService())->close( $ticket, $customer )
+            'ticket'  => (new TicketService())->close($ticket, $customer)
         ];
     }
 
@@ -133,12 +134,12 @@ class CustomerPortalService
      * @return array
      * @throws Exception
      */
-    public function reOpenTicket ( $customerAdditionalData, $ticketId )
+    public function reOpenTicket($customerAdditionalData, $ticketId)
     {
-        $ticket = Ticket::with(['customer'])->findOrFail( $ticketId );
-        $customer = $this->getCustomer( $customerAdditionalData, $ticket );
+        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
+        $customer = $this->getCustomer($customerAdditionalData, $ticket);
 
-        $this->checkCustomerTicketAccess( $customer, $ticket, 'reopen' );
+        $this->checkCustomerTicketAccess($customer, $ticket, 'reopen');
 
         return [
             'message' => __('Ticket has been opened again', 'fluent-support'),
@@ -150,18 +151,18 @@ class CustomerPortalService
      * This `validateDisabledFields` method is responsible for validating disabled fields
      * @param array $data
      * @param array $disabledFields
-     * @since 1.5.7
      * @return array $data
+     * @since 1.5.7
      */
-    private function validateDisabledFields ( $data, $disabledFields )
+    private function validateDisabledFields($data, $disabledFields)
     {
-        if(!in_array('priority', $disabledFields)) {
-            $data['priority'] = sanitize_text_field( $data['client_priority'] );
-            $data['client_priority'] = sanitize_text_field( $data['client_priority'] );
+        if (!in_array('priority', $disabledFields)) {
+            $data['priority'] = sanitize_text_field($data['client_priority']);
+            $data['client_priority'] = sanitize_text_field($data['client_priority']);
         }
 
-        if(in_array('product_services', $disabledFields)) {
-            unset( $data['product_id'] );
+        if (in_array('product_services', $disabledFields)) {
+            unset($data['product_id']);
         }
 
         return $data;
@@ -173,10 +174,10 @@ class CustomerPortalService
      * @param array $data
      * @param object $customer
      * @param array $disabledFields
-     * @since 1.5.7
      * @return Ticket
+     * @since 1.5.7
      */
-    private function storeTicket ( $data, $customer, $disabledFields )
+    private function storeTicket($data, $customer, $disabledFields)
     {
         /*
          * Filter ticket data
@@ -185,7 +186,7 @@ class CustomerPortalService
          * @param array  $data
          * @param object $customer
          */
-        $data = apply_filters( 'fluent_support/create_ticket_data', $data, $customer );
+        $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
 
         /*
          * Action before ticket create
@@ -194,13 +195,13 @@ class CustomerPortalService
          * @param array  $data
          * @param object $customer
          */
-        do_action( 'fluent_support/before_ticket_create', $data, $customer );
+        do_action('fluent_support/before_ticket_create', $data, $customer);
 
-        $ticket = Ticket::create( $data );
+        $ticket = Ticket::create($data);
 
-        $this->addTicketAttachments( $data, $disabledFields, $ticket, $customer );
-        $this->addCustomData( $data, $ticket );
-        do_action( 'fluent_support/ticket_created', $ticket, $customer );
+        $this->addTicketAttachments($data, $disabledFields, $ticket, $customer);
+        $this->addCustomData($data, $ticket);
+        do_action('fluent_support/ticket_created', $ticket, $customer);
 
         return $ticket;
     }
@@ -212,10 +213,10 @@ class CustomerPortalService
      * @param array $disabledFields
      * @param object $ticket
      * @param object $customer
-     * @since 1.5.7
      * @return Ticket
+     * @since 1.5.7
      */
-    private function addTicketAttachments ( $data, $disabledFields, $ticket, $customer )
+    private function addTicketAttachments($data, $disabledFields, $ticket, $customer)
     {
         if (($attachments = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
 
@@ -241,13 +242,13 @@ class CustomerPortalService
      * @param object $ticket
      * @return void
      */
-    private function addCustomData ( $data, $ticket )
+    private function addCustomData($data, $ticket)
     {
-        if(defined('FLUENTSUPPORTPRO')) {
+        if (defined('FLUENTSUPPORTPRO')) {
             $customData = Arr::get($data, 'custom_data');
-            if($customData) {
-                $customData = wp_unslash( $customData );
-                $ticket->syncCustomFields( $customData );
+            if ($customData) {
+                $customData = wp_unslash($customData);
+                $ticket->syncCustomFields($customData);
             }
         }
     }
@@ -258,13 +259,13 @@ class CustomerPortalService
      * @since 1.5.7
      * @throws Exception
      */
-    private function validateCustomer ( $customer )
+    private function validateCustomer($customer)
     {
-        if ( !$customer ) {
+        if (!$customer) {
             throw new Exception('Customer not found', 'no_customer');
         }
 
-        if ( $customer->status == 'inactive' ) {
+        if ($customer->status == 'inactive') {
             throw new Exception('Sorry, You do not have access to customer portal', 'inactive_customer');
         }
     }
@@ -273,20 +274,20 @@ class CustomerPortalService
      * This `getCustomer` method is responsible for getting customer
      * @param array $customerAdditionalData
      * @param object $ticket
-     * @since 1.5.7
      * @return object $customer
      * @throws Exception
      *
+     * @since 1.5.7
      */
-    private function getCustomer ( $customerAdditionalData, $ticket )
+    private function getCustomer($customerAdditionalData, $ticket)
     {
         if (Arr::get($customerAdditionalData, 'intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $customer = $ticket->customer;
         } else {
-            $customer = $this->resolveCustomer( Arr::get($customerAdditionalData, 'on_behalf'), Arr::get($customerAdditionalData, 'user_ip') );
+            $customer = $this->resolveCustomer(Arr::get($customerAdditionalData, 'on_behalf'), Arr::get($customerAdditionalData, 'user_ip'));
         }
 
-        if ( !$customer ) {
+        if (!$customer) {
             throw new Exception('Sorry! No customer found', 'no_customer');
         }
 
@@ -296,10 +297,10 @@ class CustomerPortalService
     /**
      * This `getTicketStatues` method is responsible for getting ticket statuses
      * @param array $requestedStatus
-     * @since 1.5.7
      * @return array
+     * @since 1.5.7
      */
-    private function getTicketStatues ( $requestedStatus )
+    private function getTicketStatues($requestedStatus)
     {
         return Arr::get([
             'open'   => ['new', 'active', 'on-hold'],
@@ -312,10 +313,10 @@ class CustomerPortalService
      * This `ticketsAdditionalData` method is responsible for getting tickets with additional data
      * @param object $customer
      * @param array $statuses
-     * @since 1.5.7
      * @return object $tickets
+     * @since 1.5.7
      */
-    private function ticketsAdditionalData ( $customer, $statuses )
+    private function ticketsAdditionalData($customer, $statuses)
     {
         $ticketsQuery = Ticket::with([
             'customer' => function ($query) {
@@ -377,9 +378,9 @@ class CustomerPortalService
      * @param int $mailboxId
      * @return null
      */
-    private function resolveMailboxId( $mailboxId )
+    private function resolveMailboxId($mailboxId)
     {
-        if ( $mailboxId ) {
+        if ($mailboxId) {
             $mailbox = MailBox::find($mailboxId);
             if ($mailbox) {
                 return $mailbox->id;
@@ -401,13 +402,13 @@ class CustomerPortalService
      * @param $ticketId
      * @return object $ticket
      */
-    private function getTicketByID ( $ticketId )
+    private function getTicketByID($ticketId)
     {
         $ticket = Ticket::where('id', $ticketId)
             ->with([
-                'customer' => function ($query) {
+                'customer'    => function ($query) {
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'avatar']);
-                }, 'agent' => function ($query) {
+                }, 'agent'    => function ($query) {
                     $query->select(['first_name', 'email', 'person_type', 'last_name', 'id', 'title', 'avatar']);
                 },
                 'product',
@@ -427,25 +428,35 @@ class CustomerPortalService
      * @return bool true if access is granted
      * @throws Exception
      */
-    private function checkCustomerTicketAccess ($customer, $ticket, $action = false)
+    private function checkCustomerTicketAccess($customer, $ticket, $action = false)
     {
         if (!$customer) {
-            throw new Exception('Sorry, You do not have permission to this support ticket', 'no_customer');
+            throw new \Exception('Sorry, You do not have permission to this support ticket', 'no_customer');
         }
 
-        if($customer->status == 'inactive') {
-            throw new Exception('Sorry, You do not have access to customer portal', 'inactive_customer');
+        if ($customer->status == 'inactive') {
+            throw new \Exception('Sorry, You do not have access to customer portal', 'inactive_customer');
         }
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
-            if ( $action ) {
-                throw new Exception("Sorry! You can not {$action} to this ticket", 'permission_error');
+            if ($action) {
+                throw new \Exception("Sorry! You can not {$action} to this ticket", 'permission_error');
             } else {
-                throw new Exception('You do not have permission to view this support ticket', 'permission_error');
+                throw new \Exception('You do not have permission to view this support ticket', 'permission_error');
             }
         }
 
-        return true;
+        $result = apply_filters('fluent_support/can_customer_access_ticket', true, $customer, $ticket, $action);
+
+        if ($result && !is_wp_error($result)) {
+            return $result;
+        }
+
+        if (!$result) {
+            throw new \Exception('Sorry, You can not access to this ticket', 'filter_error');
+        }
+
+        throw new \Exception($result->get_error_message(), $result->get_error_code());
     }
 
 
@@ -454,7 +465,7 @@ class CustomerPortalService
      * @param int $ticketId
      * @return mixed
      */
-    private function getResponses ( $ticketId )
+    private function getResponses($ticketId)
     {
         $responses = Conversation::where('ticket_id', $ticketId)
             ->with([
@@ -482,15 +493,15 @@ class CustomerPortalService
      * @param object $ticket
      * @return object $ticket
      */
-    private function syncTicketAdditionData ($ticket )
+    private function syncTicketAdditionData($ticket)
     {
-        $ticket->content = links_add_target(make_clickable( $ticket->content ));
+        $ticket->content = links_add_target(make_clickable($ticket->content));
 
-        if ( $ticket->customer ) {
+        if ($ticket->customer) {
             $ticket->customer->setHidden(['email']);
         }
 
-        if ( $ticket->agent ) {
+        if ($ticket->agent) {
             $ticket->agent->setHidden(['email']);
         }
 
@@ -501,8 +512,8 @@ class CustomerPortalService
             }
         }
 
-        if( defined('FLUENTSUPPORTPRO') ) {
-            $ticket->custom_fields = $ticket->customData( 'public', true );
+        if (defined('FLUENTSUPPORTPRO')) {
+            $ticket->custom_fields = $ticket->customData('public', true);
         }
 
         return $ticket;

@@ -41,7 +41,7 @@ class BaseImporter
         $person = Person::where('remote_uid', $userId)
             ->where('person_type', $type)
             ->first();
-         
+
         if ($person) {
             $persons[$userId] = $person;
             return $persons[$userId];
@@ -73,7 +73,6 @@ class BaseImporter
 
 	        return $persons[$userId];
         }
-
     }
 
     protected function fallbackAgentId()
