@@ -18,4 +18,9 @@ class TicketImportController
 	{
 		return $importService->handleImport( $request->getSafe('page', '', 'intval'), $request->getSafe('maybeDeleteTickets'), $request->getSafe('handler') );
 	}
+
+	public function deleteTickets (Importer $importService, Request $request)
+	{
+		return $importService->deleteTickets($request->getSafe('page', '', 'intval'), $request->getSafe('handler'));
+	}
 }

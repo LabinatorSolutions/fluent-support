@@ -174,4 +174,5 @@ $router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicP
 $router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group( function ( $router ) {
     $router->get('/', 'TicketImportController@getStats');
     $router->post('/import', 'TicketImportController@importTickets');
+    $router->delete('/delete', 'TicketImportController@deleteTickets');
 } );
