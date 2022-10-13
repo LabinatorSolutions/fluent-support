@@ -7,7 +7,7 @@
 	    	<div :class="'grid-content fs_'+setting.handler">
 	    		<el-card :body-style="{ padding: '0px' }" :header=setting.name>
 			        <div style="padding: 14px">
-		        		<el-tag class="ml-2" type="info">Tickets: {{setting.tickets}}</el-tag>
+	        			<el-tag class="ml-2" type="info">Tickets: {{setting.tickets}}</el-tag>
 		        		<el-tag class="ml-2" type="info">Replies: {{setting.replies}}</el-tag>
 		        		<el-progress
 		            			v-if="imporing && currently_importing == setting.handler"
@@ -17,9 +17,9 @@
 							      status="success"
 							      style="margin: 5px 0"
 						    />
-					    <el-progress v-if="deleting && currently_importing == setting.handler" :percentage="50" status="exception" :indeterminate="true" />
-					    <el-button type="success" :disabled="imporing" @click="importTickets(setting.handler)">
-					    	Import Tickets
+					    <el-progress v-if="deleting && currently_importing == setting.handler" :percentage="50" status="exception" :indeterminate="true" style="margin: 5px 0"/>
+					    <el-button type="success" :disabled="imporing" @click="importTickets(setting.handler)" style="margin-top: 15px;">
+					    	{{$t('Import Tickets')}}
 						</el-button>
 
 

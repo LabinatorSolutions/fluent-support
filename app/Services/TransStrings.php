@@ -486,7 +486,8 @@ class TransStrings
             'Include' => __('Include', 'fluent-support'),
             'Exclude' => __('Exclude', 'fluent-support'),
             'no_other_support_system_is_activate' => __('Seems like Awesome Support or Support Candy isn\'t activated in your site. To import tickets from any of these please activate it.', 'fluent-support'),
-            'Close Ticket Silently' => __('Close Ticket Silently', 'fluent-support')
+            'Close Ticket Silently' => __('Close Ticket Silently', 'fluent-support'),
+            'Import Tickets' => __('Import Tickets', 'fluent-support')
         ];
     }
 }
