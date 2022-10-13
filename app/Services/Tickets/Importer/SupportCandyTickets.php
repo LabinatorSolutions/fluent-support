@@ -150,8 +150,10 @@ class SupportCandyTickets extends BaseImporter
 	        $agent = false;
 
 	        foreach ($ticket->replies as $index => $reply) {
-	            if ($reply->customer == $ticket->customer->id) {
-	                $person = $this->getPerson($this->getTicketCustomer($reply->customer), 'customer');
+	        	$customer = $this->getPerson($this->getTicketCustomer($reply->customer), 'customer');
+
+	            if ($customer && $customer->remote_uid == $ticket->customer->remote_uid) {
+	                $person = $customer;
 	            } else {
 	                $person = $this->getPerson($this->getTicketAgent($reply->customer), 'agent');
 	                if (!$agent) {
