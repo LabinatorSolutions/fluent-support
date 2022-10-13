@@ -252,16 +252,6 @@ class AwesomeSupportTickets extends BaseImporter
         }
     }
 
-    // This method will delete all old data from db after ticket importing
-    // Param: $type
-    private function deleteOldData($types)
-    {
-        $this->db->table('posts')
-            ->select(['ID'])
-            ->whereIn('post_type', $types)
-            ->delete();
-    }
-
     private function buildTicketData($ticket)
     {
     	$ticketData = [

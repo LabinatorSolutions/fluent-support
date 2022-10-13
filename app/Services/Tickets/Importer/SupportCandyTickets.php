@@ -71,11 +71,6 @@ class SupportCandyTickets extends BaseImporter
 
         if (!$hasmore){
         	$response['message'] = __( $allCounts . ' ' . 'Tickets has been imported successfully.' ,'fluent-support');
-
-        	if($maybeDeleteTickets == 'yes') {
-        		$this->deleteOldTicketsWithReplies();
-        	}
-
         	return $response;
         }
 
@@ -98,6 +93,7 @@ class SupportCandyTickets extends BaseImporter
 	            $replies = $this->getReplies($ticket->id);
 	            $ticket_status = $this->db->table('psmsc_statuses')->where('id', $ticket->status)->select(['name'])->first();
 	            $ticketStatus = 'new';
+	            
 	            if ($ticket_status->name == 'Open' && !$replies) {
 	                $ticket->waiting_since = sanitize_text_field($ticket->last_reply_on);
 	            }
@@ -134,91 +130,95 @@ class SupportCandyTickets extends BaseImporter
      */ 
     public function insertTicket($ticket)
     {
-        $ticketData = $this->buildTicketData($ticket);
-        
-        // total_close_time
-        $ticketId = Ticket::insertGetId($ticketData);
+    	$isAlreadyImported = Helper::getTicketMeta($ticket->id, 'as_sc_origin_id');
 
-        if ( $ticket->attachments ) {
-        	$this->handleAttachments($ticket->id, $ticketId, $ticket->customer->id);
-        }
+    	if (!$isAlreadyImported){
+    		$ticketData = $this->buildTicketData($ticket);
+	        
+	        $ticketId = Ticket::insertGetId($ticketData);
 
-        $firsAgentResponseDate = false;
-        $closingDate = false;
+	        if ( $ticket->attachments ) {
+	        	$this->handleAttachments($ticket->id, $ticketId, $ticket->customer->id);
+	        }
 
-        $repliesCount = count($ticket->replies);
+	        $firsAgentResponseDate = false;
+	        $closingDate = false;
 
-        $ticketUpdateData = [];
-        $agent = false;
+	        $repliesCount = count($ticket->replies);
 
-        foreach ($ticket->replies as $index => $reply) {
-            if ($reply->customer == $ticket->customer->id) {
-                $person = $this->getPerson($this->getTicketCustomer($reply->customer), 'customer');
-            } else {
-                $person = $this->getPerson($this->getTicketAgent($reply->customer), 'agent');
-                if (!$agent) {
-                    $agent = $person;
-                }
-            }
+	        $ticketUpdateData = [];
+	        $agent = false;
 
-            if ($person) {
-                $personType = $person->person_type;
-                if ($personType == 'agent') {
-                    if (!$firsAgentResponseDate) {
-                        $firsAgentResponseDate = $reply->date_created;
-                    }
-                    $ticketUpdateData['last_agent_response'] = $reply->date_created;
-                } else {
-                    $ticketUpdateData['last_customer_response'] = $reply->date_created;
-                    $ticketUpdateData['waiting_since'] = $reply->date_created;
-                }
+	        foreach ($ticket->replies as $index => $reply) {
+	            if ($reply->customer == $ticket->customer->id) {
+	                $person = $this->getPerson($this->getTicketCustomer($reply->customer), 'customer');
+	            } else {
+	                $person = $this->getPerson($this->getTicketAgent($reply->customer), 'agent');
+	                if (!$agent) {
+	                    $agent = $person;
+	                }
+	            }
 
-                if ($ticketData['status'] == 'closed' && $index == ($repliesCount - 1)) {
-                    // this is the last response
-                    $closingDate = $reply->date_created;
-                    $ticketUpdateData['closed_by'] = $person->id;
-                    $ticketUpdateData['resolved_at'] = $reply->date_created;
-                }
-            }
+	            if ($person) {
+	                $personType = $person->person_type;
+	                if ($personType == 'agent') {
+	                    if (!$firsAgentResponseDate) {
+	                        $firsAgentResponseDate = $reply->date_created;
+	                    }
+	                    $ticketUpdateData['last_agent_response'] = $reply->date_created;
+	                } else {
+	                    $ticketUpdateData['last_customer_response'] = $reply->date_created;
+	                    $ticketUpdateData['waiting_since'] = $reply->date_created;
+	                }
 
-            $replyData = [
-                'serial'            => intval($index + 1),
-                'ticket_id'         => intval($ticketId),
-                'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId()),
-                'conversation_type' => sanitize_text_field('response'),
-                'content'           => sanitize_textarea_field($reply->body),
-                'source'            => sanitize_text_field($this->handler),
-                'created_at'        => sanitize_text_field($reply->date_created),
-                'updated_at'        => sanitize_text_field($reply->date_updated)
-            ];
+	                if ($ticketData['status'] == 'closed' && $index == ($repliesCount - 1)) {
+	                    // this is the last response
+	                    $closingDate = $reply->date_created;
+	                    $ticketUpdateData['closed_by'] = $person->id;
+	                    $ticketUpdateData['resolved_at'] = $reply->date_created;
+	                }
+	            }
 
-            $conversationId = Conversation::insertGetId($replyData);
+	            $replyData = [
+	                'serial'            => intval($index + 1),
+	                'ticket_id'         => intval($ticketId),
+	                'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId()),
+	                'conversation_type' => sanitize_text_field('response'),
+	                'content'           => sanitize_textarea_field($reply->body),
+	                'source'            => sanitize_text_field($this->handler),
+	                'created_at'        => sanitize_text_field($reply->date_created),
+	                'updated_at'        => sanitize_text_field($reply->date_updated)
+	            ];
 
-            if ($reply->attachments) {
-            	$this->handleAttachments($reply->id, $ticketId, $person->id, $conversationId);
-            }
-        }
+	            $conversationId = Conversation::insertGetId($replyData);
 
-        if ($firsAgentResponseDate) {
-            $ticketUpdateData['first_response_time'] = sanitize_text_field( strtotime($firsAgentResponseDate) - strtotime($ticketData['created_at']) );
-        }
+	            if ($reply->attachments) {
+	            	$this->handleAttachments($reply->id, $ticketId, $person->id, $conversationId);
+	            }
+	        }
 
-        if ($closingDate) {
-            $ticketUpdateData['total_close_time'] = sanitize_text_field( strtotime($closingDate) - strtotime($ticketData['created_at']) );
-        }
+	        if ($firsAgentResponseDate) {
+	            $ticketUpdateData['first_response_time'] = sanitize_text_field( strtotime($firsAgentResponseDate) - strtotime($ticketData['created_at']) );
+	        }
 
-        if ($agent) {
-            $ticketUpdateData['agent_id'] = intval($agent->id);
-        }
+	        if ($closingDate) {
+	            $ticketUpdateData['total_close_time'] = sanitize_text_field( strtotime($closingDate) - strtotime($ticketData['created_at']) );
+	        }
 
-        $ticketUpdateData = array_filter($ticketUpdateData);
+	        if ($agent) {
+	            $ticketUpdateData['agent_id'] = intval($agent->id);
+	        }
 
-        if ($ticketUpdateData) {
-            Ticket::where('id', $ticketId)
-                ->update($ticketUpdateData);
-        }
+	        $ticketUpdateData = array_filter($ticketUpdateData);
 
-        return $ticketId . ' - ' . $ticket->subject . ' [' . $ticketData['status'] . '] - ' . $ticket->id;
+	        if ($ticketUpdateData) {
+	            Ticket::where('id', $ticketId)
+	                ->update($ticketUpdateData);
+	        }
+
+	        Helper::updateTicketMeta($ticket->id, 'as_sc_origin_id', $ticketId);
+	        return $ticketId . ' - ' . $ticket->subject . ' [' . $ticketData['status'] . '] - ' . $ticket->id;
+    	}
     }
 
     private function buildTicketData($ticket)
@@ -320,9 +320,38 @@ class SupportCandyTickets extends BaseImporter
 		return (int) $agent->user;
 	}
 
-	private function deleteOldTicketsWithReplies()
+	public function deleteTickets($page)
 	{
-		$this->db->table('psmsc_tickets')->delete();
-		$this->db->table('psmsc_threads')->delete();
+		$hasmore = true;
+
+		$ticketsQuery = $this->db->table('psmsc_tickets')
+			->limit($this->limit)
+			->select(['id']);
+
+		$tickets = $ticketsQuery->get();
+
+		if (!$tickets){
+			$hasmore = false;
+		}
+
+		if ($tickets){
+			foreach($tickets as $ticket){
+				$ticketsQuery->where('id', $ticket->id)->delete();
+				$this->db->table('psmsc_threads')->where('ticket', $ticket->id)->delete();
+			}
+		}
+
+		$response = [
+			'has_more' => $hasmore,
+			'next_page' => (int) 0
+		];
+
+		if (!$hasmore){
+			$data['has_more'] = false;
+			$data['message'] = __('All tickets has been deleted successfully. Please delete other ticket & reply realated data manually', 'fluent-support');
+			return $response;
+		}
+
+		return $response;
 	}
 }
