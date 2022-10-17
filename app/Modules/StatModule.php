@@ -4,6 +4,7 @@ namespace FluentSupport\App\Modules;
 
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Product;
 /**
  * StatModule class is responsible for getting data related to report
  * @package FluentSupport\App\Modules
@@ -127,7 +128,7 @@ class StatModule
     /**
      * getTodayStats method will return a stats of today's tickets
      * This method will count the ticket number by ticket status and return the array
-     * @param bool $agentId By default value set to false however when it gets an agent id it will fetch
+     * @param bool|int $agentId By default value set to false however when it gets an agent id it will fetch
      * the result by this id
      * @return array result in array format
      */
@@ -198,6 +199,50 @@ class StatModule
                 'count' => $total_closed
             ]
         ];
+    }
+
+    /**
+     * This `getActiveTicketsByProductStats` method will count today's tickets by product that are waiting for reply
+     * @return array[]
+     */
+    public static function getActiveTicketsByProductStats()
+    {
+        $products = Product::all();
+        $result = [];
+
+        foreach ($products as $product) {
+            $result[$product->id] = [
+                'title' => $product->title,
+                'count' => static::countAwaitingTickets( 'product_id', $product->id )
+            ];
+        }
+
+        return $result;
+    }
+
+
+    /**
+     * This will count the number of tickets that are waiting for response also it can receive parameters
+     * @param string $whereClause // This is the where clause that will be used in the query
+     * @param string $whereClauseValue // This is the value of the where clause
+     * @return int
+     */
+    public static function countAwaitingTickets($whereClause = null, $whereClauseValue = null )
+    {
+        $ticket = new Ticket;
+
+        if ( $whereClause && $whereClauseValue) {
+            $ticket = $ticket->where( sanitize_text_field($whereClause), sanitize_text_field($whereClauseValue) );
+        }
+
+        $ticket = $ticket->where('status', '!=' ,'closed')
+            ->where( function ($query) {
+                $query->whereColumn('last_agent_response', '<', 'last_customer_response')
+                    ->orWhereNull('last_agent_response')
+                    ->orWhere('status', 'new');
+            })->count();
+
+        return $ticket;
     }
 
 }

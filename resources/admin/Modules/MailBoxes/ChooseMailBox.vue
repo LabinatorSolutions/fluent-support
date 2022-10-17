@@ -68,7 +68,7 @@
                     <el-radio-group v-model="new_business.box_type">
                         <el-radio label="web">{{ $t('Web Based') }}</el-radio>
                         <el-radio :disabled="!appVars.has_email_parser" label="email">
-                            {{ $t('Email Based (MailBox)') }}
+                            {{ $t('email_based_heading') }}
                         </el-radio>
                     </el-radio-group>
                 </el-form-item>

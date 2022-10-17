@@ -91,6 +91,23 @@ class Helper
     }
 
     /**
+     * This function will return custom ticket status group
+     *
+     * @return mixed
+     */
+    public static function customTicketStatus(){
+        $defaultKey = apply_filters('fluent_support/ticket_status_groups_default', ['open', 'active', 'closed', 'new', 'all']);
+        $ticketStatus = static::ticketStatusGroups();
+        foreach ($ticketStatus as $key => $status){
+            if(in_array($key, $defaultKey)){
+                unset($ticketStatus[$key]);
+            }
+        }
+
+        return $ticketStatus;
+    }
+
+    /**
      * This function will return ticket status list
      *
      * @return mixed
@@ -448,11 +465,11 @@ class Helper
     }
 
     public static function getCurrentAgent()
-    {   
+    {
         // If user is logged in then return the agent by user id.
-        // This `get_current_user_id` function is WP function and 
+        // This `get_current_user_id` function is WP function and
         // it returns user id if user is logged in.
-        if ( get_current_user_id() ){ 
+        if ( get_current_user_id() ){
             return Agent::where('user_id', get_current_user_id())->first();
         }
     }
@@ -460,7 +477,7 @@ class Helper
     public static function getCurrentCustomer()
     {
         // If user is logged in then return the customer by user id.
-        // This `get_current_user_id` function is WP function and 
+        // This `get_current_user_id` function is WP function and
         // it returns user id if user is logged in.
         if ( get_current_user_id() ){ //if user is logged in
             return Customer::where('user_id', get_current_user_id())->first();
@@ -470,7 +487,7 @@ class Helper
     public static function getCurrentPerson()
     {
         // If user is logged in then return the person(agent/customer) by user id.
-        // This `get_current_user_id` function is WP function and 
+        // This `get_current_user_id` function is WP function and
         // it returns user id if user is logged in.
         if ( get_current_user_id() ){
             return Person::where('user_id', get_current_user_id())->first();
@@ -563,5 +580,25 @@ class Helper
         }
 
         return false;
+    }
+
+    public static function generateMessageID($email)
+    {
+        $emailParts = explode('@', $email);
+        if(count($emailParts) != 2) {
+            return false;
+        }
+
+        $emailDomain = $emailParts[1];
+        try {
+            return sprintf(
+                "<%s.%s@%s>",
+                base_convert(microtime(), 10, 36),
+                base_convert(bin2hex(openssl_random_pseudo_bytes(8)), 16, 36),
+                $emailDomain
+            );
+        } catch (\Exception $exception) {
+            return false;
+        }
     }
 }

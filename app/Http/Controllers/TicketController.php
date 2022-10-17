@@ -2,7 +2,6 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Http\Requests\TicketRequest;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
@@ -11,6 +10,8 @@ use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
+use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\Tickets\TicketService;
 
 /**
  *  TicketController class for REST API related to ticket
@@ -29,7 +30,18 @@ class TicketController extends Controller
      */
     public function me(Request $request, ProfileInfoService $profileInfoService)
     {
-        return $profileInfoService->me($request, wp_get_current_user());
+        $user = wp_get_current_user();
+        $settings = [
+            'user_id'     => $user->ID,
+            'email'       => $user->user_email,
+            'person'      => Helper::getAgentByUserId($user->ID),
+            'permissions' => PermissionManager::currentUserPermissions(),
+            'request'     => $request->all()
+        ];
+
+        $withPortalSettings = $request->getSafe('with_portal_settings');
+
+        return $profileInfoService->me( $settings, $withPortalSettings );
     }
 
     /**
@@ -37,12 +49,12 @@ class TicketController extends Controller
      * @param Request $request
      * @return array
      */
-    public function index(Request $request, Ticket $ticket)
+    public function index(Request $request, TicketService $ticketService)
     {
         //Selected filter type, either simple or Advanced
         $filterType = $request->getSafe('filter_type', 'simple');
-
-        return $ticket->getTickets($request, $filterType);
+        $data = $request->all();
+        return $ticketService->getTickets($data, $filterType);
     }
 
     /**
@@ -62,7 +74,6 @@ class TicketController extends Controller
             'title'   => 'required',
             'content' => 'required'
         ]);
-
 
         $createdTicket = $ticket->createTicket($ticketData, $maybeNewCustomer);
 
@@ -87,7 +98,15 @@ class TicketController extends Controller
     public function getTicket(Request $request, Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->getTicket($request, $ticketId);
+            $ticketWith = $request->getSafe('with', []);
+            if (!$ticketWith) {
+                $ticketWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
+                    $q->whereIn('status', ['active', 'inline']);
+                }];
+            }
+            $withCrmData = in_array('fluentcrm_profile', $request->query('with_data', []));
+
+            return $ticket->getTicket($ticketWith, $withCrmData, $ticketId);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -136,8 +155,11 @@ class TicketController extends Controller
      */
     public function updateTicketProperty(Request $request, Ticket $ticket, $ticketId)
     {
+        $propName = $request->getSafe('prop_name');
+        $propValue = $request->getSafe('prop_value');
+
         try {
-            return $ticket->updateTicketProperty($request, $ticketId);
+            return $ticket->updateTicketProperty($propName, $propValue, $ticketId);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -152,7 +174,7 @@ class TicketController extends Controller
     public function closeTicket(Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->closeTicket($ticketId);
+            return $ticket->closeTicket($ticketId, $this->request->getSafe('close_ticket_silently'));
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -183,10 +205,11 @@ class TicketController extends Controller
      */
     public function doBulkActions(Request $request, Ticket $ticket)
     {
+        $action = $request->getSafe('bulk_action');//get action
         $ticketIds = $request->getSafe('ticket_ids', [], 'intval');
 
         try {
-            return $ticket->handleBulkActions($request, $ticketIds);
+            return $ticket->handleBulkActions($action, $ticketIds);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }

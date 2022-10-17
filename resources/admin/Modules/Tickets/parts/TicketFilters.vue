@@ -2,12 +2,10 @@
     <div class="fs_tk_filters">
         <div class="fs_tk_filter">
             <label>{{$t('Status')}}</label>
-            <el-radio-group size="medium" @change="fetchTickets()" v-model="filters.status_type">
-                <el-radio-button label="open">{{$t('Open')}}</el-radio-button>
-                <el-radio-button label="active">{{$t('Active')}}</el-radio-button>
-                <el-radio-button label="new">{{$t('New')}}</el-radio-button>
-                <el-radio-button label="closed">{{$t('Closed')}}</el-radio-button>
-                <el-radio-button label="all">{{$t('All')}}</el-radio-button>
+            <el-radio-group @change="fetchTickets()" v-model="filters.status_type">
+                <el-radio-button v-for="(status, statusKey) in ticket_statuses_group" :label=statusKey>
+                    {{ucFirst(statusKey)}}
+                </el-radio-button>
             </el-radio-group>
         </div>
         <div v-if="appVars.mailboxes.length" class="fs_tk_filter">
@@ -109,7 +107,8 @@ export default {
                 response_count: this.$t('Response Count'),
                 created_at: this.$t('Created At')
             },
-            searchInput: this.search
+            searchInput: this.search,
+            ticket_statuses_group: this.appVars.ticket_statuses_group
         }
     },
     watch: {

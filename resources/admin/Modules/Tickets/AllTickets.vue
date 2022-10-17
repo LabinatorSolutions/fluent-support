@@ -31,7 +31,7 @@
                             :label="column"
                         ></el-option>
                     </el-select>
-                    <el-button @click="changeOrderType()" size="medium">
+                    <el-button @click="changeOrderType()">
                         <el-icon v-if="order_type == 'DESC'"> <CaretBottom/> </el-icon>
                         <el-icon v-else> <CaretTop/> </el-icon>
                     </el-button>
@@ -55,9 +55,9 @@
                                 style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> OR</em>
                         </div>
 
-                        <el-button type="primary" size="medium" @click="fetchTickets()">{{ $t('Filter') }}
+                        <el-button type="primary" @click="fetchTickets()">{{ $t('Filter') }}
                         </el-button>
-                        <el-button size="medium" @click="advanced_filters = [[]]; fetchTickets()">
+                        <el-button @click="advanced_filters = [[]]; fetchTickets()">
                             {{ $t('Clear Filters') }}
                         </el-button>
                     </div>
@@ -125,7 +125,7 @@
                                 </span>
 
                                 <el-tooltip
-                                    v-if="scope.row.mailbox.settings.hide_business_box !=='yes'"
+                                    v-if="scope.row.mailbox.settings.hide_business_box !=='yes' && !filters.mailbox_id"
                                     class="box-item"
                                     effect="dark"
                                     :content="$t('Inbox - ') + scope.row.mailbox.name"
@@ -277,6 +277,7 @@ export default {
     watch: {
         '$route.query'() {
             if (this.app_ready) {
+                this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
                 this.filters.agent_id = this.$route.query.agent_id;
                 this.filters.watcher = this.$route.query.watcher;
                 this.filter_type = this.$route.query.filter_type;
@@ -522,6 +523,10 @@ export default {
         if (this.$route.query.agent_id) {
             this.filters.agent_id = this.$route.query.agent_id;
             this.filters.watcher = this.$route.query.watcher;
+        }
+
+        if (this.$route.query.waiting_for_reply) {
+            this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
         }
 
         if (this.$route.query.tags) {

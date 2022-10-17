@@ -737,8 +737,10 @@ class Ticket extends Model
                     $value = array_values(array_filter(explode('|', $value)));
                 }
             }
-
-            $formattedData[$dataKey] = links_add_target(make_clickable($value));
+            if(!is_array($value) && !is_object($value)) {
+                $formattedData[$dataKey] = links_add_target(make_clickable($value));
+            }
+            else $formattedData[$dataKey] = $value;
         }
 
         return $formattedData;
@@ -884,86 +886,6 @@ class Ticket extends Model
     }
 
     /**
-     * This `getTickets` method will return the all tickets
-     * @param \FluentSupport\Framework\Request\Request $request
-     * @param string $filterType
-     * @return array $tickets
-     */
-    public function getTickets($request, $filterType)
-    {
-        $queryArgs = $this->prepareQuery($request, $filterType);
-        $tickets = $this->getTicketsByQuery($queryArgs);
-
-        foreach ($tickets as $ticket) {
-            if ($request->get('per_page') < 15) {
-                if ($ticket->status != 'closed') {
-                    $ticket->live_activity = TicketHelper::getActivity($ticket->id);
-                } else {
-                    $ticket->live_activity = [];
-                }
-            }
-        }
-
-        return [
-            'tickets' => $tickets
-        ];
-    }
-
-    // This is a supporting method for getTickets method
-    // it prepare the query arguments for tickets filtering
-    private function prepareQuery($request, $filterType)
-    {
-        $queryArgs = [
-            'with'        => [],
-            'filter_type' => $filterType,
-            'sort_by'     => $request->getSafe('order_by', 'id', 'sanitize_sql_orderby'),
-            'sort_type'   => $request->getSafe('order_type', 'DESC', 'sanitize_sql_orderby'),
-        ];
-
-        if ($filterType == 'advanced') {
-            //Get the selected query params for advanced filter
-            $queryArgs['filters_groups_raw'] = json_decode($request->get('advanced_filters'), true);
-        } else {
-            //Selected filter type is simple
-            $queryArgs['simple_filters'] = $request->get('filters', []);
-            $queryArgs['search'] = trim($request->getSafe('search', ''));
-            if ($customerId = $request->getSafe('customer_id', '', 'intval')) {
-                $queryArgs['customer_id'] = $customerId;
-            }
-        }
-
-        return $queryArgs;
-    }
-
-    // This is a supporting method for getTickets method
-    // it returns the tickets by query arguments
-    private function getTicketsByQuery($queryArgs)
-    {
-        $ticketsModel = (new TicketQueryService($queryArgs))->getModel();
-
-        $ticketsModel = $ticketsModel->with([
-            'customer'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent'         => function ($query) {
-                $query->select(['first_name', 'last_name', 'id']);
-            },
-            'mailbox',
-            'product',
-            'tags',
-            'preview_response' => function ($query) {
-                $query->latest('id');
-            }
-        ]);
-
-
-        // apply filters by access level
-        do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsModel, false]);
-
-        return $ticketsModel->paginate();
-    }
-
-
-    /**
      * This `createTicket` method will create a new ticket and it will also create a new customer or
      * a customer with WP profile if given.
      * @param array $ticketData
@@ -1107,30 +1029,21 @@ class Ticket extends Model
 
     /**
      * This `getTicket` will load a ticket with all its data
-     * @param \FluentSupport\Framework\Request\Request $request
+     * @param array $ticketWith
+     * @param bool $withCrmData
      * @param int $ticketId
      * @return array
      * @throws Exception
      */
-    public function getTicket($request, $ticketId)
+    public function getTicket($ticketWith, $withCrmData, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
-
-        $ticketWith = $request->getSafe('with', []);
-        if (!$ticketWith) {
-            $ticketWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
-                $q->whereIn('status', ['active', 'inline']);
-            }];
-        }
 
         $ticket = $this->with($ticketWith)->findOrFail($ticketId);
 
         $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl($ticket->customer); //Get and set customer profile url
         $this->checkAgentPermission($ticket); // Check Agent Permission
         $this->checkIfClosedTicket($ticket);  // Check if ticket is closed, if closed then load ticket with closed data
-
-
-        $withCrmData = in_array('fluentcrm_profile', $request->query('with_data', []));
 
         return $this->getTicketAdditionalData($agent, $ticket->responses, $ticket, $withCrmData);
     }
@@ -1229,7 +1142,7 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function closeTicket($ticketId)
+    public function closeTicket($ticketId, $closeSilently=false)
     {
         $agent = Helper::getAgentByUserId(get_current_user_id());
 
@@ -1238,7 +1151,7 @@ class Ticket extends Model
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close($ticket, $agent)
+            'ticket'  => (new TicketService())->close($ticket, $agent, '', $closeSilently)
         ];
     }
 
@@ -1297,17 +1210,16 @@ class Ticket extends Model
 
     /**
      * This `updateTicketProperty` will update tickets properties
-     * @param \FluentSupport\Framework\Request\Request $request
+     * @param string $propName
+     * @param mixed $propValue
      * @param int $ticketId
      * @return array
      * @throws Exception
      */
-    public function updateTicketProperty($request, $ticketId)
+    public function updateTicketProperty($propName, $propValue, $ticketId)
     {
         $assigner = Helper::getAgentByUserId(get_current_user_id());
         $ticket = static::findOrFail($ticketId);
-        $propName = $request->getSafe('prop_name');
-        $propValue = $request->getSafe('prop_value');
 
         $this->checkAgentPermission($ticket);
 
@@ -1344,14 +1256,13 @@ class Ticket extends Model
 
     /**
      * This `handleBulkActions` will handle bulk actions
-     * @param \FluentSupport\Framework\Request\Request $request
+     * @param string $action
      * @param array $ticketIds
      * @return array
      * @throws Exception
      */
-    public function handleBulkActions($request, $ticketIds)
+    public function handleBulkActions($action, $ticketIds)
     {
-        $action = $request->getSafe('bulk_action');//get action
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
@@ -1479,5 +1390,34 @@ class Ticket extends Model
         } else {
             return true;
         }
+    }
+
+    public static function countTicketByMailBoxId($mailbox_id)
+    {
+        return self::where('mailbox_id', $mailbox_id)->count();
+    }
+
+    public static function syncMailBoxId($mailbox_id, $fallback_id)
+    {
+        return self::where('mailbox_id', $mailbox_id)
+            ->update([
+                'mailbox_id' => $fallback_id
+            ]);
+    }
+
+    public static function getTicketsQuery()
+    {
+        return self::with([
+            'customer' => function ($query) {
+                $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
+            }, 'agent' => function ($query) {
+                $query->select(['first_name', 'last_name', 'id']);
+            },
+            'product',
+            'tags',
+            'preview_response' => function ($query) {
+                $query->latest('id');
+            }
+        ]);
     }
 }

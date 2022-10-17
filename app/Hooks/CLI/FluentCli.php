@@ -27,7 +27,7 @@ class FluentCli
 
         $licenseKey = trim(sanitize_text_field($assoc_args['key']));
 
-        if(!class_exists('\FluentSupportPro\App\Services\PluginManager\LicenseManager')) {
+        if (!class_exists('\FluentSupportPro\App\Services\PluginManager\LicenseManager')) {
             \WP_CLI::line('FluentSupport Pro is required');
             return;
         }
@@ -37,21 +37,21 @@ class FluentCli
         $licenseManager = new \FluentSupportPro\App\Services\PluginManager\LicenseManager();
         $response = $licenseManager->activateLicense($licenseKey);
 
-        if(is_wp_error($response)) {
+        if (is_wp_error($response)) {
             \WP_CLI::error($response->get_error_message());
             return;
         }
 
         \WP_CLI::line('Your license key has been successfully updated');
-        \WP_CLI::line('Your License Status: '.  $response['status']);
-        \WP_CLI::line('Expire Date: '. $response['expires']);
+        \WP_CLI::line('Your License Status: ' . $response['status']);
+        \WP_CLI::line('Expire Date: ' . $response['expires']);
         return;
     }
 
     public function license_status()
     {
 
-        if(!class_exists('\FluentSupportPro\App\Services\PluginManager\LicenseManager')) {
+        if (!class_exists('\FluentSupportPro\App\Services\PluginManager\LicenseManager')) {
             \WP_CLI::line('FluentSupport Pro is required');
             return;
         }
@@ -62,8 +62,9 @@ class FluentCli
         $licenseManager->verifyRemoteLicense(true);
         $response = $licenseManager->getLicenseDetails();
 
-        \WP_CLI::line('Your License Status: '.  $response['status']);
-        \WP_CLI::line('Expires: '.  $response['expires']);
+        \WP_CLI::line('Your License Status: ' . $response['status']);
+        \WP_CLI::line('Expires: ' . $response['expires']);
         return;
     }
+
 }

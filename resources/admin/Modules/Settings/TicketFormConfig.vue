@@ -89,6 +89,7 @@ export default {
         if (this.has_pro) {
             this.fetchSettings();
         }
+        this.$setTitle('Ticket Form Config');
     }
 }
 </script>

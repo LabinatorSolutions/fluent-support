@@ -38,7 +38,7 @@
     .fc_source_icon {
         padding-right: 5px;
 
-        &.fc_source_icon_web, &.fc_source_icon_email, &.fc_source_icon_telegram, &.fc_source_icon_slack, &.fc_source_icon_whatsapp, &.fc_source_icon_webhook {
+        &.fc_source_icon_web, &.fc_source_icon_email, &.fc_source_icon_telegram, &.fc_source_icon_slack, &.fc_source_icon_whatsapp, &.fc_source_icon_webhook, &.fc_source_icon_awesome-support {
             vertical-align: middle;
             font-family: dashicons;
             span {
@@ -71,6 +71,11 @@
         &.fc_source_icon_email {
             &:before {
                 content: "\f465";
+            }
+        }
+        &.fc_source_icon_awesome-support {
+            &:before {
+                content: "\f524";
             }
         }
     }

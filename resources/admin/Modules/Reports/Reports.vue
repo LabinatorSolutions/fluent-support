@@ -24,14 +24,13 @@
                                     </template>
                                 </el-dropdown>
                                 <div class="fs_agent_report_rh_filter">
-                                    <el-select clearable filterable size="medium" placeholder="All Agent" @change="filterReport" v-model="agent"
+                                    <el-select clearable filterable placeholder="All Agent" @change="filterReport" v-model="agent"
                                                class="fs_report_by_agent">
                                         <el-option v-for="agent in appVars.support_agents" :key="agent.id" :value="agent.id"
                                                    :label="agent.full_name"></el-option>
                                     </el-select>
 
                                     <el-date-picker
-                                        size="medium"
                                         v-model="date_range"
                                         type="daterange"
                                         :range-separator="$t('To')"
@@ -49,11 +48,27 @@
                             <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'reports'" :agent_id="agent"></component>
                         </div>
                     </div>
-                    <agent-reports :url="'reports/agents-summary'"/>
+                    <agent-reports :url="'reports/agents-summary'" :show_settings="true"/>
                 </el-col>
                 <el-col :sm="24" :md="8" :lg="6">
                     <div class="fs_box">
                         <div class="fs_box_header">
+                            <div class="fs_header_title">
+                                {{$t('active_tickets_by_products')}}
+                            </div>
+                        </div>
+                        <div class="fs_box_body">
+                            <ul v-if="!loading" class="fs_card_list">
+                                <li style="padding: 15px;" v-for="(stat, stat_type) in active_tickets_by_product" :key="stat_type">
+                                    <b>{{stat.title}}:</b>  {{stat.count}}
+                                </li>
+                            </ul>
+                            <div class="fs_padded_20" v-else>
+                                <el-skeleton :rows="3" animated/>
+                            </div>
+                        </div>
+
+                        <div class="fs_box_header" style="margin-top: 1.2500em">
                             <div class="fs_header_title">
                                 {{$t('Quick Stats')}}
                             </div>
@@ -126,7 +141,8 @@ export default {
                 'response-chart': 'Response Stats',
             },
             agent: '',
-            today_reports: {}
+            today_reports: {},
+            active_tickets_by_product: {}
         }
     },
     methods: {
@@ -136,6 +152,7 @@ export default {
                 .then(response => {
                     this.overall_reports = response.overall_reports;
                     this.today_reports = response.today_reports;
+                    this.active_tickets_by_product = response.active_tickets_by_product;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
