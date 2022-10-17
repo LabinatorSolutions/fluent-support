@@ -16,7 +16,7 @@ class ResponseService
      * @param $ticket
      * @return array|false
      */
-    public function createResponse($data, $person, $ticket)
+    public function createResponse($data, $person, $ticket, $silently = false)
     {
         if (empty($data['content'])) {
             return false;
@@ -24,7 +24,7 @@ class ResponseService
 
         // Adding support for shortcode in agent response
         if ($person->person_type == 'agent') {
-            $data = apply_filters('fluent_support/parse_smartcode_data', $data, [
+            $data['content'] = apply_filters('fluent_support/parse_smartcode_data', $data['content'], [
                 'customer' => $ticket->customer,
                 'agent'    => $person
             ]);
@@ -105,15 +105,30 @@ class ResponseService
             $ticket->closed_by = $person->id;
             $ticket->total_close_time = current_time('timestamp') - strtotime($ticket->created_at);
             $closed = true;
-            Conversation::create([
-                'ticket_id'         => $ticket->id,
-                'person_id'         => $person->id,
-                'conversation_type' => 'internal_info',
-                'content'           => __('Ticket has been closed', 'fluent-support')
-            ]);
+
+            $internalNote = __('Ticket has been closed', 'fluent-support');
+
+            $internalNote = apply_filters('fluent_support/ticket_close_internal_note', $internalNote, $ticket);
+
+            if($internalNote) {
+                Conversation::create([
+                    'ticket_id'         => $ticket->id,
+                    'person_id'         => $person->id,
+                    'conversation_type' => 'internal_info',
+                    'content'           => $internalNote
+                ]);
+            }
         }
 
         $ticket->save();
+
+        if ($silently) {
+            return [
+                'response'    => $createdResponse,
+                'ticket'      => $ticket,
+                'update_data' => $updateData
+            ];
+        }
 
         if ($agentAdded) {
             $assigner = Helper::getCurrentAgent();
