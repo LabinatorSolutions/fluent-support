@@ -75,7 +75,6 @@ class TicketController extends Controller
             'content' => 'required'
         ]);
 
-
         $createdTicket = $ticket->createTicket($ticketData, $maybeNewCustomer);
 
         if (is_wp_error($createdTicket)) {

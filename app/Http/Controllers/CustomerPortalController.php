@@ -77,6 +77,10 @@ class CustomerPortalController extends Controller
                 throw new \Exception($message, $errorCode);
             }
 
+            if ($customer && $messageId = Helper::generateMessageID($customer->email)) {
+                $data['message_id'] = $messageId;
+            }
+
             $ticket = $customerPortalService->createTicket($customer, $data, $request->getSafe('mailbox_id', '', 'intval'));
 
             return [
