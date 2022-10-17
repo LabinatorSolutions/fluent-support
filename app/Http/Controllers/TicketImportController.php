@@ -11,7 +11,11 @@ class TicketImportController
 {
 	public function getStats ( Importer $importService )
 	{
-		return $importService->getStats();
+        $stats = $importService->getStats();
+        if(!$stats) {
+            return [];
+        }
+        return $stats;
 	}
 
 	public function importTickets ( Importer $importService, Request $request )
