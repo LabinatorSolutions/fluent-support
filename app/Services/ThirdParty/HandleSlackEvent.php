@@ -24,7 +24,7 @@ class HandleSlackEvent
         $request = App::getInstance('request');
 
         if ($request->get('type') == 'url_verification') {
-            echo $request->get('challenge');
+            echo wp_kses_post($request->get('challenge'));
         }
 
         return (new SlackNotification())->processSlackEvent($request->get('event'));

@@ -581,4 +581,24 @@ class Helper
 
         return false;
     }
+
+    public static function generateMessageID($email)
+    {
+        $emailParts = explode('@', $email);
+        if(count($emailParts) != 2) {
+            return false;
+        }
+
+        $emailDomain = $emailParts[1];
+        try {
+            return sprintf(
+                "<%s.%s@%s>",
+                base_convert(microtime(), 10, 36),
+                base_convert(bin2hex(openssl_random_pseudo_bytes(8)), 16, 36),
+                $emailDomain
+            );
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
 }

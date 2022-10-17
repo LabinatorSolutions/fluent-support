@@ -36,9 +36,6 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-            if ($ticket->message_id) {
-                // $headers[] = 'Message-ID: ' . $ticket->message_id;
-            }
 
             $attachments = [];
 
@@ -56,6 +53,7 @@ class EmailNotificationHandler
         if ($emailSettings && $emailSettings['status'] == 'yes' && is_email($mailbox->settings['admin_email_address'])) {
 
             $mailTo = Arr::get($mailbox->settings, 'admin_email_address');
+
             if (!$mailTo || !is_email($mailTo)) {
                 return;
             }
@@ -74,9 +72,6 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-            if ($ticket->message_id) {
-                // $headers[] = 'Message-ID: ' . $ticket->message_id;
-            }
 
             $attachments = [];
 
@@ -88,7 +83,6 @@ class EmailNotificationHandler
 
             Mailer::send($mailTo, $subject, $emailBody, $headers, $attachments);
         }
-
     }
 
     public function agentReplied($response, $ticket, $agent)
@@ -132,6 +126,7 @@ class EmailNotificationHandler
 
 
             $headers = $mailbox->getMailerHeader();
+
             $attachments = [];
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
@@ -179,9 +174,7 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-            if ($ticket->message_id) {
-                // $headers[] = 'Message-ID: ' . $ticket->message_id;
-            }
+
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
     }
@@ -227,9 +220,6 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-            if ($ticket->message_id) {
-                // $headers[] = 'Message-ID: ' . $ticket->message_id;
-            }
 
             $attachments = [];
 
