@@ -185,7 +185,7 @@ class Settings
                 'title'          => __('Ticket Created (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when a customer submit a support ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'yes',
+                'default_status' => 'no',
                 'send_attachments'=> 'no'
             ],
             'ticket_replied_by_agent_email_to_customer' => [
@@ -201,7 +201,7 @@ class Settings
                 'title'          => __('Ticket Closed by Agent (To Customer)', 'fluent-support'),
                 'description'    => __('This email will be sent when an agent close a ticket', 'fluent-support'),
                 'email_subject'  => 'Re: {{ticket.title}} #{{ticket.id}}',
-                'default_status' => 'yes',
+                'default_status' => 'no',
                 'send_attachments'=> 'no'
             ],
             'ticket_created_email_to_admin'             => [

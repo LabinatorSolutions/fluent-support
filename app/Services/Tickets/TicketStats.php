@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services\Tickets;
 
+use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\TicketHelper;
 
 class TicketStats
@@ -42,6 +43,12 @@ class TicketStats
                 'title' => __('Closed Tickets', 'fluent-support'),
                 'url'   => esc_url_raw( $urlBase . 'tickets?filter_type=simple&status_type=closed' ),
                 'number'=> TicketHelper::countClosedTickets(),
+                'icon'  => 'el-icon-message'
+            ],
+            [
+                'title' => __('Awaiting Replies', 'fluent-support'),
+                'url'   => esc_url_raw( $urlBase . 'tickets?status_type=open&waiting_for_reply=yes' ),
+                'number'=> StatModule::countAwaitingTickets(),
                 'icon'  => 'el-icon-message'
             ]
         ]);

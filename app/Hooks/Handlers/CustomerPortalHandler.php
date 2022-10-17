@@ -14,7 +14,7 @@ class CustomerPortalHandler
     public function renderPortal()
     {
         /**
-         * This hook filter customer portal customer portal access permission error message.
+         * This hook filter customer portal access permission error message.
          * If a customer has no access to the portal, then the message will be displayed.
          * @since 1.6.0
          * @param string $invalidPermissionMessage
@@ -24,7 +24,7 @@ class CustomerPortalHandler
             'fluent_support/customer_portal_invalid_permission_message',
          esc_html__('You don\'t have permission to access customer support portal', 'fluent-support')
         );
-        
+
         $person = Helper::getCurrentPerson();
         if ($person && $person->status === 'inactive') {
             return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . $invalidPermissionMessage . '</h3></div>';
@@ -135,13 +135,13 @@ class CustomerPortalHandler
             'articles_heading'     => __('Suggested articles', 'fluent-support'),
             'priority_placeholder' => __('Select Priority', 'fluent-support'),
 
-            'subject'           => __('Subject', 'fluent-support-pro'),
-            'ticket_details'    => __('Ticket Details', 'fluent-support-pro'),
-            'details_help'      => __('Please provide details about your problem', 'fluent-support-pro'),
-            'product_services'  => __('Related Product/Service', 'fluent-support-pro'),
-            'priority'          => __('Priority', 'fluent-support-pro'),
-            'btn_text'          => __('Create Ticket', 'fluent-support-pro'),
-            'submit_heading'    => __('Submit a Support Ticket', 'fluent-support-pro'),
+            'subject'           => __('Subject', 'fluent-support'),
+            'ticket_details'    => __('Ticket Details', 'fluent-support'),
+            'details_help'      => __('Please provide details about your problem', 'fluent-support'),
+            'product_services'  => __('Related Product/Service', 'fluent-support'),
+            'priority'          => __('Priority', 'fluent-support'),
+            'btn_text'          => __('Create Ticket', 'fluent-support'),
+            'submit_heading'    => __('Submit a Support Ticket', 'fluent-support'),
             'create_ticket_cta' => __('Create a New Ticket', 'fluent-support'),
             'Reopen This ticket' => __('Reopen This ticket', 'fluent-support'),
             'by'                => __('by', 'fluent-support'),

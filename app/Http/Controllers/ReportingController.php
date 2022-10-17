@@ -2,7 +2,6 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
@@ -27,7 +26,15 @@ class ReportingController extends Controller
     {
         return [
             'overall_reports' => StatModule::getOverAllStats(),
-            'today_reports' => StatModule::getTodayStats()
+            'today_reports' => StatModule::getTodayStats(),
+            'active_tickets_by_product' => StatModule::getActiveTicketsByProductStats(),
+        ];
+    }
+
+    public function getActiveTicketsByProduct()
+    {
+        return [
+            'stats' => StatModule::getActiveTicketsByProductStats()
         ];
     }
 
@@ -172,5 +179,31 @@ class ReportingController extends Controller
         return [
             'summary' =>  $reporting->agentSummary($request->getSafe('from'), $request->getSafe('to'), $agent->id)
         ];
+    }
+
+    /**
+     * `syncSummary` method will sync the summary data
+     * @param Request $request
+     * @param Reporting $reporting
+     * @return array
+     */
+    public function syncSummary( Reporting $reporting, Request $request )
+    {
+        $data = $request->getSafe();
+        return [
+            'summary' => $reporting->syncSummary($data),
+            'message' => __('Summary settings has been synced successfully', 'fluent-support')
+        ];
+    }
+
+    /**
+     * `getSummarySettings` method will return the summary settings
+     * @param Request $request
+     * @param Reporting $reporting
+     * @return array
+     */
+    public function getSummarySettings( Reporting $reporting )
+    {
+        return $reporting->getSummarySettings();
     }
 }

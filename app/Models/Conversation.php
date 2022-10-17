@@ -141,7 +141,7 @@ class Conversation extends Model
             'close_ticket'      => Arr::get($data, 'close_ticket'),
         ];
 
-        $attachments = $data['attachments'];
+        $attachments = Arr::get($data, 'attachments', []);
         $attachments = $this->getAttachsForBulkReplies( $attachments );
 
         foreach ( $tickets as $ticket ) {

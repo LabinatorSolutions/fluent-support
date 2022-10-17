@@ -5,11 +5,25 @@
                 {{$t('Overall Activities')}}
             </div>
             <div class="fs_box_actions">
+
+                <el-date-picker
+                    @change="fetchActivities"
+                    v-model="date_range"
+                    type="daterange"
+                    :range-separator="$t('To')"
+                    :start-placeholder="$t('Start')"
+                    :end-placeholder="$t('End')"
+                />
+
+
+                <el-select clearable filterable size="small" @change="fetchActivities()" v-model="filters.agent_id"
+                           :placeholder="$t('All Support Staff')" style="margin-right: 10px">
+                    <el-option v-for="agent in appVars.support_agents" :key="agent.id" :value="agent.id" :label="agent.full_name"></el-option>
+                </el-select>
                 <el-button v-loading="loading"
                            @click="fetchActivities()"
-                           icon="Refresh"
-                           size="small"></el-button>
-                <el-button v-if="me.permissions.indexOf('fst_manage_settings') != -1" @click="showSettingsModal = true" size="small" type="default" icon="Setting"></el-button>
+                           icon="Refresh"></el-button>
+                <el-button v-if="me.permissions.indexOf('fst_manage_settings') != -1" @click="showSettingsModal = true" type="default" icon="Setting"></el-button>
             </div>
         </div>
         <div class="fs_box fs_activity_box" v-if="activities">
@@ -61,6 +75,7 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import ActivitySettings from './_ActivitySettings';
+import dayjs from "dayjs";
 
 export default {
     name: "ActivityLogger",
@@ -79,7 +94,9 @@ export default {
                 current_page: 1,
                 total: 0
             },
-            settings: {}
+            settings: {},
+            filters: {},
+            date_range: null,
         }
     },
     methods: {
@@ -87,7 +104,10 @@ export default {
             this.loading = true;
             this.$get('activity-logger',  {
                 per_page: this.pagination.per_page,
-                page: this.pagination.current_page
+                page: this.pagination.current_page,
+                filters: this.filters,
+                from: (this.date_range) ? dayjs(this.date_range[0]).format('YYYY-MM-DD') : '',
+                to: (this.date_range) ? dayjs(this.date_range[1]).format('YYYY-MM-DD') : '',
             })
                 .then(response => {
                     this.activities = response.activities.data;

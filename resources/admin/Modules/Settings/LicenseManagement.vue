@@ -151,6 +151,7 @@ export default {
     },
     mounted() {
         this.fetchLicense();
+        this.$setTitle('License Management');
     }
 }
 </script>

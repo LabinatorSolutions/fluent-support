@@ -110,6 +110,8 @@ $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router)
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
     $router->get('/response-growth', 'ReportingController@getResponseChart');
     $router->get('/agents-summary', 'ReportingController@getAgentsSummary');
+    $router->post('/sync-summary', 'ReportingController@syncSummary');
+    $router->get('/summary-settings', 'ReportingController@getSummarySettings');
 });
 
 $router->prefix('my-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {
@@ -168,3 +170,9 @@ $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
 
 $router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');
+
+$router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group( function ( $router ) {
+    $router->get('/', 'TicketImportController@getStats');
+    $router->post('/import', 'TicketImportController@importTickets');
+    $router->delete('/delete', 'TicketImportController@deleteTickets');
+} );

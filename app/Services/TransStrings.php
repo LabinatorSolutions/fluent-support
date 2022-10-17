@@ -84,7 +84,7 @@ class TransStrings
             'Inbox Name'    => __('Inbox Name', 'fluent-support'),
             'Support Channel'    => __('Support Channel', 'fluent-support'),
             'Web Based'    => __('Web Based', 'fluent-support'),
-            'Email Based (MailBox)'    => __('Email Based (MailBox)', 'fluent-support'),
+            'email_based_heading'    => __('Web and Email Based (MailBox)', 'fluent-support'),
             'Mapped Email'    => __('Mapped Email', 'fluent-support'),
             'mapped_webhook_email'    => __('Please forward your emails from "Support Inbox Email" so it can auto-sync the tickets', 'fluent-support'),
             'Cancel'    => __('Cancel', 'fluent-support'),
@@ -459,8 +459,8 @@ class TransStrings
             'Add More' => __('Add More', 'fluent-support'),
             'confirm' => __('confirm', 'fluent-support'),
             'Are you sure to delete this?' => __('Are you sure to delete this?', 'fluent-support'),
-            'advance_filter_promo' => __('Using advanced filtering you can get more specific tickets', 'fluent-support-pro'),
-            'advance_filter_help_text' => __('Add new filter to narrow down your contacts based on different properties', 'fluent-support-pro'),
+            'advance_filter_promo' => __('Using advanced filtering you can get more specific tickets', 'fluent-support'),
+            'advance_filter_help_text' => __('Add new filter to narrow down your contacts based on different properties', 'fluent-support'),
             'Send Attachments' => __('Send Attachments(Not Recommended)', 'fluent-support'),
             'Today Stats' => __('Today Stats', 'fluent-support'),
             'Shortcodes' => __('Shortcodes', 'fluent-support'),
@@ -480,7 +480,14 @@ class TransStrings
             'Inbox'       => __('Inbox', 'fluent-support'),
             'Split Ticket'       => __('Split Ticket', 'fluent-support'),
             'Apply / Remove Lists on FluentCRM Profile' => __('Apply / Remove Lists on FluentCRM Profile', 'fluent-support'),
-            'Additional info' => 'Additional info'
+            'Additional info' => __('Additional info', 'fluent-support'),
+            'active_tickets_by_products' => __('Today\'s Active Tickets By Products', 'fluent-support'),
+            'exclude_or_include_in_summary' => __('Include Or Exclude Agents From Summary', 'fluent-support'),
+            'Include' => __('Include', 'fluent-support'),
+            'Exclude' => __('Exclude', 'fluent-support'),
+            'no_other_support_system_is_activate' => __('Seems like Awesome Support or Support Candy isn\'t activated in your site. To import tickets from any of these please activate it.', 'fluent-support'),
+            'Close Ticket Silently' => __('Close Ticket Silently', 'fluent-support'),
+            'Import Tickets' => __('Import Tickets', 'fluent-support')
         ];
     }
 }

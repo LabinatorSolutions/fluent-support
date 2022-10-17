@@ -7,11 +7,14 @@
                         {{ $t('Individual Performance') }}
                     </div>
                     <div class="fs_box_actions">
+                        <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18">
+                            <Setting />
+                        </el-icon>
                         <el-date-picker
                             @change="getReport()"
                             v-model="date_range"
                             type="daterange"
-                            size="mini"
+                            size="small"
                             :range-separator="$t('To')"
                             :disabledDate="onlyPastDates"
                             :start-placeholder="$t('Start')"
@@ -71,6 +74,38 @@
                         </el-table-column>
                     </el-table>
                 </div>
+
+                <Teleport to="body">
+                    <modal :show="open_setting" :title="$t('exclude_or_include_in_summary')" @close="open_setting = false">
+                        <template #body>
+                            <div class="fs_summary_settings">
+
+
+                                <el-row :gutter="20">
+                                    <el-col :span="18">
+                                        <el-select v-model="include_or_exclude">
+                                            <el-option :label="$t('Include')" value="include" />
+                                            <el-option :label="$t('Exclude')" value="exclude" />
+                                        </el-select>
+                                    </el-col>
+                                </el-row>
+
+                                <el-transfer
+                                    v-model="include_or_exclude_agents"
+                                    :data="sortedAgents"
+                                    :titles="['Available Agents', 'Selected Agents']"
+                                    filterable
+                                />
+                            </div>
+                        </template>
+                        <template #footer>
+                            <el-button @click="open_setting = false">{{ $t('Cancel') }}</el-button>
+                            <el-button type="primary" @click="syncSummary">{{ $t('Save') }}</el-button>
+                        </template>
+                    </modal>
+                </Teleport>
+
+
             </div>
         </div>
         <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
@@ -82,10 +117,12 @@
 <script type="text/babel">
 import dayjs from 'dayjs';
 import each from 'lodash/each';
+import Modal from '../../Pieces/Modal';
 
 export default {
     name: 'AgentReports',
-    props: ['url'],
+    components: {Modal},
+    props: ['url', 'show_settings'],
     data() {
         return {
             reports: [],
@@ -160,10 +197,24 @@ export default {
                     })(),
                 }
             ],
-            valueFormat: 'YYYY-MM-DD'
+            valueFormat: 'YYYY-MM-DD',
+            open_setting: false,
+            include_or_exclude_agents: [],
+            include_or_exclude: 'include', // Define if we are including or excluding agents, default is include
         }
     },
     computed: {
+        sortedAgents(){
+            let agents = [];
+            each(this.appVars.support_agents, (agent) => {
+                agents.push({
+                    key : parseInt(agent.id),
+                    label : agent.full_name
+                })
+            })
+            return agents;
+        },
+
         sortedReports() {
             let reports = this.reports;
             if (this.sort_type == 'ascending') {
@@ -186,6 +237,7 @@ export default {
             });
             return summary;
         },
+
         showOrHideSummaries() {
             if (this.url == 'my-reports/my-summary') {
                 return false;
@@ -202,6 +254,9 @@ export default {
             })
                 .then(response => {
                     this.reports = response.summary
+                    if (this.url != 'my-reports/my-summary') {
+                        this.fetchSummarySettings();
+                    }
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -210,13 +265,54 @@ export default {
                     this.loading = false;
                 });
         },
+
+        fetchSummarySettings(){
+            this.$get('reports/summary-settings')
+                .then(response => {
+                    this.include_or_exclude_agents = response.agents ?? [];
+                    this.include_or_exclude = response.type ?? 'include';
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+        },
+
+        syncSummary() {
+            this.loading = true;
+            this.$post('reports/sync-summary',{
+                agents: this.include_or_exclude_agents,
+                type: this.include_or_exclude,
+            })
+                .then(response => {
+                    this.open_setting = false;
+                    this.include_or_exclude_agents = response.summary.agents;
+                    this.include_or_exclude = response.summary.type;
+                    this.$notify.success({
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
+                    this.getReport();
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+        },
+
         handleSorting(props) {
             this.sort_column = props.prop;
             this.sort_type = props.order;
         },
+
         onlyPastDates(val) {
             return new Date() <= val;
         },
+
         getSummaries(param) {
             const {columns} = param;
             const sums = [];
@@ -235,3 +331,14 @@ export default {
     }
 }
 </script>
+
+<style lang="scss" scoped>
+    .fs_summary_settings div{
+        margin: 10px 0;
+    }
+    .fs_summary_settings_icon{
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+</style>
