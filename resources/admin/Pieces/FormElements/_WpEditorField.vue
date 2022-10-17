@@ -1,5 +1,5 @@
 <template>
-    <wp-base-editor :editorShortcodes="smartcodes" v-model="model" />
+    <wp-base-editor :showShortcodes="field.show_shortcodes"  v-model="modelValue" />
 </template>
 
 <script type="text/babel">
@@ -8,19 +8,14 @@ import WpBaseEditor from '../_wp_editor';
 
 export default {
     name: 'WPEditorField',
-    props: ['field', 'value'],
     components: {
         WpBaseEditor
     },
-    data() {
-        return {
-            model: this.value,
-            smartcodes: window.fcAdmin.globalSmartCodes
-        }
-    },
+    props: ['field', 'modelValue'],
+    emits: ['update:modelValue'],
     watch: {
-        model(value) {
-            this.$emit('input', value);
+        modelValue(value) {
+            this.$emit('update:modelValue', value);
         }
     }
 }

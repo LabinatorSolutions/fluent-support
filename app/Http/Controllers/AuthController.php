@@ -125,8 +125,8 @@ class AuthController extends Controller
             ]);
         }
 
-        $email = $data['log'];
-        $password = $data['pwd'];
+        $email = sanitize_user($data['log']);
+        $password = trim($data['pwd']);
 
         if (is_email($email)) {
             $user = get_user_by('email', $email);
@@ -135,19 +135,27 @@ class AuthController extends Controller
         }
 
         if (!$user) {
+            $user = new \WP_Error('authentication_failed', __('<strong>Error</strong>: Invalid username, email address or incorrect password.', 'fluent-support'));
+
+            do_action('wp_login_failed', $email, $user);
+
             return $this->response([
                 'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
             ], 403);
+
         }
 
-        $info = array(
-            'user_login'    => sanitize_text_field(trim($_POST['log'])),
-            'user_password' => trim($_POST['pwd']),
-            'remember'      => isset($_POST['rememberme']),
-        );
-
         if (apply_filters('fluent_support_use_native_login', true)) {
-            return $this->nativeLoginHandler($user, $info, $redirectUrl);
+            $user = wp_signon();
+            if (is_wp_error($user)) {
+                return $this->response([
+                    'message' => $user->get_error_message()
+                ], 403);
+            }
+
+            return $this->sendSuccess([
+                'redirect' => $redirectUrl
+            ]);
         }
 
         if (wp_check_password($password, $user->user_pass, $user->ID)) {
@@ -158,7 +166,7 @@ class AuthController extends Controller
         }
 
         return $this->response([
-            'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
+            'message' => __('<strong>Error</strong>: Invalid username, email address or incorrect password.', 'fluent-support')
         ], 403);
     }
 
@@ -260,65 +268,126 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
+        $errors    = new \WP_Error();
+
         if (!wp_verify_nonce($request->get('_fsupport_reset_pass_nonce'), 'fluent_support_reset_pass_nonce')) {
             return $this->sendError([
                 'message' => __('Security verification failed. Please try again', 'fluent-support')
             ]);
         }
 
-        $fields = AuthHandler::resetPasswordFields();
+        $usernameOrEmail = trim( wp_unslash( $request->get('user_login') ) );
 
-        $user = get_user_by_email($request->get('email'));
-
-        if ($user) {
-            /*
-             * Filter reset password link text
-             *
-             * @since v1.5.7
-             * @param string $linkText
-             */
-            $linkText = apply_filters("fluent_support/reset_password_link", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
-
-            $passwordResetKey = get_password_reset_key($user);
-            $resetLink = '<a href="' . wp_login_url() . "?action=rp&key=$passwordResetKey&login=" . rawurlencode($user->user_login) . '">' . $linkText . '</a>';
-
-            /*
-             * Filter reset password email subject
-             *
-             * @since v1.5.7
-             * @param string $mailSubject
-             */
-            $mailSubject = apply_filters("fluent_support/reset_password_mail_subject", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
-            $headers = [];
-
-            $message = sprintf(__('<p>Hi %s,</p>', 'fluent-support'), $user->first_name) .
-                sprintf(__('<p>You have requested to reset your password. Please click on the link below to reset your password.</p>', 'fluent-support')) .
-                sprintf(__('<p>%s</p>', 'fluent-support'), $resetLink) .
-                sprintf(__('<p>If you did not request to reset your password, please ignore this email.</p>', 'fluent-support'));
-
-            /*
-             * Filter reset password email body text
-             *
-             * @since v1.5.7
-             * @param string $message
-             * @param object $user
-             * @param string $resetLink
-             */
-            $message = apply_filters('fluent_support/reset_password_message', $message, $user, $resetLink);
-
-            add_filter('wp_mail_content_type', function ($contentType) {
-                return 'text/html';
-            });
-
-            wp_mail($user->user_email, $mailSubject, $message, $headers);
-
-            remove_filter('wp_mail_content_type', 'set_html_content_type');
-
-            return $this->sendSuccess([
-                'message' => __('Please check your email for the reset link', 'fluent-support')
+        if (!$usernameOrEmail) {
+            return $this->sendError([
+                'message' => 'Username or email is required'
             ]);
         }
 
+        $user_data = get_user_by('email', $usernameOrEmail);
+
+        if (!$user_data) {
+            $user_data = get_user_by('login', $usernameOrEmail);
+        }
+
+        if (!$user_data) {
+            return $this->sendError([
+                'message' => __('Invalid username or email', 'fluent-support')
+            ]);
+        }
+
+        $user_data = apply_filters( 'lostpassword_user_data', $user_data, $errors );
+
+        do_action( 'lostpassword_post', $errors, $user_data );
+
+        $errors = apply_filters( 'lostpassword_errors', $errors, $user_data );
+
+        if ( $errors->has_errors() ) {
+            return $this->sendError([
+                'message' => $errors->get_error_message()
+            ]);
+        }
+
+        if ( ! $user_data ) {
+            return $this->sendError([
+                'message' => __( '<strong>Error</strong>: There is no account with that username or email address.', 'fluent-support' )
+            ]);
+        }
+
+        if ( is_multisite() && ! is_user_member_of_blog( $user_data->ID, get_current_blog_id() ) ) {
+
+            return $this->sendError([
+                'message' => __( '<strong>Error</strong>: Invalid username or email', 'fluent-support' )
+            ]);
+        }
+
+        // Redefining user_login ensures we return the right case in the email.
+        $user_login = $user_data->user_login;
+
+        do_action( 'retrieve_password', $user_login );
+
+        $allow = apply_filters( 'allow_password_reset', true, $user_data->ID );
+
+        if ( ! $allow ) {
+            return $this->sendError([
+                'message' => __( 'Password reset is not allowed for this user', 'fluent-support' )
+            ]);
+        }
+
+        if ( is_wp_error( $allow ) ) {
+            return $this->sendError([
+                'message' => $allow->get_error_message()
+            ]);
+        }
+
+
+        /*
+         * Filter reset password link text
+         *
+         * @since v1.5.7
+         * @param string $linkText
+         */
+        $linkText = apply_filters("fluent_support/reset_password_link", sprintf(__('Reset your password for %s', 'fluent-support'), get_bloginfo('name')));
+
+        $resetUrl = add_query_arg([
+            'action' => 'rp',
+            'key' => get_password_reset_key( $user_data ),
+            'login' => rawurlencode($user_data->user_login)
+        ], wp_login_url());
+
+        $resetLink = '<a href="' . $resetUrl . '">' . $linkText . '</a>';
+
+        /*
+         * Filter reset password email subject
+         *
+         * @since v1.5.7
+         * @param string $mailSubject
+         */
+        $mailSubject = apply_filters("fluent_support/reset_password_mail_subject", sprintf(__('Reset your password for %s support portal', 'fluent-support'), get_bloginfo('name')));
+
+        $message = sprintf(__('<p>Hi %s,</p>', 'fluent-support'), $user_data->first_name) .
+            __('<p>Someone has requested a new password for the following account on WordPress:</p>', 'fluent-support') .
+            sprintf(__('<p>Username: %s</p>', 'fluent-support'), $user_login) .
+            sprintf(__('<p>%s</p>', 'fluent-support'), $resetLink) .
+            sprintf(__('<p>If you did not request to reset your password, please ignore this email.</p>', 'fluent-support'));
+
+        /*
+         * Filter reset password email body text
+         *
+         * @since v1.5.7
+         * @param string $message
+         * @param object $user
+         * @param string $resetLink
+         */
+        $message = apply_filters('fluent_support/reset_password_message', $message, $user_data, $resetLink);
+
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+
+        wp_mail($user_data->user_email, $mailSubject, $message, $headers);
+
+        return $this->sendSuccess([
+            'message' => __('Please check your email for the reset link', 'fluent-support')
+        ]);
     }
 
     /**
