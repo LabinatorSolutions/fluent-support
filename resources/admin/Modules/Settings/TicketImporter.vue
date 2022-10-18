@@ -13,18 +13,18 @@
                 <div style="background: white;" class="fs_box_body" v-if="loading">
                     <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
                 </div>
-                <el-row style="padding: 45px 25px" v-if="!loading && settings.length" :gutter="20">
-                    <el-col v-for="setting in settings" :span="8">
+                <el-row style="padding: 25px 25px" v-if="!loading && settings.length" :gutter="20">
+                    <el-col v-for="setting in settings" :span="24">
                         <div :class="'grid-content fs_'+setting.handler">
-                            <el-card :body-style="{ padding: '0px' }" :header=setting.name>
+                            <el-card :body-style="{ padding: '4px' }" :header=setting.name style="margin: 10px 0">
                                 <div style="padding: 14px">
-                                    <el-tag class="ml-2" type="info">Tickets: {{ setting.tickets }}</el-tag>
-                                    <el-tag class="ml-2" type="info">Replies: {{ setting.replies }}</el-tag>
+                                    <h4>This migrator will migrate total <b>{{setting.tickets}}</b> tickets with <b>{{setting.replies}}</b> replies and <b>{{setting.customers}}</b> customers. If you already migrate tickets then it won't migrate existing tickets.</h4>
+                                    <span v-if="setting.last_migrated">Last Migration: <b>{{setting.last_migrated}}</b></span>
                                     <el-progress
                                         v-if="imporing && currently_importing == setting.handler"
                                         :text-inside="true"
                                         :stroke-width="24"
-                                        :percentage="percentage"
+                                        :percentage="completed"
                                         status="success"
                                         style="margin: 5px 0"
                                     />
@@ -83,13 +83,6 @@ export default {
         }
     },
 
-    computed: {
-        percentage() {
-            let percentage = parseInt((this.completed / this.total_tickets) * 100);
-            return percentage = !isNaN(percentage) ? percentage : 0;
-        }
-    },
-
     methods: {
         fetchSettings() {
             this.loading = true;
@@ -115,7 +108,7 @@ export default {
                     if (response.has_more) {
                         this.import_page = response.next_page;
                         this.total_tickets = response.total_tickets;
-                        this.completed += response.completed;
+                        this.completed = response.completed;
                         this.$nextTick(() => {
                             this.importTickets(handler);
                         });
@@ -124,15 +117,16 @@ export default {
                             message: response.message,
                             position: 'bottom-right'
                         })
+                        this.imporing = false;
                         this.import_done = true;
                     }
                 })
                 .catch((error) => {
                     this.$handleError(error);
                 })
-                .always(() => {
-                    this.imporing = false;
-                });
+                // .always(() => {
+                //     this.imporing = false;
+                // });
         },
         deleteOldTicketsWithData(handler) {
             this.deleting = true;
@@ -154,15 +148,16 @@ export default {
                             message: response.message,
                             position: 'bottom-right'
                         })
+                        this.deleting = false;
                         this.fetchSettings();
                     }
                 })
                 .catch(e => {
                     this.$handleError(e);
                 })
-                .always(() => {
-                    this.deleting = false;
-                });
+                // .always(() => {
+                //     this.deleting = false;
+                // });
         }
     },
 
