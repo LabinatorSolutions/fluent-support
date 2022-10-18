@@ -4,12 +4,11 @@ namespace FluentSupport\App\Services\Tickets\Importer;
 
 class SupportCandyTickets extends BaseImporter
 {
-    protected $handler = 'support_candy';
+    protected $handler = 'support-candy';
 
     /**
      * This `supportCandyStats`  method will fetch all available stats of Support Candy.
      */
-
     public function stats()
     {
         $ticketsCount = $this->getCount();
@@ -41,7 +40,7 @@ class SupportCandyTickets extends BaseImporter
         $tickets = $this->getTickets($this->limit, $page);
 
         $results = $this->migrateTickets($tickets);
-        $hasMore = $page * $this->limit >= $allCounts;
+        $hasMore = $page * $this->limit <= $allCounts;
 
         if (!$hasMore) {
             update_option('_fs_migrate_support_candy', current_time('mysql'), 'no');
@@ -69,14 +68,13 @@ class SupportCandyTickets extends BaseImporter
                 'psmsc_threads.body',
                 'psmsc_threads.type'
             ])
-            ->selectRaw($wpdb->prefix . '_psmsc_threads.id as thread_id')
+            ->selectRaw($wpdb->prefix . 'psmsc_threads.id as thread_id')
             ->join('psmsc_threads', 'psmsc_threads.ticket', '=', 'psmsc_tickets.id')
             ->where('psmsc_threads.type', '=', 'report')
             ->orderBy('psmsc_tickets.id', 'ASC')
             ->offset(($page - 1) * $limit)
             ->limit($limit)
             ->get();
-
         $formattedTickets = [];
 
         if ($tickets) {
@@ -95,7 +93,7 @@ class SupportCandyTickets extends BaseImporter
                     'title'                  => $ticket->subject,
                     'content'                => wp_kses_post($ticket->body),
                     'mailbox_id'             => $this->mailbox->id,
-                    'response_count'         => count($ticket->replies),
+                    'response_count'         => count($replies),
                     'status'                 => 'active',
                     'created_at'             => $ticket->date_created,
                     'updated_at'             => $ticket->date_updated,
@@ -111,7 +109,13 @@ class SupportCandyTickets extends BaseImporter
                     $ticketData['status'] = 'new';
                 }
 
-                $ticketData['customer'] = $this->getPerson($customerData, 'customer');
+                $customer = $this->getPerson($customerData, 'customer');
+
+                if(!$customer) {
+                    continue;
+                }
+
+                $ticketData['customer'] = $customer;
 
                 if ($ticket->assigned_agent) {
                     $ticketData['agent'] = $this->getAgentPerson($ticket->assigned_agent);
