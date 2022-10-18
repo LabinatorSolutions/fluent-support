@@ -44,7 +44,7 @@ class Attachment extends Model
     {
         return add_query_arg([
             'fst_file' => $this->file_hash,
-            'secure_sign' => md5($this->id.date('YmdH'))
+            'secure_sign' => md5($this->id . date('YmdH'))
         ], site_url('/index.php'));
     }
 }

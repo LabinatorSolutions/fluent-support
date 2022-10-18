@@ -3,7 +3,7 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ $t('Tickets Importer') }}</h3>
+                    <h3>{{ $t('Tickets Migration From Other Plugins') }}</h3>
                 </div>
                 <div class="fs_box_actions">
 
@@ -18,8 +18,8 @@
                         <div :class="'grid-content fs_'+setting.handler">
                             <el-card :body-style="{ padding: '0px' }" :header=setting.name>
                                 <div style="padding: 14px">
-                                    <el-tag class="ml-2" type="info">Tickets: {{setting.tickets}}</el-tag>
-                                    <el-tag class="ml-2" type="info">Replies: {{setting.replies}}</el-tag>
+                                    <el-tag class="ml-2" type="info">Tickets: {{ setting.tickets }}</el-tag>
+                                    <el-tag class="ml-2" type="info">Replies: {{ setting.replies }}</el-tag>
                                     <el-progress
                                         v-if="imporing && currently_importing == setting.handler"
                                         :text-inside="true"
@@ -28,11 +28,14 @@
                                         status="success"
                                         style="margin: 5px 0"
                                     />
-                                    <el-progress v-if="deleting && currently_importing == setting.handler" :percentage="50" status="exception" :indeterminate="true" style="margin: 5px 0"/>
-                                    <el-button type="success" :disabled="imporing" @click="importTickets(setting.handler)" style="margin-top: 15px;">
-                                        {{$t('Import Tickets')}}
+                                    <el-progress v-if="deleting && currently_importing == setting.handler"
+                                                 :percentage="50" status="exception" :indeterminate="true"
+                                                 style="margin: 5px 0"/>
+                                    <hr/>
+                                    <el-button type="success" :disabled="imporing"
+                                               @click="importTickets(setting.handler)" style="margin-top: 15px;">
+                                        {{ $t('Import Tickets') }}
                                     </el-button>
-
 
                                     <el-dialog v-model="import_done" title="Delete Imported Tickets">
                                         <span> Do you want to delete all imported tickets and its data? </span>
@@ -52,7 +55,8 @@
                 </el-row>
                 <div class="fs_box_body" v-if="!loading && !settings.length">
                     <h2>Import from other Support Tickets Plugins</h2>
-                    <p>If you want to migrate tickets from other ticketing system like <b>Awesome Support</b> or <b>Support Candy</b> WordPress plugin then you can migrate from this section.</p>
+                    <p>If you want to migrate tickets from other ticketing system like <b>Awesome Support</b> or <b>Support
+                        Candy</b> WordPress plugin then you can migrate from this section.</p>
                     <p>Currently no migration is available for this site</p>
                 </div>
             </div>
@@ -99,9 +103,7 @@ export default {
         importTickets(handler) {
             this.imporing = true;
             this.currently_importing = handler;
-            if (handler == 'support-candy' && !this.total_tickets) {
-                this.import_page = 0;
-            }
+
             this.$post('ticket_importer/import', {
                 handler: handler,
                 page: this.import_page,

@@ -51,13 +51,18 @@ class Ticket extends Model
     public static function boot()
     {
         static::creating(function ($model) {
-            $model->slug = static::slugify($model->title);
+            if (empty($model->slug)) {
+                $model->slug = static::slugify($model->title);
+            }
+
             $model->hash = substr(md5(time() . wp_generate_uuid4()), 0, 8) . mt_rand(1, 99);
-            $model->last_customer_response = current_time('mysql');
             $model->content_hash = md5($model->content);
+
+            $model->last_customer_response = current_time('mysql');
             $model->created_at = current_time('mysql');
             $model->updated_at = current_time('mysql');
             $model->waiting_since = current_time('mysql');
+
         });
     }
 
@@ -737,10 +742,9 @@ class Ticket extends Model
                     $value = array_values(array_filter(explode('|', $value)));
                 }
             }
-            if(!is_array($value) && !is_object($value)) {
+            if (!is_array($value) && !is_object($value)) {
                 $formattedData[$dataKey] = links_add_target(make_clickable($value));
-            }
-            else $formattedData[$dataKey] = $value;
+            } else $formattedData[$dataKey] = $value;
         }
 
         return $formattedData;
@@ -897,7 +901,7 @@ class Ticket extends Model
     {
         $ticketData = $this->maybeCreateNewCustomer($ticketData, $maybeNewCustomer);
 
-        if(!$ticketData) {
+        if (!$ticketData) {
             return new \WP_Error('error', 'Ticket could not be created');
         }
 
@@ -930,7 +934,7 @@ class Ticket extends Model
             $ticketData['priority'] = sanitize_text_field($ticketData['priority']);
         }
 
-        if(!empty($ticketData['client_priority'])) {
+        if (!empty($ticketData['client_priority'])) {
             $ticketData['client_priority'] = sanitize_text_field($ticketData['client_priority']);
         }
 
@@ -1005,7 +1009,7 @@ class Ticket extends Model
 
         $existingCustomer = Customer::where('email', $email)->first();
 
-        if($existingCustomer) {
+        if ($existingCustomer) {
             $ticketData['customer_id'] = $existingCustomer->id;
             return $ticketData;
         }
@@ -1142,7 +1146,7 @@ class Ticket extends Model
      * @return array
      * @throws Exception
      */
-    public function closeTicket($ticketId, $closeSilently=false)
+    public function closeTicket($ticketId, $closeSilently = false)
     {
         $agent = Helper::getAgentByUserId(get_current_user_id());
 
@@ -1408,9 +1412,9 @@ class Ticket extends Model
     public static function getTicketsQuery()
     {
         return self::with([
-            'customer' => function ($query) {
+            'customer'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent' => function ($query) {
+            }, 'agent'         => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
             'product',
