@@ -83,10 +83,7 @@
 
                                 <el-row :gutter="20">
                                     <el-col :span="18">
-                                        <el-select v-model="include_or_exclude">
-                                            <el-option :label="$t('Include')" value="include" />
-                                            <el-option :label="$t('Exclude')" value="exclude" />
-                                        </el-select>
+                                        <span> If you don't select any agents then all the agents report will be displayed her otherwise it will show only selected agents report.</span>
                                     </el-col>
                                 </el-row>
 
@@ -217,6 +214,20 @@ export default {
 
         sortedReports() {
             let reports = this.reports;
+
+            const settings = this.$getData('agents_summary_setting');
+
+            if (this.url != 'my-reports/my-summary' && settings) {
+                let reportsToInclude = [];
+                each(reports, report => {
+                    if (settings.agents.includes(report.id)){
+                        reportsToInclude.push(report);
+                    }
+                })
+                reports = reportsToInclude;
+                console.log(reports);
+            }
+
             if (this.sort_type == 'ascending') {
                 return reports.sort((a, b) => (parseInt(a.stats[this.sort_column]) > parseInt(b.stats[this.sort_column])) ? 1 : -1)
             }
@@ -254,9 +265,6 @@ export default {
             })
                 .then(response => {
                     this.reports = response.summary
-                    if (this.url != 'my-reports/my-summary') {
-                        this.fetchSummarySettings();
-                    }
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -267,41 +275,17 @@ export default {
         },
 
         fetchSummarySettings(){
-            this.$get('reports/summary-settings')
-                .then(response => {
-                    this.include_or_exclude_agents = response.agents ?? [];
-                    this.include_or_exclude = response.type ?? 'include';
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                });
+            const settings = this.$getData('agents_summary_setting');
+            return this.include_or_exclude_agents = settings.agents;
         },
 
         syncSummary() {
             this.loading = true;
-            this.$post('reports/sync-summary',{
-                agents: this.include_or_exclude_agents,
-                type: this.include_or_exclude,
-            })
-                .then(response => {
-                    this.open_setting = false;
-                    this.include_or_exclude_agents = response.summary.agents;
-                    this.include_or_exclude = response.summary.type;
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    });
-                    this.getReport();
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                });
+            this.$saveData('agents_summary_setting', {
+                agents: this.include_or_exclude_agents
+            });
+            this.open_setting = false;
+            this.getReport();
         },
 
         handleSorting(props) {
@@ -328,6 +312,7 @@ export default {
     },
     mounted() {
         this.getReport();
+        this.fetchSummarySettings();
     }
 }
 </script>
