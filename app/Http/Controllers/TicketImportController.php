@@ -1,15 +1,14 @@
 <?php
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Services\Tickets\Importer\MigratorService;
 use FluentSupport\Framework\Request\Request;
-use FluentSupport\App\Services\Tickets\TicketImportServices;
-use FluentSupport\App\Services\Tickets\Importer\Importer;
 use FluentSupport\App\Services\Tickets\Importer\BaseImporter;
 
 
 class TicketImportController
 {
-	public function getStats ( Importer $importService )
+	public function getStats ( MigratorService $importService )
 	{
         $stats = $importService->getStats();
         if(!$stats) {
@@ -18,12 +17,12 @@ class TicketImportController
         return $stats;
 	}
 
-	public function importTickets ( Importer $importService, Request $request )
+	public function importTickets ( MigratorService $importService, Request $request )
 	{
-		return $importService->handleImport( $request->getSafe('page', '', 'intval'), $request->getSafe('maybeDeleteTickets'), $request->getSafe('handler') );
+		return $importService->handleImport( $request->getSafe('page', '', 'intval'), $request->getSafe('handler') );
 	}
 
-	public function deleteTickets (Importer $importService, Request $request)
+	public function deleteTickets (MigratorService $importService, Request $request)
 	{
 		return $importService->deleteTickets($request->getSafe('page', '', 'intval'), $request->getSafe('handler'));
 	}

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace FluentSupport\App\Services\Tickets\Importer;
 
@@ -9,32 +9,33 @@ use FluentSupport\App\Models\Conversation;
 
 class AwesomeSupportTickets extends BaseImporter
 {
-	public function awesomeSupportStats() : array
+    protected $handler = 'awesome-support';
+
+	public function stats()
 	{
-		$ticketsCount = $this->countAwesomeSupportTickets();
+		$ticketsCount = $this->countTickets();
         $replyCount = $this->db->table('posts')
             ->where('post_type', 'ticket_reply')
             ->count();
 
         return [
         	'name' => esc_html('Awesome Support'),
-        	'tickets' => (int) $ticketsCount,
-			'replies' => (int) $replyCount,
+        	'tickets' => $ticketsCount,
+			'replies' => $replyCount,
 			'handler' => 'awesome-support'
     	];
 	}
-   
+
 	/**
 	 * This `doMigration` method will migrate ticket from other support system
 	 * @param int $page
-	 * @param string $maybeDeleteTickets 
 	 * @param string $handler
-	 * @return array $respone
+	 * @return array
 	 */
-    public function doMigration( $page, $maybeDeleteTickets, $handler )
+    public function doMigration( $page, $handler )
     {
     	$this->handler = $handler;
-        $allCounts = $this->countAwesomeSupportTickets();
+        $allCounts = $this->countTickets();
         $totalBach = ceil($allCounts / $this->limit);
 
         $tickets = $this->getTickets($this->limit, $page);
@@ -66,19 +67,19 @@ class AwesomeSupportTickets extends BaseImporter
     /**
 	 * This `getTickets` method will get tickets from other support system
 	 * @param int $limit
-	 * @param int $page 
+	 * @param int $page
 	 * @return object $tickets
 	 */
 	public function getTickets( $limit, $page )
     {
-    	$args = [ 
+    	$args = [
     		'posts_per_page' => $limit,
     		'paged' => $page
     	];
 
 
         $tickets = \wpas_get_tickets('any', $args);
-		
+
         if ($tickets) {
         	foreach ($tickets as $ticket) {
 	            $replies = $this->getReplies($ticket->ID);
@@ -110,7 +111,7 @@ class AwesomeSupportTickets extends BaseImporter
      * This `insertTicket` method will insert ticket with associated replies and attachments
      * @param object $ticket
      * return void
-     */ 
+     */
     public function insertTicket($ticket)
     {
         $isAlreadyImported = Helper::getTicketMeta($ticket->ID, 'as_origin_id');
@@ -205,7 +206,7 @@ class AwesomeSupportTickets extends BaseImporter
      * @param string $metaKey
      * @param int $postId
      * @return array
-     */ 
+     */
     public function getMeta($metaKey, $postId)
     {
         return get_post_meta($postId, $metaKey, true);
@@ -286,7 +287,7 @@ class AwesomeSupportTickets extends BaseImporter
         return $ticketData;
     }
 
-    protected function countAwesomeSupportTickets()
+    protected function countTickets()
 	{
 		return count( \wpas_get_tickets( 'any' ) );
 	}
@@ -300,7 +301,7 @@ class AwesomeSupportTickets extends BaseImporter
     {
         $hasmore = true;
 
-        $args = [ 
+        $args = [
             'posts_per_page' => $this->limit,
             'paged' => $page
         ];
@@ -334,7 +335,7 @@ class AwesomeSupportTickets extends BaseImporter
 
         return $response;
     }
-    
+
 }
 
 

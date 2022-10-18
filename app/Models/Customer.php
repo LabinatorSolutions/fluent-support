@@ -9,6 +9,7 @@ use FluentSupport\App\Models\Traits\CustomerTrait;
 class Customer extends Person
 {
     use CustomerTrait;
+
     protected static $type = 'customer';
 
     protected $searchable = [
@@ -27,7 +28,7 @@ class Customer extends Person
 
         static::creating(function ($model) {
             $model->person_type = static::$type;
-            $model->hash = md5(time().wp_generate_uuid4());
+            $model->hash = md5(time() . wp_generate_uuid4());
         });
 
         static::addGlobalScope(function (Builder $builder) {
@@ -59,23 +60,26 @@ class Customer extends Person
     {
         $customer = self::getCustomerFromData($customerData);
         $user = get_user_by('email', $customerData['email']);
-        if($user) {
-            if($user->first_name) {
+        if ($user) {
+            if ($user->first_name) {
                 $customerData['first_name'] = $user->first_name;
             }
-            if($user->last_name) {
+            if ($user->last_name) {
                 $customerData['last_name'] = $user->last_name;
             }
-            if(empty($customerData['first_name']) && empty($customerData['last_name'])) {
+            if (empty($customerData['first_name']) && empty($customerData['last_name'])) {
                 $customerData['first_name'] = $user->display_name;
             }
             $customerData['user_id'] = $user->ID;
         }
 
-        if(!$customer) {
-            if(!empty($customerData['last_ip_address'])) {
+        if (!$customer) {
+            if (!empty($customerData['last_ip_address'])) {
                 $customerData['ip_address'] = $customerData['last_ip_address'];
             }
+
+            $customerData = self::explodeFullName($customerData);
+
             // we have to create customer
             $customer = self::create($customerData);
 
@@ -88,7 +92,7 @@ class Customer extends Person
             do_action('fluent_support/customer_created', $customer);
 
         } else {
-            if(!empty($customerData['user_id']) || !empty($customerData['remote_uid'])) {
+            if (!empty($customerData['user_id']) || !empty($customerData['remote_uid'])) {
                 $customerData = array_filter($customerData);
                 $customer->fill($customerData);
                 $customer->save();
@@ -125,15 +129,15 @@ class Customer extends Person
         $email = $customerData['email'];
 
         $customer = false;
-        if($remoteUid) {
+        if ($remoteUid) {
             $customer = self::where('remote_uid', $remoteUid)->first();
         }
 
-        if(!$customer) {
-            if(!empty($customerData['user_id'])) {
+        if (!$customer) {
+            if (!empty($customerData['user_id'])) {
                 $customer = self::where('user_id', $customerData['user_id'])->first();
             }
-            if(!$customer) {
+            if (!$customer) {
                 $customer = self::where('email', $email)->first();
             }
         }

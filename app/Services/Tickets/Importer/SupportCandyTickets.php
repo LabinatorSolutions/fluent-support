@@ -2,357 +2,269 @@
 
 namespace FluentSupport\App\Services\Tickets\Importer;
 
-use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Conversation;
-
 class SupportCandyTickets extends BaseImporter
 {
-	protected $fromId = 0;
+    protected $handler = 'support_candy';
 
-	/**
-	 * This `supportCandyStats`  method will fetch all available stats of Support Candy.
-	 */
+    /**
+     * This `supportCandyStats`  method will fetch all available stats of Support Candy.
+     */
 
-	public function supportCandyStats()
-	{
-		$ticketsCount = $this->countSupportCandyTickets();
+    public function stats()
+    {
+        $ticketsCount = $this->getCount();
         $replyCount = $this->db->table('psmsc_threads')
             ->where('type', 'reply')
             ->count();
 
         return [
-        	'name' => esc_html('Support Candy'),
-        	'tickets' => (int) $ticketsCount,
-			'replies' => (int) $replyCount,
-			'handler' => 'support-candy'
-    	];
-	}
+            'name'          => 'Support Candy',
+            'tickets'       => $ticketsCount,
+            'replies'       => $replyCount,
+            'customers'     => $this->db->table('psmsc_customers')->count(),
+            'handler'       => $this->handler,
+            'last_migrated' => get_option('_fs_migrate_support_candy')
+        ];
+    }
 
-	/**
-	 * This `doMigration` method will migrate ticket from other support system
-	 * @param int $page
-	 * @param string $maybeDeleteTickets 
-	 * @param string $handler
-	 * @return array $respone
-	 */
-	public function doMigration($page, $maybeDeleteTickets, $handler)
-	{
-		$this->handler = $handler;
-		$hasmore = true;
-		$allCounts = $this->countSupportCandyTickets();
-        $totalBach = ceil($allCounts / $this->limit);
+    /**
+     * This `doMigration` method will migrate ticket from other support system
+     * @param int $page
+     * @param string $handler
+     * @return array
+     */
+    public function doMigration($page, $handler)
+    {
+        $this->handler = $handler;
+        $allCounts = $this->getCount();
 
         $tickets = $this->getTickets($this->limit, $page);
-        
-        $insertIds = [];
 
-        if($tickets) {
-        	foreach ($tickets as $ticket) {
-	            $insertIds[] = $this->insertTicket($ticket);
-	        }
+        $results = $this->migrateTickets($tickets);
+        $hasMore = $page * $this->limit >= $allCounts;
+
+        if (!$hasMore) {
+            update_option('_fs_migrate_support_candy', current_time('mysql'), 'no');
         }
 
-        $checkMore = $this->getTickets(1, end($insertIds));
-
-        if(empty($checkMore)){
-        	$hasmore = false;
-        }
-
-        $response = [
-        	'insertred' => $insertIds,
-        	'completed' => (int) count($insertIds),
-        	'has_more'	=> $hasmore,
-        	'imported_page' => (int) $page,
-        	'next_page' => (int) end($insertIds),
-        	'total_tickets' => (int) $allCounts
+        return [
+            'handler'       => $this->handler,
+            'insert_ids'    => $results['inserts'],
+            'skips'         => count($results['skips']),
+            'has_more'      => $hasMore,
+            'imported_page' => $page,
+            'next_page'     => $page + 1,
+            'total_tickets' => $allCounts,
+            'remaining'     => $allCounts - ($page * $this->limit)
         ];
-
-        if (!$hasmore){
-        	$response['message'] = __( $allCounts . ' ' . 'Tickets has been imported successfully.' ,'fluent-support');
-        	return $response;
-        }
-
-        return $response;
-	}
-
-	// This `getTickets` will fetch tickets by limit and id
-	private function getTickets($limit, $fromId)
-	{
-		$tickets = $this->db->table('psmsc_tickets')
-						->where('psmsc_tickets.id', '>', $fromId)
-						->oldest('psmsc_tickets.id')
-						->limit($limit)
-						->join('psmsc_threads', 'psmsc_threads.ticket', '=', 'psmsc_tickets.id')
-						->where('psmsc_threads.type', '=', 'report')
-						->get();
-
-		if ($tickets) {
-			foreach ($tickets as $ticket) {
-	            $replies = $this->getReplies($ticket->id);
-	            $ticket_status = $this->db->table('psmsc_statuses')->where('id', $ticket->status)->select(['name'])->first();
-	            $ticketStatus = 'new';
-	            
-	            if ($ticket_status->name == 'Open' && !$replies) {
-	                $ticket->waiting_since = sanitize_text_field($ticket->last_reply_on);
-	            }
-
-	            if ($replies && $ticket_status->name != 'Closed') {
-	                $ticketStatus = 'active';
-	            }
-
-	            $ticket->ticket_status = $ticketStatus;
-	            $ticket->replies = $replies;
-
-	            $ticket->customer = $this->getPerson($this->getTicketCustomer($ticket->customer), 'customer');
-
-	            if ($ticket->assigned_agent){
-	            	$ticket->agent = $this->getPerson($this->getTicketAgent($ticket->assigned_agent), 'agent');
-	            }
-
-	            if ($ticket_status->name == 'Closed') {
-	            	$ticketStatus = 'closed';
-	                $ticket->resolved_at = $ticket->date_closed;
-	            } else {
-	                $ticket->resolved_at = false;
-	            }
-
-        	}
-        	return $tickets;
-		}
-	}
-
-	/**
-     * This `insertTicket` method will insert ticket with associated replies and attachments
-     * @param object $ticket
-     * return void
-     */ 
-    public function insertTicket($ticket)
-    {
-    	$isAlreadyImported = Helper::getTicketMeta($ticket->id, 'as_sc_origin_id');
-
-    	if (!$isAlreadyImported){
-    		$ticketData = $this->buildTicketData($ticket);
-	        
-	        $ticketId = Ticket::insertGetId($ticketData);
-
-	        if ( $ticket->attachments ) {
-	        	$this->handleAttachments($ticket->id, $ticketId, $ticket->customer->id);
-	        }
-
-	        $firsAgentResponseDate = false;
-	        $closingDate = false;
-
-	        $repliesCount = count($ticket->replies);
-
-	        $ticketUpdateData = [];
-	        $agent = false;
-
-	        foreach ($ticket->replies as $index => $reply) {
-	        	$customer = $this->getPerson($this->getTicketCustomer($reply->customer), 'customer');
-
-	            if ($customer && $customer->remote_uid == $ticket->customer->remote_uid) {
-	                $person = $customer;
-	            } else {
-	                $person = $this->getPerson($this->getTicketAgent($reply->customer), 'agent');
-	                if (!$agent) {
-	                    $agent = $person;
-	                }
-	            }
-
-	            if ($person) {
-	                $personType = $person->person_type;
-	                if ($personType == 'agent') {
-	                    if (!$firsAgentResponseDate) {
-	                        $firsAgentResponseDate = $reply->date_created;
-	                    }
-	                    $ticketUpdateData['last_agent_response'] = $reply->date_created;
-	                } else {
-	                    $ticketUpdateData['last_customer_response'] = $reply->date_created;
-	                    $ticketUpdateData['waiting_since'] = $reply->date_created;
-	                }
-
-	                if ($ticketData['status'] == 'closed' && $index == ($repliesCount - 1)) {
-	                    // this is the last response
-	                    $closingDate = $reply->date_created;
-	                    $ticketUpdateData['closed_by'] = $person->id;
-	                    $ticketUpdateData['resolved_at'] = $reply->date_created;
-	                }
-	            }
-
-	            $replyData = [
-	                'serial'            => intval($index + 1),
-	                'ticket_id'         => intval($ticketId),
-	                'person_id'         => ($person) ? intval($person->id) : intval($this->fallbackAgentId()),
-	                'conversation_type' => sanitize_text_field('response'),
-	                'content'           => sanitize_textarea_field($reply->body),
-	                'source'            => sanitize_text_field($this->handler),
-	                'created_at'        => sanitize_text_field($reply->date_created),
-	                'updated_at'        => sanitize_text_field($reply->date_updated)
-	            ];
-
-	            $conversationId = Conversation::insertGetId($replyData);
-
-	            if ($reply->attachments) {
-	            	$this->handleAttachments($reply->id, $ticketId, $person->id, $conversationId);
-	            }
-	        }
-
-	        if ($firsAgentResponseDate) {
-	            $ticketUpdateData['first_response_time'] = sanitize_text_field( strtotime($firsAgentResponseDate) - strtotime($ticketData['created_at']) );
-	        }
-
-	        if ($closingDate) {
-	            $ticketUpdateData['total_close_time'] = sanitize_text_field( strtotime($closingDate) - strtotime($ticketData['created_at']) );
-	        }
-
-	        if ($agent) {
-	            $ticketUpdateData['agent_id'] = intval($agent->id);
-	        }
-
-	        $ticketUpdateData = array_filter($ticketUpdateData);
-
-	        if ($ticketUpdateData) {
-	            Ticket::where('id', $ticketId)
-	                ->update($ticketUpdateData);
-	        }
-
-	        Helper::updateTicketMeta($ticket->id, 'as_sc_origin_id', $ticketId);
-	        return $ticketId . ' - ' . $ticket->subject . ' [' . $ticketData['status'] . '] - ' . $ticket->id;
-    	}
     }
 
-    private function buildTicketData($ticket)
+    // This `getTickets` will fetch tickets by limit and page number
+    private function getTickets($limit, $page)
     {
-    	$ticketData = [
-            'status'         => sanitize_text_field($ticket->ticket_status),
-            'hash'           => sanitize_text_field(md5(time() . wp_generate_uuid4())),
-            'title'          => sanitize_text_field($ticket->subject),
-            'slug'           => sanitize_title($ticket->subject),
-            'source'         => sanitize_text_field($this->handler),
-            'content'        => sanitize_textarea_field($ticket->body),
-            'response_count' => intval(count($ticket->replies)),
-            'mailbox_id'	 => intval($this->mailbox->id),
-            'created_at'     => sanitize_text_field($ticket->date_created),
-            'updated_at'     => sanitize_text_field($ticket->date_updated)
-        ];
-
-        if (isset($ticket->customer)) {
-            $ticketData['customer_id'] = intval($ticket->customer->id);
-        }
-
-        if (isset($ticket->resolved_at)) {
-            $ticketData['resolved_at'] = sanitize_text_field($ticket->resolved_at);
-        }
-
-        if (isset($ticket->agent)) {
-            $ticketData['agent_id'] = intval($ticket->agent->id);
-        }
-
-        if (!isset($ticket->waiting_since)) {
-        	$ticketData['waiting_since'] = sanitize_text_field($ticket->date_created);
-        }
-
-        return $ticketData;
-    }
-
-    private function handleAttachments($id, $createdTicketId, $person, $conversationId = null)
-    {
-    	$attachments = $this->db->table('psmsc_attachments')
-            ->where('source_id', $id)
-            ->latest('id')
+        global $wpdb;
+        $tickets = $this->db->table('psmsc_tickets')
+            ->select([
+                'psmsc_tickets.*',
+                'psmsc_threads.body',
+                'psmsc_threads.type'
+            ])
+            ->selectRaw($wpdb->prefix . '_psmsc_threads.id as thread_id')
+            ->join('psmsc_threads', 'psmsc_threads.ticket', '=', 'psmsc_tickets.id')
+            ->where('psmsc_threads.type', '=', 'report')
+            ->orderBy('psmsc_tickets.id', 'ASC')
+            ->offset(($page - 1) * $limit)
+            ->limit($limit)
             ->get();
 
+        $formattedTickets = [];
 
-        if ($attachments){
-        	foreach ( $attachments as $attachment ) {
-        		$uploadDir = wp_get_upload_dir();
-        		$url = explode('uploads/', $attachment->file_path);
-        		$fullUrl = $uploadDir['baseurl'] . '/' . $url[1];
+        if ($tickets) {
+            foreach ($tickets as $ticket) {
+                $customerData = $this->getTicketCustomer($ticket->customer);
 
-	        	Attachment::create([
-	        		'ticket_id' => $createdTicketId,
-	        		'conversation_id' => $conversationId,
-	        		'full_url' => $fullUrl,
-	        		'title' => $attachment->name,
-	        		'person_id' => intval($person),
-	        		'file_path' => $attachment->file_path,
-	        	]);
-        	}
+                if (!$customerData) {
+                    continue;
+                }
+
+                $replies = $this->getReplies($ticket);
+                $ticketData = [
+                    'origin_id'              => $ticket->id,
+                    'replies'                => $replies,
+                    'source'                 => $this->handler,
+                    'title'                  => $ticket->subject,
+                    'content'                => wp_kses_post($ticket->body),
+                    'mailbox_id'             => $this->mailbox->id,
+                    'response_count'         => count($ticket->replies),
+                    'status'                 => 'active',
+                    'created_at'             => $ticket->date_created,
+                    'updated_at'             => $ticket->date_updated,
+                    'last_customer_response' => $ticket->date_created,
+                    'waiting_since'          => $ticket->date_created
+                ];;
+
+                $ticket->resolved_at = NULL;
+                if ($ticket->date_closed && $ticket->date_closed != '0000-00-00 00:00:00') {
+                    $ticketData['status'] = 'closed';
+                    $ticketData['resolved_at'] = $ticket->date_closed;
+                } else if (!$replies) {
+                    $ticketData['status'] = 'new';
+                }
+
+                $ticketData['customer'] = $this->getPerson($customerData, 'customer');
+
+                if ($ticket->assigned_agent) {
+                    $ticketData['agent'] = $this->getAgentPerson($ticket->assigned_agent);
+                }
+
+                $ticketData['attachments'] = $this->getAttachments($ticket->thread_id);
+
+                $formattedTickets[] = $ticketData;
+            }
         }
+
+        return $formattedTickets;
     }
 
+    protected function getAttachments($threadId)
+    {
+        $attachments = $this->db->table('psmsc_attachments')
+            ->where('source_id', $threadId)
+            ->orderBY('id', 'ASC')
+            ->get();
 
-	protected function getReplies($ticketId)
-	{
-		return $this->db->table('psmsc_threads')
-						->where('type', 'reply')
-						->where('ticket', $ticketId)
-						->oldest('id')
-						->get();
-	}
+        $formattedAttachments = [];
 
-	private function countSupportCandyTickets()
-	{
-		return $this->db->table('psmsc_tickets')->count();
-	}
+        foreach ($attachments as $attachment) {
+            $uploadDir = wp_get_upload_dir();
+            $fileUrl = str_replace($uploadDir['basedir'], $uploadDir['baseurl'], $attachment->file_path);
 
-	private function getTicketCustomer($customerId)
-	{
-		$customer = $this->db->table('psmsc_customers')
-					->where('id', $customerId)
-					->select(['user'])
-					->first();
-					
-		return (int) $customer->user;
-	}
+            $fileInfo = wp_check_filetype($attachment->file_path);
 
-	private function getTicketAgent($agentId)
-	{
-		$agent = $this->db->table('psmsc_agents')
-					->where('id', $agentId)
-					->select(['user'])
-					->first();
+            $formattedAttachments[] = [
+                'full_url'  => $fileUrl,
+                'title'     => $attachment->name,
+                'file_path' => $attachment->file_path,
+                'driver'    => 'local',
+                'status'    => 'active',
+                'file_type' => (!empty($fileInfo['type'])) ? $fileInfo['type'] : ''
+            ];
+        }
 
-		if (!$agent) {
-			return $this->fallbackAgentId();
-		}
+        return $formattedAttachments;
+    }
 
-		return (int) $agent->user;
-	}
+    protected function getReplies($ticket)
+    {
+        $replies = $this->db->table('psmsc_threads')
+            ->select([
+                'psmsc_threads.*',
+                'psmsc_customers.user',
+                'psmsc_customers.name',
+                'psmsc_customers.email'
+            ])
+            ->join('psmsc_customers', 'psmsc_customers.id', '=', 'psmsc_threads.customer')
+            ->where('psmsc_threads.type', 'reply')
+            ->where('psmsc_threads.ticket', $ticket->id)
+            ->orderBy('psmsc_threads.id', 'ASC')
+            ->get();
 
-	public function deleteTickets($page)
-	{
-		$hasmore = true;
+        $formattedReplies = [];
 
-		$ticketsQuery = $this->db->table('psmsc_tickets')
-			->limit($this->limit)
-			->select(['id']);
+        foreach ($replies as $reply) {
+            $formattedReplies[] = [
+                'content'           => $reply->body,
+                'conversation_type' => 'response',
+                'created_at'        => $reply->date_created,
+                'updated_at'        => $reply->date_updated,
+                'is_customer_reply' => ($ticket->customer === $reply->customer),
+                'user'              => [
+                    'user_id'   => $reply->user,
+                    'email'     => $reply->email,
+                    'full_name' => $reply->name
+                ],
+                'attachments'       => $this->getAttachments($reply->id)
+            ];
+        }
 
-		$tickets = $ticketsQuery->get();
+        return $formattedReplies;
+    }
 
-		if (!$tickets){
-			$hasmore = false;
-		}
+    private function getCount()
+    {
+        return $this->db->table('psmsc_tickets')->count();
+    }
 
-		if ($tickets){
-			foreach($tickets as $ticket){
-				$ticketsQuery->where('id', $ticket->id)->delete();
-				$this->db->table('psmsc_threads')->where('ticket', $ticket->id)->delete();
-			}
-		}
+    private function getTicketCustomer($customerId)
+    {
+        $customer = $this->db->table('psmsc_customers')
+            ->where('id', $customerId)
+            ->first();
 
-		$response = [
-			'has_more' => $hasmore,
-			'next_page' => (int) 0
-		];
+        if (!$customer) {
+            return false;
+        }
 
-		if (!$hasmore){
-			$response['message'] = __('All tickets has been deleted successfully. Please delete other ticket & reply realated data manually', 'fluent-support');
-			return $response;
-		}
+        return [
+            'user_id'   => $customer->user,
+            'full_name' => $customer->name,
+            'email'     => $customer->email
+        ];
+    }
 
-		return $response;
-	}
+    protected function getAgentPerson($agentId)
+    {
+        static $agents = [];
+
+        if (isset($agents[$agentId])) {
+            return $agents[$agentId];
+        }
+
+        $agent = $this->db->table('psmsc_agents')
+            ->where('id', $agentId)
+            ->first();
+
+        if (!$agent) {
+            return false;
+        }
+
+        $agents[$agentId] = $this->getPerson([
+            'user_id'   => $agent->user,
+            'full_name' => $agent->name
+        ], 'agent');
+        return $agents[$agentId];
+    }
+
+    public function deleteTickets($page)
+    {
+        $tables = [
+            'psmsc_agents',
+            'psmsc_attachments',
+            'psmsc_categories',
+            'psmsc_custom_fields',
+            'psmsc_customers',
+            'psmsc_email_notifications',
+            'psmsc_email_otp',
+            'psmsc_holidays',
+            'psmsc_logs',
+            'psmsc_options',
+            'psmsc_priorities',
+            'psmsc_scheduled_tasks',
+            'psmsc_statuses',
+            'psmsc_threads',
+            'psmsc_tickets',
+            'psmsc_wh_exceptions',
+            'psmsc_working_hrs'
+        ];
+
+        global $wpdb;
+        foreach ($tables as $table) {
+            $this->db->query("TRUNCATE TABLE {$wpdb->prefix}{$table}");
+        }
+
+        return [
+            'has_more' => false,
+            'message'  => 'All Support Candy Tickets and associated data has been deleted. You may now deactivate Support Candy Plugin and start using Fluent Support'
+        ];
+    }
 }
