@@ -86,7 +86,7 @@
 
                 <div style="background: #dbdfe5; padding: 10px 10px 5px; margin-bottom: 10px;">
                     <h3 style="margin: 0px;">Selected Contact Details</h3>
-                    <p>Name: {{new_customer.first_name}} {{new_customer.first_name}}</p>
+                    <p>Name: {{new_customer.first_name}} {{new_customer.last_name}}</p>
                     <p>Email: {{new_customer.email}}</p>
                 </div>
 
