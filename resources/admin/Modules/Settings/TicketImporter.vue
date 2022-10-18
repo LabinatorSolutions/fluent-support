@@ -94,11 +94,14 @@ export default {
         fetchSettings() {
             this.loading = true;
             this.$get('ticket_importer').then((response) => {
-                this.settings = response;
-                this.loading = false;
-            }).catch((e) => {
-                this.$handleError(e);
-            });
+                this.settings = response.stats;
+            })
+                .catch((e) => {
+                    this.$handleError(e);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
         },
         importTickets(handler) {
             this.imporing = true;
@@ -117,7 +120,6 @@ export default {
                             this.importTickets(handler);
                         });
                     } else {
-                        this.imporing = false;
                         this.$notify.success({
                             message: response.message,
                             position: 'bottom-right'
@@ -127,16 +129,15 @@ export default {
                 })
                 .catch((error) => {
                     this.$handleError(error);
+                })
+                .always(() => {
+                    this.imporing = false;
                 });
         },
         deleteOldTicketsWithData(handler) {
             this.deleting = true;
             this.import_done = false;
             this.currently_importing = handler;
-
-            if (handler == 'support-candy') {
-                this.delete_page = 0;
-            }
 
             this.$del('ticket_importer/delete', {
                 page: this.delete_page,
@@ -149,7 +150,6 @@ export default {
                             this.deleteOldTicketsWithData(handler);
                         });
                     } else {
-                        this.deleting = false;
                         this.$notify.success({
                             message: response.message,
                             position: 'bottom-right'
@@ -160,12 +160,15 @@ export default {
                 .catch(e => {
                     this.$handleError(e);
                 })
+                .always(() => {
+                    this.deleting = false;
+                });
         }
     },
 
     mounted() {
         this.fetchSettings();
-        this.$setTitle('Ticket Importer');
+        this.$setTitle('Ticket Migrator');
     }
 }
 </script>
