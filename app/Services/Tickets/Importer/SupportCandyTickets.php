@@ -42,26 +42,35 @@ class SupportCandyTickets extends BaseImporter
         $results = $this->migrateTickets($tickets);
         $hasMore = $page * $this->limit <= $allCounts;
 
-        if (!$hasMore) {
-            update_option('_fs_migrate_support_candy', current_time('mysql'), 'no');
-        }
+        $remainingTickets = $allCounts - ($page * $this->limit);
+        $completedTickets = intval(($page / $allCounts) * 100);
 
-        return [
+        $response = [
             'handler'       => $this->handler,
             'insert_ids'    => $results['inserts'],
             'skips'         => count($results['skips']),
             'has_more'      => $hasMore,
+            'completed'     => $completedTickets,
             'imported_page' => $page,
+            'total_pages'   => ceil($allCounts / $this->limit),
             'next_page'     => $page + 1,
             'total_tickets' => $allCounts,
-            'remaining'     => $allCounts - ($page * $this->limit)
+            'remaining'     => $remainingTickets
         ];
+
+        if (!$hasMore) {
+            $response['message'] = __('All tickets has been importer successfully', 'fluent-support');
+            update_option('_fs_migrate_support_candy', current_time('mysql'), 'no');
+        }
+
+        return $response;
     }
 
     // This `getTickets` will fetch tickets by limit and page number
     private function getTickets($limit, $page)
     {
         global $wpdb;
+
         $tickets = $this->db->table('psmsc_tickets')
             ->select([
                 'psmsc_tickets.*',
@@ -75,6 +84,7 @@ class SupportCandyTickets extends BaseImporter
             ->offset(($page - 1) * $limit)
             ->limit($limit)
             ->get();
+
         $formattedTickets = [];
 
         if ($tickets) {
@@ -99,7 +109,7 @@ class SupportCandyTickets extends BaseImporter
                     'updated_at'             => $ticket->date_updated,
                     'last_customer_response' => $ticket->date_created,
                     'waiting_since'          => $ticket->date_created
-                ];;
+                ];
 
                 $ticket->resolved_at = NULL;
                 if ($ticket->date_closed && $ticket->date_closed != '0000-00-00 00:00:00') {
@@ -239,6 +249,26 @@ class SupportCandyTickets extends BaseImporter
         return $agents[$agentId];
     }
 
+    private function resolveAgent($ticketId, $customerId)
+    {
+        $agentUser = $this->db->table('psmsc_threads')
+            ->where('ticket', $ticketId)
+            ->where('type', 'reply')
+            ->oldest('ID')
+            ->where('customer', '!=', $customerId)
+            ->select(['customer'])
+            ->first();
+
+        $agent = $this->db->table('psmsc_agents')
+            ->where('id', $agentUser->customer)
+            ->first();
+
+         return $this->getPerson([
+            'user_id'   => $agent->user,
+            'full_name' => $agent->name
+        ], 'agent');
+    }
+
     public function deleteTickets($page)
     {
         $tables = [
@@ -263,12 +293,12 @@ class SupportCandyTickets extends BaseImporter
 
         global $wpdb;
         foreach ($tables as $table) {
-            $this->db->query("TRUNCATE TABLE {$wpdb->prefix}{$table}");
+            $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}{$table}");
         }
 
         return [
             'has_more' => false,
-            'message'  => 'All Support Candy Tickets and associated data has been deleted. You may now deactivate Support Candy Plugin and start using Fluent Support'
+            'message'  => __('All Support Candy Tickets and associated data has been deleted. You may now deactivate Support Candy Plugin and start using Fluent Support', 'fluent-support')
         ];
     }
 }
