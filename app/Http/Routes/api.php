@@ -110,8 +110,6 @@ $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router)
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
     $router->get('/response-growth', 'ReportingController@getResponseChart');
     $router->get('/agents-summary', 'ReportingController@getAgentsSummary');
-    $router->post('/sync-summary', 'ReportingController@syncSummary');
-    $router->get('/summary-settings', 'ReportingController@getSummarySettings');
 });
 
 $router->prefix('my-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {
