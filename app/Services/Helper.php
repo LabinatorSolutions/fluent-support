@@ -95,16 +95,13 @@ class Helper
      *
      * @return mixed
      */
-    public static function customTicketStatus(){
-        $defaultKey = apply_filters('fluent_support/ticket_status_groups_default', ['open', 'active', 'closed', 'new', 'all']);
+    public static function changeableTicketStatuses(){
         $ticketStatus = static::ticketStatusGroups();
-        foreach ($ticketStatus as $key => $status){
-            if(in_array($key, $defaultKey)){
-                unset($ticketStatus[$key]);
-            }
-        }
 
-        return $ticketStatus;
+        unset($ticketStatus['all']);
+        unset($ticketStatus['open']);
+
+        return apply_filters('fluent_support/changeable_ticket_statuses', $ticketStatus);
     }
 
     /**

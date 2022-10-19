@@ -247,7 +247,7 @@
                                 placement="bottom"
                                 :width="400"
                                 trigger="click"
-                                v-if="has_pro && !isEmpty(custom_ticket_statuses)"
+                                v-if="has_pro && !isEmpty(ticket_statuses)"
                             >
                                 <template #reference>
                                     <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
@@ -517,7 +517,7 @@ export default {
             filteredWatchersIds: [],
             split_ticket_modal: false,
             split_ticket: {},
-            custom_ticket_statuses: this.appVars.custom_ticket_statuses,
+            ticket_statuses: this.appVars.changeable_ticket_statuses,
             close_ticket_silently: false
         }
     },
@@ -849,11 +849,13 @@ export default {
         },
     },
     computed: {
-       getTicketStatus: function() {
+       getTicketStatus() {
           const status = {};
-          for (let key in this.custom_ticket_statuses) {
-              status[key] = this.custom_ticket_statuses[key][0];
+
+          for (let key in this.ticket_statuses) {
+              status[key] = this.ticket_statuses[key][0];
           }
+          
           return status;
       }
     },
