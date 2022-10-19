@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.0
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,17 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.6.6 (Date: October, 2022) =
+* Activity Log Filters
+* Active Tickets for Products
+* Waiting Tickets stat on Dashboard
+* Hourly Reports for tickets activity
+* New Trigger – Ticket Closed on Automation (Pro)
+* Close Ticket Silently (without triggering emails)
+* Migrate Tickets from Awesome Support
+* Migrate Tickets from SupportCandy
+* Bug Fixes and Improvements
 
 = 1.6.5 (Date: August 24, 2022) =
 * Added Auto Close Ticket Module based on ticket inactivity days (Pro)
