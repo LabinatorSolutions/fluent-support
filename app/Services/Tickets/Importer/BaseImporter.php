@@ -96,7 +96,7 @@ abstract class BaseImporter
 
         Helper::updateTicketMeta($createdTicket->id, '_' . $this->handler . '_origin_id', $ticketData['origin_id']);
 
-        if (!empty($ticketData['replies'])) {
+        if (empty($ticketData['replies'])) {
             return $createdTicket;
         }
 
@@ -106,6 +106,8 @@ abstract class BaseImporter
         $waitingSince = $createdTicket->waiting_since;
         $responseCount = 0;
         $firstResponseTimestamp = false;
+
+        $defualtAgentId = false;
 
         foreach ($ticketData['replies'] as $reply) {
             $replyData = Arr::only($reply, [
@@ -121,9 +123,11 @@ abstract class BaseImporter
 
             $person = ($reply['is_customer_reply']) ? $this->getPerson($reply['user']) : $this->getPerson($reply['user'], 'agent');
 
-            if ($person) {
+            if (!$person) {
                 continue; // person could not be found
             }
+
+            $replyData['person_id'] = intval($person->id);
 
             if ($replyData['conversation_type'] == 'response') {
                 $responseCount++;
@@ -143,6 +147,8 @@ abstract class BaseImporter
                     $lastAgentResponseTime = $replyData['created_at'];
                     $waitingSince = $replyData['created_at'];
                 }
+
+                $defualtAgentId  = $person->id;
             }
 
             $conversionId = $this->db->table('fs_conversations')
@@ -162,6 +168,10 @@ abstract class BaseImporter
             'waiting_since'          => $waitingSince,
             'response_count'         => $responseCount
         ]);
+
+        if(!$createdTicket->agent_id && $defualtAgentId) {
+            $ticketUpdateData['agent_id'] = $defualtAgentId;
+        }
 
         if ($firstResponseTimestamp) {
             $ticketUpdateData['first_response_time'] = strtotime($firstResponseTimestamp) - strtotime($createdTicket->crerated_at);

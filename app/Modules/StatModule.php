@@ -203,7 +203,7 @@ class StatModule
 
     /**
      * This `getActiveTicketsByProductStats` method will count today's tickets by product that are waiting for reply
-     * @return array[]
+     * @return array $result
      */
     public static function getActiveTicketsByProductStats()
     {
@@ -225,7 +225,7 @@ class StatModule
      * This will count the number of tickets that are waiting for response also it can receive parameters
      * @param string $whereClause // This is the where clause that will be used in the query
      * @param string $whereClauseValue // This is the value of the where clause
-     * @return int
+     * @return int $awatingTicketCount
      */
     public static function countAwaitingTickets($whereClause = null, $whereClauseValue = null )
     {
@@ -235,14 +235,14 @@ class StatModule
             $ticket = $ticket->where( sanitize_text_field($whereClause), sanitize_text_field($whereClauseValue) );
         }
 
-        $ticket = $ticket->where('status', '!=' ,'closed')
+        $awatingTicketCount = $ticket->where('status', '!=' ,'closed')
             ->where( function ($query) {
                 $query->whereColumn('last_agent_response', '<', 'last_customer_response')
                     ->orWhereNull('last_agent_response')
                     ->orWhere('status', 'new');
             })->count();
 
-        return $ticket;
+        return $awatingTicketCount;
     }
 
 }

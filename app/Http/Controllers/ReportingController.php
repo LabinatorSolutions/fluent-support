@@ -180,30 +180,4 @@ class ReportingController extends Controller
             'summary' =>  $reporting->agentSummary($request->getSafe('from'), $request->getSafe('to'), $agent->id)
         ];
     }
-
-    /**
-     * `syncSummary` method will sync the summary data
-     * @param Request $request
-     * @param Reporting $reporting
-     * @return array
-     */
-    public function syncSummary( Reporting $reporting, Request $request )
-    {
-        $data = $request->getSafe();
-        return [
-            'summary' => $reporting->syncSummary($data),
-            'message' => __('Summary settings has been synced successfully', 'fluent-support')
-        ];
-    }
-
-    /**
-     * `getSummarySettings` method will return the summary settings
-     * @param Request $request
-     * @param Reporting $reporting
-     * @return array
-     */
-    public function getSummarySettings( Reporting $reporting )
-    {
-        return $reporting->getSummarySettings();
-    }
 }
