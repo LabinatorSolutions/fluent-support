@@ -1,6 +1,6 @@
 === Fluent Support - WordPress Helpdesk and Customer Support Ticket Plugin ===
 Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
-Tags: support, ticketing, fluent support, support plugin, helpdesk
+Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.0
 Stable tag: 1.6.5
@@ -92,6 +92,35 @@ With BuddyPress / BuddyPress integration, you can get detailed overview about yo
 = Automate Smartly and Do More in Less Time =
 With the powerful Workflow and Saved Replied feature (pro) you can automatically send replies, add internal notes, set priority, assign appropriate support agent, etc on customer's query event.
 With the manual workflow, you can create a set of tasks and run those tasks on the selected filtered tickets. So you can automate multiple tickets and on a single click.
+
+= Migrate From Other Support Plugins =
+If you are using any of the following Support plugin and wants to migrate to this high performance and super fast support plugin then you can do that in few minutes. We have built a super smooth migration module to make your life easier.
+
+<h4> Migrate From Awesome Support - WordPress HelpDesk & Support Plugin</h4>
+If you are an Awesome Support plugin user then we got you covered. Just install Fluent Support, Configure with basic settings, create your agents and then follow the following steps
+
+* Go to Fluent Support -> Settings
+* You can see the Awesome Support migration details
+* Click on the migrate now button
+* It will take few minutes depends on your support tickets size
+* Once completed it will ask if you want to delete Awesome Support Tickets from your database.
+* Confirm delete or leave it as it is.
+* Now you have all the data right inside your Fluent Support plugin.
+* Enjoy your day!
+
+
+<h4>Migrate From SupportCandy – Helpdesk & Support Ticket System</h4>
+If you are a Support Candy plugin user then it's super easy to migrate to Fluent Support. Just install Fluent Support, Configure with basic settings, create your agents and then follow the following steps
+
+* Go to Fluent Support -> Settings
+* You can see the SupportCandy migration details
+* Click on the migrate now button
+* It will take few minutes depends on your support tickets size in SupportCandy Plugin
+* Once completed it will ask if you want to delete SupportCandy Tickets from your database.
+* Confirm delete or leave it as it is. If you leave it then all data in SupportCandy will remain as it is.
+* Now you have all the data right inside your Fluent Support plugin.
+* Migration done from "SupportCandy – Helpdesk & Support Ticket System" to Fluent Support Plugin!
+
 
 = Reviews by WordPress Experts =
 
