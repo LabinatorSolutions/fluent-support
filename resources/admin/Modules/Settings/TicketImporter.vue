@@ -18,7 +18,8 @@
                         <div :class="'grid-content fs_'+setting.handler">
                             <el-card :body-style="{ padding: '4px' }" :header=setting.name style="margin: 10px 0">
                                 <div style="padding: 14px">
-                                    <h4>This migrator will migrate total <b>{{setting.tickets}}</b> tickets with <b>{{setting.replies}}</b> replies and <b>{{setting.customers}}</b> customers. If you already migrate tickets then it won't migrate existing tickets.</h4>
+                                    <h4 v-if="setting?.type=='sass'">Migrate tickets from <b>{{setting.name}}</b> in one click.</h4>
+                                    <h4 v-else>This migrator will migrate total <b>{{setting.tickets}}</b> tickets with <b>{{setting.replies}}</b> replies and <b>{{setting.customers}}</b> customers. If you already migrate tickets then it won't migrate existing tickets.</h4>
                                     <span v-if="setting.last_migrated">Last Migration: <b>{{setting.last_migrated}}</b></span>
                                     <el-progress
                                         v-if="imporing && currently_importing == setting.handler"

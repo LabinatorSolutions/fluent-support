@@ -248,21 +248,6 @@ class AwesomeSupportTickets extends BaseImporter
         return $response;
     }
 
-    private function resolvePerson($personUserId)
-    {
-        $person = get_user_by('ID', $personUserId);
-
-        if (!$person) {
-            return false;
-        }
-
-        return [
-            'user_id'   => $personUserId,
-            'full_name' => $person->first_name . ' ' . $person->last_name,
-            'email'     => $person->user_email
-        ];
-    }
-
 }
 
 

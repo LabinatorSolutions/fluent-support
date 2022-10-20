@@ -19,6 +19,10 @@ class MigratorService
             $stats[] = $this->mapClassWithHandler('support-candy')->stats();
         }
 
+        if (defined('JSST_PLUGIN_PATH')) {
+            $stats[] = $this->mapClassWithHandler('js-helpdesk')->stats();
+        }
+
         return [
             'stats' => $stats
         ];
@@ -44,10 +48,11 @@ class MigratorService
     {
         $namespace = "FluentSupport\App\Services\Tickets\Importer\\";
 
-        $classMapper = [
+        $classMapper = apply_filters('fluent_support/migrator_class_mapper', [
             'awesome-support' => 'AwesomeSupportTickets',
-            'support-candy'   => 'SupportCandyTickets'
-        ];
+            'support-candy'   => 'SupportCandyTickets',
+            'js-helpdesk'     => 'JSHelpdeskTickets',
+        ]);
 
         $class = $namespace . $classMapper[$handler];
 
