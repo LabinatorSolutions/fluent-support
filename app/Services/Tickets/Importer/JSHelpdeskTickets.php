@@ -57,7 +57,7 @@ class JSHelpdeskTickets extends BaseImporter
         $offset = ($page - 1) * $limit;
 
         $tickets = $this->db->table('js_ticket_tickets')
-            ->select(['id', 'uid', 'name', 'email', 'subject', 'message', 'status', 'lastreply', 'created', 'updated', 'isanswered', 'closed', 'attachmentdir'])
+            ->select(['id', 'uid', 'name', 'email', 'subject', 'message', 'status', 'lastreply', 'created', 'updated', 'isanswered', 'closed', 'attachmentdir', 'priorityid'])
             ->oldest('id')
             ->offset($offset)
             ->limit($limit)
@@ -97,6 +97,8 @@ class JSHelpdeskTickets extends BaseImporter
                     $ticketData['resolved_at'] = $ticket->closed;
                 }
 
+                $ticketData['client_priority'] = $this->getPriority($ticket->priorityid);
+                $ticketData['priority'] = $ticketData['client_priority'];
                 $ticketData['attachments'] = $this->getAttachments($ticket->id, 'ticket');
 
                 $customerData = [
@@ -190,11 +192,33 @@ class JSHelpdeskTickets extends BaseImporter
             ->count();
     }
 
+    private function getPriority($priorityId)
+    {
+        if (2 == $priorityId) {
+            return 'medium';
+        } else if (4 == $priorityId) {
+            return 'critical';
+        } else {
+            return 'normal';
+        }
+    }
+
     public function deleteTickets($page)
     {
         $tables = [
             'js_ticket_tickets',
             'js_ticket_replies',
+            'js_ticket_config',
+            'js_ticket_departments',
+            'js_ticket_email',
+            'js_ticket_emailtemplates',
+            'js_ticket_erasedatarequests',
+            'js_ticket_fieldsordering',
+            'js_ticket_jshdsessiondata',
+            'js_ticket_priorities',
+            'js_ticket_slug',
+            'js_ticket_system_errors',
+            'js_ticket_users',
         ];
 
         global $wpdb;
