@@ -598,4 +598,17 @@ class Helper
             return false;
         }
     }
+
+    public static function getExportOptions(){
+        return [
+            'Agent' => __('Agent', 'fluent-support'),
+            'Responses' => __('Responses', 'fluent-support'),
+            'Interactions' => __('Interactions', 'fluent-support'),
+            'Open Tickets' => __('Open Tickets', 'fluent-support'),
+            'Closed' => __('Closed', 'fluent-support'),
+            'Waiting Tickets' => __('Waiting Tickets', 'fluent-support'),
+            'Average Waiting' => __('Average Waiting', 'fluent-support'),
+            'Max Waiting' => __('Max Waiting', 'fluent-support'),
+        ];
+    }
 }
