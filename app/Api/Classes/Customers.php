@@ -89,7 +89,7 @@ class Customers
      * @return object|boolean
      */
 
-    public function createCustomerWithOrWithoutWpUser(array $data, bool $createWpUser = false)
+    public function createCustomerWithOrWithoutWpUser(array $data, $createWpUser = false)
     {
         if (!$createWpUser) {
             $isExist = Customer::where('email', $data['email'])->first();
@@ -118,7 +118,7 @@ class Customers
      * @param bool $withAssociatedData | this will delete all tickets and attachments of this customer
      * @return void
      */
-    public function deleteCustomer(int $id, bool $withAssociatedData = false)
+    public function deleteCustomer($id, $withAssociatedData = false)
     {
         if (!$id) {
             return;
