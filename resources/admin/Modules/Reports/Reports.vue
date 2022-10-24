@@ -48,7 +48,7 @@
                             <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'reports'" :agent_id="agent"></component>
                         </div>
                     </div>
-                    <agent-reports :url="'reports/agents-summary'" :show_settings="true"/>
+                    <agent-reports :url="'reports/agents-summary'" :show_settings="true" :show_export_btn="true"/>
                 </el-col>
                 <el-col :sm="24" :md="8" :lg="6">
                     <div class="fs_box">
