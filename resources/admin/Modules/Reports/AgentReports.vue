@@ -10,6 +10,7 @@
                         <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18">
                             <Setting />
                         </el-icon>
+
                         <el-date-picker
                             @change="getReport()"
                             v-model="date_range"
@@ -21,6 +22,7 @@
                             :end-placeholder="$t('End')"
                             :shortcuts="dateShortcuts"
                         />
+                        <el-icon v-if="show_export_btn" @click="open_export_options=true"  class="fs_summary_export_icon"><Download /></el-icon>
                     </div>
                 </div>
                 <div class="fs_box_body">
@@ -102,6 +104,27 @@
                     </modal>
                 </Teleport>
 
+                <Teleport to="body">
+                    <modal :show="open_export_options" :title="$t('exclude_or_include_in_summary')" @close="open_export_options = false">
+                        <template #body>
+                            <div class="fs_summary_settings">
+                                <el-row :gutter="20">
+                                    <el-col :span="18">
+                                        <span> If you don't select any agents then all the agents report will be displayed her otherwise it will show only selected agents report.</span>
+                                    </el-col>
+                                </el-row>
+                                <el-checkbox-group v-model="selected_options" class="fs_summary_export_items">
+                                    <el-checkbox v-for="(item, key) in repost_export_options" :key="key" :model-value="key" :label="item" />
+                                </el-checkbox-group>
+
+                            </div>
+                        </template>
+                        <template #footer>
+                            <el-button @click="open_export_options = false">{{ $t('Cancel') }}</el-button>
+                            <el-button type="primary" @click="syncSummary">{{ $t('Export Agents Summary') }}</el-button>
+                        </template>
+                    </modal>
+                </Teleport>
 
             </div>
         </div>
@@ -119,7 +142,7 @@ import Modal from '../../Pieces/Modal';
 export default {
     name: 'AgentReports',
     components: {Modal},
-    props: ['url', 'show_settings'],
+    props: ['url', 'show_settings', 'show_export_btn'],
     data() {
         return {
             reports: [],
@@ -198,6 +221,9 @@ export default {
             open_setting: false,
             include_or_exclude_agents: [],
             include_or_exclude: 'include', // Define if we are including or excluding agents, default is include
+            open_export_options: false,
+            repost_export_options: this.appVars.repost_export_options,
+            selected_options: [],
         }
     },
     computed: {
@@ -323,7 +349,14 @@ export default {
     }
     .fs_summary_settings_icon{
         margin-right: 10px;
+        margin-top: 2px;
         cursor: pointer;
     }
-
+    .fs_summary_export_icon{
+        margin-left: 17px;
+        margin-top: 2px;
+        cursor: pointer;
+        color: #bd0909;
+        font-size: 18px;
+    }
 </style>
