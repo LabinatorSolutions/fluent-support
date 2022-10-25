@@ -15,6 +15,7 @@ define('FLUENT_SUPPORT_VERSION', '1.6.6');
 define('FLUENT_SUPPORT_PRO_MIN_VERSION', '1.6.6');
 define('FLUENT_SUPPORT_UPLOAD_DIR', 'fluent-support');
 define('FLUENT_SUPPORT_PLUGIN_URL', plugin_dir_url(__FILE__));
+define('FLUENT_SUPPORT_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 require __DIR__ . '/vendor/autoload.php';
 
