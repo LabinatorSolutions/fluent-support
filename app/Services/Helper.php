@@ -601,7 +601,9 @@ class Helper
 
     public static function getExportOptions(){
         return [
-            'Agent' => __('Agent', 'fluent-support'),
+            'Agent First Name' => __('Agent First Name', 'fluent-support'),
+            'Agent Last Name' => __('Agent Last Name', 'fluent-support'),
+            'Agent Full Name' => __('Agent Full Name', 'fluent-support'),
             'Responses' => __('Responses', 'fluent-support'),
             'Interactions' => __('Interactions', 'fluent-support'),
             'Open Tickets' => __('Open Tickets', 'fluent-support'),

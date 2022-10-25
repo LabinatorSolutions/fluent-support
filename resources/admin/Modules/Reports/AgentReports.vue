@@ -7,7 +7,7 @@
                         {{ $t('Individual Performance') }}
                     </div>
                     <div class="fs_box_actions">
-                        <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18">
+                        <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18" title="Filter Agent">
                             <Setting />
                         </el-icon>
 
@@ -22,7 +22,7 @@
                             :end-placeholder="$t('End')"
                             :shortcuts="dateShortcuts"
                         />
-                        <el-icon v-if="show_export_btn" @click="open_export_options=true"  class="fs_summary_export_icon"><Download /></el-icon>
+                        <el-icon v-if="show_export_btn && has_pro" @click="open_export_options=true" class="fs_summary_export_icon" title="Export Report"><Download /></el-icon>
                     </div>
                 </div>
                 <div class="fs_box_body">
@@ -81,11 +81,9 @@
                     <modal :show="open_setting" :title="$t('exclude_or_include_in_summary')" @close="open_setting = false">
                         <template #body>
                             <div class="fs_summary_settings">
-
-
                                 <el-row :gutter="20">
                                     <el-col :span="18">
-                                        <span> If you don't select any agents then all the agents report will be displayed her otherwise it will show only selected agents report.</span>
+                                        <span> If you don't select any agents then all the agents report will be displayed here otherwise it will show only selected agents report.</span>
                                     </el-col>
                                 </el-row>
 
@@ -105,23 +103,27 @@
                 </Teleport>
 
                 <Teleport to="body">
-                    <modal :show="open_export_options" :title="$t('exclude_or_include_in_summary')" @close="open_export_options = false">
+                    <modal :show="open_export_options" :title="$t('exclude_or_include_summary_column')" @close="open_export_options = false">
                         <template #body>
                             <div class="fs_summary_settings">
                                 <el-row :gutter="20">
                                     <el-col :span="18">
-                                        <span> If you don't select any agents then all the agents report will be displayed her otherwise it will show only selected agents report.</span>
+                                        <span> If you don't select any column, by default system will take all.</span>
                                     </el-col>
                                 </el-row>
-                                <el-checkbox-group v-model="selected_options" class="fs_summary_export_items">
-                                    <el-checkbox v-for="(item, key) in repost_export_options" :key="key" :model-value="key" :label="item" />
+                                <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+                                    <template v-if="!checkAll">Check all</template>
+                                    <template v-else>Uncheck all</template>
+                                </el-checkbox>
+                                <el-checkbox-group v-model="selected_options" class="fs_summary_export_items" @change="handleColumnChanges">
+                                    <el-checkbox v-for="(item, index) in repost_export_options" :key="index" :model-value="index" :label="item" />
                                 </el-checkbox-group>
 
                             </div>
                         </template>
                         <template #footer>
                             <el-button @click="open_export_options = false">{{ $t('Cancel') }}</el-button>
-                            <el-button type="primary" @click="syncSummary">{{ $t('Export Agents Summary') }}</el-button>
+                            <el-button type="primary" @click="exportReport">{{ $t('Export Agents Summary') }}</el-button>
                         </template>
                     </modal>
                 </Teleport>
@@ -224,6 +226,8 @@ export default {
             open_export_options: false,
             repost_export_options: this.appVars.repost_export_options,
             selected_options: [],
+            checkAll: false,
+            isIndeterminate: false,
         }
     },
     computed: {
@@ -237,7 +241,21 @@ export default {
             })
             return agents;
         },
-
+        handleCheckAllChange(){
+            this.selected_options = this.checkAll ? Object.keys(this.repost_export_options) : [];
+            this.isIndeterminate = true;
+        },
+        handleColumnChanges(){
+            if(this.selected_options.length === Object.keys(this.repost_export_options).length){
+                this.checkAll = true;
+                this.isIndeterminate = false;
+            }else if(this.selected_options.length === 0) {
+                this.checkAll = false;
+                this.isIndeterminate = false;
+            }else{
+                this.isIndeterminate = true;
+            }
+        },
         sortedReports() {
             let reports = this.reports;
 
@@ -280,7 +298,7 @@ export default {
                 return false;
             }
             return true;
-        }
+        },
     },
     methods: {
         getReport() {
@@ -334,6 +352,25 @@ export default {
                 sums[index] = this.totals[column.property];
             });
             return sums;
+        },
+
+        exportReport(){
+            let from = (this.date_range) ? dayjs(this.date_range[0]).format('YYYY-MM-DD') : '';
+            let to = (this.date_range) ? dayjs(this.date_range[1]).format('YYYY-MM-DD') : '';
+            let agents_summary_setting = this.$getData('agents_summary_setting');
+            let agents = '';
+            if(agents_summary_setting.agents.length){
+                agents = agents_summary_setting.agents.toString();
+            }
+
+            location.href = window.ajaxurl + '?' + jQuery.param({
+                action: 'fs_export_agent_report',
+                columns: this.selected_options,
+                from_date: from,
+                to_date: to,
+                agents: agents,
+                format: 'csv'
+            });
         }
     },
     mounted() {
@@ -358,5 +395,13 @@ export default {
         cursor: pointer;
         color: #bd0909;
         font-size: 18px;
+    }
+    .fs_summary_export_items {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .fs_summary_export_items label{
+        margin-top: 10px;
+        width: 45%;
     }
 </style>
