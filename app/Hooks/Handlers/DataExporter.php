@@ -5,12 +5,14 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Modules\Reporting\Reporting;
+use FluentSupport\App\Services\Csv\CsvWriter;
 
 class DataExporter
 {
     public function exportReport()
     {
         $this->verifyRequest();
+        $csvWriter = new CsvWriter();
         $request = Helper::FluentSupport('request');
         $from_date = $request->getSafe('from_date', false);
         $to_date = $request->getSafe('to_date', false);
@@ -24,8 +26,7 @@ class DataExporter
         $reporting = new Reporting();
         $data = $reporting->agentSummary($from_date, $to_date, $agents);
 
-        $writer = $this->getCsvWriter();
-        $writer->insertOne(array_keys($columns));
+        $csvWriter->insertOne(array_keys($columns));
 
         $rows = [];
         foreach ($data as $summary) {
@@ -42,8 +43,8 @@ class DataExporter
             $rows[] = $row;
         }
 
-        $writer->insertAll($rows);
-        $writer->output('agent_report-' . date('Y-m-d_H-i-s') . '.csv');
+        $csvWriter->insertAll($rows);
+        $csvWriter->output('agent_report-' . date('Y-m-d_H-i-s') . '.csv');
         die();
     }
 
