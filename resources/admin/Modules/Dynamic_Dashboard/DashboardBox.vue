@@ -1,5 +1,4 @@
 <template>
-
     <div class="fs_box fs_dashboard_box">
         <el-collapse v-model="activeNames" @change="handleChange">
             <el-collapse-item name="dashboard_box" class="box_board">
@@ -61,7 +60,6 @@ export default {
             activeComponent: {
                 dashboardBox: [],
             },
-            // activeNames: ['dashboard_box'],
             activeNames: [],
             collapse_data: [],
         };
@@ -76,20 +74,12 @@ export default {
             this.$emit("component_state", this.component_collapse_state);
         },
         getCollapseData() {
-            // this.collapse_data = this.$getData('component_state');
             this.collapse_data = this.component_collapse_state;
             if (this.collapse_data.dashboardBox) {
                 this.activeNames = ["dashboard_box"];
             } else {
                 this.activeNames = null;
             }
-            // console.log(this.component_collapse_state.dashboardBox);
-            // if(this.component_collapse_state.dashboardBox){
-            //     this.activeNames = ['dashboard_box']
-            // }
-            // else{
-            //     this.activeNames = null
-            // }
         },
     },
     mounted() {
