@@ -1,8 +1,4 @@
 <template>
-    <!-- <h1>SuggestedTicket</h1>  
-        {{data}}  
-
-   {{component_collapse_state.suggestedTicket}} -->
     <div class="fs_dash_suggested_ticket">
         <div class="fs_box fs_dashboard_box">
             <el-collapse v-model="activeNames" @change="handleChange">
@@ -12,8 +8,8 @@
                             class="fs_box_header"
                             style="justify-content: unset"
                         >
-                            {{ $t("Good") }} {{ greetingTime }}
-                            {{ me.full_name }},
+                            <!-- {{ $t("Good") }} {{ greetingTime }}
+                            {{ me.full_name }}, -->
                             <span style="font-weight: normal">
                                 {{ $t("dashboard_sub_heading") }}
                             </span>
@@ -161,10 +157,6 @@ export default {
         getCollapseData() {
             // this.collapse_data = this.$getData('component_state');
             this.collapse_data = this.component_collapse_state;
-            console.log(
-                "from suggested: " +
-                    this.component_collapse_state.suggestedTicket
-            );
             if (this.collapse_data.suggestedTicket) {
                 this.activeNames = ["suggested_ticket"];
             } else {
