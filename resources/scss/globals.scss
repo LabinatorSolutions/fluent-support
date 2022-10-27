@@ -102,15 +102,15 @@
     .fs_box_header {
         //display: block;
         width: auto;
-        border-bottom: 1px solid #e3e8ee;
+        // border-bottom: 1px solid #e3e8ee;
         clear: both;
         overflow: hidden;
         margin: 0;
         padding: 10px 15px;
-        background-color: #f9f9f9;
+    //   background-color: #f9f9f9;  
         font-weight: 500;
         color: #3C434A;
-
+        cursor: move;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -210,11 +210,18 @@ ul.fs_card_list {
     padding: 0;
     margin: 0;
     list-style: none;
+    // padding: 10px;
+    // margin: 0;
+    // list-style: none;
 
     li {
         margin: 0;
         padding: 8px 15px;
         border-bottom: 1px solid #e3e8ed;
+        // margin-bottom: 10px;
+        // padding: 8px 15px;
+        // border: 1px solid #e3e8ed;
+        // border-radius: 5px;
 
         &:last-child {
             border: 0;
@@ -248,6 +255,7 @@ ul.fs_card_list {
             display: flex;
             text-decoration: none;
             align-items: center;
+            display: contents;
         }
     }
 }

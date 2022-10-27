@@ -63,6 +63,15 @@ class Menu
 
         add_submenu_page(
             'fluent-support',
+            __('Dynamic_Dashboard_beta', 'fluent-support'),
+            __('Dynamic_Dashboard_beta', 'fluent-support'),
+            $permission,
+            'fluent-support#/dynamic_dashboard_beta',
+            array($this, 'renderApp')
+        );
+
+        add_submenu_page(
+            'fluent-support',
             __('Tickets', 'fluent-support'),
             __('Tickets', 'fluent-support'),
             ($isAdmin) ? 'manage_options' : 'fst_manage_own_tickets',
@@ -123,6 +132,11 @@ class Menu
                 'permalink' => $baseUrl
             ],
             [
+                'key'       => 'dynamic_dashboard_beta',
+                'label'     => __('Dynamic_Dashboard_beta', 'fluent-support'),
+                'permalink' => $baseUrl . 'dynamic_dashboard_beta'
+            ],
+            [
                 'key'       => 'tickets',
                 'label'     => __('Tickets', 'fluent-support'),
                 'permalink' => $baseUrl . 'tickets',
@@ -131,7 +145,9 @@ class Menu
                 'key'       => 'reports',
                 'label'     => __('Reports', 'fluent-support'),
                 'permalink' => $baseUrl . 'reports'
-            ]
+            ],
+
+            
         ];
 
         $hasSensitiveAccess = PermissionManager::currentUserCan('fst_sensitive_data');

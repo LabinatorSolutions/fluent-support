@@ -1,4 +1,5 @@
 import Dashboard from './Components/Dashboard';
+import DynamicDashboard from './Modules/Dynamic_Dashboard/DynamicDashboard.vue';
 import Setup from './Components/Setup';
 import TicketsView from './Modules/Tickets/TicketsView';
 import AllTickets from './Modules/Tickets/AllTickets';
@@ -44,6 +45,14 @@ export default [
         component: Dashboard,
         meta: {
             active: 'dashboard'
+        }
+    },
+    {
+        path: '/dynamic_dashboard_beta',
+        name: 'dynamicDashboard',
+        component: DynamicDashboard,
+        meta: {
+            active: 'dynamicDashboard'
         }
     },
     {
