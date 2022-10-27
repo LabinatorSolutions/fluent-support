@@ -1,6 +1,4 @@
 <template>
-    <!-- <h1>MentionedTticket</h1>
-   {{data}} -->
     <div
         class="fs_dash_mentioned_ticket"
         v-if="has_pro && data.ticket_to_watch"
@@ -103,7 +101,6 @@ export default {
         getCollapseData() {
             this.collapse_data = this.component_collapse_state;
             // this.collapse_data = this.$getData('component_state');
-            console.log("Hello" + this.collapse_data);
             if (this.collapse_data.mentionedTicket) {
                 this.activeNames = ["mentioned_ticket"];
             } else {
