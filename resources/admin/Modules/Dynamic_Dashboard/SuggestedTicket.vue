@@ -8,8 +8,6 @@
                             class="fs_box_header"
                             style="justify-content: unset"
                         >
-                            <!-- {{ $t("Good") }} {{ greetingTime }}
-                            {{ me.full_name }}, -->
                             <span style="font-weight: normal">
                                 {{ $t("dashboard_sub_heading") }}
                             </span>
@@ -155,7 +153,6 @@ export default {
             this.$emit("component_state", this.component_collapse_state);
         },
         getCollapseData() {
-            // this.collapse_data = this.$getData('component_state');
             this.collapse_data = this.component_collapse_state;
             if (this.collapse_data.suggestedTicket) {
                 this.activeNames = ["suggested_ticket"];
@@ -170,7 +167,4 @@ export default {
 };
 </script>
 <style scoped>
-.fs_box_header {
-    font-size: 15px;
-}
 </style>

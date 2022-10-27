@@ -90,8 +90,8 @@ export default {
         };
     },
     methods: {
-        handleChange(val) {
-            if (val[1]) {
+        handleChange(value) {
+            if (value[1]) {
                 this.component_collapse_state.mentionedTicket = true;
             } else {
                 this.component_collapse_state.mentionedTicket = false;
@@ -100,7 +100,6 @@ export default {
         },
         getCollapseData() {
             this.collapse_data = this.component_collapse_state;
-            // this.collapse_data = this.$getData('component_state');
             if (this.collapse_data.mentionedTicket) {
                 this.activeNames = ["mentioned_ticket"];
             } else {
