@@ -74,6 +74,7 @@ class CustomerPortalController extends Controller
                 $message = ($isWpError) ? $canCreateTicket->get_error_message() : __('Sorry you can not create ticket', 'fluent-support');
                 $errorCode = ($isWpError) ? $canCreateTicket->get_error_code() : 'general_error';
 
+
                 throw new \Exception($message, $errorCode);
             }
 
@@ -88,6 +89,7 @@ class CustomerPortalController extends Controller
                 'ticket'  => $ticket
             ];
         } catch (\Exception $e) {
+
             return $this->sendError([
                 'message'    => __($e->getMessage(), 'fluent-support'),
                 'error_type' => $e->getCode()
