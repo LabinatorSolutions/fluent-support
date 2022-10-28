@@ -506,6 +506,15 @@ p.fs_customer_address {
     }
 }
 
+.fs_box_board {
+    .el-collapse-item__header{
+        background-color: #f9f9f9;
+        margin: auto;
+        border-radius: 5px;
+        height: 60px;
+    }
+}
+
 ul.fs_contact_results {
     margin: 0;
     padding: 0;
