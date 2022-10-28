@@ -2,26 +2,23 @@
     <div class="fs_dash_suggested_ticket">
         <div class="fs_box fs_dashboard_box">
             <el-collapse v-model="activeNames" @change="handleChange">
-                <el-collapse-item name="suggested_ticket" class="box_board">
+                <el-collapse-item name="suggested_ticket" class="fs_box_board">
                     <template #title>
                         <div
                             class="fs_box_header"
                             style="justify-content: unset"
                         >
-                            <span style="font-weight: normal">
-                                {{ $t("dashboard_sub_heading") }}
-                            </span>
+                            {{ $t("dashboard_sub_heading") }}
                         </div>
                     </template>
 
                     <div class="fs_box_body">
-                        <template v-if="!loading">
                             <ul
-                                v-if="data.suggested_tickets"
+                                v-if="component_data.suggested_tickets.length"
                                 class="fs_card_list"
                             >
                                 <li
-                                    v-for="ticket in data.suggested_tickets"
+                                    v-for="ticket in component_data.suggested_tickets"
                                     :key="ticket.id"
                                 >
                                     <router-link
@@ -77,27 +74,29 @@
 
                             <p
                                 class="fs_padded_20 fs_stat_helper"
-                                v-if="data.overall_stats"
+                                v-if="component_data.overall_stats"
                             >
                                 <span class="fs_highlight"
-                                    >{{ data.overall_stats.waiting_tickets }}
+                                    >{{
+                                        component_data.overall_stats
+                                            .waiting_tickets
+                                    }}
                                     {{ $t("tickets") }}</span
                                 >
                                 {{ $t("are waiting for reply with") }}
                                 <span class="fs_highlight">
                                     {{ $t("average") }}
-                                    {{ data.overall_stats.average_waiting }}
+                                    {{
+                                        component_data.overall_stats
+                                            .average_waiting
+                                    }}
                                     {{ $t("wait time") }}</span
                                 >
                                 & {{ $t("max wait time") }}
                                 <span class="fs_highlight">{{
-                                    data.overall_stats.max_waiting
+                                    component_data.overall_stats.max_waiting
                                 }}</span>
                             </p>
-                        </template>
-                        <div class="fs_padded_20" v-else>
-                            <el-skeleton :rows="3" animated />
-                        </div>
                     </div>
                 </el-collapse-item>
             </el-collapse>
@@ -106,9 +105,8 @@
 </template>
 <script>
 export default {
-    props: ["data", "component_collapse_state"],
+    props: ["component_data"],
     name: "SuggestedTicket",
-    emits: ["component_state"],
     data() {
         return {
             me: this.appVars.me,
@@ -145,20 +143,8 @@ export default {
     },
     methods: {
         handleChange(val) {
-            if (val[1]) {
-                this.component_collapse_state.suggestedTicket = true;
-            } else {
-                this.component_collapse_state.suggestedTicket = false;
-            }
-            this.$emit("component_state", this.component_collapse_state);
         },
         getCollapseData() {
-            this.collapse_data = this.component_collapse_state;
-            if (this.collapse_data.suggestedTicket) {
-                this.activeNames = ["suggested_ticket"];
-            } else {
-                this.activeNames = null;
-            }
         },
     },
     mounted() {
@@ -166,5 +152,4 @@ export default {
     },
 };
 </script>
-<style scoped>
-</style>
+<style scoped></style>
