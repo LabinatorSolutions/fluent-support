@@ -155,8 +155,9 @@ export default {
                         component: "SuggestedTicket",
                         show: true,
                     },
-                ],
+                ]
             },
+            dashboard_build: 'v167.0',
             settings_data: {},
             default_component_collapse_state: {
                 dashboardBox: true,
@@ -171,6 +172,7 @@ export default {
         dashboard_settings_data: {
             handler(newValue, oldValue) {
                 this.$saveData("dashboard_settings_data", newValue);
+                this.$saveData("dashboard_build", this.dashboard_build);
             },
             deep: true,
         },
@@ -211,8 +213,11 @@ export default {
         },
         getDashboardSettings() {
             this.settings_data = this.$getData("dashboard_settings_data");
-            if (this.settings_data) {
+            let build = this.$getData("dashboard_build");
+            if (Object.entries(this.settings_data).length && build === this.dashboard_build) {
                 this.dashboard_settings_data = this.settings_data;
+            }else{
+                this.$saveData("dashboard_settings_data", []);
             }
         },
         fetchStat() {
