@@ -1,13 +1,22 @@
 <template>
     <el-button
         type="info"
-        class="fs_drawer"
+        class="fs_drawer_button"
         style="margin-left: 16px"
         @click="drawer = true"
     >
         <el-icon>
             <Setting />
         </el-icon>
+    </el-button>
+
+    <el-button
+        type="warning"
+        class="fs_drawer_button"
+        style="margin-left: 16px"
+        @click="defalutSettings()"
+    >
+        Reset
     </el-button>
 
     <div class="dashboard fs_box_wrapper">
@@ -19,7 +28,7 @@
         <el-row :gutter="20">
             <el-col :span="12">
                 <draggable
-                    v-model="dashboard_settings_data.first_column"
+                    v-model="dashboard_param.first_column"
                     ghost-class="ghost"
                     group="dashboard_component"
                     item-key="id"
@@ -38,7 +47,7 @@
             </el-col>
             <el-col :span="12">
                 <draggable
-                    v-model="dashboard_settings_data.second_column"
+                    v-model="dashboard_param.second_column"
                     ghost-class="ghost"
                     group="dashboard_component"
                     item-key="id"
@@ -58,8 +67,11 @@
         </el-row>
 
         <el-drawer v-model="drawer" :with-header="false">
-            <div v-for="column_data in dashboard_settings_data">
-                <div class="fs_settings_drawer" v-for="component_list_data in column_data">
+            <div v-for="column_data in dashboard_param">
+                <div
+                    class="fs_settings_drawer"
+                    v-for="component_list_data in column_data"
+                >
                     <el-skeleton
                         :rows="5"
                         :count="4"
@@ -89,6 +101,7 @@
                             </div>
                         </template>
                     </el-skeleton>
+
                     <el-checkbox
                         v-model="component_list_data.show"
                         :label="component_list_data.component"
@@ -136,6 +149,7 @@ export default {
                     overall_stats: {},
                 },
             },
+            dashboard_param: {},
             dashboard_settings_data: {
                 first_column: [
                     {
@@ -155,9 +169,9 @@ export default {
                         component: "SuggestedTicket",
                         show: true,
                     },
-                ]
+                ],
             },
-            dashboard_build: 'v167.0',
+            dashboard_build: "v167.0",
             settings_data: {},
             default_component_collapse_state: {
                 dashboardBox: true,
@@ -169,7 +183,7 @@ export default {
         };
     },
     watch: {
-        dashboard_settings_data: {
+        dashboard_param: {
             handler(newValue, oldValue) {
                 this.$saveData("dashboard_settings_data", newValue);
                 this.$saveData("dashboard_build", this.dashboard_build);
@@ -205,6 +219,13 @@ export default {
         },
     },
     methods: {
+        defalutSettings() {
+            this.$saveData(
+                "dashboard_settings_data",
+                this.dashboard_settings_data
+            );
+            this.getDashboardSettings();
+        },
         cancelClick() {
             this.drawer = false;
         },
@@ -215,10 +236,14 @@ export default {
             this.settings_data = this.$getData("dashboard_settings_data");
             let build = this.$getData("dashboard_build");
             if (Object.entries(this.settings_data).length && build === this.dashboard_build) {
-                this.dashboard_settings_data = this.settings_data;
-            }else{
+                this.dashboard_param = this.settings_data;
+            } else {
                 this.$saveData("dashboard_settings_data", []);
+                this.dashboard_param = this.dashboard_settings_data;
             }
+        },
+        saveDefaultSettingsData() {
+            this.$saveData("default_settings_data", this.default_settings_data);
         },
         fetchStat() {
             this.loading = true;
@@ -291,7 +316,7 @@ export default {
     border: 1px solid #e3e8ee;
 }
 
-.fs_drawer {
+.fs_drawer_button {
     float: right;
 }
 </style>
