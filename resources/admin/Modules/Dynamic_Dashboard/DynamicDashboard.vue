@@ -11,7 +11,7 @@
     </el-button>
 
     <el-button
-        type="warning"
+        type="success"
         class="fs_drawer_button"
         style="margin-left: 16px"
         @click="defalutSettings()"
@@ -34,13 +34,31 @@
                     item-key="id"
                 >
                     <template #item="{ element }">
-                        <div class="draggable">
-                            <component
-                                v-if="element.show"
-                                :is="element.component"
-                                :component_data="total_data[element.component]"
-                            >
-                            </component>
+                        <div v-if="element.show" class="draggable">
+                            <div class="draggable_component">
+                                <el-collapse
+                                    v-model="active_names[element.active_names]"
+                                    @change="handleChange"
+                                >
+                                    <el-collapse-item
+                                        :name="element.active_names"
+                                        class="fs_box_board"
+                                    >
+                                        <template #title>
+                                            <div class="fs_box_header">
+                                                {{ $t(element.heading) }}
+                                            </div>
+                                        </template>
+                                        <component
+                                            :is="element.component"
+                                            :component_data="
+                                                total_data[element.component]
+                                            "
+                                        >
+                                        </component>
+                                    </el-collapse-item>
+                                </el-collapse>
+                            </div>
                         </div>
                     </template>
                 </draggable>
@@ -53,13 +71,31 @@
                     item-key="id"
                 >
                     <template #item="{ element }">
-                        <div class="draggable">
-                            <component
-                                v-if="element.show"
-                                :is="element.component"
-                                :component_data="total_data[element.component]"
-                            >
-                            </component>
+                        <div v-if="element.show" class="draggable">
+                            <div class="draggable_component">
+                                <el-collapse
+                                    v-model="active_names[element.active_names]"
+                                    @change="handleChange"
+                                >
+                                    <el-collapse-item
+                                        :name="element.active_names"
+                                        class="fs_box_board"
+                                    >
+                                        <template #title>
+                                            <div class="fs_box_header">
+                                                {{ $t(element.heading) }}
+                                            </div>
+                                        </template>
+                                        <component
+                                            :is="element.component"
+                                            :component_data="
+                                                total_data[element.component]
+                                            "
+                                        >
+                                        </component>
+                                    </el-collapse-item>
+                                </el-collapse>
+                            </div>
                         </div>
                     </template>
                 </draggable>
@@ -101,7 +137,6 @@
                             </div>
                         </template>
                     </el-skeleton>
-
                     <el-checkbox
                         v-model="component_list_data.show"
                         :label="component_list_data.component"
@@ -156,6 +191,8 @@ export default {
                         id: 1,
                         component: "MentionedTicket",
                         show: true,
+                        heading: "dashboard_watcher_heading",
+                        active_names: "mentionedTicket",
                     },
                 ],
                 second_column: [
@@ -163,23 +200,27 @@ export default {
                         id: 2,
                         component: "TicketStatistics",
                         show: true,
+                        heading: "Your Overview for Today",
+                        active_names: "ticketStatistics",
                     },
                     {
                         id: 3,
                         component: "SuggestedTicket",
                         show: true,
+                        heading: "dashboard_sub_heading",
+                        active_names: "suggestedTicket",
                     },
                 ],
             },
-            dashboard_build: "v167.0",
+            dashboard_build: "v167.1",
             settings_data: {},
-            default_component_collapse_state: {
-                dashboardBox: true,
-                mentionedTicket: true,
-                suggestedTicket: true,
-            },
-            component_collapse_state: {},
             app_ready: false,
+            active_names: {},
+            default_active_names: {
+                mentionedTicket: ["mentionedTicket"],
+                ticketStatistics: ["ticketStatistics"],
+                suggestedTicket: ["suggestedTicket"],
+            },
         };
     },
     watch: {
@@ -219,11 +260,21 @@ export default {
         },
     },
     methods: {
+        handleChange() {
+            this.$saveData("component_collapse_data", this.active_names);
+        },
+
         defalutSettings() {
+            console.log(this.dashboard_settings_data);
             this.$saveData(
                 "dashboard_settings_data",
                 this.dashboard_settings_data
             );
+            this.$saveData(
+                "component_collapse_data",
+                this.default_active_names
+            );
+            this.getComponentState();
             this.getDashboardSettings();
         },
         cancelClick() {
@@ -232,18 +283,27 @@ export default {
         checkMove: function (e) {
             window.console.log("Future index: " + e.draggedContext.futureIndex);
         },
+        getComponentState() {
+            let collapseState = this.$getData("component_collapse_data");
+            let build = this.$getData("dashboard_build");
+            if (collapseState && build === this.dashboard_build) {
+                this.active_names = collapseState;
+            } else {
+                this.active_names = this.default_active_names;
+            }
+        },
         getDashboardSettings() {
             this.settings_data = this.$getData("dashboard_settings_data");
             let build = this.$getData("dashboard_build");
-            if (Object.entries(this.settings_data).length && build === this.dashboard_build) {
+            if (
+                Object.entries(this.settings_data).length &&
+                build === this.dashboard_build
+            ) {
                 this.dashboard_param = this.settings_data;
             } else {
                 this.$saveData("dashboard_settings_data", []);
                 this.dashboard_param = this.dashboard_settings_data;
             }
-        },
-        saveDefaultSettingsData() {
-            this.$saveData("default_settings_data", this.default_settings_data);
         },
         fetchStat() {
             this.loading = true;
@@ -286,6 +346,7 @@ export default {
             ) > -1;
         this.fetchStat();
         this.getDashboardSettings();
+        this.getComponentState();
         jQuery(
             ".update-nag,.notice, #wpbody-content > .updated, #wpbody-content > .error"
         ).remove();
@@ -295,12 +356,13 @@ export default {
 
 <style scoped>
 .ghost {
-    opacity: 0.4;
-    background: gray;
+    opacity: 0.2;
+    background: rgb(201, 174, 122);
     color: white;
-    width: 100%;
+    margin: 10px;
     margin: auto;
     display: block;
+    border-radius: 5px;
     overflow: hidden;
     text-align: center;
 }
@@ -318,5 +380,14 @@ export default {
 
 .fs_drawer_button {
     float: right;
+}
+.draggable_component {
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    border: 1px solid rgb(226, 228, 231);
+    box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
 }
 </style>
