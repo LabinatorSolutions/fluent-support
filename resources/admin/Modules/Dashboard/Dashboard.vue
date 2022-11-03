@@ -1,29 +1,35 @@
 <template>
-    <el-button
-        type="info"
-        class="fs_drawer_button"
-        style="margin-left: 16px"
-        @click="drawer = true"
-    >
-        <el-icon>
-            <Setting />
-        </el-icon>
-    </el-button>
+    <div class="fs_head_section">
+        <div>
+            <h1>
+                {{ $t("Good") }} {{ greetingTime }}
+                {{ me.full_name }}
+            </h1>
+        </div>
+        <div class="fs_button_group">
+            <el-button
+                type="primary"
+                class="fs_drawer_button"
+                style="margin-left: 16px"
+                @click="drawer = true"
+            >
+                <el-icon>
+                    <Setting />
+                </el-icon>
+            </el-button>
 
-    <el-button
-        type="success"
-        class="fs_drawer_button"
-        style="margin-left: 16px"
-        @click="defalutSettings()"
-    >
-        Reset
-    </el-button>
+            <el-button
+                type="info"
+                class="fs_drawer_button"
+                style="margin-left: 16px"
+                @click="defalutSettings()"
+            >
+                Reset
+            </el-button>
+        </div>
+    </div>
 
-    <div class="dashboard fs_box_wrapper">
-        <h1>
-            {{ $t("Good") }} {{ greetingTime }}
-            {{ me.full_name }}
-        </h1>
+    <div class="dashboard fs_box_wrapper" v-if="!loading">
         <div v-html="dashboard_notice"></div>
         <el-row :gutter="20">
             <el-col :span="12">
@@ -33,7 +39,7 @@
                     group="dashboard_component"
                     item-key="id"
                 >
-                    <template #item="{ element }">
+                    <template v-if="!loading" #item="{ element }">
                         <div v-if="element.show" class="draggable">
                             <div class="draggable_component">
                                 <el-collapse
@@ -103,7 +109,8 @@
         </el-row>
 
         <el-drawer v-model="drawer" :with-header="false">
-            <div v-for="column_data in dashboard_param">
+            <div  class="fs_drawer_content">
+                <div v-for="column_data in dashboard_param">
                 <div
                     class="fs_settings_drawer"
                     v-for="component_list_data in column_data"
@@ -143,6 +150,7 @@
                     />
                 </div>
             </div>
+            </div>
 
             <template #footer>
                 <div style="flex: auto">
@@ -150,6 +158,21 @@
                 </div>
             </template>
         </el-drawer>
+    </div>
+
+    <div class="fs_padded_20" v-else>
+        <el-row :gutter="20">
+            <el-col :span="12" >
+                <div class="fs_component_skeleton">
+                <el-skeleton :rows="6" animated />
+            </div>
+            </el-col>
+            <el-col :span="12">
+                <div class="fs_component_skeleton">
+                <el-skeleton :rows="6" animated />
+            </div>
+            </el-col>
+        </el-row>
     </div>
 </template>
 
@@ -194,8 +217,6 @@ export default {
                         heading: "dashboard_watcher_heading",
                         active_names: "mentionedTicket",
                     },
-                ],
-                second_column: [
                     {
                         id: 2,
                         component: "TicketStatistics",
@@ -203,6 +224,8 @@ export default {
                         heading: "Your Overview for Today",
                         active_names: "ticketStatistics",
                     },
+                ],
+                second_column: [
                     {
                         id: 3,
                         component: "SuggestedTicket",
@@ -212,7 +235,7 @@ export default {
                     },
                 ],
             },
-            dashboard_build: "v167.1",
+            dashboard_build: "v167.0",
             settings_data: {},
             app_ready: false,
             active_names: {},
@@ -265,7 +288,6 @@ export default {
         },
 
         defalutSettings() {
-            console.log(this.dashboard_settings_data);
             this.$saveData(
                 "dashboard_settings_data",
                 this.dashboard_settings_data
@@ -389,5 +411,21 @@ export default {
     border-radius: 15px;
     border: 1px solid rgb(226, 228, 231);
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
+}
+.fs_head_section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+.fs_button_group {
+    padding: 10px;
+}
+.fs_drawer_content{
+    margin-top: 30px;
+}
+.fs_component_skeleton {
+    border: 1px solid #e3e8ee;
+    border-radius: 10px;
+    padding: 10px;
 }
 </style>

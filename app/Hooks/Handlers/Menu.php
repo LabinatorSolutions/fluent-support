@@ -63,15 +63,6 @@ class Menu
 
         add_submenu_page(
             'fluent-support',
-            __('Dynamic_Dashboard_beta', 'fluent-support'),
-            __('Dynamic_Dashboard_beta', 'fluent-support'),
-            $permission,
-            'fluent-support#/dynamic_dashboard_beta',
-            array($this, 'renderApp')
-        );
-
-        add_submenu_page(
-            'fluent-support',
             __('Tickets', 'fluent-support'),
             __('Tickets', 'fluent-support'),
             ($isAdmin) ? 'manage_options' : 'fst_manage_own_tickets',
@@ -130,11 +121,6 @@ class Menu
                 'key'       => 'dashboard',
                 'label'     => __('Dashboard', 'fluent-support'),
                 'permalink' => $baseUrl
-            ],
-            [
-                'key'       => 'dynamic_dashboard_beta',
-                'label'     => __('Dynamic_Dashboard_beta', 'fluent-support'),
-                'permalink' => $baseUrl . 'dynamic_dashboard_beta'
             ],
             [
                 'key'       => 'tickets',
