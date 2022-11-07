@@ -422,7 +422,7 @@
                 </div>
             </div>
             <div class="fs_ticket_sidebar">
-                <ticket-sidebar-2 :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket" :watchers="watchers" @refresh="fetchTicket"/>
+                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket" :watchers="watchers" @refresh="fetchTicket"/>
             </div>
         </template>
         <template v-else>
@@ -461,7 +461,6 @@
 import CreateResponse from './_CreateResponse';
 import EditResponse from './_EditResponse';
 import TicketSidebar from './_TicketSidebar';
-import TicketSidebar2 from './_TicketSidebar2';
 import each from 'lodash/each';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
@@ -486,8 +485,7 @@ export default {
         TicketTags,
         CustomFieldForm,
         WorkFlowSelector,
-        SplitTicket,
-        TicketSidebar2
+        SplitTicket
     },
     data() {
         return {
