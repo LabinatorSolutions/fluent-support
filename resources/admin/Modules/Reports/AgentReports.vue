@@ -358,9 +358,23 @@ export default {
             let from = (this.date_range) ? dayjs(this.date_range[0]).format('YYYY-MM-DD') : '';
             let to = (this.date_range) ? dayjs(this.date_range[1]).format('YYYY-MM-DD') : '';
             let agents_summary_setting = this.$getData('agents_summary_setting');
-            let agents = '';
-            if(agents_summary_setting.agents.length){
+            let agents = [];
+            if(!agents_summary_setting) {
+                each(this.appVars.support_agents, (agent) => {
+                    agents.push({
+                        key : parseInt(agent.id),
+                        label : agent.full_name
+                    })
+                })
+                agents = agents.toString();
+            }else {
                 agents = agents_summary_setting.agents.toString();
+            }
+
+            if(agents === ''){
+                agents = '';
+                this.$handleError(this.$t('No agent found, Please select or make sure you have agents to export'));
+                return false;
             }
 
             location.href = window.ajaxurl + '?' + jQuery.param({
