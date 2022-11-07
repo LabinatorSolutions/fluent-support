@@ -100,8 +100,6 @@
                     <ul>
                         <li v-for="(order,order_key) in widget.orders" :key="order_key">
                             <a @click="getOrderDetails(order, widget.products)" class="fs_wc_order_link">Order Id #{{order.id}}</a>&nbsp; - <el-tag class="ml-2" :type="getType(order.status)">{{order.status}}</el-tag>
-
-
                             <!--<span>&nbsp; {{order.total}} </span><span v-html="order.currency"/>-->
                         </li>
                     </ul>
