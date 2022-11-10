@@ -40,7 +40,7 @@ class HandleSlackEvent
     private function verifyProVersion ()
     {
         if (!defined('FLUENTSUPPORTPRO')) {
-            throw new Exception('Slack Integration requires pro version of Fluent Support', 400);
+            throw new \Exception('Slack Integration requires pro version of Fluent Support', 400);
         }
 
         return true;
@@ -55,7 +55,7 @@ class HandleSlackEvent
     private function validateToken ($token)
     {
         if (\FluentSupportPro\App\Services\Integrations\Slack\SlackHelper::getWebhookToken() != $token) {
-            throw new Exception('Bot Token could not be verified', 404);
+            throw new \Exception('Bot Token could not be verified', 404);
         }
         return true;
     }

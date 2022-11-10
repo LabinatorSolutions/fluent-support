@@ -11,7 +11,7 @@ class View
 	protected $path;
 
 	protected $data = [];
-	
+
 	protected static $sharedData = [];
 
 	public function __construct($app)
@@ -45,7 +45,7 @@ class View
 			return $this;
 		}
 
-		throw new Exception("The view file [{$this->path}] doesn't exists!");
+		throw new \Exception("The view file [{$this->path}] doesn't exists!");
 	}
 
 	/**
@@ -116,7 +116,7 @@ class View
 		} else {
 			$this->__set($name, $data);
 		}
-		
+
 		return $this;
 	}
 

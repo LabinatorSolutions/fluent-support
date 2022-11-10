@@ -38,7 +38,7 @@ class MailBoxService
     public function deleteMailBox($mailBoxId, $fallbackId )
     {
         if ( $mailBoxId == $fallbackId ) {
-            throw new Exception('Fallback Box can not be the same as MailBox ID');
+            throw new \Exception('Fallback Box can not be the same as MailBox ID');
         }
 
         $box = MailBox::findOrFail($mailBoxId);
@@ -176,7 +176,7 @@ class MailBoxService
     public function getTickets ($filters, $boxId )
     {
         if (!$boxId) {
-            throw new Exception('MailBox ID must be provided');
+            throw new \Exception('MailBox ID must be provided');
         }
 
         $ticketsQuery = Ticket::getTicketsQuery();
@@ -204,11 +204,11 @@ class MailBoxService
     {
 
         if ($data['new_box_id'] == $mailBoxId) {
-            throw new Exception('New Box can not be the same as MailBox ID');
+            throw new \Exception('New Box can not be the same as MailBox ID');
         }
 
         if ( $data['move_type'] == 'Custom' && empty($data['ticket_ids']) ) {
-            throw new Exception('Invalid request submitted, Select ticket first');
+            throw new \Exception('Invalid request submitted, Select ticket first');
         }
 
         return true;
