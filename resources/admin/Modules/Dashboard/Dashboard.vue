@@ -1,11 +1,12 @@
 <template>
     <div class="fs_head_section">
-        <div>
-            <h1>
-                {{ $t("Good") }} {{ greetingTime }}
-                {{ me.full_name }}
-            </h1>
+        <div v-if="dashboard_param.greetingMessage">
+                <h1 style="margin-top: 30px">
+                    {{ $t("Good") }} {{ greetingTime }} {{ me.full_name
+                    }}{{ $t("!!!") }}
+                </h1>
         </div>
+        <div v-else style="width: 245px"></div>
         <div class="fs_button_group">
             <el-button
                 type="primary"
@@ -109,47 +110,53 @@
         </el-row>
 
         <el-drawer v-model="drawer" :with-header="false">
-            <div  class="fs_drawer_content">
-                <div v-for="column_data in dashboard_param">
-                <div
-                    class="fs_settings_drawer"
-                    v-for="component_list_data in column_data"
+            <div class="fs_drawer_content">
+                <el-checkbox v-model="dashboard_param.greetingMessage"
+                    >Greeting Message</el-checkbox
                 >
-                    <el-skeleton
-                        :rows="5"
-                        :count="4"
-                        style="width: 240px; --el-skeleton-circle-size: 20px"
+                <div v-for="column_data in dashboard_param">
+                    <div
+                        class="fs_settings_drawer"
+                        v-for="component_list_data in column_data"
                     >
-                        <template #template>
-                            <div
-                                style="
-                                    display: flex;
-                                    align-items: center;
-                                    justify-items: space-between;
-                                    margin-bottom: 5px;
-                                    height: 100%;
-                                "
-                            >
-                                <el-skeleton-item
-                                    variant="circle"
+                        <el-skeleton
+                            :rows="5"
+                            :count="4"
+                            style="
+                                width: 240px;
+                                --el-skeleton-circle-size: 20px;
+                            "
+                        >
+                            <template #template>
+                                <div
                                     style="
-                                        margin-right: 16px;
-                                        --el-skeleton-circle-size: 20px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-items: space-between;
+                                        margin-bottom: 5px;
+                                        height: 100%;
                                     "
-                                />
-                                <el-skeleton-item
-                                    variant="text"
-                                    style="width: 80%"
-                                />
-                            </div>
-                        </template>
-                    </el-skeleton>
-                    <el-checkbox
-                        v-model="component_list_data.show"
-                        :label="component_list_data.component"
-                    />
+                                >
+                                    <el-skeleton-item
+                                        variant="circle"
+                                        style="
+                                            margin-right: 16px;
+                                            --el-skeleton-circle-size: 20px;
+                                        "
+                                    />
+                                    <el-skeleton-item
+                                        variant="text"
+                                        style="width: 80%"
+                                    />
+                                </div>
+                            </template>
+                        </el-skeleton>
+                        <el-checkbox
+                            v-model="component_list_data.show"
+                            :label="component_list_data.component"
+                        />
+                    </div>
                 </div>
-            </div>
             </div>
 
             <template #footer>
@@ -162,15 +169,15 @@
 
     <div class="fs_padded_20" v-else>
         <el-row :gutter="20">
-            <el-col :span="12" >
+            <el-col :span="12">
                 <div class="fs_component_skeleton">
-                <el-skeleton :rows="6" animated />
-            </div>
+                    <el-skeleton :rows="6" animated />
+                </div>
             </el-col>
             <el-col :span="12">
                 <div class="fs_component_skeleton">
-                <el-skeleton :rows="6" animated />
-            </div>
+                    <el-skeleton :rows="6" animated />
+                </div>
             </el-col>
         </el-row>
     </div>
@@ -234,6 +241,7 @@ export default {
                         active_names: "suggestedTicket",
                     },
                 ],
+                greetingMessage: true,
             },
             dashboard_build: "v167.0",
             settings_data: {},
@@ -420,12 +428,15 @@ export default {
 .fs_button_group {
     padding: 10px;
 }
-.fs_drawer_content{
+.fs_drawer_content {
     margin-top: 30px;
 }
 .fs_component_skeleton {
     border: 1px solid #e3e8ee;
     border-radius: 10px;
     padding: 10px;
+}
+.fs_box_header {
+    cursor: move;
 }
 </style>
