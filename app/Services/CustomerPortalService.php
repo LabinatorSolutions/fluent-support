@@ -431,18 +431,18 @@ class CustomerPortalService
     private function checkCustomerTicketAccess($customer, $ticket, $action = false)
     {
         if (!$customer) {
-            throw new \Exception('Sorry, You do not have permission to this support ticket', 'no_customer');
+            throw new \Exception('Sorry, You do not have permission to this support ticket');
         }
 
         if ($customer->status == 'inactive') {
-            throw new \Exception('Sorry, You do not have access to customer portal', 'inactive_customer');
+            throw new \Exception('Sorry, You do not have access to customer portal');
         }
 
         if ($ticket->privacy == 'private' && $customer->id != $ticket->customer_id) {
             if ($action) {
-                throw new \Exception("Sorry! You can not {$action} to this ticket", 'permission_error');
+                throw new \Exception("Sorry! You can not {$action} to this ticket");
             } else {
-                throw new \Exception('You do not have permission to view this support ticket', 'permission_error');
+                throw new \Exception('You do not have permission to view this support ticket');
             }
         }
 
@@ -453,10 +453,10 @@ class CustomerPortalService
         }
 
         if (!$result) {
-            throw new \Exception('Sorry, You can not access to this ticket', 'filter_error');
+            throw new \Exception('Sorry, You can not access to this ticket');
         }
 
-        throw new \Exception($result->get_error_message(), $result->get_error_code());
+        throw new \Exception($result->get_error_message());
     }
 
 
