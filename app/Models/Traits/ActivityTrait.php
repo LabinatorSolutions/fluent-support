@@ -17,8 +17,8 @@ trait ActivityTrait
                 $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
             }
         ])->latest('id');
-        
-        $from = sanitize_text_field( Arr::get( $data, 'from', '' ) ); 
+
+        $from = sanitize_text_field( Arr::get( $data, 'from', '' ) );
         $to = sanitize_text_field( Arr::get( $data, 'to', '') );
 
         if ( $from != $to ) {
@@ -39,7 +39,7 @@ trait ActivityTrait
         $activities = $activitiesQuery->paginate();
 
         if (!$activities) {
-            throw new Exception('No activities found');
+            throw new \Exception('No activities found');
         }
 
         $settings = $this->getSettings();
@@ -79,7 +79,7 @@ trait ActivityTrait
 
         $settings = wp_parse_args($settings, $defaults);
 
-        if (! $settings ) throw new Exception('No activity settings found');
+        if (! $settings ) throw new \Exception('No activity settings found');
 
         return [
             'activity_settings' => $settings

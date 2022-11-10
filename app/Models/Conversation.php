@@ -180,7 +180,7 @@ class Conversation extends Model
 
         //if not ticket found
         if ( $tickets->isEmpty() ) {
-            throw new Exception( 'Sorry no tickets found based on your filter and bulk actions');
+            throw new \Exception( 'Sorry no tickets found based on your filter and bulk actions');
         }
 
         return $tickets;
@@ -258,7 +258,7 @@ class Conversation extends Model
     {
         if ( !PermissionManager::currentUserCan('fst_manage_other_tickets') ) {
             if ( $ticketAgentId != $agentId ) {
-                throw new Exception("Sorry, You do not have permission to {$task} this response");
+                throw new \Exception("Sorry, You do not have permission to {$task} this response");
             }
         } else {
             return true;
