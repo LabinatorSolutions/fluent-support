@@ -92,7 +92,65 @@
 
         <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key"
              :class="'fs_tk_widget_' + widget_key" class="fs_tk_card fs_tk_extra_card">
-            <div class="fs_tk_card_header">
+            <template v-if="widget_key === 'woo_purchases'">
+                <div class="fs_tk_card_header">
+                    <h3 v-html="widget.title"></h3>
+                </div>
+                <div class="fs_tk_card_body">
+                    <ul>
+                        <li v-for="(order,order_key) in widget.orders" :key="order_key">
+                            <a @click="getOrderDetails(order, widget.products)" class="fs_wc_order_link">Order Id #{{order.id}}</a>&nbsp; - <el-tag class="ml-2" :type="getType(order.status)">{{order.status}}</el-tag>
+                            <!--<span>&nbsp; {{order.total}} </span><span v-html="order.currency"/>-->
+                        </li>
+                    </ul>
+                </div>
+
+                <el-drawer v-model="drawer" size="50%" :with-header="false">
+                    <el-card class="fs_wc_order_box-card">
+                        <template #header>
+                            <div class="fs_wc_card-header">
+                                <h3>Order #{{orders.orderInfo.id}}</h3>
+                                <el-tag class="ml-2" :type="getType(orders.orderInfo.status)">{{orders.orderInfo.status}}</el-tag>
+                            </div>
+                        </template>
+                        <div class="fs_wc_card-body">
+                            <el-row :gutter="20">
+                                <el-col :span="12">
+                                    <div class="fs_wc-order-preview-address">
+                                        <h2>Billing details</h2>
+                                        <p v-html="orders.orderInfo.billing_address"></p>
+                                        <p><strong>Email: </strong>{{orders.orderInfo.email}}</p>
+                                        <p><strong>Phone: </strong>{{orders.orderInfo.phone}}</p>
+                                        <p><strong>Payment Via: </strong>{{orders.orderInfo.payment_method}}</p>
+                                    </div>
+                                </el-col>
+                                <el-col :span="12">
+                                    <div class="fs_wc-order-preview-address">
+                                        <h2>Shipping details</h2>
+                                        <p v-html="orders.orderInfo.shipping_address"></p>
+                                        <p><strong>Shipping method </strong> {{orders.orderInfo.shipping_method}}</p>
+                                    </div>
+                                </el-col>
+                            </el-row>
+
+                            <el-row>
+                                <el-table :data="orders.products" style="width: 100%">
+                                    <el-table-column prop="post_title" label="Product" width="180" />
+                                    <el-table-column prop="product_qty" label="Quantity" width="180" />
+                                    <el-table-column prop="product_gross_revenue" label="Total" />
+                                </el-table>
+                            </el-row>
+                        </div>
+
+                        <div class="fs_wc_card_footer">
+                            <a :href="orders.orderInfo.order_link" target="_blank" class="el-button el-button--primary" type="primary" >Edit</a>
+                            <el-button @click="cancelClick" type="danger">Close</el-button>
+                        </div>
+                    </el-card>
+                </el-drawer>
+
+            </template>
+            <div class="fs_tk_card_header" v-else>
                 <h3 v-html="widget.header"></h3>
             </div>
             <div class="fs_tk_card_body">
@@ -169,6 +227,7 @@ export default {
     emits: ['refresh'],
     data() {
         return {
+            drawer: false,
             loading: true,
             extra_widgets: false,
             other_tickets: [],
@@ -178,6 +237,7 @@ export default {
             activeTabName: 'update_customer_data',
             add_watcher: false,
             agents: this.appVars.support_agents,
+            orders: [],
         }
     },
     methods: {
@@ -220,6 +280,9 @@ export default {
         },
         handleClick(tab, event) {
             this.activeTabName = tab.props.name;
+        },
+        cancelClick(){
+            this.drawer = false;
         },
         closeModal() {
             this.customerManagementModal = false;
@@ -277,6 +340,25 @@ export default {
           .catch((errors) => {
             this.$handleError(errors);
           })
+        },
+        getOrderDetails(current_order, products){
+            this.drawer = true;
+            this.orders = {
+                orderInfo: current_order,
+                products: products[current_order.id],
+            }
+        },
+        getType(status){
+            switch(status.toLocaleString()) {
+                case 'on-hold':
+                    return 'warning';
+                case 'processing':
+                    return 'primary';
+                case 'completed':
+                    return 'success';
+                default:
+                    return 'info';
+            }
         }
     },
     mounted() {
@@ -289,3 +371,22 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.fs_wc_order_box-card{
+    margin-top: 20px;
+}
+.fs_wc_card-header, .fs_wc_card_footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.fs_wc_card_footer {
+    margin-top: 50px;
+    border-top: 1px solid #e4e7ed;
+    padding-top: 30px;
+}
+.fs_wc_order_link{
+    cursor: pointer;
+}
+</style>
