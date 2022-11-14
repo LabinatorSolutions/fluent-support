@@ -489,6 +489,7 @@ class TransStrings
             'Close Ticket Silently' => __('Close Ticket Silently', 'fluent-support'),
             'Import Tickets' => __('Import Tickets', 'fluent-support'),
             'exclude_or_include_summary_column' => __('Select columns that you want to export', 'fluent-support'),
+            'import_from_sass' => __('Import Tickets from Help Scout', 'fluent-support'),
         ];
     }
 }
