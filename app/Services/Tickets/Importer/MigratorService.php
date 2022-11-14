@@ -23,6 +23,8 @@ class MigratorService
             $stats[] = $this->mapClassWithHandler('js-helpdesk')->stats();
         }
 
+        $stats[] = $this->mapClassWithHandler('helpscout')->stats();
+
         return [
             'stats' => $stats
         ];
@@ -33,8 +35,16 @@ class MigratorService
      * @param int $page // It can be page number or ticket id for inserting ticket
      * @param string $handler
      */
-    public function handleImport($page, $handler)
+    public function handleImport($page, $handler, $query=[])
     {
+        if($query){
+            $class = $this->mapClassWithHandler($handler);
+            $class->setAccessToken($query['access_token']);
+            isset($query['mailbox']) ? $class->setMailboxId($query['mailbox']) : '';
+
+            return $class->doMigration($page, $handler);
+        }
+
         return $this->mapClassWithHandler($handler)->doMigration($page, $handler);
     }
 
@@ -46,16 +56,30 @@ class MigratorService
     // This method is a helper method of `handleImport` method it's responsible for calling a class by $handler
     private function mapClassWithHandler($handler)
     {
-        $namespace = "FluentSupport\App\Services\Tickets\Importer\\";
+        $namespace = $this->handleNamespace($handler);
 
         $classMapper = apply_filters('fluent_support/migrator_class_mapper', [
             'awesome-support' => 'AwesomeSupportTickets',
             'support-candy'   => 'SupportCandyTickets',
             'js-helpdesk'     => 'JSHelpdeskTickets',
+            'helpscout'       => 'HelpScoutTickets',
         ]);
 
         $class = $namespace . $classMapper[$handler];
 
         return new $class();
+    }
+
+    private function handleNamespace($handler)
+    {
+        $namespace = "FluentSupport\App\Services\Tickets\Importer\\";
+
+        $proHandlers = ['helpscout'];
+
+        if (in_array($handler, $proHandlers)) {
+            $namespace = "FluentSupportPro\App\Services\TicketImporter\\";
+        }
+
+        return $namespace;
     }
 }
