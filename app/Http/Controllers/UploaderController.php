@@ -73,7 +73,7 @@ class UploaderController extends Controller
         foreach ($uploadedFiles as $file) {
 
             $fileData = [
-                'ticket_id' => intval($ticketId),
+                'ticket_id' => intval($ticketId) ?: NULL,
                 'person_id' => intval($person->id),
                 'file_type' => $file['type'],
                 'file_path' => $file['file_path'],
