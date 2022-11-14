@@ -1,12 +1,5 @@
 <template>
     <div class="fs_head_section">
-        <div v-if="dashboard_param.greetingMessage">
-                <h1 style="margin-top: 30px">
-                    {{ $t("Good") }} {{ greetingTime }} {{ me.full_name
-                    }}{{ $t("!!!") }}
-                </h1>
-        </div>
-        <div v-else style="width: 245px"></div>
         <div class="fs_button_group">
             <el-button
                 type="primary"
@@ -32,6 +25,12 @@
 
     <div class="dashboard fs_box_wrapper" v-if="!loading">
         <div v-html="dashboard_notice"></div>
+        <div v-if="dashboard_param.greetingMessage">
+                <h1 style="margin: 70px 0px 45px">
+                    {{ $t("Good") }} {{ greetingTime }} {{ me.full_name+"!!!"
+                    }}
+                </h1>
+        </div>
         <el-row :gutter="20">
             <el-col :span="12">
                 <draggable
@@ -243,7 +242,7 @@ export default {
                 ],
                 greetingMessage: true,
             },
-            dashboard_build: "v167.0",
+            dashboard_build: "v167.1",
             settings_data: {},
             app_ready: false,
             active_names: {},
@@ -421,12 +420,13 @@ export default {
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
 }
 .fs_head_section {
-    display: flex;
-    justify-content: space-between;
     margin-bottom: 25px;
 }
 .fs_button_group {
     padding: 10px;
+    float: right;
+    margin-bottom: 15px;
+
 }
 .fs_drawer_content {
     margin-top: 30px;
