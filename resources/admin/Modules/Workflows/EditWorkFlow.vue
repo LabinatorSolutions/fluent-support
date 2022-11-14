@@ -112,7 +112,7 @@ export default {
                         this.filtred_action_fields[field] = this.action_fields[field];
                     }
                 }
-            } 
+            }
 
             else if( this.workflow.trigger_key == 'fluent_support/ticket_created' ) {
                 const exclude = ['fs_action_remove_bookmarks', 'fs_action_remove_tags'];
@@ -122,9 +122,11 @@ export default {
                         this.filtred_action_fields[field] = this.action_fields[field];
                     }
                 }
-            } 
+            }
 
             else if( this.workflow.trigger_key == 'fluent_support/response_added_by_customer' ) {
+                this.filtred_action_fields = this.action_fields;
+            } else {
                 this.filtred_action_fields = this.action_fields;
             }
 
