@@ -23,7 +23,9 @@ class MigratorService
             $stats[] = $this->mapClassWithHandler('js-helpdesk')->stats();
         }
 
-        $stats[] = $this->mapClassWithHandler('helpscout')->stats();
+        if (defined('FLUENTSUPPORTPRO')) {
+            $stats[] = $this->mapClassWithHandler('helpscout')->stats();
+        }
 
         return [
             'stats' => $stats
@@ -62,8 +64,14 @@ class MigratorService
             'awesome-support' => 'AwesomeSupportTickets',
             'support-candy'   => 'SupportCandyTickets',
             'js-helpdesk'     => 'JSHelpdeskTickets',
-            'helpscout'       => 'HelpScoutTickets',
         ]);
+
+        if(defined('FLUENTSUPPORTPRO')){
+            add_filter('fluent_support/migrator_class_mapper', function($classMapper){
+                $classMapper['helpscout'] = 'HelpScoutTickets';
+                return $classMapper;
+            });
+        }
 
         $class = $namespace . $classMapper[$handler];
 
@@ -72,11 +80,11 @@ class MigratorService
 
     private function handleNamespace($handler)
     {
-        $namespace = "FluentSupport\App\Services\Tickets\Importer\\";
-
         $proHandlers = ['helpscout'];
 
-        if (in_array($handler, $proHandlers)) {
+        $namespace = "FluentSupport\App\Services\Tickets\Importer\\";
+
+        if(defined('FLUENTSUPPORTPRO') && in_array($handler, $proHandlers)){
             $namespace = "FluentSupportPro\App\Services\TicketImporter\\";
         }
 
