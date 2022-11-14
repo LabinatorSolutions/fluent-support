@@ -19,7 +19,7 @@ class TicketImportController
 
 	public function importTickets ( MigratorService $importService, Request $request )
 	{
-		return $importService->handleImport( $request->getSafe('page', '', 'intval'), $request->getSafe('handler') );
+		return $importService->handleImport( $request->getSafe('page', '', 'intval'), $request->getSafe('handler'), $request->getSafe('query', []) );
 	}
 
 	public function deleteTickets (MigratorService $importService, Request $request)

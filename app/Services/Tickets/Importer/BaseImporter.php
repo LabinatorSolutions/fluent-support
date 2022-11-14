@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services\Tickets\Importer;
 
+use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Person;
@@ -247,23 +248,38 @@ abstract class BaseImporter
             $user = get_user_by('email', $personData['email']);
         }
 
-        if (!$user) {
-            return false;
+//        if (!$user) {
+//            return false;
+//        }
+
+        if (!$user && 'agent' == $type) {
+            $person = Agent::updateOrCreate(
+                [
+                    'email' => $personData['email']
+                ],
+                [
+                    'first_name' => $personData['first_name'],
+                    'last_name'  => $personData['last_name'],
+                    'email'      => $personData['email'],
+                    'type'       => $type
+                ]
+            );
+
+            return $person;
         }
 
-        $personData['user_id'] = $user->ID;
-        if ($user->first_name) {
+
+        if ($user){
+            $personData['user_id'] = $user->ID;
             $personData['first_name'] = $user->first_name;
-        }
-        if ($user->last_name) {
             $personData['last_name'] = $user->last_name;
-        }
-        if (empty($personData['email'])) {
+            $personData['last_name'] = $user->last_name;
             $personData['email'] = $user->user_email;
-        }
 
-        if (empty($personData['full_name'])) {
-            $personData['full_name'] = $user->display_name;
+            if (empty($personData['full_name'])) {
+                $personData['full_name'] = $user->display_name;
+            }
+
         }
 
         if (empty($personData['first_name']) && $personData['last_name'] && !empty($personData['name'])) {

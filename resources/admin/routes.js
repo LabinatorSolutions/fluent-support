@@ -36,7 +36,8 @@ import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
 import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
 
 import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
-import TicketImporter from "./Modules/Settings/TicketImporter";
+import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
+import HelpScoutAuthorization from "./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization";
 
 export default [
     {
@@ -243,6 +244,12 @@ export default [
             active: 'activity_logger'
         }
     },
+    {
+        path: '/help_scout',
+        name: 'help_scout',
+        component: HelpScoutAuthorization,
+        props: true,
+    }
 
 ];
 
