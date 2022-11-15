@@ -346,6 +346,20 @@ class FeedIntegration extends IntegrationManager
 
         $customerData['last_ip_address'] = $entry->ip;
 
+        // Don't create a ticket if customer is blocked
+        if($this->isBlockedCustomer($customerData['email'])) {
+            do_action('ff_log_data', [
+                'title'            => $feed['settings']['name'],
+                'status'           => 'failed',
+                'description'      => __('Support ticket creation failed, because customer email is blocked', 'fluentform'),
+                'parent_source_id' => $form->id,
+                'source_id'        => $entry->id,
+                'component'        => $this->integrationKey,
+                'source_type'      => 'submission_item'
+            ]);
+            return false;
+        }
+
         $customer = Customer::maybeCreateCustomer($customerData);
 
         $ticketData['customer_id'] = $customer->id;
@@ -403,6 +417,18 @@ class FeedIntegration extends IntegrationManager
     public function isEnabled()
     {
         return true;
+    }
+
+    // check if customer is blocked or not
+    private function isBlockedCustomer($customerEmail)
+    {
+        $customer = Customer::where('email', $customerEmail)->first();
+
+        if('inactive' == $customer->status) {
+            return true;
+        }
+
+        return false;
     }
 
 }
