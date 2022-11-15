@@ -393,13 +393,17 @@ class FeedIntegration extends IntegrationManager
             foreach ($attachments as $attachment){
                 $fileName = explode('/', $attachment);
                 $fileName = end($fileName);
+                $filePath = $fluentFormUploadDir . '/' . $fileName;
+                $fileInfo = wp_check_filetype($filePath);
+
                 Attachment::create(
                     [
                         'ticket_id' => $ticket->id,
-                        'file_path' => sanitize_text_field($fluentFormUploadDir . '/' . $fileName),
-                        'full_url'  => esc_url($attachment),
+                        'file_path' => sanitize_text_field($filePath),
+                        'full_url'  => sanitize_url($attachment),
                         'title'     => $fileName,
-                        'person_id' => $customer->id
+                        'person_id' => $customer->id,
+                        'file_type' => (!empty($fileInfo['type'])) ? $fileInfo['type'] : '',
                     ]
                 );
             }
