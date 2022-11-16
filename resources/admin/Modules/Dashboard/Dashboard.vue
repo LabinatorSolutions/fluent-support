@@ -187,6 +187,8 @@ import draggable from "vuedraggable";
 import TicketStatistics from "./TicketStatistics.vue";
 import SuggestedTicket from "./SuggestedTicket.vue";
 import MentionedTicket from "./MentionedTicket.vue";
+import TicketsByProduct from "./TicketsByProduct";
+
 export default {
     name: "DynamicDashboard",
     components: {
@@ -194,7 +196,9 @@ export default {
         TicketStatistics,
         SuggestedTicket,
         MentionedTicket,
+        TicketsByProduct
     },
+
     data() {
         return {
             drawer: false,
@@ -212,6 +216,7 @@ export default {
                     suggested_tickets: [],
                     overall_stats: {},
                 },
+                TicketsByProduct: {},
             },
             dashboard_param: {},
             dashboard_settings_data: {
@@ -239,6 +244,13 @@ export default {
                         heading: "dashboard_sub_heading",
                         active_names: "suggestedTicket",
                     },
+                    {
+                        id: 4,
+                        component: "TicketsByProduct",
+                        show: true,
+                        heading: "dashboard_active_tickets_stats_by_product",
+                        active_names: "ticketsByProduct",
+                    }
                 ],
                 greetingMessage: true,
             },
@@ -250,6 +262,7 @@ export default {
                 mentionedTicket: ["mentionedTicket"],
                 ticketStatistics: ["ticketStatistics"],
                 suggestedTicket: ["suggestedTicket"],
+                ticketsByProduct: ["ticketsByProduct"],
             },
         };
     },
@@ -342,18 +355,17 @@ export default {
                     "overall_stats",
                     "individual_stat",
                     "ticket_to_watch",
+                    "tickets_by_products"
                 ],
             })
                 .then((response) => {
                     this.dashboard_notice = response.dashboard_notice;
                     this.total_data.MentionedTicket = response.ticket_to_watch;
-                    this.total_data.SuggestedTicket.suggested_tickets =
-                        response.suggested_tickets;
-                    this.total_data.SuggestedTicket.overall_stats =
-                        response.overall_stats;
+                    this.total_data.SuggestedTicket.suggested_tickets = response.suggested_tickets;
+                    this.total_data.SuggestedTicket.overall_stats = response.overall_stats;
                     this.total_data.TicketStatistics.stats = response.stats;
-                    this.total_data.TicketStatistics.individual_stat =
-                        response.individual_stat;
+                    this.total_data.TicketStatistics.individual_stat = response.individual_stat;
+                    this.total_data.TicketsByProduct = response.tickets_by_product;
 
                     this.app_ready = true;
                 })
