@@ -189,6 +189,12 @@ trait AgentTrait
             $data['my_overall_stats'] = StatModule::getAgentOverallStats($agentId);
         }
 
+        if (in_array('tickets_by_products', $with)) {
+            //Get tickets by product which are waiting for agent reply
+            $data['tickets_by_product'] = StatModule::getActiveTicketsByProductStats();
+        }
+
+
         return $data;
     }
 
