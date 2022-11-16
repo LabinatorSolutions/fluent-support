@@ -67,10 +67,7 @@ class MigratorService
         ]);
 
         if(defined('FLUENTSUPPORTPRO')){
-            add_filter('fluent_support/migrator_class_mapper', function($classMapper){
-                $classMapper['helpscout'] = 'HelpScoutTickets';
-                return $classMapper;
-            });
+            $classMapper['helpscout'] = 'HelpScoutTickets';
         }
 
         $class = $namespace . $classMapper[$handler];
