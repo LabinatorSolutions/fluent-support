@@ -84,9 +84,6 @@ export default {
     },
     methods: {
         authorize() {
-            this.settings.app_id = "nmBjFtgOPvIas21NzTUhRCHf4ffnhcTC";
-            this.settings.app_secret = "Dt1BtIz2bOBdWr3Qh1p3814uyclEr5EX";
-
             let url = 'https://secure.helpscout.net/authentication/authorizeClientApplication?client_id='+ this.settings.app_id +'&state=' + this.settings.app_secret;
             window.open(url, '_blank');
         },
