@@ -26,10 +26,9 @@
     <div class="dashboard fs_box_wrapper" v-if="!loading">
         <div v-html="dashboard_notice"></div>
         <div v-if="dashboard_param.greetingMessage">
-                <h1 style="margin: 70px 0px 45px">
-                    {{ $t("Good") }} {{ greetingTime }} {{ me.full_name+"!!!"
-                    }}
-                </h1>
+            <h1 style="margin: 70px 0px 45px">
+                {{ $t("Good") }} {{ greetingTime }} {{ me.full_name + "!!!" }}
+            </h1>
         </div>
         <el-row :gutter="20">
             <el-col :span="12">
@@ -196,7 +195,7 @@ export default {
         TicketStatistics,
         SuggestedTicket,
         MentionedTicket,
-        TicketsByProduct
+        TicketsByProduct,
     },
 
     data() {
@@ -250,11 +249,10 @@ export default {
                         show: true,
                         heading: "dashboard_active_tickets_stats_by_product",
                         active_names: "ticketsByProduct",
-                    }
+                    },
                 ],
                 greetingMessage: true,
             },
-            dashboard_build: "v167.1",
             settings_data: {},
             app_ready: false,
             active_names: {},
@@ -270,7 +268,10 @@ export default {
         dashboard_param: {
             handler(newValue, oldValue) {
                 this.$saveData("dashboard_settings_data", newValue);
-                this.$saveData("dashboard_build", this.dashboard_build);
+                this.$saveData(
+                    "prev_dashboard_default_settings",
+                    this.dashboard_settings_data
+                );
             },
             deep: true,
         },
@@ -327,24 +328,30 @@ export default {
         },
         getComponentState() {
             let collapseState = this.$getData("component_collapse_data");
-            let build = this.$getData("dashboard_build");
-            if (collapseState && build === this.dashboard_build) {
+            if (collapseState) {
                 this.active_names = collapseState;
             } else {
                 this.active_names = this.default_active_names;
             }
         },
         getDashboardSettings() {
+            let prev_dashboard_default_settings = this.$getData(
+                "prev_dashboard_default_settings"
+            );
             this.settings_data = this.$getData("dashboard_settings_data");
-            let build = this.$getData("dashboard_build");
             if (
-                Object.entries(this.settings_data).length &&
-                build === this.dashboard_build
+                JSON.stringify(prev_dashboard_default_settings) ===
+                JSON.stringify(this.dashboard_settings_data)
             ) {
                 this.dashboard_param = this.settings_data;
             } else {
-                this.$saveData("dashboard_settings_data", []);
-                this.dashboard_param = this.dashboard_settings_data;
+                this.$saveData(
+                    "prev_dashboard_default_settings",
+                    this.dashboard_settings_data
+                );
+                this.dashboard_param = this.$getData(
+                    "prev_dashboard_default_settings"
+                );
             }
         },
         fetchStat() {
@@ -355,17 +362,21 @@ export default {
                     "overall_stats",
                     "individual_stat",
                     "ticket_to_watch",
-                    "tickets_by_products"
+                    "tickets_by_products",
                 ],
             })
                 .then((response) => {
                     this.dashboard_notice = response.dashboard_notice;
                     this.total_data.MentionedTicket = response.ticket_to_watch;
-                    this.total_data.SuggestedTicket.suggested_tickets = response.suggested_tickets;
-                    this.total_data.SuggestedTicket.overall_stats = response.overall_stats;
+                    this.total_data.SuggestedTicket.suggested_tickets =
+                        response.suggested_tickets;
+                    this.total_data.SuggestedTicket.overall_stats =
+                        response.overall_stats;
                     this.total_data.TicketStatistics.stats = response.stats;
-                    this.total_data.TicketStatistics.individual_stat = response.individual_stat;
-                    this.total_data.TicketsByProduct = response.tickets_by_product;
+                    this.total_data.TicketStatistics.individual_stat =
+                        response.individual_stat;
+                    this.total_data.TicketsByProduct =
+                        response.tickets_by_product;
 
                     this.app_ready = true;
                 })
@@ -438,7 +449,6 @@ export default {
     padding: 10px;
     float: right;
     margin-bottom: 15px;
-
 }
 .fs_drawer_content {
     margin-top: 30px;
