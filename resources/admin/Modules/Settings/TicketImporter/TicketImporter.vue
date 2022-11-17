@@ -66,7 +66,7 @@
                                           </span>
                                         </template>
                                     </el-dialog>
-                                    <help-scout-importer :show="openSettings" :settings="config" @import="importTickets(currently_importing)"/>
+                                    <help-scout-importer :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                 </div>
                             </el-card>
                         </div>
