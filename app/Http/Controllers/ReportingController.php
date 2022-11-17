@@ -27,7 +27,6 @@ class ReportingController extends Controller
         return [
             'overall_reports' => StatModule::getOverAllStats(),
             'today_reports' => StatModule::getTodayStats(),
-            'active_tickets_by_product' => StatModule::getActiveTicketsByProductStats(),
         ];
     }
 

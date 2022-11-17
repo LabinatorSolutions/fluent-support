@@ -490,7 +490,6 @@ class TransStrings
             'Import Tickets' => __('Import Tickets', 'fluent-support'),
             'exclude_or_include_summary_column' => __('Select columns that you want to export', 'fluent-support'),
             'import_from_sass' => __('Import Tickets from Help Scout', 'fluent-support'),
-            'dashboard_active_tickets_stats_by_product' => __('Today\'s Active Tickets By Products', 'fluent-support'),
         ];
     }
 }
