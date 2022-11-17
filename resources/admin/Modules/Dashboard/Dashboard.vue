@@ -222,33 +222,33 @@ export default {
                 first_column: [
                     {
                         id: 1,
-                        component: "MentionedTicket",
+                        component: 'MentionedTicket',
                         show: true,
-                        heading: "dashboard_watcher_heading",
-                        active_names: "mentionedTicket",
+                        heading: this.$t('dashboard_watcher_heading'),
+                        active_names: 'mentionedTicket',
                     },
                     {
                         id: 2,
-                        component: "TicketStatistics",
+                        component: 'TicketStatistics',
                         show: true,
-                        heading: "Your Overview for Today",
-                        active_names: "ticketStatistics",
+                        heading: this.$t('Your Overview for Today'),
+                        active_names: 'ticketStatistics',
                     },
                 ],
                 second_column: [
                     {
                         id: 3,
-                        component: "SuggestedTicket",
+                        component: 'SuggestedTicket',
                         show: true,
-                        heading: "dashboard_sub_heading",
-                        active_names: "suggestedTicket",
+                        heading: this.$t('dashboard_sub_heading'),
+                        active_names: 'suggestedTicket',
                     },
                     {
                         id: 4,
-                        component: "TicketsByProduct",
+                        component: 'TicketsByProduct',
                         show: true,
-                        heading: "dashboard_active_tickets_stats_by_product",
-                        active_names: "ticketsByProduct",
+                        heading: this.$t('active_tickets_by_products'),
+                        active_names: 'ticketsByProduct',
                     },
                 ],
                 greetingMessage: true,
@@ -257,19 +257,19 @@ export default {
             app_ready: false,
             active_names: {},
             default_active_names: {
-                mentionedTicket: ["mentionedTicket"],
-                ticketStatistics: ["ticketStatistics"],
-                suggestedTicket: ["suggestedTicket"],
-                ticketsByProduct: ["ticketsByProduct"],
+                mentionedTicket: ['mentionedTicket'],
+                ticketStatistics: ['ticketStatistics'],
+                suggestedTicket: ['suggestedTicket'],
+                ticketsByProduct: ['ticketsByProduct'],
             },
         };
     },
     watch: {
         dashboard_param: {
             handler(newValue, oldValue) {
-                this.$saveData("dashboard_settings_data", newValue);
+                this.$saveData('dashboard_settings_data', newValue);
                 this.$saveData(
-                    "prev_dashboard_default_settings",
+                    'prev_dashboard_default_settings',
                     this.dashboard_settings_data
                 );
             },
