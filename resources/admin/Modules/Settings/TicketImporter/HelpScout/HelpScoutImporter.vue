@@ -1,6 +1,6 @@
 <template>
     <Teleport to="body">
-        <modal :show="show" title="Import Tickets From HelpScout in Fluent Support" @close="show = false">
+        <modal :show="show" title="Import Tickets From HelpScout in Fluent Support" @close="$emit('close')">
             <template #body>
                 <div class="fs_helpscout_intro">
                     <p> Please copy and paste this url: <code><strong>{{appVars.rest.url + '/public/authorize'}}</strong></code> in your HelpScout Redirection URL. This is required as you have to authorize your app before start importing. </p>
@@ -57,7 +57,7 @@
             </template>
             <template #footer>
                 <span class="dialog-footer">
-            <el-button type="primary" @click="show=false">Cancel</el-button>
+            <el-button type="primary" @click="$emit('close')">{{ $t('Cancel') }}</el-button>
             <el-button type="success" @click="$emit('import')" :disabled="!settings.mailbox_id">
                 {{$t('Import Tickets')}}
             </el-button>
@@ -73,7 +73,7 @@ import Modal from '../../../../Pieces/Modal';
 export default {
     name: 'HelpScoutImporter',
     props:['show', 'settings'],
-    emits:['import'],
+    emits:['import', 'close'],
     components: {
         Modal
     },
@@ -129,6 +129,10 @@ export default {
             }).fail(error => {
                 this.$handleError(error);
             });
+        },
+        handleCancel() {
+            console.log(this)
+            this.show = false;
         },
     }
 }
