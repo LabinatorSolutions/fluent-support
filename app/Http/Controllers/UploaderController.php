@@ -27,17 +27,16 @@ class UploaderController extends Controller
     {
         //get settings  from settings table
         $settings = (new Settings())->globalBusinessSettings();
-        $maxFileSize = absint($settings['max_file_size']);
+        $maxFileSize = floatval($settings['max_file_size']);
         $mimeHeadings = Helper::getAcceptedMimeHeadings();
 
         $maxSizeBytes = $maxFileSize * 1024;
-
         //Validate the file type and size
         $files = $this->validate($this->request->files(), [
             'file' => 'max:' . $maxSizeBytes . '|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
         ], [
             'file.mimetypes' => sprintf(__('Only %s files are allowed.', 'fluent-support'), implode(', ', $mimeHeadings)),
-            'file.max'       => sprintf(__('The file can not be more than %dMB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support'), $maxFileSize)
+            'file.max'       => sprintf(__('The file can not be more than %.02fMB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support'), $maxFileSize)
         ]);
 
 
