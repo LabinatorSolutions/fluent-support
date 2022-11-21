@@ -166,7 +166,7 @@ class Helper
         $settings = (new Settings())->globalBusinessSettings();
         $maxFileSize = absint($settings['max_file_size']);
 
-        return sprintf(__('Supported Types: %s and max file size: %dMB', 'fluent-support'), implode(', ', $mimeHeadings), $maxFileSize);
+        return sprintf(__('Supported Types: %s and max file size: %.02fMB', 'fluent-support'), implode(', ', $mimeHeadings), $maxFileSize);
     }
 
     public static function getMimeGroups()
