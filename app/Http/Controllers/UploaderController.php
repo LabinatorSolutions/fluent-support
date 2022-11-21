@@ -36,7 +36,7 @@ class UploaderController extends Controller
             'file' => 'max:' . $maxSizeBytes . '|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
         ], [
             'file.mimetypes' => sprintf(__('Only %s files are allowed.', 'fluent-support'), implode(', ', $mimeHeadings)),
-            'file.max'       => sprintf(__('The file can not be more than %.02fMB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support'), $maxFileSize)
+            'file.max'       => sprintf(__('The file can not be more than %.01fMB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support'), $maxFileSize)
         ]);
 
 

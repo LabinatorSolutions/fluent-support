@@ -164,9 +164,9 @@ class Helper
     {
         $mimeHeadings = self::getAcceptedMimeHeadings();
         $settings = (new Settings())->globalBusinessSettings();
-        $maxFileSize = absint($settings['max_file_size']);
+        $maxFileSize = floatval($settings['max_file_size']);
 
-        return sprintf(__('Supported Types: %s and max file size: %.02fMB', 'fluent-support'), implode(', ', $mimeHeadings), $maxFileSize);
+        return sprintf(__('Supported Types: %s and max file size: %.01fMB', 'fluent-support'), implode(', ', $mimeHeadings), $maxFileSize);
     }
 
     public static function getMimeGroups()
