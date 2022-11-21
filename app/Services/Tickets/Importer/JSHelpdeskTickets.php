@@ -83,7 +83,7 @@ class JSHelpdeskTickets extends BaseImporter
                     'updated_at'             => $ticket->updated,
                 ];
 
-                if($ticket->lastreply == '0000-00-00 00:00:00') {
+                if('0000-00-00 00:00:00' == $ticket->lastreply) {
                     $ticketData['waiting_since'] = $ticket->created;
                 } else {
                     $ticketData['waiting_since'] = $ticket->lastreply;
