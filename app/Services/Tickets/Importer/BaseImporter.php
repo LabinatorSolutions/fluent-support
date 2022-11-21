@@ -323,7 +323,7 @@ abstract class BaseImporter
     protected function addMetaData($ticketData)
     {
         if (empty($ticketData['slug'])) {
-            $ticketData['title'] = Ticket::slugify($ticketData['title']);
+            $ticketData['slug'] = Ticket::slugify($ticketData['title']);
         }
 
         $ticketData['hash'] = substr(md5(time() . wp_generate_uuid4()), 0, 8) . mt_rand(1, 99);
