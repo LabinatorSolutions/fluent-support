@@ -55,7 +55,7 @@ class UploaderController extends Controller
             $person = Helper::getCurrentPerson();
         }
 
-        //Check if customer has permission to uipload file
+        //Check if customer has permission to upload file
         if ($person->person_type == 'customer') {
             $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
             if (in_array('file_upload', $disabledFields)) {
