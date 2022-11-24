@@ -9,7 +9,8 @@ class TransStrings
     {
         return [
             'dashboard_sub_heading' => __('Here are a few tickets you may want to take a look at', 'fluent-support'),
-            'dashboard_watcher_heading' => __('You have some bookmarked tickets', 'fluent-support'),
+            'Your bookmarked tickets' => __('Your bookmarked tickets', 'fluent-support'),
+            'no_bookmarked_ticket' => __('At this moment you don\'t have any bookmarked ticket.', 'fluent-support'),
             'dashboard_all_catch_up' => __('Looks like you have caught up everything for now.', 'fluent-support'),
             'Your Overview for Today' => __('Your Overview for Today', 'fluent-support'),
             'Your Business Details' => __('Your Business Details', 'fluent-support'),

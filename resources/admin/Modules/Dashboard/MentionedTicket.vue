@@ -1,6 +1,6 @@
 <template>
     <div class="fs_box_body">
-        <ul v-if="component_data" class="fs_card_list">
+        <ul v-if="component_data.length" class="fs_card_list">
             <li v-for="ticket in component_data" :key="ticket.id">
                 <router-link
                     tag="li"
@@ -44,6 +44,11 @@
                 </router-link>
             </li>
         </ul>
+        <div v-else class="fs_no_book_tk">
+            <span>
+                {{ $t('no_bookmarked_ticket') }}
+            </span>
+        </div>
     </div>
 </template>
 <script>
@@ -55,4 +60,11 @@ export default {
     },
 };
 </script>
-<style></style>
+<style scoped>
+    .fs_no_book_tk span{
+        font-size: 15px;
+        color: #3c434a;
+        font-weight: 400;
+        padding: 0 15px;
+    }
+</style>
