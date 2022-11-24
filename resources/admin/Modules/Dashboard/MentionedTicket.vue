@@ -66,5 +66,6 @@ export default {
         color: #3c434a;
         font-weight: 400;
         padding: 0 15px;
+        display: block;
     }
 </style>

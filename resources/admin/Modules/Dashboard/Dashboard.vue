@@ -7,25 +7,27 @@
         </div>
         <div></div>
         <div class="fs_button_group">
-            <el-button
-                type="primary"
-                class="fs_drawer_button"
-                style="margin-left: 16px"
-                @click="drawer = true"
-            >
-                <el-icon>
-                    <Setting />
-                </el-icon>
-            </el-button>
+            <div class="fs_button_group_inner">
+                <el-button
+                    type="primary"
+                    class="fs_drawer_button"
+                    style="margin-left: 16px"
+                    @click="drawer = true"
+                >
+                    <el-icon>
+                        <Setting />
+                    </el-icon>
+                </el-button>
 
-            <el-button
-                type="info"
-                class="fs_drawer_button"
-                style="margin-left: 16px"
-                @click="defalutSettings()"
-            >
-                Reset
-            </el-button>
+                <el-button
+                    type="info"
+                    class="fs_drawer_button"
+                    style="margin-left: 16px"
+                    @click="defalutSettings()"
+                >
+                    Reset
+                </el-button>
+            </div>
         </div>
     </div>
 
@@ -432,12 +434,11 @@ export default {
 }
 
 .fs_drawer_button {
-    float: right;
+    /*float: right;*/
 }
 .draggable_component {
     max-width: 680px;
     margin-left: auto;
-    margin-right: auto;
     margin-bottom: 20px;
     border-radius: 15px;
     border: 1px solid rgb(226, 228, 231);
@@ -448,9 +449,26 @@ export default {
     justify-content: space-between;
     margin-bottom: 25px;
 }
+.fs_head_section h1 {
+    line-height: 1.4;
+    max-width: 680px;
+    width: 100%;
+    margin-left: auto;
+}
+.fs_head_section > :first-child  {
+    flex-basis: 50%;
+}
 .fs_button_group {
-    float: right;
     margin: 15px 0px 15px 0px;
+    flex-basis: 50%;
+}
+.fs_button_group .fs_button_group_inner {
+    max-width: 680px;
+    width: 100%;
+    margin-right: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 .fs_drawer_content {
     margin-top: 30px;
@@ -462,5 +480,10 @@ export default {
 }
 .fs_box_header {
     cursor: move;
+}
+
+.dashboard .el-row .el-col:last-child .draggable_component {
+    margin-right: auto;
+    margin-left: 0;
 }
 </style>
