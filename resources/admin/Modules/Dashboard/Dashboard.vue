@@ -225,7 +225,7 @@ export default {
                         id: 1,
                         component: 'MentionedTicket',
                         show: true,
-                        heading: this.$t('dashboard_watcher_heading'),
+                        heading: this.$t('Your bookmarked tickets'),
                         active_names: 'mentionedTicket',
                     },
                     {
