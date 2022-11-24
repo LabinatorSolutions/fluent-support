@@ -99,8 +99,10 @@
                 <div class="fs_tk_card_body">
                     <ul>
                         <li v-for="(order,order_key) in widget.orders" :key="order_key">
-                            <a @click="getOrderDetails(order, widget.products)" class="fs_wc_order_link">Order Id #{{order.id}}</a>&nbsp; - <el-tag class="ml-2" :type="getType(order.status)">{{order.status}}</el-tag>
-                            <!--<span>&nbsp; {{order.total}} </span><span v-html="order.currency"/>-->
+                            <el-tooltip :content="`Purchase date: `+order.date+`, Amount: `+order.currency+order.total" placement="top" :raw-content="true">
+                                <a @click="getOrderDetails(order, widget.products)" class="fs_wc_order_link">#{{order.id}}</a>
+                            </el-tooltip>
+                            &nbsp; - <el-tag class="ml-2" :type="getType(order.status)">{{order.status}}</el-tag>
                         </li>
                     </ul>
                 </div>
@@ -122,6 +124,7 @@
                                         <p><strong>Email: </strong>{{orders.orderInfo.email}}</p>
                                         <p><strong>Phone: </strong>{{orders.orderInfo.phone}}</p>
                                         <p><strong>Payment Via: </strong>{{orders.orderInfo.payment_method}}</p>
+                                        <p><strong>Purchase Date: </strong>{{orders.orderInfo.date}}</p>
                                     </div>
                                 </el-col>
                                 <el-col :span="12">
@@ -134,10 +137,16 @@
                             </el-row>
 
                             <el-row>
-                                <el-table :data="orders.products" style="width: 100%">
-                                    <el-table-column prop="post_title" label="Product" width="180" />
-                                    <el-table-column prop="product_qty" label="Quantity" width="180" />
-                                    <el-table-column prop="product_gross_revenue" label="Total" />
+                                <el-table
+                                    :data="orders.products"
+                                    style="width: 100%; margin-top:2%;">
+                                    <el-table-column prop="post_title" label="Product" width="60%"/>
+                                    <el-table-column prop="product_qty" label="Quantity" width="20%"  align="center"/>
+                                    <el-table-column label="Total" width="20%" align="center">
+                                        <template #default="scope">
+                                            <span v-html="orders.orderInfo.currency"></span><span>{{scope.row.product_gross_revenue}}</span>
+                                        </template>
+                                    </el-table-column>
                                 </el-table>
                             </el-row>
                         </div>
@@ -342,6 +351,7 @@ export default {
           })
         },
         getOrderDetails(current_order, products){
+            console.log(current_order);
             this.drawer = true;
             this.orders = {
                 orderInfo: current_order,
