@@ -1134,7 +1134,7 @@ class Ticket extends Model
     private function checkIfValidAgent($agent)
     {
         if (!$agent) {
-            throw new Exception('Sorry, You do not have permission. Please add yourself as support agent first');
+            throw new \Exception('Sorry, You do not have permission. Please add yourself as support agent first');
         } else {
             return true;
         }
@@ -1291,7 +1291,7 @@ class Ticket extends Model
         } else if ($action == 'assign_tags') {
             return $this->bulkAssignTag($query->get());
         } else {
-            throw new Exception('Sorry no action found as available');
+            throw new \Exception('Sorry no action found as available');
         }
     }
 
@@ -1338,7 +1338,7 @@ class Ticket extends Model
         $request = \FluentSupport\App\App::getInstance('request');
 
         if (!$request->has('agent_id')) {
-            throw new Exception('agent_id param is required');
+            throw new \Exception('agent_id param is required');
         }
 
         $agent = Agent::findOrFail($request->get('agent_id'));
@@ -1372,7 +1372,7 @@ class Ticket extends Model
         $request = \FluentSupport\App\App::getInstance('request');
 
         if (!$request->has('tag_ids')) {
-            throw new Exception('tag_ids param is required');
+            throw new \Exception('tag_ids param is required');
         }
 
         $tags = array_filter(array_map('absint', $request->get('tag_ids', [])));
@@ -1390,7 +1390,7 @@ class Ticket extends Model
     private function checkAgentPermission($ticket)
     {
         if (!PermissionManager::hasTicketPermission($ticket)) {
-            throw new Exception('Sorry, You do not have permission to this ticket');
+            throw new \Exception('Sorry, You do not have permission to this ticket');
         } else {
             return true;
         }

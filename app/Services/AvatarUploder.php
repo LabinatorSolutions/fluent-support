@@ -26,7 +26,7 @@ class AvatarUploder
 
 
         if ( !$uploadedImage ) {
-            throw new Exception('Something went wrong while updating the profile picture', 403);
+            throw new \Exception('Something went wrong while updating the profile picture', 403);
         }
 
         $user->avatar = $uploadedImage[0]['url'];
@@ -54,7 +54,7 @@ class AvatarUploder
         $ext = $file['file']->getClientOriginalExtension();
 
         if( !in_array($ext, $allowExtension) ) {
-            throw new Exception('Unsupported file submitted, please select an image file');
+            throw new \Exception('Unsupported file submitted, please select an image file');
         }
 
         if( !in_array($ext, $allowExtension) ) {

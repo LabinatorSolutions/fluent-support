@@ -14,11 +14,23 @@
                     <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
                 </div>
                 <el-row style="padding: 25px 25px" v-if="!loading && settings.length" :gutter="20">
+
+                    <el-col :span="24">
+                        <el-card :body-style="{ padding: '0px' }" style="margin: 10px 0" v-if="!has_pro">
+                            <div class="fs_narrow_promo" style="background: white;">
+                                <h3>{{$t('import_from_sass')}}</h3>
+                                <p>{{$t('pro_promo')}}</p>
+                                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
+                            </div>
+                        </el-card>
+                    </el-col>
+
                     <el-col v-for="setting in settings" :span="24">
                         <div :class="'grid-content fs_'+setting.handler">
                             <el-card :body-style="{ padding: '4px' }" :header=setting.name style="margin: 10px 0">
                                 <div style="padding: 14px">
-                                    <h4>This migrator will migrate total <b>{{setting.tickets}}</b> tickets with <b>{{setting.replies}}</b> replies and <b>{{setting.customers}}</b> customers. If you already migrate tickets then it won't migrate existing tickets.</h4>
+                                    <h4 v-if="setting?.type=='sass'">Migrate tickets from <b>{{setting.name}}</b> in one click.</h4>
+                                    <h4 v-else>This migrator will migrate total <b>{{setting.tickets}}</b> tickets with <b>{{setting.replies}}</b> replies and <b>{{setting.customers}}</b> customers. If you already migrate tickets then it won't migrate existing tickets.</h4>
                                     <span v-if="setting.last_migrated">Last Migration: <b>{{setting.last_migrated}}</b></span>
                                     <el-progress
                                         v-if="imporing && currently_importing == setting.handler"
@@ -32,22 +44,29 @@
                                                  :percentage="50" status="exception" :indeterminate="true"
                                                  style="margin: 5px 0"/>
                                     <hr/>
-                                    <el-button type="success" :disabled="imporing"
-                                               @click="importTickets(setting.handler)" style="margin-top: 15px;">
-                                        {{ $t('Import Tickets') }}
-                                    </el-button>
+                                    <div class="fs_import_buttons">
+                                        <el-button v-if="setting.type=='sass'" type="success"
+                                                   @click="(openSettings=true)&&(currently_importing=setting.handler)" :disabled="imporing">
+                                            {{ $t('Import Tickets') }}
+                                        </el-button>
+                                        <el-button v-else type="success" :disabled="imporing"
+                                                   @click="importTickets(setting.handler)">
+                                            {{ $t('Import Tickets') }}
+                                        </el-button>
+                                    </div>
 
                                     <el-dialog v-model="import_done" title="Delete Imported Tickets">
                                         <span> Do you want to delete all imported tickets and its data? </span>
                                         <template #footer>
-						      <span class="dialog-footer">
-						        <el-button @click="import_done = false" type="primary">No</el-button>
-						        <el-button type="danger" @click="deleteOldTicketsWithData(currently_importing)">
-						        	Yes
-					        	</el-button>
-						      </span>
+                                          <span class="dialog-footer">
+                                            <el-button @click="import_done = false" type="primary">No</el-button>
+                                            <el-button type="danger" @click="deleteOldTicketsWithData(currently_importing)">
+                                                Yes
+                                            </el-button>
+                                          </span>
                                         </template>
                                     </el-dialog>
+                                    <help-scout-importer :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                 </div>
                             </el-card>
                         </div>
@@ -65,8 +84,12 @@
 </template>
 
 <script type="text/babel">
+import HelpScoutImporter from './HelpScout/HelpScoutImporter.vue';
 export default {
     name: 'TicketImporter',
+    components: {
+        HelpScoutImporter
+    },
     data() {
         return {
             settings: {},
@@ -79,7 +102,11 @@ export default {
             currently_importing: '',
             import_done: false,
             deleting: false,
-            delete_page: 1
+            delete_page: 1,
+            openSettings: false,
+            config:{},
+            sass_systems: ['helpscout'],
+            import_from_sass: false
         }
     },
 
@@ -98,12 +125,25 @@ export default {
         },
         importTickets(handler) {
             this.imporing = true;
-            this.currently_importing = handler;
 
-            this.$post('ticket_importer/import', {
+            if (this.openSettings) {
+                this.openSettings = false;
+            }
+
+            this.currently_importing = handler;
+            let query = {
                 handler: handler,
-                page: this.import_page,
-            })
+                page: this.import_page
+            };
+
+            if (this.config){
+                query.query = {
+                    access_token: this.config.access_token,
+                    mailbox: this.config.mailbox_id,
+                };
+            }
+
+            this.$post('ticket_importer/import', query)
                 .then(response => {
                     if (response.has_more) {
                         this.import_page = response.next_page;
@@ -118,7 +158,15 @@ export default {
                             position: 'bottom-right'
                         })
                         this.imporing = false;
-                        this.import_done = true;
+
+                        if(!this.sass_systems.includes(handler)){
+                            this.import_done = true;
+                        } else{
+                            this.config = {};
+                            this.import_from_sass = true;
+                        }
+
+                        this.fetchSettings();
                     }
                 })
                 .catch((error) => {
@@ -171,5 +219,8 @@ export default {
 <style lang="scss" scoped>
 .fs_no_active_support_system {
     padding: 20px;
+}
+.fs_import_buttons {
+    margin-top: 15px;
 }
 </style>

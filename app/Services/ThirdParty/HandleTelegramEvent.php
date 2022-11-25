@@ -71,7 +71,7 @@ class HandleTelegramEvent
     private function verifyProVersion ()
     {
         if (!defined('FLUENTSUPPORTPRO')) {
-            throw new Exception('Telegram Integration requires pro version of Fluent Support', 400);
+            throw new \Exception('Telegram Integration requires pro version of Fluent Support', 400);
         }
 
         return true;
@@ -86,7 +86,7 @@ class HandleTelegramEvent
     private function validateToken ($token)
     {
         if (\FluentSupportPro\App\Services\Integrations\Telegram\TelegramHelper::getWebhookToken() != $token) {
-            throw new Exception('Bot Token could not be verified', 404);
+            throw new \Exception('Bot Token could not be verified', 404);
         }
         return true;
     }
@@ -112,7 +112,7 @@ class HandleTelegramEvent
              */
             do_action('fluent_support/telegram_payload_error', $responseData, $payload);
 
-            throw new Exception($responseData->get_error_message(), $responseData->get_error_code());
+            throw new \Exception($responseData->get_error_message(), $responseData->get_error_code());
         } else {
             return $responseData;
         }
@@ -130,13 +130,13 @@ class HandleTelegramEvent
         $ticket = Ticket::find($ticketId);
 
         if ( !$ticket ) {
-            throw new Exception('No ticket found', 400);
+            throw new \Exception('No ticket found', 400);
         }
 
         $agent = Agent::find($agentId);
 
         if ( !$agent ) {
-            throw new Exception('No Agent found', 400);
+            throw new \Exception('No Agent found', 400);
         }
 
         (new ResponseService)->createResponse($data, $agent, $ticket);

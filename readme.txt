@@ -2,8 +2,8 @@
 Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
-Tested up to: 6.0
-Stable tag: 1.6.6
+Tested up to: 6.1.1
+Stable tag: 1.6.7
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,15 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.6.7 (Date: November 24, 2022) =
+* Migrate Tickets from JS Help Desk
+* Agent Assignee Record on Activity
+* Dynamic Dashboard
+* Agent Summary Exporter (Pro)
+* Migrate Tickets from Help Scout (Pro)
+* WooCommerce Purchase History Widget Redesigned (Pro)
+* Bug Fixes and Improvements
 
 = 1.6.6 (Date: October, 2022) =
 * Activity Log Filters

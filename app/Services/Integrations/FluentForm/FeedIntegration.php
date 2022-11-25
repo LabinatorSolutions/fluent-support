@@ -346,6 +346,20 @@ class FeedIntegration extends IntegrationManager
 
         $customerData['last_ip_address'] = $entry->ip;
 
+        // Don't create a ticket if customer is blocked
+        if($this->isBlockedCustomer($customerData['email'])) {
+            do_action('ff_log_data', [
+                'title'            => $feed['settings']['name'],
+                'status'           => 'failed',
+                'description'      => __('Support ticket creation failed, because customer email is blocked', 'fluentform'),
+                'parent_source_id' => $form->id,
+                'source_id'        => $entry->id,
+                'component'        => $this->integrationKey,
+                'source_type'      => 'submission_item'
+            ]);
+            return false;
+        }
+
         $customer = Customer::maybeCreateCustomer($customerData);
 
         $ticketData['customer_id'] = $customer->id;
@@ -379,13 +393,17 @@ class FeedIntegration extends IntegrationManager
             foreach ($attachments as $attachment){
                 $fileName = explode('/', $attachment);
                 $fileName = end($fileName);
+                $filePath = $fluentFormUploadDir . '/' . $fileName;
+                $fileInfo = wp_check_filetype($filePath);
+
                 Attachment::create(
                     [
                         'ticket_id' => $ticket->id,
-                        'file_path' => sanitize_text_field($fluentFormUploadDir . '/' . $fileName),
-                        'full_url'  => esc_url($attachment),
+                        'file_path' => sanitize_text_field($filePath),
+                        'full_url'  => sanitize_url($attachment),
                         'title'     => $fileName,
-                        'person_id' => $customer->id
+                        'person_id' => $customer->id,
+                        'file_type' => (!empty($fileInfo['type'])) ? $fileInfo['type'] : '',
                     ]
                 );
             }
@@ -403,6 +421,18 @@ class FeedIntegration extends IntegrationManager
     public function isEnabled()
     {
         return true;
+    }
+
+    // check if customer is blocked or not
+    private function isBlockedCustomer($customerEmail)
+    {
+        $customer = Customer::where('email', $customerEmail)->first();
+
+        if('inactive' == $customer->status) {
+            return true;
+        }
+
+        return false;
     }
 
 }

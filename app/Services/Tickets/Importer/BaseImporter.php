@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services\Tickets\Importer;
 
+use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Person;
@@ -156,6 +157,7 @@ abstract class BaseImporter
 
             if (!empty($reply['attachments'])) {
                 foreach ($reply['attachments'] as $attachmentData) {
+                    $attachmentData['ticket_id'] = $createdTicket->id;
                     $attachmentData['person_id'] = $person->id;
                     $attachmentData['conversation_id'] = $conversionId;
                     Attachment::create($attachmentData);
@@ -246,23 +248,38 @@ abstract class BaseImporter
             $user = get_user_by('email', $personData['email']);
         }
 
-        if (!$user) {
-            return false;
+//        if (!$user) {
+//            return false;
+//        }
+
+        if (!$user && 'agent' == $type) {
+            $person = Agent::updateOrCreate(
+                [
+                    'email' => $personData['email']
+                ],
+                [
+                    'first_name' => $personData['first_name'],
+                    'last_name'  => $personData['last_name'],
+                    'email'      => $personData['email'],
+                    'type'       => $type
+                ]
+            );
+
+            return $person;
         }
 
-        $personData['user_id'] = $user->ID;
-        if ($user->first_name) {
+
+        if ($user){
+            $personData['user_id'] = $user->ID;
             $personData['first_name'] = $user->first_name;
-        }
-        if ($user->last_name) {
             $personData['last_name'] = $user->last_name;
-        }
-        if (empty($personData['email'])) {
+            $personData['last_name'] = $user->last_name;
             $personData['email'] = $user->user_email;
-        }
 
-        if (empty($personData['full_name'])) {
-            $personData['full_name'] = $user->display_name;
+            if (empty($personData['full_name'])) {
+                $personData['full_name'] = $user->display_name;
+            }
+
         }
 
         if (empty($personData['first_name']) && $personData['last_name'] && !empty($personData['name'])) {
@@ -306,7 +323,7 @@ abstract class BaseImporter
     protected function addMetaData($ticketData)
     {
         if (empty($ticketData['slug'])) {
-            $ticketData['title'] = Ticket::slugify($ticketData['title']);
+            $ticketData['slug'] = Ticket::slugify($ticketData['title']);
         }
 
         $ticketData['hash'] = substr(md5(time() . wp_generate_uuid4()), 0, 8) . mt_rand(1, 99);
@@ -331,4 +348,19 @@ abstract class BaseImporter
         return $ticketData;
     }
 
+
+    public function resolvePerson($personUserId)
+    {
+        $person = get_user_by('ID', $personUserId);
+
+        if (!$person) {
+            return false;
+        }
+
+        return [
+            'user_id'   => $personUserId,
+            'full_name' => $person->first_name . ' ' . $person->last_name,
+            'email'     => $person->user_email
+        ];
+    }
 }

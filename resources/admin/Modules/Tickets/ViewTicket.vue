@@ -855,7 +855,7 @@ export default {
           for (let key in this.ticket_statuses) {
               status[key] = this.ticket_statuses[key][0];
           }
-          
+
           return status;
       }
     },

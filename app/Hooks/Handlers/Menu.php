@@ -131,7 +131,9 @@ class Menu
                 'key'       => 'reports',
                 'label'     => __('Reports', 'fluent-support'),
                 'permalink' => $baseUrl . 'reports'
-            ]
+            ],
+
+            
         ];
 
         $hasSensitiveAccess = PermissionManager::currentUserCan('fst_sensitive_data');
@@ -357,7 +359,8 @@ class Menu
             'ticket_tags'               => $tags,
             'i18n'                      => $i18ns,
             'custom_fields'             => apply_filters('fluent_support/ticket_custom_fields', []),
-            'has_file_upload'           => !!Helper::ticketAcceptedFileMiles()
+            'has_file_upload'           => !!Helper::ticketAcceptedFileMiles(),
+            'repost_export_options'     => Helper::getExportOptions(),
         ));
 
         if (defined('FLUENTCRM')) {

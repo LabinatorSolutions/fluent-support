@@ -262,11 +262,11 @@ class CustomerPortalService
     private function validateCustomer($customer)
     {
         if (!$customer) {
-            throw new Exception('Customer not found', 'no_customer');
+            throw new \Exception('Customer not found');
         }
 
         if ($customer->status == 'inactive') {
-            throw new Exception('Sorry, You do not have access to customer portal', 'inactive_customer');
+            throw new \Exception('Sorry, You do not have access to customer portal');
         }
     }
 
@@ -288,7 +288,7 @@ class CustomerPortalService
         }
 
         if (!$customer) {
-            throw new Exception('Sorry! No customer found', 'no_customer');
+            throw new \Exception('Sorry! No customer found');
         }
 
         return $customer;

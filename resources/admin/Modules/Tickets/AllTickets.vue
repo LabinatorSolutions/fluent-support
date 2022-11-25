@@ -275,16 +275,36 @@ export default {
         }
     },
     watch: {
-        '$route.query'() {
+        '$route.query.agent_id'() {
             if (this.app_ready) {
-                this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
                 this.filters.agent_id = this.$route.query.agent_id;
+                this.fetchTickets();
+            }
+        },
+        '$route.query.watcher'() {
+            if (this.app_ready) {
                 this.filters.watcher = this.$route.query.watcher;
-                this.filter_type = this.$route.query.filter_type;
+                this.fetchTickets();
+            }
+        },
+        '$route.query.status_type'() {
+            if (this.app_ready) {
                 this.filters.status_type = this.$route.query.status_type;
                 this.fetchTickets();
             }
-        }
+        },
+        '$route.query.filter_type'() {
+            if (this.app_ready) {
+                this.filter_type = this.$route.query.filter_type;
+                this.fetchTickets();
+            }
+        },
+        '$route.query.waiting_for_reply'() {
+            if (this.app_ready) {
+                this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
+                this.fetchTickets();
+            }
+        },
     },
     methods: {
         fetchTickets() {
