@@ -3,9 +3,9 @@
         <el-form :data="ticket" label-position="top">
 
             <div class="text-align-center" v-if="step == 'search'">
-                <h3>Search Existing contact or provide email address</h3>
+                <h3>{{$t('Search Existing contact or provide email address')}}</h3>
                 <el-input @keypress.enter.native.prevent="searchCustomers()" v-model="search_customer" size="large"
-                          placeholder="Search or provide email address">
+                          :placeholder="$t('Search or provide email address')">
                     <template #append>
                         <el-button :disabled="!search_customer" @click="searchCustomers()">
                             <el-icon>
@@ -75,7 +75,9 @@
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button @click="step = 'ticket'" type="primary">Next</el-button>
+                            <el-button @click="step = 'ticket'" type="primary">
+                                {{$t('Next')}}
+                            </el-button>
                         </el-form-item>
 
                     </div>
@@ -85,9 +87,9 @@
             <template v-else-if="step == 'ticket'">
 
                 <div style="background: #dbdfe5; padding: 10px 10px 5px; margin-bottom: 10px;">
-                    <h3 style="margin: 0px;">Selected Contact Details</h3>
-                    <p>Name: {{new_customer.first_name}} {{new_customer.last_name}}</p>
-                    <p>Email: {{new_customer.email}}</p>
+                    <h3 style="margin: 0px;">{{$t('Selected Contact Details')}}</h3>
+                    <p>{{$t('Name')}}: {{new_customer.first_name}} {{new_customer.last_name}}</p>
+                    <p>{{$t('Email')}}: {{new_customer.email}}</p>
                 </div>
 
                 <el-form-item v-if="mailboxes.length > 1" :label="$t('Select Business Inbox')">

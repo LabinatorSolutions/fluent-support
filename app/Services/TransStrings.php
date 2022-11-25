@@ -478,7 +478,6 @@ class TransStrings
             'watcher_remove_warning'    => __('Are you sure to remove this watcher?', 'fluent-support'),
             'add_cs_from_crm'    => __('Add Customer From FluentCRM', 'fluent-support'),
             'Inbox Color'       => __('Inbox Color', 'fluent-support'),
-            'Inbox'       => __('Inbox', 'fluent-support'),
             'Split Ticket'       => __('Split Ticket', 'fluent-support'),
             'Apply / Remove Lists on FluentCRM Profile' => __('Apply / Remove Lists on FluentCRM Profile', 'fluent-support'),
             'Additional info' => __('Additional info', 'fluent-support'),
@@ -491,6 +490,12 @@ class TransStrings
             'Import Tickets' => __('Import Tickets', 'fluent-support'),
             'exclude_or_include_summary_column' => __('Select columns that you want to export', 'fluent-support'),
             'import_from_sass' => __('Import Tickets from Help Scout', 'fluent-support'),
+            'Search Existing contact or provide email address' => __('Search Existing contact or provide email address', 'fluent-support'),
+            'Search or provide email address' => __('Search or provide email address', 'fluent-support'),
+            'Could not find a contact? Create a new one.' => __('Could not find a contact? Create a new one.', 'fluent-support'),
+            'Selected Contact Details' => __('Selected Contact Details', 'fluent-support'),
+            'Next' => __('Next', 'fluent-support'),
+            'Enable Auto Closing Inactive Tickets' => __('Enable Auto Closing Inactive Tickets', 'fluent-support'),
         ];
     }
 }

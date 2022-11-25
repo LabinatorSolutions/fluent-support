@@ -16,7 +16,9 @@
         <template v-else>
             <div style="padding: 20px;" v-if="!fetching" v-loading="loading" class="fs_box_body">
                 <div style="margin-bottom: 20px;">
-                    <el-checkbox v-model="settings.enabled" true-label="yes" false-label="no">Enable Auto Closing Inactive Tickets</el-checkbox>
+                    <el-checkbox v-model="settings.enabled" true-label="yes" false-label="no">
+                        {{$t('Enable Auto Closing Inactive Tickets')}}
+                    </el-checkbox>
                 </div>
                 <form-builder v-if="app_ready && settings.enabled == 'yes'" :fields="fields" :form-data="settings" label_position="top">
                 </form-builder>
