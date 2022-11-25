@@ -9,7 +9,8 @@ class TransStrings
     {
         return [
             'dashboard_sub_heading' => __('Here are a few tickets you may want to take a look at', 'fluent-support'),
-            'dashboard_watcher_heading' => __('You have some bookmarked tickets', 'fluent-support'),
+            'Your bookmarked tickets' => __('Your bookmarked tickets', 'fluent-support'),
+            'no_bookmarked_ticket' => __('At this moment you don\'t have any bookmarked ticket.', 'fluent-support'),
             'dashboard_all_catch_up' => __('Looks like you have caught up everything for now.', 'fluent-support'),
             'Your Overview for Today' => __('Your Overview for Today', 'fluent-support'),
             'Your Business Details' => __('Your Business Details', 'fluent-support'),
@@ -487,7 +488,9 @@ class TransStrings
             'Exclude' => __('Exclude', 'fluent-support'),
             'no_other_support_system_is_activate' => __('Seems like Awesome Support or Support Candy isn\'t activated in your site. To import tickets from any of these please activate it.', 'fluent-support'),
             'Close Ticket Silently' => __('Close Ticket Silently', 'fluent-support'),
-            'Import Tickets' => __('Import Tickets', 'fluent-support')
+            'Import Tickets' => __('Import Tickets', 'fluent-support'),
+            'exclude_or_include_summary_column' => __('Select columns that you want to export', 'fluent-support'),
+            'import_from_sass' => __('Import Tickets from Help Scout', 'fluent-support'),
         ];
     }
 }

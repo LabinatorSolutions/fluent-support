@@ -182,7 +182,7 @@ class MailBox extends Model
         $mailbox = MailBox::findOrFail($mailBoxId);
 
         if ($data['box_type'] == 'email' && empty($data['mapped_email'])) {
-            throw new Exception('Mapped Email Address is required');
+            throw new \Exception('Mapped Email Address is required');
         }
 
         $mailbox->fill($data);

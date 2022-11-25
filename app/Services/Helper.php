@@ -164,9 +164,9 @@ class Helper
     {
         $mimeHeadings = self::getAcceptedMimeHeadings();
         $settings = (new Settings())->globalBusinessSettings();
-        $maxFileSize = absint($settings['max_file_size']);
+        $maxFileSize = floatval($settings['max_file_size']);
 
-        return sprintf(__('Supported Types: %s and max file size: %dMB', 'fluent-support'), implode(', ', $mimeHeadings), $maxFileSize);
+        return sprintf(__('Supported Types: %s and max file size: %.01fMB', 'fluent-support'), implode(', ', $mimeHeadings), $maxFileSize);
     }
 
     public static function getMimeGroups()
@@ -597,5 +597,20 @@ class Helper
         } catch (\Exception $exception) {
             return false;
         }
+    }
+
+    public static function getExportOptions(){
+        return [
+            'Agent First Name' => __('Agent First Name', 'fluent-support'),
+            'Agent Last Name' => __('Agent Last Name', 'fluent-support'),
+            'Agent Full Name' => __('Agent Full Name', 'fluent-support'),
+            'Responses' => __('Responses', 'fluent-support'),
+            'Interactions' => __('Interactions', 'fluent-support'),
+            'Open Tickets' => __('Open Tickets', 'fluent-support'),
+            'Closed' => __('Closed', 'fluent-support'),
+            'Waiting Tickets' => __('Waiting Tickets', 'fluent-support'),
+            'Average Waiting' => __('Average Waiting', 'fluent-support'),
+            'Max Waiting' => __('Max Waiting', 'fluent-support'),
+        ];
     }
 }

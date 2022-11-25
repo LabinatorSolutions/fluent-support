@@ -146,7 +146,7 @@ trait CustomerTrait
 
         if($this->customerExists($customerId, $data['email']))
         {
-            throw new Exception('Another Customer has same email address');
+            throw new \Exception('Another Customer has same email address');
         }
 
         $user = get_user_by('email', $data['email']);

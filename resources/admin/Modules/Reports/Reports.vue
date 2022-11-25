@@ -48,26 +48,10 @@
                             <component v-if="showing_charts" :is="currently_showing" :date_range="date_range" :url="'reports'" :agent_id="agent"></component>
                         </div>
                     </div>
-                    <agent-reports :url="'reports/agents-summary'" :show_settings="true"/>
+                    <agent-reports :url="'reports/agents-summary'" :show_settings="true" :show_export_btn="true"/>
                 </el-col>
                 <el-col :sm="24" :md="8" :lg="6">
                     <div class="fs_box">
-                        <div class="fs_box_header">
-                            <div class="fs_header_title">
-                                {{$t('active_tickets_by_products')}}
-                            </div>
-                        </div>
-                        <div class="fs_box_body">
-                            <ul v-if="!loading" class="fs_card_list">
-                                <li style="padding: 15px;" v-for="(stat, stat_type) in active_tickets_by_product" :key="stat_type">
-                                    <b>{{stat.title}}:</b>  {{stat.count}}
-                                </li>
-                            </ul>
-                            <div class="fs_padded_20" v-else>
-                                <el-skeleton :rows="3" animated/>
-                            </div>
-                        </div>
-
                         <div class="fs_box_header" style="margin-top: 1.2500em">
                             <div class="fs_header_title">
                                 {{$t('Quick Stats')}}
@@ -142,7 +126,6 @@ export default {
             },
             agent: '',
             today_reports: {},
-            active_tickets_by_product: {}
         }
     },
     methods: {
@@ -152,7 +135,6 @@ export default {
                 .then(response => {
                     this.overall_reports = response.overall_reports;
                     this.today_reports = response.today_reports;
-                    this.active_tickets_by_product = response.active_tickets_by_product;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);

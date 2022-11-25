@@ -43,7 +43,7 @@ trait AgentTrait
     public function createAgent(array $data)
     {
         if (!$user = get_user_by('email', $data['email'])) {
-        	throw new Exception('Sorry, Connected user could not be found with the provided email address');
+        	throw new \Exception('Sorry, Connected user could not be found with the provided email address');
         }
 
         $data = $this->setAgentInfo($data, $user);
@@ -52,7 +52,7 @@ trait AgentTrait
         $person = Person::where('email', $data['email'])->first();
 
         if ($person) {
-            throw new Exception('Sorry, Another agent/person exist with the same email address. Please use a different email address');
+            throw new \Exception('Sorry, Another agent/person exist with the same email address. Please use a different email address');
         }
 
 
@@ -74,7 +74,7 @@ trait AgentTrait
     public function updateAgent(array $data, object $agent)
     {
         if (!$user = get_user_by('ID', $agent->user_id)) {
-            throw new Exception('Sorry, Connected user could not be found with the provided email address');
+            throw new \Exception('Sorry, Connected user could not be found with the provided email address');
         }
 
         PermissionManager::attachPermissions($user, Arr::get($data, 'permissions', []));
@@ -101,7 +101,7 @@ trait AgentTrait
     public function deleteAgent($fallBackAgentId, $agentId)
     {
         if ($fallBackAgentId == $agentId) {
-            throw new Exception('Old Agent and New agent is same person');
+            throw new \Exception('Old Agent and New agent is same person');
         }
 
         $agent = static::findOrFail($agentId);
@@ -188,6 +188,12 @@ trait AgentTrait
             //Get the overall statistics by the agent
             $data['my_overall_stats'] = StatModule::getAgentOverallStats($agentId);
         }
+
+        if (in_array('tickets_by_products', $with)) {
+            //Get tickets by product which are waiting for agent reply
+            $data['tickets_by_product'] = StatModule::getActiveTicketsByProductStats();
+        }
+
 
         return $data;
     }

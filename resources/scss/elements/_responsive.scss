@@ -137,3 +137,33 @@
         overflow: scroll;
     }
 }
+@media all and (max-width: 767px) {
+    .dashboard {
+        .el-row {
+            flex-wrap: wrap;
+            > * {
+                flex-basis: 100%;
+                width: 100%;
+                max-width: 100%;
+            }
+        }
+
+        .fs_box_board {
+            .el-collapse-item__header {
+                height: auto;
+                line-height: 1.5;
+            }
+        }
+    }
+
+    .fs_head_section {
+        h1 {
+            font-size: 20px;
+        }
+        .fs_button_group {
+            float: none;
+            display: flex;
+            align-items: center;
+        }
+    }
+}
