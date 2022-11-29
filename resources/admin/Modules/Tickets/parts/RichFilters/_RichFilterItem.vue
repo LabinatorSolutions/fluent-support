@@ -4,14 +4,14 @@
             {{ ucFirst(itemConfig.provider) }} <span class="fs_provider_separator">/</span> {{ itemConfig.label }}
         </td>
         <td style="width: 190px" class="fs_filter_operator">
-            <el-select size="small" placeholder="Select Operator" @visible-change="maybeOperatorSelected"
+            <el-select size="small" :placeholder="$t('Select Operator')" @visible-change="maybeOperatorSelected"
                        v-model="item.operator">
                 <el-option v-for="(optionLabel,option) in operatorOptions" :key="option" :value="option"
                            :label="optionLabel"></el-option>
             </el-select>
         </td>
         <td class="fs_filter_value">
-            <el-input size="small" v-if="!itemConfig.type || itemConfig.type === 'text'" placeholder="Condition Value"
+            <el-input size="small" v-if="!itemConfig.type || itemConfig.type === 'text'" :placeholder="$t('Condition Value')"
                       type="text" v-model="item.value"/>
             <template v-if="itemConfig.type === 'selections'">
                 <template v-if="itemConfig.component === 'options_selector'">
@@ -22,7 +22,7 @@
                     }"></option-selector>
                 </template>
                 <template v-else-if="itemConfig.options">
-                    <el-select size="small" :multiple="itemConfig.is_multiple" placeholder="Select Option"
+                    <el-select size="small" :multiple="itemConfig.is_multiple" :placeholder="$t('Select Option')"
                                v-model="item.value">
                         <el-option v-for="(optionLabel,option) in itemConfig.options" :key="option" :value="option"
                                    :label="optionLabel"></el-option>

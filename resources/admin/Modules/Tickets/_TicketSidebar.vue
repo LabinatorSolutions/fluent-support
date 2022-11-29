@@ -140,8 +140,8 @@
                                 <el-table
                                     :data="orders.products"
                                     style="width: 100%; margin-top:2%;">
-                                    <el-table-column prop="post_title" label="Product" width="60%"/>
-                                    <el-table-column prop="product_qty" label="Quantity" width="20%"  align="center"/>
+                                    <el-table-column prop="post_title" :label="$t('Product')" width="60%"/>
+                                    <el-table-column prop="product_qty" :label="$t('Quantity')" width="20%"  align="center"/>
                                     <el-table-column label="Total" width="20%" align="center">
                                         <template #default="scope">
                                             <span v-html="orders.orderInfo.currency"></span><span>{{scope.row.product_gross_revenue}}</span>

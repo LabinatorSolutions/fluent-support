@@ -19,7 +19,7 @@
                             </li>
                         </template>
 
-                        <li title="Run Workflow" class="fs_add_workflow"
+                        <li :title="$t('Run Workflow')" class="fs_add_workflow"
                             v-if="appVars.manual_workflows && appVars.manual_workflows.length">
                             <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]"/>
                         </li>
