@@ -39,7 +39,7 @@
                                                     :show-file-list="false"
                                                     drag
                                                 >
-                                                    Upload a Custom Picture
+                                                   {{$t('Upload a Custom Picture')}} 
                                                 </el-upload>
 
                                             </el-dropdown-item>
@@ -149,8 +149,8 @@
 
                 <div class="slack_integration" v-if="integrationSettings.includes('twilio_settings')">
                     <h3>Twilio Integration</h3>
-                    <el-form-item label="WhatsApp Phone Number">
-                        <el-input type="text" placeholder="Ex: +123456789" v-model="editing_agent.whatsapp_number"/>
+                    <el-form-item :label="$t('WhatsApp Phone Number')">
+                        <el-input type="text" :placeholder="$t('Ex: +123456789')" v-model="editing_agent.whatsapp_number"/>
                     </el-form-item>
                 </div>
 
