@@ -45,8 +45,7 @@
                         </div>
                     </div>
                     <div class="fs_box_body fs_padded_20">
-                        This is a <b>manual workflow</b>. You can set your actions and run the workflow actions from
-                        ticket page.
+                        {{$t('This is a')}} <b>{{$t('manual workflow')}}</b>{{$t('. You can set your actions and run the workflow actions from ticket page.')}}
                     </div>
                 </div>
 
