@@ -21,7 +21,7 @@
                         <a :href="licenseData.renew_url" target="_blank" class="el-button el-button--danger el-button--small">{{$t('Click Here to Renew your License')}}</a>
 
                         <hr style="margin: 20px 0px;" />
-                        <p v-if="!showNewLicenseInput">{{$t('Have a new license Key?')}} <a @click.prevent="showNewLicenseInput = !showNewLicenseInput" href="#">Click here</a></p>
+                        <p v-if="!showNewLicenseInput">{{$t('Have a new license Key?')}} <a @click.prevent="showNewLicenseInput = !showNewLicenseInput" href="#">{{$t('Click here')}}</a></p>
                         <div v-else>
                             <h3>{{$t('Your License Key')}}</h3>
                             <el-input v-model="licenseKey" placeholder="License Key">

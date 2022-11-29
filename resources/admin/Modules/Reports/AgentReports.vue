@@ -83,7 +83,7 @@
                             <div class="fs_summary_settings">
                                 <el-row :gutter="20">
                                     <el-col :span="18">
-                                        <span> If you don't select any agents then all the agents report will be displayed here otherwise it will show only selected agents report.</span>
+                                        <span> {{$t("If you don't select any agents then all the agents report will be displayed here otherwise it will show only selected agents report.")}}</span>
                                     </el-col>
                                 </el-row>
 
@@ -108,12 +108,12 @@
                             <div class="fs_summary_settings">
                                 <el-row :gutter="20">
                                     <el-col :span="18">
-                                        <span> If you don't select any column, by default system will take all.</span>
+                                        <span> {{$t("If you don't select any column, by default system will take all.")}}</span>
                                     </el-col>
                                 </el-row>
                                 <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-                                    <template v-if="!checkAll">Check all</template>
-                                    <template v-else>Uncheck all</template>
+                                    <template v-if="!checkAll">{{$t('Check all')}}</template>
+                                    <template v-else>{{$t('Uncheck all')}}</template>
                                 </el-checkbox>
                                 <el-checkbox-group v-model="selected_options" class="fs_summary_export_items" @change="handleColumnChanges">
                                     <el-checkbox v-for="(item, index) in repost_export_options" :key="index" :model-value="index" :label="item" />

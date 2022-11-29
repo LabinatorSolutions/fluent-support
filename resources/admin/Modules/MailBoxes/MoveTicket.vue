@@ -58,7 +58,7 @@
                                 </el-col>
                                 <el-col :span="7">
                                     <el-form-item :label="$t('Ticket Title')">
-                                        <el-input v-model="filters.ticket_title" placeholder="Filter by ticket title" clearable
+                                        <el-input v-model="filters.ticket_title" :placeholder="$t('Filter by ticket title')" clearable
                                         @keyup="showTicket('Custom')" />
                                     </el-form-item>
                                 </el-col>
@@ -66,7 +66,7 @@
                         </el-form>
                     </div>
                     <div class="fs_box_body">
-                        <h4>Select ticket that you want to move</h4>
+                        <h4>{{$t('Select ticket that you want to move')}}</h4>
                         <hr/>
                         <el-table  :v-infinite-scroll="load" class="infinite-list" style="overflow: auto" :data="tickets" height="350" @selection-change="handleSelectionChange">
                             <el-table-column

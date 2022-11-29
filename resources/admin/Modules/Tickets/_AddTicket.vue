@@ -88,8 +88,8 @@
 
                 <div style="background: #dbdfe5; padding: 10px 10px 5px; margin-bottom: 10px;">
                     <h3 style="margin: 0px;">{{$t('Selected Contact Details')}}</h3>
-                    <p>{{$t('Name')}}: {{new_customer.first_name}} {{new_customer.last_name}}</p>
-                    <p>{{$t('Email')}}: {{new_customer.email}}</p>
+                    <p>{{$t('Name:')}} {{new_customer.first_name}} {{new_customer.last_name}}</p>
+                    <p>{{$t('Email:')}} {{new_customer.email}}</p>
                 </div>
 
                 <el-form-item v-if="mailboxes.length > 1" :label="$t('Select Business Inbox')">
