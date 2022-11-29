@@ -12,8 +12,8 @@
             <div class="fs_box_body" v-if="has_pro && webhook">
                 <el-form>
                     <el-form-item size="small">
-                        <el-input style="width:90%; margin-right:.2em;" label="Incoming Webhook URL" v-model="webhook" :readonly="true" />
-                        <el-popconfirm title="Are you sure to regenerate the webhook url? If you regenerate the url you have to change all your used webhook"
+                        <el-input style="width:90%; margin-right:.2em;" :label="$t('Incoming Webhook URL')" v-model="webhook" :readonly="true" />
+                        <el-popconfirm :title="$t('Are you sure to regenerate the webhook url? If you regenerate the url you have to change all your used webhook')"
                                        @confirm="updateWebhook">
                             <template #reference>
                                 <el-button size="default" icon="Refresh"></el-button>

@@ -111,7 +111,7 @@
                     <el-card class="fs_wc_order_box-card">
                         <template #header>
                             <div class="fs_wc_card-header">
-                                <h3>Order #{{orders.orderInfo.id}}</h3>
+                                <h3>{{$t('Order')}} #{{orders.orderInfo.id}}</h3>
                                 <el-tag class="ml-2" :type="getType(orders.orderInfo.status)">{{orders.orderInfo.status}}</el-tag>
                             </div>
                         </template>
@@ -119,19 +119,19 @@
                             <el-row :gutter="20">
                                 <el-col :span="12">
                                     <div class="fs_wc-order-preview-address">
-                                        <h2>Billing details</h2>
+                                        <h2>{{$t('Billing details')}}</h2>
                                         <p v-html="orders.orderInfo.billing_address"></p>
-                                        <p><strong>Email: </strong>{{orders.orderInfo.email}}</p>
-                                        <p><strong>Phone: </strong>{{orders.orderInfo.phone}}</p>
-                                        <p><strong>Payment Via: </strong>{{orders.orderInfo.payment_method}}</p>
-                                        <p><strong>Purchase Date: </strong>{{orders.orderInfo.date}}</p>
+                                        <p><strong>{{$t('Email')}}: </strong>{{orders.orderInfo.email}}</p>
+                                        <p><strong>{{$t('Phone')}}: </strong>{{orders.orderInfo.phone}}</p>
+                                        <p><strong>{{$t('Payment Via')}}: </strong>{{orders.orderInfo.payment_method}}</p>
+                                        <p><strong>{{$t('Purchase Date')}}: </strong>{{orders.orderInfo.date}}</p>
                                     </div>
                                 </el-col>
                                 <el-col :span="12">
                                     <div class="fs_wc-order-preview-address">
-                                        <h2>Shipping details</h2>
+                                        <h2>{{$t('Shipping details')}}</h2>
                                         <p v-html="orders.orderInfo.shipping_address"></p>
-                                        <p><strong>Shipping method </strong> {{orders.orderInfo.shipping_method}}</p>
+                                        <p><strong>{{$t('Shipping method')}} </strong> {{orders.orderInfo.shipping_method}}</p>
                                     </div>
                                 </el-col>
                             </el-row>
@@ -152,8 +152,8 @@
                         </div>
 
                         <div class="fs_wc_card_footer">
-                            <a :href="orders.orderInfo.order_link" target="_blank" class="el-button el-button--primary" type="primary" >Edit</a>
-                            <el-button @click="cancelClick" type="danger">Close</el-button>
+                            <a :href="orders.orderInfo.order_link" target="_blank" class="el-button el-button--primary" type="primary" >{{$t('Edit')}}</a>
+                            <el-button @click="cancelClick" type="danger">{{$t('Close')}}</el-button>
                         </div>
                     </el-card>
                 </el-drawer>

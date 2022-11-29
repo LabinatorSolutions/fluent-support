@@ -3,48 +3,48 @@
         <modal :show="show" title="Import Tickets From HelpScout in Fluent Support" @close="$emit('close')">
             <template #body>
                 <div class="fs_helpscout_intro">
-                    <p> Please copy and paste this url: <code><strong>{{appVars.rest.url + '/public/authorize'}}</strong></code> in your HelpScout Redirection URL. This is required as you have to authorize your app before start importing. </p>
+                    <p> {{$t('Please copy and paste this url:')}} <code><strong>{{appVars.rest.url + '/public/authorize'}}</strong></code> {{$t('in your HelpScout Redirection URL. This is required as you have to authorize your app before start importing.')}} </p>
                 </div>
                 <el-form :data="settings" label-position="top">
-                    <el-form-item label="App ID">
-                        <el-input v-model="settings.app_id" placeholder="App ID" />
+                    <el-form-item :label="$t('App ID')">
+                        <el-input v-model="settings.app_id" :placeholder="$t('App ID')" />
                     </el-form-item>
-                    <el-form-item label="App Secret">
+                    <el-form-item :label="$t('App Secret')">
                         <el-row :gutter="20" >
                             <el-col :span="20">
-                                <el-input v-model="settings.app_secret" placeholder="App Secret" />
+                                <el-input v-model="settings.app_secret" :placeholder="$t('App Secret')" />
                                 <span>
-                                    Click on the <code>Get Authorized</code> button to get the authorization code.
+                                    {{$t('Click on the')}} <code>{{$t('Get Authorized')}}</code> {{$t('button to get the authorization code.')}}
                                 </span>
                             </el-col>
                             <el-col :span="4">
                                 <el-button type="primary" @click="authorize" :disabled="!settings.app_secret || !settings.app_id">
-                                   Get Authorized
+                                    {{$t('Get Authorized')}}
                                 </el-button>
                             </el-col>
                         </el-row>
                     </el-form-item>
 
-                    <el-form-item label="Authorization Code">
+                    <el-form-item :label="$t('Authorization Code')">
                         <el-row :gutter="20" >
                             <el-col :span="20">
-                                <el-input v-model="settings.code" placeholder="Authorization Code" />
-                                <span>Paste the authorization code here once you get it.</span>
+                                <el-input v-model="settings.code" :placeholder="$t('Authorization Code')" />
+                                <span>{{$t('Paste the authorization code here once you get it.')}}</span>
                             </el-col>
                             <el-col :span="4">
                                 <el-button type="primary" @click="getAccessToken" :disabled="!settings.code">
-                                    Request Token
+                                    {{$t('Request Token')}}
                                 </el-button>
                             </el-col>
                         </el-row>
                     </el-form-item>
 
-                    <el-form-item label="Access Token" v-if="settings.access_token">
-                        <el-input v-model="settings.access_token" placeholder="Access Token" disabled/>
+                    <el-form-item :label="$t('Access Token')" v-if="settings.access_token">
+                        <el-input v-model="settings.access_token" :placeholder="$t('Access Token')" disabled/>
                     </el-form-item>
 
-                    <el-form-item label="Choose Mailbox" v-if="mailboxes.length">
-                        <el-select v-model="settings.mailbox_id" placeholder="Please select a mailbox">
+                    <el-form-item :label="$t('Choose Mailbox')" v-if="mailboxes.length">
+                        <el-select v-model="settings.mailbox_id" :placeholder="$t('Please select a mailbox')">
                             <el-option
                                 v-for="item in mailboxes"
                                 :key="item.id"

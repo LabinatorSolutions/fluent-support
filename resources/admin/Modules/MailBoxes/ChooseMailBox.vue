@@ -73,8 +73,8 @@
                     </el-radio-group>
                 </el-form-item>
             </el-form>
-            <div class="fs_narrow_promo" style="background: white;" v-else>
-                <h3>Create Multiple Shared inbox and connect your email inbox with Fluent Support</h3>
+            <div class="fs_narrow_promo" style="background: white;">
+                <h3>{{$t('shared_inbox_message')}}</h3>
                 <p>{{$t('pro_promo')}}</p>
                 <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">
                     {{$t('Upgrade To Pro')}}
