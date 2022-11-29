@@ -78,7 +78,7 @@
                             @searchChange="(s) => { search = s; }"
                             :reset-filters="resetFilters"/>
                     </div>
-                    <el-button size="small" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
+                    <el-button size="small" style="margin: 10px;" @click="show_filters = true" v-else>{{$t('Show Filters')}}
                     </el-button>
                 </template>
 
