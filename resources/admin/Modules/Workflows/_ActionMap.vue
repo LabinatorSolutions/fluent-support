@@ -23,8 +23,8 @@
                 <div v-if="action.action_name && builder_ready">
                     <form-builder :fields="actions[action.action_name].fields" :form-data="action.settings">
                         <template v-slot:form_end>
-                            <el-form-item label="Action Title">
-                                <el-input type="text" placeholder="Action Title" v-model="action.title"></el-input>
+                            <el-form-item :label="$t('Action Title')">
+                                <el-input type="text" :placeholder="$t('Action Title')" v-model="action.title"></el-input>
                             </el-form-item>
                         </template>
                     </form-builder>

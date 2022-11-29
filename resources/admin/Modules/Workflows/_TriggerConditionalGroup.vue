@@ -21,7 +21,7 @@
                 </div>
                 <template v-if="setting.data_key && all_conditions[setting.data_key]">
                     <div class="fs_cond_block fc_cond_operator">
-                        <el-select @change="maybeValueReset(setting, 'operator')" placeholder="Operator"
+                        <el-select @change="maybeValueReset(setting, 'operator')" :placeholder="$t('Operator')"
                                    v-model="setting.data_operator">
                             <template v-if="all_conditions[setting.data_key].data_type == 'string'">
                                     <el-option value="contains" :label="$t('Contains')"></el-option>

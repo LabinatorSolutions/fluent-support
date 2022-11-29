@@ -15,8 +15,8 @@
             <div v-if="has_pro" class="fs_box_body fs_padded_20">
                 <template v-if="!loading">
                     <el-table :data="workflows" border stripe>
-                        <el-table-column prop="id" label="ID" width="90"/>
-                        <el-table-column label="Title">
+                        <el-table-column prop="id" :label="$t('ID')" width="90"/>
+                        <el-table-column :label="$t('Title')">
                             <template #default="scope">
                                 <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
                                     {{ scope.row.title }}
@@ -25,9 +25,9 @@
                                       class="fs_trigger_sub">{{ scope.row.trigger_human_name }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="status" label="Status" width="120"/>
-                        <el-table-column prop="trigger_type" label="Trigger Type" width="120"/>
-                        <el-table-column label="Actions" width="120">
+                        <el-table-column prop="status" :label="$t('Status')" width="120"/>
+                        <el-table-column prop="trigger_type" :label="$t('Trigger Type')" width="120"/>
+                        <el-table-column :label="$t('Actions')" width="120">
                             <template #default="scope">
                                 <router-link :to="{ name: 'edit-workflow', params: { workflow_id: scope.row.id } }">
                                     <el-icon> <EditPen /> </el-icon>
@@ -72,36 +72,32 @@
             width="60%"
         >
             <el-form :data="new_workflow" label-position="top">
-                <el-form-item label="Your Workflow Name">
-                    <el-input type="text" placeholder="Workflow Name" v-model="new_workflow.title"/>
+                <el-form-item :label="$t('Your Workflow Name')">
+                    <el-input type="text" :placeholder="$t('Workflow Name')" v-model="new_workflow.title"/>
                 </el-form-item>
                 <el-form-item label="Workflow Type">
                     <el-radio-group v-model="new_workflow.trigger_type">
-                        <el-radio value="manual" label="manual">{{ $t('Manual') }}</el-radio>
-                        <el-radio value="automatic" label="automatic">{{$t('Automatic')}}</el-radio>
+                        <el-radio value="manual" :label="$t('manual')">{{ $t('Manual') }}</el-radio>
+                        <el-radio value="automatic" :label="$t('automatic')">{{$t('Automatic')}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <div class="fs_workflow_type_info">
                     <div v-if="new_workflow.trigger_type == 'manual'">
                         <div class="fs_workflow_info_header">
-                            A <b>Manual workflow</b> doesn't do anything until you tell it to. When you apply a manual
-                            workflow from a ticket, Fluent Support performs all the actions.
+                            {{$t('A')}} <b>{{$t('Manual workflow')}}</b> {{$t("doesn't do anything until you tell it to. When you apply a manual workflow from a ticket, Fluent Support performs all the actions.")}}
                         </div>
                         <div class="fs_workflow_info_body">
                             <b>{{$t('Example')}}</b><br/>
-                            When a customer's ticket/response in with a specific question, you execute this workflow to
-                            send a reply, add a tag and assign it to someone on your team.
+                           {{$t("When a customer's ticket/response in with a specific question, you execute this workflow to send a reply, add a tag and assign it to someone on your team.")}} 
                         </div>
                     </div>
                     <div v-else-if="new_workflow.trigger_type == 'automatic'">
                         <div class="fs_workflow_info_header">
-                            <b>Automatic workflows</b> are always on, running on selected ticket events. Based on what's
-                            happening to your tickets and conversations, It will run the defined actions automatically.
+                            <b>{{$t('Automatic workflows')}}</b> {{$t(" are always on, running on selected ticket events. Based on what's happening to your tickets and conversations, It will run the defined actions automatically.")}}
                         </div>
                         <div class="fs_workflow_info_body">
                             <b>{{$t('Example')}}</b><br/>
-                            When the subject line contains "Bug Report", you want Fluent Support to automatically add a
-                            tag, send an email to the customer and assign a support agent.
+                            {{$t('When the subject line contains "Bug Report", you want Fluent Support to automatically add a tag, send an email to the customer and assign a support agent.')}}
                         </div>
                     </div>
                 </div>
