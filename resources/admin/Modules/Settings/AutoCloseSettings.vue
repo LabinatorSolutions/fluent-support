@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="fs_narrow_promo" v-if="!appVars.has_pro">
-            <h3>Auto Close tickets based on active days or based on tags or waiting time.</h3>
+            <h3>{{$t('Auto Close tickets based on active days or based on tags or waiting time.')}}</h3>
             <p>{{ $t('pro_promo') }}</p>
             <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
         </div>

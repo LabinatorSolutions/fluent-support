@@ -38,6 +38,8 @@ class TransStrings
             'Please setup your support portal first'    => __('Please setup your support portal first', 'fluent-support'),
             'Support Portal Page (For Customers)'    => __('Support Portal Page (For Customers)', 'fluent-support'),
             'eg: Awesome Business Inc'    => __('eg: Awesome Business Inc', 'fluent-support'),
+            'Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin' => 
+            __('Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin','fluent-support'),
             'From Email Address'    => __('From Email Address', 'fluent-support'),
             'Update Customer'    => __('Update Customer', 'fluent-support'),
             'Create Customer'    => __('Create Customer', 'fluent-support'),
@@ -183,6 +185,7 @@ class TransStrings
             'Created On'    => __('Created On', 'fluent-support'),
             'Action'    => __('Action', 'fluent-support'),
             'Close Tickets'     => __('Close Tickets', 'fluent-support'),
+            'Auto Close tickets based on active days or based on tags or waiting time.' => __('Auto Close tickets based on active days or based on tags or waiting time.', 'fluent-support'),
             'create_reply_template'    => __('Create reply templates and quickly send responses to the tickets.', 'fluent-support'),
             'shared_inbox_message'      => __('Create Multiple Shared inbox and connect your email inbox with Fluent Support', 'fluent-support'),
             'pro_promo'    => __('This is a pro feature. Please upgrade to Fluent Support Pro to use this feature', 'fluent-support'),
@@ -524,6 +527,7 @@ class TransStrings
             'to_create_tickets_using_webhooks_notice' => __('To create tickets using webhooks please copy this webhook URL and paste to the site from where you want to create ticket in this site.', 'fluent-support'),
             'use_webhook_to_create_ticket_from_external_site' => __('Use incoming webhook to create ticket from external sites.', 'fluent-support'),
             'Fillable Fields' => __('Fillable Fields', 'fluent-support'),
+            'Twilio Integration'    => __('Twilio Integration', 'fluent-support'),
             'Looks like your license has been expired' => __('Looks like your license has been expired', 'fluent-support'),
             'Click Here to Renew your License' => __('Click Here to Renew your License', 'fluent-support'),
             'Click here'    => __('Click here', 'fluent-support'),
@@ -568,6 +572,10 @@ class TransStrings
             'From' => __('From', 'fluent-support'),
             'OR' => __('OR', 'fluent-support'),
             'Continue' => __('Continue', 'fluent-support'),
+            'Almost Done'   => __('Almost Done', 'fluent-support'),
+            'Thank you again for configuring your own Support System in WordPress. You may install companion
+            Form Plugin to create tickets from contact forms.'  => __('                        Thank you again for configuring your own Support System in WordPress. You may install companion
+            Form Plugin to create tickets from contact forms.', 'fluent-support'),
             'Workflows' => __('Workflows', 'fluent-support'),
             'Update Workflow' => __('Update Workflow', 'fluent-support'),
             'Update'    => __('Update', 'fluent-support'),

@@ -46,12 +46,11 @@
                     </el-form>
                 </template>
                 <template v-else-if="step == 'maintenance'">
-                    <h3>Almost Done</h3>
+                    <h3>{{$t('Almost Done')}}</h3>
 
                     <p v-if="!has_fluentform">
-                        Thank you again for configuring your own Support System in WordPress. You may install companion
-                        Form Plugin to create tickets from contact forms.<br/>
-                        Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin
+                        {{$t('Thank you again for configuring your own Support System in WordPress. You may install companion Form Plugin to create tickets from contact forms.')}}<br/>
+                        {{$t('Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin')}}
                     </p>
 
                     <p v-else>
