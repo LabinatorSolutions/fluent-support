@@ -284,6 +284,8 @@ class TransStrings
             'Waiting for Reply'    => __('Waiting for Reply', 'fluent-support'),
             'Please input'    => __('Please input', 'fluent-support'),
             'Reset Filters'    => __('Reset Filters', 'fluent-support'),
+            'Reset'    => __('Reset', 'fluent-support'),
+            'Greeting Message'  => __('Greeting Message', 'fluent-support'),
             'Select Operator'   => __('Select Operator', 'fluent-support'),
             'Condition Value'   => __('Condition Value', 'fluent-support'),
             'Select Option'     =>__('Select Option', 'fluent-support'),

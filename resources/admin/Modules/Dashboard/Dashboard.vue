@@ -25,7 +25,7 @@
                     style="margin-left: 16px"
                     @click="defalutSettings()"
                 >
-                    Reset
+                    {{$t('Reset')}}
                 </el-button>
             </div>
         </div>
@@ -113,7 +113,7 @@
         <el-drawer v-model="drawer" :with-header="false">
             <div class="fs_drawer_content">
                 <el-checkbox v-model="dashboard_param.greetingMessage"
-                    >Greeting Message</el-checkbox
+                    >{{$t('Greeting Message')}}</el-checkbox
                 >
                 <div v-for="column_data in dashboard_param">
                     <div
@@ -162,7 +162,7 @@
 
             <template #footer>
                 <div style="flex: auto">
-                    <el-button @click="cancelClick">Close</el-button>
+                    <el-button @click="cancelClick">{{$t('Close')}}</el-button>
                 </div>
             </template>
         </el-drawer>
