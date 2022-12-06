@@ -55,7 +55,7 @@
                                         </el-button>
                                     </div>
 
-                                    <el-dialog v-model="import_done" title="Delete Imported Tickets">
+                                    <el-dialog v-if=!had_tickets v-model="import_done" title="Delete Imported Tickets">
                                         <span> {{$t('Do you want to delete all imported tickets and its data?')}} </span>
                                         <template #footer>
                                           <span class="dialog-footer">
@@ -105,7 +105,8 @@ export default {
             openSettings: false,
             config:{},
             sass_systems: ['helpscout'],
-            import_from_sass: false
+            import_from_sass: false,
+            had_tickets: true
         }
     },
 
@@ -157,6 +158,10 @@ export default {
                             position: 'bottom-right'
                         })
                         this.imporing = false;
+
+                        if(response.had_tickets){
+                            this.had_tickets = response.had_tickets == 'yes' ? false : true;
+                        }
 
                         if(!this.sass_systems.includes(handler)){
                             this.import_done = true;
