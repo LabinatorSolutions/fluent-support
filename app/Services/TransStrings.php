@@ -122,6 +122,7 @@ class TransStrings
             'Support Channel'    => __('Support Channel', 'fluent-support'),
             'Web Based'    => __('Web Based', 'fluent-support'),
             'email_based_heading'    => __('Web and Email Based (MailBox)', 'fluent-support'),
+            'Reset To Default Gravatar' => __('Reset To Default Gravatar', 'fluent-support'),
             'Mapped Email'    => __('Mapped Email', 'fluent-support'),
             'mapped_webhook_email'    => __('Please forward your emails from "Support Inbox Email" so it can auto-sync the tickets', 'fluent-support'),
             'Cancel'    => __('Cancel', 'fluent-support'),

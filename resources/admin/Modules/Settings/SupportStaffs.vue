@@ -52,7 +52,7 @@
                                                     @confirm="confirmResetProfile(scope.row)"
                                                 >
                                                     <template #reference>
-                                                        Reset To Default Gravatar
+                                                        {{$t('Reset To Default Gravatar')}}
                                                     </template>
                                                 </el-popconfirm>
                                             </el-dropdown-item>
