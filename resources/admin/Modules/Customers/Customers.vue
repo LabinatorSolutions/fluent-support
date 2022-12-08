@@ -3,16 +3,16 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ $t('All Customers') }}</h3>
+                    <h3>{{ translate('All Customers') }}</h3>
                     <el-button
                         @click="showAddCustomerModal({})"
                         size="small"
-                        icon="Plus">{{ $t('Add Customer') }}
+                        icon="Plus">{{ translate('Add Customer') }}
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_customer_filters">
                     <div class="fs_cs_status_filter">
-                        <label>{{ $t('Status') }}</label>
+                        <label>{{ translate('Status') }}</label>
                         <el-select filterable @change="fetchCustomers()" v-model="status" size="small"
                                    style="padding-right: 0.7em;">
                             <el-option
@@ -24,7 +24,7 @@
                         </el-select>
                     </div>
                     <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="small"
-                              :placeholder="$t('Search Customers')" v-model="search">
+                              :placeholder="translate('Search Customers')" v-model="search">
                         <template #append>
                             <el-button @click="fetchCustomers()" icon="Search"></el-button>
                         </template>
@@ -34,31 +34,31 @@
             <div class="fs_box_body fs_padded_20">
                 <template v-if="!first_time_loading">
                     <el-table :row-class-name="tableRowClassName" v-loading="loading" stripe :data="customers">
-                        <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
-                        <el-table-column :label="$t('Name')" width="260">
+                        <el-table-column prop="id" :label="translate('ID')" width="100"></el-table-column>
+                        <el-table-column :label="translate('Name')" width="260">
                             <template #default="scope">
                                 <router-link :to="{name: 'view_customer', params: { customer_id: scope.row.id }}">
                                     {{ scope.row.full_name }}
                                 </router-link>
                             </template>
                         </el-table-column>
-                        <el-table-column :label="$t('Email')">
+                        <el-table-column :label="translate('Email')">
                             <template #default="scope">
                                 {{ scope.row.email }}
                             </template>
                         </el-table-column>
-                        <el-table-column width="120" :label="$t('Status')">
+                        <el-table-column width="120" :label="translate('Status')">
                             <template #default="scope">
-                                <span v-if="scope.row.status == 'inactive'">{{$t('Blocked')}}</span>
+                                <span v-if="scope.row.status == 'inactive'">{{translate('Blocked')}}</span>
                                 <span v-else>{{ ucFirst(scope.row.status) }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column :label="$t('Last Activity')" width="160">
+                        <el-table-column :label="translate('Last Activity')" width="160">
                             <template #default="scope">
-                                {{ $timeDiff(scope.row.last_response_at) }}
+                                {{ humanDiffTime(scope.row.last_response_at) }}
                             </template>
                         </el-table-column>
-                        <el-table-column :label="$t('Stats')" width="180">
+                        <el-table-column :label="translate('Stats')" width="180">
                             <template #default="scope">
                                 <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
                                     <el-button size="small" type="text" icon="Folder" style="color:#409eff;">
@@ -72,11 +72,11 @@
                                 <el-popconfirm
                                     v-loading="deleting"
                                     confirm-button-type="danger"
-                                    :confirm-button-text="$t('Yes, Delete this Customer')"
-                                    :cancel-button-text="$t('No')"
+                                    :confirm-button-text="translate('Yes, Delete this Customer')"
+                                    :cancel-button-text="translate('No')"
                                     icon-color="red"
                                     @confirm="deleteCustomer(scope.row.id)"
-                                    :title="$t('Are you sure to delete this customer? It will delete all associated data with this customer')"
+                                    :title="translate('Are you sure to delete this customer? It will delete all associated data with this customer')"
                                 >
                                     <template #reference>
                                         <el-button size="small" type="text" icon="Delete" style="color:red;"/>
@@ -100,7 +100,7 @@
         </div>
         <el-dialog
             :append-to-body=true
-            :title="(editing_customer.id) ? $t('Update customer') : $t('Add new customer')"
+            :title="(editing_customer.id) ? translate('Update customer') : translate('Add new customer')"
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%">
@@ -113,7 +113,7 @@
 import Pagination from "../../Pieces/Pagination";
 import CustomerForm from './_CustomerForm';
 import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
-import { computed, watch, onMounted, reactive, toRefs } from "vue";
+import { onMounted, reactive, toRefs } from "vue";
 
 export default {
     name: 'Customers',
@@ -124,13 +124,14 @@ export default {
     setup(){
         const {
             appVars,
-            $get,
-            $del,
-            $t,
+            get,
+            del,
+            translate,
             handleError,
             moment,
-            $setTitle,
+            setTitle,
             ucFirst,
+            humanDiffTime,
         } = useFluentHelper();
         const { notify } = useNotify();
         const state = reactive({
@@ -148,14 +149,14 @@ export default {
             status: '',
             search: '',
             statusFilters: {
-                'active': $t('Active'),
-                'inactive': $t('Blocked'),
-                'pending': $t('Pending'),
+                'active': translate('Active'),
+                'inactive': translate('Blocked'),
+                'pending': translate('Pending'),
             }
         });
 
         const  fetchCustomers = async () => {
-            $get( 'customers',{
+            get( 'customers',{
                 per_page: state.pagination.per_page,
                 page: state.pagination.current_page,
                 search: state.search,
@@ -163,7 +164,6 @@ export default {
             })
             .then(response => {
                 state.customers = response.customers.data;
-                console.log(state.customers);
                 state.pagination.total = response.customers.total;
             })
             .always(() => {
@@ -187,7 +187,7 @@ export default {
 
         const deleteCustomer = (customerId) =>{
             state.deleting = true;
-            $del(`customers/${customerId}`)
+            del(`customers/${customerId}`)
                 .then(response => {
                     fetchCustomers();
                     notify({
@@ -204,23 +204,29 @@ export default {
                 });
         }
 
+        const tableRowClassName = ({ row, rowIndex }) => {
+            return 'fs_status_' + row.status;
+        }
+
         onMounted(() => {
-            $setTitle($t('Customers'));
+            setTitle(translate('Customers'));
             fetchCustomers();
         });
 
         return {
             appVars,
-            $get,
-            $t,
+            get,
+            translate,
             handleError,
             moment,
             fetchCustomers,
             showAddCustomerModal,
             closeModal,
             deleteCustomer,
-            $setTitle,
+            setTitle,
             ucFirst,
+            humanDiffTime,
+            tableRowClassName,
             ...toRefs(state)
         }
     }

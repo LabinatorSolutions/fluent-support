@@ -1,17 +1,19 @@
 <template>
     <div v-loading="loading" class="ffc_customer_form">
-        <h3>{{$t('Basic Info')}}</h3>
+        <h3>{{translate('Basic Info')}}</h3>
         <form-builder :fields="basic_fields" :form-data="customer"/>
-        <h3>{{$t('Address Info')}}</h3>
+        <h3>{{translate('Address Info')}}</h3>
         <form-builder :fields="address_fields" :form-data="customer"/>
 
-        <el-button @click="updateCustomer()" type="success" v-if="customer.id">{{ $t('Update Customer') }}</el-button>
+        <el-button @click="updateCustomer()" type="success" v-if="customer.id">{{ translate('Update Customer') }}</el-button>
 
-        <el-button @click="createCustomer()" type="primary" v-else>{{ $t('Create Customer') }}</el-button>
+        <el-button @click="createCustomer()" type="primary" v-else>{{ translate('Create Customer') }}</el-button>
     </div>
 </template>
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
+import { reactive, toRefs} from "vue";
+import { useFluentHelper, useNotify } from "@/admin/Bits/FluentFramework";
 
 export default {
     name: 'CustomerForm',
@@ -19,52 +21,64 @@ export default {
     components: {
         FormBuilder
     },
-    data() {
-        return {
+    emits:['updated'],
+    setup(props, context){
+        const emit = context.emit;
+        const customer = reactive(props.customer);
+        const {
+            translate,
+            post,
+            put,
+            handleError
+        } = useFluentHelper();
+
+        const { notify } = useNotify();
+
+        const state = reactive({
             basic_fields: {
                 first_name: {
-                    label: this.$t('First Name'),
+                    label: translate('First Name'),
                     data_type: 'text',
-                    placeholder: this.$t('First Name'),
+                    placeholder: translate('First Name'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
                 },
                 last_name: {
-                    label: this.$t('Last Name'),
+                    label: translate('Last Name'),
                     data_type: 'text',
-                    placeholder: this.$t('Last Name'),
+                    placeholder: translate('Last Name'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field'
                 },
                 email: {
-                    label: this.$t('Email'),
+                    label: translate('Email'),
                     data_type: 'email',
-                    placeholder: this.$t('Email'),
+                    placeholder: translate('Email'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
-                    disabled: !!this.customer.id
+                    disabled: !!customer.id
                 },
                 title: {
-                    label: this.$t('Job Title'),
+                    label: translate('Job Title'),
                     data_type: 'text',
-                    placeholder: this.$t('Job Title'),
+                    placeholder: translate('Job Title'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field'
                 },
                 note: {
-                    label: this.$t('Note'),
+                    label: translate('Note'),
                     data_type: 'textarea',
-                    placeholder: this.$t('Note'),
+                    placeholder: translate('Note'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field'
                 },
                 status: {
-                    label: this.$t('Status'),
+                    label: translate('Status'),
                     data_type: 'text',
                     type: 'input-radio',
                     options: {
-                        'active': {'id': 'active', 'value': 'active', 'label': this.$t('Active')},
-                        'inactive': {'id': 'inactive', 'value': 'inactive', 'label': this.$t('Blocked')}
+                        'active': {'id': 'active', 'value': 'active', 'label': translate('Active')},
+                        'inactive': {'id': 'inactive', 'value': 'inactive', 'label': translate('Blocked')}
                     },
                     wrapper_class: 'fs_half_field'
                 },
@@ -76,89 +90,99 @@ export default {
                     },
                     type: 'html-viewer',
                     wrapper_class: 'fs_warn',
-                    html: this.$t('block_instruction')
+                    html: translate('block_instruction')
                 },
             },
             address_fields: {
                 address_line_1: {
-                    label: this.$t('Address Line 1'),
+                    label: translate('Address Line 1'),
                     data_type: 'text',
-                    placeholder: this.$t('Address Line 1'),
+                    placeholder: translate('Address Line 1'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
                 },
                 address_line_2: {
-                    label: this.$t('Address Line 2'),
+                    label: translate('Address Line 2'),
                     data_type: 'text',
-                    placeholder: this.$t('Address Line 2'),
+                    placeholder: translate('Address Line 2'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
                 },
                 city: {
-                    label: this.$t('City'),
+                    label: translate('City'),
                     data_type: 'text',
-                    placeholder: this.$t('City'),
+                    placeholder: translate('City'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
                 },
                 state: {
-                    label: this.$t('State'),
+                    label: translate('State'),
                     data_type: 'text',
-                    placeholder: this.$t('State'),
+                    placeholder: translate('State'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
                 },
                 zip: {
-                    label: this.$t('Zip Code'),
+                    label: translate('Zip Code'),
                     data_type: 'text',
-                    placeholder: this.$t('Zip Code'),
+                    placeholder: translate('Zip Code'),
                     type: 'input-text',
                     wrapper_class: 'fs_half_field',
                 },
                 country: {
-                    label: this.$t('Country'),
-                    placeholder: this.$t('Country'),
+                    label: translate('Country'),
+                    placeholder: translate('Country'),
                     type: 'country-selector',
                     wrapper_class: 'fs_half_field',
                 }
             },
-            loading: false
+            loading: false,
+        });
+
+        const createCustomer = async () => {
+            state.loading = true;
+            post('customers', customer)
+                .then(response => {
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                    emit('updated', response.customer);
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {
+                    state.loading = false;
+                });
         }
-    },
-    methods: {
-        updateCustomer() {
-            this.loading = true;
-            this.$put(`customers/${this.customer.id}`, this.customer)
+
+        const updateCustomer = async () => {
+            state.loading = true;
+            put(`customers/${customer.id}`, customer)
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
+                        type: 'success',
                         position: 'bottom-right'
                     });
-                    this.$emit('updated', response.customer);
+                    emit('updated', response.customer);
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-        createCustomer() {
-            this.loading = true;
-            this.$post('customers', this.customer)
-                .then(response => {
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    });
-                    this.$emit('updated', response.customer);
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                });
+        }
+
+        return{
+            translate,
+            handleError,
+            createCustomer,
+            updateCustomer,
+            ...toRefs(state)
         }
     }
 }
