@@ -23,7 +23,7 @@ import { dateTimeHelper } from "@/admin/Composable/dateTimeHelper";
 import { useRestApi } from '@/admin/Bits/Rest';//Duplicate of Rest.js, will remove once we have done with composition API
 export function useFluentHelper(){
     const { humanDiffTime, dateTimeFormat, localDate, longLocalDate } = dateTimeHelper();
-    const { $get, $post, $del, $put, $patch} = useRestApi();
+    const { get, post, del, put, patch} = useRestApi();
     const { notify } = useNotify();
     const appVars = window.fluentSupportAdmin;
 
@@ -45,7 +45,7 @@ export function useFluentHelper(){
         return string.join('<br />')
     }
 
-    function $t(string) {
+    function translate(string) {
         return window.window.fluentSupportAdmin.i18n[string] || string;
 
         return string;
@@ -62,7 +62,7 @@ export function useFluentHelper(){
     }
 
     //Store in local storage
-    function $saveData(key, data) {
+    function saveData(key, data) {
         let existingData = window.localStorage.getItem('__fluentsupport_data');
 
         if (!existingData) {
@@ -77,7 +77,7 @@ export function useFluentHelper(){
     }
 
     //Get from local storage
-    function  $getData(key, defaultValue = false) {
+    function  getData(key, defaultValue = false) {
         let existingData = window.localStorage.getItem('__fluentsupport_data');
         existingData = JSON.parse(existingData);
         if (!existingData) {
@@ -117,30 +117,30 @@ export function useFluentHelper(){
         });
     }
 
-    function $setTitle(title) {
+    function setTitle(title) {
         document.title = title;
     }
 
     return {
         appVars,
-        $get,
-        $post,
-        $del,
-        $put,
-        $patch,
+        get,
+        post,
+        del,
+        put,
+        patch,
         convertToText,
-        $t,
+        translate,
         ucFirst,
         ucWords,
         handleError,
-        $saveData,
-        $getData,
+        saveData,
+        getData,
         moment,
         humanDiffTime,
         dateTimeFormat,
         localDate,
         longLocalDate,
-        $setTitle
+        setTitle
     }
 }
 

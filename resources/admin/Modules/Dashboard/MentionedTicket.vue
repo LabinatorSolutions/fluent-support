@@ -55,8 +55,10 @@
 export default {
     props: ["component_data"],
     name: "MentionedTicket",
-    data() {
-        return {};
+    setup() {
+        return {
+
+        };
     },
 };
 </script>

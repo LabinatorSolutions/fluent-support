@@ -35,32 +35,32 @@ export default {
 };
 
 export function useRestApi(){
-    function $get(route, data) {
+    function get(route, data) {
         return request('GET', route, data)
     }
 
-    function $post(route, data) {
+    function post(route, data) {
         return request('POST', route, data)
     }
 
-    function $del(route, data) {console.log('del is calling from composible/rest.js')
+    function del(route, data) {console.log('del is calling from composible/rest.js')
         return request('DELETE', route, data);
     }
 
-    function $put(route, data) {
+    function put(route, data) {
         return request('PUT', route, data);
     }
 
-    function $patch(route, data) {
+    function patch(route, data) {
         return request('PATCH', route, data);
     }
 
     return {
-        $get,
-        $post,
-        $del,
-        $put,
-        $patch
+        get,
+        post,
+        del,
+        put,
+        patch
     }
 }
 
