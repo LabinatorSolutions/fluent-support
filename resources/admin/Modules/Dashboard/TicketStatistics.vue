@@ -29,7 +29,7 @@
 export default {
     props: ["component_data"],
     name: "TicketStatistics",
-    data() {
+    setup() {
         return {};
     },
 };

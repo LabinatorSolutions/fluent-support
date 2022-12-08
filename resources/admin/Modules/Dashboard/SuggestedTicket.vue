@@ -78,10 +78,8 @@
 export default {
     props: ["component_data"],
     name: "SuggestedTicket",
-    data() {
-        return {
-            me: this.appVars.me,
-        };
+    setup() {
+        return {};
     },
 };
 </script>
