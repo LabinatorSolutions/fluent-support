@@ -60,6 +60,8 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 import Modal from "../../Pieces/Modal";
+import { computed, onMounted, reactive, toRefs } from 'vue';
+import { useFluentHelper, useNotify } from '../../Composable/composables';
 
 export default {
     name: 'BoxEmailSettings',
@@ -68,8 +70,13 @@ export default {
         Modal
     },
     props: ['box_id','mailbox'],
-    data() {
-        return {
+
+    setup(props){
+
+        const {$get, $put, $t, handleError} = useFluentHelper();
+        const { notify } = useNotify();
+
+        const state = reactive({
             active_email: '',
             email_types: [],
             active_email_settings: false,
@@ -83,119 +90,133 @@ export default {
                 'ticket_replied_by_agent_email_to_customer',
                 'ticket_replied_by_customer_email_to_admin'
             ]
-        }
-    },
-    computed: {
-        currentSmartCodes() {
-            if (
-                this.active_email == 'ticket_created_email_to_customer' ||
-                this.active_email == 'ticket_created_email_to_admin'
-            ) {
-                return {
-                    '{{customer.first_name}}': this.$t('Customer First Name'),
-                    '{{customer.last_name}}': this.$t('Customer Last Name'),
-                    '{{customer.full_name}}': this.$t('Customer Full Name'),
-                    '{{customer.email}}': this.$t('Customer Email'),
-                    '{{ticket.admin_url}}': this.$t('Ticket Link(Agent)'),
-                    '{{ticket.public_url}}': this.$t('Ticket Link(Customer)'),
-                    '{{ticket.id}}': this.$t('Ticket ID'),
-                    '{{ticket.title}}': this.$t('Ticket Title'),
-                    '{{ticket.content}}': this.$t('Ticket Content'),
-                    '{{business.name}}': this.$t('Business Name')
-                }
-            } else if (this.active_email== 'ticket_agent_on_change') {
-                return {
-                    '{{ticket.admin_url}}' : this.$t('Ticket Link(Agent)'),
-                    '{{ticket.id}}': this.$t('Ticket ID'),
-                    '{{ticket.title}}': this.$t('Ticket Title'),
-                    '{{ticket.content}}': this.$t('Ticket Content'),
-                    '{{business.name}}': this.$t('Business Name'),
-                    '{{agent.first_name}}': this.$t('Assigned Agent First Name'),
-                    '{{agent.last_name}}': this.$t('AssignedAgent Last Name'),
-                    '{{agent.full_name}}': this.$t('Assigned Agent Full Name'),
-                    '{{assigner.first_name}}': this.$t('Assigner First Name'),
-                    '{{assigner.last_name}}': this.$t('Assigner Last Name'),
-                    '{{assigner.full_name}}': this.$t('Assigner Full Name')
-                }
-            }
-            else {
-                return {
-                    '{{customer.first_name}}':  this.$t('Customer First Name'),
-                    '{{customer.last_name}}': this.$t('Customer Last Name'),
-                    '{{customer.full_name}}': this.$t('Customer Full Name'),
-                    '{{customer.email}}': this.$t('Customer Email'),
-                    '{{ticket.admin_url}}' : this.$t('Ticket Link(Agent)'),
-                    '{{ticket.public_url}}': this.$t('Ticket Link(Customer)'),
-                    '{{ticket.id}}': this.$t('Ticket ID'),
-                    '{{ticket.title}}': this.$t('Ticket Title'),
-                    '{{ticket.content}}': this.$t('Ticket Content'),
-                    '{{business.name}}': this.$t('Business Name'),
-                    '{{agent.first_name}}': this.$t('Agent First Name'),
-                    '{{agent.last_name}}': this.$t('Agent Last Name'),
-                    '{{agent.full_name}}': this.$t('Agent Full Name'),
-                    '{{response.title}}': this.$t('Response Title'),
-                    '{{response.content}}': this.$t('Response Content')
-                }
-            }
-        }
-    },
-    methods: {
-        getConfigs() {
-            this.loading = true;
-            this.$get(`mailboxes/${this.box_id}/email_configs`)
+        });
+
+        function getConfigs() {
+
+            state.loading = true;
+
+            $get(`mailboxes/${props.box_id}/email_configs`)
                 .then((response) => {
-                    this.configs = response.email_configs;
-                    this.email_types = response.email_keys;
+                    state.configs = response.email_configs;
+                    state.email_types = response.email_keys;
                 })
                 .catch((errors) => {
-                    this.handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.saving = false;
+                    state.saving = false;
                 });
-        },
-        editEmail(email) {
-            this.$get(`mailboxes/${this.box_id}/email_settings?email_type=${email.key}`)
+        }
+
+        function editEmail(email) {
+            $get(`mailboxes/${props.box_id}/email_settings?email_type=${email.key}`)
                 .then(response => {
-                    this.active_email_settings = response.email_settings;
-                    this.edit_modal = !this.edit_modal;
+                    state.active_email_settings = response.email_settings;
+                    state.edit_modal = !state.edit_modal;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
 
-            this.active_email = email.key;
-            this.active_email_settings = false;
-        },
-        saveSettings() {
-            this.saving = true;
-            this.$put(`mailboxes/${this.box_id}/email_settings`, {
-                email_type: this.active_email_settings.key,
-                email_settings: this.active_email_settings
+            state.active_email = email.key;
+            state.active_email_settings = false;
+        }
+
+        function saveSettings() {
+
+            state.saving = true;
+
+            $put(`mailboxes/${props.box_id}/email_settings`, {
+                email_type: state.active_email_settings.key,
+                email_settings: state.active_email_settings
             })
                 .then((response) => {
-                    this.$notify({
+                    notify({
                         message: response.message,
                         type: 'success',
                         position: 'bottom-right'
                     });
-                    this.edit_modal=false;
-                    this.loading = true;
-                    this.getConfigs();
+                    state.edit_modal=false;
+                    state.loading = true;
+                    getConfigs();
                 })
                 .catch((errors) => {
-                    this.handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.saving = false;
+                    state.saving = false;
                 });
-        },
-    },
-    mounted() {
-        this.getConfigs();
+        }
+
+
+        const currentSmartCodes = computed(() =>{
+            if (
+                state.active_email == 'ticket_created_email_to_customer' ||
+                state.active_email == 'ticket_created_email_to_admin'
+            ) {
+                return {
+                    '{{customer.first_name}}': $t('Customer First Name'),
+                    '{{customer.last_name}}': $t('Customer Last Name'),
+                    '{{customer.full_name}}': $t('Customer Full Name'),
+                    '{{customer.email}}': $t('Customer Email'),
+                    '{{ticket.admin_url}}': $t('Ticket Link(Agent)'),
+                    '{{ticket.public_url}}': $t('Ticket Link(Customer)'),
+                    '{{ticket.id}}': $t('Ticket ID'),
+                    '{{ticket.title}}': $t('Ticket Title'),
+                    '{{ticket.content}}': $t('Ticket Content'),
+                    '{{business.name}}': $t('Business Name')
+                }
+            } else if (state.active_email== 'ticket_agent_on_change') {
+                return {
+                    '{{ticket.admin_url}}' : $t('Ticket Link(Agent)'),
+                    '{{ticket.id}}': $t('Ticket ID'),
+                    '{{ticket.title}}': $t('Ticket Title'),
+                    '{{ticket.content}}': $t('Ticket Content'),
+                    '{{business.name}}': $t('Business Name'),
+                    '{{agent.first_name}}': $t('Assigned Agent First Name'),
+                    '{{agent.last_name}}': $t('AssignedAgent Last Name'),
+                    '{{agent.full_name}}': $t('Assigned Agent Full Name'),
+                    '{{assigner.first_name}}': $t('Assigner First Name'),
+                    '{{assigner.last_name}}': $t('Assigner Last Name'),
+                    '{{assigner.full_name}}': $t('Assigner Full Name')
+                }
+            }
+            else {
+                return {
+                    '{{customer.first_name}}':  $t('Customer First Name'),
+                    '{{customer.last_name}}': $t('Customer Last Name'),
+                    '{{customer.full_name}}': $t('Customer Full Name'),
+                    '{{customer.email}}': $t('Customer Email'),
+                    '{{ticket.admin_url}}' : $t('Ticket Link(Agent)'),
+                    '{{ticket.public_url}}': $t('Ticket Link(Customer)'),
+                    '{{ticket.id}}': $t('Ticket ID'),
+                    '{{ticket.title}}': $t('Ticket Title'),
+                    '{{ticket.content}}': $t('Ticket Content'),
+                    '{{business.name}}': $t('Business Name'),
+                    '{{agent.first_name}}': $t('Agent First Name'),
+                    '{{agent.last_name}}': $t('Agent Last Name'),
+                    '{{agent.full_name}}': $t('Agent Full Name'),
+                    '{{response.title}}': $t('Response Title'),
+                    '{{response.content}}': $t('Response Content')
+                }
+            }
+        })
+    onMounted(()=> {
+        getConfigs();
+    })
+
+
+    return {
+        ...toRefs(state),
+        getConfigs,
+        editEmail,
+        saveSettings,
+        currentSmartCodes
     }
+    },
 }
 </script>

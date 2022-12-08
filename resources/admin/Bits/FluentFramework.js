@@ -124,11 +124,9 @@ export default class FluentFramework {
     $del(url, options = {}) {
         return Rest.delete(url, options);
     }
-
     $put(url, options = {}) {
         return Rest.put(url, options);
     }
-
     $patch(url, options = {}) {
         return Rest.patch(url, options);
     }
@@ -177,7 +175,7 @@ export default class FluentFramework {
         return defaultValue;
 
     }
-
+    
     longLocalDateTime(date) {
         return this.dateTimeFormat(
             date, 'ddd, DD MMM, YYYY hh:mm:ssa'
