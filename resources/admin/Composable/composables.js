@@ -14,6 +14,8 @@ const request = function(method, route, data = {}) {
         method = 'POST';
     }
 
+
+
     return window.jQuery.ajax({
         url: url,
         type: method,
