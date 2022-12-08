@@ -5,7 +5,7 @@
                 <div class="fs_box_head">
                     <h3>{{ $t('All Customers') }}</h3>
                     <el-button
-                        @click="showEditCustomerModal({})"
+                        @click="showAddCustomerModal({})"
                         size="small"
                         icon="Plus">{{ $t('Add Customer') }}
                     </el-button>
@@ -112,6 +112,8 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import CustomerForm from './_CustomerForm';
+import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
+import { computed, watch, onMounted, reactive, toRefs } from "vue";
 
 export default {
     name: 'Customers',
@@ -119,82 +121,108 @@ export default {
         Pagination,
         CustomerForm
     },
-    data() {
-        return {
+    setup(){
+        const {
+            appVars,
+            $get,
+            $del,
+            $t,
+            handleError,
+            moment,
+            $setTitle,
+            ucFirst,
+        } = useFluentHelper();
+        const { notify } = useNotify();
+        const state = reactive({
             customers: [],
             pagination: {
                 per_page: 10,
                 current_page: 1,
                 total: 0
             },
-            first_time_loading: true,
-            search: '',
             loading: false,
-            editing_customer: {},
+            deleting: false,
+            first_time_loading: true,
             showEditModal: false,
+            editing_customer: {},
+            status: '',
+            search: '',
             statusFilters: {
-                all: 'All',
-                active: 'Active',
-                inactive: 'Blocked'
-            },
-            status: 'all',
-            deleting: false
-        }
-    },
-    methods: {
-        fetchCustomers() {
-            this.loading = true;
-            this.$get('customers', {
-                per_page: this.pagination.per_page,
-                page: this.pagination.current_page,
-                search: this.search,
-                status: this.status
+                'active': $t('Active'),
+                'inactive': $t('Blocked'),
+                'pending': $t('Pending'),
+            }
+        });
+
+        const  fetchCustomers = async () => {
+            $get( 'customers',{
+                per_page: state.pagination.per_page,
+                page: state.pagination.current_page,
+                search: state.search,
+                status: state.status
             })
-                .then((response) => {
-                    this.customers = response.customers.data;
-                    this.pagination.total = response.customers.total;
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                    this.first_time_loading = false;
-                });
-        },
-        showEditCustomerModal(customer) {
-            this.editing_customer = customer;
-            this.showEditModal = true;
-        },
-        closeModal() {
-            this.editing_customer = {};
-            this.showEditModal = false;
-            this.fetchCustomers();
-        },
-        deleteCustomer(customerId) {
-            this.deleting = true;
-            this.$del(`customers/${customerId}`)
+            .then(response => {
+                state.customers = response.customers.data;
+                console.log(state.customers);
+                state.pagination.total = response.customers.total;
+            })
+            .always(() => {
+                state.loading = false;
+                state.first_time_loading = false;
+            })
+            .catch(error => {
+                handleError(error);
+            });
+        }
+
+        const showAddCustomerModal = (customer) => {
+            state.editing_customer = customer;
+            state.showEditModal = true;
+        }
+        const closeModal = () =>{
+            state.editing_customer = {};
+            state.showEditModal = false;
+            fetchCustomers();
+        }
+
+        const deleteCustomer = (customerId) =>{
+            state.deleting = true;
+            $del(`customers/${customerId}`)
                 .then(response => {
-                    this.fetchCustomers();
-                    this.$notify.success({
+                    fetchCustomers();
+                    notify({
                         message: response.message,
+                        type: 'success',
                         position: 'bottom-right'
-                    })
+                    });
                 })
                 .catch(errors => {
-                    this.$handleError(errors)
+                    handleError(errors)
                 })
                 .always(() => {
-                    this.deleting = false;
+                    state.deleting = false;
                 });
-        },
-        tableRowClassName({ row, rowIndex }) {
-            return 'fs_status_' + row.status;
         }
-    },
-    mounted() {
-        this.fetchCustomers();
-        this.$setTitle('Customers');
+
+        onMounted(() => {
+            $setTitle($t('Customers'));
+            fetchCustomers();
+        });
+
+        return {
+            appVars,
+            $get,
+            $t,
+            handleError,
+            moment,
+            fetchCustomers,
+            showAddCustomerModal,
+            closeModal,
+            deleteCustomer,
+            $setTitle,
+            ucFirst,
+            ...toRefs(state)
+        }
     }
 }
 </script>
