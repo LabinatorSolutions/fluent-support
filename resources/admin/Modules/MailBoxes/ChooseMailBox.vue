@@ -255,7 +255,7 @@ export default {
             return true;
         });
 
-        const fetch = () => {
+        const fetch = async () => {
             state.fetching = true;
             get("mailboxes")
                 .then((response) => {

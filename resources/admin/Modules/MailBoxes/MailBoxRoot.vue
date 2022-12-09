@@ -3,7 +3,7 @@
         <div v-if="mailbox" class="fs_box_wrapper">
             <div style="margin-bottom: 20px;" class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ $t('Settings') }}: {{ mailbox.name }}</h3>
+                    <h3>{{ translate('Settings') }}: {{ mailbox.name }}</h3>
                 </div>
                 <div class="fs_box_actions">
 
@@ -15,19 +15,19 @@
                         <li>
                             <router-link :to="{ name: 'box_settings', params: { box_id: mailbox.id } }">
                                 <el-icon> <Box /> </el-icon>
-                                {{ $t('Inbox Settings') }}
+                                {{ translate('Inbox Settings') }}
                             </router-link>
                         </li>
                         <li>
                             <router-link :to="{ name: 'email_settings', params: { box_id: mailbox.id } }">
                                 <el-icon> <Message /> </el-icon>
-                                {{ $t('Email Settings') }}
+                                {{ translate('Email Settings') }}
                             </router-link>
                         </li>
                         <li v-if="mailbox && mailbox.box_type == 'email'">
                             <router-link :to="{ name: 'email_piping', params: { box_id: mailbox.id } }">
                                 <el-icon> <Connection /> </el-icon>
-                                {{ $t('Email Piping') }}
+                                {{ translate('Email Piping') }}
                             </router-link>
                         </li>
                     </ul>
@@ -44,34 +44,52 @@
 </template>
 
 <script type="text/babel">
+import { onMounted, reactive, toRefs } from 'vue';
+import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
 export default {
     name: 'MailBoxRoot',
     props: ['box_id'],
-    data() {
-        return {
+
+    setup(props){
+        const {
+            get,
+            handleError,
+            setTitle,
+            translate,
+
+        } = useFluentHelper();
+
+        const state = reactive({
             fetching: true,
             mailbox: false
-        }
-    },
-    methods: {
-        fetch() {
-            this.fetching = true;
-            this.$get(`mailboxes/${this.box_id}`)
+        })
+
+        const fetch = async ()=>{
+            state.fetching = true;
+            get(`mailboxes/${props.box_id}`)
                 .then((response) => {
-                    this.mailbox = response.mailbox;
-                    this.$setTitle(response.mailbox.name + ' Settings');
+                    state.mailbox = response.mailbox;
+                    setTitle(response.mailbox.name + ' Settings');
                 })
                 .catch((errors) => {
-                    this.$handleError(errors)
+                    handleError(errors)
                 })
                 .always(() => {
-                    this.fetching = false;
+                    state.fetching = false;
                 })
         }
-    },
-    mounted() {
-        this.fetch();
-        this.$setTitle('Business Settings');
+
+        onMounted(()=>{
+            fetch();
+            setTitle('Business Settings');
+        })
+
+        return{
+            fetch,
+            translate,
+            ...toRefs(state)
+        }
+
     }
 }
 </script>

@@ -61,11 +61,11 @@
                         <el-table-column :label="translate('Stats')" width="180">
                             <template #default="scope">
                                 <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
-                                    <el-button size="small" type="text" icon="Folder" style="color:#409eff;">
+                                    <el-button size="small" text icon="Folder" style="color:#409eff;">
                                         {{ scope.row.total_tickets }}
                                     </el-button>
                                 </router-link>
-                                <el-button size="small" type="text" icon="ChatLineRound" style="color:#409eff;">
+                                <el-button size="small" text icon="ChatLineRound" style="color:#409eff;">
                                     {{ scope.row.total_responses }}
                                 </el-button>
 
@@ -79,7 +79,7 @@
                                     :title="translate('Are you sure to delete this customer? It will delete all associated data with this customer')"
                                 >
                                     <template #reference>
-                                        <el-button size="small" type="text" icon="Delete" style="color:red;"/>
+                                        <el-button size="small" text icon="Delete" style="color:red;"/>
                                         <span class="fs_badge"><Delete /></span>
                                     </template>
                                 </el-popconfirm>
