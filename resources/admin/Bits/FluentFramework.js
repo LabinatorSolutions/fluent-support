@@ -26,6 +26,7 @@ export function useFluentHelper(){
     const { get, post, del, put, patch} = useRestApi();
     const { notify } = useNotify();
     const appVars = window.fluentSupportAdmin;
+    const has_pro = window.fluentSupportAdmin.has_pro;
 
     function convertToText(obj) {
         const string = [];
@@ -140,7 +141,8 @@ export function useFluentHelper(){
         dateTimeFormat,
         localDate,
         longLocalDate,
-        setTitle
+        setTitle,
+        has_pro
     }
 }
 
