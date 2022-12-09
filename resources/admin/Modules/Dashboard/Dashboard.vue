@@ -2,7 +2,7 @@
     <div class="fs_head_section">
         <div v-if="dashboard_param.greetingMessage">
             <h1>
-                {{ $t("Good") }} {{ greetingTime }} {{ me.full_name + "!!!" }}
+                {{ translate("Good") }} {{ greetingTime }} {{ me.full_name + "!!!" }}
             </h1>
         </div>
         <div></div>
@@ -25,7 +25,7 @@
                     style="margin-left: 16px"
                     @click="defalutSettings()"
                 >
-                    {{ $t("Reset") }}
+                    {{ translate("Reset") }}
                 </el-button>
             </div>
         </div>
@@ -54,7 +54,7 @@
                                     >
                                         <template #title>
                                             <div class="fs_box_header">
-                                                {{ $t(element.heading) }}
+                                                {{ element.heading }}
                                             </div>
                                         </template>
                                         <component
@@ -91,7 +91,7 @@
                                     >
                                         <template #title>
                                             <div class="fs_box_header">
-                                                {{ $t(element.heading) }}
+                                                {{ element.heading }}
                                             </div>
                                         </template>
                                         <component
@@ -113,7 +113,7 @@
         <el-drawer v-model="drawer" :with-header="false">
             <div class="fs_drawer_content">
                 <el-checkbox v-model="dashboard_param.greetingMessage">{{
-                    $t("Greeting Message")
+                    translate("Greeting Message")
                 }}</el-checkbox>
                 <div v-for="column_data in dashboard_param">
                     <div
@@ -163,7 +163,7 @@
             <template #footer>
                 <div style="flex: auto">
                     <el-button @click="cancelClick">{{
-                        $t("Close")
+                        translate("Close")
                     }}</el-button>
                 </div>
             </template>
@@ -208,11 +208,11 @@ export default {
     setup() {
         const {
             appVars,
-            $get,
-            $t,
+            get,
+            translate,
             handleError,
-            $saveData,
-            $getData,
+            saveData,
+            getData,
             moment,
         } = useFluentHelper();
 
@@ -241,14 +241,14 @@ export default {
                         id: 1,
                         component: "MentionedTicket",
                         show: true,
-                        heading: $t("Your bookmarked tickets"),
+                        heading: translate("Your bookmarked tickets"),
                         active_names: "mentionedTicket",
                     },
                     {
                         id: 2,
                         component: "TicketStatistics",
                         show: true,
-                        heading: $t("Your Overview for Today"),
+                        heading: translate("Your Overview for Today"),
                         active_names: "ticketStatistics",
                     },
                 ],
@@ -257,14 +257,14 @@ export default {
                         id: 3,
                         component: "SuggestedTicket",
                         show: true,
-                        heading: $t("dashboard_sub_heading"),
+                        heading: translate("dashboard_sub_heading"),
                         active_names: "suggestedTicket",
                     },
                     {
                         id: 4,
                         component: "TicketsByProduct",
                         show: true,
-                        heading: $t("active_tickets_by_products"),
+                        heading: translate("active_tickets_by_products"),
                         active_names: "ticketsByProduct",
                     },
                 ],
@@ -284,8 +284,8 @@ export default {
         watch(
             () => state.dashboard_param,
             (newValue, oldValue) => {
-                $saveData("dashboard_settings_data", newValue);
-                $saveData(
+                saveData("dashboard_settings_data", newValue);
+                saveData(
                     "prev_dashboard_default_settings",
                     state.dashboard_settings_data
                 );
@@ -308,23 +308,23 @@ export default {
                 currentHour >= split_afternoon &&
                 currentHour <= split_evening
             ) {
-                g = $t("afternoon");
+                g = translate("afternoon");
             } else if (currentHour >= split_evening) {
-                g = $t("evening");
+                g = translate("evening");
             } else {
-                g = $t("morning");
+                g = translate("morning");
             }
 
             return g;
         });
 
         function handleChange() {
-            $saveData("component_collapse_data", state.active_names);
+            saveData("component_collapse_data", state.active_names);
         }
 
         function defalutSettings() {
-            $saveData("dashboard_settings_data", state.dashboard_settings_data);
-            $saveData("component_collapse_data", state.default_active_names);
+            saveData("dashboard_settings_data", state.dashboard_settings_data);
+            saveData("component_collapse_data", state.default_active_names);
             getComponentState();
             getDashboardSettings();
         }
@@ -338,7 +338,7 @@ export default {
         }
 
         function getComponentState() {
-            let collapseState = $getData("component_collapse_data");
+            let collapseState = getData("component_collapse_data");
             if (collapseState) {
                 state.active_names = collapseState;
             } else {
@@ -347,21 +347,21 @@ export default {
         }
 
         function getDashboardSettings() {
-            let prev_dashboard_default_settings = $getData(
+            let prev_dashboard_default_settings = getData(
                 "prev_dashboard_default_settings"
             );
-            state.settings_data = $getData("dashboard_settings_data");
+            state.settings_data = getData("dashboard_settings_data");
             if (
                 JSON.stringify(prev_dashboard_default_settings) ===
                 JSON.stringify(state.dashboard_settings_data)
             ) {
                 state.dashboard_param = state.settings_data;
             } else {
-                $saveData(
+                saveData(
                     "prev_dashboard_default_settings",
                     state.dashboard_settings_data
                 );
-                state.dashboard_param = $getData(
+                state.dashboard_param = getData(
                     "prev_dashboard_default_settings"
                 );
             }
@@ -369,7 +369,7 @@ export default {
 
         function fetchStat() {
             state.loading = true;
-            $get("tickets/my_stats", {
+            get("tickets/my_stats", {
                 with: [
                     "suggested_tickets",
                     "overall_stats",
@@ -427,6 +427,13 @@ export default {
             getComponentState,
             getDashboardSettings,
             fetchStat,
+            appVars,
+            get,
+            translate,
+            handleError,
+            saveData,
+            getData,
+            moment,
         };
     },
 };
