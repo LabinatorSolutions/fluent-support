@@ -61,7 +61,7 @@
 import WpEditor from '../../Pieces/_wp_editor';
 import Modal from "../../Pieces/Modal";
 import { computed, onMounted, reactive, toRefs } from 'vue';
-import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'BoxEmailSettings',
@@ -216,9 +216,9 @@ export default {
         editEmail,
         saveSettings,
         currentSmartCodes,
-        get, 
-        put, 
-        translate, 
+        get,
+        put,
+        translate,
         handleError
     }
     },

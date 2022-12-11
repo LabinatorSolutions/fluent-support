@@ -144,7 +144,7 @@
 import CustomerForm from './_CustomerForm';
 import FluentCrmProfile from '@/admin/Modules/Tickets/parts/_CrmProfile';
 import {onMounted, reactive, toRefs} from "vue";
-import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "CustomerPage",

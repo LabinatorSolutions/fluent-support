@@ -193,7 +193,7 @@ import SuggestedTicket from "./SuggestedTicket.vue";
 import MentionedTicket from "./MentionedTicket.vue";
 import TicketsByProduct from "./TicketsByProduct";
 import { computed, watch, onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper } from "@/admin/Bits/FluentFramework";
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "DynamicDashboard",

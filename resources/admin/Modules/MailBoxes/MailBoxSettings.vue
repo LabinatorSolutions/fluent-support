@@ -58,7 +58,7 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 import { onMounted, reactive, toRefs,computed } from 'vue';
-import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'MailBoxSettings',
@@ -75,7 +75,7 @@ export default {
 
         } = useFluentHelper();
 
-        const { notify } = useNotify(); 
+        const { notify } = useNotify();
 
         const state = reactive({
             show_codes: false,

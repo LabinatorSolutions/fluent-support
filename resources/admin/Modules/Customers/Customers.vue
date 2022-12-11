@@ -112,7 +112,7 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import CustomerForm from './_CustomerForm';
-import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 import { onMounted, reactive, toRefs } from "vue";
 
 export default {
