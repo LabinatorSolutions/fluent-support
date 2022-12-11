@@ -16,23 +16,35 @@ const request = function(method, route, data = {}) {
     });
 }
 
-export default {
-    get(route, data = {}) {
-        return request('GET', route, data);
-    },
-    post(route, data = {}) {
-        return request('POST', route, data);
-    },
-    delete(route, data = {}) {
+export function useRestApi(){
+    function get(route, data) {
+        return request('GET', route, data)
+    }
+
+    function post(route, data) {
+        return request('POST', route, data)
+    }
+
+    function del(route, data) {console.log('del is calling from composible/rest.js')
         return request('DELETE', route, data);
-    },
-    put(route, data = {}) {
+    }
+
+    function put(route, data) {
         return request('PUT', route, data);
-    },
-    patch(route, data = {}) {
+    }
+
+    function patch(route, data) {
         return request('PATCH', route, data);
     }
-};
+
+    return {
+        get,
+        post,
+        del,
+        put,
+        patch
+    }
+}
 
 jQuery(document).ajaxSuccess((event, xhr, settings) => {
     const nonce = xhr.getResponseHeader('X-WP-Nonce');

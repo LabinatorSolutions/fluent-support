@@ -45,7 +45,7 @@
 
 <script type="text/babel">
 import { onMounted, reactive, toRefs } from 'vue';
-import {useFluentHelper, useNotify} from "@/admin/Bits/FluentFramework";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     name: 'MailBoxRoot',
     props: ['box_id'],

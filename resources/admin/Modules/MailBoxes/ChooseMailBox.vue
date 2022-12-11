@@ -208,7 +208,7 @@
 import MoveTicket from "./MoveTicket";
 import { computed, onMounted, reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
-import { useFluentHelper, useNotify } from "@/admin/Bits/FluentFramework";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ChooseMailBox",
