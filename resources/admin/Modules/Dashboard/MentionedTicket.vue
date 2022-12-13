@@ -3,6 +3,7 @@
         <ul v-if="component_data.length" class="fs_card_list">
             <li v-for="ticket in component_data" :key="ticket.id">
                 <router-link
+                class="fs_mentioned_ticket_list"
                     tag="li"
                     :to="{
                         name: 'view_ticket',
@@ -11,10 +12,6 @@
                 >
                     <div class="fs_suggested_ticket">
                         <div class="fs_ticket_info">
-                            <img
-                                class="fs_inline_photo_40"
-                                :src="ticket.customer.photo"
-                            />
                             <span
                                 style="
                                     color: #3c434a;
@@ -69,5 +66,8 @@ export default {
         font-weight: 400;
         padding: 0 15px;
         display: block;
+    }
+    .fs_mentioned_ticket_list{
+        text-decoration: none;
     }
 </style>

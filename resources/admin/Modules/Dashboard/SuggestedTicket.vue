@@ -48,27 +48,27 @@
             </li>
         </ul>
 
-        <p class="fs_padded_20 fs_stat_helper" v-else>
+        <p class="fs_stat_helper" v-else>
             {{ $t("dashboard_all_catch_up") }}
             <b>{{ $t("Good Job") }}, {{ me.full_name }}!</b>
         </p>
 
         <p
-            class="fs_padded_20 fs_stat_helper"
+            class="fs_stat_helper"
             v-if="component_data.overall_stats"
         >
-            <span class="fs_highlight"
+            <span  style="color:#FF7C7C"
                 >{{ component_data.overall_stats.waiting_tickets }}
                 {{ $t("tickets") }}</span
             >
             {{ $t("are waiting for reply with") }}
-            <span class="fs_highlight">
+            <span style="color:#88C379">
                 {{ $t("average") }}
                 {{ component_data.overall_stats.average_waiting }}
                 {{ $t("wait time") }}</span
             >
             & {{ $t("max wait time") }}
-            <span class="fs_highlight">{{
+            <span style="color:#7280FF">{{
                 component_data.overall_stats.max_waiting
             }}</span>
         </p>
@@ -83,4 +83,8 @@ export default {
     },
 };
 </script>
-<style scoped></style>
+<style scoped>
+    .fs_stat_helper{
+        padding: 5px 30px;
+    }
+</style>

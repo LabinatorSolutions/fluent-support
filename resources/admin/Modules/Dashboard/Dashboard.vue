@@ -1,188 +1,199 @@
 <template>
-    <div class="fs_head_section">
-        <div v-if="dashboard_param.greetingMessage">
-            <h1>
-                {{ translate("Good") }} {{ greetingTime }} {{ me.full_name + "!!!" }}
-            </h1>
-        </div>
-        <div></div>
-        <div class="fs_button_group">
-            <div class="fs_button_group_inner">
-                <el-button
-                    type="primary"
-                    class="fs_drawer_button"
-                    style="margin-left: 16px"
-                    @click="drawer = true"
-                >
-                    <el-icon>
-                        <Setting />
-                    </el-icon>
-                </el-button>
+    <div class="fs_dashboard_wrapper">
+        <div class="fs_head_section">
+            <div v-if="dashboard_param.greetingMessage">
+                <h1>
+                    {{ translate("Good") }} {{ greetingTime }}
+                    {{ me.full_name + "!!!" }}
+                </h1>
+            </div>
+            <div></div>
+            <div class="fs_button_group">
+                <div class="fs_button_group_inner">
+                    <el-button
+                        type="primary"
+                        class="fs_drawer_button"
+                        style="margin-left: 16px"
+                        @click="drawer = true"
+                    >
+                        <el-icon>
+                            <Setting />
+                        </el-icon>
+                    </el-button>
 
-                <el-button
-                    type="info"
-                    class="fs_drawer_button"
-                    style="margin-left: 16px"
-                    @click="defalutSettings()"
-                >
-                    {{ translate("Reset") }}
-                </el-button>
+                    <el-button
+                        type="info"
+                        class="fs_drawer_button"
+                        style="margin-left: 16px"
+                        @click="defalutSettings()"
+                    >
+                        {{ translate("Reset") }}
+                    </el-button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="dashboard fs_box_wrapper" v-if="!loading">
-        <div v-html="dashboard_notice"></div>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <draggable
-                    v-model="dashboard_param.first_column"
-                    ghost-class="ghost"
-                    group="dashboard_component"
-                    item-key="id"
-                >
-                    <template v-if="!loading" #item="{ element }">
-                        <div v-if="element.show" class="draggable">
-                            <div class="draggable_component">
-                                <el-collapse
-                                    v-model="active_names[element.active_names]"
-                                    @change="handleChange"
-                                >
-                                    <el-collapse-item
-                                        :name="element.active_names"
-                                        class="fs_box_board"
-                                    >
-                                        <template #title>
-                                            <div class="fs_box_header">
-                                                {{ element.heading }}
-                                            </div>
-                                        </template>
-                                        <component
-                                            :is="element.component"
-                                            :component_data="
-                                                total_data[element.component]
-                                            "
-                                        >
-                                        </component>
-                                    </el-collapse-item>
-                                </el-collapse>
-                            </div>
-                        </div>
-                    </template>
-                </draggable>
-            </el-col>
-            <el-col :span="12">
-                <draggable
-                    v-model="dashboard_param.second_column"
-                    ghost-class="ghost"
-                    group="dashboard_component"
-                    item-key="id"
-                >
-                    <template #item="{ element }">
-                        <div v-if="element.show" class="draggable">
-                            <div class="draggable_component">
-                                <el-collapse
-                                    v-model="active_names[element.active_names]"
-                                    @change="handleChange"
-                                >
-                                    <el-collapse-item
-                                        :name="element.active_names"
-                                        class="fs_box_board"
-                                    >
-                                        <template #title>
-                                            <div class="fs_box_header">
-                                                {{ element.heading }}
-                                            </div>
-                                        </template>
-                                        <component
-                                            :is="element.component"
-                                            :component_data="
-                                                total_data[element.component]
-                                            "
-                                        >
-                                        </component>
-                                    </el-collapse-item>
-                                </el-collapse>
-                            </div>
-                        </div>
-                    </template>
-                </draggable>
-            </el-col>
-        </el-row>
-
-        <el-drawer v-model="drawer" :with-header="false">
-            <div class="fs_drawer_content">
-                <el-checkbox v-model="dashboard_param.greetingMessage">{{
-                    translate("Greeting Message")
-                }}</el-checkbox>
-                <div v-for="column_data in dashboard_param">
-                    <div
-                        class="fs_settings_drawer"
-                        v-for="component_list_data in column_data"
+        <div class="dashboard fs_box_wrapper" v-if="!loading">
+            <div v-html="dashboard_notice"></div>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <draggable
+                        v-model="dashboard_param.first_column"
+                        ghost-class="ghost"
+                        group="dashboard_component"
+                        item-key="id"
                     >
-                        <el-skeleton
-                            :rows="5"
-                            :count="4"
-                            style="
-                                width: 240px;
-                                --el-skeleton-circle-size: 20px;
-                            "
-                        >
-                            <template #template>
-                                <div
-                                    style="
-                                        display: flex;
-                                        align-items: center;
-                                        justify-items: space-between;
-                                        margin-bottom: 5px;
-                                        height: 100%;
-                                    "
-                                >
-                                    <el-skeleton-item
-                                        variant="circle"
-                                        style="
-                                            margin-right: 16px;
-                                            --el-skeleton-circle-size: 20px;
+                        <template v-if="!loading" #item="{ element }">
+                            <div v-if="element.show" class="draggable">
+                                <div class="draggable_component">
+                                    <el-collapse
+                                        v-model="
+                                            active_names[element.active_names]
                                         "
-                                    />
-                                    <el-skeleton-item
-                                        variant="text"
-                                        style="width: 80%"
-                                    />
+                                        @change="handleChange"
+                                    >
+                                        <el-collapse-item
+                                            :name="element.active_names"
+                                            class="fs_box_board"
+                                        >
+                                            <template #title>
+                                                <div class="fs_component_header">
+                                                    {{ element.heading }}
+                                                </div>
+                                            </template>
+                                            <component
+                                                :is="element.component"
+                                                :component_data="
+                                                    total_data[
+                                                        element.component
+                                                    ]
+                                                "
+                                            >
+                                            </component>
+                                        </el-collapse-item>
+                                    </el-collapse>
                                 </div>
-                            </template>
-                        </el-skeleton>
-                        <el-checkbox
-                            v-model="component_list_data.show"
-                            :label="component_list_data.component"
-                        />
+                            </div>
+                        </template>
+                    </draggable>
+                </el-col>
+                <el-col :span="12">
+                    <draggable
+                        v-model="dashboard_param.second_column"
+                        ghost-class="ghost"
+                        group="dashboard_component"
+                        item-key="id"
+                    >
+                        <template #item="{ element }">
+                            <div v-if="element.show" class="draggable">
+                                <div class="draggable_component">
+                                    <el-collapse
+                                        v-model="
+                                            active_names[element.active_names]
+                                        "
+                                        @change="handleChange"
+                                    >
+                                        <el-collapse-item
+                                            :name="element.active_names"
+                                            class="fs_box_board"
+                                        >
+                                            <template #title>
+                                                <div class="fs_component_header">
+                                                    {{ element.heading }}
+                                                </div>
+                                            </template>
+                                            <component
+                                                :is="element.component"
+                                                :component_data="
+                                                    total_data[
+                                                        element.component
+                                                    ]
+                                                "
+                                            >
+                                            </component>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                </div>
+                            </div>
+                        </template>
+                    </draggable>
+                </el-col>
+            </el-row>
+
+            <el-drawer v-model="drawer" :with-header="false">
+                <div class="fs_drawer_content">
+                    <el-checkbox v-model="dashboard_param.greetingMessage">{{
+                        translate("Greeting Message")
+                    }}</el-checkbox>
+                    <div v-for="column_data in dashboard_param">
+                        <div
+                            class="fs_settings_drawer"
+                            v-for="component_list_data in column_data"
+                        >
+                            <el-skeleton
+                                :rows="5"
+                                :count="4"
+                                style="
+                                    width: 240px;
+                                    --el-skeleton-circle-size: 20px;
+                                "
+                            >
+                                <template #template>
+                                    <div
+                                        style="
+                                            display: flex;
+                                            align-items: center;
+                                            justify-items: space-between;
+                                            margin-bottom: 5px;
+                                            height: 100%;
+                                        "
+                                    >
+                                        <el-skeleton-item
+                                            variant="circle"
+                                            style="
+                                                margin-right: 16px;
+                                                --el-skeleton-circle-size: 20px;
+                                            "
+                                        />
+                                        <el-skeleton-item
+                                            variant="text"
+                                            style="width: 80%"
+                                        />
+                                    </div>
+                                </template>
+                            </el-skeleton>
+                            <el-checkbox
+                                v-model="component_list_data.show"
+                                :label="component_list_data.component"
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <template #footer>
-                <div style="flex: auto">
-                    <el-button @click="cancelClick">{{
-                        translate("Close")
-                    }}</el-button>
-                </div>
-            </template>
-        </el-drawer>
-    </div>
+                <template #footer>
+                    <div style="flex: auto">
+                        <el-button @click="cancelClick">{{
+                            translate("Close")
+                        }}</el-button>
+                    </div>
+                </template>
+            </el-drawer>
+        </div>
 
-    <div class="fs_padded_20" v-else>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <div class="fs_component_skeleton">
-                    <el-skeleton :rows="6" animated />
-                </div>
-            </el-col>
-            <el-col :span="12">
-                <div class="fs_component_skeleton">
-                    <el-skeleton :rows="6" animated />
-                </div>
-            </el-col>
-        </el-row>
+        <div class="fs_padded_20" v-else>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <div class="fs_component_skeleton">
+                        <el-skeleton :rows="6" animated />
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="fs_component_skeleton">
+                        <el-skeleton :rows="6" animated />
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
     </div>
 </template>
 
@@ -439,6 +450,32 @@ export default {
 };
 </script>
 
+<style>
+.el-collapse-item__arrow,
+.el-collapse-item__arrow.is-active,
+.el-collapse-item__arrow {
+    cursor: pointer !important;
+    background-color: white;
+    border-radius: 50%;
+    /* border: 1px solid grey; */
+    /* padding: 10px; */
+    height: 15px;
+    width: 15px;
+}
+.el-collapse-item__arrow:hover {
+    background: #54b47e;
+    color: white;
+}
+.el-collapse-item__wrap {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.el-collapse-item__header {
+    padding: 10px 30px;
+}
+</style>
+
 <style scoped>
 .ghost {
     opacity: 0.2;
@@ -447,7 +484,7 @@ export default {
     margin: 10px;
     margin: auto;
     display: block;
-    border-radius: 5px;
+    /* border-radius: 5px; */
     overflow: hidden;
     text-align: center;
 }
@@ -467,11 +504,11 @@ export default {
     /*float: right;*/
 }
 .draggable_component {
-    max-width: 680px;
+    max-width: 670px;
     margin-left: auto;
     margin-bottom: 20px;
-    border-radius: 15px;
-    border: 1px solid rgb(226, 228, 231);
+    border-radius: 10px;
+    /* border: 1px solid rgb(226, 228, 231); */
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
 }
 .fs_head_section {
@@ -508,12 +545,34 @@ export default {
     border-radius: 10px;
     padding: 10px;
 }
-.fs_box_header {
-    cursor: move;
-}
 
 .dashboard .el-row .el-col:last-child .draggable_component {
     margin-right: auto;
     margin-left: 0;
+}
+.fs_dashboard_wrapper {
+    margin-left: 8.85%;
+    margin-right: 4.012%;
+}
+
+.el-collapse-item {
+    position: relative;
+}
+.fs_component_header {
+    width: auto;
+    clear: both;
+    overflow: hidden;
+    margin: 0;
+    font-weight: 500;
+    color: #000000;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: "Oxygen";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 36px;
 }
 </style>
