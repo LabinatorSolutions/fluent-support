@@ -43,18 +43,25 @@
         </ul>
         <div v-else class="fs_no_book_tk">
             <span>
-                {{ $t('no_bookmarked_ticket') }}
+                {{ translate('no_bookmarked_ticket') }}
             </span>
         </div>
     </div>
 </template>
 <script>
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     props: ["component_data"],
     name: "MentionedTicket",
     setup() {
-        return {
+        
+        const {
 
+            translate,
+
+        } = useFluentHelper();
+        return{
+            translate
         };
     },
 };

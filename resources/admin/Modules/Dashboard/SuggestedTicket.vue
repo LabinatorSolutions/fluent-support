@@ -49,42 +49,43 @@
         </ul>
 
         <p class="fs_stat_helper" v-else>
-            {{ $t("dashboard_all_catch_up") }}
-            <b>{{ $t("Good Job") }}, {{ me.full_name }}!</b>
+            {{ translate("dashboard_all_catch_up") }}
+            <b>{{ translate("Good Job") }}, {{ me.full_name }}!</b>
         </p>
 
-        <p
-            class="fs_stat_helper"
-            v-if="component_data.overall_stats"
-        >
-            <span  style="color:#FF7C7C"
+        <p class="fs_stat_helper" v-if="component_data.overall_stats">
+            <span style="color: #ff7c7c"
                 >{{ component_data.overall_stats.waiting_tickets }}
-                {{ $t("tickets") }}</span
+                {{ translate("tickets") }}</span
             >
-            {{ $t("are waiting for reply with") }}
-            <span style="color:#88C379">
-                {{ $t("average") }}
+            {{ translate("are waiting for reply with") }}
+            <span style="color: #88c379">
+                {{ translate("average") }}
                 {{ component_data.overall_stats.average_waiting }}
-                {{ $t("wait time") }}</span
+                {{ translate("wait time") }}</span
             >
-            & {{ $t("max wait time") }}
-            <span style="color:#7280FF">{{
+            & {{ translate("max wait time") }}
+            <span style="color: #7280ff">{{
                 component_data.overall_stats.max_waiting
             }}</span>
         </p>
     </div>
 </template>
 <script>
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     props: ["component_data"],
     name: "SuggestedTicket",
     setup() {
-        return {};
+        const { translate } = useFluentHelper();
+        return {
+            translate,
+        };
     },
 };
 </script>
 <style scoped>
-    .fs_stat_helper{
-        padding: 5px 30px;
-    }
+.fs_stat_helper {
+    padding: 5px 30px;
+}
 </style>
