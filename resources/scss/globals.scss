@@ -111,9 +111,8 @@
         align-items: center;
         justify-content: space-between;
         font-style: normal;
-        font-weight: 700;
         font-size: 18px;
-        line-height: 36px;
+        line-height: 25px;
 
         .fs_header_title {
             display: flex;
@@ -223,7 +222,7 @@ ul.fs_card_list {
 }
 
 .fs_dashboard_box {
-    max-width: 680px;
+    max-width: 1360px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 24px;

@@ -57,7 +57,9 @@
                                             class="fs_box_board"
                                         >
                                             <template #title>
-                                                <div class="fs_component_header">
+                                                <div
+                                                    class="fs_component_header"
+                                                >
                                                     {{ element.heading }}
                                                 </div>
                                             </template>
@@ -98,7 +100,9 @@
                                             class="fs_box_board"
                                         >
                                             <template #title>
-                                                <div class="fs_component_header">
+                                                <div
+                                                    class="fs_component_header"
+                                                >
                                                     {{ element.heading }}
                                                 </div>
                                             </template>
@@ -457,8 +461,6 @@ export default {
     cursor: pointer !important;
     background-color: white;
     border-radius: 50%;
-    /* border: 1px solid grey; */
-    /* padding: 10px; */
     height: 15px;
     width: 15px;
 }
@@ -478,15 +480,13 @@ export default {
 
 <style scoped>
 .ghost {
-    opacity: 0.2;
-    background: rgb(201, 174, 122);
-    color: white;
-    margin: 10px;
-    margin: auto;
+    opacity: 0.5;
     display: block;
-    /* border-radius: 5px; */
     overflow: hidden;
     text-align: center;
+    border-style: dashed;
+    border-radius: 10px;
+    max-width: 670px;
 }
 
 .fs_settings_drawer {
@@ -500,15 +500,11 @@ export default {
     border: 1px solid #e3e8ee;
 }
 
-.fs_drawer_button {
-    /*float: right;*/
-}
 .draggable_component {
     max-width: 670px;
     margin-left: auto;
     margin-bottom: 20px;
     border-radius: 10px;
-    /* border: 1px solid rgb(226, 228, 231); */
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
 }
 .fs_head_section {
@@ -551,8 +547,7 @@ export default {
     margin-left: 0;
 }
 .fs_dashboard_wrapper {
-    margin-left: 8.85%;
-    margin-right: 4.012%;
+    margin: 0% 5% 0% 5%;
 }
 
 .el-collapse-item {
@@ -569,10 +564,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-family: "Oxygen";
     font-style: normal;
-    font-weight: 700;
     font-size: 18px;
-    line-height: 36px;
+    line-height: 25px;
 }
 </style>
