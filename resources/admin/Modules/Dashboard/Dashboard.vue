@@ -124,51 +124,48 @@
                 </el-col>
             </el-row>
 
-            <el-drawer v-model="drawer" :with-header="false">
+            <el-drawer
+                v-model="drawer"
+                :with-header="false"
+                size="25%"
+                show-close="true"
+            >
                 <div class="fs_drawer_content">
-                    <el-checkbox v-model="dashboard_param.greetingMessage">{{
-                        translate("Greeting Message")
-                    }}</el-checkbox>
+                    <div class="fs_settings_drawer">
+                        <img
+                            :src="
+                                appVars.asset_url +
+                                'images/ComponentIcons/GreetingMessage.png'
+                            "
+                            alt="HelpScout"
+                            class="fs_drawer_icon"
+                        />
+                        <el-checkbox
+                            v-model="dashboard_param.greetingMessage"
+                            >{{ translate("Greeting Message") }}</el-checkbox
+                        >
+                    </div>
+
                     <div v-for="column_data in dashboard_param">
                         <div
                             class="fs_settings_drawer"
                             v-for="component_list_data in column_data"
                         >
-                            <el-skeleton
-                                :rows="5"
-                                :count="4"
-                                style="
-                                    width: 240px;
-                                    --el-skeleton-circle-size: 20px;
+                            <img
+                                :src="
+                                    appVars.asset_url +
+                                    'images/ComponentIcons/' +
+                                    component_list_data.component +
+                                    '.png'
                                 "
-                            >
-                                <template #template>
-                                    <div
-                                        style="
-                                            display: flex;
-                                            align-items: center;
-                                            justify-items: space-between;
-                                            margin-bottom: 5px;
-                                            height: 100%;
-                                        "
-                                    >
-                                        <el-skeleton-item
-                                            variant="circle"
-                                            style="
-                                                margin-right: 16px;
-                                                --el-skeleton-circle-size: 20px;
-                                            "
-                                        />
-                                        <el-skeleton-item
-                                            variant="text"
-                                            style="width: 80%"
-                                        />
-                                    </div>
-                                </template>
-                            </el-skeleton>
+                                alt="HelpScout"
+                                class="fs_drawer_icon"
+                            />
                             <el-checkbox
                                 v-model="component_list_data.show"
-                                :label="component_list_data.component"
+                                :label="
+                                    translate(component_list_data.component)
+                                "
                             />
                         </div>
                     </div>
@@ -461,8 +458,8 @@ export default {
     cursor: pointer !important;
     background-color: white;
     border-radius: 50%;
-    height: 15px;
-    width: 15px;
+    height: 30px;
+    width: 30px;
 }
 .el-collapse-item__arrow:hover {
     background: #54b47e;
@@ -481,23 +478,20 @@ export default {
 <style scoped>
 .ghost {
     opacity: 0.5;
-    display: block;
-    overflow: hidden;
     text-align: center;
     border-style: dashed;
     border-radius: 10px;
     max-width: 670px;
+    float: none;
 }
 
 .fs_settings_drawer {
-    width: 70%;
-    border-radius: 10px;
+    width: 85%;
     padding: 10px;
     margin-bottom: 10px;
     background: #fff;
     display: block;
     overflow: hidden;
-    border: 1px solid #e3e8ee;
 }
 
 .draggable_component {
@@ -511,6 +505,9 @@ export default {
     display: flex;
     justify-content: space-between;
     margin-bottom: 25px;
+    max-width: 1160px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .fs_head_section h1 {
     line-height: 1.4;
@@ -554,7 +551,7 @@ export default {
     position: relative;
 }
 .fs_component_header {
-    width: auto;
+    width: 80%;
     clear: both;
     overflow: hidden;
     margin: 0;
@@ -567,5 +564,9 @@ export default {
     font-style: normal;
     font-size: 18px;
     line-height: 25px;
+}
+.fs_drawer_icon {
+    width: 75%;
+    height: 75%;
 }
 </style>
