@@ -167,3 +167,14 @@
         }
     }
 }
+
+@media all and (max-width: 600px)
+{
+.el-drawer.rtl.open.fs_dashboard_settings{
+    width:60%!important;
+}
+.el-drawer.rtl.open.fs_wc_order_details{
+    width:100%!important;
+}
+}
+
