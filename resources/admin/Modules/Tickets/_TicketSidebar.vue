@@ -107,7 +107,7 @@
                     </ul>
                 </div>
 
-                <el-drawer v-model="drawer" size="50%" :with-header="false">
+                <el-drawer custom-class="fs_wc_order_details" v-model="drawer" size="50%" :with-header="false">
                     <el-card class="fs_wc_order_box-card">
                         <template #header>
                             <div class="fs_wc_card-header">

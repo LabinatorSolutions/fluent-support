@@ -125,10 +125,12 @@
             </el-row>
 
             <el-drawer
+                custom-class="fs_dashboard_settings"
                 v-model="drawer"
                 :with-header="false"
                 size="25%"
                 show-close="true"
+                
             >
                 <div class="fs_drawer_content">
                     <div class="fs_settings_drawer">
@@ -473,9 +475,11 @@ export default {
 .el-collapse-item__header {
     padding: 10px 30px;
 }
+
 </style>
 
 <style scoped>
+
 .ghost {
     opacity: 0.5;
     text-align: center;
