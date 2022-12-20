@@ -129,8 +129,6 @@
                 v-model="drawer"
                 :with-header="false"
                 size="25%"
-                show-close="true"
-                
             >
                 <div class="fs_drawer_content">
                     <div class="fs_settings_drawer">
@@ -479,7 +477,6 @@ export default {
 </style>
 
 <style scoped>
-
 .ghost {
     opacity: 0.5;
     text-align: center;
@@ -572,5 +569,7 @@ export default {
 .fs_drawer_icon {
     width: 75%;
     height: 75%;
+    border: 1px solid #453b391c;
+    border-radius: 5px;
 }
 </style>
