@@ -71,8 +71,10 @@ export default {
         font-size: 15px;
         color: #3c434a;
         font-weight: 400;
-        padding: 0 15px;
+        padding: 0px 30px;
         display: block;
+        margin-top: 25px;
+
     }
     .fs_mentioned_ticket_list{
         text-decoration: none;
