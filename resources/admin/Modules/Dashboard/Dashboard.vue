@@ -137,7 +137,7 @@
                                 appVars.asset_url +
                                 'images/ComponentIcons/GreetingMessage.png'
                             "
-                            alt="HelpScout"
+                            alt="Greetings"
                             class="fs_drawer_icon"
                         />
                         <el-checkbox
@@ -158,7 +158,7 @@
                                     component_list_data.component +
                                     '.png'
                                 "
-                                alt="HelpScout"
+                                :alt="component_list_data.component"
                                 class="fs_drawer_icon"
                             />
                             <el-checkbox
