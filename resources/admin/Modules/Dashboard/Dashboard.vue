@@ -137,7 +137,7 @@
                                 appVars.asset_url +
                                 'images/ComponentIcons/GreetingMessage.png'
                             "
-                            alt="Greeting Message"
+                            alt="Greetings"
                             class="fs_drawer_icon"
                         /><br>
                         <el-checkbox
@@ -158,7 +158,7 @@
                                     component_list_data.component +
                                     '.png'
                                 "
-                                :alt="translate(component_list_data.component)"
+                                :alt="component_list_data.component"
                                 class="fs_drawer_icon"
                             /><br>
                             <el-checkbox
