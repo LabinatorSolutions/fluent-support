@@ -574,4 +574,5 @@ export default {
     border: 1px solid #453b391c;
     border-radius: 5px;
 }
+
 </style>
