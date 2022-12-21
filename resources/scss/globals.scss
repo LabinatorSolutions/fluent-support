@@ -511,17 +511,31 @@ p.fs_customer_address {
 
     }
     .el-collapse-item__header.is-active{
-        background-color: #F5F5F5;
-        margin: auto;
         border-radius: 10px 10px 0px 0px;
-        height: 60px;
-        cursor: move;
-        border: 1px solid rgb(226, 228, 231);
-        box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
     }
     .el-collapse-item__header:hover{
         background-color: #EDF8F2;
     }
+}
+
+@media (min-width: 768px) and (max-width: 830px) {
+    .fs_box_board {
+    .el-collapse-item__header{
+        background-color: #F5F5F5;
+        border-radius: 10px;
+        height: auto;
+        cursor: move;
+        border: 1px solid rgb(226, 228, 231);
+        box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
+
+    }
+    .el-collapse-item__header.is-active{
+        border-radius: 10px 10px 0px 0px;
+    }
+    .el-collapse-item__header:hover{
+        background-color: #EDF8F2;
+    }
+}
 }
 
 ul.fs_contact_results {
