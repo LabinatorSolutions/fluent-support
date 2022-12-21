@@ -137,9 +137,9 @@
                                 appVars.asset_url +
                                 'images/ComponentIcons/GreetingMessage.png'
                             "
-                            alt="HelpScout"
+                            alt="Greeting Message"
                             class="fs_drawer_icon"
-                        />
+                        /><br>
                         <el-checkbox
                             v-model="dashboard_param.greetingMessage"
                             >{{ translate("Greeting Message") }}</el-checkbox
@@ -158,9 +158,9 @@
                                     component_list_data.component +
                                     '.png'
                                 "
-                                alt="HelpScout"
+                                :alt="translate(component_list_data.component)"
                                 class="fs_drawer_icon"
-                            />
+                            /><br>
                             <el-checkbox
                                 v-model="component_list_data.show"
                                 :label="
@@ -468,6 +468,8 @@ export default {
 .el-collapse-item__wrap {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    border-left: 1px solid rgb(226, 228, 231);
+    box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
 }
 
 .el-collapse-item__header {
