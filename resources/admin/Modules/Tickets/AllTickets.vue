@@ -215,6 +215,9 @@ import Modal from "../../Pieces/Modal";
 
 const isEmpty = require('lodash/isEmpty');
 const isArray = require('lodash/isArray');
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
+import {nextTick, onMounted, reactive, toRefs} from "vue";
+import {createRouter as router, useRoute} from "vue-router";
 
 export default {
     name: 'AllTickets',
@@ -227,8 +230,23 @@ export default {
         TicketBulkActions,
         RichFilter
     },
-    data() {
-        return {
+    setup() {
+        const {
+            appVars,
+            get,
+            del,
+            translate,
+            handleError,
+            moment,
+            setTitle,
+            ucFirst,
+            humanDiffTime,
+            has_pro,
+            getData,
+        } = useFluentHelper();
+        const {notify} = useNotify();
+        const route = useRoute()
+        const state = reactive({
             loading: false,
             tickets: [],
             pagination: {
@@ -247,31 +265,194 @@ export default {
                 mailbox_id: '',
                 watcher: '',
             },
+            filterColumns: {
+                id: translate('Ticket ID'),
+                product_id: translate('Product ID'),
+                priority: translate('Priority'),
+                client_priority: translate('Client Priority'),
+                title: translate('Title'),
+                last_agent_response: translate('Last Agent Response'),
+                last_customer_response: translate('Last Customer Response'),
+                waiting_since: translate('Waiting Time'),
+                response_count: translate('Response Count'),
+                created_at: translate('Created At')
+            },
             search: '',
             order_by: 'last_customer_response',
             order_type: 'ASC',
-            filterColumns: {
-                id: this.$t('Ticket ID'),
-                product_id: this.$t('Product ID'),
-                priority: this.$t('Priority'),
-                client_priority: this.$t('Client Priority'),
-                title: this.$t('Title'),
-                last_agent_response: this.$t('Last Agent Response'),
-                last_customer_response: this.$t('Last Customer Response'),
-                waiting_since: this.$t('Waiting Time'),
-                response_count: this.$t('Response Count'),
-                created_at: this.$t('Created At')
-            },
             ticket_selections: [],
             doing_bulk: false,
             app_ready: false,
             add_ticket_modal: false,
             appReady: false,
             add_response_modal: false,
-            show_filters: !this.is_mobile,
             first_time_loading: true,
-            advanced_filters: [[]],
+            advanced_filters: false,
             filter_type: 'simple'
+        })
+
+        const fetchTickets = async () => {
+            if (!state.app_ready) {
+                return false;
+            }
+            state.ticket_selections = [];
+            state.loading = true;
+            let query = {
+                page: state.pagination.current_page,
+                per_page: state.pagination.per_page,
+                order_by: state.order_by,
+                order_type: state.order_type,
+                filter_type: state.filter_type
+            };
+            if(state.filter_type == 'advanced' && has_pro) {
+                query.advanced_filters = JSON.stringify(state.advanced_filters);
+            } else {
+                query.filters = state.filters;
+                query.search = state.search;
+
+                if(!has_pro) {
+                    query.filter_type = 'simple';
+                    state.filter_type = 'simple';
+                }
+            }
+
+            const params = {};
+
+            each(query, (val, key) => {
+                if (!isEmpty(val)) {
+                    params[key] = val;
+                }
+            });
+
+            window.fs_sub_params = params;
+            params.t = Date.now();
+
+            try {
+                await get('tickets', query)
+                    .then(response => {
+                        if (response.tickets.total && (!response.tickets.from && state.pagination.current_page > 1)) {
+                            state.pagination.current_page = 1;
+                            fetchTickets();
+                            return false;
+                        }
+
+                        state.tickets = response.tickets.data;
+                        state.pagination.total = response.tickets.total;
+                        //this.saveFilters();
+                    })
+                    .always(() => {
+                        state.loading = false;
+                        state.first_time_loading = false;
+                    })
+                    .catch(error => {
+                        handleError(error);
+                    });
+            } catch (e) {
+                handleError(e);
+                state.loading = false;
+            }
+        }
+
+        const addConditionGroup = () =>{
+            state.advanced_filters.push([]);
+        }
+
+        const maybeRemoveGroup = (index) =>{
+            if (state.advanced_filters.length > 1) {
+                state.advanced_filters.splice(index, 1);
+            }
+        }
+
+        const gotToTicket = (row) =>{
+            router.push({
+                name: 'view_ticket',
+                params: {ticket_id: row.id}
+            });
+        }
+
+        const setFromSaveFilters = (callback) => {
+            state.filter_type = getData('tickets_filter_type', 'simple');
+            const filters = getData('tickets_filter', {});
+
+            each(filters, (filter, filterKey) => {
+                state.filters[filterKey] = filter;
+            });
+
+            const ticketPref = getData('tickets_pref', false);
+            if (ticketPref) {
+                state.order_by = ticketPref.order_by;
+                state.order_type = ticketPref.order_type;
+                state.pagination.per_page = ticketPref.per_page;
+                state.pagination.current_page = ticketPref.current_page;
+                state.search = ticketPref.search;
+            }
+
+            const advancedFilters = getData('tickets_advanced_filters', false);
+            if(advancedFilters) {
+                state.advanced_filters = advancedFilters;
+            }
+
+            state.appReady = true;
+        }
+
+        onMounted(() => {
+            state.app_ready = true;
+            setFromSaveFilters();
+
+            if (route.query.agent_id) {
+                state.filters.agent_id = route.query.agent_id;
+                state.filters.watcher = route.query.watcher;
+            }
+            if (route.query.waiting_for_reply) {
+                this.filters.waiting_for_reply = route.query.waiting_for_reply;
+            }
+
+            if (route.query.tags) {
+                const tagIds = route.query.tags;
+                if (typeof tagIds == 'object') {
+                    state.filters.ticket_tags = tagIds.map(tagId => {
+                        return parseInt(tagId);
+                    });
+                } else {
+                    state.filters.ticket_tags = [parseInt(tagIds)];
+                }
+            }
+
+            if (route.query.search) {
+                state.search = route.query.search;
+            }
+
+            if(route.query.filter_type){
+                //resetWithOutFetch();
+                state.filter_type = route.query.filter_type;
+                state.filters.status_type = route.query.status_type;
+            }
+
+            nextTick(() => {
+                fetchTickets();
+            });
+            setTitle(translate('All Tickets'));
+        });
+
+        return {
+            appVars,
+            get,
+            del,
+            translate,
+            handleError,
+            moment,
+            setTitle,
+            ucFirst,
+            humanDiffTime,
+            has_pro,
+            getData,
+            notify,
+            ...toRefs(state),
+            fetchTickets,
+            addConditionGroup,
+            maybeRemoveGroup,
+            gotToTicket,
+            setFromSaveFilters,
         }
     },
     watch: {
@@ -307,102 +488,6 @@ export default {
         },
     },
     methods: {
-        fetchTickets() {
-            if (!this.app_ready) {
-                return false;
-            }
-
-            this.ticket_selections = [];
-            this.loading = true;
-            let query = {
-                page: this.pagination.current_page,
-                per_page: this.pagination.per_page,
-                order_by: this.order_by,
-                order_type: this.order_type,
-                filter_type: this.filter_type
-            };
-
-            if(this.filter_type == 'advanced' && this.has_pro) {
-                query.advanced_filters = JSON.stringify(this.advanced_filters);
-            } else {
-                query.filters = this.filters;
-                query.search = this.search;
-
-                if(!this.has_pro) {
-                    query.filter_type = 'simple';
-                    this.filter_type = 'simple';
-                }
-            }
-
-            const params = {};
-
-            each(query, (val, key) => {
-                if (!isEmpty(val)) {
-                    params[key] = val;
-                }
-            });
-
-            window.fs_sub_params = params;
-            params.t = Date.now();
-
-            this.$get('tickets', query)
-                .then(response => {
-                    if (response.tickets.total && (!response.tickets.from && this.pagination.current_page > 1)) {
-                        this.pagination.current_page = 1;
-                        this.fetchTickets();
-                        return false;
-                    }
-
-                    this.tickets = response.tickets.data;
-                    this.pagination.total = response.tickets.total;
-                    this.saveFilters();
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                    this.first_time_loading = false;
-                })
-        },
-        addConditionGroup() {
-            this.advanced_filters.push([]);
-        },
-        maybeRemoveGroup(index) {
-            if (this.advanced_filters.length > 1) {
-                this.advanced_filters.splice(index, 1);
-            }
-        },
-        gotToTicket(row) {
-            this.$router.push({
-                name: 'view_ticket',
-                params: {ticket_id: row.id}
-            });
-        },
-        setFromSaveFilters(callback) {
-            this.filter_type = this.$getData('tickets_filter_type', 'simple');
-            const filters = this.$getData('tickets_filter', {});
-
-            each(filters, (filter, filterKey) => {
-                this.filters[filterKey] = filter;
-            });
-
-            const ticketPref = this.$getData('tickets_pref', false);
-            if (ticketPref) {
-                this.order_by = ticketPref.order_by;
-                this.order_type = ticketPref.order_type;
-                this.pagination.per_page = ticketPref.per_page;
-                this.pagination.current_page = ticketPref.current_page;
-                this.search = ticketPref.search;
-            }
-
-            const advancedFilters = this.$getData('tickets_advanced_filters', false);
-            if(advancedFilters) {
-                this.advanced_filters = advancedFilters;
-            }
-
-            this.appReady = true;
-        },
         saveFilters() {
             this.$saveData('tickets_pref', {
                 order_by: this.order_by,
@@ -538,7 +623,7 @@ export default {
             return text.substring(0, 3).padEnd(5, '.');
         },
     },
-    mounted() {
+   /* mounted() {
         this.setFromSaveFilters();
         if (this.$route.query.agent_id) {
             this.filters.agent_id = this.$route.query.agent_id;
@@ -576,7 +661,7 @@ export default {
         });
 
         this.$setTitle('All Tickets');
-    }
+    }*/
 }
 </script>
 
