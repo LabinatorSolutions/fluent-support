@@ -33,8 +33,6 @@ export function useFluentHelper(){
 
     function translate(string) {
         return window.window.fluentSupportAdmin.i18n[string] || string;
-
-        return string;
     }
 
     function ucFirst(text) {
