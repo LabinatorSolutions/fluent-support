@@ -267,68 +267,6 @@ export default {
             ...toRefs(state)
         }
     },
-    /*methods: {
-        fetchCustomer() {
-            this.loading = !this.loading;
-            this.$get('customers/' + this.customer_id, {
-                with: ['widgets', 'tickets', 'fluentcrm_profile']
-            })
-                .then(response => {
-                    this.customer = response.customer;
-                    this.widgets = response.widgets;
-                    this.tickets = response.tickets;
-                    this.fluentcrm_profile = response.fluentcrm_profile;
-                })
-                .catch(errors => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = !this.loading;
-                })
-        },
-        handleAvatarSuccess(res, file) {
-            this.customer.photo = URL.createObjectURL(file.raw);
-            this.$notify.success({
-                message: 'Profile picture has been updated successfully',
-                position: 'bottom-right'
-            });
-        },
-        handleAvatarError(err, _){
-            let errorMessage = JSON.parse(err.message);
-
-            this.$notify.error({
-                message: errorMessage.message,
-                position: 'bottom-right'
-            });
-        },
-        showIcon() {
-            document.querySelector('i.fs_customer_avatar_upload').style.display = 'inline-flex';
-        },
-        hideIcon() {
-            document.querySelector('i.fs_customer_avatar_upload').style.display = 'none';
-        },
-        confirmResetProfile(){
-            this.loading = !this.loading;
-            this.$post('customers/reset_avatar/' + this.customer_id)
-                .then(response => {
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    });
-
-                    this.fetchCustomer();
-                })
-                .catch(errors => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = !this.loading;
-                })
-        }
-    },
-    mounted() {
-        this.fetchCustomer();
-    }*/
 }
 </script>
 

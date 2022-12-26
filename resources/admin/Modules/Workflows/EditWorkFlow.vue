@@ -51,6 +51,7 @@
                         v-model="workflow.title"
                     />
                 </div>
+                {{ workflow.trigger_type }}
                 <div
                     v-if="workflow.trigger_type == 'automatic'"
                     class="fs_box fs_triggers_wrap"
@@ -163,7 +164,6 @@ export default {
         watch(
             () => state.workflow.trigger_key,
             (value) => {
-                console.log(state.workflow.trigger_key);
                 if (
                     state.workflow.trigger_key == "fluent_support/ticket_closed"
                 ) {
