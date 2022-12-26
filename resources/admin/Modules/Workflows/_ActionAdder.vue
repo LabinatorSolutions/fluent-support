@@ -1,60 +1,79 @@
 <template>
     <div class="fcon_add_trigger">
-        <h3>{{$t('Select Action')}}</h3>
+        <h3>{{ $t("Select Action") }}</h3>
         <ul class="fcon_provider_selectors">
             <el-select @change="actionSuccess()" v-model="action.action_name">
-                <el-option v-for="(action, actionName) in all_actions" :value="actionName"
-                           :label="action.title"></el-option>
+                <el-option
+                    v-for="(action, actionName) in all_actions"
+                    :value="actionName"
+                    :label="action.title"
+                ></el-option>
             </el-select>
         </ul>
     </div>
 </template>
 
 <script type="text/babel">
+import { reactive, computed, toRefs } from "vue";
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
-    name: 'ActionAdder',
-    props: ['all_actions'],
-    emits: ['success'],
-    computed: {
-        selectedProvider() {
-            const selectedProviderKey = this.action.action_provider;
-            if (!selectedProviderKey) {
-                return false;
-            }
-
-            return this.all_actions[selectedProviderKey];
-        }
-    },
-    data() {
-        return {
+    name: "ActionAdder",
+    props: ["all_actions"],
+    emits: ["success"],
+    setup(props, context) {
+        const { translate } = useFluentHelper();
+        const state = reactive({
             action: {
-                title: '',
-                action_name: '',
-                settings: {}
-            }
-        }
-    },
-    methods: {
-        actionSuccess() {
-            if (this.action.action_name) {
-                let defaultSettings = {};
-                if(this.all_actions[this.action.action_name].settings_defaults) {
-                    defaultSettings = JSON.parse(JSON.stringify(this.all_actions[this.action.action_name].settings_defaults));
+                title: "",
+                action_name: "",
+                settings: {},
+            },
+        });
+
+        const selectedProvider = computed({
+            selectedProvider() {
+                const selectedProviderKey = state.action.action_provider;
+                if (!selectedProviderKey) {
+                    return false;
                 }
-                this.action.is_open = true;
-                this.action.settings = defaultSettings;
-                this.$emit('success', this.action);
+
+                return props.all_actions[selectedProviderKey];
+            },
+        });
+
+        const actionSuccess = () => {
+            if (state.action.action_name) {
+                let defaultSettings = {};
+                if (
+                    props.all_actions[state.action.action_name]
+                        .settings_defaults
+                ) {
+                    defaultSettings = JSON.parse(
+                        JSON.stringify(
+                            props.all_actions[state.action.action_name]
+                                .settings_defaults
+                        )
+                    );
+                }
+                state.action.is_open = true;
+                state.action.settings = defaultSettings;
+                context.emit("success", state.action);
                 setTimeout(() => {
-                    this.action = {
-                        title: '',
-                        action_name: '',
-                        settings: {}
+                    state.action = {
+                        title: "",
+                        action_name: "",
+                        settings: {},
                     };
                 }, 200);
             }
-        }
+        };
+
+        return {
+            ...toRefs(state),
+            selectedProvider,
+            actionSuccess,
+            translate,
+        };
     },
-    mounted() {
-    }
-}
+};
 </script>
