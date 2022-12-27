@@ -473,7 +473,7 @@ import Modal from "../../Pieces/Modal";
 import SplitTicket from "./_SplitTicket"
 import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
 import { computed, nextTick, onMounted, onBeforeUnmount, reactive, toRefs, watch } from "vue";
-import { createRouter as router, useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 export default {
     name: 'ViewTicket',
     props: ['ticket_id'],
@@ -504,6 +504,7 @@ export default {
             translate,
         } = useFluentHelper();
         const { notify } = useNotify();
+        const router = useRouter();
         const route = useRoute();
         const state = reactive({
             loading: false,
