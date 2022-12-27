@@ -89,54 +89,67 @@
 </template>
 
 <script type="text/babel">
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
+import {computed, reactive, toRefs, watch} from "vue";
 export default {
     name: 'TicketFilters',
     emits: ['fetchTickets', 'searchChange'],
     props: ['filters', 'resetFilters', 'search'],
-    data() {
-        return {
+    setup(props, context) {
+        const emit = context.emit;
+        const { appVars, translate } = useFluentHelper();
+        const {notify} = useNotify();
+        const state = reactive({
             filterColumns: {
-                id: this.$t('Ticket ID'),
-                product_id: this.$t('Product ID'),
-                priority: this.$t('Priority'),
-                client_priority: this.$t('Client Priority'),
-                title: this.$t('Title'),
-                last_agent_response: this.$t('Last Agent Response'),
-                last_customer_response: this.$t('Last Customer Response'),
-                waiting_since: this.$t('Waiting Time'),
-                response_count: this.$t('Response Count'),
-                created_at: this.$t('Created At')
+                id: translate('Ticket ID'),
+                product_id: translate('Product ID'),
+                priority: translate('Priority'),
+                client_priority: translate('Client Priority'),
+                title: translate('Title'),
+                last_agent_response: translate('Last Agent Response'),
+                last_customer_response: translate('Last Customer Response'),
+                waiting_since: translate('Waiting Time'),
+                response_count: translate('Response Count'),
+                created_at: translate('Created At')
             },
-            searchInput: this.search,
-            ticket_statuses_group: this.appVars.ticket_statuses_group
-        }
-    },
-    watch: {
-        searchInput(value) {
-            this.$emit('searchChange', value);
-        }
-    },
-    computed: {
-        has_active_filter() {
-            const f = this.filters;
-            return f.status_type != 'open' || f.product_id || f.mailbox_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || this.searchInput || f.ticket_tags?.length || f.filter_type;
-        }
-    },
-    methods: {
-        fetchTickets() {
-            this.$emit('fetchTickets');
-        },
-        maybeChangeWaitingReply() {
-            if (this.filters.waiting_for_reply == 'yes') {
-                if (this.filters.status_type == 'new' || this.filters.status_type == 'active') {
-                    this.filters.status_type;
+            searchInput: props.search,
+            ticket_statuses_group: appVars.ticket_statuses_group,
+        });
+
+        const fetchTickets = () => {
+            emit('fetchTickets');
+        };
+
+        const maybeChangeWaitingReply = () => {
+            if (props.filters.waiting_for_reply == 'yes') {
+                if (props.filters.status_type == 'new' || props.filters.status_type == 'active') {
+                    props.filters.status_type;
                 }
                 else{
-                    this.filters.status_type = 'open';
+                    props.filters.status_type = 'open';
                 }
             }
-            this.fetchTickets();
+            fetchTickets();
         }
+
+        watch(() => state.searchInput, (value) => {console.log("search value", value)
+            emit('searchChange', value);
+        });
+
+        const has_active_filter = computed(() => {
+            const f = props.filters;
+            return f.status_type !== 'open' || f.product_id || f.mailbox_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || state.searchInput || f.ticket_tags?.length || f.filter_type;
+        });
+
+        return {
+            appVars,
+            translate,
+            notify,
+            fetchTickets,
+            maybeChangeWaitingReply,
+            has_active_filter,
+            ...toRefs(state),
+        };
     }
 }
 </script>

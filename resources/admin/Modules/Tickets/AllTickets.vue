@@ -32,13 +32,13 @@
                         ></el-option>
                     </el-select>
                     <el-button @click="changeOrderType()">
-                        <el-icon v-if="order_type == 'DESC'"> <CaretBottom/> </el-icon>
+                        <el-icon v-if="order_type === 'DESC'"> <CaretBottom/> </el-icon>
                         <el-icon v-else> <CaretTop/> </el-icon>
                     </el-button>
                 </div>
             </div>
             <div class="fs_box_body">
-                <div v-if="filter_type == 'advanced'">
+                <div v-if="filter_type === 'advanced'">
                     <div v-if="has_pro" class="fs_rich_container">
                         <div v-if="appReady" class="fs_rich_wrap">
                             <div v-for="(rich_filter, filterIndex) in advanced_filters" :key="filterIndex">
@@ -246,7 +246,7 @@ export default {
             getData,
             saveData,
         } = useFluentHelper();
-        const {notify} = useNotify();
+        const { notify } = useNotify();
         const route = useRoute()
         const state = reactive({
             loading: false,
@@ -484,10 +484,10 @@ export default {
                 bulk_action: 'close_tickets'
             })
                 .then((response) => {
-                    notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right',
-                        type: 'success'
+                        type: "success",
+                        position: "bottom-right",
                     });
                     fetchTickets();
                 })
