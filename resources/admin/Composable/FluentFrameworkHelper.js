@@ -2,9 +2,18 @@ import { ElNotification } from 'element-plus';
 const moment = require('moment');
 require('moment/locale/en-gb');
 moment.locale('en-gb');
-
+import each from 'lodash/each';
+import isEmpty from 'lodash/isEmpty';
+import isArray from 'lodash/isArray';
 import { dateTimeHelper } from "@/admin/Composable/dateTimeHelper";
 import { useRestApi } from '@/admin/Composable/Rest';
+import {
+    applyFilters,
+    addFilter,
+    addAction,
+    doAction,
+    removeAllActions
+} from '@wordpress/hooks';
 
 export function useFluentHelper(){
     const { humanDiffTime, dateTimeFormat, localDate, longLocalDate } = dateTimeHelper();
@@ -125,11 +134,16 @@ export function useFluentHelper(){
         localDate,
         longLocalDate,
         setTitle,
-        has_pro
+        has_pro,
+        applyFilters,
+        addFilter,
+        addAction,
+        doAction,
+        removeAllActions,
     }
 }
 
-export function useNotify(config){
+export function useNotify(){
 
     const notify= (config)=> {
         ElNotification({

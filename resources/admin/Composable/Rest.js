@@ -25,7 +25,7 @@ export function useRestApi(){
         return request('POST', route, data)
     }
 
-    function del(route, data) {console.log('del is calling from composible/rest.js')
+    function del(route, data) {
         return request('DELETE', route, data);
     }
 

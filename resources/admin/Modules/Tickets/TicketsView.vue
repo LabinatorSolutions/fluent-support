@@ -28,25 +28,40 @@
 </template>
 
 <script type="text/babel">
+import {computed} from "vue";
+import {useRoute} from "vue-router";
+import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
+
 export default {
     name: 'ticketsView',
-    data() {
-        return {
+    setup(props, _){
+        const {
+            appVars,
+        } = useFluentHelper();
+        const route = useRoute();
 
-        }
-    },
-    computed: {
-        isAll(){
-            return this.$route.query.agent_id
-        },
-        isMine() {
-            return !(this.$route.query.watcher !== 'watcher' && this.appVars.me.id == this.$route.query.agent_id);
-        },
-        isUnassigned() {
-            return !(this.$route.query.agent_id === 'unassigned' && !this.$route.query.watcher);
-        },
-        isMentioned(){
-            return !(this.$route.query.watcher === 'watcher' && this.appVars.me.id == this.$route.query.agent_id);
+        const isAll = computed(() => {
+            return route.query.agent_id;
+        });
+
+        const isMine = computed(() => {
+            return !(route.query.watcher !== 'watcher' && appVars.me.id === parseInt(route.query.agent_id));
+        });
+
+        const isUnassigned = computed(() => {
+            return !(route.query.agent_id === 'unassigned' && !route.query.watcher);
+        });
+
+        const isMentioned = computed(() => {
+            return !(route.query.watcher === 'watcher' && appVars.me.id === parseInt(route.query.agent_id));
+        });
+
+        return {
+            appVars,
+            isAll,
+            isMine,
+            isUnassigned,
+            isMentioned,
         }
     }
 }
