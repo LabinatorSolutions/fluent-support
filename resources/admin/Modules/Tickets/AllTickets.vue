@@ -217,7 +217,7 @@ const isEmpty = require('lodash/isEmpty');
 const isArray = require('lodash/isArray');
 import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 import {nextTick, onMounted, reactive, toRefs, watch} from "vue";
-import {createRouter as router, useRoute} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 
 export default {
     name: 'AllTickets',
@@ -247,6 +247,7 @@ export default {
             saveData,
         } = useFluentHelper();
         const { notify } = useNotify();
+        const router = useRouter();
         const route = useRoute()
         const state = reactive({
             loading: false,
