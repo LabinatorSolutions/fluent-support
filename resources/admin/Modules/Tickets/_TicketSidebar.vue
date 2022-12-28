@@ -224,6 +224,8 @@
 import CustomerForm from "../Customers/_CustomerForm";
 import RemoteSelector from "../../Pieces/RemoteSelector";
 import FluentCrmProfile from './parts/_CrmProfile';
+import {useFluentHelper, useNotify, useConfirm} from "@/admin/Composable/FluentFrameworkHelper";
+import { onMounted, reactive, toRefs } from "vue";
 
 export default {
     name: 'TicketSidebar',
@@ -234,8 +236,20 @@ export default {
     },
     props: ['ticket_id', 'ticket', 'fluentcrm_profile', 'watchers'],
     emits: ['refresh'],
-    data() {
-        return {
+    setup(props, context){
+        const {
+            appVars,
+            get,
+            post,
+            put,
+            translate,
+            handleError,
+            has_pro,
+        } = useFluentHelper();
+        const emit = context.emit;
+        const { notify } = useNotify();
+        const { confirm } = useConfirm();
+        const state = reactive({
             drawer: false,
             loading: true,
             extra_widgets: false,
@@ -245,59 +259,65 @@ export default {
             changing: false,
             activeTabName: 'update_customer_data',
             add_watcher: false,
-            agents: this.appVars.support_agents,
+            agents: appVars.support_agents,
             orders: [],
-        }
-    },
-    methods: {
-        fetchWidgets() {
-            this.loading = true;
-            this.$get(`tickets/${this.ticket_id}/widgets`, {
+        });
+
+        const fetchWidgets = () => {
+            state.loading = true;
+            get(`tickets/${props.ticket_id}/widgets`, {
                 with: ['other_tickets', 'extra_widgets']
             })
-                .then(response => {
-                    this.other_tickets = response.other_tickets;
-                    this.extra_widgets = response.extra_widgets;
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                })
-        },
-        customerManagement() {
-            this.customerManagementModal = !this.customerManagementModal;
-        },
-        changeCustomer(customer_id) {
-            this.$put(`tickets/${this.ticket_id}/change-customer`, {
+            .then(response => {
+                state.other_tickets = response.other_tickets;
+                state.extra_widgets = response.extra_widgets;
+            })
+            .catch((errors) => {
+                handleError(errors);
+            })
+            .always(() => {
+                state.loading = false;
+            })
+        }
+
+        const customerManagement = () =>{
+            state.customerManagementModal = !state.customerManagementModal;
+        }
+
+        const changeCustomer = (customer_id) => {
+            put(`tickets/${props.ticket_id}/change-customer`, {
                 customer: customer_id
             })
                 .then((response) => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
+                        type: 'success',
                         position: 'bottom-right'
                     });
-                    this.closeModal();
+                    closeModal();
                 })
                 .catch((errors) => {
-                    this.$handleError(errors)
+                    handleError(errors)
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 })
-        },
-        handleClick(tab, event) {
-            this.activeTabName = tab.props.name;
-        },
-        cancelClick(){
-            this.drawer = false;
-        },
-        closeModal() {
-            this.customerManagementModal = false;
+        }
+
+        const handleClick = (tab, event) => {
+            state.activeTabName = tab.props.name;
+        }
+
+        const cancelClick = () =>{
+            state.drawer = false;
+        }
+
+        const closeModal = () =>{
+            state.customerManagementModal = false;
             window.location.reload();
-        },
-        getCustomerAddress(customer) {
+        }
+
+        const getCustomerAddress = (customer) => {
             let address = [
                 customer.address_line_1,
                 customer.address_line_2,
@@ -312,53 +332,61 @@ export default {
             });
 
             return address.join(', ');
-        },
-        handleClose(watcherId){
-          this.$confirm(this.$t('watcher_remove_warning'), 'Warning', {
-            confirmButtonText: this.$t('Delete'),
-            cancelButtonText: this.$t('Cancel'),
-            type: 'warning'
-          })
-              .then(() => {
-                  const index = this.watcherIds.indexOf(watcherId.toString());
-                  if (index > -1) {
-                      this.watcherIds.splice(index, 1);
-                  }
-                  this.saving = true;
-                  this.updateWatcher();
-              })
-              .catch(errors => {
-                this.$handleError(errors)
-              })
-        },
-        updateWatcher(){
-          this.saving = true;
-          this.$post(`tickets/${this.ticket.id}/sync-watchers`, {
-            watchers: this.watcherIds,
-          })
-          .then(response => {
-            this.$notify.success({
-              message: response.message,
-              position: 'bottom-right'
-            });
+        }
 
-            this.$emit('refresh');
+        const handleClose = (watcherId) => {
+            confirm({
+                message: translate('watcher_remove_warning'),
+                title: translate('Warning'),
+                options: {
+                    confirmButtonText: translate('Yes'),
+                    cancelButtonText: translate('No'),
+                    type: 'warning'
+                }
+            })
+            .then(() => {
+                const index = state.watcherIds.indexOf(watcherId.toString());
+                if (index > -1) {
+                    state.watcherIds.splice(index, 1);
+                }
+                state.saving = true;
+                updateWatcher();
+            })
+            .catch(errors => {
+                handleError(errors)
+            })
+        }
 
-            this.add_watcher = false;
-          })
-          .catch((errors) => {
-            this.$handleError(errors);
-          })
-        },
-        getOrderDetails(current_order, products){
-            console.log(current_order);
-            this.drawer = true;
-            this.orders = {
+        const updateWatcher = () => {
+            state.saving = true;
+            post(`tickets/${props.ticket.id}/sync-watchers`, {
+                watchers: state.watcherIds,
+            })
+                .then(response => {
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+
+                    emit('refresh');
+
+                    state.add_watcher = false;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+        }
+
+        const getOrderDetails = (current_order, products) => {
+            state.drawer = true;
+            state.orders = {
                 orderInfo: current_order,
                 products: products[current_order.id],
             }
-        },
-        getType(status){
+        }
+
+        const getType = (status) => {
             switch(status.toLocaleString()) {
                 case 'on-hold':
                     return 'warning';
@@ -370,13 +398,36 @@ export default {
                     return 'info';
             }
         }
-    },
-    mounted() {
-        this.fetchWidgets();
-        if (this.has_pro) {
-            this.watcherIds = this.ticket.watchers.map((watcher) => {
-                return watcher.tag_id.toString();
-            });
+
+        onMounted(() => {
+            fetchWidgets();
+            if (has_pro) {
+                state.watcherIds = props.ticket.watchers.map((watcher) => {
+                    return watcher.tag_id.toString();
+                });
+            }
+        });
+
+        return {
+            appVars,
+            get,
+            post,
+            put,
+            translate,
+            handleError,
+            has_pro,
+            ...toRefs(state),
+            fetchWidgets,
+            customerManagement,
+            changeCustomer,
+            handleClick,
+            cancelClick,
+            closeModal,
+            getCustomerAddress,
+            handleClose,
+            updateWatcher,
+            getOrderDetails,
+            getType,
         }
     }
 }

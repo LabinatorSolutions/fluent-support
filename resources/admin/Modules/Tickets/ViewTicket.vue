@@ -471,7 +471,7 @@ import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import Modal from "../../Pieces/Modal";
 import SplitTicket from "./_SplitTicket"
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
+import { useFluentHelper, useNotify, useConfirm } from "@/admin/Composable/FluentFrameworkHelper";
 import { computed, nextTick, onMounted, onBeforeUnmount, reactive, toRefs, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
@@ -504,6 +504,7 @@ export default {
             translate,
         } = useFluentHelper();
         const { notify } = useNotify();
+        const { confirm } = useConfirm();
         const router = useRouter();
         const route = useRoute();
         const state = reactive({
@@ -688,10 +689,14 @@ export default {
             const conversation = data.conversation;
 
             if (actionType == 'delete') {
-                this.$confirm(translate('response_delete_warning'), 'Warning', {
-                    confirmButtonText: translate('Delete Response'),
-                    cancelButtonText: translate('Cancel'),
-                    type: 'warning'
+                confirm({
+                    message: translate('response_delete_warning'),
+                    title: 'Warning',
+                    options: {
+                        confirmButtonText: translate('Delete Response'),
+                        cancelButtonText: translate('Cancel'),
+                        type: 'warning'
+                    }
                 }).then(() => {
                     del(`tickets/${state.ticket.id}/responses/${conversation.id}`)
                         .then(response => {
@@ -754,31 +759,36 @@ export default {
         }
 
         const customerTickets = () =>{
-            this.$get('tickets/customer_tickets/' + this.ticket.customer_id, {
+            get('tickets/customer_tickets/' + state.ticket.customer_id, {
                 exclude_ticket_id: props.ticket_id,
-                page: this.pagination.current_page,
-                per_page: this.pagination.per_page,
+                page: state.pagination.current_page,
+                per_page: state.pagination.per_page,
             })
                 .then(response => {
-                    this.customer_tickets = response.tickets.data;
-                    this.pagination.total = response.tickets.total;
+                    state.customer_tickets = response.tickets.data;
+                    state.pagination.total = response.tickets.total;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
         }
 
         const mergeTickets = (ticketToMerge) =>{
-            this.$confirm('Are you sure you want to merge these tickets?', 'Merge Tickets', {
-                confirmButtonText: 'Merge',
-                cancelButtonText: 'Cancel',
-                type: 'warning'
+            confirm({
+                message: translate('Are you sure you want to merge these tickets?'),
+                title: translate('Merge Tickets'),
+                type: 'Warning',
+                options: {
+                    confirmButtonText: translate('Merge'),
+                    cancelButtonText: translate('Cancel'),
+                    type: 'warning'
+                }
             }).then(() => {
-                this.loading = true;
-                this.$post('tickets/' + props.ticket_id +'/merge_tickets', {
+                state.loading = true;
+                post('tickets/' + props.ticket_id +'/merge_tickets', {
                     ticket_to_merge: ticketToMerge,
                 })
                     .then(response => {
@@ -807,14 +817,14 @@ export default {
         }
 
         const syncCustomData = (data) => {
-            this.ticket.custom_fields = data;
-            this.showCustomDataEditForm = false;
+            state.ticket.custom_fields = data;
+            state.showCustomDataEditForm = false;
         }
 
         const addWatchers = () => {
-            this.saving = true;
+            state.saving = true;
             post(`tickets/${state.ticket.id}/add_watchers`, {
-                watchers: this.watchers
+                watchers: state.watchers
             })
                 .then(response => {
                     notify({
@@ -823,28 +833,6 @@ export default {
                         position: "bottom-right",
                     });
                     fetchTicket()
-                    state.show_watcher_modal = false;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {
-                    state.saving = false;
-                });
-        }
-
-        const updateWatcher = () =>{
-            state.saving = true;
-            post(`tickets/${state.ticket.id}/sync-watchers`, {
-                watchers: this.filteredWatchersIds
-            })
-                .then(response => {
-                    notify({
-                        message: response.message,
-                        type: "success",
-                        position: "bottom-right",
-                    });
-                    fetchTicket();
                     state.show_watcher_modal = false;
                 })
                 .catch((errors) => {
@@ -921,7 +909,6 @@ export default {
             santizeContent,
             syncCustomData,
             addWatchers,
-            updateWatcher,
             splitToNewTicket,
             getTicketStatus
         }

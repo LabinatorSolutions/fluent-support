@@ -42,7 +42,7 @@ class TransStrings
             'Please setup your support portal first'    => __('Please setup your support portal first', 'fluent-support'),
             'Support Portal Page (For Customers)'    => __('Support Portal Page (For Customers)', 'fluent-support'),
             'eg: Awesome Business Inc'    => __('eg: Awesome Business Inc', 'fluent-support'),
-            'Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin' => 
+            'Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin' =>
             __('Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin','fluent-support'),
             'From Email Address'    => __('From Email Address', 'fluent-support'),
             'Update Customer'    => __('Update Customer', 'fluent-support'),
@@ -220,7 +220,7 @@ class TransStrings
             "customers. If you already migrate tickets then it won't migrate existing tickets." => __("customers. If you already migrate tickets then it won't migrate existing tickets.", 'fluent-support'),
             'Select Business Inbox'    => __('Select Business Inbox', 'fluent-support'),
             'Prefered Product'    => __('Prefered Product', 'fluent-support'),
-            
+
             'Update'    => __('Update', 'fluent-support'),
             'Upgrade To Pro'    => __('Upgrade To Pro', 'fluent-support'),
             'Are you sure, You want to delete this?'    => __('Are you sure, You want to delete this?', 'fluent-support'),
@@ -615,7 +615,7 @@ class TransStrings
             'Add Bookmark'    => __('Add Bookmark', 'fluent-support'),
             'activity_not_found'    => __('No activities found at this moment', 'fluent-support'),
             'customer_has_one_tk'    => __('Sorry, this customer has one ticket only', 'fluent-support'),
-            'watcher_remove_warning'    => __('Are you sure to remove this watcher?', 'fluent-support'),
+            'watcher_remove_warning'    => __('Are you sure to remove this bookmark?', 'fluent-support'),
             'add_cs_from_crm'    => __('Add Customer From FluentCRM', 'fluent-support'),
             'Inbox Color'       => __('Inbox Color', 'fluent-support'),
             'Split Ticket'       => __('Split Ticket', 'fluent-support'),
