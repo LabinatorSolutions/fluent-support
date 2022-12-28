@@ -1,10 +1,7 @@
-import { ElNotification } from 'element-plus';
+import { ElNotification, ElMessageBox } from 'element-plus';
 const moment = require('moment');
 require('moment/locale/en-gb');
 moment.locale('en-gb');
-import each from 'lodash/each';
-import isEmpty from 'lodash/isEmpty';
-import isArray from 'lodash/isArray';
 import { dateTimeHelper } from "@/admin/Composable/dateTimeHelper";
 import { useRestApi } from '@/admin/Composable/Rest';
 import {
@@ -153,5 +150,15 @@ export function useNotify(){
 
     return {
         notify
+    }
+}
+
+export function useConfirm(){
+    const confirm = (config)=> {
+        return ElMessageBox.confirm(config.message, config.title, config.options);
+    }
+
+    return {
+        confirm
     }
 }
