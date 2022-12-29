@@ -111,6 +111,16 @@ export function useFluentHelper(){
         document.title = title;
     }
 
+    function renewOptions(type) {
+        get(type)
+            .then(response => {
+                if (response.option_key) {
+                    appVars[response.option_key] = response.options;
+                    
+                }
+            })
+    }
+
     return {
         appVars,
         get,
@@ -137,6 +147,7 @@ export function useFluentHelper(){
         addAction,
         doAction,
         removeAllActions,
+        renewOptions
     }
 }
 
