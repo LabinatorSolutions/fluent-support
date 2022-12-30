@@ -116,7 +116,7 @@ export function useFluentHelper(){
             .then(response => {
                 if (response.option_key) {
                     appVars[response.option_key] = response.options;
-                    
+
                 }
             })
     }
@@ -142,12 +142,17 @@ export function useFluentHelper(){
         longLocalDate,
         setTitle,
         has_pro,
+        renewOptions
+    }
+}
+
+export function wpHooks() {
+    return {
         applyFilters,
         addFilter,
         addAction,
         doAction,
-        removeAllActions,
-        renewOptions
+        removeAllActions
     }
 }
 
