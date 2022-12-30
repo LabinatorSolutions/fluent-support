@@ -471,7 +471,7 @@ import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import Modal from "../../Pieces/Modal";
 import SplitTicket from "./_SplitTicket"
-import { useFluentHelper, useNotify, useConfirm } from "@/admin/Composable/FluentFrameworkHelper";
+import { useFluentHelper, useNotify, useConfirm , wpHooks} from "@/admin/Composable/FluentFrameworkHelper";
 import { computed, nextTick, onMounted, onBeforeUnmount, reactive, toRefs, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
@@ -500,11 +500,11 @@ export default {
             setTitle,
             has_pro,
             handleError,
-            doAction,
             translate,
         } = useFluentHelper();
         const { notify } = useNotify();
         const { confirm } = useConfirm();
+        const { doAction } = wpHooks();
         const router = useRouter();
         const route = useRoute();
         const state = reactive({
@@ -598,7 +598,7 @@ export default {
                 state.ticket[key] = data;
             });
 
-            if (appVars.pref.go_back_after_reply == 'yes') {
+            if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
                     router.go(-1);
                 }
@@ -628,7 +628,7 @@ export default {
         }
 
         const getHumanName = (person) =>{
-            if (appVars.me?.id == person.id) {
+            if (parseInt(appVars.me?.id) === parseInt(person.id)) {
                 return translate('You');
             }
 

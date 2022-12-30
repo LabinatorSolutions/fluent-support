@@ -41,7 +41,8 @@
 
 <script>
 import WpEditor from '../../Pieces/_wp_editor';
-
+import { reactive, toRefs } from "vue";
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     name: "SplitTicket",
     components: {
@@ -57,17 +58,25 @@ export default {
             required: true,
         },
     },
-    data() {
+    setup(props, context) {
+        const {
+            appVars
+        } = useFluentHelper();
+        const state = reactive({
+            priorities: appVars.client_priorities,
+            products: appVars.support_products,
+            mailboxes: appVars.mailboxes,
+        });
+        const { emit } = context;
+
+        const splitTicket = () => {
+            emit('split-ticket');
+        };
+
         return {
-            products: this.appVars.support_products,
-            priorities: this.appVars.client_priorities,
-            mailboxes: this.appVars.mailboxes,
-        }
-    },
-    methods: {
-        splitTicket() {
-            this.$emit('split-ticket', this.ticket_data);
-        },
+            ...toRefs(state),
+            splitTicket,
+        };
     }
 }
 </script>
