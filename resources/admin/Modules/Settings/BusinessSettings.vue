@@ -120,62 +120,6 @@ export default {
             saveSettings
         }
     },
-
-    // data() {
-    //     return {
-    //         settings: {},
-    //         fields: {},
-    //         fetching: false,
-    //         loading: false,
-    //         app_ready: false,
-    //         settings_key: 'global_business_settings'
-    //     }
-    // },
-    // methods: {
-    //     fetchSettings() {
-    //         this.fetching = true;
-    //         this.$get('settings', {
-    //             settings_key: this.settings_key,
-    //             with: ['fields']
-    //         })
-    //             .then(response => {
-    //                 this.settings = response.settings;
-    //                 this.fields = response.fields;
-    //                 this.app_ready = true;
-    //             })
-    //             .catch((errors) => {
-    //                 this.$handleError(errors);
-    //             })
-    //             .always(() => {
-    //                 this.fetching = false;
-    //             });
-    //     },
-    //     saveSettings() {
-    //         this.loading = true;
-    //         const that = this;
-    //         this.$post('settings', {
-    //             settings_key: this.settings_key,
-    //             settings: this.settings
-    //         })
-    //             .then(response => {
-    //                 this.$notify({
-    //                     type: 'success',
-    //                     message: response.message,
-    //                     position: 'bottom-right'
-    //                 })
-    //             })
-    //             .catch((errors) => {
-    //                 this.$handleError(errors);
-    //             })
-    //             .always(() => {
-    //                 this.loading = false;
-    //             });
-    //     }
-    // },
-    // mounted() {
-    //     this.fetchSettings();
-    //     this.$setTitle('Business Settings');
-    // }
 };
 </script>
 <style>
