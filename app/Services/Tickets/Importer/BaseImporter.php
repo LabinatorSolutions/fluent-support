@@ -32,7 +32,6 @@ abstract class BaseImporter
 
     public function migrateTickets($tickets)
     {
-        error_log(print_r($tickets, true));
         $insertIds = [];
         $skips = [];
         foreach ($tickets as $ticket) {
