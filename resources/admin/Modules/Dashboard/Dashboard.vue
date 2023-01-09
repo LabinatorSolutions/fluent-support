@@ -206,6 +206,7 @@ import MentionedTicket from "./MentionedTicket.vue";
 import TicketsByProduct from "./TicketsByProduct";
 import { computed, watch, onMounted, reactive, toRefs } from "vue";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
+import {useRouter} from "vue-router";
 
 export default {
     name: "DynamicDashboard",
@@ -227,7 +228,7 @@ export default {
             getData,
             moment,
         } = useFluentHelper();
-
+        const router = useRouter();
         const state = reactive({
             drawer: false,
             me: appVars.me,
@@ -415,7 +416,7 @@ export default {
 
         onMounted(() => {
             if (!appVars.mailboxes.length) {
-                this.$router.push({ name: "setup", query: { t: Date.now() } });
+                router.push({ name: "setup", query: { t: Date.now() } });
             }
             state.can_access_unassigned_tickets =
                 appVars.me.permissions.indexOf(

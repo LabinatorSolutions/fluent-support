@@ -77,9 +77,15 @@ export default {
     props: ["component_data"],
     name: "SuggestedTicket",
     setup() {
+        const {
+            appVars
+        } = useFluentHelper();
         const { translate } = useFluentHelper();
+        const me = appVars.me;
         return {
             translate,
+            appVars,
+            me
         };
     },
 };
