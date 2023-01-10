@@ -57,7 +57,9 @@
                                 icon="EditPen"
                             ></el-button>
                             <el-popconfirm
-                                :confirm-button-text="translate('Yes, Delete this')"
+                                :confirm-button-text="
+                                    translate('Yes, Delete this')
+                                "
                                 :cancel-button-text="translate('No')"
                                 icon="InfoFilled"
                                 icon-color="red"
@@ -143,7 +145,10 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import { onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
+import {
+    useFluentHelper,
+    useNotify,
+} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "SupportProducts",
@@ -151,15 +156,8 @@ export default {
         Pagination,
     },
     setup() {
-        const {
-            get,
-            post,
-            put,
-            del,
-            handleError,
-            setTitle,
-            translate
-        } = useFluentHelper();
+        const { get, post, put, del, handleError, setTitle, translate } =
+            useFluentHelper();
 
         const { notify } = useNotify();
 
@@ -177,18 +175,18 @@ export default {
             search: "",
         });
 
-        const getProducts = async() => {
+        const getProducts = async () => {
             state.fetching = true;
-            await get('products', {
+            await get("products", {
                 per_page: state.pagination.per_page,
                 page: state.pagination.current_page,
-                search: state.search
+                search: state.search,
             })
-                .then(response => {
+                .then((response) => {
                     state.products = response.products.data;
                     state.pagination.total = response.products.total;
                 })
-                .catch(errors => {
+                .catch((errors) => {
                     handleError(errors);
                 })
                 .always(() => {
@@ -198,20 +196,20 @@ export default {
         const createOrUpdateProduct = () => {
             state.saving = true;
             let method = post;
-            let route = 'products';
+            let route = "products";
             if (state.editing_product.id) {
                 method = put;
                 route = `products/${state.editing_product.id}`;
             }
 
             method(route, {
-                ...state.editing_product
+                ...state.editing_product,
             })
-                .then(response => {
+                .then((response) => {
                     notify({
                         message: response.message,
-                        type: 'success',
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
                     getProducts();
                     state.ticket_modal = false;
@@ -222,35 +220,36 @@ export default {
                 .always(() => {
                     state.saving = false;
                 });
-
         };
+
         const editProductModal = (product) => {
             state.editing_product = JSON.parse(JSON.stringify(product));
             state.ticket_modal = true;
         };
+
         const createTicketModal = () => {
             state.editing_product = {
-                title: '',
-                description: ''
-            }
+                title: "",
+                description: "",
+            };
             state.ticket_modal = true;
         };
-        const deleteProduct = async(product) => {
-            await del(`products/${product.id}`)
-                .then(response => {
-                    notify({
-                        message: response.message,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
 
-                    getProducts();
+        const deleteProduct = async (product) => {
+            await del(`products/${product.id}`).then((response) => {
+                notify({
+                    message: response.message,
+                    type: "success",
+                    position: "bottom-right",
                 });
-        }
+
+                getProducts();
+            });
+        };
 
         onMounted(() => {
             getProducts();
-            setTitle('Products Settings');
+            setTitle("Products Settings");
         });
 
         return {
@@ -260,14 +259,13 @@ export default {
             createOrUpdateProduct,
             editProductModal,
             createTicketModal,
-            deleteProduct
-
-        }
+            deleteProduct,
+        };
     },
 };
 </script>
 <style>
-    .fs_products_action_btn{
-        padding: 0px;
-    }
+.fs_products_action_btn {
+    padding: 0px;
+}
 </style>
