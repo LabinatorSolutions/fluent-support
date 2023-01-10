@@ -126,7 +126,7 @@
                     </el-radio-group>
                 </el-form-item>
             </el-form>
-            <div class="fs_narrow_promo" style="background: white">
+            <div class="fs_narrow_promo" style="background: white" v-else>
                 <h3>{{ translate("shared_inbox_message") }}</h3>
                 <p>{{ translate("pro_promo") }}</p>
                   <a
