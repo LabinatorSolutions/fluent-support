@@ -977,7 +977,7 @@ class Ticket extends Model
          * @param object $customer
          */
         do_action('fluent_support/ticket_created', $createdTicket, $customer);
-
+        do_action('fluent_support/ticket_created_behalf_of_customer', $createdTicket, $customer, Helper::getAgentByUserId());
         return $createdTicket;
     }
 
