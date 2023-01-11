@@ -32,13 +32,13 @@
                         ></el-option>
                     </el-select>
                     <el-button @click="changeOrderType()">
-                        <el-icon v-if="order_type == 'DESC'"> <CaretBottom/> </el-icon>
+                        <el-icon v-if="order_type === 'DESC'"> <CaretBottom/> </el-icon>
                         <el-icon v-else> <CaretTop/> </el-icon>
                     </el-button>
                 </div>
             </div>
             <div class="fs_box_body">
-                <div v-if="filter_type == 'advanced'">
+                <div v-if="filter_type === 'advanced'">
                     <div v-if="has_pro" class="fs_rich_container">
                         <div v-if="appReady" class="fs_rich_wrap">
                             <div v-for="(rich_filter, filterIndex) in advanced_filters" :key="filterIndex">
@@ -78,7 +78,7 @@
                             @searchChange="(s) => { search = s; }"
                             :reset-filters="resetFilters"/>
                     </div>
-                    <el-button size="small" style="margin: 10px;" @click="show_filters = true" v-else>Show Filters
+                    <el-button size="small" style="margin: 10px;" @click="show_filters = true" v-else>{{$t('Show Filters')}}
                     </el-button>
                 </template>
 
@@ -215,6 +215,9 @@ import Modal from "../../Pieces/Modal";
 
 const isEmpty = require('lodash/isEmpty');
 const isArray = require('lodash/isArray');
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
+import {nextTick, onMounted, reactive, toRefs, watch} from "vue";
+import {useRouter, useRoute} from "vue-router";
 
 export default {
     name: 'AllTickets',
@@ -227,8 +230,26 @@ export default {
         TicketBulkActions,
         RichFilter
     },
-    data() {
-        return {
+    setup() {
+        const {
+            appVars,
+            get,
+            post,
+            del,
+            translate,
+            handleError,
+            moment,
+            setTitle,
+            ucFirst,
+            humanDiffTime,
+            has_pro,
+            getData,
+            saveData,
+        } = useFluentHelper();
+        const { notify } = useNotify();
+        const router = useRouter();
+        const route = useRoute()
+        const state = reactive({
             loading: false,
             tickets: [],
             pagination: {
@@ -247,90 +268,55 @@ export default {
                 mailbox_id: '',
                 watcher: '',
             },
+            filterColumns: {
+                id: translate('Ticket ID'),
+                product_id: translate('Product ID'),
+                priority: translate('Priority'),
+                client_priority: translate('Client Priority'),
+                title: translate('Title'),
+                last_agent_response: translate('Last Agent Response'),
+                last_customer_response: translate('Last Customer Response'),
+                waiting_since: translate('Waiting Time'),
+                response_count: translate('Response Count'),
+                created_at: translate('Created At')
+            },
             search: '',
             order_by: 'last_customer_response',
             order_type: 'ASC',
-            filterColumns: {
-                id: this.$t('Ticket ID'),
-                product_id: this.$t('Product ID'),
-                priority: this.$t('Priority'),
-                client_priority: this.$t('Client Priority'),
-                title: this.$t('Title'),
-                last_agent_response: this.$t('Last Agent Response'),
-                last_customer_response: this.$t('Last Customer Response'),
-                waiting_since: this.$t('Waiting Time'),
-                response_count: this.$t('Response Count'),
-                created_at: this.$t('Created At')
-            },
             ticket_selections: [],
             doing_bulk: false,
             app_ready: false,
             add_ticket_modal: false,
             appReady: false,
             add_response_modal: false,
-            show_filters: !this.is_mobile,
+            show_filters: true,
             first_time_loading: true,
-            advanced_filters: [[]],
+            advanced_filters: false,
             filter_type: 'simple'
-        }
-    },
-    watch: {
-        '$route.query.agent_id'() {
-            if (this.app_ready) {
-                this.filters.agent_id = this.$route.query.agent_id;
-                this.fetchTickets();
-            }
-        },
-        '$route.query.watcher'() {
-            if (this.app_ready) {
-                this.filters.watcher = this.$route.query.watcher;
-                this.fetchTickets();
-            }
-        },
-        '$route.query.status_type'() {
-            if (this.app_ready) {
-                this.filters.status_type = this.$route.query.status_type;
-                this.fetchTickets();
-            }
-        },
-        '$route.query.filter_type'() {
-            if (this.app_ready) {
-                this.filter_type = this.$route.query.filter_type;
-                this.fetchTickets();
-            }
-        },
-        '$route.query.waiting_for_reply'() {
-            if (this.app_ready) {
-                this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
-                this.fetchTickets();
-            }
-        },
-    },
-    methods: {
-        fetchTickets() {
-            if (!this.app_ready) {
+        })
+
+        const fetchTickets = async () => {
+            if (!state.app_ready) {
                 return false;
             }
-
-            this.ticket_selections = [];
-            this.loading = true;
+            state.ticket_selections = [];
+            state.loading = true;
             let query = {
-                page: this.pagination.current_page,
-                per_page: this.pagination.per_page,
-                order_by: this.order_by,
-                order_type: this.order_type,
-                filter_type: this.filter_type
+                page: state.pagination.current_page,
+                per_page: state.pagination.per_page,
+                order_by: state.order_by,
+                order_type: state.order_type,
+                filter_type: state.filter_type
             };
-
-            if(this.filter_type == 'advanced' && this.has_pro) {
-                query.advanced_filters = JSON.stringify(this.advanced_filters);
+            if(state.filter_type == 'advanced' && has_pro) {
+                query.advanced_filters = JSON.stringify(state.advanced_filters);
             } else {
-                query.filters = this.filters;
-                query.search = this.search;
+                query.filters = state.filters;
+                query.search = state.search;
 
-                if(!this.has_pro) {
+                if(!has_pro) {
                     query.filter_type = 'simple';
-                    this.filter_type = 'simple';
+                    state.filter_type = 'simple';
                 }
             }
 
@@ -345,91 +331,102 @@ export default {
             window.fs_sub_params = params;
             params.t = Date.now();
 
-            this.$get('tickets', query)
-                .then(response => {
-                    if (response.tickets.total && (!response.tickets.from && this.pagination.current_page > 1)) {
-                        this.pagination.current_page = 1;
-                        this.fetchTickets();
-                        return false;
-                    }
+            try {
+                await get('tickets', query)
+                    .then(response => {
+                        if (response.tickets.total && (!response.tickets.from && state.pagination.current_page > 1)) {
+                            state.pagination.current_page = 1;
+                            fetchTickets();
+                            return false;
+                        }
 
-                    this.tickets = response.tickets.data;
-                    this.pagination.total = response.tickets.total;
-                    this.saveFilters();
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = false;
-                    this.first_time_loading = false;
-                })
-        },
-        addConditionGroup() {
-            this.advanced_filters.push([]);
-        },
-        maybeRemoveGroup(index) {
-            if (this.advanced_filters.length > 1) {
-                this.advanced_filters.splice(index, 1);
+                        state.tickets = response.tickets.data;
+                        state.pagination.total = response.tickets.total;
+                        saveFilters();
+                    })
+                    .always(() => {
+                        state.loading = false;
+                        state.first_time_loading = false;
+                    })
+                    .catch(error => {
+                        handleError(error);
+                    });
+            } catch (e) {
+                handleError(e);
+                state.loading = false;
             }
-        },
-        gotToTicket(row) {
-            this.$router.push({
+        }
+
+        const addConditionGroup = () =>{
+            state.advanced_filters.push([]);
+        }
+
+        const maybeRemoveGroup = (index) =>{
+            if (state.advanced_filters.length > 1) {
+                state.advanced_filters.splice(index, 1);
+            }
+        }
+
+        const gotToTicket = (row) =>{
+            router.push({
                 name: 'view_ticket',
                 params: {ticket_id: row.id}
             });
-        },
-        setFromSaveFilters(callback) {
-            this.filter_type = this.$getData('tickets_filter_type', 'simple');
-            const filters = this.$getData('tickets_filter', {});
+        }
+
+        const setFromSaveFilters = (callback) => {
+            state.filter_type = getData('tickets_filter_type', 'simple');
+            const filters = getData('tickets_filter', {});
 
             each(filters, (filter, filterKey) => {
-                this.filters[filterKey] = filter;
+                state.filters[filterKey] = filter;
             });
 
-            const ticketPref = this.$getData('tickets_pref', false);
+            const ticketPref = getData('tickets_pref', false);
             if (ticketPref) {
-                this.order_by = ticketPref.order_by;
-                this.order_type = ticketPref.order_type;
-                this.pagination.per_page = ticketPref.per_page;
-                this.pagination.current_page = ticketPref.current_page;
-                this.search = ticketPref.search;
+                state.order_by = ticketPref.order_by;
+                state.order_type = ticketPref.order_type;
+                state.pagination.per_page = ticketPref.per_page;
+                state.pagination.current_page = ticketPref.current_page;
+                state.search = ticketPref.search;
             }
 
-            const advancedFilters = this.$getData('tickets_advanced_filters', false);
+            const advancedFilters = getData('tickets_advanced_filters', false);
             if(advancedFilters) {
-                this.advanced_filters = advancedFilters;
+                state.advanced_filters = advancedFilters;
             }
 
-            this.appReady = true;
-        },
-        saveFilters() {
-            this.$saveData('tickets_pref', {
-                order_by: this.order_by,
-                order_type: this.order_type,
-                per_page: this.pagination.per_page,
-                search: this.search,
-                current_page: this.pagination.current_page
+            state.appReady = true;
+        }
+
+        const saveFilters = () => {
+            saveData('tickets_pref', {
+                order_by: state.order_by,
+                order_type: state.order_type,
+                per_page: state.pagination.per_page,
+                search: state.search,
+                current_page: state.pagination.current_page
             });
 
-            this.$saveData('tickets_filter_type', this.filter_type);
+            saveData('tickets_filter_type', state.filter_type);
 
-            if(this.filter_type == 'advanced') {
-                this.$saveData('tickets_advanced_filters', this.advanced_filters);
+            if(state.filter_type == 'advanced') {
+                saveData('tickets_advanced_filters', state.advanced_filters);
             } else {
-                this.$saveData('tickets_filter', this.filters);
+                saveData('tickets_filter', state.filters);
             }
+        }
 
-        },
-        changeOrderType() {
-            if (this.order_type == 'DESC') {
-                this.order_type = 'ASC';
+        const changeOrderType = () => {
+            if (state.order_type == 'DESC') {
+                state.order_type = 'ASC';
             } else {
-                this.order_type = 'DESC';
+                state.order_type = 'DESC';
             }
-            this.fetchTickets();
-        },
-        getWaitingStatus(ticket) {
+            fetchTickets();
+        }
+
+        const getWaitingStatus = (ticket) => {
             if (ticket.status == 'closed') {
                 return '';
             }
@@ -438,77 +435,83 @@ export default {
             } else if (!ticket.last_customer_response) {
                 return '';
             }
-            if (this.moment(ticket.last_agent_response).isAfter(ticket.last_customer_response, 'seconds')) {
+            if (moment(ticket.last_agent_response).isAfter(ticket.last_customer_response, 'seconds')) {
                 return '';
             }
 
             return 'waiting';
-        },
-        getLastResponse(ticket) {
-            if (this.moment(ticket.last_agent_response).isAfter(ticket.last_customer_response, 'seconds')) {
-                return this.$timeDiff(ticket.last_agent_response);
+        }
+
+        const getLastResponse = (ticket) => {
+            if (moment(ticket.last_agent_response).isAfter(ticket.last_customer_response, 'seconds')) {
+                return humanDiffTime(ticket.last_agent_response);
             } else {
-                return this.$timeDiff(ticket.last_customer_response);
+                return humanDiffTime(ticket.last_customer_response);
             }
-        },
-        handleSelectionChange(selections) {
+        }
+
+        const handleSelectionChange = (selections) => {
             const selectionIds = [];
             each(selections, (selection) => {
                 selectionIds.push(selection.id);
             })
-            this.ticket_selections = selectionIds;
-        },
-        deleteSelected() {
-            this.doing_bulk = true;
-            this.$del('tickets/bulk', {
-                ticket_ids: this.ticket_selections
-            })
-                .then((response) => {
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right',
-                        type: 'success'
-                    });
-                    this.fetchTickets();
+            state.ticket_selections = selectionIds;
+        }
+
+        const deleteSelected = () => {
+            if (state.ticket_selections.length) {
+                state.doing_bulk = true;
+                del('tickets/bulk', {
+                    ticket_ids: state.ticket_selections
                 })
-                .catch((errors) => {
-                    this.$handleError(errors);
+                .then(response => {
+                    if (response.success) {
+                        fetchTickets();
+                    }
+                })
+                .catch(error => {
+                    handleError(error);
                 })
                 .always(() => {
-                    this.doing_bulk = false;
-                });
-        },
-        closeSelected() {
-            this.doing_bulk = true;
-            this.$post('tickets/bulk', {
+                    state.doing_bulk = false;
+                })
+            }
+        }
+
+        const closeSelected = () => {
+            state.doing_bulk = true;
+            post('tickets/bulk', {
                 ticket_ids: this.ticket_selections,
                 bulk_action: 'close_tickets'
             })
                 .then((response) => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right',
-                        type: 'success'
+                        type: "success",
+                        position: "bottom-right",
                     });
-                    this.fetchTickets();
+                    fetchTickets();
                 })
-                .catch((errros) => {
-                    this.$handleError(errors);
+                .catch((errors) => {
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.doing_bulk = false;
+                    state.doing_bulk = false;
                 });
-        },
-        getExcerpt(row) {
+        }
+
+        const getExcerpt = (row) => {
             let text = (row.preview_response) ? row.preview_response.content : row.content;
 
             if (!text) {
                 return '';
             }
             return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
-        },
-        resetFilters() {
-            this.filters = {
+        }
+
+
+        const resetFilters = () => {
+            state.filters = {
                 status_type: 'open',
                 product_id: '',
                 agent_id: '',
@@ -517,12 +520,13 @@ export default {
                 waiting_for_reply: '',
                 ticket_tags: []
             };
-            this.search = '';
-            this.pagination.current_page = 1;
-            this.fetchTickets();
-        },
-        resetWithOutFetch(){
-            this.filters = {
+            state.search = '';
+            state.pagination.current_page = 1;
+            fetchTickets();
+        }
+
+        const resetWithOutFetch = () => {
+            state.filters = {
                 status_type: 'open',
                 product_id: '',
                 agent_id: '',
@@ -531,51 +535,115 @@ export default {
                 waiting_for_reply: '',
                 ticket_tags: []
             };
-            this.search = '';
-            this.pagination.current_page = 1;
-        },
-        getExcerptBox(text) {
+            state.search = '';
+            state.pagination.current_page = 1;
+        }
+
+        const getExcerptBox = (text) => {
             return text.substring(0, 3).padEnd(5, '.');
-        },
-    },
-    mounted() {
-        this.setFromSaveFilters();
-        if (this.$route.query.agent_id) {
-            this.filters.agent_id = this.$route.query.agent_id;
-            this.filters.watcher = this.$route.query.watcher;
         }
 
-        if (this.$route.query.waiting_for_reply) {
-            this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
-        }
+        onMounted(() => {
+            state.app_ready = true;
+            setFromSaveFilters();
 
-        if (this.$route.query.tags) {
-            const tagIds = this.$route.query.tags;
-            if (typeof tagIds == 'object') {
-                this.filters.ticket_tags = tagIds.map(tagId => {
-                    return parseInt(tagId);
-                });
-            } else {
-                this.filters.ticket_tags = [parseInt(tagIds)];
+            if (route.query.agent_id) {
+                state.filters.agent_id = route.query.agent_id;
+                state.filters.watcher = route.query.watcher;
             }
-        }
+            if (route.query.waiting_for_reply) {
+                this.filters.waiting_for_reply = route.query.waiting_for_reply;
+            }
 
-        if (this.$route.query.search) {
-            this.search = this.$route.query.search;
-        }
+            if (route.query.tags) {
+                const tagIds = route.query.tags;
+                if (typeof tagIds == 'object') {
+                    state.filters.ticket_tags = tagIds.map(tagId => {
+                        return parseInt(tagId);
+                    });
+                } else {
+                    state.filters.ticket_tags = [parseInt(tagIds)];
+                }
+            }
 
-        if(this.$route.query.filter_type){
-            this.resetWithOutFetch();
-            this.filter_type = this.$route.query.filter_type;
-            this.filters.status_type = this.$route.query.status_type;
-        }
+            if (route.query.search) {
+                state.search = route.query.search;
+            }
 
-        this.app_ready = true;
-        this.$nextTick(() => {
-            this.fetchTickets();
+            if(route.query.filter_type){
+                //resetWithOutFetch();
+                state.filter_type = route.query.filter_type;
+                state.filters.status_type = route.query.status_type;
+            }
+
+            nextTick(() => {
+                fetchTickets();
+            });
+            setTitle(translate('All Tickets'));
         });
 
-        this.$setTitle('All Tickets');
+        watch(
+            () => route.query.agent_id, () => {
+            if (state.app_ready) {
+                state.filters.agent_id = route.query.agent_id;
+                fetchTickets();
+            }
+        },
+            () => route.query.watcher, () => {
+            if (state.app_ready) {
+                state.filters.watcher = route.query.watcher;
+                fetchTickets();
+            }
+        },
+            () => route.query.status_type, () => {
+            if (state.app_ready) {
+                state.filters.status_type = route.query.status_type;
+                fetchTickets();
+            }
+        },
+            () => route.query.filter_type, () => {
+            if (state.app_ready) {
+                state.filters.filter_type = route.query.filter_type;
+                fetchTickets();
+            }
+        },
+            () => route.query.waiting_for_reply, () => {
+            if (state.app_ready) {
+                state.filters.waiting_for_reply = route.query.waiting_for_reply;
+                fetchTickets();
+            }
+        });
+
+        return {
+            appVars,
+            get,
+            del,
+            translate,
+            handleError,
+            moment,
+            setTitle,
+            ucFirst,
+            humanDiffTime,
+            has_pro,
+            getData,
+            notify,
+            ...toRefs(state),
+            fetchTickets,
+            addConditionGroup,
+            maybeRemoveGroup,
+            gotToTicket,
+            setFromSaveFilters,
+            saveFilters,
+            changeOrderType,
+            getWaitingStatus,
+            getLastResponse,
+            handleSelectionChange,
+            deleteSelected,
+            closeSelected,
+            getExcerpt,
+            resetFilters,
+            getExcerptBox
+        }
     }
 }
 </script>

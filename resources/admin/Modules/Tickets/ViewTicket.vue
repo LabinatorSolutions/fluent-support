@@ -19,7 +19,7 @@
                             </li>
                         </template>
 
-                        <li title="Run Workflow" class="fs_add_workflow"
+                        <li :title="$t('Run Workflow')" class="fs_add_workflow"
                             v-if="appVars.manual_workflows && appVars.manual_workflows.length">
                             <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]"/>
                         </li>
@@ -471,7 +471,9 @@ import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import Modal from "../../Pieces/Modal";
 import SplitTicket from "./_SplitTicket"
-
+import { useFluentHelper, useNotify, useConfirm , wpHooks} from "@/admin/Composable/FluentFrameworkHelper";
+import { computed, nextTick, onMounted, onBeforeUnmount, reactive, toRefs, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 export default {
     name: 'ViewTicket',
     props: ['ticket_id'],
@@ -487,23 +489,40 @@ export default {
         WorkFlowSelector,
         SplitTicket
     },
-    data() {
-        return {
+
+    setup(props, _) {
+        const {
+            appVars,
+            get,
+            post,
+            put,
+            del,
+            setTitle,
+            has_pro,
+            handleError,
+            translate,
+        } = useFluentHelper();
+        const { notify } = useNotify();
+        const { confirm } = useConfirm();
+        const { doAction } = wpHooks();
+        const router = useRouter();
+        const route = useRoute();
+        const state = reactive({
             loading: false,
-            ticket: false,
+            ticket: {},
             conversations: [],
             show_response_box: '',
-            products: this.appVars.support_products,
-            agents: this.appVars.support_agents,
-            admin_priorities: this.appVars.admin_priorities,
-            client_priorities: this.appVars.client_priorities,
+            products: appVars.support_products,
+            agents: appVars.support_agents,
+            admin_priorities: appVars.admin_priorities,
+            client_priorities: appVars.client_priorities,
             updating: false,
             active_agents: [],
             edit_response_modal: false,
             editing_response: false,
             showCustomDataEditForm: false,
             fluentcrm_profile: false,
-            mailboxes: this.appVars.mailboxes,
+            mailboxes: appVars.mailboxes,
             customer_tickets: [],
             show_merge_modal: false,
             show_watcher_modal: false,
@@ -517,54 +536,47 @@ export default {
             filteredWatchersIds: [],
             split_ticket_modal: false,
             split_ticket: {},
-            ticket_statuses: this.appVars.changeable_ticket_statuses,
-            close_ticket_silently: false
-        }
-    },
-    watch: {
-        '$route.params.ticket_id'(ticketId) {
+            ticket_statuses: appVars.changeable_ticket_statuses,
+            close_ticket_silently: false,
+        });
+
+        watch(() => route.params.ticket_id, (ticketId) => {
             if (ticketId) {
-                this.doAction('ticket_view_exit', this.ticket.id);
-                this.ticket = false;
-                this.$nextTick(() => {
-                    this.doAction('ticket_view_entered', ticketId);
-                    this.fetchTicket();
+                doAction('ticket_view_exit', state.ticket.id);
+                state.ticket = {};
+                nextTick(() => {
+                    doAction('ticket_view_entered', ticketId);
+                    fetchTicket();
                 });
             }
-        }
-    },
-    methods: {
-        fetchTicket() {
-            this.loading = true;
-            this.$get(`tickets/${this.ticket_id}`, {
-                with_data: ['fluentcrm_profile']
-            })
-            .then(response => {
-                let that = this;
-                this.ticket = response.ticket;
+        });
 
-                this.$setTitle(response.ticket.title);
-                this.conversations = response.responses;
+        const fetchTicket = async () => {
+            state.loading = true;
+            await get(`tickets/${props.ticket_id}`, {
+                customer_id: state.ticket.customer_id
+            }).then(response => {
+                state.loading = false;
+                state.ticket = response.ticket;
+                setTitle(response.ticket.title);
+                state.conversations = response.responses;
 
-                if (this.appVars.fluentcrm_config) {
-                    this.fluentcrm_profile = response.fluentcrm_profile;
-                }
-
-                if (this.has_pro) {
-                    this.watchers = response.watchers;
-                    this.filteredWatchersIds = response.watchers.map((watcher, key) => {
+                if (has_pro) {
+                    state.watchers = response.watchers;
+                    state.filteredWatchersIds = response.watchers.map((watcher, key) => {
                         return watcher.tag_id;
                     });
                 }
-            })
-            .catch((errors) => {
-                this.$handleError(errors);
+            }).catch(error => {
+                state.loading = false;
+                handleError(error);
             })
             .always(() => {
-                this.loading = false;
+                state.loading = false;
             });
-        },
-        getTicketClasses(conversation) {
+        };
+
+        const getTicketClasses = (conversation) => {
             const classes = [
                 'fs_thread'
             ];
@@ -575,296 +587,331 @@ export default {
 
             classes.push('fs_conv_type_' + conversation.conversation_type);
             return classes;
-        },
-        recordNewResponse(response, data) {
-            this.conversations.unshift(response);
-            this.ticket.status = data.ticket.status;
-            this.show_response_box = false;
+        }
+
+        const recordNewResponse = (response, data) =>{
+            state.conversations.unshift(response);
+            state.ticket.status = data.ticket.status;
+            state.show_response_box = false;
 
             each(data.update_data, (data, key) => {
-                this.ticket[key] = data;
+                state.ticket[key] = data;
             });
 
-            if (this.appVars.pref.go_back_after_reply == 'yes') {
+            if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
-                    this.$router.go(-1);
+                    router.go(-1);
                 }
             }
-        },
-        updateTicketAttr(propName) {
-            this.$put(`tickets/${this.ticket.id}/property`, {
+        }
+
+        const updateTicketAttr = (propName) => {
+            put(`tickets/${state.ticket.id}/property`, {
                 prop_name: propName,
-                prop_value: this.ticket[propName]
+                prop_value: state.ticket[propName]
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
 
                     each(response.update_data, (data, key) => {
-                        this.ticket[key] = data;
+                        state.ticket[key] = data;
                     });
-                    this.fetchTicket();
+                    fetchTicket();
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 });
-        },
-        getHumanName(person) {
-            if (this.appVars.me?.id == person.id) {
-                return this.$t('You');
+        }
+
+        const getHumanName = (person) =>{
+            if (parseInt(appVars.me?.id) === parseInt(person.id)) {
+                return translate('You');
             }
 
             return person.full_name;
-        },
-        closeTicket() {
-            this.updating = true;
-            this.$post(`tickets/${this.ticket.id}/close`, {close_ticket_silently: this.close_ticket_silently})
+        }
+
+        const closeTicket = () => {
+            state.updating = true;
+            post(`tickets/${state.ticket.id}/close`, {close_ticket_silently: state.close_ticket_silently})
                 .then(response => {
-                    this.ticket.status = response.ticket.status;
-                    this.$notify.success({
+                    state.ticket.status = response.ticket.status;
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
                     if (window.history.state.back) {
-                        this.$router.go(-1);
+                       router.go(-1);
                     }
                 })
                 .catch((errors) => {
-                    console.log(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.updating = false;
+                    state.updating = false;
                 });
-        },
-        reOpen() {
-            this.updating = true;
-            this.$post(`tickets/${this.ticket.id}/re-open`)
+        }
+
+        const reOpen = () =>{
+            state.updating = true;
+            post(`tickets/${state.ticket.id}/re-open`)
                 .then(response => {
-                    this.ticket.status = response.ticket.status;
+                    state.ticket.status = response.ticket.status;
                 })
                 .catch((errors) => {
-                    console.log(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.updating = false;
+                    state.updating = false;
                 });
-        },
-        onActivityChange(items) {
+        }
+
+        const onActivityChange = (items) =>{
             const personIds = [];
             items.forEach((item) => {
                 personIds.push(item.val());
             });
-            this.active_agents = personIds;
-        },
-        onTicketDataChange(item) {
+            state.active_agents = personIds;
+        }
+
+        const onTicketDataChange = (item) =>{
             let data = item.val();
-            this.ticket[data.type] = data.data;
-        },
-        handleResponseActionCommand(data) {
+            state.ticket[data.type] = data.data;
+        }
+
+        const handleResponseActionCommand = (data) =>{
             const actionType = data.type;
             const conversation = data.conversation;
 
             if (actionType == 'delete') {
-                this.$confirm(this.$t('response_delete_warning'), 'Warning', {
-                    confirmButtonText: this.$t('Delete Response'),
-                    cancelButtonText: this.$t('Cancel'),
-                    type: 'warning'
+                confirm({
+                    message: translate('response_delete_warning'),
+                    title: 'Warning',
+                    options: {
+                        confirmButtonText: translate('Delete Response'),
+                        cancelButtonText: translate('Cancel'),
+                        type: 'warning'
+                    }
                 }).then(() => {
-                    this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)
+                    del(`tickets/${state.ticket.id}/responses/${conversation.id}`)
                         .then(response => {
-                            this.$notify.success({
+                            notify({
                                 message: response.message,
-                                position: 'bottom-right',
-                                type: 'success'
+                                type: "success",
+                                position: "bottom-right",
                             });
-                            this.fetchTicket();
+                            fetchTicket();
                         })
                 });
-            } else if (actionType == 'edit') {
-                if (this.ticket.status == 'closed') {
-                    this.$notify({
-                        type: 'error',
-                        message: this.$t('error_msg_on_closed_ticket_edit'),
-                        position: 'bottom-right'
+            } else if (actionType === 'edit') {
+                if (state.ticket.status === 'closed') {
+                    notify({
+                        message: translate('error_msg_on_closed_ticket_edit'),
+                        type: "error",
+                        position: "bottom-right",
                     });
                     return false;
                 }
-                this.editing_response = conversation;
-                this.edit_response_modal = true;
-                this.conversation_type = conversation.conversation_type;
-            } else if ( actionType == 'split_ticket' ) {
-                this.split_ticket = {
-                  conversation_id: conversation.id,
-                  content: conversation.content,
-                  customer_id: parseInt(this.ticket.customer_id),
-                  mailbox_id: parseInt(this.ticket.mailbox_id),
-                  product_id: this.ticket.product?.id,
-                  client_priority: this.ticket.priority,
-                  create_wp_user: 'no',
-                  create_customer: 'no',
+                state.editing_response = conversation;
+                state.edit_response_modal = true;
+                state.conversation_type = conversation.conversation_type;
+            } else if ( actionType === 'split_ticket' ) {
+                state.split_ticket = {
+                    conversation_id: conversation.id,
+                    content: conversation.content,
+                    customer_id: parseInt(state.ticket.customer_id),
+                    mailbox_id: parseInt(state.ticket.mailbox_id),
+                    product_id: state.ticket.product?.id,
+                    client_priority: state.ticket.priority,
+                    create_wp_user: 'no',
+                    create_customer: 'no',
                 };
-                this.split_ticket_modal = true;
+                state.split_ticket_modal = true;
             }
-        },
-        changeMailbox(mailbox) {
-            this.loading != this.loading;
-            this.$put(`mailboxes/${this.ticket.mailbox_id}/move_tickets`, {
+        }
+
+        const changeMailbox = (mailbox) =>{
+            state.loading = !state.loading;
+            put(`mailboxes/${state.ticket.mailbox_id}/move_tickets`, {
                 new_box_id: mailbox,
-                ticket_ids: [this.ticket_id],
+                ticket_ids: [props.ticket_id],
                 move_type: 'Custom',
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
-                    this.fetchTicket();
+                    fetchTicket();
                 })
                 .catch((error) => {
-                    this.$handleError(error);
+                    handleError(error);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-        customerTickets(){
-            this.$get('tickets/customer_tickets/' + this.ticket.customer_id, {
-                exclude_ticket_id: this.ticket_id,
-                page: this.pagination.current_page,
-                per_page: this.pagination.per_page,
+        }
+
+        const customerTickets = () =>{
+            get('tickets/customer_tickets/' + state.ticket.customer_id, {
+                exclude_ticket_id: props.ticket_id,
+                page: state.pagination.current_page,
+                per_page: state.pagination.per_page,
             })
                 .then(response => {
-                    this.customer_tickets = response.tickets.data;
-                    this.pagination.total = response.tickets.total;
+                    state.customer_tickets = response.tickets.data;
+                    state.pagination.total = response.tickets.total;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-        mergeTickets(ticketToMerge){
-            this.$confirm('Are you sure you want to merge these tickets?', 'Merge Tickets', {
-                confirmButtonText: 'Merge',
-                cancelButtonText: 'Cancel',
-                type: 'warning'
+        }
+
+        const mergeTickets = (ticketToMerge) =>{
+            confirm({
+                message: translate('Are you sure you want to merge these tickets?'),
+                title: translate('Merge Tickets'),
+                type: 'Warning',
+                options: {
+                    confirmButtonText: translate('Merge'),
+                    cancelButtonText: translate('Cancel'),
+                    type: 'warning'
+                }
             }).then(() => {
-                this.loading = true;
-                this.$post('tickets/' + this.ticket_id +'/merge_tickets', {
+                state.loading = true;
+                post('tickets/' + props.ticket_id +'/merge_tickets', {
                     ticket_to_merge: ticketToMerge,
                 })
                     .then(response => {
-                        this.$notify.success({
+                        notify({
                             message: response.message,
-                            position: 'bottom-right'
+                            type: "success",
+                            position: "bottom-right",
                         });
-                        this.customerTickets();
-                        this.fetchTicket();
+                        customerTickets();
+                        fetchTicket();
                     })
                     .catch((error) => {
-                        this.$handleError(error);
+                        handleError(error);
                     })
                     .always(() => {
-                        this.loading = false;
+                        state.loading = false;
                     });
             });
-        },
-        santizeContent(content) {
+        }
+
+        const santizeContent = (content) =>{
             if (!content) {
                 return content;
             }
             return content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
-        },
-        isEmpty,
-        isArray,
-        syncCustomData(data) {
-            this.ticket.custom_fields = data;
-            this.showCustomDataEditForm = false;
-        },
-        addWatchers() {
-            this.saving = true;
-            this.$post(`tickets/${this.ticket.id}/add_watchers`, {
-                watchers: this.watchers
+        }
+
+        const syncCustomData = (data) => {
+            state.ticket.custom_fields = data;
+            state.showCustomDataEditForm = false;
+        }
+
+        const addWatchers = () => {
+            state.saving = true;
+            post(`tickets/${state.ticket.id}/add_watchers`, {
+                watchers: state.watchers
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
-                    this.fetchTicket()
-                    this.show_watcher_modal = false;
+                    fetchTicket()
+                    state.show_watcher_modal = false;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.saving = false;
+                    state.saving = false;
                 });
-        },
-        updateWatcher(){
-            this.saving = true;
-            this.$post(`tickets/${this.ticket.id}/sync-watchers`, {
-                watchers: this.filteredWatchersIds
+        }
+
+        const splitToNewTicket = () =>{
+            state.loading = true;
+            post('tickets/' + state.ticket.id +'/split_ticket', {
+                split_ticket: state.split_ticket,
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
-
-                    this.fetchTicket()
-
-                    this.show_watcher_modal = false;
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.saving = false;
-                });
-        },
-        splitToNewTicket (){
-            this.loading = true;
-            this.$post('tickets/' + this.ticket.id +'/split_ticket', {
-                split_ticket: this.split_ticket,
-            })
-                .then(response => {
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    });
-                    this.customerTickets();
-                    this.fetchTicket();
-                    this.split_ticket_modal = false;
+                    customerTickets();
+                    fetchTicket();
+                    state.split_ticket_modal = false;
                 })
                 .catch((error) => {
-                    this.$handleError(error);
+                    handleError(error);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-    },
-    computed: {
-       getTicketStatus() {
-          const status = {};
+        }
 
-          for (let key in this.ticket_statuses) {
-              status[key] = this.ticket_statuses[key][0];
-          }
+        const getTicketStatus = computed(() => {
+            const status = {};
 
-          return status;
-      }
-    },
-    mounted() {
-        this.fetchTicket();
-        this.doAction('ticket_view_entered', this.ticket_id, this);
-    },
-    beforeUnmount() {
-        this.doAction('ticket_view_exit', this.ticket_id);
+            for (let key in state.ticket_statuses) {
+                status[key] = state.ticket_statuses[key][0];
+            }
+
+            return status;
+        });
+
+        onMounted(() => {
+            fetchTicket();
+            doAction('ticket_view_entered', props.ticket_id);
+        });
+
+        onBeforeUnmount(() => {
+            doAction('ticket_view_exit', props.ticket_id);
+        });
+
+        return {
+            ...toRefs(state),
+            setTitle,
+            has_pro,
+            appVars,
+            handleError,
+            fetchTicket,
+            getTicketClasses,
+            isEmpty,
+            isArray,
+            recordNewResponse,
+            updateTicketAttr,
+            getHumanName,
+            closeTicket,
+            reOpen,
+            onActivityChange,
+            onTicketDataChange,
+            handleResponseActionCommand,
+            changeMailbox,
+            customerTickets,
+            mergeTickets,
+            santizeContent,
+            syncCustomData,
+            addWatchers,
+            splitToNewTicket,
+            getTicketStatus
+        }
     }
 }
 </script>

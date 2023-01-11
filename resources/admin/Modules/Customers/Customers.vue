@@ -3,18 +3,24 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ $t('All Customers') }}</h3>
+                    <h3>{{ translate("All Customers") }}</h3>
                     <el-button
-                        @click="showEditCustomerModal({})"
+                        @click="showAddCustomerModal({})"
                         size="small"
-                        icon="Plus">{{ $t('Add Customer') }}
+                        icon="Plus"
+                        >{{ translate("Add Customer") }}
                     </el-button>
                 </div>
                 <div class="fs_box_actions fs_customer_filters">
                     <div class="fs_cs_status_filter">
-                        <label>{{ $t('Status') }}</label>
-                        <el-select filterable @change="fetchCustomers()" v-model="status" size="small"
-                                   style="padding-right: 0.7em;">
+                        <label>{{ translate("Status") }}</label>
+                        <el-select
+                            filterable
+                            @change="fetchCustomers()"
+                            v-model="status"
+                            size="small"
+                            style="padding-right: 0.7em"
+                        >
                             <el-option
                                 v-for="(statusKey, statusName) in statusFilters"
                                 :key="statusName"
@@ -23,180 +29,292 @@
                             ></el-option>
                         </el-select>
                     </div>
-                    <el-input @keyup.enter="fetchCustomers()" clearable @clear="fetchCustomers()" size="small"
-                              :placeholder="$t('Search Customers')" v-model="search">
+                    <el-input
+                        @keyup.enter="fetchCustomers()"
+                        clearable
+                        @clear="fetchCustomers()"
+                        size="small"
+                        :placeholder="translate('Search Customers')"
+                        v-model="search"
+                    >
                         <template #append>
-                            <el-button @click="fetchCustomers()" icon="Search"></el-button>
+                            <el-button
+                                @click="fetchCustomers()"
+                                icon="Search"
+                            ></el-button>
                         </template>
                     </el-input>
                 </div>
             </div>
             <div class="fs_box_body fs_padded_20">
                 <template v-if="!first_time_loading">
-                    <el-table :row-class-name="tableRowClassName" v-loading="loading" stripe :data="customers">
-                        <el-table-column prop="id" :label="$t('ID')" width="100"></el-table-column>
-                        <el-table-column :label="$t('Name')" width="260">
+                    <el-table
+                        :row-class-name="tableRowClassName"
+                        v-loading="loading"
+                        stripe
+                        :data="customers"
+                    >
+                        <el-table-column
+                            prop="id"
+                            :label="translate('ID')"
+                            width="100"
+                        ></el-table-column>
+                        <el-table-column :label="translate('Name')" width="260">
                             <template #default="scope">
-                                <router-link :to="{name: 'view_customer', params: { customer_id: scope.row.id }}">
+                                <router-link
+                                    :to="{
+                                        name: 'view_customer',
+                                        params: { customer_id: scope.row.id },
+                                    }"
+                                >
                                     {{ scope.row.full_name }}
                                 </router-link>
                             </template>
                         </el-table-column>
-                        <el-table-column :label="$t('Email')">
+                        <el-table-column :label="translate('Email')">
                             <template #default="scope">
                                 {{ scope.row.email }}
                             </template>
                         </el-table-column>
-                        <el-table-column width="120" :label="$t('Status')">
+                        <el-table-column
+                            width="120"
+                            :label="translate('Status')"
+                        >
                             <template #default="scope">
-                                <span v-if="scope.row.status == 'inactive'">{{$t('Blocked')}}</span>
-                                <span v-else>{{ ucFirst(scope.row.status) }}</span>
+                                <span v-if="scope.row.status == 'inactive'">{{
+                                    translate("Blocked")
+                                }}</span>
+                                <span v-else>{{
+                                    ucFirst(scope.row.status)
+                                }}</span>
                             </template>
                         </el-table-column>
-                        <el-table-column :label="$t('Last Activity')" width="160">
+                        <el-table-column
+                            :label="translate('Last Activity')"
+                            width="160"
+                        >
                             <template #default="scope">
-                                {{ $timeDiff(scope.row.last_response_at) }}
+                                {{ humanDiffTime(scope.row.last_response_at) }}
                             </template>
                         </el-table-column>
-                        <el-table-column :label="$t('Stats')" width="180">
+                        <el-table-column
+                            :label="translate('Stats')"
+                            width="180"
+                        >
                             <template #default="scope">
-                                <router-link :to="{ name: 'tickets', query: { search: 'customer_id:'+scope.row.id } }">
-                                    <el-button size="small" type="text" icon="Folder" style="color:#409eff;">
+                                <router-link
+                                    :to="{
+                                        name: 'tickets',
+                                        query: {
+                                            search:
+                                                'customer_id:' + scope.row.id,
+                                        },
+                                    }"
+                                >
+                                    <el-button
+                                        size="small"
+                                        text
+                                        icon="Folder"
+                                        style="color: #409eff"
+                                    >
                                         {{ scope.row.total_tickets }}
                                     </el-button>
                                 </router-link>
-                                <el-button size="small" type="text" icon="ChatLineRound" style="color:#409eff;">
+                                <el-button
+                                    size="small"
+                                    text
+                                    icon="ChatLineRound"
+                                    style="color: #409eff"
+                                >
                                     {{ scope.row.total_responses }}
                                 </el-button>
 
                                 <el-popconfirm
                                     v-loading="deleting"
                                     confirm-button-type="danger"
-                                    :confirm-button-text="$t('Yes, Delete this Customer')"
-                                    :cancel-button-text="$t('No')"
+                                    :confirm-button-text="
+                                        translate('Yes, Delete this Customer')
+                                    "
+                                    :cancel-button-text="translate('No')"
                                     icon-color="red"
                                     @confirm="deleteCustomer(scope.row.id)"
-                                    :title="$t('Are you sure to delete this customer? It will delete all associated data with this customer')"
+                                    :title="
+                                        translate(
+                                            'Are you sure to delete this customer? It will delete all associated data with this customer'
+                                        )
+                                    "
                                 >
                                     <template #reference>
-                                        <el-button size="small" type="text" icon="Delete" style="color:red;"/>
+                                        <el-button
+                                            size="small"
+                                            text
+                                            icon="Delete"
+                                            style="color: red"
+                                        />
                                         <span class="fs_badge"><Delete /></span>
                                     </template>
                                 </el-popconfirm>
-
                             </template>
                         </el-table-column>
                     </el-table>
                     <div class="fframe_pagination_wrapper">
-                        <pagination @fetch="fetchCustomers()" :pagination="pagination"/>
+                        <pagination
+                            @fetch="fetchCustomers()"
+                            :pagination="pagination"
+                        />
                     </div>
                 </template>
 
-                <div v-else style="padding: 15px;">
-                    <el-skeleton :rows="10" animated/>
+                <div v-else style="padding: 15px">
+                    <el-skeleton :rows="10" animated />
                 </div>
-
             </div>
         </div>
         <el-dialog
-            :append-to-body=true
-            :title="(editing_customer.id) ? $t('Update customer') : $t('Add new customer')"
+            :append-to-body="true"
+            :title="
+                editing_customer.id
+                    ? translate('Update customer')
+                    : translate('Add new customer')
+            "
             v-model="showEditModal"
             v-if="editing_customer"
-            width="60%">
-            <customer-form v-if="editing_customer" @updated="closeModal()" :customer="editing_customer"/>
+            width="60%"
+        >
+            <customer-form
+                v-if="editing_customer"
+                @updated="closeModal()"
+                :customer="editing_customer"
+            />
         </el-dialog>
     </div>
 </template>
 
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
-import CustomerForm from './_CustomerForm';
+import CustomerForm from "./_CustomerForm";
+import {
+    useFluentHelper,
+    useNotify,
+} from "@/admin/Composable/FluentFrameworkHelper";
+import { onMounted, reactive, toRefs } from "vue";
 
 export default {
-    name: 'Customers',
+    name: "Customers",
     components: {
         Pagination,
-        CustomerForm
+        CustomerForm,
     },
-    data() {
-        return {
+    setup() {
+        const {
+            appVars,
+            get,
+            del,
+            translate,
+            handleError,
+            moment,
+            setTitle,
+            ucFirst,
+            humanDiffTime,
+        } = useFluentHelper();
+        const { notify } = useNotify();
+        const state = reactive({
             customers: [],
             pagination: {
                 per_page: 10,
                 current_page: 1,
-                total: 0
+                total: 0,
             },
-            first_time_loading: true,
-            search: '',
             loading: false,
-            editing_customer: {},
+            deleting: false,
+            first_time_loading: true,
             showEditModal: false,
+            editing_customer: {},
+            status: "",
+            search: "",
             statusFilters: {
-                all: 'All',
-                active: 'Active',
-                inactive: 'Blocked'
+                active: translate("Active"),
+                inactive: translate("Blocked"),
+                pending: translate("Pending"),
             },
-            status: 'all',
-            deleting: false
-        }
-    },
-    methods: {
-        fetchCustomers() {
-            this.loading = true;
-            this.$get('customers', {
-                per_page: this.pagination.per_page,
-                page: this.pagination.current_page,
-                search: this.search,
-                status: this.status
+        });
+
+        const fetchCustomers = async () => {
+            get("customers", {
+                per_page: state.pagination.per_page,
+                page: state.pagination.current_page,
+                search: state.search,
+                status: state.status,
             })
                 .then((response) => {
-                    this.customers = response.customers.data;
-                    this.pagination.total = response.customers.total;
+                    state.customers = response.customers.data;
+                    state.pagination.total = response.customers.total;
+                })
+                .always(() => {
+                    state.loading = false;
+                    state.first_time_loading = false;
+                })
+                .catch((error) => {
+                    handleError(error);
+                });
+        };
+
+        const showAddCustomerModal = (customer) => {
+            state.editing_customer = customer;
+            state.showEditModal = true;
+        };
+        const closeModal = () => {
+            state.editing_customer = {};
+            state.showEditModal = false;
+            fetchCustomers();
+        };
+
+        const deleteCustomer = (customerId) => {
+            state.deleting = true;
+            del(`customers/${customerId}`)
+                .then((response) => {
+                    fetchCustomers();
+                    notify({
+                        message: response.message,
+                        type: "success",
+                        position: "bottom-right",
+                    });
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
-                    this.first_time_loading = false;
+                    state.deleting = false;
                 });
-        },
-        showEditCustomerModal(customer) {
-            this.editing_customer = customer;
-            this.showEditModal = true;
-        },
-        closeModal() {
-            this.editing_customer = {};
-            this.showEditModal = false;
-            this.fetchCustomers();
-        },
-        deleteCustomer(customerId) {
-            this.deleting = true;
-            this.$del(`customers/${customerId}`)
-                .then(response => {
-                    this.fetchCustomers();
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    })
-                })
-                .catch(errors => {
-                    this.$handleError(errors)
-                })
-                .always(() => {
-                    this.deleting = false;
-                });
-        },
-        tableRowClassName({ row, rowIndex }) {
-            return 'fs_status_' + row.status;
-        }
+        };
+
+        const tableRowClassName = ({ row, rowIndex }) => {
+            return "fs_status_" + row.status;
+        };
+
+        onMounted(() => {
+            setTitle(translate("Customers"));
+            fetchCustomers();
+        });
+
+        return {
+            appVars,
+            get,
+            translate,
+            handleError,
+            moment,
+            fetchCustomers,
+            showAddCustomerModal,
+            closeModal,
+            deleteCustomer,
+            setTitle,
+            ucFirst,
+            humanDiffTime,
+            tableRowClassName,
+            ...toRefs(state),
+        };
     },
-    mounted() {
-        this.fetchCustomers();
-        this.$setTitle('Customers');
-    }
-}
+};
 </script>
 
 <style scoped>

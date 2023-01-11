@@ -15,7 +15,7 @@
 export default {
     props: ["component_data"],
     name: "TicketsByProduct",
-    data() {
+    setup() {
         return {};
     },
 };

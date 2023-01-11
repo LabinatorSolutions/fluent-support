@@ -9,29 +9,39 @@
                 <b>{{ stat.title }}: </b> {{ stat.count }}
             </li>
         </ul>
-        <p class="fs_padded_20 fs_stat_helper" v-if="component_data.individual_stat" >
-            <span class="fs_highlight">
+        <p class="fs_stat_helper" v-if="component_data.individual_stat">
+            <span style="color: #ff7c7c">
                 {{ component_data.individual_stat.waiting_tickets }}
-                {{ $t("tickets") }}
+                {{ translate("tickets") }}
             </span>
-            {{ $t("are waiting for reply with") }}
-            <span class="fs_highlight">
-                {{ $t("average") }}
+            {{ translate("are waiting for reply with") }}
+            <span style="color: #88c379">
+                {{ translate("average") }}
                 {{ component_data.individual_stat.average_waiting }}
-                {{ $t("wait time") }}</span
-            >
-            & {{ $t("max wait time") }}
-            <span class="fs_highlight">{{ component_data.individual_stat.max_waiting }}</span>
+                {{ translate("wait time") }}
+            </span>
+            & {{ translate("max wait time") }}
+            <span style="color: #7280ff">{{
+                component_data.individual_stat.max_waiting
+            }}</span>
         </p>
     </div>
 </template>
 <script>
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     props: ["component_data"],
     name: "TicketStatistics",
-    data() {
-        return {};
+    setup() {
+        const { translate } = useFluentHelper();
+        return {
+            translate,
+        };
     },
 };
 </script>
-<style></style>
+<style scoped>
+.fs_stat_helper {
+    padding: 5px 30px;
+}
+</style>

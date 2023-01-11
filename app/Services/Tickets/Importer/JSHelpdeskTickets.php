@@ -23,6 +23,13 @@ class JSHelpdeskTickets extends BaseImporter
         $this->handler = $handler;
         $allCounts = $this->countTickets();
 
+        if (!$allCounts) {
+            return [
+                'message' => __('Sorry, no tickets available for import.', 'fluent-support'),
+                'had_tickets' => 'no',
+            ];
+        }
+
         $tickets = $this->getTickets($this->limit, $page);
 
         $results = $this->migrateTickets($tickets);

@@ -36,7 +36,7 @@
                                    v-model="new_item"/>
                 <template #reference>
                     <el-button @click="addVisible = !addVisible" size="small" icon="Plus" style="margin-top: 0.7em;
-">And</el-button>
+">{{$t('And')}}</el-button>
                 </template>
             </el-popover>
         </div>

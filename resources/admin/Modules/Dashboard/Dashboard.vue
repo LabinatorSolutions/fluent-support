@@ -1,186 +1,200 @@
 <template>
-    <div class="fs_head_section">
-        <div v-if="dashboard_param.greetingMessage">
-            <h1>
-                {{ $t("Good") }} {{ greetingTime }} {{ me.full_name + "!!!" }}
-            </h1>
-        </div>
-        <div></div>
-        <div class="fs_button_group">
-            <div class="fs_button_group_inner">
-                <el-button
-                    type="primary"
-                    class="fs_drawer_button"
-                    style="margin-left: 16px"
-                    @click="drawer = true"
-                >
-                    <el-icon>
-                        <Setting />
-                    </el-icon>
-                </el-button>
+    <div class="fs_dashboard_wrapper">
+        <div class="fs_head_section">
+            <div v-if="dashboard_param.greetingMessage">
+                <h1>
+                    {{ translate("Good") }} {{ greetingTime }}
+                    {{ me.full_name + "!!!" }}
+                </h1>
+            </div>
+            <div></div>
+            <div class="fs_button_group">
+                <div class="fs_button_group_inner">
+                    <el-button
+                        type="primary"
+                        class="fs_drawer_button"
+                        style="margin-left: 16px"
+                        @click="drawer = true"
+                    >
+                        <el-icon>
+                            <Setting />
+                        </el-icon>
+                    </el-button>
 
-                <el-button
-                    type="info"
-                    class="fs_drawer_button"
-                    style="margin-left: 16px"
-                    @click="defalutSettings()"
-                >
-                    Reset
-                </el-button>
+                    <el-button
+                        type="info"
+                        class="fs_drawer_button"
+                        style="margin-left: 16px"
+                        @click="defalutSettings()"
+                    >
+                        {{ translate("Reset") }}
+                    </el-button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="dashboard fs_box_wrapper" v-if="!loading">
-        <div v-html="dashboard_notice"></div>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <draggable
-                    v-model="dashboard_param.first_column"
-                    ghost-class="ghost"
-                    group="dashboard_component"
-                    item-key="id"
-                >
-                    <template v-if="!loading" #item="{ element }">
-                        <div v-if="element.show" class="draggable">
-                            <div class="draggable_component">
-                                <el-collapse
-                                    v-model="active_names[element.active_names]"
-                                    @change="handleChange"
-                                >
-                                    <el-collapse-item
-                                        :name="element.active_names"
-                                        class="fs_box_board"
-                                    >
-                                        <template #title>
-                                            <div class="fs_box_header">
-                                                {{ $t(element.heading) }}
-                                            </div>
-                                        </template>
-                                        <component
-                                            :is="element.component"
-                                            :component_data="
-                                                total_data[element.component]
-                                            "
-                                        >
-                                        </component>
-                                    </el-collapse-item>
-                                </el-collapse>
-                            </div>
-                        </div>
-                    </template>
-                </draggable>
-            </el-col>
-            <el-col :span="12">
-                <draggable
-                    v-model="dashboard_param.second_column"
-                    ghost-class="ghost"
-                    group="dashboard_component"
-                    item-key="id"
-                >
-                    <template #item="{ element }">
-                        <div v-if="element.show" class="draggable">
-                            <div class="draggable_component">
-                                <el-collapse
-                                    v-model="active_names[element.active_names]"
-                                    @change="handleChange"
-                                >
-                                    <el-collapse-item
-                                        :name="element.active_names"
-                                        class="fs_box_board"
-                                    >
-                                        <template #title>
-                                            <div class="fs_box_header">
-                                                {{ $t(element.heading) }}
-                                            </div>
-                                        </template>
-                                        <component
-                                            :is="element.component"
-                                            :component_data="
-                                                total_data[element.component]
-                                            "
-                                        >
-                                        </component>
-                                    </el-collapse-item>
-                                </el-collapse>
-                            </div>
-                        </div>
-                    </template>
-                </draggable>
-            </el-col>
-        </el-row>
-
-        <el-drawer v-model="drawer" :with-header="false">
-            <div class="fs_drawer_content">
-                <el-checkbox v-model="dashboard_param.greetingMessage"
-                    >Greeting Message</el-checkbox
-                >
-                <div v-for="column_data in dashboard_param">
-                    <div
-                        class="fs_settings_drawer"
-                        v-for="component_list_data in column_data"
+        <div class="dashboard fs_box_wrapper" v-if="!loading">
+            <div v-html="dashboard_notice"></div>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <draggable
+                        v-model="dashboard_param.first_column"
+                        ghost-class="ghost"
+                        group="dashboard_component"
+                        item-key="id"
                     >
-                        <el-skeleton
-                            :rows="5"
-                            :count="4"
-                            style="
-                                width: 240px;
-                                --el-skeleton-circle-size: 20px;
-                            "
-                        >
-                            <template #template>
-                                <div
-                                    style="
-                                        display: flex;
-                                        align-items: center;
-                                        justify-items: space-between;
-                                        margin-bottom: 5px;
-                                        height: 100%;
-                                    "
-                                >
-                                    <el-skeleton-item
-                                        variant="circle"
-                                        style="
-                                            margin-right: 16px;
-                                            --el-skeleton-circle-size: 20px;
+                        <template v-if="!loading" #item="{ element }">
+                            <div v-if="element.show" class="draggable">
+                                <div class="draggable_component">
+                                    <el-collapse
+                                        v-model="
+                                            active_names[element.active_names]
                                         "
-                                    />
-                                    <el-skeleton-item
-                                        variant="text"
-                                        style="width: 80%"
-                                    />
+                                        @change="handleChange"
+                                    >
+                                        <el-collapse-item
+                                            :name="element.active_names"
+                                            class="fs_box_board"
+                                        >
+                                            <template #title>
+                                                <div
+                                                    class="fs_component_header"
+                                                >
+                                                    {{ element.heading }}
+                                                </div>
+                                            </template>
+                                            <component
+                                                :is="element.component"
+                                                :component_data="
+                                                    total_data[
+                                                        element.component
+                                                    ]
+                                                "
+                                            >
+                                            </component>
+                                        </el-collapse-item>
+                                    </el-collapse>
                                 </div>
-                            </template>
-                        </el-skeleton>
+                            </div>
+                        </template>
+                    </draggable>
+                </el-col>
+                <el-col :span="12">
+                    <draggable
+                        v-model="dashboard_param.second_column"
+                        ghost-class="ghost"
+                        group="dashboard_component"
+                        item-key="id"
+                    >
+                        <template #item="{ element }">
+                            <div v-if="element.show" class="draggable">
+                                <div class="draggable_component">
+                                    <el-collapse
+                                        v-model="
+                                            active_names[element.active_names]
+                                        "
+                                        @change="handleChange"
+                                    >
+                                        <el-collapse-item
+                                            :name="element.active_names"
+                                            class="fs_box_board"
+                                        >
+                                            <template #title>
+                                                <div
+                                                    class="fs_component_header"
+                                                >
+                                                    {{ element.heading }}
+                                                </div>
+                                            </template>
+                                            <component
+                                                :is="element.component"
+                                                :component_data="
+                                                    total_data[
+                                                        element.component
+                                                    ]
+                                                "
+                                            >
+                                            </component>
+                                        </el-collapse-item>
+                                    </el-collapse>
+                                </div>
+                            </div>
+                        </template>
+                    </draggable>
+                </el-col>
+            </el-row>
+
+            <el-drawer
+                custom-class="fs_dashboard_settings"
+                v-model="drawer"
+                :with-header="false"
+                size="25%"
+            >
+                <div class="fs_drawer_content">
+                    <div class="fs_settings_drawer">
+                        <img
+                            :src="
+                                appVars.asset_url +
+                                'images/ComponentIcons/GreetingMessage.png'
+                            "
+                            alt="Greetings"
+                            class="fs_drawer_icon"
+                        /><br>
                         <el-checkbox
-                            v-model="component_list_data.show"
-                            :label="component_list_data.component"
-                        />
+                            v-model="dashboard_param.greetingMessage"
+                            >{{ translate("Greeting Message") }}</el-checkbox
+                        >
+                    </div>
+
+                    <div v-for="column_data in dashboard_param">
+                        <div
+                            class="fs_settings_drawer"
+                            v-for="component_list_data in column_data"
+                        >
+                            <img
+                                :src="
+                                    appVars.asset_url +
+                                    'images/ComponentIcons/' +
+                                    component_list_data.component +
+                                    '.png'
+                                "
+                                :alt="component_list_data.component"
+                                class="fs_drawer_icon"
+                            /><br>
+                            <el-checkbox
+                                v-model="component_list_data.show"
+                                :label="
+                                    translate(component_list_data.component)
+                                "
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <template #footer>
-                <div style="flex: auto">
-                    <el-button @click="cancelClick">Close</el-button>
-                </div>
-            </template>
-        </el-drawer>
-    </div>
+                <template #footer>
+                    <div style="flex: auto">
+                        <el-button @click="cancelClick">{{
+                            translate("Close")
+                        }}</el-button>
+                    </div>
+                </template>
+            </el-drawer>
+        </div>
 
-    <div class="fs_padded_20" v-else>
-        <el-row :gutter="20">
-            <el-col :span="12">
-                <div class="fs_component_skeleton">
-                    <el-skeleton :rows="6" animated />
-                </div>
-            </el-col>
-            <el-col :span="12">
-                <div class="fs_component_skeleton">
-                    <el-skeleton :rows="6" animated />
-                </div>
-            </el-col>
-        </el-row>
+        <div class="fs_padded_20" v-else>
+            <el-row :gutter="20">
+                <el-col :span="12">
+                    <div class="fs_component_skeleton">
+                        <el-skeleton :rows="6" animated />
+                    </div>
+                </el-col>
+                <el-col :span="12">
+                    <div class="fs_component_skeleton">
+                        <el-skeleton :rows="6" animated />
+                    </div>
+                </el-col>
+            </el-row>
+        </div>
     </div>
 </template>
 
@@ -190,6 +204,9 @@ import TicketStatistics from "./TicketStatistics.vue";
 import SuggestedTicket from "./SuggestedTicket.vue";
 import MentionedTicket from "./MentionedTicket.vue";
 import TicketsByProduct from "./TicketsByProduct";
+import { computed, watch, onMounted, reactive, toRefs } from "vue";
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
+import {useRouter} from "vue-router";
 
 export default {
     name: "DynamicDashboard",
@@ -201,10 +218,20 @@ export default {
         TicketsByProduct,
     },
 
-    data() {
-        return {
+    setup() {
+        const {
+            appVars,
+            get,
+            translate,
+            handleError,
+            saveData,
+            getData,
+            moment,
+        } = useFluentHelper();
+        const router = useRouter();
+        const state = reactive({
             drawer: false,
-            me: this.appVars.me,
+            me: appVars.me,
             can_access_unassigned_tickets: false,
             loading: false,
             dashboard_notice: "",
@@ -225,33 +252,33 @@ export default {
                 first_column: [
                     {
                         id: 1,
-                        component: 'MentionedTicket',
+                        component: "MentionedTicket",
                         show: true,
-                        heading: this.$t('Your bookmarked tickets'),
-                        active_names: 'mentionedTicket',
+                        heading: translate("Your Bookmarked Tickets"),
+                        active_names: "mentionedTicket",
                     },
                     {
                         id: 2,
-                        component: 'TicketStatistics',
+                        component: "TicketStatistics",
                         show: true,
-                        heading: this.$t('Your Overview for Today'),
-                        active_names: 'ticketStatistics',
+                        heading: translate("Your Overview For Today"),
+                        active_names: "ticketStatistics",
                     },
                 ],
                 second_column: [
                     {
                         id: 3,
-                        component: 'SuggestedTicket',
+                        component: "SuggestedTicket",
                         show: true,
-                        heading: this.$t('dashboard_sub_heading'),
-                        active_names: 'suggestedTicket',
+                        heading: translate("dashboard_sub_heading"),
+                        active_names: "suggestedTicket",
                     },
                     {
                         id: 4,
-                        component: 'TicketsByProduct',
+                        component: "TicketsByProduct",
                         show: true,
-                        heading: this.$t('active_tickets_by_products'),
-                        active_names: 'ticketsByProduct',
+                        heading: translate("active_tickets_by_products"),
+                        active_names: "ticketsByProduct",
                     },
                 ],
                 greetingMessage: true,
@@ -260,28 +287,26 @@ export default {
             app_ready: false,
             active_names: {},
             default_active_names: {
-                mentionedTicket: ['mentionedTicket'],
-                ticketStatistics: ['ticketStatistics'],
-                suggestedTicket: ['suggestedTicket'],
-                ticketsByProduct: ['ticketsByProduct'],
+                mentionedTicket: ["mentionedTicket"],
+                ticketStatistics: ["ticketStatistics"],
+                suggestedTicket: ["suggestedTicket"],
+                ticketsByProduct: ["ticketsByProduct"],
             },
-        };
-    },
-    watch: {
-        dashboard_param: {
-            handler(newValue, oldValue) {
-                this.$saveData('dashboard_settings_data', newValue);
-                this.$saveData(
-                    'prev_dashboard_default_settings',
-                    this.dashboard_settings_data
+        });
+
+        watch(
+            () => state.dashboard_param,
+            (newValue, oldValue) => {
+                saveData("dashboard_settings_data", newValue);
+                saveData(
+                    "prev_dashboard_default_settings",
+                    state.dashboard_settings_data
                 );
             },
-            deep: true,
-        },
-    },
-    computed: {
-        greetingTime() {
-            const m = this.moment();
+            { deep: true }
+        );
+        const greetingTime = computed(() => {
+            const m = moment();
             let g = null; //return g
 
             if (!m || !m.isValid()) {
@@ -296,70 +321,68 @@ export default {
                 currentHour >= split_afternoon &&
                 currentHour <= split_evening
             ) {
-                g = this.$t("afternoon");
+                g = translate("afternoon");
             } else if (currentHour >= split_evening) {
-                g = this.$t("evening");
+                g = translate("evening");
             } else {
-                g = this.$t("morning");
+                g = translate("morning");
             }
 
             return g;
-        },
-    },
-    methods: {
-        handleChange() {
-            this.$saveData("component_collapse_data", this.active_names);
-        },
+        });
 
-        defalutSettings() {
-            this.$saveData(
-                "dashboard_settings_data",
-                this.dashboard_settings_data
-            );
-            this.$saveData(
-                "component_collapse_data",
-                this.default_active_names
-            );
-            this.getComponentState();
-            this.getDashboardSettings();
-        },
-        cancelClick() {
-            this.drawer = false;
-        },
-        checkMove: function (e) {
+        function handleChange() {
+            saveData("component_collapse_data", state.active_names);
+        }
+
+        function defalutSettings() {
+            saveData("dashboard_settings_data", state.dashboard_settings_data);
+            saveData("component_collapse_data", state.default_active_names);
+            getComponentState();
+            getDashboardSettings();
+        }
+
+        function cancelClick() {
+            state.drawer = false;
+        }
+
+        function checkMove(e) {
             window.console.log("Future index: " + e.draggedContext.futureIndex);
-        },
-        getComponentState() {
-            let collapseState = this.$getData("component_collapse_data");
+        }
+
+        function getComponentState() {
+            let collapseState = getData("component_collapse_data");
             if (collapseState) {
-                this.active_names = collapseState;
+                state.active_names = collapseState;
             } else {
-                this.active_names = this.default_active_names;
+                state.active_names = state.default_active_names;
             }
-        },
-        getDashboardSettings() {
-            let prev_dashboard_default_settings = this.$getData(
+        }
+
+        function getDashboardSettings() {
+            let prev_dashboard_default_settings = getData(
                 "prev_dashboard_default_settings"
             );
-            this.settings_data = this.$getData("dashboard_settings_data");
+            state.settings_data = getData("dashboard_settings_data");
             if (
                 JSON.stringify(prev_dashboard_default_settings) ===
-                JSON.stringify(this.dashboard_settings_data)
+                JSON.stringify(state.dashboard_settings_data)
             ) {
-                this.dashboard_param = this.settings_data;
+                state.dashboard_param = state.settings_data;
             } else {
-                this.$saveData(
+                saveData(
                     "prev_dashboard_default_settings",
-                    this.dashboard_settings_data
+                    state.dashboard_settings_data
                 );
-                this.dashboard_param = this.$getData(
+                state.dashboard_param = getData(
                     "prev_dashboard_default_settings"
                 );
             }
-        },
-        fetchStat() {
-            this.loading = true;
-            this.$get("tickets/my_stats", {
+        }
+
+        function fetchStat() {
+            state.loading = true;
+            get("tickets/my_stats", {
                 with: [
                     "suggested_tickets",
                     "overall_stats",
@@ -369,85 +392,126 @@ export default {
                 ],
             })
                 .then((response) => {
-                    this.dashboard_notice = response.dashboard_notice;
-                    this.total_data.MentionedTicket = response.ticket_to_watch;
-                    this.total_data.SuggestedTicket.suggested_tickets =
+                    state.dashboard_notice = response.dashboard_notice;
+                    state.total_data.MentionedTicket = response.ticket_to_watch;
+                    state.total_data.SuggestedTicket.suggested_tickets =
                         response.suggested_tickets;
-                    this.total_data.SuggestedTicket.overall_stats =
+                    state.total_data.SuggestedTicket.overall_stats =
                         response.overall_stats;
-                    this.total_data.TicketStatistics.stats = response.stats;
-                    this.total_data.TicketStatistics.individual_stat =
+                    state.total_data.TicketStatistics.stats = response.stats;
+                    state.total_data.TicketStatistics.individual_stat =
                         response.individual_stat;
-                    this.total_data.TicketsByProduct =
+                    state.total_data.TicketsByProduct =
                         response.tickets_by_product;
 
-                    this.app_ready = true;
+                    state.app_ready = true;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-    },
-    mounted() {
-        if (!this.appVars.mailboxes.length) {
-            this.$router.push({ name: "setup", query: { t: Date.now() } });
         }
-        this.can_access_unassigned_tickets =
-            this.appVars.me.permissions.indexOf(
-                "fst_manage_unassigned_tickets"
-            ) > -1;
-        this.fetchStat();
-        this.getDashboardSettings();
-        this.getComponentState();
-        jQuery(
-            ".update-nag,.notice, #wpbody-content > .updated, #wpbody-content > .error"
-        ).remove();
+
+        onMounted(() => {
+            if (!appVars.mailboxes.length) {
+                router.push({ name: "setup", query: { t: Date.now() } });
+            }
+            state.can_access_unassigned_tickets =
+                appVars.me.permissions.indexOf(
+                    "fst_manage_unassigned_tickets"
+                ) > -1;
+            fetchStat();
+            getDashboardSettings();
+            getComponentState();
+            jQuery(
+                ".update-nag,.notice, #wpbody-content > .updated, #wpbody-content > .error"
+            ).remove();
+        });
+
+        return {
+            ...toRefs(state),
+            greetingTime,
+            handleChange,
+            defalutSettings,
+            cancelClick,
+            checkMove,
+            getComponentState,
+            getDashboardSettings,
+            fetchStat,
+            appVars,
+            get,
+            translate,
+            handleError,
+            saveData,
+            getData,
+            moment,
+        };
     },
 };
 </script>
 
+<style>
+.el-collapse-item__arrow,
+.el-collapse-item__arrow.is-active,
+.el-collapse-item__arrow {
+    cursor: pointer !important;
+    background-color: white;
+    border-radius: 50%;
+    height: 30px;
+    width: 30px;
+}
+.el-collapse-item__arrow:hover {
+    background: #54b47e;
+    color: white;
+}
+.el-collapse-item__wrap {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-left: 1px solid rgb(226, 228, 231);
+    box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
+}
+
+.el-collapse-item__header {
+    padding: 10px 30px;
+}
+
+</style>
+
 <style scoped>
 .ghost {
-    opacity: 0.2;
-    background: rgb(201, 174, 122);
-    color: white;
-    margin: 10px;
-    margin: auto;
-    display: block;
-    border-radius: 5px;
-    overflow: hidden;
+    opacity: 0.5;
     text-align: center;
+    border-style: dashed;
+    border-radius: 10px;
+    max-width: 670px;
+    float: none;
 }
 
 .fs_settings_drawer {
-    width: 70%;
-    border-radius: 10px;
+    width: 85%;
     padding: 10px;
     margin-bottom: 10px;
     background: #fff;
     display: block;
     overflow: hidden;
-    border: 1px solid #e3e8ee;
 }
 
-.fs_drawer_button {
-    /*float: right;*/
-}
 .draggable_component {
-    max-width: 680px;
+    max-width: 670px;
     margin-left: auto;
     margin-bottom: 20px;
-    border-radius: 15px;
-    border: 1px solid rgb(226, 228, 231);
+    border-radius: 10px;
     box-shadow: 0 1px 4px rgb(18 25 97 / 8%);
 }
 .fs_head_section {
     display: flex;
     justify-content: space-between;
     margin-bottom: 25px;
+    max-width: 1160px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .fs_head_section h1 {
     line-height: 1.4;
@@ -455,7 +519,7 @@ export default {
     width: 100%;
     margin-left: auto;
 }
-.fs_head_section > :first-child  {
+.fs_head_section > :first-child {
     flex-basis: 50%;
 }
 .fs_button_group {
@@ -478,12 +542,38 @@ export default {
     border-radius: 10px;
     padding: 10px;
 }
-.fs_box_header {
-    cursor: move;
-}
 
 .dashboard .el-row .el-col:last-child .draggable_component {
     margin-right: auto;
     margin-left: 0;
 }
+.fs_dashboard_wrapper {
+    margin: 0% 5% 0% 5%;
+}
+
+.el-collapse-item {
+    position: relative;
+}
+.fs_component_header {
+    width: 80%;
+    clear: both;
+    overflow: hidden;
+    margin: 0;
+    font-weight: 500;
+    color: #000000;
+    cursor: move;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 25px;
+}
+.fs_drawer_icon {
+    width: 75%;
+    height: 75%;
+    border: 1px solid #453b391c;
+    border-radius: 5px;
+}
+
 </style>

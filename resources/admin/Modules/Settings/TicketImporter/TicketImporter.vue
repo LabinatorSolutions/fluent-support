@@ -29,9 +29,9 @@
                         <div :class="'grid-content fs_'+setting.handler">
                             <el-card :body-style="{ padding: '4px' }" :header=setting.name style="margin: 10px 0">
                                 <div style="padding: 14px">
-                                    <h4 v-if="setting?.type=='sass'">Migrate tickets from <b>{{setting.name}}</b> in one click.</h4>
-                                    <h4 v-else>This migrator will migrate total <b>{{setting.tickets}}</b> tickets with <b>{{setting.replies}}</b> replies and <b>{{setting.customers}}</b> customers. If you already migrate tickets then it won't migrate existing tickets.</h4>
-                                    <span v-if="setting.last_migrated">Last Migration: <b>{{setting.last_migrated}}</b></span>
+                                    <h4 v-if="setting?.type=='sass'">{{$t('Migrate tickets from')}} <b>{{setting.name}}</b> {{$t('in one click.')}}</h4>
+                                    <h4 v-else>{{$t('This migrator will migrate total')}} <b>{{setting.tickets}}</b> {{$t('tickets with')}} <b>{{setting.replies}}</b> {{$t('replies and')}} <b>{{setting.customers}}</b> {{$t("customers. If you already migrate tickets then it won't migrate existing tickets.")}}</h4>
+                                    <span v-if="setting.last_migrated">{{$t('Last Migration:')}} <b>{{setting.last_migrated}}</b></span>
                                     <el-progress
                                         v-if="imporing && currently_importing == setting.handler"
                                         :text-inside="true"
@@ -55,13 +55,13 @@
                                         </el-button>
                                     </div>
 
-                                    <el-dialog v-model="import_done" title="Delete Imported Tickets">
-                                        <span> Do you want to delete all imported tickets and its data? </span>
+                                    <el-dialog v-if=!had_tickets v-model="import_done" title="Delete Imported Tickets">
+                                        <span> {{$t('Do you want to delete all imported tickets and its data?')}} </span>
                                         <template #footer>
                                           <span class="dialog-footer">
-                                            <el-button @click="import_done = false" type="primary">No</el-button>
+                                            <el-button @click="import_done = false" type="primary">{{$t('No')}}</el-button>
                                             <el-button type="danger" @click="deleteOldTicketsWithData(currently_importing)">
-                                                Yes
+                                                {{$t('Yes')}}
                                             </el-button>
                                           </span>
                                         </template>
@@ -73,10 +73,9 @@
                     </el-col>
                 </el-row>
                 <div class="fs_box_body" v-if="!loading && !settings.length">
-                    <h2>Import from other Support Tickets Plugins</h2>
-                    <p>If you want to migrate tickets from other ticketing system like <b>Awesome Support</b> or <b>Support
-                        Candy</b> WordPress plugin then you can migrate from this section.</p>
-                    <p>Currently no migration is available for this site</p>
+                    <h2>{{$t('Import from other Support Tickets Plugins')}}</h2>
+                    <p>{{$t('If you want to migrate tickets from other ticketing system like')}} <b>{{$t('Awesome Support')}}</b> {{$t('or')}} <b>{{$t('Support Candy')}}</b> {{$t('WordPress plugin then you can migrate from this section.')}}</p>
+                    <p>{{$t('Currently no migration is available for this site')}}</p>
                 </div>
             </div>
         </div>
@@ -106,7 +105,8 @@ export default {
             openSettings: false,
             config:{},
             sass_systems: ['helpscout'],
-            import_from_sass: false
+            import_from_sass: false,
+            had_tickets: true
         }
     },
 
@@ -158,6 +158,10 @@ export default {
                             position: 'bottom-right'
                         })
                         this.imporing = false;
+
+                        if(response.had_tickets){
+                            this.had_tickets = response.had_tickets == 'yes' ? false : true;
+                        }
 
                         if(!this.sass_systems.includes(handler)){
                             this.import_done = true;

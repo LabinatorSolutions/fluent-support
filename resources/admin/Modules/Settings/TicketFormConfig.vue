@@ -2,94 +2,124 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>{{$t('Ticket Form Settings')}}</h3>
+                <h3>{{ translate("Ticket Form Settings") }}</h3>
             </div>
-            <div class="fs_box_actions">
-
-            </div>
+            <div class="fs_box_actions"></div>
         </div>
         <template v-if="has_pro">
-            <div style="padding: 20px;" v-if="!fetching" class="fs_box_body">
-                <form-builder :fields="settings_fields" :form-data="settings"/>
+            <div style="padding: 20px" v-if="!fetching" class="fs_box_body">
+                <form-builder :fields="settings_fields" :form-data="settings" />
                 <div style="display: block">
-                    <el-button @click="saveSettings()" :disabled="saving" v-loading="saving" type="success">
-                        {{$t('Save Settings')}}
+                    <el-button
+                        @click="saveSettings()"
+                        :disabled="saving"
+                        v-loading="saving"
+                        type="success"
+                    >
+                        {{ translate("Save Settings") }}
                     </el-button>
                 </div>
             </div>
 
-            <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
-                <el-skeleton :rows="5" animated/>
+            <div
+                style="padding: 20px; background: white"
+                class="fs_box_body"
+                v-else
+            >
+                <el-skeleton :rows="5" animated />
             </div>
         </template>
         <div class="fs_narrow_promo" v-else>
-            <h3>{{$t('ticket_form_notice_for_pro')}}</h3>
-            <p>{{ $t('pro_promo') }}</p>
-            <a target="_blank" rel="noopener" href="https://fluentsupport.com"
-               class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
+            <h3>{{ translate("ticket_form_notice_for_pro") }}</h3>
+            <p>{{ translate("pro_promo") }}</p>
+            <a
+                target="_blank"
+                rel="noopener"
+                href="https://fluentsupport.com"
+                class="el-button el-button--success"
+                >{{ translate("Upgrade To Pro") }}</a
+            >
         </div>
     </div>
 </template>
 
 <script type="text/babel">
-import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
+import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
+import { onMounted, reactive, toRefs } from "vue";
+import {
+    useFluentHelper,
+    useNotify,
+} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
-    name: 'TicketFormConfig',
+    name: "TicketFormConfig",
     components: {
-        FormBuilder
+        FormBuilder,
     },
-    data() {
-        return {
+    setup() {
+        const { get, post, handleError, has_pro, setTitle, translate } =
+            useFluentHelper();
+
+        const { notify } = useNotify();
+
+        const state = reactive({
             settings: {},
             fetching: false,
             settings_fields: {},
             saving: false,
-            settings_key: 'ticket_form_settings'
-        }
-    },
-    methods: {
-        fetchSettings() {
-            this.fetching = true;
-            this.$get('pro/form-settings', {
-                with: ['fields']
+            settings_key: "ticket_form_settings",
+        });
+
+        const fetchSettings = () => {
+            state.fetching = true;
+            get("pro/form-settings", {
+                with: ["fields"],
             })
-                .then(response => {
-                    this.settings = response.settings;
-                    this.settings_fields = response.settings_fields;
+                .then((response) => {
+                    state.settings = response.settings;
+                    state.settings_fields = response.settings_fields;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.fetching = false;
+                    state.fetching = false;
                 });
-        },
-        saveSettings() {
-            this.saving = true;
-            this.$post('pro/form-settings', {
-                settings: this.settings
+        };
+
+        const saveSettings = () => {
+            state.saving = true;
+            post("pro/form-settings", {
+                settings: state.settings,
             })
-                .then(response => {
-                    this.$notify({
-                        type: 'success',
+                .then((response) => {
+                    notify({
+                        type: "success",
                         message: response.message,
-                        position: 'bottom-right'
-                    })
+                        position: "bottom-right",
+                    });
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.saving = false;
+                    state.saving = false;
                 });
-        }
+        };
+
+        onMounted(() => {
+            if (has_pro) {
+                fetchSettings();
+            }
+            setTitle("Ticket Form Config");
+        });
+
+        return {
+            ...toRefs(state),
+            translate,
+            fetchSettings,
+            saveSettings,
+        };
     },
-    mounted() {
-        if (this.has_pro) {
-            this.fetchSettings();
-        }
-        this.$setTitle('Ticket Form Config');
-    }
-}
+};
 </script>

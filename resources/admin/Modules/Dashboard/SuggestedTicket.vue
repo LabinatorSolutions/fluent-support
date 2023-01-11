@@ -48,41 +48,50 @@
             </li>
         </ul>
 
-        <p class="fs_padded_20 fs_stat_helper" v-else>
-            {{ $t("dashboard_all_catch_up") }}
-            <b>{{ $t("Good Job") }}, {{ me.full_name }}!</b>
+        <p class="fs_stat_helper" v-else>
+            {{ translate("dashboard_all_catch_up") }}
+            <b>{{ translate("Good Job") }}, {{ me.full_name }}!</b>
         </p>
 
-        <p
-            class="fs_padded_20 fs_stat_helper"
-            v-if="component_data.overall_stats"
-        >
-            <span class="fs_highlight"
+        <p class="fs_stat_helper" v-if="component_data.overall_stats">
+            <span style="color: #ff7c7c"
                 >{{ component_data.overall_stats.waiting_tickets }}
-                {{ $t("tickets") }}</span
+                {{ translate("tickets") }}</span
             >
-            {{ $t("are waiting for reply with") }}
-            <span class="fs_highlight">
-                {{ $t("average") }}
+            {{ translate("are waiting for reply with") }}
+            <span style="color: #88c379">
+                {{ translate("average") }}
                 {{ component_data.overall_stats.average_waiting }}
-                {{ $t("wait time") }}</span
+                {{ translate("wait time") }}</span
             >
-            & {{ $t("max wait time") }}
-            <span class="fs_highlight">{{
+            & {{ translate("max wait time") }}
+            <span style="color: #7280ff">{{
                 component_data.overall_stats.max_waiting
             }}</span>
         </p>
     </div>
 </template>
 <script>
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     props: ["component_data"],
     name: "SuggestedTicket",
-    data() {
+    setup() {
+        const {
+            appVars
+        } = useFluentHelper();
+        const { translate } = useFluentHelper();
+        const me = appVars.me;
         return {
-            me: this.appVars.me,
+            translate,
+            appVars,
+            me
         };
     },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.fs_stat_helper {
+    padding: 5px 30px;
+}
+</style>

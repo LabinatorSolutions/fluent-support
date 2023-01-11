@@ -124,11 +124,9 @@ export default class FluentFramework {
     $del(url, options = {}) {
         return Rest.delete(url, options);
     }
-
     $put(url, options = {}) {
         return Rest.put(url, options);
     }
-
     $patch(url, options = {}) {
         return Rest.patch(url, options);
     }

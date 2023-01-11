@@ -143,6 +143,8 @@
 <script type="text/babel">
 import CustomerForm from './_CustomerForm';
 import FluentCrmProfile from '@/admin/Modules/Tickets/parts/_CrmProfile';
+import {onMounted, reactive, toRefs} from "vue";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "CustomerPage",
@@ -151,82 +153,120 @@ export default {
         CustomerForm,
         FluentCrmProfile
     },
-    data() {
-        return {
-            loading: false,
-            loading_sidebar: false,
-            customer: false,
-            widgets: false,
+    setup(props, context) {
+        const {
+            appVars,
+            translate,
+            get,
+            post,
+            handleError
+        } = useFluentHelper();
+
+        const { notify } = useNotify();
+        const customer_id = props.customer_id;
+        const state = reactive({
+            customer: {},
             tickets: [],
+            widgets: {},
+            loading_sidebar: false,
             fluentcrm_profile: false,
-            upload_url: this.appVars.rest.url+'/customers/profile_image/'+this.customer_id,
+            loading: false,
+            upload_url: appVars.rest.url+`/customers/profile_image/'${customer_id}`,
             requestHeaders: {
-                'X-WP-Nonce': this.appVars.rest.nonce
+                //'X-WP-Nonce': fluentcrm.nonce
             }
-        }
-    },
-    methods: {
-        fetchCustomer() {
-            this.loading = !this.loading;
-            this.$get('customers/' + this.customer_id, {
-                with: ['widgets', 'tickets', 'fluentcrm_profile']
-            })
-                .then(response => {
-                    this.customer = response.customer;
-                    this.widgets = response.widgets;
-                    this.tickets = response.tickets;
-                    this.fluentcrm_profile = response.fluentcrm_profile;
+        });
+
+        const fetchCustomer = async () => {
+            state.loading = !state.loading;
+            try {
+                await get(`customers/${customer_id}`, {
+                    with: ['widgets', 'tickets', 'fluentcrm_profile']
+                }).then(response => {
+                    state.customer = response.customer;
+                    state.tickets = response.tickets;
+                    state.widgets = response.widgets;
+                    state.fluentcrm_profile = response.fluentcrm_profile;
                 })
-                .catch(errors => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = !this.loading;
-                })
-        },
-        handleAvatarSuccess(res, file) {
-            this.customer.photo = URL.createObjectURL(file.raw);
-            this.$notify.success({
-                message: 'Profile picture has been updated successfully',
-                position: 'bottom-right'
-            });
-        },
-        handleAvatarError(err, _){
+                    .catch(errors => {
+                        this.$handleError(errors);
+                    })
+                    .always(() => {
+                        state.loading = !state.loading;
+                    });
+            } catch (e) {
+                handleError(e);
+            }
+        };
+
+        const handleAvatarSuccess = (response, file) => {
+            if (response.success) {
+                state.customer.photo = URL.createObjectURL(file.raw);
+                notify({
+                    title: translate('Success'),
+                    message: translate('Profile picture has been updated successfully'),
+                    type: 'success'
+                });
+            }
+        };
+
+        const handleAvatarError = (err, _) => {
             let errorMessage = JSON.parse(err.message);
 
-            this.$notify.error({
-                message: errorMessage.message,
-                position: 'bottom-right'
+            notify.error({
+                message: translate(errorMessage.message),
+                position: 'bottom-right',
+                type: 'error'
             });
-        },
-        showIcon() {
-            document.querySelector('i.fs_customer_avatar_upload').style.display = 'inline-flex';
-        },
-        hideIcon() {
-            document.querySelector('i.fs_customer_avatar_upload').style.display = 'none';
-        },
-        confirmResetProfile(){
-            this.loading = !this.loading;
-            this.$post('customers/reset_avatar/' + this.customer_id)
-                .then(response => {
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    });
+        };
 
-                    this.fetchCustomer();
-                })
-                .catch(errors => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.loading = !this.loading;
-                })
+        const showIcon = () => {
+            document.querySelector('i.fs_customer_avatar_upload').style.display = 'inline-flex';
+        };
+
+        const hideIcon = () => {
+            document.querySelector('i.fs_customer_avatar_upload').style.display = 'none';
+        };
+        const confirmResetProfile = async () => {
+            state.loading = !state.loading;
+            try {
+                await post(`customers/reset_avatar/${customer_id}`)
+                    .then(response => {
+                        notify.success({
+                            message: translate(response.message),
+                            position: 'bottom-right',
+                            type: 'success'
+                        })
+                    })
+                    .catch(errors => {
+                        handleError(errors);
+                    })
+                    .always(() => {
+                        state.loading = !state.loading;
+                    });
+            } catch (e) {
+                handleError(e);
+            }
+        }
+
+        onMounted(() => {
+            fetchCustomer();
+        });
+
+        return {
+            fetchCustomer,
+            handleAvatarSuccess,
+            handleAvatarError,
+            showIcon,
+            hideIcon,
+            confirmResetProfile,
+            translate,
+            post,
+            handleError,
+            notify,
+            ...toRefs(state)
         }
     },
-    mounted() {
-        this.fetchCustomer();
-    }
 }
 </script>
 
