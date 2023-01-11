@@ -124,14 +124,12 @@ export default {
             };
 
             jQuery.ajax(settings).done(response => {
-                console.log(response._embedded.mailboxes)
                 that.mailboxes = response._embedded.mailboxes;
             }).fail(error => {
                 this.$handleError(error);
             });
         },
         handleCancel() {
-            console.log(this)
             this.show = false;
         },
     }
