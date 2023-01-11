@@ -13,7 +13,7 @@
         <template v-if="item.type">
             <el-row :gutter="30">
                 <el-col :sm="12" :xs="24">
-                    <el-form-item :label="$t('Public Label')">
+                    <el-form-item :label="$t('Admin Label (Optional)')">
                         <el-input @keyup.native="maybeSetSlug()" :placeholder="$t('Custom Field Public Label')"
                                   v-model="item.label"></el-input>
                     </el-form-item>
@@ -45,7 +45,7 @@
             <el-form-item v-if="hasOptions(item.type)" :label="$t('Field Value Options')">
                 <ul class="fluentcrm_option_lists">
                     <li v-for="(optionName, optionIndex) in item.options" :key="optionIndex">
-                        <el-input placeholder="Option Value" v-model="item.options[optionIndex]" type="text">
+                        <el-input :placeholder="$t('Option Value')" v-model="item.options[optionIndex]" type="text">
                             <template #suffix>
                                 <i @click="removeOptionItem(optionIndex)" class="fluentcrm_clickable el-icon-close"></i>
                             </template>
@@ -125,7 +125,7 @@
                             <template
                                 v-if="condition.operator && condition.item_key && keyedFields[condition.item_key]">
                                 <el-select v-if="keyedFields[condition.item_key].options" v-model="condition.value"
-                                           placeholder="Select Value">
+                                           :placeholder="$t('Select Value')">
                                     <el-option v-for="option in keyedFields[condition.item_key].options" :key="option"
                                                :label="option" :value="option"></el-option>
                                 </el-select>
@@ -144,10 +144,10 @@
                     </tr>
                     </tbody>
                 </table>
-                <el-form-item label="Condition Match Type">
+                <el-form-item :label="$t('Condition Match Type')">
                     <el-radio-group v-model="item.match_type">
-                        <el-radio label="all">{{$t('Match all conditions')}}</el-radio>
-                        <el-radio label="any">{{$t('Match any conditions')}}</el-radio>
+                        <el-radio :label="$t('all')">{{$t('Match all conditions')}}</el-radio>
+                        <el-radio :label="$t('any')">{{$t('Match any conditions')}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
             </template>

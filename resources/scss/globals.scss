@@ -96,22 +96,24 @@
     }
 
     display: block;
-    width: 100%;
-    overflow: hidden;
+    max-width: 1160px;
+    margin-left: auto;
+    margin-right: auto;
 
     .fs_box_header {
         width: auto;
         clear: both;
         overflow: hidden;
         margin: 0;
-        padding: 10px 15px;
+        padding: 10px 30px;
         font-weight: 500;
-        color: #3C434A;
-        // cursor: move;
+        color: #000000;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        font-size: 17px;
+        font-style: normal;
+        font-size: 18px;
+        line-height: 25px;
 
         .fs_header_title {
             display: flex;
@@ -205,21 +207,14 @@ span.fs_inline_avatars {
 }
 
 ul.fs_card_list {
-    padding: 0;
+    padding: 0px 15px;
     margin: 0;
     list-style: none;
-    // padding: 10px;
-    // margin: 0;
-    // list-style: none;
 
     li {
         margin: 0;
         padding: 8px 15px;
         border-bottom: 1px solid #e3e8ed;
-        // margin-bottom: 10px;
-        // padding: 8px 15px;
-        // border: 1px solid #e3e8ed;
-        // border-radius: 5px;
 
         &:last-child {
             border: 0;
@@ -228,7 +223,7 @@ ul.fs_card_list {
 }
 
 .fs_dashboard_box {
-    max-width: 680px;
+    max-width: 1360px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 24px;
@@ -242,6 +237,7 @@ ul.fs_card_list {
             display: inline-block;
             vertical-align: top;
             font-size: 16px;
+            padding: 0px 25px;
         }
 
         &:hover {
@@ -506,11 +502,40 @@ p.fs_customer_address {
 
 .fs_box_board {
     .el-collapse-item__header{
-        background-color: #f9f9f9;
-        margin: auto;
-        border-radius: 5px;
+        background-color: #F5F5F5;
+        border-radius: 10px;
         height: 60px;
+        cursor: move;
+        border: 1px solid rgb(226, 228, 231);
+        box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
+
     }
+    .el-collapse-item__header.is-active{
+        border-radius: 10px 10px 0px 0px;
+    }
+    .el-collapse-item__header:hover{
+        background-color: #EDF8F2;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 830px) {
+    .fs_box_board {
+    .el-collapse-item__header{
+        background-color: #F5F5F5;
+        border-radius: 10px;
+        height: auto;
+        cursor: move;
+        border: 1px solid rgb(226, 228, 231);
+        box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
+
+    }
+    .el-collapse-item__header.is-active{
+        border-radius: 10px 10px 0px 0px;
+    }
+    .el-collapse-item__header:hover{
+        background-color: #EDF8F2;
+    }
+}
 }
 
 ul.fs_contact_results {

@@ -3,6 +3,7 @@
         <ul v-if="component_data.length" class="fs_card_list">
             <li v-for="ticket in component_data" :key="ticket.id">
                 <router-link
+                class="fs_mentioned_ticket_list"
                     tag="li"
                     :to="{
                         name: 'view_ticket',
@@ -11,10 +12,6 @@
                 >
                     <div class="fs_suggested_ticket">
                         <div class="fs_ticket_info">
-                            <img
-                                class="fs_inline_photo_40"
-                                :src="ticket.customer.photo"
-                            />
                             <span
                                 style="
                                     color: #3c434a;
@@ -46,17 +43,26 @@
         </ul>
         <div v-else class="fs_no_book_tk">
             <span>
-                {{ $t('no_bookmarked_ticket') }}
+                {{ translate('no_bookmarked_ticket') }}
             </span>
         </div>
     </div>
 </template>
 <script>
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     props: ["component_data"],
     name: "MentionedTicket",
-    data() {
-        return {};
+    setup() {
+        
+        const {
+
+            translate,
+
+        } = useFluentHelper();
+        return{
+            translate
+        };
     },
 };
 </script>
@@ -65,7 +71,12 @@ export default {
         font-size: 15px;
         color: #3c434a;
         font-weight: 400;
-        padding: 0 15px;
+        padding: 0px 30px;
         display: block;
+        margin-top: 25px;
+
+    }
+    .fs_mentioned_ticket_list{
+        text-decoration: none;
     }
 </style>
