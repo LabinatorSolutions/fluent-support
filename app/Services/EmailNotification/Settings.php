@@ -15,7 +15,8 @@ class Settings
             'ticket_closed_by_agent_email_to_customer',
             'ticket_created_email_to_admin',
             'ticket_replied_by_customer_email_to_admin',
-            'ticket_agent_on_change'
+            'ticket_agent_on_change',
+            'ticket_created_by_agent_email_to_customer'
         ]);
         return $key;
     }
@@ -227,6 +228,14 @@ class Settings
                 'email_subject'  => 'Ticket Agent Change: {{ticket.title}} #{{ticket.id}}',
                 'default_status' => 'yes',
                 'send_attachments'=> 'no'
+            ],
+            'ticket_created_by_agent_email_to_customer' => [
+                'key' => 'ticket_created_by_agent_email_to_customer',
+                'title' => __('Ticket Created by Agent (To Customer)', 'fluent-support'),
+                'description' => __('This email will be sent when an agent create a ticket for a customer', 'fluent-support'),
+                'email_subject' => 'Re: {{ticket.title}} #{{ticket.id}}',
+                'default_status' => 'no',
+                'send_attachments'=> 'no'
             ]
         ];
 
@@ -316,6 +325,8 @@ class Settings
             return '<p>A new response has been added to "<a href="{{ticket.admin_url}}">{{ticket.title}}</a>"  by {{customer.full_name}}</p><h4>Response Body</h4><p>{{response.content}}</p><p><b><a href="{{ticket.admin_url}}">View Ticket</a></b></p>';
         } else if($emailKey == 'ticket_agent_on_change') {
             return '<p>Hi <strong><em>{{agent.full_name}}</em>,</strong></p><p>Ticket "<a href="{{ticket.admin_url}}">#{{ticket.id}}</a>" assigned to you.</p>';
+        } else if($emailKey == 'ticket_created_by_agent_email_to_customer') {
+            return '<p>Hi <strong><em>{{customer.full_name}}</em>,</strong></p><p>{{agent.full_name}} created a ticket on behalf of you, you can check it <a href="{{ticket.public_url}}">here</a></p>.';
         }
 
         return '';

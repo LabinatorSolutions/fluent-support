@@ -281,6 +281,47 @@ class EmailNotificationHandler
         }
     }
 
+    public function ticketCreatedByAgent($ticket, $customer, $agent)
+    {
+        $mailbox = $ticket->mailbox;
+
+        if (!$mailbox) {
+            return;
+        }
+
+        // Let's send welcome email to customer if enabled
+        $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_by_agent_email_to_customer');
+        error_log(print_r($emailSettings, true));
+        if ($emailSettings && $emailSettings['status'] == 'yes') {
+            $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
+                'customer' => $customer,
+                'agent'    => $agent,
+                'business' => $mailbox,
+                'ticket'   => $ticket
+            ]);
+
+            $emailBody = $this->parseEmailBody($emailSettings['email_body'], [
+                'customer'   => $customer,
+                'business'   => $mailbox,
+                'agent'      => $agent,
+                'ticket'     => $ticket,
+                'email_type' => 'ticket_created_by_agent_email_to_customer'
+            ]);
+
+            $headers = $mailbox->getMailerHeader();
+
+            $attachments = [];
+
+            if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
+                foreach ($files as $file) {
+                    $attachments[] = $file->file_path;
+                }
+            }
+
+            Mailer::send($customer->email, $subject, $emailBody, $headers, $attachments);
+        }
+    }
+
     private function emailTemplateCss()
     {
         $app = App::getInstance();
