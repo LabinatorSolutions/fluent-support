@@ -371,7 +371,12 @@ class FeedIntegration extends IntegrationManager
 
         if(defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
             $ticket->syncCustomFields($ticketData['custom_fields']);
-            $ticket->custom_fields = $ticket->customData();
+            /*
+             * This custom_fields is causing issues in all webhook to where we called $ticket->save()
+             * As we are calling $ticket->syncCustomFields() above, we don't need this anymore
+             * TODO: need to remove this line in future
+             */
+            //$ticket->custom_fields = $ticket->customData();
         }
 
         do_action('fluent_support/ticket_created', $ticket, $customer);
