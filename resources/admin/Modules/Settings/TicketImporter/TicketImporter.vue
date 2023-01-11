@@ -66,7 +66,8 @@
                                           </span>
                                         </template>
                                     </el-dialog>
-                                    <help-scout-importer :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                                    <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                                    <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                 </div>
                             </el-card>
                         </div>
@@ -84,10 +85,12 @@
 
 <script type="text/babel">
 import HelpScoutImporter from './HelpScout/HelpScoutImporter.vue';
+import FreshDeskImporter from './FreshDesk/FreshDeskImporter.vue';
 export default {
     name: 'TicketImporter',
     components: {
-        HelpScoutImporter
+        HelpScoutImporter,
+        FreshDeskImporter
     },
     data() {
         return {
@@ -104,7 +107,7 @@ export default {
             delete_page: 1,
             openSettings: false,
             config:{},
-            sass_systems: ['helpscout'],
+            sass_systems: ['helpscout', 'freshdesk'],
             import_from_sass: false,
             had_tickets: true
         }
@@ -141,6 +144,10 @@ export default {
                     access_token: this.config.access_token,
                     mailbox: this.config.mailbox_id,
                 };
+            }
+
+            if(this.config.domain){
+                query.query.domain = this.config.domain;
             }
 
             this.$post('ticket_importer/import', query)
