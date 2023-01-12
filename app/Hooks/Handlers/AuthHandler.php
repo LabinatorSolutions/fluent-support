@@ -34,7 +34,7 @@ class AuthHandler
         $attributes = $this->getShortcodes($attributes);
         $this->handleAlreadyLoggedIn($attributes);
 
-        $return = '<div class="fst_auth_wrapper">';
+        $return = '<div class="fst_login_form_auth_wrapper">';
         $return .= '<div id="fst_login_form" class="fst_login_wrapper">';
 
         if (!empty($attributes['redirect-to'])) {
@@ -189,13 +189,7 @@ class AuthHandler
             return '<p>' . sprintf(__('You are already logged in. <a href="%s">Go to support portal</a>', 'fluent-support'), Helper::getPortalBaseUrl()) . '</p>';
         }
 
-        $authForm = '<div class="fst_auth_wrapper">';
-
         $authForm .= do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
-        $authForm .= do_shortcode('[fluent_support_signup hide=true]');
-        $authForm .= do_shortcode('[fluent_support_reset_password hide=true]');
-
-        $authForm .= '</div>';
 
         return $authForm;
     }
