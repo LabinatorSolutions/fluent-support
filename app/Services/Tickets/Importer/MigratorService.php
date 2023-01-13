@@ -27,6 +27,10 @@ class MigratorService
             $stats[] = $this->mapClassWithHandler('helpscout')->stats();
         }
 
+        if (defined('FLUENTSUPPORTPRO')) {
+            $stats[] = $this->mapClassWithHandler('freshdesk')->stats();
+        }
+
         return [
             'stats' => $stats
         ];
@@ -43,6 +47,7 @@ class MigratorService
             $class = $this->mapClassWithHandler($handler);
             $class->setAccessToken($query['access_token']);
             isset($query['mailbox']) ? $class->setMailboxId($query['mailbox']) : '';
+            isset($query['domain']) ? $class->setDomain($query['domain']) : '';
 
             return $class->doMigration($page, $handler);
         }
@@ -68,6 +73,7 @@ class MigratorService
 
         if(defined('FLUENTSUPPORTPRO')){
             $classMapper['helpscout'] = 'HelpScoutTickets';
+            $classMapper['freshdesk'] = 'FreshDeskTickets';
         }
 
         $class = $namespace . $classMapper[$handler];
@@ -77,7 +83,7 @@ class MigratorService
 
     private function handleNamespace($handler)
     {
-        $proHandlers = ['helpscout'];
+        $proHandlers = ['helpscout', 'freshdesk'];
 
         $namespace = "FluentSupport\App\Services\Tickets\Importer\\";
 
