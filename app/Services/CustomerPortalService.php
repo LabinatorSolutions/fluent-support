@@ -380,11 +380,9 @@ class CustomerPortalService
      */
     private function resolveMailboxId($mailboxId)
     {
-        if ($mailboxId) {
-            $mailbox = MailBox::find($mailboxId);
-            if ($mailbox) {
-                return $mailbox->id;
-            }
+        $mailbox = MailBox::find($mailboxId);
+        if ($mailbox) {
+            return $mailbox->id;
         }
 
         $mailbox = Helper::getDefaultMailBox();

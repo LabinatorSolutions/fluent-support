@@ -81,8 +81,8 @@ class CustomerPortalController extends Controller
             if ($customer && $messageId = Helper::generateMessageID($customer->email)) {
                 $data['message_id'] = $messageId;
             }
-
-            $ticket = $customerPortalService->createTicket($customer, $data, $request->getSafe('mailbox_id', '', 'intval'));
+            $defaultMailbox = Helper::getDefaultMailBox();
+            $ticket = $customerPortalService->createTicket($customer, $data, $request->getSafe('mailbox_id', $defaultMailbox->id , 'intval'));
 
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
