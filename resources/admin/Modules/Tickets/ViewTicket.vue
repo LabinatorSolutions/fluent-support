@@ -120,8 +120,8 @@
                                             <path d="M12.8334 8.60417V6.10878C12.5737 6.34124 12.2791 6.53543 11.9584 6.68267V8.60417C11.9584 9.16796 11.5014 9.625 10.9376 9.625H7.29962L4.375 11.8128L4.37438 9.625H3.06258C2.49879 9.625 2.04175 9.16796 2.04175 8.60417V3.64583C2.04175 3.08204 2.49879 2.625 3.06258 2.625H7.11033C7.19025 2.31457 7.31164 2.02082 7.46832 1.75H3.06258C2.01554 1.75 1.16675 2.59879 1.16675 3.64583V8.60417C1.16675 9.65119 2.01554 10.5 3.06258 10.5H3.49962L3.50008 12.1041C3.50008 12.2614 3.55104 12.4146 3.64534 12.5407C3.88654 12.8632 4.34349 12.9291 4.66598 12.6879L7.59071 10.5H10.9376C11.9846 10.5 12.8334 9.65119 12.8334 8.60417Z" fill="currentColor"/>
                                         </svg> {{ $t('Add Bookmark')}}
                                     </el-dropdown-item>
-                                    <el-dropdown-item @click='(close_ticket_silently=true) && closeTicket()'>
-                                       <el-icon><MuteNotification /></el-icon> {{$t('Close Ticket Silently')}}
+                                    <el-dropdown-item @click='(close_ticket_silently="yes") && closeTicket()'>
+                                        <el-icon><MuteNotification /></el-icon> {{$t('Close Ticket Silently')}}
                                     </el-dropdown-item>
                                 </el-dropdown-menu>
                             </template>
@@ -326,8 +326,8 @@
                                                             icon="EditPen"> {{$t('Edit')}}
                                                         </el-dropdown-item>
                                                         <el-dropdown-item v-if="has_pro"
-                                                            :command="{ type: 'split_ticket', conversation: conversation }"
-                                                            icon="TopLeft"> {{$t('Split Ticket')}}
+                                                                          :command="{ type: 'split_ticket', conversation: conversation }"
+                                                                          icon="TopLeft"> {{$t('Split Ticket')}}
                                                         </el-dropdown-item>
                                                         <el-dropdown-item
                                                             :command="{ type: 'delete', conversation: conversation }"
@@ -348,7 +348,7 @@
                                                 :key="attachment.file_hash"
                                             >
                                                 <el-icon style="vertical-align: middle;"><paperclip /></el-icon> <a target="_blank" rel="noopener"
-                                                                                     :href="attachment.secureUrl">{{
+                                                                                                                    :href="attachment.secureUrl">{{
                                                     attachment.title
                                                 }}</a>
                                             </li>
@@ -383,7 +383,7 @@
                                                 :key="attachment.file_hash"
                                             >
                                                 <el-icon style="vertical-align: middle;"><paperclip /></el-icon> <a target="_blank" rel="noopener"
-                                                                                     :href="attachment.secureUrl">{{
+                                                                                                                    :href="attachment.secureUrl">{{
                                                     attachment.title
                                                 }}</a>
                                             </li>
@@ -471,7 +471,9 @@ import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import Modal from "../../Pieces/Modal";
 import SplitTicket from "./_SplitTicket"
-
+import { useFluentHelper, useNotify, useConfirm , wpHooks} from "@/admin/Composable/FluentFrameworkHelper";
+import { computed, nextTick, onMounted, onBeforeUnmount, reactive, toRefs, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 export default {
     name: 'ViewTicket',
     props: ['ticket_id'],
@@ -487,23 +489,40 @@ export default {
         WorkFlowSelector,
         SplitTicket
     },
-    data() {
-        return {
+
+    setup(props, _) {
+        const {
+            appVars,
+            get,
+            post,
+            put,
+            del,
+            setTitle,
+            has_pro,
+            handleError,
+            translate,
+        } = useFluentHelper();
+        const { notify } = useNotify();
+        const { confirm } = useConfirm();
+        const { doAction } = wpHooks();
+        const router = useRouter();
+        const route = useRoute();
+        const state = reactive({
             loading: false,
-            ticket: false,
+            ticket: {},
             conversations: [],
             show_response_box: '',
-            products: this.appVars.support_products,
-            agents: this.appVars.support_agents,
-            admin_priorities: this.appVars.admin_priorities,
-            client_priorities: this.appVars.client_priorities,
+            products: appVars.support_products,
+            agents: appVars.support_agents,
+            admin_priorities: appVars.admin_priorities,
+            client_priorities: appVars.client_priorities,
             updating: false,
             active_agents: [],
             edit_response_modal: false,
             editing_response: false,
             showCustomDataEditForm: false,
             fluentcrm_profile: false,
-            mailboxes: this.appVars.mailboxes,
+            mailboxes: appVars.mailboxes,
             customer_tickets: [],
             show_merge_modal: false,
             show_watcher_modal: false,
@@ -523,47 +542,41 @@ export default {
 
         watch(() => route.params.ticket_id, (ticketId) => {
             if (ticketId) {
-                this.doAction('ticket_view_exit', this.ticket.id);
-                this.ticket = false;
-                this.$nextTick(() => {
-                    this.doAction('ticket_view_entered', ticketId);
-                    this.fetchTicket();
+                doAction('ticket_view_exit', state.ticket.id);
+                state.ticket = {};
+                nextTick(() => {
+                    doAction('ticket_view_entered', ticketId);
+                    fetchTicket();
                 });
             }
-        }
-    },
-    methods: {
-        fetchTicket() {
-            this.loading = true;
-            this.$get(`tickets/${this.ticket_id}`, {
-                with_data: ['fluentcrm_profile']
-            })
-            .then(response => {
-                let that = this;
-                this.ticket = response.ticket;
+        });
 
-                this.$setTitle(response.ticket.title);
-                this.conversations = response.responses;
+        const fetchTicket = async () => {
+            state.loading = true;
+            await get(`tickets/${props.ticket_id}`, {
+                customer_id: state.ticket.customer_id
+            }).then(response => {
+                state.loading = false;
+                state.ticket = response.ticket;
+                setTitle(response.ticket.title);
+                state.conversations = response.responses;
 
-                if (this.appVars.fluentcrm_config) {
-                    this.fluentcrm_profile = response.fluentcrm_profile;
-                }
-
-                if (this.has_pro) {
-                    this.watchers = response.watchers;
-                    this.filteredWatchersIds = response.watchers.map((watcher, key) => {
+                if (has_pro) {
+                    state.watchers = response.watchers;
+                    state.filteredWatchersIds = response.watchers.map((watcher, key) => {
                         return watcher.tag_id;
                     });
                 }
+            }).catch(error => {
+                state.loading = false;
+                handleError(error);
             })
-            .catch((errors) => {
-                this.$handleError(errors);
-            })
-            .always(() => {
-                this.loading = false;
-            });
-        },
-        getTicketClasses(conversation) {
+                .always(() => {
+                    state.loading = false;
+                });
+        };
+
+        const getTicketClasses = (conversation) => {
             const classes = [
                 'fs_thread'
             ];
@@ -574,296 +587,331 @@ export default {
 
             classes.push('fs_conv_type_' + conversation.conversation_type);
             return classes;
-        },
-        recordNewResponse(response, data) {
-            this.conversations.unshift(response);
-            this.ticket.status = data.ticket.status;
-            this.show_response_box = false;
+        }
+
+        const recordNewResponse = (response, data) =>{
+            state.conversations.unshift(response);
+            state.ticket.status = data.ticket.status;
+            state.show_response_box = false;
 
             each(data.update_data, (data, key) => {
-                this.ticket[key] = data;
+                state.ticket[key] = data;
             });
 
-            if (this.appVars.pref.go_back_after_reply == 'yes') {
+            if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
-                    this.$router.go(-1);
+                    router.go(-1);
                 }
             }
-        },
-        updateTicketAttr(propName) {
-            this.$put(`tickets/${this.ticket.id}/property`, {
+        }
+
+        const updateTicketAttr = (propName) => {
+            put(`tickets/${state.ticket.id}/property`, {
                 prop_name: propName,
-                prop_value: this.ticket[propName]
+                prop_value: state.ticket[propName]
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
 
                     each(response.update_data, (data, key) => {
-                        this.ticket[key] = data;
+                        state.ticket[key] = data;
                     });
-                    this.fetchTicket();
+                    fetchTicket();
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 });
-        },
-        getHumanName(person) {
-            if (this.appVars.me?.id == person.id) {
-                return this.$t('You');
+        }
+
+        const getHumanName = (person) =>{
+            if (parseInt(appVars.me?.id) === parseInt(person.id)) {
+                return translate('You');
             }
 
             return person.full_name;
-        },
-        closeTicket() {
-            this.updating = true;
-            this.$post(`tickets/${this.ticket.id}/close`, {close_ticket_silently: this.close_ticket_silently})
+        }
+
+        const closeTicket = () => {
+            state.updating = true;
+            post(`tickets/${state.ticket.id}/close`, {close_ticket_silently: state.close_ticket_silently})
                 .then(response => {
-                    this.ticket.status = response.ticket.status;
-                    this.$notify.success({
+                    state.ticket.status = response.ticket.status;
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
                     if (window.history.state.back) {
-                        this.$router.go(-1);
+                        router.go(-1);
                     }
                 })
                 .catch((errors) => {
-                    console.log(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.updating = false;
+                    state.updating = false;
                 });
-        },
-        reOpen() {
-            this.updating = true;
-            this.$post(`tickets/${this.ticket.id}/re-open`)
+        }
+
+        const reOpen = () =>{
+            state.updating = true;
+            post(`tickets/${state.ticket.id}/re-open`)
                 .then(response => {
-                    this.ticket.status = response.ticket.status;
+                    state.ticket.status = response.ticket.status;
                 })
                 .catch((errors) => {
-                    console.log(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.updating = false;
+                    state.updating = false;
                 });
-        },
-        onActivityChange(items) {
+        }
+
+        const onActivityChange = (items) =>{
             const personIds = [];
             items.forEach((item) => {
                 personIds.push(item.val());
             });
-            this.active_agents = personIds;
-        },
-        onTicketDataChange(item) {
+            state.active_agents = personIds;
+        }
+
+        const onTicketDataChange = (item) =>{
             let data = item.val();
-            this.ticket[data.type] = data.data;
-        },
-        handleResponseActionCommand(data) {
+            state.ticket[data.type] = data.data;
+        }
+
+        const handleResponseActionCommand = (data) =>{
             const actionType = data.type;
             const conversation = data.conversation;
 
             if (actionType == 'delete') {
-                this.$confirm(this.$t('response_delete_warning'), 'Warning', {
-                    confirmButtonText: this.$t('Delete Response'),
-                    cancelButtonText: this.$t('Cancel'),
-                    type: 'warning'
+                confirm({
+                    message: translate('response_delete_warning'),
+                    title: 'Warning',
+                    options: {
+                        confirmButtonText: translate('Delete Response'),
+                        cancelButtonText: translate('Cancel'),
+                        type: 'warning'
+                    }
                 }).then(() => {
-                    this.$del(`tickets/${this.ticket.id}/responses/${conversation.id}`)
+                    del(`tickets/${state.ticket.id}/responses/${conversation.id}`)
                         .then(response => {
-                            this.$notify.success({
+                            notify({
                                 message: response.message,
-                                position: 'bottom-right',
-                                type: 'success'
+                                type: "success",
+                                position: "bottom-right",
                             });
-                            this.fetchTicket();
+                            fetchTicket();
                         })
                 });
-            } else if (actionType == 'edit') {
-                if (this.ticket.status == 'closed') {
-                    this.$notify({
-                        type: 'error',
-                        message: this.$t('error_msg_on_closed_ticket_edit'),
-                        position: 'bottom-right'
+            } else if (actionType === 'edit') {
+                if (state.ticket.status === 'closed') {
+                    notify({
+                        message: translate('error_msg_on_closed_ticket_edit'),
+                        type: "error",
+                        position: "bottom-right",
                     });
                     return false;
                 }
-                this.editing_response = conversation;
-                this.edit_response_modal = true;
-                this.conversation_type = conversation.conversation_type;
-            } else if ( actionType == 'split_ticket' ) {
-                this.split_ticket = {
-                  conversation_id: conversation.id,
-                  content: conversation.content,
-                  customer_id: parseInt(this.ticket.customer_id),
-                  mailbox_id: parseInt(this.ticket.mailbox_id),
-                  product_id: this.ticket.product?.id,
-                  client_priority: this.ticket.priority,
-                  create_wp_user: 'no',
-                  create_customer: 'no',
+                state.editing_response = conversation;
+                state.edit_response_modal = true;
+                state.conversation_type = conversation.conversation_type;
+            } else if ( actionType === 'split_ticket' ) {
+                state.split_ticket = {
+                    conversation_id: conversation.id,
+                    content: conversation.content,
+                    customer_id: parseInt(state.ticket.customer_id),
+                    mailbox_id: parseInt(state.ticket.mailbox_id),
+                    product_id: state.ticket.product?.id,
+                    client_priority: state.ticket.priority,
+                    create_wp_user: 'no',
+                    create_customer: 'no',
                 };
-                this.split_ticket_modal = true;
+                state.split_ticket_modal = true;
             }
-        },
-        changeMailbox(mailbox) {
-            this.loading != this.loading;
-            this.$put(`mailboxes/${this.ticket.mailbox_id}/move_tickets`, {
+        }
+
+        const changeMailbox = (mailbox) =>{
+            state.loading = !state.loading;
+            put(`mailboxes/${state.ticket.mailbox_id}/move_tickets`, {
                 new_box_id: mailbox,
-                ticket_ids: [this.ticket_id],
+                ticket_ids: [props.ticket_id],
                 move_type: 'Custom',
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
-                    this.fetchTicket();
+                    fetchTicket();
                 })
                 .catch((error) => {
-                    this.$handleError(error);
+                    handleError(error);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-        customerTickets(){
-            this.$get('tickets/customer_tickets/' + this.ticket.customer_id, {
-                exclude_ticket_id: this.ticket_id,
-                page: this.pagination.current_page,
-                per_page: this.pagination.per_page,
+        }
+
+        const customerTickets = () =>{
+            get('tickets/customer_tickets/' + state.ticket.customer_id, {
+                exclude_ticket_id: props.ticket_id,
+                page: state.pagination.current_page,
+                per_page: state.pagination.per_page,
             })
                 .then(response => {
-                    this.customer_tickets = response.tickets.data;
-                    this.pagination.total = response.tickets.total;
+                    state.customer_tickets = response.tickets.data;
+                    state.pagination.total = response.tickets.total;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-        mergeTickets(ticketToMerge){
-            this.$confirm('Are you sure you want to merge these tickets?', 'Merge Tickets', {
-                confirmButtonText: 'Merge',
-                cancelButtonText: 'Cancel',
-                type: 'warning'
+        }
+
+        const mergeTickets = (ticketToMerge) =>{
+            confirm({
+                message: translate('Are you sure you want to merge these tickets?'),
+                title: translate('Merge Tickets'),
+                type: 'Warning',
+                options: {
+                    confirmButtonText: translate('Merge'),
+                    cancelButtonText: translate('Cancel'),
+                    type: 'warning'
+                }
             }).then(() => {
-                this.loading = true;
-                this.$post('tickets/' + this.ticket_id +'/merge_tickets', {
+                state.loading = true;
+                post('tickets/' + props.ticket_id +'/merge_tickets', {
                     ticket_to_merge: ticketToMerge,
                 })
                     .then(response => {
-                        this.$notify.success({
+                        notify({
                             message: response.message,
-                            position: 'bottom-right'
+                            type: "success",
+                            position: "bottom-right",
                         });
-                        this.customerTickets();
-                        this.fetchTicket();
+                        customerTickets();
+                        fetchTicket();
                     })
                     .catch((error) => {
-                        this.$handleError(error);
+                        handleError(error);
                     })
                     .always(() => {
-                        this.loading = false;
+                        state.loading = false;
                     });
             });
-        },
-        santizeContent(content) {
+        }
+
+        const santizeContent = (content) =>{
             if (!content) {
                 return content;
             }
             return content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
-        },
-        isEmpty,
-        isArray,
-        syncCustomData(data) {
-            this.ticket.custom_fields = data;
-            this.showCustomDataEditForm = false;
-        },
-        addWatchers() {
-            this.saving = true;
-            this.$post(`tickets/${this.ticket.id}/add_watchers`, {
-                watchers: this.watchers
+        }
+
+        const syncCustomData = (data) => {
+            state.ticket.custom_fields = data;
+            state.showCustomDataEditForm = false;
+        }
+
+        const addWatchers = () => {
+            state.saving = true;
+            post(`tickets/${state.ticket.id}/add_watchers`, {
+                watchers: state.watchers
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
-                    this.fetchTicket()
-                    this.show_watcher_modal = false;
+                    fetchTicket()
+                    state.show_watcher_modal = false;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.saving = false;
+                    state.saving = false;
                 });
-        },
-        updateWatcher(){
-            this.saving = true;
-            this.$post(`tickets/${this.ticket.id}/sync-watchers`, {
-                watchers: this.filteredWatchersIds
+        }
+
+        const splitToNewTicket = () =>{
+            state.loading = true;
+            post('tickets/' + state.ticket.id +'/split_ticket', {
+                split_ticket: state.split_ticket,
             })
                 .then(response => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        type: "success",
+                        position: "bottom-right",
                     });
-
-                    this.fetchTicket()
-
-                    this.show_watcher_modal = false;
-                })
-                .catch((errors) => {
-                    this.$handleError(errors);
-                })
-                .always(() => {
-                    this.saving = false;
-                });
-        },
-        splitToNewTicket (){
-            this.loading = true;
-            this.$post('tickets/' + this.ticket.id +'/split_ticket', {
-                split_ticket: this.split_ticket,
-            })
-                .then(response => {
-                    this.$notify.success({
-                        message: response.message,
-                        position: 'bottom-right'
-                    });
-                    this.customerTickets();
-                    this.fetchTicket();
-                    this.split_ticket_modal = false;
+                    customerTickets();
+                    fetchTicket();
+                    state.split_ticket_modal = false;
                 })
                 .catch((error) => {
-                    this.$handleError(error);
+                    handleError(error);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-    },
-    computed: {
-       getTicketStatus() {
-          const status = {};
+        }
 
-          for (let key in this.ticket_statuses) {
-              status[key] = this.ticket_statuses[key][0];
-          }
+        const getTicketStatus = computed(() => {
+            const status = {};
 
-          return status;
-      }
-    },
-    mounted() {
-        this.fetchTicket();
-        this.doAction('ticket_view_entered', this.ticket_id, this);
-    },
-    beforeUnmount() {
-        this.doAction('ticket_view_exit', this.ticket_id);
+            for (let key in state.ticket_statuses) {
+                status[key] = state.ticket_statuses[key][0];
+            }
+
+            return status;
+        });
+
+        onMounted(() => {
+            fetchTicket();
+            doAction('ticket_view_entered', props.ticket_id);
+        });
+
+        onBeforeUnmount(() => {
+            doAction('ticket_view_exit', props.ticket_id);
+        });
+
+        return {
+            ...toRefs(state),
+            setTitle,
+            has_pro,
+            appVars,
+            handleError,
+            fetchTicket,
+            getTicketClasses,
+            isEmpty,
+            isArray,
+            recordNewResponse,
+            updateTicketAttr,
+            getHumanName,
+            closeTicket,
+            reOpen,
+            onActivityChange,
+            onTicketDataChange,
+            handleResponseActionCommand,
+            changeMailbox,
+            customerTickets,
+            mergeTickets,
+            santizeContent,
+            syncCustomData,
+            addWatchers,
+            splitToNewTicket,
+            getTicketStatus
+        }
     }
 }
 </script>
