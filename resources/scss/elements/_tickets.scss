@@ -735,16 +735,25 @@ ul.fs_tk_actions {
         li {
             padding: 0;
 
-            > i, > .fs_workflow_pop > i {
-                border-right: 1px solid white;
+            > i, > .fs_workflow_pop > i{
                 padding: 10px 20px;
                 height: auto;
                 width: auto;
             }
+            &:not(:last-child) {
+                border-right: 1px solid white;
+            }
         }
     }
 }
-
+//For frontend agent portal
+.fst_front{
+    .fs_bulk_actions_bar ul li > i,
+    .fs_bulk_actions_bar ul li > .fs_workflow_pop > i {
+        padding: 0 2px;
+        margin: 8px;
+    }
+}
 
 .fs_crm_profile {
     border-top: 1px solid #e1e2e5;
