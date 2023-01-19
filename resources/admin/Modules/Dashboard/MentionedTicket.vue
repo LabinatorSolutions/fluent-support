@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_box_body">
+    <div class="fs_box_body" v-if="has_pro">
         <ul v-if="component_data.length" class="fs_card_list">
             <li v-for="ticket in component_data" :key="ticket.id">
                 <router-link
@@ -54,13 +54,14 @@ export default {
     props: ["component_data"],
     name: "MentionedTicket",
     setup() {
-        
-        const {
 
+        const {
+            has_pro,
             translate,
 
         } = useFluentHelper();
         return{
+            has_pro,
             translate
         };
     },
