@@ -299,7 +299,7 @@ export default {
         };
 
         const removeCondition = (index) => {
-            if (this.settings.length == 1) {
+            if (props.settings.length == 1) {
                 context.emit("deleteGroup");
             } else {
                 props.settings.splice(index, 1);
