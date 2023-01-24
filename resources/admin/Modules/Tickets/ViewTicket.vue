@@ -422,7 +422,7 @@
                 </div>
             </div>
             <div class="fs_ticket_sidebar">
-                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket" :watchers="watchers" @refresh="fetchTicket"/>
+                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket" :watchers="watchers" @refresh="fetchTicket" :fetch_other_tickets="fetch_other_tickets"/>
             </div>
         </template>
         <template v-else>
@@ -539,6 +539,7 @@ export default {
             ticket_statuses: appVars.changeable_ticket_statuses,
             close_ticket_silently: "no",
             app_ready: false,
+            fetch_other_tickets: false,
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -768,7 +769,6 @@ export default {
                 .then(response => {
                     state.customer_tickets = response.tickets.data;
                     state.pagination.total = response.tickets.total;
-                    state.app_ready = true;
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -801,6 +801,7 @@ export default {
                         });
                         customerTickets();
                         fetchTicket();
+                        state.fetch_other_tickets = !state.fetch_other_tickets;
                     })
                     .catch((error) => {
                         handleError(error);
