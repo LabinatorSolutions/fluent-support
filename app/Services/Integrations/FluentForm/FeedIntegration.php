@@ -412,9 +412,8 @@ class FeedIntegration extends IntegrationManager
                     ]
                 );
             }
-            $ticket->load($attachments);
+            $ticket->load('attachments');
         }
-
         return true;
     }
 
