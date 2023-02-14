@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.1.1
-Stable tag: 1.6.7
+Stable tag: 1.6.8
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,19 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.6.8 (Date: February 14, 2022) =
+* Added - notify user when agent create a ticket on behalf of them
+* Fixed - custom fields issues while creating ticket from Fluent Forms
+* Fixed - issue with Shortcode
+* Fixed - issue on ticket close
+* Fixed - Issue with telegram reply (Pro)
+* Fixed - Support staff not assigned to ticket via workflow (Pro)
+* Fixed - Frontend agent portal issues (Pro)
+* Added - Migrate Tickets from Freshdesk (Pro)
+* Added - Toggle to stop auto close bookmarked tickets (Pro)
+* More Bug Fixes and Improvements
+
 
 = 1.6.7 (Date: November 24, 2022) =
 * Migrate Tickets from JS Help Desk
