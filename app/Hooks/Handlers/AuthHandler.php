@@ -190,7 +190,7 @@ class AuthHandler
             return '<p>' . sprintf(__('You are already logged in. <a href="%s">Go to support portal</a>', 'fluent-support'), Helper::getPortalBaseUrl()) . '</p>';
         }
 
-        $authForm .= do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
+        $authForm = do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
 
         return $authForm;
     }
