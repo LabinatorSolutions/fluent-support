@@ -556,12 +556,17 @@ export default {
         const fetchTicket = async () => {
             state.loading = true;
             await get(`tickets/${props.ticket_id}`, {
-                customer_id: state.ticket.customer_id
+                customer_id: state.ticket.customer_id,
+                with_data: ['fluentcrm_profile']
             }).then(response => {
                 state.loading = false;
                 state.ticket = response.ticket;
                 setTitle(response.ticket.title);
                 state.conversations = response.responses;
+
+                if (appVars.fluentcrm_config) {
+                    state.fluentcrm_profile = response.fluentcrm_profile;
+                }
 
                 if (has_pro) {
                     state.watchers = response.watchers;
