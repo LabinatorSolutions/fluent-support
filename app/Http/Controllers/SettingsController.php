@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
+use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
 
 /**
  *  SettingsController class is responsible for all settings
@@ -255,6 +256,58 @@ class SettingsController extends Controller
             'message' => __('Installation has been completed', 'fluent-support')
         ]);
 
+    }
+
+    public function saveReCaptchaSettings(Request $request)
+    {
+        $data = $request->get('reCaptcha');
+
+        if ('clear-reCaptcha-settings' == $data) {
+            delete_option('_fs_recaptcha_data');
+
+            wp_send_json_success([
+                'message' => __('Your reCAPTCHA settings are deleted.', 'fluent-support'),
+            ], 200);
+        }
+       
+        $reCaptchaData = [
+            'reCaptcha_version' => sanitize_text_field($data['reCaptchaVersion']),
+            'siteKey'     => sanitize_text_field($data['siteKey']),
+            'secretKey'   => sanitize_text_field($data['secretKey']),
+            'formContainingReCaptcha' => array_map( 'sanitize_text_field', $data['formContainingReCaptcha'])
+        ];
+
+        $previousValue = get_option('_fs_recaptcha_data');
+
+        if($previousValue ===  $reCaptchaData) {
+            wp_send_json_error([
+                'message' => __('Your recaptcha details are already saved', 'fluent-support')
+            ],400);
+        }
+
+        $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($data['captchaResponse'], $data['secretKey'], $data['reCaptchaVersion']);
+   
+        if(!$verifyReCaptcha){
+            wp_send_json_error([
+                'message' => __('Your recaptcha is not verified', 'fluent-support')
+            ],400);
+        }
+
+
+        update_option('_fs_recaptcha_data', $reCaptchaData, 'no');
+
+        wp_send_json_success([
+            'message' => __('Your reCAPTCHA settings added successfully.', 'fluent-support'),
+        ], 200);
+
+
+    }
+
+    public function getReCaptchaSettings()
+    {
+        $reCaptchaSettingsData = get_option('_fs_recaptcha_data');
+
+        wp_send_json_success($reCaptchaSettingsData, 200);
     }
 
     private function shareEmail($optinEmail)

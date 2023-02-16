@@ -1,0 +1,259 @@
+<template>
+    <div class="fs_reCaptcha_settings_body" v-if="load">
+        <el-row class="setting_header">
+            <el-col :md="24">
+                <h2>{{ $t("Google reCAPTCHA Settings") }}</h2>
+            </el-col>
+        </el-row>
+
+        <div class="settings-body">
+            <el-form label-position="left" label-width="140px">
+                <el-form-item
+                    label="Recaptcha Version"
+                    style="margin-right: 20px"
+                >
+                    <el-radio-group
+                        @change="loadRecaptchaResponse"
+                        v-model="reCaptchaVersion"
+                        style="width: 90%; margin-right: 0.2em"
+                    >
+                        <el-radio label="recaptcha_v2">{{
+                            $t("Version 2")
+                        }}</el-radio>
+                        <el-radio label="recaptcha_v3">{{
+                            $t("Version 3")
+                        }}</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                <el-form-item
+                    label="Enable reCAPTCHA"
+                    @change="loadRecaptchaResponse"
+                >
+                    <el-checkbox
+                        v-model="formContainingReCaptcha.login_form"
+                        @change="loadRecaptchaResponse"
+                        true-label="yes"
+                        false-label="no"
+                        name="type"
+                        >Login Form</el-checkbox
+                    >
+                    <el-checkbox
+                        v-model="formContainingReCaptcha.signup_form"
+                        true-label="yes"
+                        false-label="no"
+                        name="type"
+                        >Signup Form</el-checkbox
+                    >
+                </el-form-item>
+
+                <el-form-item label="Site Key">
+                    <el-input
+                        v-model="siteKey"
+                        @change="loadRecaptchaResponse"
+                    />
+                </el-form-item>
+
+                <el-form-item label="Secret Key">
+                    <el-input
+                        type="password"
+                        v-model="secretKey"
+                        @change="loadRecaptchaResponse"
+                    />
+                </el-form-item>
+                <el-form-item
+                    v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
+                    :class="hidden"
+                    label="Validate Captcha"
+                >
+                    <div
+                        class="g-recaptcha"
+                        id="recaptchaContainer"
+                        :data-sitekey="siteKey"
+                    ></div>
+                </el-form-item>
+
+                <el-form-item label-position="right">
+                    <el-button
+                        type="primary"
+                        @click="saveSettings"
+                        :disabled="disabled"
+                        >Save</el-button
+                    >
+                    <el-button type="danger" @click="clearSettings"
+                        >Clear Settings</el-button
+                    >
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+</template>
+
+<script>
+import { reactive, toRefs, onMounted, ref } from "vue";
+import {
+    useFluentHelper,
+    useNotify,
+} from "@/admin/Composable/FluentFrameworkHelper";
+export default {
+    name: "RecaptchaView",
+    setup() {
+        const { get, post, translate, handleError } = useFluentHelper();
+        const { notify } = useNotify();
+
+        const state = reactive({
+            reCaptchaVersion: "recaptcha_v2",
+            formContainingReCaptcha: {
+                login_form: "no",
+                signup_form: "no",
+            },
+            siteKey: "",
+            secretKey: "",
+            captchaResponse: "",
+        });
+        const load = ref(false);
+        const disabled = ref(true);
+
+        const loadRecaptchaResponse = async () => {
+            disabled.value = !validate();
+
+            if ("recaptcha_v3" === state.reCaptchaVersion) {
+                loadRecaptchaV3Script();
+
+                window.grecaptcha.ready(() => {
+                    window.grecaptcha
+                        .execute(state.siteKey, { action: "submit" })
+                        .then(function (token) {
+                            state.captchaResponse = token;
+                            disabled.value = false;
+                            console.log(token);
+                        })
+                        .catch(function (error) {});
+                });
+            } else {
+                document.querySelector(".grecaptcha-badge")?.remove();
+
+                let reCaptcha = document.getElementById("recaptchaContainer");
+                reCaptcha.innerHTML = "";
+
+                window.___grecaptcha_cfg.clients = {};
+
+                if (window.grecaptcha) {
+                    var widgetId = window.grecaptcha.render(
+                        "recaptchaContainer",
+                        {
+                            sitekey: state.siteKey,
+                            callback: function (token) {
+                                state.captchaResponse = token;
+                                disabled.value = false;
+                            },
+                        }
+                    );
+                }
+            }
+        };
+
+        const loadRecaptchaV3Script = () => {
+            if ("recaptcha_v3" === state.reCaptchaVersion) {
+                var v3Script = document.createElement("script");
+                v3Script.src = `https://www.google.com/recaptcha/api.js?render=${state.siteKey}`;
+                document.head.appendChild(v3Script);
+            }
+        };
+
+        const saveSettings = async () => {
+            if (!validate()) {
+                return notify({
+                    message: "Missing required fields.",
+                    type: "error",
+                    position: "bottom-right",
+                });
+            }
+            await post("settings/recaptcha-settings", {
+                key: "reCaptcha",
+                reCaptcha: state,
+            })
+                .then((response) => {
+                    notify({
+                        message: response.data.message,
+                        type: "success",
+                        position: "bottom-right",
+                    });
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                });
+        };
+
+        const fetchSettings = async () => {
+            await get("settings/recaptcha-settings")
+                .then((response) => {
+                    const data = response.data;
+
+                    if (data) {
+                        state.reCaptchaVersion = data.reCaptcha_version;
+                        state.siteKey = data.siteKey;
+                        state.secretKey = data.secretKey;
+                        state.formContainingReCaptcha =
+                            data.formContainingReCaptcha;
+                    }
+                    loadRecaptchaV3Script();
+                    load.value = true;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {});
+        };
+
+        const validate = () => {
+            return !!(state.siteKey && state.secretKey);
+        };
+
+        const clearSettings = async () => {
+            await post("settings/recaptcha-settings", {
+                key: "reCaptcha",
+                reCaptcha: "clear-reCaptcha-settings",
+            })
+                .then((response) => {
+                    state.reCaptchaVersion = "";
+                    state.siteKey = "";
+                    state.secretKey = "";
+                    (state.formContainingReCaptcha = {
+                        login_form: "no",
+                        signup_form: "no",
+                    }),
+                        notify({
+                            message: response.data.message,
+                            type: "success",
+                            position: "bottom-right",
+                        });
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                });
+        };
+
+        onMounted(() => {
+            var v2Script = document.createElement("script");
+            v2Script.src = `https://www.google.com/recaptcha/api.js`;
+            document.head.appendChild(v2Script);
+
+            fetchSettings();
+        });
+
+        return {
+            ...toRefs(state),
+            saveSettings,
+            clearSettings,
+            loadRecaptchaResponse,
+            load,
+            disabled,
+        };
+    },
+};
+</script>
+<style>
+.fs_reCaptcha_settings_body {
+    padding: 30px;
+}
+</style>
