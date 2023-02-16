@@ -52,7 +52,7 @@ export default {
                 {
                     title: translate("Recaptcha"),
                     route_name: "reCaptcha",
-                    icon: "Setting",
+                    icon: "Key",
                 },
                 {
                     title: translate("Ticket Form Config"),

@@ -389,7 +389,8 @@ class AuthHandler
         //Get Recaptcha settings and enqueue recaptcha script
         $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
         $reCaptchaData = maybe_unserialize($reCaptchaSettingsData->value, []);
-        if(!empty($reCaptchaData) && isset($reCaptchaData['is_enabled']) && $reCaptchaData['is_enabled'] == true){
+
+        if(!empty($reCaptchaData) && isset($reCaptchaData['is_enabled']) && $reCaptchaData['is_enabled'] == "true"){
             unset($reCaptchaData['secretKey']);
             $recaptchaVersion = $reCaptchaData["reCaptcha_version"];
             $reCaptchaApiUrl = 'https://www.google.com/recaptcha/api.js';

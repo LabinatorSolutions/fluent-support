@@ -8,6 +8,17 @@
 
         <div class="settings-body">
             <el-form label-position="left" label-width="140px">
+                <el-switch
+                    v-model="reCaptchaEnabled"
+                    class="ml-2"
+                    style="
+                        --el-switch-on-color: #13ce66;
+                        --el-switch-off-color: #ff4949;
+                    "
+                    active-text="Enabled"
+                    inactive-text="Disabled"
+                    @change="loadRecaptchaResponse"
+                />
                 <el-form-item
                     label="Recaptcha Version"
                     style="margin-right: 20px"
@@ -60,14 +71,7 @@
                         @change="loadRecaptchaResponse"
                     />
                 </el-form-item>
-                <el-switch
-                    v-model="reCaptchaEnabled"
-                    class="ml-2"
-                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-                    active-text="Enabled"
-                    inactive-text="Disabled"
-                    @change="loadRecaptchaResponse"
-                />
+
                 <el-form-item
                     v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
                     :class="hidden"
@@ -134,9 +138,7 @@ export default {
                         .then(function (token) {
                             state.captchaResponse = token;
                             disabled.value = false;
-                            console.log(token);
-                        })
-                        .catch(function (error) {});
+                        });
                 });
             } else {
                 document.querySelector(".grecaptcha-badge")?.remove();
@@ -147,16 +149,13 @@ export default {
                 window.___grecaptcha_cfg.clients = {};
 
                 if (window.grecaptcha) {
-                    var widgetId = window.grecaptcha.render(
-                        "recaptchaContainer",
-                        {
-                            sitekey: state.siteKey,
-                            callback: function (token) {
-                                state.captchaResponse = token;
-                                disabled.value = false;
-                            },
-                        }
-                    );
+                    window.grecaptcha.render("recaptchaContainer", {
+                        sitekey: state.siteKey,
+                        callback: function (token) {
+                            state.captchaResponse = token;
+                            disabled.value = false;
+                        },
+                    });
                 }
             }
         };
@@ -204,7 +203,7 @@ export default {
                         state.secretKey = data.secretKey;
                         state.formContainingReCaptcha =
                             data.formContainingReCaptcha;
-                        state.reCaptchaEnabled = data.is_enabled === 'true';
+                        state.reCaptchaEnabled = data.is_enabled === "true";
                     }
                     loadRecaptchaV3Script();
                     load.value = true;
