@@ -54,7 +54,7 @@ class AuthController extends Controller
             if(!$validateCaptcha){
                 wp_send_json_error([
                     'message' => __('Your recaptcha is not verified', 'fluent-support')
-                ],400);
+                ],423);
            }
         }
         //Testing recaptcha
@@ -202,7 +202,7 @@ class AuthController extends Controller
         $reCaptchaData = get_option('_fs_recaptcha_data');
         $formContainingReCaptcha = $reCaptchaData["formContainingReCaptcha"];
         return 'yes' === $formContainingReCaptcha[$formName];
-    } 
+    }
 
     private function nativeLoginHandler($user, $info, $redirectUrl = '')
     {

@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
+use FluentSupport\App\Models\Meta;
 
 class AuthHandler
 {
@@ -384,22 +385,22 @@ class AuthHandler
         $assets = $app['url.assets'];
         wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css', [], FLUENT_SUPPORT_VERSION);
         wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js', [], FLUENT_SUPPORT_VERSION);
-        
-        //Testing recaptcha
-        $reCaptchaData = get_option('_fs_recaptcha_data');
-        unset($reCaptchaData['secretKey']);
 
-        $recaptchaVersion = $reCaptchaData["reCaptcha_version"];
-        $reCaptchaApiUrl = 'https://www.google.com/recaptcha/api.js';
+        //Get Recaptcha settings and enqueue recaptcha script
+        $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+        $reCaptchaData = maybe_unserialize($reCaptchaSettingsData->value, []);
+        if(!empty($reCaptchaData) && isset($reCaptchaData['is_enabled']) && $reCaptchaData['is_enabled'] == true){
+            unset($reCaptchaData['secretKey']);
+            $recaptchaVersion = $reCaptchaData["reCaptcha_version"];
+            $reCaptchaApiUrl = 'https://www.google.com/recaptcha/api.js';
 
-        if( "recaptcha_v3" === $recaptchaVersion )
-        {
-            $reCaptchaApiUrl .= '?render=' . $reCaptchaData["siteKey"];
+            if( "recaptcha_v3" === $recaptchaVersion )
+            {
+                $reCaptchaApiUrl .= '?render=' . $reCaptchaData["siteKey"];
+            }
+
+            wp_enqueue_script( 'recaptcha', $reCaptchaApiUrl );
         }
-
-        wp_enqueue_script( 'recaptcha', $reCaptchaApiUrl );
-        //Testing recaptcha
-        
 
         wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
             'signup'               => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
