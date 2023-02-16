@@ -39,18 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
 
-        //Testing recaptcha
-        if (
-            reCaptchaSettingsData &&
-            "yes" ===
-                reCaptchaSettingsData.formContainingReCaptcha["signup_form"]
-        ) {
+        /*If Recaptcha Integration is enabled for signup form*/
+        if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes") {
             const captchaContainer =
                 ".fst_registration_wrapper form #fst_submit";
             const fieldName = "g-recaptcha-signup";
             handleRecaptcha(captchaContainer, fieldName);
         }
-        //Testing recaptcha
     }
 
     if (document.getElementById("fs_show_reset_password")) {
@@ -69,18 +64,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             });
 
-
-
-        if (
-            reCaptchaSettingsData &&
-            "yes" ===
-                reCaptchaSettingsData.formContainingReCaptcha["login_form"]
-        ) {
-        //Testing recaptcha
+        /*If Recaptcha Integration is enabled for login form*/
+        if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes") {
             const captchaContainer = "#fst_login_form form .login-submit";
             const fieldName = "g-recaptcha-login";
             handleRecaptcha(captchaContainer, fieldName);
-         //Testing recaptcha
         }
     }
 
@@ -166,12 +154,12 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(target).classList.toggle("hide");
     }
 
-    //Testing recaptcha
+    /*Handle Recaptcha V2 and V3*/
     function handleRecaptcha(captchaContainer, fieldName) {
-  
+
         const recaptchaVersion = reCaptchaSettingsData.reCaptcha_version;
         const reCaptchaSiteKey = reCaptchaSettingsData.siteKey;
-     
+
         var inputContainer = document.querySelector(captchaContainer);
 
         if ("recaptcha_v2" === recaptchaVersion) {
@@ -198,9 +186,9 @@ document.addEventListener("DOMContentLoaded", () => {
         inputContainer.insertAdjacentHTML("beforebegin", newInputHTML);
 
         return true;
-    
+
     }
-    //Testing recaptcha
+    /*End Handle Recaptcha V2 and V3*/
 
     const loginForm = document.querySelectorAll("#fst_login_form form");
 

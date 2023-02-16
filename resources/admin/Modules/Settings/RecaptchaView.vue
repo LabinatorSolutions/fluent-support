@@ -60,6 +60,14 @@
                         @change="loadRecaptchaResponse"
                     />
                 </el-form-item>
+                <el-switch
+                    v-model="reCaptchaEnabled"
+                    class="ml-2"
+                    style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+                    active-text="Enabled"
+                    inactive-text="Disabled"
+                    @change="loadRecaptchaResponse"
+                />
                 <el-form-item
                     v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
                     :class="hidden"
@@ -109,6 +117,7 @@ export default {
             siteKey: "",
             secretKey: "",
             captchaResponse: "",
+            reCaptchaEnabled: false,
         });
         const load = ref(false);
         const disabled = ref(true);
@@ -195,6 +204,7 @@ export default {
                         state.secretKey = data.secretKey;
                         state.formContainingReCaptcha =
                             data.formContainingReCaptcha;
+                        state.reCaptchaEnabled = data.is_enabled === 'true';
                     }
                     loadRecaptchaV3Script();
                     load.value = true;

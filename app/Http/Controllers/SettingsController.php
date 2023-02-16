@@ -262,22 +262,23 @@ class SettingsController extends Controller
     {
         $data = $request->get('reCaptcha');
 
-        if ('clear-reCaptcha-settings' == $data) {
+        /*if ('clear-reCaptcha-settings' == $data) {
             delete_option('_fs_recaptcha_data');
 
             wp_send_json_success([
                 'message' => __('Your reCAPTCHA settings are deleted.', 'fluent-support'),
             ], 200);
-        }
-       
+        }*/
+
         $reCaptchaData = [
             'reCaptcha_version' => sanitize_text_field($data['reCaptchaVersion']),
             'siteKey'     => sanitize_text_field($data['siteKey']),
             'secretKey'   => sanitize_text_field($data['secretKey']),
-            'formContainingReCaptcha' => array_map( 'sanitize_text_field', $data['formContainingReCaptcha'])
+            'formContainingReCaptcha' => array_map( 'sanitize_text_field', $data['formContainingReCaptcha']),
+            'is_enabled'  => sanitize_text_field($data['reCaptchaEnabled'], 'no'),
         ];
 
-        $previousValue = get_option('_fs_recaptcha_data');
+        $previousValue = Meta::where('object_type', '_fs_recaptcha_settings')->first();
 
         if($previousValue ===  $reCaptchaData) {
             wp_send_json_error([
@@ -286,15 +287,28 @@ class SettingsController extends Controller
         }
 
         $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($data['captchaResponse'], $data['secretKey'], $data['reCaptchaVersion']);
-   
+
         if(!$verifyReCaptcha){
             wp_send_json_error([
                 'message' => __('Your recaptcha is not verified', 'fluent-support')
             ],400);
         }
 
+        if($previousValue){
+            Meta::where('object_type', '_fs_recaptcha_settings')->update([
+                'value' => maybe_serialize($reCaptchaData)
+            ]);
+            wp_send_json_success([
+                'message' => __('Your reCAPTCHA settings updated successfully.', 'fluent-support'),
+            ], 200);
+        }else {
+            Meta::insert([
+                'object_type' => '_fs_recaptcha_settings',
+                'key'         => '_fs_recaptcha_data',
+                'value'       => maybe_serialize($reCaptchaData)
+            ]);
+        }
 
-        update_option('_fs_recaptcha_data', $reCaptchaData, 'no');
 
         wp_send_json_success([
             'message' => __('Your reCAPTCHA settings added successfully.', 'fluent-support'),
@@ -305,9 +319,9 @@ class SettingsController extends Controller
 
     public function getReCaptchaSettings()
     {
-        $reCaptchaSettingsData = get_option('_fs_recaptcha_data');
-
-        wp_send_json_success($reCaptchaSettingsData, 200);
+        $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+        $settings = maybe_unserialize($reCaptchaSettingsData->value, []);
+        wp_send_json_success($settings, 200);
     }
 
     private function shareEmail($optinEmail)
