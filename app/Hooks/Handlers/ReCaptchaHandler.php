@@ -1,6 +1,7 @@
 <?php
 
 namespace FluentSupport\App\Hooks\Handlers;
+use FluentSupport\App\Models\Meta;
 
 
 class ReCaptchaHandler
@@ -12,9 +13,10 @@ class ReCaptchaHandler
         $verifyUrl = 'https://www.google.com/recaptcha/api/siteverify';
 
             if(!$secret){
-                $reCaptchaData = get_option('_fs_recaptcha_data');
-                $recaptchaVersion = $reCaptchaData["reCaptcha_version"];
-                $secret = $reCaptchaData['secretKey'];
+                $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+                $settings = maybe_unserialize($reCaptchaSettingsData->value, []);
+                $recaptchaVersion = $settings["reCaptcha_version"];
+                $secret = $settings['secretKey'];
             }
             
             $response = wp_remote_post($verifyUrl, [

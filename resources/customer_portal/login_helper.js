@@ -38,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 fsToggleForms(event, this, ".fst_registration_wrapper");
             });
 
-
         /*If Recaptcha Integration is enabled for signup form*/
         if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes") {
             const captchaContainer =
@@ -70,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const fieldName = "g-recaptcha-login";
             handleRecaptcha(captchaContainer, fieldName);
         }
+
     }
 
     function handleFormSubmission(form, submitBtnId, reqUrl) {
@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!genericError && this.response.message) {
                     genericError = this.response.message;
-                } else if (genericError && this.response.data.status === 403) {
+                } else if (genericError && this.response.data.status === 403 || this.status === 422 ) {
                     genericError = this.response.message;
                 }
 
@@ -152,6 +152,10 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         that.parentNode.parentNode.classList.toggle("hide");
         document.querySelector(target).classList.toggle("hide");
+
+        if('recaptcha_v3'===reCaptchaSettingsData.reCaptcha_version){
+            handleRecaptchaBadgeVsibility(target)
+        }
     }
 
     /*Handle Recaptcha V2 and V3*/
@@ -168,6 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 reCaptchaSiteKey +
                 "></div><br>";
         } else {
+            
             var newInputHTML =
                 '<input type="hidden" name="g-recaptcha-response" id=' +
                 fieldName +
@@ -178,10 +183,14 @@ document.addEventListener("DOMContentLoaded", () => {
                         action: "submit",
                     })
                     .then(function (token) {
+
                         document.getElementById(fieldName).value = token;
-                        console.log(token);
+                        if(reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes"){
+                            document.querySelector('.grecaptcha-badge').style.visibility = 'visible';
+                        }
                     });
             });
+    
         }
         inputContainer.insertAdjacentHTML("beforebegin", newInputHTML);
 
@@ -189,6 +198,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
     /*End Handle Recaptcha V2 and V3*/
+
+    /*Handle Recaptcha badge visibility in V3*/
+    function handleRecaptchaBadgeVsibility(target){
+        const isSignupForm = reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes";
+        const isLoginForm = reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes";
+
+        switch (target) {
+            case '.fst_registration_wrapper':
+              document.querySelector('.grecaptcha-badge').style.visibility = isSignupForm ? 'visible' : 'hidden';
+              break;
+            case '.fst_login_wrapper':
+              document.querySelector('.grecaptcha-badge').style.visibility = isLoginForm ? 'visible' : 'hidden';
+              break;
+            default:
+              document.querySelector('.grecaptcha-badge').style.visibility = 'hidden';
+              break;
+          }
+    }
+     /*End Handle Recaptcha badge visibility in V3*/
 
     const loginForm = document.querySelectorAll("#fst_login_form form");
 
@@ -234,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     let genericError = this.response.error;
 
-                    if (this.response && this.status === 403) {
+                    if (this.response && this.status === 403 || this.status === 422) {
                         genericError = this.response.message;
                     }
 
