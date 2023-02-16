@@ -225,7 +225,7 @@ import CustomerForm from "../Customers/_CustomerForm";
 import RemoteSelector from "../../Pieces/RemoteSelector";
 import FluentCrmProfile from './parts/_CrmProfile';
 import {useFluentHelper, useNotify, useConfirm} from "@/admin/Composable/FluentFrameworkHelper";
-import { onMounted, reactive, toRefs } from "vue";
+import {onMounted, reactive, toRefs, watch} from "vue";
 
 export default {
     name: 'TicketSidebar',
@@ -234,7 +234,7 @@ export default {
         RemoteSelector,
         FluentCrmProfile
     },
-    props: ['ticket_id', 'ticket', 'fluentcrm_profile', 'watchers'],
+    props: ['ticket_id', 'ticket', 'fluentcrm_profile', 'watchers', 'fetch_other_tickets'],
     emits: ['refresh'],
     setup(props, context){
         const {
@@ -406,6 +406,10 @@ export default {
                     return watcher.tag_id.toString();
                 });
             }
+        });
+
+        watch(() => props.fetch_other_tickets, (newVal) => {
+            fetchWidgets();
         });
 
         return {

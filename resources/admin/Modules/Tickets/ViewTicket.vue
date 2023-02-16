@@ -132,7 +132,7 @@
                             v-if="has_pro && show_merge_modal"
                             :title="$t('Merge Tickets')"
                         >
-                            <div class="fs_box_body" v-if="customer_tickets.length">
+                            <div class="fs_box_body" v-if="customer_tickets.length && app_ready">
                                 <el-table :data="customer_tickets" style="width: 100%">
                                     <el-table-column prop="id" label="ID" width="130"></el-table-column>
                                     <el-table-column prop="title" label="Title" width="250"></el-table-column>
@@ -149,7 +149,7 @@
                                     <pagination @fetch="customerTickets" :pagination="pagination" />
                                 </div>
                             </div>
-                            <div class="fs_box_body" v-else-if="customer_tickets.length == 0">
+                            <div class="fs_box_body" v-else-if="customer_tickets.length == 0  && app_ready">
                                 <h3>{{$t('customer_has_one_tk')}}</h3>
                             </div>
                             <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
@@ -422,7 +422,7 @@
                 </div>
             </div>
             <div class="fs_ticket_sidebar">
-                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket" :watchers="watchers" @refresh="fetchTicket"/>
+                <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket" :watchers="watchers" @refresh="fetchTicket" :fetch_other_tickets="fetch_other_tickets"/>
             </div>
         </template>
         <template v-else>
@@ -538,6 +538,8 @@ export default {
             split_ticket: {},
             ticket_statuses: appVars.changeable_ticket_statuses,
             close_ticket_silently: "no",
+            app_ready: false,
+            fetch_other_tickets: false,
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -799,6 +801,7 @@ export default {
                         });
                         customerTickets();
                         fetchTicket();
+                        state.fetch_other_tickets = !state.fetch_other_tickets;
                     })
                     .catch((error) => {
                         handleError(error);
