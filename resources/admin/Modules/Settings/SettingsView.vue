@@ -50,6 +50,11 @@ export default {
                     route_query: {},
                 },
                 {
+                    title: translate("Recaptcha"),
+                    route_name: "reCaptcha",
+                    icon: "Setting",
+                },
+                {
                     title: translate("Ticket Form Config"),
                     route_name: "ticket-form-config",
                     icon: "Setting",

@@ -36,6 +36,7 @@ class TransStrings
             'Setup Associate Product/Services for Tickets'    => __('Setup Associate Product/Services for Tickets', 'fluent-support'),
             'Manage Support Staff'    => __('Manage Support Staff', 'fluent-support'),
             'Global Settings'    => __('Global Settings', 'fluent-support'),
+            'Recaptcha'  => __('Recaptcha', 'fluent-support'),
             'Go to Dashboard'    => __('Go to Dashboard', 'fluent-support'),
             'Use shortcode'    => __('Use shortcode', 'fluent-support'),
             'in the selected page'    => __('in the selected page', 'fluent-support'),
