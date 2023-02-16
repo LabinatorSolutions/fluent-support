@@ -6,6 +6,7 @@ use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\AuthHandler;
+use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
 
 class AuthController extends Controller
 {
@@ -45,6 +46,18 @@ class AuthController extends Controller
          * @param array $formData
          */
         do_action('fluent_support/before_signup_validation', $formData);
+
+        //Testing recaptcha
+        $checkRecaptchaAvailability = $this->isRecaptchaApplicable('signup_form');
+        if($checkRecaptchaAvailability){
+            $validateCaptcha = ReCaptchaHandler::validateRecaptcha($formData['g-recaptcha-response']);
+            if(!$validateCaptcha){
+                wp_send_json_error([
+                    'message' => __('Your recaptcha is not verified', 'fluent-support')
+                ],400);
+           }
+        }
+        //Testing recaptcha
 
         $this->validate($formData, $rules, $messages);
 
@@ -106,6 +119,20 @@ class AuthController extends Controller
         }
 
         $data = $request->all();
+
+        //Testing recaptcha
+
+        $checkRecaptchaAvailability = $this->isRecaptchaApplicable('login_form');
+        if($checkRecaptchaAvailability){
+           $validateCaptcha  = ReCaptchaHandler::validateRecaptcha($data['g-recaptcha-response']);
+
+           if(!$validateCaptcha){
+                wp_send_json_error([
+                    'message' => __('Your recaptcha is not verified', 'fluent-support')
+                ],400);
+           }
+        }
+        //Testing recaptcha
 
         if (empty($data['pwd']) || empty($data['log'])) {
             return $this->response([
@@ -169,6 +196,13 @@ class AuthController extends Controller
             'message' => __('<strong>Error</strong>: Invalid username, email address or incorrect password.', 'fluent-support')
         ], 403);
     }
+
+    public function isRecaptchaApplicable($formName)
+    {
+        $reCaptchaData = get_option('_fs_recaptcha_data');
+        $formContainingReCaptcha = $reCaptchaData["formContainingReCaptcha"];
+        return 'yes' === $formContainingReCaptcha[$formName];
+    } 
 
     private function nativeLoginHandler($user, $info, $redirectUrl = '')
     {

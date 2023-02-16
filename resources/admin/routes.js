@@ -11,6 +11,7 @@ import Products from './Modules/Settings/Products';
 import TicketTags from './Modules/Settings/TicketTags';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
+import RecaptchaView from './Modules/Settings/RecaptchaView'
 import SlackIntegration from "./Modules/Settings/SlackIntegration";
 import TicketFormConfig from "./Modules/Settings/TicketFormConfig";
 import CustomFields from "./Modules/Settings/CustomFields";
@@ -87,6 +88,11 @@ export default [
                 name: 'global_settings',
                 path: '',
                 component: BusinessSettings
+            },
+            {
+                name: 'reCaptcha',
+                path: 'reCaptcha',
+                component: RecaptchaView
             },
             {
                 name: 'ticket-form-config',
