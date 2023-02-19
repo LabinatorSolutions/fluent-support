@@ -82,6 +82,13 @@
                         </el-checkbox>
                     </el-form-item>
                 </el-col>
+                <el-col :sm="12" :xs="24">
+                    <el-form-item>
+                        <el-checkbox @change="initConditions(item)" v-model="item.required" true-label="yes"
+                                     false-label="no">{{$t('Required')}}
+                        </el-checkbox>
+                    </el-form-item>
+                </el-col>
             </el-row>
 
             <template v-if="item.has_logics == 'yes' && item.conditions">
