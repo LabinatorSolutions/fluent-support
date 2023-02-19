@@ -18,7 +18,7 @@ class ReCaptchaHandler
                 $recaptchaVersion = $settings["reCaptcha_version"];
                 $secret = $settings['secretKey'];
             }
-            
+
             $response = wp_remote_post($verifyUrl, [
                 'method' => 'POST',
                 'body'   => [
@@ -30,9 +30,9 @@ class ReCaptchaHandler
             if (is_wp_error($response)) {
                 return false;
             }
-        
+
             $result = json_decode(wp_remote_retrieve_body($response));
-        
+
             if ($recaptchaVersion === 'recaptcha_v3') {
                 $score = $result->score;
                 $checkScore = apply_filters('fluent_support/recaptcha_v3_ref_score', 0.5);

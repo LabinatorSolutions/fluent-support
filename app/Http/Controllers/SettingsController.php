@@ -281,26 +281,26 @@ class SettingsController extends Controller
         $previousValue = Meta::where('object_type', '_fs_recaptcha_settings')->first();
 
         if($previousValue ===  $reCaptchaData) {
-            wp_send_json_error([
-                'message' => __('Your recaptcha details are already saved', 'fluent-support')
-            ],400);
+            $this->sendError([
+                'message' => __('Your recaptcha details are already saved.', 'fluent-support'),
+            ]);
         }
 
         $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($data['captchaResponse'], $data['secretKey'], $data['reCaptchaVersion']);
 
         if(!$verifyReCaptcha){
-            wp_send_json_error([
-                'message' => __('Your recaptcha is not verified', 'fluent-support')
-            ],400);
+            $this->sendError([
+                'message' => __('Your reCAPTCHA settings are not valid.', 'fluent-support'),
+            ]);
         }
 
         if($previousValue){
             Meta::where('object_type', '_fs_recaptcha_settings')->update([
                 'value' => maybe_serialize($reCaptchaData)
             ]);
-            wp_send_json_success([
+            $this->sendSuccess([
                 'message' => __('Your reCAPTCHA settings updated successfully.', 'fluent-support'),
-            ], 200);
+            ]);
         }else {
             Meta::insert([
                 'object_type' => '_fs_recaptcha_settings',
@@ -309,19 +309,20 @@ class SettingsController extends Controller
             ]);
         }
 
-
-        wp_send_json_success([
+        return $this->sendSuccess([
             'message' => __('Your reCAPTCHA settings added successfully.', 'fluent-support'),
-        ], 200);
-
-
+        ]);
     }
 
     public function getReCaptchaSettings()
     {
         $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
-        $settings = maybe_unserialize($reCaptchaSettingsData->value, []);
-        wp_send_json_success($settings, 200);
+        if($reCaptchaSettingsData){
+            $settings = maybe_unserialize($reCaptchaSettingsData->value);
+            return $this->sendSuccess($settings);
+        }
+
+        return [];
     }
 
     private function shareEmail($optinEmail)
