@@ -115,12 +115,12 @@ export default {
         const state = reactive({
             reCaptchaVersion: "recaptcha_v2",
             formContainingReCaptcha: {
-                login_form: "no",
-                signup_form: "no",
+                login_form: 'no',
+                signup_form: 'no',
             },
-            siteKey: "",
-            secretKey: "",
-            captchaResponse: "",
+            siteKey: '',
+            secretKey: '',
+            captchaResponse: '',
             reCaptchaEnabled: false,
         });
         const load = ref(false);
@@ -193,16 +193,14 @@ export default {
         };
 
         const fetchSettings = async () => {
-            await get("settings/recaptcha-settings")
+             await get("settings/recaptcha-settings")
                 .then((response) => {
-                    const data = response.data;
-
+                    const data = response;
                     if (data) {
                         state.reCaptchaVersion = data.reCaptcha_version;
                         state.siteKey = data.siteKey;
                         state.secretKey = data.secretKey;
-                        state.formContainingReCaptcha =
-                            data.formContainingReCaptcha;
+                        state.formContainingReCaptcha = data.formContainingReCaptcha;
                         state.reCaptchaEnabled = data.is_enabled === "true";
                     }
                     loadRecaptchaV3Script();
