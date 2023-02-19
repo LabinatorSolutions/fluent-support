@@ -613,4 +613,32 @@ class Helper
             'Max Waiting' => __('Max Waiting', 'fluent-support'),
         ];
     }
+
+    public static function getRequiredCustomFields()
+    {
+        $data = Meta::where('object_type', 'option')
+            ->where('key', '_ticket_custom_fields')
+            ->first();
+
+        if ($data) {
+            $value = maybe_unserialize($data->value);
+            if ($value) {
+                $requiredFields = [];
+                $errorMessages = [];
+                foreach ($value as $field) {
+                    if (isset($field['required']) && $field['required'] == 'yes') {
+                        $requiredFields['custom_data.'.$field['slug']] = 'required';
+                        $errorMessages['custom_data.'.$field['slug'].'.required'] = sprintf(__('%s is required', 'fluent-support'), $field['label']);
+                    }
+                }
+
+                return [
+                    'required_fields' => $requiredFields,
+                    'error_messages' => $errorMessages
+                ];
+            }
+        }
+
+        return [];
+    }
 }
