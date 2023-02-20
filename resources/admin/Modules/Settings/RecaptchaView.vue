@@ -110,7 +110,7 @@ import {
 export default {
     name: "RecaptchaView",
     setup() {
-        const { get, post, translate, handleError } = useFluentHelper();
+        const { get, post, translate, handleError, setTitle } = useFluentHelper();
         const { notify } = useNotify();
 
         const state = reactive({
@@ -242,6 +242,7 @@ export default {
         };
 
         onMounted(() => {
+            setTitle("ReCaptcha Settings");
             var v2Script = document.createElement("script");
             v2Script.src = `https://www.google.com/recaptcha/api.js`;
             document.head.appendChild(v2Script);
@@ -256,6 +257,7 @@ export default {
             loadRecaptchaResponse,
             load,
             disabled,
+            setTitle
         };
     },
 };
