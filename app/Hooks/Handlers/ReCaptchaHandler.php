@@ -39,6 +39,6 @@ class ReCaptchaHandler
                 return $score >= $checkScore;
             }
 
-            return $result->success;
+            return $result['success'];
     }
 }
