@@ -7,7 +7,7 @@
         </el-row>
 
         <div class="settings-body">
-            <el-form label-position="left" label-width="140px">
+            <el-form label-position="top" label-width="140px">
                 <el-switch
                     v-model="reCaptchaEnabled"
                     class="ml-2"
@@ -74,7 +74,7 @@
 
                 <el-form-item
                     v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
-                    :class="hidden"
+                    class="hidden"
                     label="Validate Captcha"
                 >
                     <div
@@ -84,16 +84,17 @@
                     ></div>
                 </el-form-item>
 
-                <el-form-item label-position="right">
+                <el-form-item>
                     <el-button
-                        type="primary"
+                        type="success"
                         @click="saveSettings"
                         :disabled="disabled"
-                        >Save</el-button
                     >
-                    <el-button type="danger" @click="clearSettings"
-                        >Clear Settings</el-button
-                    >
+                        Save
+                    </el-button>
+                    <el-button type="danger" @click="clearSettings">
+                        Clear Settings
+                    </el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -182,7 +183,7 @@ export default {
             })
                 .then((response) => {
                     notify({
-                        message: response.data.message,
+                        message: response.message,
                         type: "success",
                         position: "bottom-right",
                     });

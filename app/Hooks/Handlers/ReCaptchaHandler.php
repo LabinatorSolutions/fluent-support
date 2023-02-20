@@ -20,7 +20,6 @@ class ReCaptchaHandler
             }
 
             $response = wp_remote_post($verifyUrl, [
-                'method' => 'POST',
                 'body'   => [
                     'secret'   => $secret,
                     'response' => $token
@@ -31,10 +30,10 @@ class ReCaptchaHandler
                 return false;
             }
 
-            $result = json_decode(wp_remote_retrieve_body($response));
+            $result = json_decode(wp_remote_retrieve_body($response), true);
 
-            if ($recaptchaVersion === 'recaptcha_v3') {
-                $score = $result->score;
+            if ('recaptcha_v3' === $recaptchaVersion) {
+                $score = $result['score'];
                 $checkScore = apply_filters('fluent_support/recaptcha_v3_ref_score', 0.5);
 
                 return $score >= $checkScore;
