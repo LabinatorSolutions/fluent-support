@@ -12,7 +12,6 @@ import TicketTags from './Modules/Settings/TicketTags';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
 import RecaptchaView from './Modules/Settings/RecaptchaView'
-import SlackIntegration from "./Modules/Settings/SlackIntegration";
 import TicketFormConfig from "./Modules/Settings/TicketFormConfig";
 import CustomFields from "./Modules/Settings/CustomFields";
 import LicenseManagement from "./Modules/Settings/LicenseManagement";
@@ -123,11 +122,6 @@ export default [
                 path: 'integration',
                 name: 'integration',
                 component: IntegrationView
-            },
-            {
-                path: 'slack-integration',
-                name: 'slack-integration',
-                component: SlackIntegration
             },
             {
                 path: 'fluentcrm-integration',
