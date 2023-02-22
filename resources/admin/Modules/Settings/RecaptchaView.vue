@@ -201,7 +201,7 @@ export default {
              await get("settings/recaptcha-settings")
                 .then((response) => {
                     const data = response;
-                    if (data.length) {
+                    if (data != null && Object.keys(data).length > 0) {
                         state.reCaptchaVersion = data.reCaptcha_version;
                         state.siteKey = data.siteKey;
                         state.secretKey = data.secretKey;
