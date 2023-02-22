@@ -626,6 +626,15 @@ class TransStrings
             'Next' => __('Next', 'fluent-support'),
             'Enable Auto Closing Inactive Tickets' => __('Enable Auto Closing Inactive Tickets', 'fluent-support'),
             'Required' => __('Required', 'fluent-support'),
+            'Recaptcha_heading' => __('Google reCAPTCHA Settings', 'fluent-support'),
+            'Recaptcha Version' => __('Recaptcha Version', 'fluent-support'),
+            'Version 2' => __('Version 2', 'fluent-support'),
+            'Version 3' => __('Version 3', 'fluent-support'),
+            'Use Recaptcha' => __('Use Recaptcha', 'fluent-support'),
+            'Login Form' => __('Login Form', 'fluent-support'),
+            'Signup Form'   => __('Signup Form', 'fluent-support'),
+            'Validate Captcha' => __('Validate Captcha', 'fluent-support'),
+            'Clear Settings' => __('Clear Settings', 'fluent-support')
         ];
     }
 }

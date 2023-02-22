@@ -2,7 +2,7 @@
     <div class="fs_reCaptcha_settings_body" v-if="load">
         <el-row class="setting_header">
             <el-col :md="24">
-                <h2>{{ $t("Google reCAPTCHA Settings") }}</h2>
+                <h2>{{ translate("Recaptcha_heading") }}</h2>
             </el-col>
         </el-row>
 
@@ -20,7 +20,7 @@
                     @change="loadRecaptchaResponse"
                 />
                 <el-form-item
-                    label="Recaptcha Version"
+                    :label="translate('Recaptcha Version')"
                     style="margin-right: 20px"
                 >
                     <el-radio-group
@@ -29,7 +29,7 @@
                         style="width: 90%; margin-right: 0.2em"
                     >
                         <el-radio label="recaptcha_v2">{{
-                            $t("Version 2")
+                            translate("Version 2")
                         }}</el-radio>
                         <el-radio label="recaptcha_v3">{{
                             $t("Version 3")
@@ -37,7 +37,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item
-                    label="Enable reCAPTCHA"
+                    :label="translate('Use Recaptcha')"
                     @change="loadRecaptchaResponse"
                 >
                     <el-checkbox
@@ -46,14 +46,14 @@
                         true-label="yes"
                         false-label="no"
                         name="type"
-                        >Login Form</el-checkbox
+                        >{{ translate("Login Form") }}</el-checkbox
                     >
                     <el-checkbox
                         v-model="formContainingReCaptcha.signup_form"
                         true-label="yes"
                         false-label="no"
                         name="type"
-                        >Signup Form</el-checkbox
+                        >{{ translate("Signup Form") }}</el-checkbox
                     >
                 </el-form-item>
 
@@ -75,7 +75,7 @@
                 <el-form-item
                     v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
                     class="hidden"
-                    label="Validate Captcha"
+                    :label="translate('Validate Captcha')"
                 >
                     <div
                         class="g-recaptcha"
@@ -90,10 +90,10 @@
                         @click="saveSettings"
                         :disabled="disabled"
                     >
-                        Save
+                        {{ translate("Save Settings") }}
                     </el-button>
                     <el-button type="danger" @click="clearSettings">
-                        Clear Settings
+                        {{ translate("Clear Settings") }}
                     </el-button>
                 </el-form-item>
             </el-form>
@@ -110,18 +110,19 @@ import {
 export default {
     name: "RecaptchaView",
     setup() {
-        const { get, post, translate, handleError, setTitle } = useFluentHelper();
+        const { get, post, translate, handleError, setTitle } =
+            useFluentHelper();
         const { notify } = useNotify();
 
         const state = reactive({
             reCaptchaVersion: "recaptcha_v2",
             formContainingReCaptcha: {
-                login_form: 'no',
-                signup_form: 'no',
+                login_form: "no",
+                signup_form: "no",
             },
-            siteKey: '',
-            secretKey: '',
-            captchaResponse: '',
+            siteKey: "",
+            secretKey: "",
+            captchaResponse: "",
             reCaptchaEnabled: false,
         });
         const load = ref(false);
@@ -189,19 +190,22 @@ export default {
                     });
                 })
                 .catch((errors) => {
+                    console.log(errors);
                     handleError(errors);
                 });
         };
 
         const fetchSettings = async () => {
-             await get("settings/recaptcha-settings")
+            await get("settings/recaptcha-settings")
                 .then((response) => {
                     const data = response;
+                    console.log(data);
                     if (data) {
                         state.reCaptchaVersion = data.reCaptcha_version;
                         state.siteKey = data.siteKey;
                         state.secretKey = data.secretKey;
-                        state.formContainingReCaptcha = data.formContainingReCaptcha;
+                        state.formContainingReCaptcha =
+                            data.formContainingReCaptcha;
                         state.reCaptchaEnabled = data.is_enabled === "true";
                     }
                     loadRecaptchaV3Script();
@@ -255,9 +259,10 @@ export default {
             saveSettings,
             clearSettings,
             loadRecaptchaResponse,
+            translate,
             load,
             disabled,
-            setTitle
+            setTitle,
         };
     },
 };
