@@ -1,102 +1,106 @@
 <template>
-    <div class="fs_reCaptcha_settings_body" v-if="load">
-        <el-row class="setting_header">
-            <el-col :md="24">
-                <h2>{{ translate("Recaptcha_heading") }}</h2>
-            </el-col>
-        </el-row>
-
-        <div class="settings-body">
-            <el-form label-position="top" label-width="140px">
-                <el-switch
-                    v-model="reCaptchaEnabled"
-                    class="ml-2"
-                    style="
+    <div class="fs_box_wrapper"  v-if="load">
+        <div class="fs_box_header">
+            <div class="fs_box_head">
+                <h3>{{ translate("Recaptcha_heading") }}</h3>
+            </div>
+        </div>
+        <div class="fs_box_body">
+            <div class="fs_reCaptcha_settings_body">
+                <div class="settings-body">
+                    <el-form label-position="top" label-width="140px">
+                        <el-switch
+                            v-model="reCaptchaEnabled"
+                            class="ml-2"
+                            style="
                         --el-switch-on-color: #13ce66;
                         --el-switch-off-color: #ff4949;
-                    "
-                    active-text="Enabled"
-                    inactive-text="Disabled"
-                    @change="loadRecaptchaResponse"
-                />
-                <el-form-item
-                    :label="translate('Recaptcha Version')"
-                    style="margin-right: 20px"
-                >
-                    <el-radio-group
-                        @change="loadRecaptchaResponse"
-                        v-model="reCaptchaVersion"
-                        style="width: 90%; margin-right: 0.2em"
-                    >
-                        <el-radio label="recaptcha_v2">{{
-                            translate("Version 2")
-                        }}</el-radio>
-                        <el-radio label="recaptcha_v3">{{
-                            $t("Version 3")
-                        }}</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item
-                    :label="translate('Use Recaptcha')"
-                    @change="loadRecaptchaResponse"
-                >
-                    <el-checkbox
-                        v-model="formContainingReCaptcha.login_form"
-                        @change="loadRecaptchaResponse"
-                        true-label="yes"
-                        false-label="no"
-                        name="type"
-                        >{{ translate("Login Form") }}</el-checkbox
-                    >
-                    <el-checkbox
-                        v-model="formContainingReCaptcha.signup_form"
-                        true-label="yes"
-                        false-label="no"
-                        name="type"
-                        >{{ translate("Signup Form") }}</el-checkbox
-                    >
-                </el-form-item>
-
-                <el-form-item label="Site Key">
-                    <el-input
-                        v-model="siteKey"
+                        "
+                        active-text="Enabled"
+                        inactive-text="Disabled"
                         @change="loadRecaptchaResponse"
                     />
-                </el-form-item>
+                        <el-form-item
+                            :label="translate('Recaptcha Version')"
+                            style="margin-right: 20px; margin-top: 20px"
+                        >
+                            <el-radio-group
+                                @change="loadRecaptchaResponse"
+                                v-model="reCaptchaVersion"
+                                style="width: 90%; margin-right: 0.2em"
+                            >
+                                <el-radio label="recaptcha_v2">{{
+                                    translate("Version 2")
+                                }}</el-radio>
+                                <el-radio label="recaptcha_v3">{{
+                                    translate("Version 3")
+                                }}</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
 
-                <el-form-item label="Secret Key">
-                    <el-input
-                        type="password"
-                        v-model="secretKey"
-                        @change="loadRecaptchaResponse"
-                    />
-                </el-form-item>
+                        <el-form-item label="Site Key">
+                            <el-input
+                                v-model="siteKey"
+                                @change="loadRecaptchaResponse"
+                            />
+                        </el-form-item>
 
-                <el-form-item
-                    v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
-                    class="hidden"
-                    :label="translate('Validate Captcha')"
-                >
-                    <div
-                        class="g-recaptcha"
-                        id="recaptchaContainer"
-                        :data-sitekey="siteKey"
-                    ></div>
-                </el-form-item>
+                        <el-form-item label="Secret Key">
+                                    <el-input
+                                        type="password"
+                                        v-model="secretKey"
+                                        @change="loadRecaptchaResponse"
+                                    />
+                                </el-form-item>
 
-                <el-form-item>
-                    <el-button
-                        type="success"
-                        @click="saveSettings"
-                        :disabled="disabled"
-                    >
-                        {{ translate("Save Settings") }}
-                    </el-button>
-                    <el-button type="danger" @click="clearSettings">
-                        {{ translate("Clear Settings") }}
-                    </el-button>
-                </el-form-item>
-            </el-form>
+                        <el-form-item
+                            :label="translate('Use Recaptcha')"
+                            @change="loadRecaptchaResponse"
+                        >
+                            <el-checkbox
+                                v-model="formContainingReCaptcha.login_form"
+                                @change="loadRecaptchaResponse"
+                                true-label="yes"
+                                false-label="no"
+                                name="type"
+                            >{{ translate("Login Form") }}</el-checkbox
+                            >
+                            <el-checkbox
+                                v-model="formContainingReCaptcha.signup_form"
+                                true-label="yes"
+                                false-label="no"
+                                name="type"
+                            >{{ translate("Signup Form") }}</el-checkbox
+                            >
+                        </el-form-item>
+
+                        <el-form-item
+                            v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
+                            class="hidden"
+                            :label="translate('Validate Captcha')"
+                        >
+                            <div
+                                class="g-recaptcha"
+                                id="recaptchaContainer"
+                                :data-sitekey="siteKey"
+                            ></div>
+                        </el-form-item>
+
+                        <el-form-item>
+                            <el-button
+                                type="success"
+                                @click="saveSettings"
+                                :disabled="disabled"
+                            >
+                                {{ translate("Save Settings") }}
+                            </el-button>
+                            <el-button type="danger" @click="clearSettings">
+                                {{ translate("Clear Settings") }}
+                            </el-button>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -110,19 +114,18 @@ import {
 export default {
     name: "RecaptchaView",
     setup() {
-        const { get, post, translate, handleError, setTitle } =
-            useFluentHelper();
+        const { get, post, translate, handleError, setTitle } = useFluentHelper();
         const { notify } = useNotify();
 
         const state = reactive({
             reCaptchaVersion: "recaptcha_v2",
             formContainingReCaptcha: {
-                login_form: "no",
-                signup_form: "no",
+                login_form: 'no',
+                signup_form: 'no',
             },
-            siteKey: "",
-            secretKey: "",
-            captchaResponse: "",
+            siteKey: '',
+            secretKey: '',
+            captchaResponse: '',
             reCaptchaEnabled: false,
         });
         const load = ref(false);
@@ -190,22 +193,19 @@ export default {
                     });
                 })
                 .catch((errors) => {
-                    console.log(errors);
                     handleError(errors);
                 });
         };
 
         const fetchSettings = async () => {
-            await get("settings/recaptcha-settings")
+             await get("settings/recaptcha-settings")
                 .then((response) => {
                     const data = response;
-                    console.log(data);
-                    if (data) {
+                    if (data.length) {
                         state.reCaptchaVersion = data.reCaptcha_version;
                         state.siteKey = data.siteKey;
                         state.secretKey = data.secretKey;
-                        state.formContainingReCaptcha =
-                            data.formContainingReCaptcha;
+                        state.formContainingReCaptcha = data.formContainingReCaptcha;
                         state.reCaptchaEnabled = data.is_enabled === "true";
                     }
                     loadRecaptchaV3Script();
@@ -230,18 +230,18 @@ export default {
                     state.reCaptchaVersion = "";
                     state.siteKey = "";
                     state.secretKey = "";
-                    (state.formContainingReCaptcha = {
+                    state.formContainingReCaptcha = {
                         login_form: "no",
                         signup_form: "no",
-                    }),
-                        notify({
-                            message: response.data.message,
-                            type: "success",
-                            position: "bottom-right",
-                        });
+                    };
+                    notify({
+                        message: response.message,
+                        type: "success",
+                        position: "bottom-right",
+                    });
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 });
         };
 
@@ -259,16 +259,11 @@ export default {
             saveSettings,
             clearSettings,
             loadRecaptchaResponse,
-            translate,
             load,
             disabled,
             setTitle,
+            translate,
         };
     },
 };
 </script>
-<style>
-.fs_reCaptcha_settings_body {
-    padding: 30px;
-}
-</style>

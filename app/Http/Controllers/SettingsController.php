@@ -262,13 +262,17 @@ class SettingsController extends Controller
     {
         $data = $request->get('reCaptcha');
 
-        /*if ('clear-reCaptcha-settings' == $data) {
-            delete_option('_fs_recaptcha_data');
+        if ('clear-reCaptcha-settings' == $data) {
+            if(Meta::where('object_type', '_fs_recaptcha_settings')->delete()){
+                return $this->sendSuccess([
+                    'message' => __('Your reCAPTCHA settings deleted successfully.', 'fluent-support'),
+                ]);
+            }
 
-            wp_send_json_success([
-                'message' => __('Your reCAPTCHA settings are deleted.', 'fluent-support'),
-            ], 200);
-        }*/
+            return $this->sendError([
+                'message' => __('Unable to delete reCAPTCHA settings, try again', 'fluent-support'),
+            ]);
+        }
 
         $reCaptchaData = [
             'reCaptcha_version' => sanitize_text_field($data['reCaptchaVersion']),
@@ -289,7 +293,7 @@ class SettingsController extends Controller
         $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($data['captchaResponse'], $data['secretKey'], $data['reCaptchaVersion']);
 
         if(!$verifyReCaptcha){
-            $this->sendError([
+            return $this->sendError([
                 'message' => __('Your reCAPTCHA settings are not valid.', 'fluent-support'),
             ]);
         }
@@ -298,7 +302,7 @@ class SettingsController extends Controller
             Meta::where('object_type', '_fs_recaptcha_settings')->update([
                 'value' => maybe_serialize($reCaptchaData)
             ]);
-            $this->sendSuccess([
+            return $this->sendSuccess([
                 'message' => __('Your reCAPTCHA settings updated successfully.', 'fluent-support'),
             ]);
         }else {
