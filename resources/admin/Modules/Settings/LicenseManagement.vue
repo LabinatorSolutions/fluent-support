@@ -134,7 +134,7 @@ import {
 export default {
     name: "LicenseManagement",
     setup() {
-        const { get, post, translate, handleError, setTitle, appVars, convertToText } =
+        const { get, post, translate, handleError, setTitle, convertToText } =
             useFluentHelper();
 
         const { notify } = useNotify();
@@ -241,7 +241,6 @@ export default {
             fetchLicense,
             verifyLicense,
             deactivateLicense
-
         };
     },
 };
