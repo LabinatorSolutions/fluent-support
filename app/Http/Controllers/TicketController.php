@@ -70,10 +70,24 @@ class TicketController extends Controller
 
         $maybeNewCustomer = $request->getSafe('newCustomer');
 
-        $this->validate($ticketData, [
+        $dataRules =  [
             'title'   => 'required',
             'content' => 'required'
-        ]);
+        ];
+
+        $requiredCustomFields = Helper::getRequiredCustomFields();
+
+        if (defined('FLUENT_SUPPORT_PRO_DIR_FILE') && $requiredCustomFields) {
+            //In $ticketDataWithCustomData variable change the key name custom_fields to custom_data for validating custom field data
+            $ticketDataWithCustomData = $ticketData;
+            $ticketDataWithCustomData['custom_data'] = $ticketDataWithCustomData['custom_fields'];
+            unset($ticketDataWithCustomData['custom_fields']);
+
+            $dataRules = array_merge($dataRules, $requiredCustomFields['required_fields']);
+            $this->validate($ticketDataWithCustomData, $dataRules, $requiredCustomFields['error_messages']);
+        } else {
+            $this->validate($ticketData, $dataRules);
+        }
 
         $createdTicket = $ticket->createTicket($ticketData, $maybeNewCustomer);
 
@@ -205,7 +219,7 @@ class TicketController extends Controller
      */
     public function doBulkActions(Request $request, Ticket $ticket)
     {
-        $action = $request->getSafe('bulk_action');//get action
+        $action = $request->getSafe('bulk_action'); //get action
         $ticketIds = $request->getSafe('ticket_ids', [], 'intval');
 
         try {

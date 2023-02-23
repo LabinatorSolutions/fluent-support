@@ -4,7 +4,7 @@
             <el-row v-if="fields" :gutter="30">
                 <el-col v-for="(field, fieldName) in fields" :key="fieldName" :xs="24" :md="12">
                     <el-form :data="formData" :label-position="labelPosition">
-                        <el-form-item :label="field.label">
+                        <el-form-item :label="field.label" :required="field.required=='yes'">
                             <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
                                       :type="field.type" v-model="formData[field.slug]"/>
                             <el-select v-else-if="field.type == 'select-one'" v-model="formData[field.slug]">
