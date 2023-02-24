@@ -285,7 +285,7 @@ class SettingsController extends Controller
         $previousValue = Meta::where('object_type', '_fs_recaptcha_settings')->first();
 
         if($previousValue ===  $reCaptchaData) {
-            $this->sendError([
+            return $this->sendError([
                 'message' => __('Your recaptcha details are already saved.', 'fluent-support'),
             ]);
         }
