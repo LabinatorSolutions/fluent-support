@@ -1,7 +1,7 @@
 <template>
     <el-form label-position="top" :data="item">
-        <el-form-item :label="$t('Field Type')">
-            <el-select @change="changeFieldType()" :placeholder="$t('Select Field Type')" v-model="item.field_key">
+        <el-form-item :label="translate('Field Type')">
+            <el-select @change="changeFieldType()" :placeholder="translate('Select Field Type')" v-model="item.field_key">
                 <el-option
                     v-for="(fieldType, fieldKey) in field_types"
                     :key="fieldKey"
@@ -13,39 +13,39 @@
         <template v-if="item.type">
             <el-row :gutter="30">
                 <el-col :sm="12" :xs="24">
-                    <el-form-item :label="$t('Admin Label (Optional)')">
-                        <el-input @keyup.native="maybeSetSlug()" :placeholder="$t('Custom Field Public Label')"
+                    <el-form-item :label="translate('Admin Label (Optional)')">
+                        <el-input @keyup.native="maybeSetSlug()" :placeholder="translate('Custom Field Public Label')"
                                   v-model="item.label"></el-input>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
-                    <el-form-item :label="$t('Admin Label (Optional)')">
-                        <el-input @keyup.native="maybeSetSlug()" :placeholder="$t('Custom Field Admin Label')"
+                    <el-form-item :label="translate('Admin Label (Optional)')">
+                        <el-input @keyup.native="maybeSetSlug()" :placeholder="translate('Custom Field Admin Label')"
                                   v-model="item.admin_label"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
             <el-row :gutter="30">
                 <el-col :sm="12" :xs="24">
-                    <el-form-item :label="$t('Slug (Optional)')">
-                        <el-input maxlength="20" :placeholder="$t('Custom Field Slug')" :disabled="form_type == 'update'"
+                    <el-form-item :label="translate('Slug (Optional)')">
+                        <el-input maxlength="20" :placeholder="translate('Custom Field Slug')" :disabled="form_type == 'update'"
                                   v-model="item.slug">
                             <template v-if="form_type == 'new'" #prepend>cf_</template>
                         </el-input>
-                        <p v-if="form_type == 'new'">{{$t('You can not change the slug once save a custom field')}}</p>
+                        <p v-if="form_type == 'new'">{{translate('You can not change the slug once save a custom field')}}</p>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
-                    <el-form-item :label="$t('Placeholder')">
-                        <el-input :placeholder="$t('Field Placeholder')" v-model="item.placeholder" />
+                    <el-form-item :label="translate('Placeholder')">
+                        <el-input :placeholder="translate('Field Placeholder')" v-model="item.placeholder" />
                     </el-form-item>
                 </el-col>
             </el-row>
 
-            <el-form-item v-if="hasOptions(item.type)" :label="$t('Field Value Options')">
+            <el-form-item v-if="hasOptions(item.type)" :label="translate('Field Value Options')">
                 <ul class="fluentcrm_option_lists">
                     <li v-for="(optionName, optionIndex) in item.options" :key="optionIndex">
-                        <el-input :placeholder="$t('Option Value')" v-model="item.options[optionIndex]" type="text">
+                        <el-input :placeholder="translate('Option Value')" v-model="item.options[optionIndex]" type="text">
                             <template #suffix>
                                 <i @click="removeOptionItem(optionIndex)" class="fluentcrm_clickable el-icon-close"></i>
                             </template>
@@ -57,13 +57,13 @@
                     v-if="optionInputVisible"
                     v-model="optionInputValue"
                     ref="saveTagInput"
-                    :placeholder="$t('type and press enter')"
+                    :placeholder="translate('type and press enter')"
                     @keyup.enter.native="handleOptionInputConfirm"
                     @blur="handleOptionInputConfirm"
                 >
                 </el-input>
                 <el-button v-else class="button-new-tag" size="small" @click="showOptionInput">
-                    + {{$t('New Option')}}
+                    + {{translate('New Option')}}
                 </el-button>
             </el-form-item>
 
@@ -71,21 +71,21 @@
                 <el-col :sm="12" :xs="24">
                     <el-form-item>
                         <el-checkbox true-label="yes" false-label="no" v-model="item.admin_only">
-                            {{$t('This is an agent only field')}}
+                            {{translate('This is an agent only field')}}
                         </el-checkbox>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
                     <el-form-item>
                         <el-checkbox @change="initConditions(item)" v-model="item.has_logics" true-label="yes"
-                                     false-label="no">{{$t('Enable Conditional Logics')}}
+                                     false-label="no">{{translate('Enable Conditional Logics')}}
                         </el-checkbox>
                     </el-form-item>
                 </el-col>
                 <el-col :sm="12" :xs="24">
                     <el-form-item>
                         <el-checkbox @change="initConditions(item)" v-model="item.required" true-label="yes"
-                                     false-label="no">{{$t('Required')}}
+                                     false-label="no">{{translate('Required')}}
                         </el-checkbox>
                     </el-form-item>
                 </el-col>
@@ -95,16 +95,16 @@
                 <table style="margin-bottom: 20px;" class="fs_table fs_stripe">
                     <thead>
                     <tr>
-                        <th>{{$t('Field')}}</th>
-                        <th>{{$t('Operator')}}</th>
-                        <th>{{$t('Match Value')}}</th>
+                        <th>{{translate('Field')}}</th>
+                        <th>{{translate('Operator')}}</th>
+                        <th>{{translate('Match Value')}}</th>
                         <th></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr v-for="(condition,conditionIndex) in item.conditions" :key="conditionIndex">
                         <td>
-                            <el-select filterable v-model="condition.item_key" :placeholder="$t('Select Field')">
+                            <el-select filterable v-model="condition.item_key" :placeholder="translate('Select Field')">
                                 <el-option
                                     v-for="(field, fieldKey) in keyedFields"
                                     :key="field.slug" :value="field.slug"
@@ -115,16 +115,16 @@
                         <td>
                             <el-select v-if="condition.item_key && keyedFields[condition.item_key]" filterable
                                        v-model="condition.operator"
-                                       :placeholder="$t('Select Field')">
-                                <el-option :label="$t('Equal')" value="="/>
-                                <el-option :label="$t('Not Equal')" value="!="/>
+                                       :placeholder="translate('Select Field')">
+                                <el-option :label="translate('Equal')" value="="/>
+                                <el-option :label="translate('Not Equal')" value="!="/>
                                 <template v-if="keyedFields[condition.item_key].type == 'number'">
-                                    <el-option :label="$t('Less than')" value="lt"/>
-                                    <el-option :label="$t('Greater Than')" value="gt"/>
+                                    <el-option :label="translate('Less than')" value="lt"/>
+                                    <el-option :label="translate('Greater Than')" value="gt"/>
                                 </template>
                                 <template v-else-if="!keyedFields[condition.item_key].options">
-                                    <el-option :label="$t('Contains')" value="contains"/>
-                                    <el-option :label="$t('Not Contains')" value="not_contains"/>
+                                    <el-option :label="translate('Contains')" value="contains"/>
+                                    <el-option :label="translate('Not Contains')" value="not_contains"/>
                                 </template>
                             </el-select>
                         </td>
@@ -132,13 +132,13 @@
                             <template
                                 v-if="condition.operator && condition.item_key && keyedFields[condition.item_key]">
                                 <el-select v-if="keyedFields[condition.item_key].options" v-model="condition.value"
-                                           :placeholder="$t('Select Value')">
+                                           :placeholder="translate('Select Value')">
                                     <el-option v-for="option in keyedFields[condition.item_key].options" :key="option"
                                                :label="option" :value="option"></el-option>
                                 </el-select>
                                 <el-input v-else
                                           :type="(keyedFields[condition.item_key].type == 'number') ? 'number' : 'text'"
-                                          v-model="condition.value" :placeholder="$t('Type Compare Value')"/>
+                                          v-model="condition.value" :placeholder="translate('Type Compare Value')"/>
                             </template>
                         </td>
                         <td>
@@ -151,10 +151,10 @@
                     </tr>
                     </tbody>
                 </table>
-                <el-form-item :label="$t('Condition Match Type')">
+                <el-form-item :label="translate('Condition Match Type')">
                     <el-radio-group v-model="item.match_type">
-                        <el-radio :label="$t('all')">{{$t('Match all conditions')}}</el-radio>
-                        <el-radio :label="$t('any')">{{$t('Match any conditions')}}</el-radio>
+                        <el-radio :label="translate('all')">{{translate('Match all conditions')}}</el-radio>
+                        <el-radio :label="translate('any')">{{translate('Match any conditions')}}</el-radio>
                     </el-radio-group>
                 </el-form-item>
             </template>
@@ -164,23 +164,30 @@
 
 <script type="text/babel">
 import each from 'lodash/each';
+import { reactive, toRefs, computed, nextTick, ref } from "vue";
+import {
+    useFluentHelper,
+    useNotify,
+} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'FieldForm',
     props: ['field_types', 'item', 'form_type', 'fields'],
-    data() {
-        return {
+
+    setup(props) {
+        const { translate, appVars } =
+            useFluentHelper();
+        const saveTagInput = ref('');
+        const state = reactive({
             optionInputVisible: false,
             optionInputValue: ''
-        }
-    },
-    computed: {
-        keyedFields() {
+        })
+
+        const keyedFields = computed(() => {
             const supportProducts = [];
-            each(this.appVars.support_products, (product) => {
+            each(appVars.support_products, (product) => {
                 supportProducts.push(product.title);
             });
-
             const formattedFields = {
                 ticket_title: {
                     label: 'Ticket Title',
@@ -196,69 +203,74 @@ export default {
                     label: 'Ticket Client Priority',
                     slug: 'ticket_client_priority',
                     type: 'select-one',
-                    options: Object.keys(this.appVars.client_priorities)
+                    options: Object.keys(appVars.client_priorities)
                 },
                 ticket_product_id: {
                     label: 'Selected Product or Service',
                     slug: 'ticket_product_id',
                     type: 'select-one',
-                    options: supportProducts
+                    options: supportProducts.value
                 }
             };
-            each(this.fields, (field) => {
+            each(props.fields, (field) => {
                 formattedFields[field.slug] = field;
             });
 
             return formattedFields;
-        }
-    },
-    methods: {
-        maybeSetSlug() {
-            if (this.form_type != 'new') {
+        });
+
+        const maybeSetSlug = () => {
+            if (props.form_type != 'new') {
                 return false;
             }
-            const slug = this.item.label.toLowerCase().replace(/đ/gi, 'd').replace(/\s*$/g, '').replace(/\s+/g, '_').substring(0, 25);
-            this.$set(this.item, 'slug', slug);
-        },
-        changeFieldType() {
-            const selectedType = this.item.field_key;
-            const field = this.field_types[selectedType];
+            const slug = props.item.label.toLowerCase().replace(/đ/gi, 'd').replace(/\s*$/g, '').replace(/\s+/g, '_').substring(0, 25);
+            props.item['slug'] = slug;
+        };
 
-            this.item.type = field.type;
-            this.item.label = '';
+        const changeFieldType = () => {
+            const selectedType = props.item.field_key;
+            const field = props.field_types[selectedType];
 
-            if (this.hasOptions(field.type)) {
-                if (!this.item.options) {
-                    this.item.options = [
+            props.item.type = field.type;
+            props.item.label = '';
+
+            if (hasOptions(field.type)) {
+                if (!props.item.options) {
+                    props.item.options = [
                         'Value Option 1'
                     ];
                 }
             } else {
-                delete this.item.options;
+                delete props.item.options;
             }
-        },
-        hasOptions(type) {
+        };
+
+        const hasOptions = (type) => {
             const optionTypeFields = ['select-one', 'select-multi', 'radio', 'checkbox'];
             return optionTypeFields.indexOf(type) !== -1
-        },
-        showOptionInput() {
-            this.optionInputVisible = true;
-            this.$nextTick(_ => {
-                this.$refs.saveTagInput.$refs.input.focus();
+        };
+
+        const showOptionInput = () => {
+            state.optionInputVisible = true;
+            nextTick(() => {
+                saveTagInput.value.focus();
             });
-        },
-        handleOptionInputConfirm() {
-            const inputValue = this.optionInputValue;
+        };
+
+        const handleOptionInputConfirm = () => {
+            const inputValue = state.optionInputValue;
             if (inputValue) {
-                this.item.options.push(inputValue);
+                props.item.options.push(inputValue);
             }
-            this.optionInputVisible = false;
-            this.optionInputValue = '';
-        },
-        removeOptionItem(fieldIndex) {
-            this.item.options.splice(fieldIndex, 1);
-        },
-        initConditions(item) {
+            state.optionInputVisible = false;
+            state.optionInputValue = '';
+        };
+
+        const removeOptionItem = (fieldIndex) => {
+            props.item.options.splice(fieldIndex, 1);
+        };
+
+        const initConditions = (item) => {
             if (!item.conditions || !item.conditions.length) {
                 item.conditions = [
                     {
@@ -272,20 +284,35 @@ export default {
             if (!item.match_type) {
                 item.match_type = 'all';
             }
-        },
-        addCondition(conditionIndex) {
-            this.item.conditions.splice(conditionIndex + 1, 0, {
+        };
+
+        const addCondition = (conditionIndex) => {
+            props.item.conditions.splice(conditionIndex + 1, 0, {
                 item_key: '',
                 operator: '=',
                 value: ''
             });
-        },
-        removeCondition(conditionIndex) {
-            this.item.conditions.splice(conditionIndex, 1);
-        }
-    },
-    mounted() {
+        };
 
+        const removeCondition = (conditionIndex) => {
+            props.item.conditions.splice(conditionIndex, 1);
+        };
+
+        return {
+            ...toRefs(state),
+            maybeSetSlug,
+            changeFieldType,
+            hasOptions,
+            showOptionInput,
+            handleOptionInputConfirm,
+            removeOptionItem,
+            initConditions,
+            addCondition,
+            removeCondition,
+            translate,
+            keyedFields,
+            saveTagInput,
+        }
     }
 }
 </script>
