@@ -52,18 +52,15 @@ class CustomerPortalController extends Controller
      */
     public function createTicket(Request $request, CustomerPortalService $customerPortalService)
     {
-        $data = [];
-        $dataRules =  [
-            'title'   => 'required',
-            'content' => 'required'
-        ];
-        if(defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
-            $requiredCustomFields = apply_filters('fluent_support/custom_field_required_before_ticket_create', Helper::getRequiredCustomFields());
-            $dataRules = array_merge($dataRules, $requiredCustomFields['required_fields']);
-            $data = $this->validate($request->get(), $dataRules, $requiredCustomFields['error_messages']);
-        } else {
-            $data = $this->validate($request->get(), $dataRules);
-        }
+        $dataRules =  $this->app->applyCustomFilters('custom_field_required_before_ticket_create', [
+            'required_fields' => [
+                'title'   => 'required',
+                'content' => 'required'
+            ],
+            'error_messages'  => []
+        ]);
+
+        $data = $this->validate($request->get(), $dataRules['required_fields'], $dataRules['error_messages']);
 
         $data['title'] = sanitize_text_field($data['title']);
         $data['content'] = wp_kses_post($data['content']);
