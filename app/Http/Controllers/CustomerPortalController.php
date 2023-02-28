@@ -57,9 +57,8 @@ class CustomerPortalController extends Controller
             'title'   => 'required',
             'content' => 'required'
         ];
-
         if(defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
-            $requiredCustomFields = Helper::getRequiredCustomFields();
+            $requiredCustomFields = \FluentSupportPro\App\Services\CustomFieldsService::requiredFields();
             $dataRules = array_merge($dataRules, $requiredCustomFields['required_fields']);
             $data = $this->validate($request->get(), $dataRules, $requiredCustomFields['error_messages']);
         } else {
