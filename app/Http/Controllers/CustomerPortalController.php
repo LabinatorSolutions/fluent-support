@@ -58,7 +58,7 @@ class CustomerPortalController extends Controller
             'content' => 'required'
         ];
         if(defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
-            $requiredCustomFields = \FluentSupportPro\App\Services\CustomFieldsService::requiredFields();
+            $requiredCustomFields = apply_filters('fluent_support/custom_field_required_before_ticket_create', Helper::getRequiredCustomFields());
             $dataRules = array_merge($dataRules, $requiredCustomFields['required_fields']);
             $data = $this->validate($request->get(), $dataRules, $requiredCustomFields['error_messages']);
         } else {
