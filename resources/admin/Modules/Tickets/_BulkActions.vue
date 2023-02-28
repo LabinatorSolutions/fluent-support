@@ -110,9 +110,8 @@
 <script type="text/babel">
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import CreateResponse from "./_CreateResponse";
-import { computed, watch, onMounted, reactive, toRefs } from "vue";
+import { reactive, toRefs } from "vue";
 import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
-import {useRouter} from "vue-router";
 export default {
     name: 'TicketBulkActions',
     props: ['ticket_selections'],
@@ -123,16 +122,11 @@ export default {
 
     setup(props, {emit}) {
         const {
-            appVars,
-            get,
             translate,
             handleError,
             post,
-            saveData,
-            getData,
-            moment,
         } = useFluentHelper();
-        const router = useRouter();
+        
         const { notify } = useNotify();
 
         const state = reactive({
@@ -232,7 +226,6 @@ export default {
             }
         }
 
-
         return {
             ...toRefs(state),
             fetchTickets,
@@ -246,5 +239,4 @@ export default {
         }
     }
 }
-
 </script>
