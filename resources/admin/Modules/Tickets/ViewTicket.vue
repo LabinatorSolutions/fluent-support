@@ -149,7 +149,7 @@
                                     <pagination @fetch="customerTickets" :pagination="pagination" />
                                 </div>
                             </div>
-                            <div class="fs_box_body" v-else-if="customer_tickets.length == 0  && app_ready">
+                            <div class="fs_box_body" v-else-if="!customer_tickets.length && app_ready">
                                 <h3>{{$t('customer_has_one_tk')}}</h3>
                             </div>
                             <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
@@ -772,6 +772,7 @@ export default {
                 per_page: state.pagination.per_page,
             })
                 .then(response => {
+                    state.app_ready = true;
                     state.customer_tickets = response.tickets.data;
                     state.pagination.total = response.tickets.total;
                 })
