@@ -126,7 +126,6 @@ export default {
             handleError,
             post,
         } = useFluentHelper();
-        
         const { notify } = useNotify();
 
         const state = reactive({
