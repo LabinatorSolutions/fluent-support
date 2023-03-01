@@ -11,7 +11,7 @@
                         placement="bottom"
                         :width="400"
                         trigger="manual"
-                        v-model:visible="assignAgentPop"
+                        :visible="assignAgentPop"
                     >
                         <template #reference>
                             <el-icon :class="{'fs_pop_active': assignAgentPop}" @click="togglePop('assignAgentPop')">
@@ -44,7 +44,7 @@
                         placement="bottom"
                         :width="400"
                         trigger="manual"
-                        v-model:visible="addTagPop"
+                        :visible="addTagPop"
                     >
                         <template #reference>
                             <el-icon @click="togglePop('addTagPop')" :class="{fs_pop_active: assignAgentPop}">
@@ -214,8 +214,7 @@ export default {
 
         const togglePop = (pop) => {
             if (pop && state[pop]) {
-                    console.log(pop);
-                    state[pop].value = false;
+                    state[pop] = false;
                 return;
             }
             state.assignAgentPop = false;
