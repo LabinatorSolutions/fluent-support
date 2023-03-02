@@ -58,7 +58,7 @@
                     </div>
                 </div>
 
-                <custom-fields-form :ticket="ticket" :custom_data="custom_data" />
+                <custom-fields-form :ticket="ticket" :custom_data="custom_data" :exceptions="exceptions" />
 
                 <el-form-item>
                     <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('btn_text')}}</el-button>
@@ -102,6 +102,11 @@ export default {
             priorities: this.appVars.customer_ticket_priorities,
             suggestions: [],
             fetchingSuggestions: false,
+        }
+    },
+    computed: {
+        exceptions() {
+            return this.errors.errors;
         }
     },
     watch: {

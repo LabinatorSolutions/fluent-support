@@ -8,6 +8,7 @@ use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
+use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
 
 /**
  *  SettingsController class is responsible for all settings
@@ -255,6 +256,77 @@ class SettingsController extends Controller
             'message' => __('Installation has been completed', 'fluent-support')
         ]);
 
+    }
+
+    public function saveReCaptchaSettings(Request $request)
+    {
+        $data = $request->get('reCaptcha');
+
+        if ('clear-reCaptcha-settings' == $data) {
+            if(Meta::where('object_type', '_fs_recaptcha_settings')->delete()){
+                return $this->sendSuccess([
+                    'message' => __('Your reCAPTCHA settings deleted successfully.', 'fluent-support'),
+                ]);
+            }
+
+            return $this->sendError([
+                'message' => __('Unable to delete reCAPTCHA settings, try again', 'fluent-support'),
+            ]);
+        }
+
+        $reCaptchaData = [
+            'reCaptcha_version' => sanitize_text_field($data['reCaptchaVersion']),
+            'siteKey'     => sanitize_text_field($data['siteKey']),
+            'secretKey'   => sanitize_text_field($data['secretKey']),
+            'formContainingReCaptcha' => array_map( 'sanitize_text_field', $data['formContainingReCaptcha']),
+            'is_enabled'  => sanitize_text_field($data['reCaptchaEnabled'], 'no'),
+        ];
+
+        $previousValue = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+
+        if($previousValue ===  $reCaptchaData) {
+            return $this->sendError([
+                'message' => __('Your recaptcha details are already saved.', 'fluent-support'),
+            ]);
+        }
+
+        $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($data['captchaResponse'], $data['secretKey'], $data['reCaptchaVersion']);
+
+        if(!$verifyReCaptcha){
+            return $this->sendError([
+                'message' => __('Your reCAPTCHA settings are not valid.', 'fluent-support'),
+            ]);
+        }
+
+        if($previousValue){
+            Meta::where('object_type', '_fs_recaptcha_settings')->update([
+                'value' => maybe_serialize($reCaptchaData)
+            ]);
+            return $this->sendSuccess([
+                'message' => __('Your reCAPTCHA settings updated successfully.', 'fluent-support'),
+            ]);
+        }else {
+            Meta::insert([
+                'object_type' => '_fs_recaptcha_settings',
+                'key'         => '_fs_recaptcha_data',
+                'value'       => maybe_serialize($reCaptchaData)
+            ]);
+        }
+
+        return $this->sendSuccess([
+            'message' => __('Your reCAPTCHA settings added successfully.', 'fluent-support'),
+        ]);
+    }
+
+    public function getReCaptchaSettings()
+    {
+        $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+        if($reCaptchaSettingsData){
+            $settings = maybe_unserialize($reCaptchaSettingsData->value);
+            return $this->sendSuccess($settings);
+        }
+
+        return [];
     }
 
     private function shareEmail($optinEmail)

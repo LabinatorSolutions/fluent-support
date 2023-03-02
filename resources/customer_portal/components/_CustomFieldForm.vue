@@ -3,7 +3,7 @@
         <div v-if="appReady" class="fs_custom_fields fs_tk_row">
             <template v-for="(field, fieldName) in fields" :key="fieldName">
                 <div v-if="isRenderable(field, fieldName)" class="fs_tk_col">
-                    <el-form-item :label="field.label">
+                    <el-form-item :label="field.label" :required="field.required=='yes'">
                         <el-input
                             v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
                             :type="field.type"
@@ -30,6 +30,7 @@
                             <el-checkbox v-for="option in field.options" :key="option"
                                          :value="option" :label="option"></el-checkbox>
                         </el-checkbox-group>
+                        <error :error="errors.get('custom_data.'+field.slug)"/>
                     </el-form-item>
                 </div>
             </template>
@@ -43,17 +44,29 @@
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import each from 'lodash/each';
+import Errors from '../../admin/Bits/Errors';
+import Error from '../../admin/Pieces/Error';
+
 
 export default {
     name: 'CustomFieldForm',
-    props: ['custom_data', 'ticket'],
+    props: ['custom_data', 'ticket', 'exceptions'],
+    components: {
+        Error
+    },
+    watch: {
+        'exceptions': function (newVal, oldVal) {
+            this.errors.record(newVal);
+        }
+    },
     data() {
         return {
             appReady: false,
             fields: this.appVars.custom_fields,
             labelPosition: 'top',
             loading_remote: false,
-            formattedProducts: {}
+            formattedProducts: {},
+            errors: new Errors()
         }
     },
     methods: {

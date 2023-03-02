@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
+use FluentSupport\App\Models\Meta;
 
 class AuthHandler
 {
@@ -189,7 +190,7 @@ class AuthHandler
             return '<p>' . sprintf(__('You are already logged in. <a href="%s">Go to support portal</a>', 'fluent-support'), Helper::getPortalBaseUrl()) . '</p>';
         }
 
-        $authForm .= do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
+        $authForm = do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
 
         return $authForm;
     }
@@ -385,6 +386,23 @@ class AuthHandler
         wp_enqueue_style('fluent_support_login_style', $assets . 'admin/css/all_public.css', [], FLUENT_SUPPORT_VERSION);
         wp_enqueue_script('fluent_support_login_helper', $assets . 'portal/js/login_helper.js', [], FLUENT_SUPPORT_VERSION);
 
+        //Get Recaptcha settings and enqueue recaptcha script
+        $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+        $reCaptchaData = maybe_unserialize($reCaptchaSettingsData->value, []);
+
+        if(!empty($reCaptchaData) && isset($reCaptchaData['is_enabled']) && $reCaptchaData['is_enabled'] == "true"){
+            unset($reCaptchaData['secretKey']);
+            $recaptchaVersion = $reCaptchaData["reCaptcha_version"];
+            $reCaptchaApiUrl = 'https://www.google.com/recaptcha/api.js';
+
+            if( "recaptcha_v3" === $recaptchaVersion )
+            {
+                $reCaptchaApiUrl .= '?render=' . $reCaptchaData["siteKey"];
+            }
+
+            wp_enqueue_script( 'recaptcha', $reCaptchaApiUrl );
+        }
+
         wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
             'signup'               => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
             'login'                => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
@@ -393,6 +411,7 @@ class AuthHandler
             'redirect_fallback'    => Helper::getPortalBaseUrl(),
             'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce'),
             'resetPass'            => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
+            'reCaptchaSettingsData' => $reCaptchaData
         ]);
 
 

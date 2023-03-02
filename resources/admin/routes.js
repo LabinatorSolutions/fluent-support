@@ -11,7 +11,7 @@ import Products from './Modules/Settings/Products';
 import TicketTags from './Modules/Settings/TicketTags';
 import Agents from './Modules/Settings/SupportStaffs';
 import IntegrationView from './Modules/Settings/IntegrationView';
-import SlackIntegration from "./Modules/Settings/SlackIntegration";
+import RecaptchaView from './Modules/Settings/RecaptchaView'
 import TicketFormConfig from "./Modules/Settings/TicketFormConfig";
 import CustomFields from "./Modules/Settings/CustomFields";
 import LicenseManagement from "./Modules/Settings/LicenseManagement";
@@ -89,6 +89,11 @@ export default [
                 component: BusinessSettings
             },
             {
+                name: 'reCaptcha',
+                path: 'reCaptcha',
+                component: RecaptchaView
+            },
+            {
                 name: 'ticket-form-config',
                 path: 'ticket-form-config',
                 component: TicketFormConfig
@@ -117,11 +122,6 @@ export default [
                 path: 'integration',
                 name: 'integration',
                 component: IntegrationView
-            },
-            {
-                path: 'slack-integration',
-                name: 'slack-integration',
-                component: SlackIntegration
             },
             {
                 path: 'fluentcrm-integration',
