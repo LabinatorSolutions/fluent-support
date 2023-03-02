@@ -52,10 +52,15 @@ class CustomerPortalController extends Controller
      */
     public function createTicket(Request $request, CustomerPortalService $customerPortalService)
     {
-        $data = $this->validate($request->get(), [
-            'title'   => 'required',
-            'content' => 'required'
+        $dataRules =  $this->app->applyCustomFilters('custom_field_required_before_ticket_create', [
+            'required_fields' => [
+                'title'   => 'required',
+                'content' => 'required'
+            ],
+            'error_messages'  => []
         ]);
+
+        $data = $this->validate($request->get(), $dataRules['required_fields'], $dataRules['error_messages']);
 
         $data['title'] = sanitize_text_field($data['title']);
         $data['content'] = wp_kses_post($data['content']);

@@ -6,17 +6,17 @@
         :visible="visible"
     >
         <template #reference>
-            <el-button @click="initModal()" size="small" type="default">{{$t('Templates')}}</el-button>
+            <el-button @click="initModal()" size="small" type="default">{{translate('Templates')}}</el-button>
         </template>
         <div class="fs_template_inserter">
             <div class="fs_row">
                 <div class="fs_half">
-                    <el-select @change="searchTemplates()" clearable v-model="selected_product" :placeholder="$t('All')">
+                    <el-select @change="searchTemplates()" clearable v-model="selected_product" :placeholder="translate('All')">
                         <el-option v-for="product in products" :label="product.title" :value="product.id" :key="product.id"></el-option>
                     </el-select>
                 </div>
                 <div class="fs_half">
-                    <el-input @keyup.enter="searchTemplates()" :placeholder="$t('Search Replies')" v-model="search" class="input-with-select">
+                    <el-input @keyup.enter="searchTemplates()" :placeholder="translate('Search Replies')" v-model="search" class="input-with-select">
                         <template #append>
                             <el-button @click="searchTemplates()" icon="Search"></el-button>
                         </template>
@@ -39,16 +39,28 @@
 
 <script type="text/babel">
 import Pagination from '../../Pieces/Pagination'
+import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
+import {onMounted, reactive, toRefs} from "vue";
 export default {
     name: 'TemplateInserter',
     components: {
         Pagination
     },
-    data() {
-        return {
+    setup(props, context) {
+        const {
+            appVars,
+            get,
+            post,
+            put,
+            translate,
+            handleError,
+            has_pro,
+        } = useFluentHelper();
+        const emit = context.emit;
+        const state = reactive({
             selected_product: '',
             search: '',
-            products: this.appVars.support_products,
+            products: appVars.support_products,
             replies: [],
             visible: false,
             loading: false,
@@ -57,60 +69,75 @@ export default {
                 current_page: 1,
                 total: 0
             }
-        }
-    },
-    emits: ['insert'],
-    methods: {
-        searchTemplates() {
-            this.loading = true;
-            this.$get('saved-replies', {
-                page: this.pagination.current_page,
-                product_id: this.selected_product,
-                search: this.search,
-                per_page: this.pagination.per_page
-            })
-                .then(response => {
-                    window.fst_last_replies = response.replies;
-                    window.fst_last_replies.product_id = this.selected_product;
-                    window.fst_last_replies.search = this.search;
-                    this.replies = response.replies.data;
-                    this.pagination.total = response.replies.total;
-                })
-                .catch((errors) => {
-                    this.$handleError(errors)
-                })
-                .always(() => {
-                    this.loading = false;
+        });
+
+        const searchTemplates = async () => {
+            state.loading = true;
+            try {
+                const response = await get('saved-replies', {
+                    page: state.pagination.current_page,
+                    product_id: state.selected_product,
+                    search: state.search,
+                    per_page: state.pagination.per_page
                 });
-        },
-        initModal() {
-            if(!this.visible) {
-                this.visible = true;
+                window.fst_last_replies = response.replies;
+                window.fst_last_replies.product_id = state.selected_product;
+                window.fst_last_replies.search = state.search;
+                state.replies = response.replies.data;
+                state.pagination.total = response.replies.total;
+            } catch (errors) {
+                handleError(errors);
+            } finally {
+                state.loading = false;
+            }
+        };
+
+        const initModal = () => {
+            if(!state.visible) {
+                state.visible = true;
                 if(!window.fst_last_replies) {
-                    this.searchTemplates();
+                    searchTemplates();
                 }
             } else {
-                this.visible = false;
+                state.visible = false;
             }
-        },
-        insertReply(reply) {
-            this.$emit('insert', reply.content);
-            this.visible = false;
-        },
-        getExcerpt(content, limit = 200) {
+        };
+
+        const insertReply = (reply) => {
+            emit('insert', reply.content);
+            state.visible = false;
+        };
+
+        const getExcerpt = (content, limit = 200) => {
             if (!content) {
                 return '';
             }
             return content.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "").substring(0, limit) + '...';
-        }
-    },
-    mounted() {
-        if(window.fst_last_replies) {
-            this.replies = window.fst_last_replies.data;
-            this.pagination.total = parseInt(window.fst_last_replies.total);
-            this.pagination.current_page = parseInt(window.fst_last_replies.current_page);
-            this.selected_product = parseInt(window.fst_last_replies.product_id);
-            this.search = window.fst_last_replies.search;
+        };
+
+        onMounted(() => {
+            if(window.fst_last_replies) {
+                state.selected_product = window.fst_last_replies.product_id;
+                state.search = window.fst_last_replies.search;
+                state.replies = window.fst_last_replies.data;
+                state.pagination.total = window.fst_last_replies.total;
+                state.pagination.current_page = window.fst_last_replies.current_page;
+            }
+        });
+
+        return {
+            ...toRefs(state),
+            appVars,
+            get,
+            post,
+            put,
+            translate,
+            handleError,
+            has_pro,
+            searchTemplates,
+            initModal,
+            insertReply,
+            getExcerpt,
         }
     }
 }

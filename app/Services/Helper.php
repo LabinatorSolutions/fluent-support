@@ -171,7 +171,7 @@ class Helper
 
     public static function getMimeGroups()
     {
-        return [
+        return apply_filters('fluent_support/mime_groups', [
             'images'    => [
                 'title' => __('Photos', 'fluent-support'),
                 'mimes' => [
@@ -220,7 +220,7 @@ class Helper
                     'application/jsonml+json'
                 ]
             ]
-        ];
+        ]);
     }
 
     /**

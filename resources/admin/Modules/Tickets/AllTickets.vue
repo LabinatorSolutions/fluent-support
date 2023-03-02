@@ -3,11 +3,11 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ $t('Tickets') }} <span class="fs_badge">{{ pagination.total }}</span></h3>
+                    <h3>{{ translate('Tickets') }} <span class="fs_badge">{{ pagination.total }}</span></h3>
                     <el-button
                         @click="add_ticket_modal = true"
                         size="small"
-                        icon="Plus">{{ $t('Add Ticket') }}
+                        icon="Plus">{{ translate('Add Ticket') }}
                     </el-button>
                     <el-button
                         @click="fetchTickets()"
@@ -55,17 +55,17 @@
                                 style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> OR</em>
                         </div>
 
-                        <el-button type="primary" @click="fetchTickets()">{{ $t('Filter') }}
+                        <el-button type="primary" @click="fetchTickets()">{{ translate('Filter') }}
                         </el-button>
                         <el-button @click="advanced_filters = [[]]; fetchTickets()">
-                            {{ $t('Clear Filters') }}
+                            {{ translate('Clear Filters') }}
                         </el-button>
                     </div>
                     <div class="fs_narrow_promo" v-else>
-                        <h3>{{ $t('advance_filter_promo') }}</h3>
-                        <p>{{ $t('pro_promo') }}</p>
+                        <h3>{{ translate('advance_filter_promo') }}</h3>
+                        <p>{{ translate('pro_promo') }}</p>
                         <a target="_blank" rel="noopener" href="https://fluentsupport.com"
-                           class="el-button el-button--success">{{ $t('Upgrade To Pro') }}</a>
+                           class="el-button el-button--success">{{ translate('Upgrade To Pro') }}</a>
                     </div>
                 </div>
                 <template v-else>
@@ -78,7 +78,7 @@
                             @searchChange="(s) => { search = s; }"
                             :reset-filters="resetFilters"/>
                     </div>
-                    <el-button size="small" style="margin: 10px;" @click="show_filters = true" v-else>{{$t('Show Filters')}}
+                    <el-button size="small" style="margin: 10px;" @click="show_filters = true" v-else>{{translate('Show Filters')}}
                     </el-button>
                 </template>
 
@@ -102,12 +102,12 @@
                                  class="tk_customer_avatar" :src="scope.row.customer.photo"/>
                         </template>
                     </el-table-column>
-                    <el-table-column min-width="300" :label="$t('Title')">
+                    <el-table-column min-width="300" :label="translate('Title')">
                         <template #default="scope">
                             <router-link class="fs_tk_preview"
                                          :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
                                 <strong>{{ scope.row.title }}</strong>
-                                <span style="font-size: 10px;"> {{$t(' by')}} {{ scope.row.customer.first_name }}</span>
+                                <span style="font-size: 10px;"> {{translate(' by')}} {{ scope.row.customer.first_name }}</span>
                                 <span style="margin-left: 5px; font-size: 10px;"
                                       v-if="scope.row.product && !filters.product_id"
                                       class="fs_badge">
@@ -128,7 +128,7 @@
                                     v-if="scope.row.mailbox.settings.hide_business_box !=='yes' && !filters.mailbox_id"
                                     class="box-item"
                                     effect="dark"
-                                    :content="$t('Inbox - ') + scope.row.mailbox.name"
+                                    :content="translate('Inbox - ') + scope.row.mailbox.name"
                                     placement="top"
                                 >
                                     <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox.settings.color || '#a3b2bd'}" v-html="getExcerptBox(scope.row.mailbox.name)"></span>
@@ -148,14 +148,14 @@
                             <span class="fs_thread_count">{{ scope.row.response_count }}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column width="100" :label="$t('Manager')">
+                    <el-table-column width="100" :label="translate('Manager')">
                         <template #default="scope">
                             <span :title="scope.row.agent.full_name"
                                   v-if="scope.row.agent">{{ scope.row.agent.first_name }}</span>
                             <span v-else>n/a</span>
                         </template>
                     </el-table-column>
-                    <el-table-column width="120" :label="$t('Status')">
+                    <el-table-column width="120" :label="translate('Status')">
                         <template #default="scope">
                             <span class="fs_badge fs_badge_new" v-if="getWaitingStatus(scope.row)">
                                     {{ getWaitingStatus(scope.row) }}
@@ -163,20 +163,20 @@
                             <span v-else class="fs_badge" :class="'fs_badge_'+scope.row.status">{{
                                     scope.row.status
                                 }}</span>
-                            <span class="fs_badge" :title="$t('Client Priority: ') + scope.row.client_priority "
+                            <span class="fs_badge" :title="translate('Client Priority: ') + scope.row.client_priority "
                                   :class="'fs_badge_priority_'+scope.row.client_priority"> <el-icon><User/></el-icon>
                                 <el-icon><Flag/></el-icon>  {{ scope.row.client_priority }}
                             </span>
                         </template>
                     </el-table-column>
                     <el-table-column
-                        :label="$t('Date')"
+                        :label="translate('Date')"
                         width="180">
                         <template #default="scope">
-                            <span style="opacity: 0.4;" :title="$t('Ticket created at ') + scope.row.created_at">
+                            <span style="opacity: 0.4;" :title="translate('Ticket created at ') + scope.row.created_at">
                                 <el-icon style="vertical-align: middle;"> <ChatLineSquare /> </el-icon> {{ $timeDiff(scope.row.created_at) }}
                             </span>
-                            <span style="display: block;" :title="$t('Waiting Time')">
+                            <span style="display: block;" :title="translate('Waiting Time')">
                                 <el-icon style="vertical-align: middle;"> <Stopwatch /> </el-icon> {{ $timeDiff(scope.row.waiting_since) }}
                             </span>
                         </template>
@@ -192,7 +192,7 @@
                 </div>
             </div>
         </div>
-        <modal :show="add_ticket_modal" @close="add_ticket_modal = false" :title="$t('Create a Ticket')">
+        <modal :show="add_ticket_modal" @close="add_ticket_modal = false" :title="translate('Create a Ticket')">
             <template #body>
                 <add-ticket v-if="add_ticket_modal"></add-ticket>
             </template>
