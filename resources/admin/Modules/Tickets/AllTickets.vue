@@ -583,36 +583,32 @@ export default {
         });
 
         watch(
-            () => route.query.agent_id, () => {
-            if (state.app_ready) {
-                state.filters.agent_id = route.query.agent_id;
-                fetchTickets();
+            [
+                () => route.query.agent_id,
+                () => route.query.watcher,
+                () => route.query.status_type,
+                () => route.query.waiting_for_reply,
+                () => state.filter_type
+            ],
+            (
+                [
+                    newAgentId,
+                    newWatcher,
+                    newStatusType,
+                    newWaitingForReply,
+                    newFilterType
+                ],
+            ) => {
+                if (state.app_ready) {
+                    state.filters.agent_id = newAgentId;
+                    state.filters.watcher = newWatcher;
+                    state.filters.status_type = newStatusType;
+                    state.filter_type = newFilterType;
+                    state.filters.waiting_for_reply = newWaitingForReply;
+                    fetchTickets();
+                }
             }
-        },
-            () => route.query.watcher, () => {
-            if (state.app_ready) {
-                state.filters.watcher = route.query.watcher;
-                fetchTickets();
-            }
-        },
-            () => route.query.status_type, () => {
-            if (state.app_ready) {
-                state.filters.status_type = route.query.status_type;
-                fetchTickets();
-            }
-        },
-            () => route.query.filter_type, () => {
-            if (state.app_ready) {
-                state.filters.filter_type = route.query.filter_type;
-                fetchTickets();
-            }
-        },
-            () => route.query.waiting_for_reply, () => {
-            if (state.app_ready) {
-                state.filters.waiting_for_reply = route.query.waiting_for_reply;
-                fetchTickets();
-            }
-        });
+        ); 
 
         return {
             appVars,
