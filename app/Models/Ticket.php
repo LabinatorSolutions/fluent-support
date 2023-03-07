@@ -489,7 +489,17 @@ class Ticket extends Model
      */
     public function buildSearchableQuery($provider, $query, $search, $operator = 'LIKE')
     {
-        $fields = $this->searchable;
+        switch ($provider) {
+            case 'customer':
+                $fields = (new Customer())->getSearchableFields();
+                break;
+            case 'agent':
+                $fields = (new Agent())->getSearchableFields();
+                break;
+            default:
+                $fields = $this->searchable;
+                break;
+        }
 
         $query->whereHas($provider, function ($query) use ($fields, $search, $operator) {
             $query->where(array_shift($fields), $operator, $search);

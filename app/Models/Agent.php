@@ -20,6 +20,13 @@ class Agent extends Person
         'country'
     ];
 
+    /**
+     * @return array
+     */
+    public function getSearchableFields(){
+        return $this->searchable;
+    }
+
     public static function boot()
     {
         static::creating(function ($model) {

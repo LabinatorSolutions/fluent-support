@@ -22,6 +22,14 @@ class Customer extends Person
         'country'
     ];
 
+    /**
+     * @return array
+     */
+    public function getSearchableFields()
+    {
+        return $this->searchable;
+    }
+
     public static function boot()
     {
         parent::boot();
