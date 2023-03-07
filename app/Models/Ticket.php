@@ -523,42 +523,29 @@ class Ticket extends Model
      */
     public function filterTicketByUser($provider, $query, $filters)
     {
-        foreach ($filters as $index => $filter) {
+        foreach ($filters as $filter) {
             if ($filter['operator'] == 'in' || $filter['operator'] == 'not_in') {
                 $method = $filter['operator'] == 'in' ? 'whereIn' : 'whereNotIn';
                 $query = $query->whereHas($provider, function ($q) use ($method, $filter) {
                     $q->{$method}($filter['property'], $filter['value']);
                 });
-            } elseif ($filter['operator'] == 'contains') {
-                $operator = 'LIKE';
-                $searchTerm = '%' . $filter['value'] . '%';
-                $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
-            } elseif ($filter['operator'] == 'not_contains') {
-                $operator = 'NOT LIKE';
-                $searchTerm = '%' . $filter['value'] . '%';
-                $query = $this->buildSearchableQuery($provider, $query, $searchTerm, $operator);
             }
 
-            if ($filter['operator'] == '=') {
-                $query->whereHas($provider, function ($q) use ($index, $filter) {
-                    if ($index == 0) {
-                        $q->where($filter['property'], '=', $filter['value']);
-                    } else {
-                        $q->orWhere($filter['property'], '=', $filter['value']);
-                    }
+            if ($filter['operator'] == 'contains' || $filter['operator'] == 'not_contains') {
+                $operator = $filter['operator'] == 'contains' ? 'LIKE' : 'NOT LIKE';
+                $query->whereHas($provider, function ($q) use ($operator, $filter) {
+                    $q->where($filter['property'], $operator, '%' . $filter['value'] . '%');
                 });
-            } elseif ($filter['operator'] == '!=') {
-                $query->whereHas($provider, function ($q) use ($index, $filter) {
-                    if ($index == 0) {
-                        $q->where($filter['property'], '!=', $filter['value']);
-                    } else {
-                        $q->orWhere($filter['property'], '!=', $filter['value']);
-                    }
-                });
-
             }
-            return $query;
+
+            if ($filter['operator'] == '=' || $filter['operator'] == '!=') {
+                $operator = $filter['operator'];
+                $query->whereHas($provider, function ($q) use ($operator, $filter) {
+                    $q->where($filter['property'], $operator , $filter['value']);
+                });
+            }
         }
+        return $query;
     }
 
     /**
