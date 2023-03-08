@@ -598,17 +598,38 @@ export default {
                     newWaitingForReply,
                     newFilterType
                 ],
+                [
+                    oldAgentId,
+                    oldWatcher,
+                    oldStatusType,
+                    oldWaitingForReply,
+                    oldFilterType
+                ],
             ) => {
                 if (state.app_ready) {
-                    state.filters.agent_id = newAgentId;
-                    state.filters.watcher = newWatcher;
-                    state.filters.status_type = newStatusType;
-                    state.filter_type = newFilterType;
-                    state.filters.waiting_for_reply = newWaitingForReply;
+                    if ( newAgentId !== oldAgentId ) {
+                        state.filters.agent_id = newAgentId;
+                    }
+
+                    if ( newWatcher !== oldWatcher ) {
+                        state.filters.watcher = newWatcher;
+                    }
+
+                    if ( newStatusType !== oldStatusType ) {
+                        //state.filters.status_type = newStatusType;
+                    }
+                    if ( newWaitingForReply !== oldWaitingForReply ) {
+                        state.filters.waiting_for_reply = newWaitingForReply;
+                    }
+
+                    if ( newFilterType !== oldFilterType ) {
+                        state.filter_type = newFilterType;
+                    }
+
                     fetchTickets();
                 }
             }
-        ); 
+        );
 
         return {
             appVars,
