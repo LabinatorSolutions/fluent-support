@@ -123,7 +123,7 @@ export default {
         const maybeChangeWaitingReply = () => {
             if (props.filters.waiting_for_reply == 'yes') {
                 if (props.filters.status_type == 'new' || props.filters.status_type == 'active') {
-                    props.filters.status_type;
+                    props.filters.status_type =  props.filters.status_type;
                 }
                 else{
                     props.filters.status_type = 'open';

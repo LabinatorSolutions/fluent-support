@@ -521,7 +521,15 @@ export default {
                 ticket_tags: []
             };
             state.search = '';
+            state.order_type = 'ASC';
+            state.order_by = 'last_customer_response';
             state.pagination.current_page = 1;
+            if (route.query.agent_id) {
+                state.filters.agent_id = route.query.agent_id;
+            }
+            if (route.query.watcher){
+                state.filters.watcher = route.query.watcher;
+            }
             fetchTickets();
         }
 
@@ -552,7 +560,7 @@ export default {
                 state.filters.watcher = route.query.watcher;
             }
             if (route.query.waiting_for_reply) {
-                this.filters.waiting_for_reply = route.query.waiting_for_reply;
+                state.filters.waiting_for_reply = route.query.waiting_for_reply;
             }
 
             if (route.query.tags) {
@@ -586,23 +594,17 @@ export default {
             [
                 () => route.query.agent_id,
                 () => route.query.watcher,
-                () => route.query.status_type,
-                () => route.query.waiting_for_reply,
                 () => state.filter_type
             ],
             (
                 [
                     newAgentId,
                     newWatcher,
-                    newStatusType,
-                    newWaitingForReply,
                     newFilterType
                 ],
                 [
                     oldAgentId,
                     oldWatcher,
-                    oldStatusType,
-                    oldWaitingForReply,
                     oldFilterType
                 ],
             ) => {
@@ -613,13 +615,6 @@ export default {
 
                     if ( newWatcher !== oldWatcher ) {
                         state.filters.watcher = newWatcher;
-                    }
-
-                    if ( newStatusType !== oldStatusType ) {
-                        //state.filters.status_type = newStatusType;
-                    }
-                    if ( newWaitingForReply !== oldWaitingForReply ) {
-                        state.filters.waiting_for_reply = newWaitingForReply;
                     }
 
                     if ( newFilterType !== oldFilterType ) {
