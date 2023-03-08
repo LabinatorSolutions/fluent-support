@@ -270,7 +270,7 @@
                     <h3>{{ translate("Telegram Integration") }}</h3>
                     <el-form-item :label="translate('Telegram Chat ID')">
                         <el-input
-                            text 
+                            text
                             :placeholder="translate('Telegram Chat ID')"
                             v-model="editing_agent.telegram_chat_id"
                         />
