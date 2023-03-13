@@ -25,15 +25,13 @@
 
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
-import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateResponse',
     props: ['ticket', 'type'],
     components: {
         WpEditor,
-        AttachmentForm,
-        TemplateInserter
+        AttachmentForm
     },
     data() {
         return {
@@ -88,13 +86,6 @@ export default {
                 .always(() => {
                     this.creating = false;
                 });
-        },
-        insertTemplate(content) {
-            this.editor_ready = false;
-            this.response_body = this.response_body + content;
-            this.$nextTick(() => {
-                this.editor_ready = true;
-            });
         }
     }
 }

@@ -152,7 +152,6 @@ import RemoteSelector from '../../Pieces/RemoteSelector';
 import Error from '../../../admin/Pieces/Error';
 import Errors from '../../../admin/Bits/Errors';
 import CustomFieldForm from './parts/_CustomFieldForm';
-import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateTicketForm',
@@ -160,8 +159,7 @@ export default {
         WpEditor,
         RemoteSelector,
         Error,
-        CustomFieldForm,
-        TemplateInserter
+        CustomFieldForm
     },
     data() {
         return {
