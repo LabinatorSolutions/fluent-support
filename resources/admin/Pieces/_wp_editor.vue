@@ -1,7 +1,7 @@
 <template>
     <div class="wp_vue_editor_wrapper">
         <div class="fs_shortcode_saved_replies">
-            <div class="fc_shortcode_box" v-if="showShortcodes">
+            <div class="fc_shortcode_box" v-if="showShortcodes" style="padding: 5px;">
                 <el-dropdown type="primary" trigger="click">
                     <el-button size="small" type="primary" style="margin-right: .3em;">
                         {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
