@@ -1,5 +1,5 @@
 <template>
-    <wp-base-editor :showShortcodes="field.show_shortcodes"  v-model="modelValue" />
+    <wp-base-editor :showShortcodes="field.show_shortcodes" :showSavedReplies="field.show_saved_replies" v-model="modelValue" />
 </template>
 
 <script type="text/babel">
