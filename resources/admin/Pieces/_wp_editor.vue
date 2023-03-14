@@ -199,6 +199,7 @@ export default {
 
 .wp_vue_editor_wrapper {
     position: relative;
+    width: 100%;
 
     .wp-media-buttons .insert-media {
         vertical-align: middle;
