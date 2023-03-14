@@ -13,7 +13,7 @@
         <template v-if="item.type">
             <el-row :gutter="30">
                 <el-col :sm="12" :xs="24">
-                    <el-form-item :label="translate('Admin Label (Optional)')">
+                    <el-form-item :label="translate('Public Label')">
                         <el-input @keyup.native="maybeSetSlug()" :placeholder="translate('Custom Field Public Label')"
                                   v-model="item.label"></el-input>
                     </el-form-item>
