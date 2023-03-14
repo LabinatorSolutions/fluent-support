@@ -1,4 +1,4 @@
-const request = function(method, route, data = {}) {
+const request = function (method, route, data = {}) {
     const url = `${window.fluentSupportAdmin.rest.url}/${route}`;
 
     const headers = {'X-WP-Nonce': window.fluentSupportAdmin.rest.nonce};
@@ -16,7 +16,7 @@ const request = function(method, route, data = {}) {
     });
 }
 
-export function useRestApi(){
+export function useRestApi() {
     function get(route, data) {
         return request('GET', route, data)
     }
@@ -46,9 +46,17 @@ export function useRestApi(){
     }
 }
 
+
 jQuery(document).ajaxSuccess((event, xhr, settings) => {
+    if (!window.fluentSupportAdmin) {
+        return;
+    }
+    
     const nonce = xhr.getResponseHeader('X-WP-Nonce');
     if (nonce) {
         window.fluentSupportAdmin.rest.nonce = nonce;
     }
 });
+
+
+
