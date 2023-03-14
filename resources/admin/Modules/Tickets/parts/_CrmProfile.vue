@@ -17,7 +17,7 @@
                 v-if="can_add_tags"
                 placement="bottom"
                 :width="400"
-                v-model:visible="popVisible"
+                :visible="popVisible"
                 trigger="manual"
             >
                 <template #reference>
@@ -54,7 +54,7 @@
                 v-if="can_add_tags"
                 placement="bottom"
                 :width="400"
-                v-model:visible="listPopVisible"
+                :visible="listPopVisible"
                 trigger="manual"
             >
                 <template #reference>
