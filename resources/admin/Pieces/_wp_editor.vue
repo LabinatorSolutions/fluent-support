@@ -29,11 +29,10 @@
 </template>
 
 <script type="text/babel">
-import TemplateInserter from '../Modules/Tickets/_templateInserter';
 export default {
     name: 'wp_editor',
     components: {
-        TemplateInserter
+        TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined
     },
     props: {
         editor_id: {
@@ -183,6 +182,11 @@ export default {
             let tinyInstance = tinyMCE.editors[wpActiveEditor];
             tinyInstance.setContent(this.modelValue + content)
             this.$emit('update:modelValue', this.modelValue + content)
+        }
+    },
+    beforeCreate() {
+        if(window.fluentSupportAdmin) {
+            this.$options.components.TemplateInserter = require('../Modules/Tickets/_templateInserter').default
         }
     },
     mounted() {
