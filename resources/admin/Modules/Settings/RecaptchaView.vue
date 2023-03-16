@@ -106,7 +106,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted, ref } from "vue";
+import { reactive, toRefs, onMounted, ref, onBeforeUnmount } from "vue";
 import {
     useFluentHelper,
     useNotify,
@@ -252,6 +252,10 @@ export default {
             document.head.appendChild(v2Script);
 
             fetchSettings();
+        });
+
+        onBeforeUnmount(() => {
+            document.querySelector(".grecaptcha-badge")?.remove();
         });
 
         return {

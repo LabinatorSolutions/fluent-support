@@ -291,7 +291,6 @@ class EmailNotificationHandler
 
         // Let's send welcome email to customer if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_by_agent_email_to_customer');
-        error_log(print_r($emailSettings, true));
         if ($emailSettings && $emailSettings['status'] == 'yes') {
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,

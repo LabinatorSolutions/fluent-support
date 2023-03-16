@@ -521,7 +521,15 @@ export default {
                 ticket_tags: []
             };
             state.search = '';
+            state.order_type = 'ASC';
+            state.order_by = 'last_customer_response';
             state.pagination.current_page = 1;
+            if (route.query.agent_id) {
+                state.filters.agent_id = route.query.agent_id;
+            }
+            if (route.query.watcher){
+                state.filters.watcher = route.query.watcher;
+            }
             fetchTickets();
         }
 
@@ -552,7 +560,7 @@ export default {
                 state.filters.watcher = route.query.watcher;
             }
             if (route.query.waiting_for_reply) {
-                this.filters.waiting_for_reply = route.query.waiting_for_reply;
+                state.filters.waiting_for_reply = route.query.waiting_for_reply;
             }
 
             if (route.query.tags) {
@@ -583,36 +591,40 @@ export default {
         });
 
         watch(
-            () => route.query.agent_id, () => {
-            if (state.app_ready) {
-                state.filters.agent_id = route.query.agent_id;
-                fetchTickets();
+            [
+                () => route.query.agent_id,
+                () => route.query.watcher,
+                () => state.filter_type
+            ],
+            (
+                [
+                    newAgentId,
+                    newWatcher,
+                    newFilterType
+                ],
+                [
+                    oldAgentId,
+                    oldWatcher,
+                    oldFilterType
+                ],
+            ) => {
+                if (state.app_ready) {
+                    if ( newAgentId !== oldAgentId ) {
+                        state.filters.agent_id = newAgentId;
+                    }
+
+                    if ( newWatcher !== oldWatcher ) {
+                        state.filters.watcher = newWatcher;
+                    }
+
+                    if ( newFilterType !== oldFilterType ) {
+                        state.filter_type = newFilterType;
+                    }
+
+                    fetchTickets();
+                }
             }
-        },
-            () => route.query.watcher, () => {
-            if (state.app_ready) {
-                state.filters.watcher = route.query.watcher;
-                fetchTickets();
-            }
-        },
-            () => route.query.status_type, () => {
-            if (state.app_ready) {
-                state.filters.status_type = route.query.status_type;
-                fetchTickets();
-            }
-        },
-            () => route.query.filter_type, () => {
-            if (state.app_ready) {
-                state.filters.filter_type = route.query.filter_type;
-                fetchTickets();
-            }
-        },
-            () => route.query.waiting_for_reply, () => {
-            if (state.app_ready) {
-                state.filters.waiting_for_reply = route.query.waiting_for_reply;
-                fetchTickets();
-            }
-        });
+        );
 
         return {
             appVars,

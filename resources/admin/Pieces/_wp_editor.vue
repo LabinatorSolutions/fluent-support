@@ -1,18 +1,23 @@
 <template>
     <div class="wp_vue_editor_wrapper">
-        <div class="fc_shortcode_box" style=" position:absolute; top:0; right:-4px; z-index:10; " v-if="showShortcodes">
-            <el-dropdown type="primary" trigger="click">
-                <el-button size="small" type="primary" style="margin-right: .3em;">
-                    {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
-                </el-button>
-                <template #dropdown>
-                    <el-dropdown-menu>
-                        <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
-                            {{value}}
-                        </el-dropdown-item>
-                    </el-dropdown-menu>
-                </template>
-            </el-dropdown>
+        <div class="fs_shortcode_saved_replies">
+            <div class="fc_shortcode_box" v-if="showShortcodes" style="padding: 5px;">
+                <el-dropdown type="primary" trigger="click">
+                    <el-button size="small" type="primary" style="margin-right: .3em;">
+                        {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
+                    </el-button>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
+                                {{value}}
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </div>
+            <div class="fc_saved_replies_box" v-if="showSavedReplies">
+                <template-inserter @insert="insertTemplate"/>
+            </div>
         </div>
         <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">{{ modelValue }}</textarea>
         <textarea v-else
@@ -24,9 +29,11 @@
 </template>
 
 <script type="text/babel">
-
 export default {
     name: 'wp_editor',
+    components: {
+        TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined
+    },
     props: {
         editor_id: {
             type: String,
@@ -65,6 +72,12 @@ export default {
             }
         },
         showShortcodes: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
+        showSavedReplies: {
             type: Boolean,
             default() {
                 return false
@@ -161,7 +174,19 @@ export default {
 
         insertShortcode(content) {
             let tinyInstance = tinyMCE.editors[wpActiveEditor];
-            this.modelValue = tinyInstance.setContent(this.modelValue + content.target._value);
+            tinyInstance.setContent(this.modelValue + content.target._value);
+            this.$emit('update:modelValue', this.modelValue + content.target._value)
+        },
+
+        insertTemplate(content) {
+            let tinyInstance = tinyMCE.editors[wpActiveEditor];
+            tinyInstance.setContent(this.modelValue + content)
+            this.$emit('update:modelValue', this.modelValue + content)
+        }
+    },
+    beforeCreate() {
+        if(window.fluentSupportAdmin) {
+            this.$options.components.TemplateInserter = require('../Modules/Tickets/_templateInserter').default
         }
     },
     mounted() {
@@ -178,6 +203,7 @@ export default {
 
 .wp_vue_editor_wrapper {
     position: relative;
+    width: 100%;
 
     .wp-media-buttons .insert-media {
         vertical-align: middle;
@@ -212,4 +238,12 @@ export default {
         border: 1px solid transparent !important;
     }
 }
+
+.fs_shortcode_saved_replies {
+    display: inline-flex;
+    position: absolute;
+    right: 0px;
+    z-index: 2;
+}
+
 </style>
