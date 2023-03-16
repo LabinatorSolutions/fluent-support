@@ -26,7 +26,7 @@ Fluent Support is the perfect helpdesk & support ticketing plugin that can match
 
 = Your Self Hosted Customer Support Solution in WordPress  =
 
-[Fluent Support](https://fluentsupport.com) is the best and complete feature-rich customer support ticketing system solution. It is also the simplest and fastest Support Ticketing Plugin on WordPress. Manage your customer queries from different channels like contact form, support ticketing form, email, or from remote website. (Yes, It's Free!)
+[Fluent Support](https://fluentsupport.com) is the best and complete feature-rich customer support ticketing system solution. It is also the simplest and fastest Support Ticketing Plugin on WordPress. Manage your customer queries from different channels like contact form, support ticketing form, email, or from remote website.
 Along with managing tickets, you can assign multiple customer agents with appropriate permission levels. Get in details reports about your customers, agents, and productive your overall customer support desk. From the ticket view, you can see the 360-degree view of your customer like their previous tickets, address, purchase history, membership levels, etc. You can do more when you have all the data about a customer along with their query.
 
 Fluent Support is a self-hosted support ticketing system with unlimited tickets, support agents, users, products, tags, channels, You name it! There have no limitations as you own your own system and data.
