@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.1.1
-Stable tag: 1.6.8
+Stable tag: 1.6.9
 Requires PHP: 7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -189,7 +189,18 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 
 == Changelog ==
 
-= 1.6.8 (Date: February 14, 2022) =
+= 1.6.9 (Date: March 16, 2023) =
+* Added - Google reCAPTCHA support
+* Added - Custom field required or optional (Pro)
+* Added - Custom field in the workflow condition (Pro)
+* Added - Saved replies templates in auto ticket close module (Pro)
+* Added - Saved replies templates in the workflow (Pro)
+* Fixed - Fluent CRM widget missing issue (Pro)
+* Fixed - Ticket merge popup issue (Pro)
+* Fixed - Delete action of manual workflow (Pro)
+* More improvements
+
+= 1.6.8 (Date: February 14, 2023) =
 * Added - notify user when agent create a ticket on behalf of them
 * Fixed - custom fields issues while creating ticket from Fluent Forms
 * Fixed - issue with Shortcode
