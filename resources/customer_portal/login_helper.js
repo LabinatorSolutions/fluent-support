@@ -37,7 +37,19 @@ document.addEventListener("DOMContentLoaded", () => {
             .addEventListener("click", function (event) {
                 fsToggleForms(event, this, ".fst_registration_wrapper");
             });
+    }
 
+    //Get element for login form and show recaptcha if enabled
+    if(document.getElementById('fst_login_form')){
+        /*If Recaptcha Integration is enabled for login form*/
+        if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes") {
+            const captchaContainer = "#fst_login_form form .login-submit";
+            const fieldName = "g-recaptcha-login";
+            handleRecaptcha(captchaContainer, fieldName);
+        }
+    }
+    //Get element for Sign Up form and show recaptcha if enabled
+    if(document.getElementById('fs_show_signup')){
         /*If Recaptcha Integration is enabled for signup form*/
         if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes") {
             const captchaContainer =
@@ -62,14 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 fsToggleForms(event, this, ".fst_login_wrapper");
 
             });
-
-        /*If Recaptcha Integration is enabled for login form*/
-        if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes") {
-            const captchaContainer = "#fst_login_form form .login-submit";
-            const fieldName = "g-recaptcha-login";
-            handleRecaptcha(captchaContainer, fieldName);
-        }
-
     }
 
     function handleFormSubmission(form, submitBtnId, reqUrl) {
@@ -172,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 reCaptchaSiteKey +
                 "></div><br>";
         } else {
-            
+
             var newInputHTML =
                 '<input type="hidden" name="g-recaptcha-response" id=' +
                 fieldName +
@@ -190,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     });
             });
-    
+
         }
         inputContainer.insertAdjacentHTML("beforebegin", newInputHTML);
 
