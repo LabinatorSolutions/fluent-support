@@ -140,7 +140,7 @@
                             />
                         </el-form-item>
                         <el-form-item :label="translate('Content')">
-                            <wp-editor v-model="editing_reply.content" />
+                            <wp-editor v-model="editing_reply.content" :show-shortcodes="true"/>
                         </el-form-item>
                         <el-form-item :label="translate('Preferred Product')">
                             <el-select
