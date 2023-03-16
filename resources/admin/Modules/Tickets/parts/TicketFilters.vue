@@ -69,7 +69,7 @@
         <div class="fs_tk_filter">
             <label>{{$t('Search')}}</label>
             <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="small"
-                      :placeholder="$t('Please input')" v-model="searchInput">
+                      :placeholder="$t('Please input')" v-model="search">
                 <template #append>
                     <el-button @click="fetchTickets()" icon="Search"></el-button>
                 </template>
@@ -123,7 +123,7 @@ export default {
         const maybeChangeWaitingReply = () => {
             if (props.filters.waiting_for_reply == 'yes') {
                 if (props.filters.status_type == 'new' || props.filters.status_type == 'active') {
-                    props.filters.status_type;
+                    props.filters.status_type =  props.filters.status_type;
                 }
                 else{
                     props.filters.status_type = 'open';
@@ -132,7 +132,7 @@ export default {
             fetchTickets();
         }
 
-        watch(() => state.searchInput, (value) => {console.log("search value", value)
+        watch(() => props.search, (value) => {
             emit('searchChange', value);
         });
 

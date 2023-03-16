@@ -1,13 +1,6 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
-        <div class="fc_template_box">
-            <div class="fs_saved_tempalte" style="margin-right: 8.2em">
-                <template-inserter v-if="appVars.has_pro" @insert="insertTemplate"/>
-            </div>
-        </div>
-
-        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"/>
-
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true" :show-saved-replies="true"/>
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
@@ -32,15 +25,13 @@
 
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
-import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateResponse',
     props: ['ticket', 'type'],
     components: {
         WpEditor,
-        AttachmentForm,
-        TemplateInserter
+        AttachmentForm
     },
     data() {
         return {
@@ -95,13 +86,6 @@ export default {
                 .always(() => {
                     this.creating = false;
                 });
-        },
-        insertTemplate(content) {
-            this.editor_ready = false;
-            this.response_body = this.response_body + content;
-            this.$nextTick(() => {
-                this.editor_ready = true;
-            });
         }
     }
 }

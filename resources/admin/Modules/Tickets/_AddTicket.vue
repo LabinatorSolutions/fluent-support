@@ -106,12 +106,7 @@
                     <error :error="errors.get('title')"/>
                 </el-form-item>
                 <el-form-item :label="$t('Ticket Details')">
-                    <el-row :gutter="20" style="position: absolute;right: 86px;z-index: 2;">
-                        <el-col :span="6" :offset="20">
-                            <template-inserter v-if="appVars.has_pro" @insert="insertTemplate"/>
-                        </el-col>
-                    </el-row>
-                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" v-if="editor_ready"/>
+                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" v-if="editor_ready" :show-saved-replies="true"/>
                     <error :error="errors.get('content')"/>
                 </el-form-item>
 
@@ -157,7 +152,6 @@ import RemoteSelector from '../../Pieces/RemoteSelector';
 import Error from '../../../admin/Pieces/Error';
 import Errors from '../../../admin/Bits/Errors';
 import CustomFieldForm from './parts/_CustomFieldForm';
-import TemplateInserter from './_templateInserter';
 
 export default {
     name: 'CreateTicketForm',
@@ -165,8 +159,7 @@ export default {
         WpEditor,
         RemoteSelector,
         Error,
-        CustomFieldForm,
-        TemplateInserter
+        CustomFieldForm
     },
     data() {
         return {

@@ -634,7 +634,9 @@ class TransStrings
             'Login Form' => __('Login Form', 'fluent-support'),
             'Signup Form'   => __('Signup Form', 'fluent-support'),
             'Validate Captcha' => __('Validate Captcha', 'fluent-support'),
-            'Clear Settings' => __('Clear Settings', 'fluent-support')
+            'Clear Settings' => __('Clear Settings', 'fluent-support'),
+            'Public Label' => __('Public Label', 'fluent-support'),
+            'Admin Label (Optional)' => __('Admin Label (Optional)', 'fluent-support'),
         ];
     }
 }

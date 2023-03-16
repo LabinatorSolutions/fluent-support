@@ -89,7 +89,12 @@ export default {
                         position: 'bottom-right'
                     });
                     this.modalVisible = false;
-                    this.$emit('reloadTickets');
+                    // if `workflow_action` contains `fs_delete_ticket` on `action_name` then redirect to tickets list
+                    if (this.workflow_actions.some(action => action.action_name === 'fs_delete_ticket')) {
+                        this.$router.push({name: 'tickets'});
+                    } else {
+                        this.$emit('reloadTickets');
+                    }
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
