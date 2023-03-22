@@ -117,8 +117,8 @@ class CreateTicketAction extends BaseAction
 
         $subscriber->funnel_subscriber_id = $funnelSubscriberId;
 
-        $emailSubject = apply_filters('fluentcrm_parse_campaign_email_text', Arr::get($sequence->settings, 'ticket_title'), $subscriber);
-        $emailBody = apply_filters('fluentcrm_parse_campaign_email_text', Arr::get($sequence->settings, 'ticket_content'), $subscriber);
+        $emailSubject = apply_filters('fluent_crm/parse_campaign_email_text', Arr::get($sequence->settings, 'ticket_title'), $subscriber);
+        $emailBody = apply_filters('fluent_crm/parse_campaign_email_text', Arr::get($sequence->settings, 'ticket_content'), $subscriber);
 
         $ticketData = [
             'title'   => substr(sanitize_text_field($emailSubject), 0, 192),
