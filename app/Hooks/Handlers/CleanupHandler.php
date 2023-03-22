@@ -15,6 +15,7 @@ class CleanupHandler
     public function initHourlyTasks()
     {
         $this->cleanLiveActivities();
+        $this->cleanVerificationCodes();
     }
 
     public function initDailyTasks()
@@ -94,5 +95,15 @@ class CleanupHandler
     public function maybeMaintanceTask()
     {
         (new Maintenance())->maybeProcessData();
+    }
+
+    protected function cleanVerificationCodes()
+    {
+        // Delete all verification codes older than 1 hour
+        $oldDateTime = date('Y-m-d H:i:s', current_time('timestamp') - 3600);
+        Meta::where('key', 'LIKE' ,'%_verification_code%')
+            ->where('object_type', 'option')
+            ->where('updated_at', '<', $oldDateTime)
+            ->delete();
     }
 }

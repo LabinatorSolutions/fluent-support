@@ -49,8 +49,8 @@ class EmailVerification
         $emailText .= sprintf('<a href="%s" style="text-decoration: none;"><button style="background: #0fb779; color: #fff; border: none; padding: 12px; border-radius: 2px; cursor: pointer;">Click Here</button></a><br>', $verificationLink, $verificationLink);
         $emailText .= sprintf('<p>Alternatively, you can use the below code to verify:</p><br>');
         $emailText .= sprintf('<div style="background:#e9e9e9;padding: 10px;text-align: center;letter-spacing: 14px;font-size: 20px;border: 1px dashed;"><strong>%s</strong></div><br>', $verificationCode);
-        $emailText .= sprintf('<p>If you did not request this verification, please ignore this email.</p><br>');
-        $emailText .= sprintf('<p>Thanks</p><br>');
+        $emailText .= sprintf('<p>If you didn\'t request this verification, please ignore this email. This verification code will be expired in one hour.</p><br>');
+        $emailText .= sprintf('<p>Thanks</p>');
 
         return $emailText;
     }
