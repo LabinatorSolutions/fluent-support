@@ -26,6 +26,11 @@ class CustomerPortalHandler
         );
 
         $person = Helper::getCurrentPerson();
+        if(isset($_REQUEST['fs_action']) && 'verify_email' === $_REQUEST['fs_action']) {
+            do_action('fluent_support/verify_customer_email', $_REQUEST['code']);
+        }
+
+
         if ($person && $person->status === 'inactive') {
             return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . $invalidPermissionMessage . '</h3></div>';
         } else if (PermissionManager::currentUserPermissions()) {
@@ -160,7 +165,8 @@ class CustomerPortalHandler
             'i18n'                       => $i18ns,
             'fallback_image'             => $assets . 'images/icons/file.svg',
             'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
-            'has_rich_text_editor'       => true
+            'has_rich_text_editor'       => true,
+            'customer_status'            => static::customerStatus()->status,
         ];
 
         if ($this->isSignedTicketView()) {

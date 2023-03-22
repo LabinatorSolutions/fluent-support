@@ -93,3 +93,21 @@ if(defined('LSCWP_V')){
         }
     });
 }
+
+$app->addCustomAction('verification_needed', function ($email){
+    $user = get_user_by('email', $email);
+    if($user) {
+        unset( $user->user_pass );
+        $customerData = [
+            'user_id' => $user->ID,
+            'email' => $user->user_email,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name
+        ];
+        $customer = (new \FluentSupport\App\Models\Customer())->maybeCreateCustomer($customerData);
+        $customer->status = 'unverified';
+        $customer->save();
+    }
+});
+
+$app->addCustomAction('verify_customer_email', '\FluentSupport\App\Services\EmailVerification@verifyEmail');

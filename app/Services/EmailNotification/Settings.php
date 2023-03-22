@@ -71,7 +71,8 @@ class Settings
             'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
             'max_file_size'         => 2,
             'del_files_on_close'    => 'no',
-            'enable_admin_bar_summary' => 'no'
+            'enable_admin_bar_summary' => 'no',
+            'enable_email_verification' => 'no',
         ];
 
         //Get default/existing settings from database using the key global_business_settings
@@ -150,7 +151,14 @@ class Settings
                 'false-label'    => 'no',
                 'checkbox_label' => __('Enable Fluent Summary In Admin Bar', 'fluent-support'),
                 'inline_help'    => __('If you enable this, logged in user can see the ticket summary from top nav bar.', 'fluent-support')
-            ]
+            ],
+            'enable_email_verification' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Enable Email Verification', 'fluent-support'),
+                'inline_help'    => __('If you enable this setting, then user can create tickets only after verifying the email address.', 'fluent-support')
+            ],
         ];
 
         return $fields;

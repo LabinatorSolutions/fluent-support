@@ -78,7 +78,8 @@ export default {
                     type: 'input-radio',
                     options: {
                         'active': {'id': 'active', 'value': 'active', 'label': translate('Active')},
-                        'inactive': {'id': 'inactive', 'value': 'inactive', 'label': translate('Blocked')}
+                        'inactive': {'id': 'inactive', 'value': 'inactive', 'label': translate('Blocked')},
+                        'unverified': {'id': 'unverified', 'value': 'unverified', 'label': translate('Unverified')},
                     },
                     wrapper_class: 'fs_half_field'
                 },
