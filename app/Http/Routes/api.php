@@ -152,6 +152,8 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
     $router->get('me', 'TicketController@me');
 
     $router->post('logout', 'CustomerPortalController@logout');
+    $router->post('verify_email', 'AuthController@verifyEmail');
+    $router->post('resend_verify_email', 'AuthController@resendVerificationEmail');
 });
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {

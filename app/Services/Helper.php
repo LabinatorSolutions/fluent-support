@@ -277,6 +277,13 @@ class Helper
         ]);
     }
 
+    public static function deleteOption($key)
+    {
+        return Meta::where('object_type', 'option')
+            ->where('key', $key)
+            ->delete();
+    }
+
     /**
      * getIntegrationOption method will return the integration settings by integration key
      * @param $key
@@ -379,9 +386,13 @@ class Helper
         return apply_filters('fluent_support/portal_admin_base_url', admin_url('admin.php?page=fluent-support/#/'));
     }
 
-    public static function getBusinessSettings()
+    public static function getBusinessSettings($key=null)
     {
         static $settings;
+
+        if ($settings && $key) {
+            return Arr::get($settings, $key);
+        }
 
         if ($settings) {
             return $settings;
@@ -389,6 +400,9 @@ class Helper
 
         $settings = (new Settings())->globalBusinessSettings();
 
+        if ($key) {
+            return Arr::get($settings, $key);
+        }
         return $settings;
     }
 

@@ -2,12 +2,13 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\AuthHandler;
+use FluentSupport\App\Services\EmailVerification;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
-use FluentSupport\App\Models\Meta;
 
 class AuthController extends Controller
 {
@@ -56,7 +57,7 @@ class AuthController extends Controller
             if(!$validateCaptcha){
                 return $this->response([
                     'message' => __('Your recaptcha is not verified', 'fluent-support')
-                ], 422);  
+                ], 422);
            }
         }
         //Testing recaptcha
@@ -492,6 +493,11 @@ class AuthController extends Controller
 
         $userId = wp_create_user($userName, $password, $email);
 
+        if('yes' == Helper::getBusinessSettings('enable_email_verification')) {
+            do_action('fluent_support/verification_needed', $email);
+            (new EmailVerification())->triggerEmailVerification($email);
+        }
+
         if (is_wp_error($userId)) {
             return false;
         }
@@ -604,5 +610,27 @@ class AuthController extends Controller
          * @param integer $userId
          */
         do_action('fluent_support/after_logging_in_user', $userId);
+    }
+    public function verifyEmail(Request $request, EmailVerification $emailVerification)
+    {
+        try {
+            $emailVerification->verifyEmail($request->getSafe('code'));
+            return $this->sendSuccess([
+                'message' => __('Email verification successful.', 'fluent-support')
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function resendVerificationEmail(Request $request, EmailVerification $emailVerification)
+    {
+        $emailVerification->triggerEmailVerification();
+
+        return $this->sendSuccess([
+            'message' => __('Verification email has been sent to your email address.', 'fluent-support')
+        ]);
     }
 }
