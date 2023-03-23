@@ -26,13 +26,14 @@
 
 <script type="text/babel">
 
-import {reactive, toRefs} from "vue";
+import {reactive, toRefs, watch} from "vue";
 import {
     useFluentHelper,
     useNotify,
 } from "@/admin/Composable/FluentFrameworkHelper";
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
+import {debounce} from 'lodash'
 
 export default {
     name: 'CreateResponse',
@@ -44,7 +45,10 @@ export default {
 
     setup(props, {emit}) {
 
-        const {post, translate, handleError} = useFluentHelper();
+        const {
+            post, translate, handleError, saveData,
+            getData, removeData
+        } = useFluentHelper();
         const {notify} = useNotify();
 
         const state = reactive({
@@ -64,6 +68,17 @@ export default {
                 '{{agent.email}}': 'Agent Email',
             }
         });
+
+        let previousResponse = getData("ticket_no_" + props.ticket.id + "_response_draft");
+        if (previousResponse) {
+            state.response_body = previousResponse;
+        }
+
+        const saveResponseDraft = debounce(() => {
+            saveData("ticket_no_" + props.ticket.id + "_response_draft", state.response_body);
+        }, 5000)
+
+        watch(state, saveResponseDraft)
 
         const create = (closed = 'no') => {
 
@@ -89,6 +104,7 @@ export default {
                         type: 'success',
                         position: 'bottom-right'
                     });
+                    removeData("ticket_no_" + props.ticket.id + "_response_draft");
                     state.response_body = '';
                     emit('created', response.response, response);
                     state.attachments = [];
