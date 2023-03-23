@@ -82,6 +82,21 @@ export function useFluentHelper(){
 
     }
 
+    function removeData(key) {
+        let existingData = window.localStorage.getItem('__fluentsupport_data');
+
+        if (!existingData) {
+            return [];
+        } else {
+            existingData = JSON.parse(existingData);
+        }
+
+        delete existingData[key];
+
+        window.localStorage.setItem('__fluentsupport_data', JSON.stringify(existingData));
+
+    }
+
     //Error handler
     function handleError(response) {
         if (response.responseJSON) {
@@ -135,6 +150,7 @@ export function useFluentHelper(){
         handleError,
         saveData,
         getData,
+        removeData,
         moment,
         humanDiffTime,
         dateTimeFormat,
