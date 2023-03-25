@@ -73,6 +73,7 @@ class Settings
             'del_files_on_close'    => 'no',
             'enable_admin_bar_summary' => 'no',
             'enable_email_verification' => 'no',
+            'enable_draft_mode' => 'no',
         ];
 
         //Get default/existing settings from database using the key global_business_settings
@@ -158,6 +159,13 @@ class Settings
                 'false-label'    => 'no',
                 'checkbox_label' => __('Enable Email Verification', 'fluent-support'),
                 'inline_help'    => __('If you enable this setting, then user can create tickets only after verifying the email address.', 'fluent-support')
+            ],
+            'enable_draft_mode' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Enable Draft Mode', 'fluent-support'),
+                'inline_help'    => __('If you enable this setting, then if an agent close a ticket accidentally then the written response will be saved as draft.', 'fluent-support')
             ],
         ];
 
