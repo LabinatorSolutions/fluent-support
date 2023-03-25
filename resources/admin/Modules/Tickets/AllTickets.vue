@@ -430,6 +430,9 @@ export default {
             if (ticket.status == 'closed') {
                 return '';
             }
+            if(ticket.status === 'new') {
+                return 'new';
+            }
             if (!ticket.last_agent_response) {
                 return 'waiting';
             } else if (!ticket.last_customer_response) {
