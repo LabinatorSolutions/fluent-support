@@ -133,7 +133,7 @@ class Menu
                 'permalink' => $baseUrl . 'reports'
             ],
 
-            
+
         ];
 
         $hasSensitiveAccess = PermissionManager::currentUserCan('fst_sensitive_data');
@@ -361,6 +361,7 @@ class Menu
             'custom_fields'             => apply_filters('fluent_support/ticket_custom_fields', []),
             'has_file_upload'           => !!Helper::ticketAcceptedFileMiles(),
             'repost_export_options'     => Helper::getExportOptions(),
+            'enable_draft_mode'         => Helper::getBusinessSettings('enable_draft_mode', 'no'),
         ));
 
         if (defined('FLUENTCRM')) {

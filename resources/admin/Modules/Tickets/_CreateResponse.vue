@@ -47,7 +47,7 @@ export default {
 
         const {
             post, translate, handleError, saveData,
-            getData, removeData
+            getData, removeData, appVars
         } = useFluentHelper();
         const {notify} = useNotify();
 
@@ -69,16 +69,18 @@ export default {
             }
         });
 
-        let previousResponse = getData("ticket_no_" + props.ticket.id + "_response_draft");
-        if (previousResponse) {
-            state.response_body = previousResponse;
+        if(appVars.enable_draft_mode === 'yes'){
+            let previousResponse = getData("ticket_no_" + props.ticket.id + "_response_draft");
+            if (previousResponse) {
+                state.response_body = previousResponse;
+            }
+            const saveResponseDraft = debounce(() => {
+                saveData("ticket_no_" + props.ticket.id + "_response_draft", state.response_body);
+            }, 5000)
+            watch(saveResponseDraft)
         }
 
-        const saveResponseDraft = debounce(() => {
-            saveData("ticket_no_" + props.ticket.id + "_response_draft", state.response_body);
-        }, 5000)
-
-        watch(state, saveResponseDraft)
+        watch(state)
 
         const create = (closed = 'no') => {
 
@@ -104,7 +106,9 @@ export default {
                         type: 'success',
                         position: 'bottom-right'
                     });
-                    removeData("ticket_no_" + props.ticket.id + "_response_draft");
+                    if(appVars.enable_draft_mode === 'yes'){
+                        removeData("ticket_no_" + props.ticket.id + "_response_draft");
+                    }
                     state.response_body = '';
                     emit('created', response.response, response);
                     state.attachments = [];
