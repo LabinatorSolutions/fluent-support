@@ -1,7 +1,9 @@
 <template>
-    <div v-if="ticket.live_activity && ticket.live_activity.length > 1" class="fs_active_agents">
+    <div v-if="ticket.live_activity && JSON.stringify(ticket.live_activity).length > 1" class="fs_active_agents">
         <ul>
-            <li @click="activityOn()" v-loading="loading" class="fs_active_agent_title">{{$t('Currently Viewing')}}</li>
+            <li @click="activityOn()" v-loading="loading" class="fs_active_agent_title">
+                {{ translate('Currently Viewing') }}
+            </li>
             <li v-for="activity in ticket.live_activity" :key="activity.id">
                 <span class="fs_agent_photo_icon"><img :src="activity.photo"/></span>
             </li>
@@ -10,54 +12,83 @@
 </template>
 
 <script type="text/babel">
+import {onBeforeUnmount, onMounted, reactive, toRefs} from "vue";
+import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
+
 export default {
     name: 'active_agents',
     props: ['ticket'],
-    data() {
-        return {
-            ticket_id: this.ticket.id,
+
+    setup(props) {
+        const {
+            get,
+            del,
+            translate,
+        } = useFluentHelper();
+        const state = reactive({
+            ticket_id: props.ticket.id,
             loading: false,
             app_off: false
-        }
-    },
-    methods: {
-        scheduleNextEvent() {
+        });
+
+        const scheduleNextEvent = () => {
             const randTimer = Math.random() * 20000 + 30000;
             setTimeout(() => {
-                if(!this.loading) {
-                    this.activityOn();
+                if (!state.loading) {
+                    activityOn();
                 }
             }, randTimer);
-        },
-        activityOn() {
-            if(this.loading || this.app_off) {
-                return ;
+        };
+
+        const activityOn = () => {
+            if (state.loading || state.app_off) {
+                return;
             }
-            this.loading = true;
-            this.$get(`tickets/${this.ticket_id}/live_activity`)
+            state.loading = true;
+            get(`tickets/${state.ticket_id}/live_activity`)
                 .then(response => {
-                    this.ticket.live_activity = response.live_activity;
-                    this.scheduleNextEvent();
+                    props.ticket.live_activity = response.live_activity;
+                    scheduleNextEvent();
                 })
                 .catch((errors) => {
                     console.log(errors);
                 })
                 .always(() => {
-                    this.loading = false;
+                    state.loading = false;
                 });
-        },
-        activityOff() {
-            this.app_off = true;
-            this.$del(`tickets/${this.ticket_id}/live_activity`);
+        };
+
+        const activityOff = () => {
+            state.app_off = true;
+            del(`tickets/${state.ticket_id}/live_activity`);
         }
-    },
-    mounted() {
-        setTimeout(() => {
-            this.activityOn();
-        }, 30000);
-    },
-    beforeUnmount() {
-        this.activityOff();
+
+        onMounted(() => {
+            setTimeout(function () {
+                activityOn();
+            }, 30000);
+        });
+
+        onBeforeUnmount(() => {
+            activityOff();
+        });
+
+        return {
+            ...toRefs(state),
+            scheduleNextEvent,
+            activityOn,
+            activityOff,
+            translate,
+        }
     }
 }
 </script>
+
+<style>
+.fs_active_agent_title {
+    cursor: pointer;
+}
+</style>
+
+
+
