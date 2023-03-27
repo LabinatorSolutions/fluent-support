@@ -3,9 +3,9 @@
         <el-form :data="ticket" label-position="top">
 
             <div class="text-align-center" v-if="step == 'search'">
-                <h3>{{$t('Search Existing contact or provide email address')}}</h3>
+                <h3>{{ translate('Search Existing contact or provide email address') }}</h3>
                 <el-input @keypress.enter.native.prevent="searchCustomers()" v-model="search_customer" size="large"
-                          :placeholder="$t('Search or provide email address')">
+                          :placeholder="translate('Search or provide email address')">
                     <template #append>
                         <el-button :disabled="!search_customer" @click="searchCustomers()">
                             <el-icon>
@@ -15,7 +15,8 @@
                     </template>
                 </el-input>
 
-                <div style="text-align: left;" v-if="search_results && search_results.data && search_results.data.length && ticket.create_customer != 'yes'"
+                <div style="text-align: left;"
+                     v-if="search_results && search_results.data && search_results.data.length && ticket.create_customer != 'yes'"
                      class="fs_customer_selector">
                     <h3>Please Select a contact [{{ search_results.provider }}]</h3>
                     <ul class="fs_contact_results">
@@ -29,54 +30,56 @@
                 <template v-if="searched">
                     <el-form-item style="margin-top: 20px;">
                         <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">
-                            {{ $t('Could not find a contact? Create a new one.') }}
+                            {{ translate('Could not find a contact? Create a new one.') }}
                         </el-checkbox>
                     </el-form-item>
 
                     <div class="fs_tk_create_customer" v-if="ticket.create_customer=='yes'">
                         <el-row :gutter="30">
                             <el-col :md="12" :xs="24">
-                                <el-form-item :label="$t('First Name')">
-                                    <el-input :placeholder="$t('First Name')" type="text"
+                                <el-form-item :label="translate('First Name')">
+                                    <el-input :placeholder="translate('First Name')" type="text"
                                               v-model="new_customer.first_name"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :md="12" :xs="24">
-                                <el-form-item :label="$t('Last Name')">
-                                    <el-input :placeholder="$t('Last Name')" type="text"
+                                <el-form-item :label="translate('Last Name')">
+                                    <el-input :placeholder="translate('Last Name')" type="text"
                                               v-model="new_customer.last_name"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
 
-                        <el-form-item :label="$t('Email')">
+                        <el-form-item :label="translate('Email')">
                             <el-input placeholder="Email" type="email" v-model="new_customer.email"></el-input>
                         </el-form-item>
 
                         <el-row :gutter="30" v-if="ticket.create_wp_user=='yes'">
                             <el-col :md="12" :xs="24">
-                                <el-form-item :label="$t('Username')">
-                                    <el-input :placeholder="$t('Username')" type="text"
+                                <el-form-item :label="translate('Username')">
+                                    <el-input :placeholder="translate('Username')" type="text"
                                               v-model="new_customer.username"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :md="12" :xs="24">
-                                <el-form-item :label="$t('Password')">
-                                    <el-input :placeholder="$t('Password (Leave blank for auto generated email)')" type="password" show-password
-                                              v-model="new_customer.password"></el-input>
+                                <el-form-item :label="translate('Password')">
+                                    <el-input
+                                        :placeholder="translate('Password (Leave blank for auto generated email)')"
+                                        type="password" show-password
+                                        v-model="new_customer.password"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
 
                         <el-form-item>
                             <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_wp_user">
-                                {{ $t('Create New User in WordPress') }}
+                                {{ translate('Create New User in WordPress') }}
                             </el-checkbox>
                         </el-form-item>
 
                         <el-form-item>
                             <el-button @click="step = 'ticket'" type="primary">
-                                {{$t('Next')}}
+                                {{ translate('Next') }}
                             </el-button>
                         </el-form-item>
 
@@ -87,33 +90,35 @@
             <template v-else-if="step == 'ticket'">
 
                 <div style="background: #dbdfe5; padding: 10px 10px 5px; margin-bottom: 10px;">
-                    <h3 style="margin: 0px;">{{$t('Selected Contact Details')}}</h3>
-                    <p>{{$t('Name:')}} {{new_customer.first_name}} {{new_customer.last_name}}</p>
-                    <p>{{$t('Email:')}} {{new_customer.email}}</p>
+                    <h3 style="margin: 0px;">{{ translate('Selected Contact Details') }}</h3>
+                    <p>{{ translate('Name:') }} {{ new_customer.first_name }} {{ new_customer.last_name }}</p>
+                    <p>{{ translate('Email:') }} {{ new_customer.email }}</p>
                 </div>
 
-                <el-form-item v-if="mailboxes.length > 1" :label="$t('Select Business Inbox')">
-                    <el-select v-model="ticket.mailbox_id" :placeholder="$t('Select Business Inbox')">
+                <el-form-item v-if="mailboxes.length > 1" :label="translate('Select Business Inbox')">
+                    <el-select v-model="ticket.mailbox_id" :placeholder="translate('Select Business Inbox')">
                         <el-option v-for="mailbox in mailboxes" :key="mailbox.id" :value="mailbox.id"
                                    :label="mailbox.name"></el-option>
                     </el-select>
                     <error :error="errors.get('mailbox_id')"/>
                 </el-form-item>
 
-                <el-form-item :label="$t('Subject')">
-                    <el-input :placeholder="$t('subject_placeholder')" type="text"
+                <el-form-item :label="translate('Subject')">
+                    <el-input :placeholder="translate('subject_placeholder')" type="text"
                               v-model="ticket.title"></el-input>
                     <error :error="errors.get('title')"/>
                 </el-form-item>
-                <el-form-item :label="$t('Ticket Details')">
-                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" v-if="editor_ready" :show-saved-replies="true"/>
+                <el-form-item :label="translate('Ticket Details')">
+                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" v-if="editor_ready"
+                               :show-saved-replies="true"/>
                     <error :error="errors.get('content')"/>
                 </el-form-item>
 
                 <el-row :gutter="30">
                     <el-col v-if="products.length" :md="12" :xs="24">
-                        <el-form-item :label="$t('Related Product/Service')">
-                            <el-select v-model="ticket.product_id" :placeholder="$t('Select related Product/Service')">
+                        <el-form-item :label="translate('Related Product/Service')">
+                            <el-select v-model="ticket.product_id"
+                                       :placeholder="translate('Select related Product/Service')">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id"
                                            :label="product.title"></el-option>
                             </el-select>
@@ -121,8 +126,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col :md="12" :xs="24">
-                        <el-form-item :label="$t('Priority (Customer)')">
-                            <el-select v-model="ticket.client_priority" :placeholder="$t('Select Priority')">
+                        <el-form-item :label="translate('Priority (Customer)')">
+                            <el-select v-model="ticket.client_priority" :placeholder="translate('Select Priority')">
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey"
                                            :value="priorityKey" :label="priority"></el-option>
                             </el-select>
@@ -136,7 +141,7 @@
                 <el-col :span="4">
                     <el-form-item>
                         <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">
-                            {{ $t('Create Ticket') }}
+                            {{ translate('Create Ticket') }}
                         </el-button>
                     </el-form-item>
                 </el-col>
@@ -152,6 +157,9 @@ import RemoteSelector from '../../Pieces/RemoteSelector';
 import Error from '../../../admin/Pieces/Error';
 import Errors from '../../../admin/Bits/Errors';
 import CustomFieldForm from './parts/_CustomFieldForm';
+import {nextTick, reactive, toRefs} from "vue";
+import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
+import {useRouter} from 'vue-router'
 
 export default {
     name: 'CreateTicketForm',
@@ -161,14 +169,25 @@ export default {
         Error,
         CustomFieldForm
     },
-    data() {
-        return {
+
+    setup() {
+        const {
+            translate,
+            handleError,
+            appVars,
+            post,
+            get
+        } = useFluentHelper();
+        const {notify} = useNotify();
+        const router = useRouter()
+
+        const state = reactive({
             step: 'search',
             creating: false,
             editor_ready: true,
-            products: this.appVars.support_products,
-            priorities: this.appVars.client_priorities,
-            mailboxes: this.appVars.mailboxes,
+            products: appVars.support_products,
+            priorities: appVars.client_priorities,
+            mailboxes: appVars.mailboxes,
             errors: new Errors(),
             ticket: {
                 customer_id: '',
@@ -193,63 +212,75 @@ export default {
             },
             searching: false,
             searched: false
-        }
-    },
-    methods: {
-        create() {
-            this.errors.clear();
-            this.creating = true;
-            this.$post('tickets', {
-                ticket: this.ticket,
-                newCustomer: this.new_customer,
-                // customerFromCrm: this.customer_from_crm,
+        });
+
+        const create = () => {
+            state.errors.clear();
+            state.creating = true;
+            post('tickets', {
+                ticket: state.ticket,
+                newCustomer: state.new_customer,
             })
                 .then((response) => {
-                    this.$notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right'
+                        position: 'bottom-right',
+                        type: 'success'
                     });
-                    this.$router.push({name: 'view_ticket', params: {ticket_id: response.ticket.id}});
+                    router.push({name: 'view_ticket', params: {ticket_id: response.ticket.id}});
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.creating = false;
+                    state.creating = false;
                 });
-        },
-        labelMaker(name, email) {
+        };
+
+        const labelMaker = (name, email) => {
             return `${name} - ${email}`;
-        },
-        insertTemplate(content) {
-            this.editor_ready = false;
-            this.ticket.content = this.ticket.content + content;
-            this.$nextTick(() => {
-                this.editor_ready = true;
+        };
+
+        const insertTemplate = (content) => {
+            state.editor_ready = false;
+            state.ticket.content = state.ticket.content + content;
+            nextTick(() => {
+                state.editor_ready = true;
             });
-        },
-        searchCustomers() {
-            this.searching = true;
-            this.searched = false;
-            this.$get('tickets/search-contact', {
-                search: this.search_customer
+        };
+
+        const searchCustomers = () => {
+            state.searching = true;
+            state.searched = false;
+            get('tickets/search-contact', {
+                search: state.search_customer
             })
                 .then(response => {
-                    this.search_results = response;
+                    state.search_results = response;
                 })
                 .catch((errors) => {
-                    this.$handleError(errors);
-                    // this.errors.record(errors);
+                    handleError(errors);
                 })
                 .always(() => {
-                    this.searching = false;
-                    this.searched = true;
+                    state.searching = false;
+                    state.searched = true;
                 });
-        },
-        customerSelected(item, provider) {
-            this.new_customer = {...item};
-            this.new_customer.provider = provider;
-            this.step = 'ticket';
+        };
+
+        const customerSelected = (item, provider) => {
+            state.new_customer = {...item};
+            state.new_customer.provider = provider;
+            state.step = 'ticket';
+        }
+
+        return {
+            ...toRefs(state),
+            create,
+            labelMaker,
+            insertTemplate,
+            searchCustomers,
+            customerSelected,
+            translate,
         }
     }
 }
