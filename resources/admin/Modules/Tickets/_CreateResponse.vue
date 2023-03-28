@@ -104,7 +104,8 @@ export default {
                     notify({
                         message: response.message,
                         type: 'success',
-                        position: 'bottom-right'
+                        position: 'bottom-right',
+                        offset: 50,
                     });
                     if(appVars.enable_draft_mode === 'yes'){
                         removeData("ticket_no_" + props.ticket.id + "_response_draft");
