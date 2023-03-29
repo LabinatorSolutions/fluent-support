@@ -10,7 +10,7 @@
             multiple
             :headers="requestHeaders"
             :data="upload_data"
-            :limit="3"
+            :limit= "parseInt(appVars.max_file_upload)"
             :on-exceed="handleExceed"
             :file-list="file_lists"
             list-type="picture"
