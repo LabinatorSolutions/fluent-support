@@ -70,6 +70,7 @@ class Settings
             'disable_public_ticket' => 'no',
             'accepted_file_types'   => ['images', 'csv', 'documents', 'zip', 'json'],
             'max_file_size'         => 2,
+            'max_file_upload'       => 3,
             'del_files_on_close'    => 'no',
             'enable_admin_bar_summary' => 'no',
             'enable_email_verification' => 'no',
@@ -138,6 +139,12 @@ class Settings
                 'type'    => 'input-text',
                 'data_type' => 'number',
                 'label'   => __('Max File Size (in MegaByte)', 'fluent-support'),
+            ],
+            'max_file_upload' => [
+                'wrapper_class' => 'fs_half_field',
+                'type'    => 'input-text',
+                'data_type' => 'number',
+                'label'   => __('Maximum File Upload', 'fluent-support'),
             ],
             'del_files_on_close' => [
                 'type'           => 'inline-checkbox',

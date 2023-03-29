@@ -167,6 +167,7 @@ class CustomerPortalHandler
             'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
             'has_rich_text_editor'       => true,
             'customer_status'            => static::customerStatus()->status,
+            'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
         ];
 
         if ($this->isSignedTicketView()) {
