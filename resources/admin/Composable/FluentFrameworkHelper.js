@@ -176,6 +176,7 @@ export function useNotify(){
 
     const notify= (config)=> {
         ElNotification({
+            position: config.position || 'bottom-right',
             ...config
         })
     }
