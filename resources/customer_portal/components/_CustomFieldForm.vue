@@ -107,14 +107,15 @@ export default {
             if (field.has_logics != 'yes' || !field.conditions || !field.conditions.length) {
                 return true;
             }
-
             let singlePass = false;
             let allPassed = true;
 
+            console.log("Condition", field.conditions);
             each(field.conditions, (condition) => {
                 if (this.dependancyPass(condition)) {
                     singlePass = true;
                 } else {
+                    this.custom_data[field.slug] = '';
                     allPassed = false;
                 }
             });
