@@ -109,8 +109,6 @@ export default {
             }
             let singlePass = false;
             let allPassed = true;
-
-            console.log("Condition", field.conditions);
             each(field.conditions, (condition) => {
                 if (this.dependancyPass(condition)) {
                     singlePass = true;
