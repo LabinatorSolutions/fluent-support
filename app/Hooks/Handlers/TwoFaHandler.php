@@ -43,6 +43,7 @@ class TwoFaHandler
             'status' => 'issued',
             'ip_address' => $_SERVER['HTTP_USER_AGENT'],
             'use_type' => 'email_2_fa',
+            'used_count' => 0,
             'user_email' => $user->user_email,
             'two_fa_code_hash' => wp_hash_password($twoFaCode),
             'valid_till' => date('Y-m-d H:i:s', current_time('timestamp') + 10 * 30),
