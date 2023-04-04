@@ -208,7 +208,11 @@ class AuthController extends Controller
     {
         $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
         $reCaptchaData = maybe_unserialize($reCaptchaSettingsData->value, []);
-        $formContainingReCaptcha = $reCaptchaData["formContainingReCaptcha"];
+        $isEnabled = filter_var($reCaptchaData['is_enabled'], FILTER_VALIDATE_BOOLEAN);
+        if (!$isEnabled) {
+            return false;
+        }
+        $formContainingReCaptcha = $reCaptchaData['formContainingReCaptcha'];
         return 'yes' === $formContainingReCaptcha[$formName];
     }
 
@@ -310,7 +314,7 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $errors    = new \WP_Error();
+        $errors = new \WP_Error();
 
         if (!wp_verify_nonce($request->get('_fsupport_reset_pass_nonce'), 'fluent_support_reset_pass_nonce')) {
             return $this->sendError([
@@ -318,7 +322,7 @@ class AuthController extends Controller
             ]);
         }
 
-        $usernameOrEmail = trim( wp_unslash( $request->get('user_login') ) );
+        $usernameOrEmail = trim(wp_unslash($request->get('user_login')));
 
         if (!$usernameOrEmail) {
             return $this->sendError([
@@ -338,45 +342,45 @@ class AuthController extends Controller
             ]);
         }
 
-        $user_data = apply_filters( 'lostpassword_user_data', $user_data, $errors );
+        $user_data = apply_filters('lostpassword_user_data', $user_data, $errors);
 
-        do_action( 'lostpassword_post', $errors, $user_data );
+        do_action('lostpassword_post', $errors, $user_data);
 
-        $errors = apply_filters( 'lostpassword_errors', $errors, $user_data );
+        $errors = apply_filters('lostpassword_errors', $errors, $user_data);
 
-        if ( $errors->has_errors() ) {
+        if ($errors->has_errors()) {
             return $this->sendError([
                 'message' => $errors->get_error_message()
             ]);
         }
 
-        if ( ! $user_data ) {
+        if (!$user_data) {
             return $this->sendError([
-                'message' => __( '<strong>Error</strong>: There is no account with that username or email address.', 'fluent-support' )
+                'message' => __('<strong>Error</strong>: There is no account with that username or email address.', 'fluent-support')
             ]);
         }
 
-        if ( is_multisite() && ! is_user_member_of_blog( $user_data->ID, get_current_blog_id() ) ) {
+        if (is_multisite() && !is_user_member_of_blog($user_data->ID, get_current_blog_id())) {
 
             return $this->sendError([
-                'message' => __( '<strong>Error</strong>: Invalid username or email', 'fluent-support' )
+                'message' => __('<strong>Error</strong>: Invalid username or email', 'fluent-support')
             ]);
         }
 
         // Redefining user_login ensures we return the right case in the email.
         $user_login = $user_data->user_login;
 
-        do_action( 'retrieve_password', $user_login );
+        do_action('retrieve_password', $user_login);
 
-        $allow = apply_filters( 'allow_password_reset', true, $user_data->ID );
+        $allow = apply_filters('allow_password_reset', true, $user_data->ID);
 
-        if ( ! $allow ) {
+        if (!$allow) {
             return $this->sendError([
-                'message' => __( 'Password reset is not allowed for this user', 'fluent-support' )
+                'message' => __('Password reset is not allowed for this user', 'fluent-support')
             ]);
         }
 
-        if ( is_wp_error( $allow ) ) {
+        if (is_wp_error($allow)) {
             return $this->sendError([
                 'message' => $allow->get_error_message()
             ]);
@@ -393,7 +397,7 @@ class AuthController extends Controller
 
         $resetUrl = add_query_arg([
             'action' => 'rp',
-            'key' => get_password_reset_key( $user_data ),
+            'key' => get_password_reset_key($user_data),
             'login' => rawurlencode($user_data->user_login)
         ], wp_login_url());
 
@@ -521,11 +525,11 @@ class AuthController extends Controller
         $name = trim(Arr::get($formData, 'first_name') . ' ' . Arr::get($formData, 'last_name'));
 
         $data = array_filter([
-            'ID'            => $userId,
+            'ID' => $userId,
             'user_nicename' => $name,
-            'display_name'  => $name,
-            'first_name'    => Arr::get($formData, 'first_name'),
-            'last_name'     => Arr::get($formData, 'last_name'),
+            'display_name' => $name,
+            'first_name' => Arr::get($formData, 'first_name'),
+            'last_name' => Arr::get($formData, 'last_name'),
         ]);
 
         if ($name) {
