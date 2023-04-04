@@ -9,6 +9,7 @@ use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\AuthHandler;
 use FluentSupport\App\Services\EmailVerification;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
+use FluentSupport\App\Hooks\Handlers\TwoFaHandler;
 
 class AuthController extends Controller
 {
@@ -52,13 +53,13 @@ class AuthController extends Controller
         //Testing recaptcha
 
         $checkRecaptchaAvailability = $this->isRecaptchaApplicable('signup_form');
-        if($checkRecaptchaAvailability){
+        if ($checkRecaptchaAvailability) {
             $validateCaptcha = ReCaptchaHandler::validateRecaptcha($formData['g-recaptcha-response']);
-            if(!$validateCaptcha){
+            if (!$validateCaptcha) {
                 return $this->response([
                     'message' => __('Your recaptcha is not verified', 'fluent-support')
                 ], 422);
-           }
+            }
         }
         //Testing recaptcha
 
@@ -101,7 +102,7 @@ class AuthController extends Controller
          * @param array $response
          */
         $response = apply_filters('fluent_support/signup_complete_response', [
-            'message'  => __('Successfully registered to the site.', 'fluent-support'),
+            'message' => __('Successfully registered to the site.', 'fluent-support'),
             'redirect' => Arr::get($formData, '__redirect_to', Helper::getPortalBaseUrl())
         ]);
 
@@ -123,18 +124,17 @@ class AuthController extends Controller
 
         $data = $request->all();
 
-        //Testing recaptcha
-        $checkRecaptchaAvailability = $this->isRecaptchaApplicable('login_form');
-        if($checkRecaptchaAvailability){
-           $validateCaptcha  = ReCaptchaHandler::validateRecaptcha($data['g-recaptcha-response']);
 
-           if(!$validateCaptcha){
+        $checkRecaptchaAvailability = $this->isRecaptchaApplicable('login_form');
+        if ($checkRecaptchaAvailability) {
+            $validateCaptcha = ReCaptchaHandler::validateRecaptcha($data['g-recaptcha-response']);
+
+            if (!$validateCaptcha) {
                 return $this->response([
                     'message' => __('Your recaptcha is not verified', 'fluent-support')
                 ], 422);
-           }
+            }
         }
-        //Testing recaptcha
 
         if (empty($data['pwd']) || empty($data['log'])) {
             return $this->response([
@@ -174,6 +174,11 @@ class AuthController extends Controller
 
         }
 
+        $twoFactorEnabled = Helper::getBusinessSettings('enable_two_fa');
+        if ('yes' == $twoFactorEnabled) {
+            (new TwoFaHandler)->maybe2FaRedirect($user);
+        }
+
         if (apply_filters('fluent_support_use_native_login', true)) {
             $user = wp_signon();
             if (is_wp_error($user)) {
@@ -202,7 +207,7 @@ class AuthController extends Controller
     public function isRecaptchaApplicable($formName)
     {
         $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
-        $reCaptchaData  = maybe_unserialize($reCaptchaSettingsData->value, []);
+        $reCaptchaData = maybe_unserialize($reCaptchaSettingsData->value, []);
         $formContainingReCaptcha = $reCaptchaData["formContainingReCaptcha"];
         return 'yes' === $formContainingReCaptcha[$formName];
     }
@@ -493,7 +498,7 @@ class AuthController extends Controller
 
         $userId = wp_create_user($userName, $password, $email);
 
-        if('yes' == Helper::getBusinessSettings('enable_email_verification')) {
+        if ('yes' == Helper::getBusinessSettings('enable_email_verification')) {
             do_action('fluent_support/verification_needed', $email);
             (new EmailVerification())->triggerEmailVerification($email);
         }
@@ -611,6 +616,7 @@ class AuthController extends Controller
          */
         do_action('fluent_support/after_logging_in_user', $userId);
     }
+
     public function verifyEmail(Request $request, EmailVerification $emailVerification)
     {
         try {

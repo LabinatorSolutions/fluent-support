@@ -411,7 +411,8 @@ class AuthHandler
             'redirect_fallback'    => Helper::getPortalBaseUrl(),
             'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce'),
             'resetPass'            => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
-            'reCaptchaSettingsData' => $reCaptchaData
+            'reCaptchaSettingsData' => $reCaptchaData,
+            'fs_two_fa'             => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/two_fa'
         ]);
 
 

@@ -40,18 +40,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     //Get element for login form and show recaptcha if enabled
-    if(document.getElementById('fst_login_form')){
+    if (document.getElementById('fst_login_form')) {
         /*If Recaptcha Integration is enabled for login form*/
-        if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes") {
+        if (reCaptchaSettingsData.is_enabled === 'true' && reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes") {
             const captchaContainer = "#fst_login_form form .login-submit";
             const fieldName = "g-recaptcha-login";
             handleRecaptcha(captchaContainer, fieldName);
         }
     }
     //Get element for Sign Up form and show recaptcha if enabled
-    if(document.getElementById('fs_show_signup')){
+    if (document.getElementById('fs_show_signup')) {
         /*If Recaptcha Integration is enabled for signup form*/
-        if (reCaptchaSettingsData.is_enabled === 'true' &&  reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes") {
+        if (reCaptchaSettingsData.is_enabled === 'true' && reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes") {
             const captchaContainer =
                 ".fst_registration_wrapper form #fst_submit";
             const fieldName = "g-recaptcha-signup";
@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = new FormData(form);
 
         const request = new XMLHttpRequest();
+        const twoFaForm = document.getElementById('fst_login_form');
 
         request.open("POST", reqUrl, true);
         request.responseType = "json";
@@ -113,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (!genericError && this.response.message) {
                     genericError = this.response.message;
-                } else if (genericError && this.response.data.status === 403 || this.status === 422 ) {
+                } else if (genericError && this.response.data.status === 403 || this.status === 422) {
                     genericError = this.response.message;
                 }
 
@@ -157,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
         that.parentNode.parentNode.classList.toggle("hide");
         document.querySelector(target).classList.toggle("hide");
 
-        if('recaptcha_v3'===reCaptchaSettingsData.reCaptcha_version){
+        if ('recaptcha_v3' === reCaptchaSettingsData.reCaptcha_version) {
             handleRecaptchaBadgeVsibility(target)
         }
     }
@@ -189,7 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     .then(function (token) {
 
                         document.getElementById(fieldName).value = token;
-                        if(reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes"){
+                        if (reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes") {
                             document.querySelector('.grecaptcha-badge').style.visibility = 'visible';
                         }
                     });
@@ -201,26 +202,41 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
 
     }
+
     /*End Handle Recaptcha V2 and V3*/
 
     /*Handle Recaptcha badge visibility in V3*/
-    function handleRecaptchaBadgeVsibility(target){
+    function handleRecaptchaBadgeVsibility(target) {
         const isSignupForm = reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes";
         const isLoginForm = reCaptchaSettingsData.formContainingReCaptcha["login_form"] === "yes";
 
         switch (target) {
             case '.fst_registration_wrapper':
-              document.querySelector('.grecaptcha-badge').style.visibility = isSignupForm ? 'visible' : 'hidden';
-              break;
+                document.querySelector('.grecaptcha-badge').style.visibility = isSignupForm ? 'visible' : 'hidden';
+                break;
             case '.fst_login_wrapper':
-              document.querySelector('.grecaptcha-badge').style.visibility = isLoginForm ? 'visible' : 'hidden';
-              break;
+                document.querySelector('.grecaptcha-badge').style.visibility = isLoginForm ? 'visible' : 'hidden';
+                break;
             default:
-              document.querySelector('.grecaptcha-badge').style.visibility = 'hidden';
-              break;
-          }
+                document.querySelector('.grecaptcha-badge').style.visibility = 'hidden';
+                break;
+        }
     }
-     /*End Handle Recaptcha badge visibility in V3*/
+
+    /*End Handle Recaptcha badge visibility in V3*/
+
+    function init2FaForm() {
+        const twoFaForm = document.getElementById('fst_login_form');
+        if (twoFaForm) {
+            twoFaForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const loginForm = document.querySelectorAll("#fst_login_form form");
+                const reqUrl = window.fluentSupportPublic.fs_two_fa;
+
+                handleFormSubmission(loginForm[0], 'fs_2fa_confirm', reqUrl);
+            });
+        }
+    }
 
     const loginForm = document.querySelectorAll("#fst_login_form form");
 
@@ -247,21 +263,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
             request.open("POST", window.fluentSupportPublic.login, true);
             request.responseType = "json";
-            request.setRequestHeader(
-                "X-WP-Nonce",
-                window.fluentSupportPublic.nonce
+            data.append(
+                "_support_login_nonce",
+                window.fluentSupportPublic.fsupport_login_nonce
             );
 
             request.onload = function () {
                 if (this.status === 200) {
-                    if (this.response.redirect) {
+                    if (this.response.load_2fa) {
+                        document.getElementById('fst_login_form').innerHTML = this.response.two_fa_form;
+                        init2FaForm();
+                    } else if (this.response.redirect) {
                         window.location.href = this.response.redirect;
                         setTimeout(function () {
                             window.location.reload();
                         }, 1500);
                     } else {
-                        window.location.href =
-                            window.fluentSupportPublic.redirect_fallback;
+                        window.location.href = window.fluentSupportPublic.redirect_fallback;
                     }
                 } else {
                     let genericError = this.response.error;
