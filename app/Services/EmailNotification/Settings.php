@@ -75,6 +75,7 @@ class Settings
             'enable_admin_bar_summary' => 'no',
             'enable_email_verification' => 'no',
             'enable_draft_mode' => 'no',
+            'enable_two_fa' => 'no'
         ];
 
         //Get default/existing settings from database using the key global_business_settings
@@ -173,6 +174,13 @@ class Settings
                 'false-label'    => 'no',
                 'checkbox_label' => __('Enable Draft Mode', 'fluent-support'),
                 'inline_help'    => __('If you enable this setting, then if an agent close a ticket accidentally then the written response will be saved as draft.', 'fluent-support')
+            ],
+            'enable_two_fa' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Enable Two-Factor Authentication', 'fluent-support'),
+                'inline_help'    => __('If you enable this setting, users will be required to submit a second form of authentication, such as a code sent to their email, to login.', 'fluent-support')
             ],
         ];
 
