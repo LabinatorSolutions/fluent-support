@@ -13,6 +13,11 @@ export default {
     },
     props: ['field', 'modelValue'],
     emits: ['update:modelValue'],
+    data() {
+        return {
+            modelValue: this.modelValue
+        }
+    },
     watch: {
         modelValue(value) {
             this.$emit('update:modelValue', value);

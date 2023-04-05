@@ -24,7 +24,8 @@ export default {
     data() {
         return {
             agents: this.appVars.support_agents,
-            loading: false
+            loading: false,
+            modelValue: this.modelValue
         }
     },
     watch: {

@@ -19,7 +19,8 @@ export default {
     data() {
         return {
             countries: {},
-            loading: false
+            loading: false,
+            modelValue: this.modelValue
         }
     },
     watch: {
