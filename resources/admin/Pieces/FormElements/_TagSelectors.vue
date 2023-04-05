@@ -24,7 +24,8 @@ export default {
     data() {
         return {
             tags: this.appVars.ticket_tags,
-            loading: false
+            loading: false,
+            modelValue: this.modelValue
         }
     },
     watch: {

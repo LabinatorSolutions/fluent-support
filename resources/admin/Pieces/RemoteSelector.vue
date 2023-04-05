@@ -30,7 +30,8 @@ export default {
     data() {
         return {
             options: [],
-            loading: false
+            loading: false,
+            modelValue: this.modelValue
         }
     },
     methods: {

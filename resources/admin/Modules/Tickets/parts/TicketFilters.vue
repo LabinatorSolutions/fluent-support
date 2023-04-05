@@ -99,6 +99,7 @@ export default {
         const emit = context.emit;
         const { appVars, translate } = useFluentHelper();
         const {notify} = useNotify();
+        const search = props.search;
         const state = reactive({
             filterColumns: {
                 id: translate('Ticket ID'),
@@ -113,7 +114,7 @@ export default {
                 created_at: translate('Created At')
             },
             searchInput: props.search,
-            ticket_statuses_group: appVars.ticket_statuses_group,
+            ticket_statuses_group: appVars.ticket_statuses_group
         });
 
         const fetchTickets = () => {
@@ -148,6 +149,7 @@ export default {
             fetchTickets,
             maybeChangeWaitingReply,
             has_active_filter,
+            search,
             ...toRefs(state),
         };
     }
