@@ -309,7 +309,7 @@ body.has_fluent_support {
 
 .fs_saved_blocks {
     max-height: 300px;
-    overflow: scroll;
+    overflow: auto;
 }
 
 ul.fs_saved_replies {
@@ -347,4 +347,20 @@ ul.fs_saved_replies {
 .fs_ticket_info {
     display: flex;
     align-items: center;
+}
+
+.fc_global_form_builder {
+    form {
+        .el-form-item {
+            .el-input {
+                .el-input__wrapper {
+                    input {
+                        background: none;
+                        box-shadow: none;
+                        border: none;
+                    }
+                }
+            }
+        }
+    }
 }
