@@ -1,5 +1,5 @@
 <template>
-    <wp-base-editor :showShortcodes="field.show_shortcodes" :showSavedReplies="field.show_saved_replies" v-model="modelValue" />
+    <wp-base-editor :showShortcodes="field.show_shortcodes" :showSavedReplies="field.show_saved_replies" v-model="modelValueLocal" />
 </template>
 
 <script type="text/babel">
@@ -15,11 +15,11 @@ export default {
     emits: ['update:modelValue'],
     data() {
         return {
-            modelValue: this.modelValue
+            modelValueLocal: this.modelValue
         }
     },
     watch: {
-        modelValue(value) {
+        modelValueLocal(value) {
             this.$emit('update:modelValue', value);
         }
     }

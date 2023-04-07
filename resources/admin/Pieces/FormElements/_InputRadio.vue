@@ -1,5 +1,5 @@
 <template>
-    <el-radio-group :class="field.wrapper_class" v-model="modelValue">
+    <el-radio-group :class="field.wrapper_class" v-model="modelValueLocal">
         <el-radio v-for="(item,itemIndex) in field.options" :key="itemIndex" :label="item.id">
             {{ item.label }}
         </el-radio>
@@ -13,11 +13,11 @@ export default {
     emits: ['update:modelValue'],
     data() {
         return {
-            modelValue: this.modelValue
+            modelValueLocal: this.modelValue
         }
     },
     watch: {
-        modelValue(value) {
+        modelValueLocal(value) {
             this.$emit('update:modelValue', value);
         }
     }

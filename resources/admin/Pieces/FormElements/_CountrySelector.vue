@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-select v-loading="loading" clearable filterable :placeholder="field.placeholder" v-model="modelValue">
+        <el-select v-loading="loading" clearable filterable :placeholder="field.placeholder" v-model="modelValueLocal">
             <el-option
                 v-for="(country,countryCode) in countries"
                 :key="countryCode"
@@ -20,11 +20,11 @@ export default {
         return {
             countries: {},
             loading: false,
-            modelValue: this.modelValue
+            modelValueLocal: this.modelValue
         }
     },
     watch: {
-        modelValue(value) {
+        modelValueLocal(value) {
             this.$emit('update:modelValue', value);
         }
     },

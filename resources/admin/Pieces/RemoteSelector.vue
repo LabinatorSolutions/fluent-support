@@ -1,6 +1,6 @@
 <template>
     <el-select
-        v-model="modelValue"
+        v-model="modelValueLocal"
         filterable
         remote
         :placeholder="$t('Search')"
@@ -17,13 +17,14 @@
 
 <script type="text/babel">
 import each from 'lodash/each';
+import {computed} from "vue";
 
 export default {
     name: 'RemoteSelector',
     props: ['api_path', 'response_key', 'value_selector', 'label_selectors', 'label_joiner', 'modelValue'],
     emits: ['update:modelValue'],
     watch: {
-        modelValue(value) {
+        modelValueLocal(value) {
             this.$emit('update:modelValue', value);
         }
     },
@@ -31,7 +32,7 @@ export default {
         return {
             options: [],
             loading: false,
-            modelValue: this.modelValue
+            modelValueLocal: this.modelValue
         }
     },
     methods: {
