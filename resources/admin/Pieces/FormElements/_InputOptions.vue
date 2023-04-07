@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-select clearable filterable :multiple="field.multiple" :placeholder="field.placeholder" v-model="modelValue">
+        <el-select clearable filterable :multiple="field.multiple" :placeholder="field.placeholder" v-model="modelValueLocal">
             <el-option
                 v-for="item in field.options"
                 :key="item.id"
@@ -20,11 +20,11 @@ export default {
     emits: ['update:modelValue'],
     data() {
         return {
-            modelValue: this.modelValue
+            modelValueLocal: this.modelValue
         }
     },
     watch: {
-        modelValue(value) {
+        modelValueLocal(value) {
             this.$emit('update:modelValue', value);
         }
     }

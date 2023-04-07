@@ -69,7 +69,7 @@
         <div class="fs_tk_filter">
             <label>{{$t('Search')}}</label>
             <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="small"
-                      :placeholder="$t('Please input')" v-model="search">
+                      :placeholder="$t('Please input')" v-model="searchInput">
                 <template #append>
                     <el-button @click="fetchTickets()" icon="Search"></el-button>
                 </template>
@@ -93,13 +93,12 @@ import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelp
 import {computed, reactive, toRefs, watch} from "vue";
 export default {
     name: 'TicketFilters',
-    emits: ['fetchTickets', 'searchChange'],
+    emits: ['fetchTickets', 'searchChange', 'resetFilters'],
     props: ['filters', 'resetFilters', 'search'],
     setup(props, context) {
         const emit = context.emit;
         const { appVars, translate } = useFluentHelper();
         const {notify} = useNotify();
-        const search = props.search;
         const state = reactive({
             filterColumns: {
                 id: translate('Ticket ID'),
@@ -113,7 +112,10 @@ export default {
                 response_count: translate('Response Count'),
                 created_at: translate('Created At')
             },
-            searchInput: props.search,
+            searchInput: computed({
+                get: () => props.search,
+                set: (value) => emit('searchChange', value)
+            }),
             ticket_statuses_group: appVars.ticket_statuses_group
         });
 
@@ -133,10 +135,6 @@ export default {
             fetchTickets();
         }
 
-        watch(() => props.search, (value) => {
-            emit('searchChange', value);
-        });
-
         const has_active_filter = computed(() => {
             const f = props.filters;
             return f.status_type !== 'open' || f.product_id || f.mailbox_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || state.searchInput || f.ticket_tags?.length || f.filter_type;
@@ -149,7 +147,6 @@ export default {
             fetchTickets,
             maybeChangeWaitingReply,
             has_active_filter,
-            search,
             ...toRefs(state),
         };
     }

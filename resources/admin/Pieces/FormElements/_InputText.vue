@@ -1,5 +1,5 @@
 <template>
-    <el-input :disabled="field.disabled" :type="field.data_type" :placeholder="field.placeholder" v-model="modelValue"></el-input>
+    <el-input :disabled="field.disabled" :type="field.data_type" :placeholder="field.placeholder" v-model="modelValueLocal"></el-input>
 </template>
 
 <script type="text/babel">
@@ -9,11 +9,11 @@ export default {
     emits: ['update:modelValue'],
     data() {
         return {
-            modelValue: this.modelValue
+            modelValueLocal: this.modelValue
         }
     },
     watch: {
-        modelValue(value) {
+        modelValueLocal(value) {
             this.$emit('update:modelValue', value);
         }
     }

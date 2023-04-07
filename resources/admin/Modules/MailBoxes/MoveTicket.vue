@@ -177,6 +177,7 @@
                 state.filters.product_id = val;
                 showTicket('Custom');
             }
+
             const  showTicket = (moveType) => {
                 if(moveType === 'Custom'){
                     let query = {
@@ -269,7 +270,14 @@
             return{
                 translate,
                 ...toRefs(state),
-                moveTicketMailBox
+                closeModal,
+                customerChangeHandler,
+                productChangeHandler,
+                moveTicketMailBox,
+                setPage,
+                handleSelectionChange,
+                showTicket,
+                load
             }
 
         }

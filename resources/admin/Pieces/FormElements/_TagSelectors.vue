@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-select clearable :multiple="field.is_multiple" filterable :placeholder="field.placeholder" v-model="modelValue">
+        <el-select clearable :multiple="field.is_multiple" filterable :placeholder="field.placeholder" v-model="modelValueLocal">
             <template v-if="field.extra_options">
                 <el-option v-for="(option, optionValue) in field.extra_options" :key="option.id" :value="option.id" :label="option.title"></el-option>
             </template>
@@ -25,11 +25,11 @@ export default {
         return {
             tags: this.appVars.ticket_tags,
             loading: false,
-            modelValue: this.modelValue
+            modelValueLocal: this.modelValue
         }
     },
     watch: {
-        modelValue(value) {
+        modelValueLocal(value) {
             this.$emit('update:modelValue', value);
         }
     }
