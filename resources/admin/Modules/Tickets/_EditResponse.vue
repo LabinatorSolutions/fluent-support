@@ -43,9 +43,8 @@ export default {
                 content: props.response.content
             })
                 .then(response => {
-                    notify.success({
+                    notify({
                         message: response.message,
-                        position: 'bottom-right',
                         type: 'success'
                     });
                     emit('updated', response.response);
