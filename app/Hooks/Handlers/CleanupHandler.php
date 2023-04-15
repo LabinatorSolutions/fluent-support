@@ -70,7 +70,7 @@ class CleanupHandler
 
             foreach ($attachments as $attachment) {
                 if ($attachment->driver != 'local') {
-                    continue;
+                    do_action('fluent_support/delete_non_local_attachment', $attachment, $ticket->id);
                 }
                 if (file_exists($attachment->file_path)) {
                     @unlink($attachment->file_path);

@@ -17,6 +17,7 @@ import CustomFields from "./Modules/Settings/CustomFields";
 import LicenseManagement from "./Modules/Settings/LicenseManagement";
 import FluentCRMIntegration from "./Modules/Settings/FluentCRMIntegration";
 import AutoCloseSettings from "./Modules/Settings/AutoCloseSettings";
+import UploadIntegrationView from './Modules/Settings/UploadIntegrationView';
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -122,6 +123,11 @@ export default [
                 path: 'integration',
                 name: 'integration',
                 component: IntegrationView
+            },
+            {
+                path: 'upload_integration',
+                name: 'upload_integration',
+                component: UploadIntegrationView
             },
             {
                 path: 'fluentcrm-integration',

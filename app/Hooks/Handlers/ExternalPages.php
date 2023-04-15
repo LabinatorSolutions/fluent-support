@@ -83,6 +83,10 @@ class ExternalPages
 
             $attachment = Attachment::where('file_hash', $attachmentHash)->first();
 
+            if('local' !== $attachment->driver) {
+                wp_redirect($attachment->full_url, 307);
+            }
+
             /**
              * Return a 404 page if the attachment ID
              * does not match any attachment in the database.

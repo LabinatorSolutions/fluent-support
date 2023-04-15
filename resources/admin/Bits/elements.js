@@ -54,7 +54,8 @@ import {
     TopLeft,
     Timer,
     Download,
-    MuteNotification
+    MuteNotification,
+    FolderAdd
 } from '@element-plus/icons-vue/dist';
 
 const icons = [
@@ -105,7 +106,8 @@ const icons = [
     TopLeft,
     Timer,
     Download,
-    MuteNotification
+    MuteNotification,
+    FolderAdd
 ];
 
 const app = createApp({});
