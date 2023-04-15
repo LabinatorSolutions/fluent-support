@@ -96,6 +96,11 @@ export default {
                     icon: "AlarmClock",
                 },
                 {
+                    title: translate("File Upload Integrations"),
+                    route_name: "upload_integration",
+                    icon: "FolderAdd",
+                },
+                {
                     title: translate("Auto Close Settings"),
                     route_name: "auto_close",
                     icon: "Timer",
