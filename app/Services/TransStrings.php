@@ -637,6 +637,10 @@ class TransStrings
             'Clear Settings' => __('Clear Settings', 'fluent-support'),
             'Public Label' => __('Public Label', 'fluent-support'),
             'Admin Label (Optional)' => __('Admin Label (Optional)', 'fluent-support'),
+            'Zendesk Domain'    => __('Zendesk Domain', 'fluent-support'),
+            'API Key'   => __('API Key', 'fluent-support'),
+            'Import'    => __('Import', 'fluent-support'),
+            'Email Address' => __('Email Address', 'fluent-support'),
         ];
     }
 }
