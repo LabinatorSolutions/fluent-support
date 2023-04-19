@@ -68,6 +68,7 @@
                                     </el-dialog>
                                     <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                     <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                                    <zendesk-importer v-if="currently_importing=='zendesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                 </div>
                             </el-card>
                         </div>
@@ -86,11 +87,13 @@
 <script type="text/babel">
 import HelpScoutImporter from './HelpScout/HelpScoutImporter.vue';
 import FreshDeskImporter from './FreshDesk/FreshDeskImporter.vue';
+import ZendeskImporter from './Zendesk/ZendeskImporter';
 export default {
     name: 'TicketImporter',
     components: {
         HelpScoutImporter,
-        FreshDeskImporter
+        FreshDeskImporter,
+        ZendeskImporter
     },
     data() {
         return {
@@ -107,7 +110,7 @@ export default {
             delete_page: 1,
             openSettings: false,
             config:{},
-            sass_systems: ['helpscout', 'freshdesk'],
+            sass_systems: ['helpscout', 'freshdesk','zendesk'],
             import_from_sass: false,
             had_tickets: true
         }
@@ -148,6 +151,10 @@ export default {
 
             if(this.config.domain){
                 query.query.domain = this.config.domain;
+            }
+
+            if(this.config.email){
+                query.query.email = this.config.email;
             }
 
             this.$post('ticket_importer/import', query)
