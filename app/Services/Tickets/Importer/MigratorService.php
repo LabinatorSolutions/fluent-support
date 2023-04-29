@@ -29,9 +29,6 @@ class MigratorService
 
         if (defined('FLUENTSUPPORTPRO')) {
             $stats[] = $this->mapClassWithHandler('freshdesk')->stats();
-        }
-
-        if (defined('FLUENTSUPPORTPRO')) {
             $stats[] = $this->mapClassWithHandler('zendesk')->stats();
         }
 
