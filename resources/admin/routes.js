@@ -255,7 +255,14 @@ export default [
         name: 'help_scout',
         component: HelpScoutAuthorization,
         props: true,
+    },
+    {
+        path: "/:catchAll(.*)",
+        name: 'dashboard',
+        component: Dashboard,
+        meta: {
+            active: 'dashboard'
+        }
     }
-
 ];
 
