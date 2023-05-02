@@ -19,5 +19,10 @@ export default [
         path: '/ticket/create',
         component: CreateTicket,
         props: true
+    },
+    {
+        path: "/:catchAll(.*)",
+        name: 'dashboard',
+        component: Dashboard
     }
 ];
