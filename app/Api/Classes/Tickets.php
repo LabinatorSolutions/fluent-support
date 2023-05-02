@@ -4,7 +4,9 @@ namespace FluentSupport\App\Api\Classes;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\Tickets\ResponseService;
 
 /**
@@ -112,6 +114,19 @@ class Tickets
 
         if (!$data['title'] || !$data['content']) {
             return false;
+        }
+
+        if(!$data['mailbox_id']){
+            $defaultMailbox = Helper::getDefaultMailBox();
+            if(!$defaultMailbox){
+                return false;
+            }
+            $data['mailbox_id'] = $defaultMailbox->id;
+        }else{
+            $mailbox = MailBox::find($data['mailbox_id']);
+            if (!$mailbox) {
+                return false;
+            }
         }
 
         $createdTicket = Ticket::create($data);
