@@ -21,7 +21,7 @@ export default [
         props: true
     },
     {
-        path: "/:catchAll(.*)",
+        path: "/:catchAll(.*)*",
         name: 'dashboard',
         component: Dashboard
     }
