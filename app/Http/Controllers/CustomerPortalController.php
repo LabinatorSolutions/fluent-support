@@ -60,6 +60,11 @@ class CustomerPortalController extends Controller
             'error_messages'  => []
         ]);
 
+        $dataRules = $this->app->applyCustomFilters('custom_field_required_by_conditions_before_ticket_create',[
+            'custom_data' => $request->get('custom_data'),
+            'dataRules' => $dataRules
+        ]);
+
         $data = $this->validate($request->get(), $dataRules['required_fields'], $dataRules['error_messages']);
 
         $data['title'] = sanitize_text_field($data['title']);
