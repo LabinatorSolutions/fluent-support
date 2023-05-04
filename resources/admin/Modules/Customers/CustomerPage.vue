@@ -171,7 +171,7 @@ export default {
             loading_sidebar: false,
             fluentcrm_profile: false,
             loading: false,
-            upload_url: appVars.rest.url+`/customers/profile_image/'${customer_id}`,
+            upload_url: appVars.rest.url+`/customers/profile_image/${customer_id}`,
             requestHeaders: {
                 //'X-WP-Nonce': fluentcrm.nonce
             }
