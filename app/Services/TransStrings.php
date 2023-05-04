@@ -8,15 +8,15 @@ class TransStrings
     public static function getTransStrings()
     {
         return [
-            'dashboard_sub_heading' => __('Here are a few tickets you may want to take a look at', 'fluent-support'),
-            'Your bookmarked tickets' => __('Your bookmarked tickets', 'fluent-support'),
+            'dashboard_sub_heading' => __('Here Are A Few Tickets You May Want To Take A Look At', 'fluent-support'),
+            'Your Bookmarked Tickets' => __('Your Bookmarked Tickets', 'fluent-support'),
             'SuggestedTicket'   => __('Suggested Ticket', 'fluent-support'),
             'TicketStatistics'  => __('Ticket Statistics', 'fluent-support'),
             'MentionedTicket'   => __('Mentioned Ticket', 'fluent-support'),
             'TicketsByProduct'  => __('Tickets By Product', 'fluent-support'),
             'no_bookmarked_ticket' => __('At this moment you don\'t have any bookmarked ticket.', 'fluent-support'),
             'dashboard_all_catch_up' => __('Looks like you have caught up everything for now.', 'fluent-support'),
-            'Your Overview for Today' => __('Your Overview for Today', 'fluent-support'),
+            'Your Overview For Today' => __('Your Overview For Today', 'fluent-support'),
             'Your Business Details' => __('Your Business Details', 'fluent-support'),
             'support_portal_ready' => __('Awesome! Your support portal is ready to go!', 'fluent-support'),
             'Ticket Email Settings' => __('Ticket Email Settings', 'fluent-support'),
