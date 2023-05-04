@@ -8,7 +8,7 @@
                     </el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-for="(value ,key) in shortcodes" :value="key" @click="insertShortcode">
+                            <el-dropdown-item v-for="(value ,key) in shortcodes" :key="key" :value="key" @click="insertShortcode">
                                 {{value}}
                             </el-dropdown-item>
                         </el-dropdown-menu>
@@ -244,6 +244,12 @@ export default {
     position: absolute;
     right: 0px;
     z-index: 2;
+    align-items: center;
+    .fc_saved_replies_box {
+        button {
+            padding: 6px 11px;
+        }
+    }
 }
 
 </style>
