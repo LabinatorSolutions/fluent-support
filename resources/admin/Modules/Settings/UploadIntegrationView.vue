@@ -35,6 +35,7 @@
 import { onMounted,computed, reactive, toRefs } from "vue";
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
 import DropboxSettings from "@/admin/Modules/Settings/FileUploadSettings/DropboxSettings";
+import GoogleDriveSettings from "@/admin/Modules/Settings/FileUploadSettings/GoogleDriveSettings";
 import LocalSettings from "@/admin/Modules/Settings/FileUploadSettings/LocalSettings";
 import {
     useFluentHelper,
@@ -47,6 +48,7 @@ export default {
     components: {
         FormBuilder,
         DropboxSettings,
+        GoogleDriveSettings,
         LocalSettings
     },
 
@@ -64,23 +66,13 @@ export default {
             settings: false,
             fields: false,
             saving: false,
-            drivers: appVars.upload_drivers,
-            dropbox_code: router.currentRoute.value.query.code,
-            authorization: false,
+            drivers: appVars.upload_drivers
         });
 
         const current_integration = computed(() => {
             return state.drivers.find((driver) => {
                 return driver.key == state.integration_key;
             })
-        });
-
-        const check = computed(() => {
-            if (state.dropbox_code) {
-                setTimeout(() => {
-                    handleAuthorizationResponse();
-                }, 2000);
-            }
         });
 
         const fetchSettings = async () => {
@@ -107,95 +99,12 @@ export default {
                 });
         };
 
-        // const handleAction = (integrationKey) => {
-        //     if ('dropbox_settings' == integrationKey) {
-        //         authorize();
-        //     } else {
-        //         saveSettings();
-        //     }
-        // }
-
-        const saveSettings = () => {
-            state.saving = true;
-            post('settings/upload_integration', {
-                integration_key: state.integration_key,
-                settings: state.settings
-            })
-                .then(response => {
-                    state.settings = response.settings;
-                    if(state.integration_key == 'dropbox_settings' && !state.settings.access_token) {
-                        authorize();
-                    } else {
-                        notify({
-                            message: response.message,
-                            type: 'success',
-                            position: 'bottom-right'
-                        });
-                    }
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {
-                    state.saving = false;
-                });
-        };
 
         const switchIntegration = (integrationKey) => {
             router.push({name: 'upload_integration', query: {integration_key: integrationKey}});
             state.integration_key = integrationKey;
             fetchSettings();
         };
-
-
-
-// Redirect the user to the Dropbox authorization page
-        const authorize = () => {
-            const redirectUri = 'https://187b-82-6-61-227.ngrok-free.app/wp-json/fluent-support/v2/public/dropbox_auth';
-            const authorizeUrl = 'https://www.dropbox.com/oauth2/authorize';
-            const url = `${authorizeUrl}?client_id=${state.settings.client_id}&redirect_uri=${redirectUri}&token_access_type=offline&response_type=code`;
-            window.location.href = url;
-        }
-
-
-
-
-
-// After the user authorizes the app, the Dropbox server will redirect the user back to your redirect URI
-// with a code that can be exchanged for an access token
-        const handleAuthorizationResponse = () => {
-            const redirectUri = 'https://187b-82-6-61-227.ngrok-free.app/wp-json/fluent-support/v2/public/dropbox_auth';
-            // Exchange the code for an access token
-            fetch('https://api.dropboxapi.com/oauth2/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: `grant_type=authorization_code&code=${state.dropbox_code}&client_id=${state.settings.client_id}&client_secret=${state.settings.client_secret}&redirect_uri=${redirectUri}`
-            })
-                .then(response => response.json())
-                .then(data => {
-                    // Store the access token somewhere secure (e.g. a server-side database) and use it to make API calls
-                    state.settings.access_token = data.access_token;
-                    state.settings.refresh_token = data.refresh_token;
-                    state.authorization = false;
-                    saveSettings();
-                })
-                .catch(error => {
-                    console.error('Error exchanging code for access token:', error);
-                });
-        }
-
-
-
-
-
-
-
-
-
-
-
 
         onMounted(() => {
             if (state.integration_key) {
@@ -211,13 +120,8 @@ export default {
             ...toRefs(state),
             translate,
             fetchSettings,
-            saveSettings,
             switchIntegration,
             current_integration,
-            authorize,
-            // handleAction,
-            check,
-            handleAuthorizationResponse,
         };
     }
 }
