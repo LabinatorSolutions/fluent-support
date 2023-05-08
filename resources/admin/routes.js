@@ -39,6 +39,7 @@ import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
 import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
 import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
 import HelpScoutAuthorization from "./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization";
+import VerifyGoogleDrive from "@/admin/Modules/Settings/FileUploadSettings/VerifyGoogleDrive.vue";
 
 export default [
     {
@@ -263,6 +264,12 @@ export default [
         meta: {
             active: 'dashboard'
         }
+    },
+    {
+        path: '/verify_g_drive',
+        name: 'verify_g_drive',
+        component: VerifyGoogleDrive,
+        props: true,
     }
 ];
 
