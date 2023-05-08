@@ -18,7 +18,12 @@ abstract class RequestGuard
         return [];
     }
 
-    public function sanitize()
+    public function beforeValidation()
+    {
+        return [];
+    }
+
+    public function afterValidation()
     {
         return [];
     }

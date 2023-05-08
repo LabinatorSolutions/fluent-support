@@ -28,10 +28,6 @@ class App
 
     public static function __callStatic($method, $params)
     {
-        if ($method == 'user') {
-            return static::$instance->user();
-        }
-
         return static::getInstance($method);
     }
 }
