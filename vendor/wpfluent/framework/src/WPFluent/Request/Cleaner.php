@@ -59,6 +59,6 @@ trait Cleaner
             }
         }
 
-        return $value;
+        return stripslashes_deep($value);
     }
 }

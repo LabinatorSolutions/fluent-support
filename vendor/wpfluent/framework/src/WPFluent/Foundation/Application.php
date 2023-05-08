@@ -50,9 +50,9 @@ class Application extends Container
 
         $psr4 = array_flip($autoload['psr-4']);
 
-        $this->handlerNamespace = $psr4['app/'] . 'Hooks\Handlers';
-
         $this->policyNamespace = $psr4['app/'] . 'Http\Policies';
+
+        $this->handlerNamespace = $psr4['app/'] . 'Hooks\Handlers';
         
         $this->controllerNamespace = $psr4['app/'] . 'Http\Controllers';
     }
@@ -71,9 +71,11 @@ class Application extends Container
         $this->bindAppInstance();
         $this->bindPathsAndUrls();
         $this->loadConfigIfExists();
-        $this->loadTextdomain();
-        $this->bindComponents($this);
+        $this->registerTextdomain();
+        $this->bindCoreComponents();
         $this->requireCommonFiles($this);
+        $this->registerAsyncActions();
+        $this->addRestApiInitAction($this);
     }
 
     protected function bindAppInstance()
@@ -120,7 +122,7 @@ class Application extends Container
         $this->instance('config', new Config($data));
     }
 
-    protected function loadTextdomain()
+    protected function registerTextdomain()
     {
         $this->addAction('init', function() {
             load_plugin_textdomain(
@@ -134,9 +136,9 @@ class Application extends Container
         return basename($this['path']) . $this->config->get('app.domain_path');
     }
 
-    protected function bindComponents($app)
+    protected function bindCoreComponents()
     {
-        (new ComponentBinder($app))->bindComponents();
+        (new ComponentBinder($this))->bindComponents();
     }
 
     protected function requireCommonFiles($app)
@@ -147,19 +149,30 @@ class Application extends Container
         if (file_exists($includes = $this->basePath . 'app/Hooks/includes.php')) {
             require_once $includes;
         }
+    }
 
-        $this->registerAsyncActions();
-
+    protected function addRestApiInitAction($app)
+    {
         $this->addAction('rest_api_init', function($wpRestServer) use ($app) {
             try {
-                $router = $app->router;
-                require_once $this->basePath . 'app/Http/Routes/api.php';
-                $router->registerRoutes();
+                $this->registerRestRoutes($app->router);
             } catch (InvalidArgumentException $e) {
                 return $app->response->json([
                     'message' => $e->getMessage()
                 ], $e->getCode() ?: 500);
             }
         });
+    }
+
+    protected function registerRestRoutes($router)
+    {
+        $router->registerRoutes(
+            $this->requireRouteFile($router)
+        );
+    }
+
+    protected function requireRouteFile($router)
+    {
+        require_once $this['path.http'] . 'Routes/api.php';
     }
 }

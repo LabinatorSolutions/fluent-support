@@ -64,9 +64,11 @@ class Route
         return $this;
     }
 
-    public function meta($meta)
+    public function meta($key, $value = null)
     {
-        $this->meta = $meta;
+        $meta = is_array($key) ? $key : func_get_args();
+
+        $this->meta = array_merge($this->meta, $meta);
 
         return $this;
     }
