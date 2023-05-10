@@ -122,7 +122,7 @@ export default {
 // Set the headers and body for the POST request to get the access token
             const body = new URLSearchParams({
                 'client_id': client_id,
-                'scope': 'https://www.googleapis.com/auth/drive.file,https://www.googleapis.com/auth/drive.metadata.readonly,https://www.googleapis.com/auth/drive.readonly',
+                'scope': 'https://www.googleapis.com/auth/drive.file',
                 'response_type': 'code',
                 'redirect_uri': state.redirect_uri,
                 'access_type': 'offline'
