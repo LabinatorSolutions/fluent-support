@@ -14,7 +14,10 @@
                 <el-button v-if="!settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="verify()">
                     Connect
                 </el-button>
-                <el-button v-else v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
+                <el-button v-else-if="settings.access_token && settings.refresh_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="verify()">
+                    Reconnect
+                </el-button>
+                <el-button v-if="settings.access_token && settings.refresh_token" v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
                     {{fields.button_text}}
                 </el-button>
             </div>
