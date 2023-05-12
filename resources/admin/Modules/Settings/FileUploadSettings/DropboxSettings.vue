@@ -17,7 +17,7 @@
                 <el-button v-if="!settings.refresh_token && access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
                     Authorize App
                 </el-button>
-                <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
+                <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings">
                     Update
                 </el-button>
             </div>
