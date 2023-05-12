@@ -11,11 +11,14 @@
                     <strong>oAuth2 Redirect URL</strong>: <code>{{dropbox_redirect_uri}}</code>
                 </div>
                 <form-builder :fields="fields.fields" :formData="settings"/>
-                <el-button v-if="settings.refresh_token==''" size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
+                <el-button v-if="!settings.refresh_token && !access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="authorize()">
                     Get Authorization Code
                 </el-button>
-                <el-button v-if="access_code!=''" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
+                <el-button v-if="!settings.refresh_token && access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
                     Authorize App
+                </el-button>
+                <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
+                    Update
                 </el-button>
             </div>
             <div  v-else>
@@ -135,6 +138,7 @@ export default {
 
 // Redirect the user to the Dropbox authorization page
         const authorize = () => {
+            saveSettings();
             const authorizeUrl = 'https://www.dropbox.com/oauth2/authorize';
             const url = `${authorizeUrl}?client_id=${state.settings.client_id}&redirect_uri=${state.dropbox_redirect_uri}&token_access_type=offline&response_type=code`;
             window.location.href = url;
