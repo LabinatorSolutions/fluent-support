@@ -805,8 +805,8 @@ class Ticket extends Model
     public function syncCarbonCopyCustomer($data, $id){
         $existing = Meta::where('object_type', 'customer_cc_info')->where('object_id', $id)->first();
         if($existing){
-            $existingData = maybe_unserialize($existing->value);
-            $newData = array_merge($existingData,$data);
+            $existingCustomer = maybe_unserialize($existing->value);
+            $newData = array_merge($existingCustomer, $data);
             $existing->value = maybe_serialize($newData);
             $existing->save();
         }else{
@@ -1286,6 +1286,8 @@ class Ticket extends Model
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
+        //Delete all customer cc info from meta table
+        Meta::where('object_type', 'customer_cc_info')->whereIn('object_id', $ticketIds)->delete();
 
         if (!$hasAllPermission) {
             //Filter ticket by agent_id
