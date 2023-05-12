@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Emogrifier;
 use FluentSupport\App\Services\Helper;
@@ -36,6 +37,7 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
+            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, $ticket, 'ticket_created_email_to_customer');
 
             $attachments = [];
 
@@ -126,7 +128,7 @@ class EmailNotificationHandler
 
 
             $headers = $mailbox->getMailerHeader();
-
+            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, $ticket, 'ticket_replied_by_agent_email_to_customer');
             $attachments = [];
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
@@ -174,7 +176,7 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-
+            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, $ticket, 'ticket_closed_by_agent_email_to_customer');
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
     }
@@ -220,7 +222,6 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-
             $attachments = [];
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
@@ -354,6 +355,29 @@ class EmailNotificationHandler
         $emogrifier = new Emogrifier($emailBody, $this->emailTemplateCss());
         $emogrifier->disableInvisibleNodeRemoval();
         return $emogrifier->emogrify();
+    }
+
+    public function getMailerHeaderWithCc($headers, $ticket){
+        $ticketId = $ticket->id;
+        $ccInfo = Meta::where('object_type', 'customer_cc_info')->where('object_id', $ticketId)->first();
+        if($ccInfo){
+            $count = 0;
+            $ccCustomers = maybe_unserialize($ccInfo->value);
+            $ccCustomerEmails = array_column($ccCustomers, 'email');
+            $CcHeaders = '';
+            foreach ($ccCustomerEmails as $ccMail) {
+                if($count == 0) {
+                    $CcHeaders .= "\r\nCc: $ccMail";
+                }else{
+                    $CcHeaders .= ", $ccMail";
+                }
+                $count++;
+            }
+            $CcHeaders .= "\r\n";
+            $headers[] = $CcHeaders;
+        }
+
+        return $headers;
     }
 
 }
