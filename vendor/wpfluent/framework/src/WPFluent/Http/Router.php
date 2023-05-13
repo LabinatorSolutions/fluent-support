@@ -54,6 +54,10 @@ class Router
             $this->prefix($attributes['prefix']);
         }
 
+        if (isset($attributes['policy'])) {
+            $this->withPolicy($attributes['policy']);
+        }
+
         call_user_func($callback, $this);
         array_pop($this->prefix);
         array_pop($this->name);

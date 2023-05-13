@@ -2,6 +2,8 @@
 
 namespace FluentSupport\Framework\Request;
 
+use FluentSupport\Framework\Support\Helper;
+
 trait FileHandler
 {
     /**
@@ -109,5 +111,17 @@ trait FileHandler
         }
 
         return $files;
+    }
+
+    /**
+     * Retrieve a file from the request.
+     *
+     * @param  string|null  $key
+     * @param  mixed  $default
+     * @return \FluentSupport\Framework\Request\File|array|null
+     */
+    public function file($key = null, $default = null)
+    {
+        return Helper::dataGet($this->files(), $key, $default);
     }
 }

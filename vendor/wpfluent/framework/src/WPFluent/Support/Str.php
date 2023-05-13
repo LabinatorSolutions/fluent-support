@@ -392,22 +392,13 @@ class Str
             return static::$snakeCache[$key][$delimiter];
         }
 
-        if (! self::ctypeLower($value)) {
+        if (! ctype_lower($value)) {
             $value = preg_replace('/\s+/u', '', $value);
 
             $value = static::lower(preg_replace('/(.)(?=[A-Z])/u', '$1'.$delimiter, $value));
         }
 
         return static::$snakeCache[$key][$delimiter] = $value;
-    }
-
-    public static function ctypeLower($text)
-    {
-        if(function_exists('\ctype_lower')) {
-            return \ctype_lower($text);
-        }
-
-        return \is_string($text) && '' !== $text && !preg_match('/[^a-z]/', $text);
     }
 
     /**

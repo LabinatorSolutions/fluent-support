@@ -46,10 +46,18 @@ class ComponentBinder
 
         $this->loadGlobalFunctions($this->app);
 
-        $this->app->resolving(RequestGuard::class, function($request) {
-            $data = $request->validate($this->app->make('validator'));
+        $this->registerResolvingEvent($this->app);
+    }
 
-            $request->merge($request->sanitize());
+    protected function registerResolvingEvent($app)
+    {
+        $app->resolving(RequestGuard::class, function($request) use ($app) {
+
+            $request->merge($request->beforeValidation());
+
+            $data = $request->validate($app->make('validator'));
+
+            $request->merge($request->afterValidation());
         });
     }
 

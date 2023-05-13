@@ -52,7 +52,7 @@ class TicketController extends Controller
     public function index(Request $request, TicketService $ticketService)
     {
         //Selected filter type, either simple or Advanced
-        $filterType = $request->getSafe('filter_type', 'simple');
+        $filterType = $request->getSafe('filter_type', '', 'simple');
         $data = $request->all();
         return $ticketService->getTickets($data, $filterType);
     }

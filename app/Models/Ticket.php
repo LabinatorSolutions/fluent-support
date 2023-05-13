@@ -802,6 +802,25 @@ class Ticket extends Model
         return true;
     }
 
+    public function syncCarbonCopyCustomer($data, $id){
+        $existing = Meta::where('object_type', 'customer_cc_info')->where('object_id', $id)->first();
+        if($existing){
+            $existingCustomer = maybe_unserialize($existing->value);
+            $newData = array_merge($existingCustomer, $data);
+            $existing->value = maybe_serialize($newData);
+            $existing->save();
+        }else{
+            Meta::insert([
+                'object_type' => 'customer_cc_info',
+                'object_id'  => $id,
+                'key'         => '_customer_cc_info',
+                'value'       => maybe_serialize($data)
+            ]);
+        }
+
+        return true;
+    }
+
     public function getLastAgentResponse()
     {
         $query = \FluentSupport\App\App::db()->table('fs_conversations')
@@ -1267,6 +1286,8 @@ class Ticket extends Model
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
+        //Delete all customer cc info from meta table
+        Meta::where('object_type', 'customer_cc_info')->whereIn('object_id', $ticketIds)->delete();
 
         if (!$hasAllPermission) {
             //Filter ticket by agent_id
