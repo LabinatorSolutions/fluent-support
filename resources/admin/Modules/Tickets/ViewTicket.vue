@@ -286,7 +286,7 @@
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
-                             :class="(conversation.person.title && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation) ">
+                             :class="(conversation.person.title && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation, ticket) ">
 
                         <span class="agent_title"
                               v-if="conversation.person.title && !['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)"> {{ conversation.person.title }} </span>
@@ -583,12 +583,22 @@ export default {
                 });
         };
 
-        const getTicketClasses = (conversation) => {
+        const getTicketClasses = (conversation, ticket) => {
+            console.log("ticket", ticket);
             const classes = [
                 'fs_thread'
             ];
 
             if (conversation.person) {
+                if(conversation.person.person_type === 'agent') {
+                    classes.push('fs_person_agent');
+                } else {
+                    if(ticket.customer_id == conversation.person_id){
+                        classes.push('fs_person_customer');
+                    } else {
+                        classes.push('fs_person_customer_cc');
+                    }
+                }
                 classes.push('fs_person_' + conversation.person.person_type);
             }
 
