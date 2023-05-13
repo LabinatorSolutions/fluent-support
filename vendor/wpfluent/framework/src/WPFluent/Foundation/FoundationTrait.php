@@ -39,14 +39,7 @@ trait FoundationTrait
         if (!$handler) return;
 
         if (is_string($handler)) {
-
-            if ($this->hasNamespace($handler)) {
-                $handler = $handler;
-            } else {
-                $handler = $this->policyNamespace . '\\' . $handler;
-            }
-
-            // $handler = $this->policyNamespace . '\\' . $handler;
+            $handler = $this->policyNamespace . '\\' . $handler;
 
             if ($this->isCallableWithAtSign($handler)) {
                 list($class, $method) = explode('@', $handler);
@@ -64,13 +57,7 @@ trait FoundationTrait
             list($class, $method) = $handler;
 
             if (is_string($class)) {
-                if ($this->hasNamespace($handler)) {
-                    $handler = $class . '::' . $method;
-                } else {
-                    $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
-                }
-
-                // $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
+                $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
             }
         }
 
@@ -163,26 +150,14 @@ trait FoundationTrait
         if (is_string($handler)) {
             list($class, $method) = preg_split('/::|@/', $handler);
 
-            if ($this->hasNamespace($handler)) {
-                $class = $this->make($class);
-            } else {
-                $class = $this->make($this->handlerNamespace . '\\' . $class);
-            }
-
-            // $class = $this->make($this->handlerNamespace . '\\' . $class);
+            $class = $this->makeInstance($class);
 
             return [$class, $method];
 
         } else if (is_array($handler)) {
             list($class, $method) = $handler;
             if (is_string($class)) {
-                
-                if ($this->hasNamespace($handler)) {
-                    $class = $this->make($class);
-                } else {
-                    $class = $this->make($this->handlerNamespace . '\\' . $class);
-                }
-                // $class = $this->make($this->handlerNamespace . '\\' . $class);
+                $class = $this->makeInstance($class);
             }
             return [$class, $method];
         }
@@ -208,5 +183,50 @@ trait FoundationTrait
         }
 
         return $this->controllerNamespace;
+    }
+
+    public function makeInstance($class)
+    {
+        if ($this->hasNamespace($class)) {
+            $instance = $this->make($class);
+        } else {
+            $instance = $this->make($this->handlerNamespace . '\\' . $class);
+        }
+
+        return $instance;
+    }
+
+    public function url($url = '')
+	{
+		return $this->baseUrl.ltrim($url, '/');
+	}
+
+    private function addAjaxAction($tag, $handler, $priority, $scope)
+    {
+    	if ($scope == 'admin') {
+        	return add_action(
+        		'wp_ajax_'.$tag,
+        		$this->parseHookHandler($handler),
+        		$priority
+        	);
+    	}
+
+    	if ($scope == 'public') {
+        	return add_action(
+        		'wp_ajax_nopriv_'.$tag,
+        		$this->parseHookHandler($handler),
+        		$priority
+        	);
+    	}
+    }
+
+    public function addAdminAjaxAction($tag, $handler, $priority = 10)
+    {
+        return $this->addAjaxAction($tag, $handler, $priority, 'admin');
+    }
+
+    public function addPublicAjaxAction($tag, $handler, $priority = 10)
+    {
+        return $this->addAjaxAction($tag, $handler, $priority, 'public');
     }
 }

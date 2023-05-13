@@ -22,7 +22,7 @@ trait ModelHelperTrait
                 $results += static::traitUsesRecursive($class);
             }
         }
-
+        
         return array_unique($results);
     }
 
@@ -36,7 +36,7 @@ trait ModelHelperTrait
 
         return $traits;
     }
-    #[\ReturnTypeWillChange]
+
     public function getTimezone()
     {
         // if site timezone string exists, return it
@@ -66,7 +66,7 @@ trait ModelHelperTrait
             foreach ($abbr as $city) {
                 if ($city['dst'] == $isDst && $city['offset'] == $utcOffset) {
                     $timezoneId = $city['timezone_id'];
-                    $timezone = $timezoneId ?: timezone_name_from_abbr('', $timezoneId ?? 0, 0);
+                    $timezone = $timezoneId ?: timezone_name_from_abbr('', $timezoneId, 0);
                     if ($timezone) return new DateTimeZone($timezone);
                 }
             }
@@ -81,10 +81,10 @@ trait ModelHelperTrait
         if (isset($this->dateFormat)) {
             return $this->dateFormat;
         }
-
+        
         return 'Y-m-d H:i:s';
     }
-    #[\ReturnTypeWillChange]
+
     public static function createFromFormat($format, $datetime, $timezone = null)
     {
         $instance = new static;

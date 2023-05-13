@@ -8,10 +8,11 @@ use ArrayAccess;
 use LogicException;
 use JsonSerializable;
 use DateTimeInterface;
-use InvalidArgumentException;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Foundation\App;
+use FluentSupport\Framework\Support\Helper;
+use InvalidArgumentException;
 use FluentSupport\Framework\Support\UrlRoutable;
 use FluentSupport\Framework\Database\Orm\DateTime;
 use FluentSupport\Framework\Foundation\Dispatcher;
@@ -19,17 +20,17 @@ use FluentSupport\Framework\Support\QueueableEntity;
 use FluentSupport\Framework\Support\JsonableInterface;
 use FluentSupport\Framework\Support\ArrayableInterface;
 use FluentSupport\Framework\Database\Orm\Relations\Pivot;
-use FluentSupport\Framework\Database\Orm\Relations\HasOne;
 use FluentSupport\Framework\Database\Orm\ModelHelperTrait;
-use FluentSupport\Framework\Database\Orm\Relations\MorphTo;
+use FluentSupport\Framework\Database\Orm\Relations\HasOne;
 use FluentSupport\Framework\Database\Orm\Relations\HasMany;
+use FluentSupport\Framework\Database\Orm\Relations\MorphTo;
 use FluentSupport\Framework\Database\Orm\Relations\MorphOne;
-use FluentSupport\Framework\Database\Orm\Relations\MorphMany;
 use FluentSupport\Framework\Database\Orm\Relations\Relation;
 use FluentSupport\Framework\Database\Orm\Relations\BelongsTo;
+use FluentSupport\Framework\Database\Orm\Relations\MorphMany;
 use FluentSupport\Framework\Database\Orm\Relations\MorphToMany;
-use FluentSupport\Framework\Support\Collection as BaseCollection;
 use FluentSupport\Framework\Database\Orm\Relations\BelongsToMany;
+use FluentSupport\Framework\Support\Collection as BaseCollection;
 use FluentSupport\Framework\Database\Orm\Relations\HasManyThrough;
 use FluentSupport\Framework\Database\Query\Builder as QueryBuilder;
 use FluentSupport\Framework\Database\ConnectionResolverInterface as Resolver;
@@ -1120,7 +1121,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
     public function delete()
     {
         if (is_null($this->getKeyName())) {
-            throw new \Exception('No primary key defined on model.');
+            throw new Exception('No primary key defined on model.');
         }
 
         if ($this->exists) {
@@ -2381,7 +2382,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
             return $key;
         }
 
-        return last(explode('.', $key));
+        return Helper::last(explode('.', $key));
     }
 
     /**
@@ -2446,7 +2447,6 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      *
      * @return array
      */
-    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->toArray();
@@ -3445,7 +3445,6 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  mixed  $offset
      * @return bool
      */
-    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return isset($this->$offset);
@@ -3457,7 +3456,6 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  mixed  $offset
      * @return mixed
      */
-    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->$offset;
@@ -3470,7 +3468,6 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  mixed  $value
      * @return void
      */
-    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->$offset = $value;
@@ -3482,7 +3479,6 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
      * @param  mixed  $offset
      * @return void
      */
-    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->$offset);

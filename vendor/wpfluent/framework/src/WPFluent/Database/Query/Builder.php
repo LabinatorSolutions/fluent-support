@@ -4,18 +4,19 @@ namespace FluentSupport\Framework\Database\Query;
 
 use Closure;
 use RuntimeException;
-use BadMethodCallException;
-use InvalidArgumentException;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
+use BadMethodCallException;
+use FluentSupport\Framework\Support\Helper;
+use InvalidArgumentException;
 use FluentSupport\Framework\Support\Collection;
 use FluentSupport\Framework\Pagination\Paginator;
-use FluentSupport\Framework\Pagination\LengthAwarePaginator;
-use FluentSupport\Framework\Support\MacroableTrait;
 use FluentSupport\Framework\Database\Query\Grammar;
+use FluentSupport\Framework\Support\MacroableTrait;
 use FluentSupport\Framework\Database\Query\Processor;
 use FluentSupport\Framework\Support\ArrayableInterface;
 use FluentSupport\Framework\Database\ConnectionInterface;
+use FluentSupport\Framework\Pagination\LengthAwarePaginator;
 
 class Builder
 {
@@ -586,6 +587,22 @@ class Builder
     }
 
     /**
+     * Set a "where not" constraint on the query.
+     *
+     * @param  string  $column
+     * @param  array|string  $value
+     * @return $this
+     */
+    public function whereNot($column, $value)
+    {
+        if (is_array($value)) {
+            return $this->whereNotIn($column, $value);
+        }
+
+        return $this->where($column, '!'.$value);
+    }
+
+    /**
      * Add an "or where" clause to the query.
      *
      * @param  string  $column
@@ -907,7 +924,7 @@ class Builder
             return $this->whereInSub($column, $values, $boolean, $not);
         }
 
-        if ($values instanceof Arrayable) {
+        if ($values instanceof ArrayableInterface) {
             $values = $values->toArray();
         }
 
@@ -1799,7 +1816,7 @@ class Builder
                 return false;
             }
 
-            $lastId = last($results)->{$alias};
+            $lastId = Helper::last($results)->{$alias};
 
             $results = $this->forPageAfterId($count, $lastId, $column)->get();
         }
