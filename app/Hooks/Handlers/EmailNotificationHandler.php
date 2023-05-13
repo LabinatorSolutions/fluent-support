@@ -361,20 +361,10 @@ class EmailNotificationHandler
         $ticketId = $ticket->id;
         $ccInfo = Meta::where('object_type', 'customer_cc_info')->where('object_id', $ticketId)->first();
         if($ccInfo){
-            $count = 0;
             $ccCustomers = maybe_unserialize($ccInfo->value);
             $ccCustomerEmails = array_column($ccCustomers, 'email');
-            $CcHeaders = '';
-            foreach ($ccCustomerEmails as $ccMail) {
-                if($count == 0) {
-                    $CcHeaders .= "\r\nCc: $ccMail";
-                }else{
-                    $CcHeaders .= ", $ccMail";
-                }
-                $count++;
-            }
-            $CcHeaders .= "\r\n";
-            $headers[] = $CcHeaders;
+            $CcHeaders = implode(',', $ccCustomerEmails);
+            $headers[] = $CcHeaders ? "Cc: $CcHeaders" : '';
         }
 
         return $headers;
