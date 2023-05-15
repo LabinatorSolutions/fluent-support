@@ -40,7 +40,7 @@ class CustomerController extends Controller
      */
     public function getCustomer(Request $request, Customer $customer, $customerId)
     {
-        return $customer->getCustomer($customerId, $request->getSafe('with', []));
+        return $customer->getCustomer($customerId, $request->getSafe('with'));
     }
 
     /**
@@ -115,7 +115,7 @@ class CustomerController extends Controller
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
         try {
-            return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id', ''), 'customer');
+            return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id'), 'customer');
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')

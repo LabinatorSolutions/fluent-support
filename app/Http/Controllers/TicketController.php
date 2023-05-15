@@ -52,7 +52,7 @@ class TicketController extends Controller
     public function index(Request $request, TicketService $ticketService)
     {
         //Selected filter type, either simple or Advanced
-        $filterType = $request->getSafe('filter_type', '', 'simple');
+        $filterType = $request->getSafe('filter_type', 'simple');
         $data = $request->all();
         return $ticketService->getTickets($data, $filterType);
     }
@@ -66,7 +66,7 @@ class TicketController extends Controller
      */
     public function createTicket(Request $request, Ticket $ticket)
     {
-        $ticketData = $request->getSafe('ticket', [], 'wp_kses_post');
+        $ticketData = $request->getSafe('ticket', 'wp_kses_post', []);
 
         $maybeNewCustomer = $request->getSafe('newCustomer');
 
@@ -98,7 +98,7 @@ class TicketController extends Controller
     public function getTicket(Request $request, Ticket $ticket, $ticketId)
     {
         try {
-            $ticketWith = $request->getSafe('with', []);
+            $ticketWith = $request->getSafe('with');
             if (!$ticketWith) {
                 $ticketWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
                     $q->whereIn('status', ['active', 'inline']);
@@ -122,7 +122,7 @@ class TicketController extends Controller
      */
     public function createResponse(TicketResponseRequest $request, Ticket $ticket, $ticketId)
     {
-        $data = $request->getSafe(null, [], 'wp_kses_post');
+        $data = $request->getSafe(null, 'wp_kses_post', [] );
 
         try {
             return $ticket->createResponse($data, $ticketId);
@@ -206,7 +206,7 @@ class TicketController extends Controller
     public function doBulkActions(Request $request, Ticket $ticket)
     {
         $action = $request->getSafe('bulk_action'); //get action
-        $ticketIds = $request->getSafe('ticket_ids', [], 'intval');
+        $ticketIds = $request->getSafe('ticket_ids', 'intval', []);
 
         try {
             return $ticket->handleBulkActions($action, $ticketIds);
@@ -316,7 +316,7 @@ class TicketController extends Controller
     {
         $ticket = Ticket::findOrFail($ticketId);
 
-        $ticket->applyTags($request->getSafe('tag_id', '', 'intval'));
+        $ticket->applyTags($request->getSafe('tag_id', 'intval'));
 
         return [
             'message' => __('Tag has been added to this ticket', 'fluent-support'),
@@ -349,7 +349,7 @@ class TicketController extends Controller
      */
     public function changeTicketCustomer(Request $request)
     {
-        $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', '', 'intval'))
+        $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', 'intval'))
             ->update(['customer_id' => $request->getSafe('customer')]);
         return [
             'message'         => __('Customer has been updated', 'fluent-support'),

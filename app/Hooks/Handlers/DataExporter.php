@@ -14,8 +14,8 @@ class DataExporter
         $this->verifyRequest();
         $csvWriter = new CsvWriter();
         $request = Helper::FluentSupport('request');
-        $from_date = $request->getSafe('from_date', false);
-        $to_date = $request->getSafe('to_date', false);
+        $from_date = $request->getSafe('from_date');
+        $to_date = $request->getSafe('to_date');
         $columns = $request->get('columns', []);
         $agents = $request->get('agents', []);
         if(empty($columns)) {
