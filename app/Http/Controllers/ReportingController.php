@@ -49,7 +49,7 @@ class ReportingController extends Controller
         $filter = [];
         $stats = $reporting->getTicketsGrowth($from, $to);
 
-        if($agent_id = $request->getSafe('agent_id', '', 'intval')) {
+        if($agent_id = $request->getSafe('agent_id', 'intval')) {
             $filter['agent_id'] = $agent_id;
             $stats = $reporting->getTicketsGrowth($from, $to, $filter);
         }
@@ -70,7 +70,7 @@ class ReportingController extends Controller
         $filter = [];
         $stats = $reporting->getTicketResolveGrowth($from, $to);
 
-        if($agent_id = $request->getSafe('agent_id', '', 'intval')) {
+        if($agent_id = $request->getSafe('agent_id', 'intval')) {
             $filter['agent_id'] = $agent_id;
             $stats = $reporting->getTicketResolveGrowth($from, $to, $filter);
         }
@@ -92,7 +92,7 @@ class ReportingController extends Controller
         $filter = [];
         $stats = $reporting->getResponseGrowth($from, $to);
 
-        if($person_id = $request->getSafe('agent_id', '', 'intval')) {
+        if($person_id = $request->getSafe('agent_id', 'intval')) {
             $filter['person_id'] = $person_id;
             $stats = $reporting->getResponseGrowth($from, $to, $filter);
         }

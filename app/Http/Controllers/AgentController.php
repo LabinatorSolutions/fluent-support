@@ -87,7 +87,7 @@ class AgentController extends Controller
     public function deleteAgent(Request $request, Agent $agent, $agentId)
     {
         try {
-            $agent->deleteAgent($request->getSafe('fallback_agent_id', '', 'intval'), $agentId);
+            $agent->deleteAgent($request->getSafe('fallback_agent_id', 'intval'), $agentId);
 
             return [
                 'message' => __('Support Staff has been deleted', 'fluent-support')
@@ -112,7 +112,7 @@ class AgentController extends Controller
         try {
             $stats = StatModule::getAgentStat($agent->id); //Get ticket statistics
 
-            $with = $request->getSafe('with', []);
+            $with = $request->getSafe('with');
 
             $response = (new Agent())->getAgentStat($stats, $with, $agent->id);
 
@@ -154,7 +154,7 @@ class AgentController extends Controller
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
         try {
-            return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('agent_id', '', 'intval'), 'agent');
+            return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('agent_id', 'intval'), 'agent');
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support')

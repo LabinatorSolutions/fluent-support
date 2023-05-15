@@ -96,7 +96,7 @@ class MailBoxController extends Controller
     public function delete(Request $request, MailBoxService $mailBoxService, $mailBoxId)
     {
         try {
-            return $mailBoxService->deleteMailBox( $mailBoxId, $request->getSafe('fallback_id', '', 'intval') );
+            return $mailBoxService->deleteMailBox( $mailBoxId, $request->getSafe('fallback_id', 'intval') );
         } catch (\Exception $e) {
             return [
                 'message' => __( $e->getMessage(), 'fluent-support' ),

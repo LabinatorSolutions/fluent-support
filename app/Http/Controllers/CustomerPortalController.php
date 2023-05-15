@@ -28,13 +28,13 @@ class CustomerPortalController extends Controller
      */
     public function getTickets(Request $request, CustomerPortalService $customerPortalService)
     {
-        $onBehalf = $request->getSafe('on_behalf', '', 'intval');
+        $onBehalf = $request->getSafe('on_behalf', 'intval');
         $userIP = $request->getIp();
 
         try {
             $customer = $customerPortalService->resolveCustomer($onBehalf, $userIP);
             return [
-                'tickets' => $customerPortalService->getTickets($customer, $request->getSafe('filter_type', ''))
+                'tickets' => $customerPortalService->getTickets($customer, $request->getSafe('filter_type'))
             ];
         } catch (Exception $e) {
             return $this->sendError([
@@ -70,7 +70,7 @@ class CustomerPortalController extends Controller
         $data['title'] = sanitize_text_field($data['title']);
         $data['content'] = wp_kses_post($data['content']);
 
-        $onBehalf = $request->getSafe('on_behalf', '', 'intval');
+        $onBehalf = $request->getSafe('on_behalf', 'intval');
         $userIP = $request->getIp();
 
         try {
@@ -92,7 +92,7 @@ class CustomerPortalController extends Controller
                 $data['message_id'] = $messageId;
             }
             $defaultMailbox = Helper::getDefaultMailBox();
-            $ticket = $customerPortalService->createTicket($customer, $data, $request->getSafe('mailbox_id', $defaultMailbox->id , 'intval'));
+            $ticket = $customerPortalService->createTicket($customer, $data, $request->getSafe('mailbox_id', 'intval', $defaultMailbox->id));
 
             return [
                 'message' => __('Ticket has been created successfully', 'fluent-support'),
@@ -116,8 +116,8 @@ class CustomerPortalController extends Controller
     public function getTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
         $customerAdditionalData = [
-            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
             'user_ip'              => $request->getIp()
         ];
 
@@ -141,13 +141,13 @@ class CustomerPortalController extends Controller
     public function createResponse(TicketResponseRequest $request, CustomerPortalService $customerPortalService, $ticketId)
     {
         $customerAdditionalData = [
-            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
             'user_ip'              => $request->getIp()
         ];
 
         $ticket = Ticket::findOrFail($ticketId);
-        $data = $request->getSafe(null, [], 'wp_kses_post');
+        $data = $request->getSafe(null, 'wp_kses_post', []);
 
         $canCreateResponse = apply_filters('fluent_support/can_customer_create_response', true, $ticket->customer, $ticket, $data);
 
@@ -177,8 +177,8 @@ class CustomerPortalController extends Controller
     public function closeTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
         $customerAdditionalData = [
-            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
             'user_ip'              => $request->getIp()
         ];
         try {
@@ -200,8 +200,8 @@ class CustomerPortalController extends Controller
     public function reOpenTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
         $customerAdditionalData = [
-            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', ''),
-            'on_behalf'            => $request->getSafe('on_behalf', '', 'intval'),
+            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
             'user_ip'              => $request->getIp()
         ];
         try {
