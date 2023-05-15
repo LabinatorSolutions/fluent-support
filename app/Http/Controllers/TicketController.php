@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Http\Requests\TicketRequest;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
@@ -64,16 +65,12 @@ class TicketController extends Controller
      * @return array
      * @throws \Exception
      */
-    public function createTicket(Request $request, Ticket $ticket)
+    public function createTicket(TicketRequest $request, Ticket $ticket)
     {
-        $ticketData = $request->getSafe('ticket', 'wp_kses_post', []);
+        $data = $request->sanitize();
 
-        $maybeNewCustomer = $request->getSafe('newCustomer');
-
-        $this->validate($ticketData, [
-            'title'   => 'required',
-            'content' => 'required'
-        ]);
+        $ticketData = $data['ticket'];
+        $maybeNewCustomer = $data['newCustomer'];
 
         $createdTicket = $ticket->createTicket($ticketData, $maybeNewCustomer);
 
@@ -122,7 +119,8 @@ class TicketController extends Controller
      */
     public function createResponse(TicketResponseRequest $request, Ticket $ticket, $ticketId)
     {
-        $data = $request->getSafe(null, 'wp_kses_post', [] );
+
+        $data = $request->sanitize();
 
         try {
             return $ticket->createResponse($data, $ticketId);
