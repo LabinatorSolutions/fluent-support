@@ -24,8 +24,6 @@ class TicketRequest extends RequestGuard
                 $rules['newCustomer.username'] = 'required';
                 $rules['newCustomer.password'] = 'required';
             }
-        }else{
-            $rules['ticket.customer_id'] = 'required';
         }
 
         return apply_filters('fluent_support/ticket_create_validation_rules', $rules);
@@ -37,7 +35,6 @@ class TicketRequest extends RequestGuard
     public function messages()
     {
         $messages = [
-            'ticket.customer_id.required' => 'Customer is required',
             'ticket.title.required' => 'Ticket title is required',
             'ticket.content.required' => 'Ticket content is required',
             'newCustomer.email.required' => 'Customer email is required',
