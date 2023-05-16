@@ -204,10 +204,11 @@ class TicketController extends Controller
     public function doBulkActions(Request $request, Ticket $ticket)
     {
         $action = $request->getSafe('bulk_action'); //get action
-        $ticketIds = $request->getSafe('ticket_ids', 'intval', []);
+        $ticketIds = $request->getSafe('ticket_ids', '', []);
+        $sanitizedTicketIds = array_map('intval',$ticketIds);
 
         try {
-            return $ticket->handleBulkActions($action, $ticketIds);
+            return $ticket->handleBulkActions($action, $sanitizedTicketIds);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
