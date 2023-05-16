@@ -39,7 +39,14 @@ trait FoundationTrait
         if (!$handler) return;
 
         if (is_string($handler)) {
-            $handler = $this->policyNamespace . '\\' . $handler;
+
+            if ($this->hasNamespace($handler)) {
+                $handler = $handler;
+            } else {
+                $handler = $this->policyNamespace . '\\' . $handler;
+            }
+
+            // $handler = $this->policyNamespace . '\\' . $handler;
 
             if ($this->isCallableWithAtSign($handler)) {
                 list($class, $method) = explode('@', $handler);
@@ -57,7 +64,13 @@ trait FoundationTrait
             list($class, $method) = $handler;
 
             if (is_string($class)) {
-                $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
+                if ($this->hasNamespace($handler)) {
+                    $handler = $class . '::' . $method;
+                } else {
+                    $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
+                }
+
+                // $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
             }
         }
 
@@ -170,9 +183,9 @@ trait FoundationTrait
         if ($handler instanceof \Closure) {
             return false;
         };
-        
+
         $parts = explode('\\', $handler);
-        
+
         return count($parts) > 1;
     }
 
