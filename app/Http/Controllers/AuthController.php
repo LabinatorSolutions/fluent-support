@@ -207,7 +207,13 @@ class AuthController extends Controller
     public function isRecaptchaApplicable($formName)
     {
         $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+        if(!isset($reCaptchaSettingsData->value)){
+            return false;
+        }
         $reCaptchaData = maybe_unserialize($reCaptchaSettingsData->value, []);
+        if(!isset($reCaptchaData['is_enabled']) || !isset($reCaptchaData['formContainingReCaptcha'])){
+            return false;
+        }
         $isEnabled = filter_var($reCaptchaData['is_enabled'], FILTER_VALIDATE_BOOLEAN);
         if (!$isEnabled) {
             return false;
