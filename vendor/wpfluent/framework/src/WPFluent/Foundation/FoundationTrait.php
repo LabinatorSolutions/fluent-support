@@ -46,8 +46,6 @@ trait FoundationTrait
                 $handler = $this->policyNamespace . '\\' . $handler;
             }
 
-            // $handler = $this->policyNamespace . '\\' . $handler;
-
             if ($this->isCallableWithAtSign($handler)) {
                 list($class, $method) = explode('@', $handler);
                 if (!method_exists($class, $method)) {
@@ -69,8 +67,6 @@ trait FoundationTrait
                 } else {
                     $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
                 }
-
-                // $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
             }
         }
 
