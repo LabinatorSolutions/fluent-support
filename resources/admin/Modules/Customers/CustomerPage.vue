@@ -212,8 +212,7 @@ export default {
 
         const handleAvatarError = (err, _) => {
             let errorMessage = JSON.parse(err.message);
-
-            notify.error({
+            notify({
                 message: translate(errorMessage.message),
                 position: 'bottom-right',
                 type: 'error'
