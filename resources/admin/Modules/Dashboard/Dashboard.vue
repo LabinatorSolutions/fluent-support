@@ -453,27 +453,27 @@ export default {
 </script>
 
 <style>
-.el-collapse-item__arrow,
-.el-collapse-item__arrow.is-active,
-.el-collapse-item__arrow {
+.draggable_component .el-collapse-item__arrow,
+.draggable_component .el-collapse-item__arrow.is-active,
+.draggable_component .el-collapse-item__arrow {
     cursor: pointer !important;
     background-color: white;
     border-radius: 50%;
     height: 30px;
     width: 30px;
 }
-.el-collapse-item__arrow:hover {
+.draggable_component .el-collapse-item__arrow:hover {
     background: #54b47e;
     color: white;
 }
-.el-collapse-item__wrap {
+.draggable_component .el-collapse-item__wrap {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
     border-left: 1px solid rgb(226, 228, 231);
     box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
 }
 
-.el-collapse-item__header {
+.draggable_component .el-collapse-item__header {
     padding: 10px 30px;
 }
 
