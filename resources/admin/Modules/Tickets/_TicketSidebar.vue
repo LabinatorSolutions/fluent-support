@@ -105,7 +105,7 @@
                                 <span style="color: red;" v-if="user.status == 'inactive'">({{$t('Blocked')}})</span>
                             </div>
                             <div class="fs_tk_profile_email">
-                                <span>test@gmail.com</span>
+                                <span>{{user.email}}</span>
                             </div>
                         </div>
                     </div>
@@ -480,7 +480,9 @@ export default {
 
 /*------*/
 .fs_tk_carbon_copy {
+    margin-bottom: 20px;
     .el-collapse-item__header {
+        padding-left: 20px;
         &.is-active {
             border-bottom: 1px solid #f1f2f5;
         }
