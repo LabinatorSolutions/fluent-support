@@ -90,6 +90,29 @@
         </div>
       </div>
 
+        <div v-if="ticket.carbon_copy.length" class="fs_tk_carbon_copy">
+            <el-collapse>
+                <el-collapse-item title="More in Conversation">
+                    <div v-for="(user) in ticket.carbon_copy" :key="user.id" class="fs_tk_card fs_carbon_user">
+                        <div class="fs_tk_carbon_avatar">
+                            <router-link :to="{name: 'view_customer', params: { customer_id: user.id }}">
+                                <img :src="user.photo" :alt="user.full_name"/>
+                            </router-link>
+                        </div>
+                        <div class="fs_tk_card_body">
+                            <div class="fs_tk_profile_name">
+                                {{ user.full_name }}
+                                <span style="color: red;" v-if="user.status == 'inactive'">({{$t('Blocked')}})</span>
+                            </div>
+                            <div class="fs_tk_profile_email">
+                                <span>test@gmail.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </el-collapse-item>
+            </el-collapse>
+        </div>
+
         <div v-if="extra_widgets" v-for="(widget,widget_key) in extra_widgets" :key="widget_key"
              :class="'fs_tk_widget_' + widget_key" class="fs_tk_card fs_tk_extra_card">
             <template v-if="widget_key === 'woo_purchases'">
@@ -437,7 +460,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 .fs_wc_order_box-card{
     margin-top: 20px;
 }
@@ -453,5 +476,46 @@ export default {
 }
 .fs_wc_order_link{
     cursor: pointer;
+}
+
+/*------*/
+.fs_tk_carbon_copy {
+    .el-collapse-item__header {
+        &.is-active {
+            border-bottom: 1px solid #f1f2f5;
+        }
+    }
+    .el-collapse-item__wrap {
+        box-shadow: none;
+        border: none;
+        max-height: 300px;
+        overflow: auto;
+    }
+    .el-collapse-item__content {
+        padding: 0 10px;
+        .fs_carbon_user {
+            margin-top: 40px;
+            box-shadow: none;
+            border: 1px solid #f1f2f5;
+            padding-bottom: 15px;
+            .fs_tk_carbon_avatar {
+                width: 55px;
+                height: 55px;
+                border-radius: 50%;
+                margin-right: 10px;
+                box-shadow: 0 4px 6px rgba(147, 161, 175, 0.5);
+                border: 2px solid #fff;
+                margin-top: -40px;
+                margin-bottom: 10px;
+                img {
+                    display: block;
+                    border-radius: 50%;
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+            }
+        }
+    }
 }
 </style>

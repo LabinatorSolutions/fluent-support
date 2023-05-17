@@ -1095,6 +1095,8 @@ class Ticket extends Model
 
         //Get last activity by agent
         $ticket->live_activity = TicketHelper::getActivity($ticket->id, $agent->id);
+        //Get all carbon copy customer
+        $ticket->carbon_copy = TicketHelper::getCarbonCopyCustomerInfo($ticket->id);
 
         if (defined('FLUENTSUPPORTPRO')) {
             $ticket->custom_fields = $ticket->customData('admin', true);
