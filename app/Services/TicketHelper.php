@@ -6,6 +6,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Modules\PermissionManager;
 
 class TicketHelper
@@ -179,6 +180,17 @@ class TicketHelper
         }
 
         return $watcherAgents;
+    }
+
+    public static function getCarbonCopyCustomerInfo($ticketId){
+        $existing = Meta::where('object_type', 'customer_cc_info')->where('object_id', $ticketId)->first();
+        if($existing){
+            $existingData = maybe_unserialize($existing->value);
+            $ccCustomerIds = array_column($existingData, 'customer_id');
+            return Customer::whereIn('id', $ccCustomerIds)->get();
+        }
+
+        return [];
     }
 
     // This method will count total tickets
