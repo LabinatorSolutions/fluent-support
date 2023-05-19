@@ -584,7 +584,6 @@ export default {
         };
 
         const getTicketClasses = (conversation, ticket) => {
-            console.log("ticket", ticket);
             const classes = [
                 'fs_thread'
             ];
