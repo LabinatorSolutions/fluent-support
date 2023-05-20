@@ -147,7 +147,7 @@ class CustomerPortalController extends Controller
         ];
 
         $ticket = Ticket::findOrFail($ticketId);
-        $data = $request->getSafe(null, 'wp_kses_post', []);
+        $data = $request->sanitize();
 
         $canCreateResponse = apply_filters('fluent_support/can_customer_create_response', true, $ticket->customer, $ticket, $data);
 
