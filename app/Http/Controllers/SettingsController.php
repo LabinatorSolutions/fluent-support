@@ -242,12 +242,12 @@ class SettingsController extends Controller
             $this->installFluentForm();
         }
 
-        $optinEmail = $request->getSafe('optin_email', 'no');
+        $optinEmail = $request->getSafe('optin_email', 'sanitize_text_field', 'no');
         if ($optinEmail && is_email($optinEmail)) {
             $this->shareEmail($optinEmail);
         }
 
-        $shareEssential = $request->getSafe('share_essentials','no');
+        $shareEssential = $request->getSafe('share_essentials','sanitize_text_field','no');
         if ($shareEssential == 'yes') {
             Helper::updateOption('_share_essential', $shareEssential);
         }
