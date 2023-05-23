@@ -219,7 +219,7 @@ export default {
     },
     setup() {
         const router = useRouter();
-        const { get, post, translate, handleError, del, setTitle, has_pro } =
+        const { get, post, translate, handleError, renewOptions, del, setTitle, has_pro } =
             useFluentHelper();
 
         const { notify } = useNotify();
@@ -273,6 +273,7 @@ export default {
             state.creating = true;
             await post("workflows", state.new_workflow)
                 .then((response) => {
+
                     notify({
                         type: "success",
                         message: response.message,
@@ -282,6 +283,7 @@ export default {
                         name: "edit-workflow",
                         params: { workflow_id: response.workflow.id },
                     });
+
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -301,6 +303,7 @@ export default {
                         position: "bottom-right",
                     });
                     fetch();
+                    renewOptions("workflows/options");
                 })
                 .catch((errors) => {
                     handleError(errors);
