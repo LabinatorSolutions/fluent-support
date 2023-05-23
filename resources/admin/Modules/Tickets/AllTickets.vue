@@ -291,7 +291,7 @@ export default {
             add_response_modal: false,
             show_filters: true,
             first_time_loading: true,
-            advanced_filters: false,
+            advanced_filters: [[]],
             filter_type: 'simple'
         })
 
@@ -391,7 +391,7 @@ export default {
                 state.search = ticketPref.search;
             }
 
-            const advancedFilters = getData('tickets_advanced_filters', false);
+            const advancedFilters = getData('tickets_advanced_filters', [[]]);
             if(advancedFilters) {
                 state.advanced_filters = advancedFilters;
             }
