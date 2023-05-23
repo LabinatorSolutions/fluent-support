@@ -125,13 +125,13 @@
                                 </span>
 
                                 <el-tooltip
-                                    v-if="scope.row.mailbox.settings.hide_business_box !=='yes' && !filters.mailbox_id"
+                                    v-if="scope.row.mailbox?.settings.hide_business_box !=='yes' && !filters.mailbox_id"
                                     class="box-item"
                                     effect="dark"
-                                    :content="translate('Inbox - ') + scope.row.mailbox.name"
+                                    :content="translate('Inbox - ') + scope.row.mailbox?.name"
                                     placement="top"
                                 >
-                                    <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox.settings.color || '#a3b2bd'}" v-html="getExcerptBox(scope.row.mailbox.name)"></span>
+                                    <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox?.settings.color || '#a3b2bd'}" v-html="getExcerptBox(scope.row.mailbox?.name)"></span>
                                 </el-tooltip>
 
                                 <span v-if="scope.row.source" style="margin-right: 5px;" :title="'Source: ' + scope.row.source" :class="'fc_source_icon fc_source_icon_'+scope.row.source"></span>
