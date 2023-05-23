@@ -144,7 +144,7 @@ export default {
     },
     props: ["workflow_id"],
     setup(props) {
-        const { get, post, translate, handleError, setTitle, has_pro } =
+        const { get, post, translate, handleError, renewOptions, setTitle, has_pro } =
             useFluentHelper();
 
         const { notify } = useNotify();
@@ -252,6 +252,9 @@ export default {
                     }
                     state.workflow = response.workflow;
                     state.actions = response.actions;
+                    if("published" == state.workflow.status){
+                        renewOptions("workflows/options");
+                    }
                 })
                 .catch((errors) => {
                     handleError(errors);
