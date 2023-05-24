@@ -39,12 +39,7 @@ trait FoundationTrait
         if (!$handler) return;
 
         if (is_string($handler)) {
-
-            if ($this->hasNamespace($handler)) {
-                $handler = $handler;
-            } else {
-                $handler = $this->policyNamespace . '\\' . $handler;
-            }
+            $handler = $this->getPolicyNamespace($handler) . '\\' . $handler;
 
             if ($this->isCallableWithAtSign($handler)) {
                 list($class, $method) = explode('@', $handler);
@@ -62,11 +57,7 @@ trait FoundationTrait
             list($class, $method) = $handler;
 
             if (is_string($class)) {
-                if ($this->hasNamespace($handler)) {
-                    $handler = $class . '::' . $method;
-                } else {
-                    $handler = $this->policyNamespace . '\\' . $class . '::' . $method;
-                }
+                $handler = $this->getPolicyNamespace($handler) . '\\' . $class . '::' . $method;
             }
         }
 
@@ -179,9 +170,9 @@ trait FoundationTrait
         if ($handler instanceof \Closure) {
             return false;
         };
-
+        
         $parts = explode('\\', $handler);
-
+        
         return count($parts) > 1;
     }
 
@@ -192,6 +183,15 @@ trait FoundationTrait
         }
 
         return $this->controllerNamespace;
+    }
+
+    public function getPolicyNamespace($handler)
+    {
+        if ($this->hasNamespace($handler)) {
+            return '';
+        }
+
+        return $this->policyNamespace;
     }
 
     public function makeInstance($class)
@@ -206,36 +206,42 @@ trait FoundationTrait
     }
 
     public function url($url = '')
-	{
-		return $this->baseUrl.ltrim($url, '/');
-	}
-
-    private function addAjaxAction($tag, $handler, $priority, $scope)
     {
-    	if ($scope == 'admin') {
-        	return add_action(
-        		'wp_ajax_'.$tag,
-        		$this->parseHookHandler($handler),
-        		$priority
-        	);
-    	}
-
-    	if ($scope == 'public') {
-        	return add_action(
-        		'wp_ajax_nopriv_'.$tag,
-        		$this->parseHookHandler($handler),
-        		$priority
-        	);
-    	}
+        return $this->baseUrl.ltrim($url, '/');
     }
 
-    public function addAdminAjaxAction($tag, $handler, $priority = 10)
+    private function addAjaxAction($action, $handler, $priority, $scope)
     {
-        return $this->addAjaxAction($tag, $handler, $priority, 'admin');
+        if ($scope == 'admin') {
+            return add_action(
+                'wp_ajax_'.$action,
+                $this->parseHookHandler($handler),
+                $priority
+            );
+        }
+
+        if ($scope == 'public') {
+            return add_action(
+                'wp_ajax_nopriv_'.$action,
+                $this->parseHookHandler($handler),
+                $priority
+            );
+        }
     }
 
-    public function addPublicAjaxAction($tag, $handler, $priority = 10)
+    public function addAjaxActions($action, $handler, $priority = 10)
     {
-        return $this->addAjaxAction($tag, $handler, $priority, 'public');
+        $this->addAjaxAction($action, $handler, $priority, 'admin');
+        $this->addAjaxAction($action, $handler, $priority, 'public');
+    }
+
+    public function addAdminAjaxAction($action, $handler, $priority = 10)
+    {
+        return $this->addAjaxAction($action, $handler, $priority, 'admin');
+    }
+
+    public function addPublicAjaxAction($action, $handler, $priority = 10)
+    {
+        return $this->addAjaxAction($action, $handler, $priority, 'public');
     }
 }
