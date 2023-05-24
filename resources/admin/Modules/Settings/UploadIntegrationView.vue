@@ -1,10 +1,10 @@
 <template>
     <div class="fs_narrow_promo" v-if="!has_pro">
-        <h3>{{ current_integration.promo_heading }}</h3>
+        <h3>3rd party file upload integration is available on Pro Version</h3>
         <p>{{translate('pro_promo')}}</p>
         <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{translate('Upgrade To Pro')}}</a>
     </div>
-    <div class="fs_integration" v-else-if="has_pro">
+    <div class="fs_integration" v-else>
         <div class="fs_settings_sub_menu">
             <ul>
                 <li v-for="driver in drivers" :key="driver.key" @click="switchIntegration(driver.key)"
@@ -54,7 +54,7 @@ export default {
 
     setup() {
 
-        const { get, post, translate, handleError, setTitle, appVars } =
+        const { get, post, translate, handleError, setTitle, appVars, has_pro } =
             useFluentHelper();
 
         const { notify } = useNotify();
@@ -122,6 +122,7 @@ export default {
             fetchSettings,
             switchIntegration,
             current_integration,
+            has_pro
         };
     }
 }
