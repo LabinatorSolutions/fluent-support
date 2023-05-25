@@ -20,6 +20,9 @@
                 <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings">
                     Update
                 </el-button>
+                <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="resetSettings">
+                    Reset
+                </el-button>
             </div>
             <div  v-else>
                 <h3>{{translate('Settings could not be found')}}!</h3>
@@ -49,7 +52,7 @@ export default {
 
     setup() {
 
-        const { get, post, translate, handleError, setTitle, appVars } =
+        const { get, post, del, translate, handleError, setTitle, appVars } =
             useFluentHelper();
 
         const { notify } = useNotify();
@@ -72,14 +75,6 @@ export default {
                 return driver.key == state.integration_key;
             })
         });
-
-        // const check = computed(() => {
-        //     if (state.access_code) {
-        //         setTimeout(() => {
-        //             handleAuthorizationResponse();
-        //         }, 2000);
-        //     }
-        // });
 
         const fetchSettings = async () => {
             if (!current_integration) {
@@ -113,6 +108,27 @@ export default {
             })
                 .then(response => {
                     state.settings = response.settings;
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                    fetchSettings();
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {
+                    state.saving = false;
+                });
+        };
+
+        const resetSettings = () => {
+            state.saving = true;
+            del('settings/upload_integration', {
+                integration_key: state.integration_key,
+            })
+                .then(response => {
                     notify({
                         message: response.message,
                         type: 'success',
@@ -181,10 +197,10 @@ export default {
             translate,
             fetchSettings,
             saveSettings,
+            resetSettings,
             switchIntegration,
             current_integration,
             authorize,
-            // check,
             handleAuthorizationResponse,
         };
     }
