@@ -141,16 +141,17 @@ class ActivityLogger
 
             $description = sprintf('Assign  %1$s ticket to %2$s by %3$s', $this->getTicketMarkup($ticket), $this->getPersonMarkup($assignedAgent), $this->getPersonMarkup($assigner));
 
-            $log = [
-                'event_type' => 'fluent_support/agent_assigned_to_ticket',
-                'person_id' => $assigner->id,
-                'person_type' => $assigner->person_type,
-                'object_id' => $ticket->id,
-                'object_type' => 'ticket',
-                'description' => $description
-            ];
-
-            Activity::create($log);
+            if($assigner && isset($assigner->id) && isset($assigner->person_type)){
+                $log = [
+                    'event_type' => 'fluent_support/agent_assigned_to_ticket',
+                    'person_id' => $assigner->id,
+                    'person_type' => $assigner->person_type,
+                    'object_id' => $ticket->id,
+                    'object_type' => 'ticket',
+                    'description' => $description
+                ];
+                Activity::create($log);
+            }
         }, 20, 3);
     }
 
@@ -177,7 +178,7 @@ class ActivityLogger
     public function getPersonMarkup($person)
     {
         $route = 'view_agent';
-        if ($person->person_type == 'customer') {
+        if (isset($person->person_type) && $person->person_type == 'customer') {
             $route = 'view_customer';
         }
         return '<a class="fs_link_trans fs_pr" href="#' . $route . '">' . $person->full_name . '</a>';
