@@ -78,7 +78,7 @@ class UploaderController extends Controller
             $uploadedFiles = $this->uploadToCloud($files, $ticketId);
         } elseif (defined('FLUENTSUPPORTPRO') && !$isLocalUploadDisable && $integratedDrivers) {
             $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
-            $this->uploadToCloud($files);
+            $this->uploadToCloud($files, $ticketId);
         } else {
             $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
         }
