@@ -2,7 +2,7 @@
 Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
-Tested up to: 6.1.1
+Tested up to: 6.2.1
 Stable tag: 1.6.9
 Requires PHP: 7.1
 License: GPLv2 or later
@@ -188,6 +188,22 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+= 1.7.0 (Date: May 29, 2023) =
+* Added - Effortless draft mode and auto save functionality
+* Added - Email verification while registering customer
+* Added - Two factor authentication in login
+* Added - Option to set maximum file upload limit
+* Added - Email CC and BCC support(Pro)
+* Added - Support file attachment upload in third party (Google Drive and Dropbox)(Pro)
+* Added - Zendesk migrator(Pro)
+* Fixed - Exception handled in route issue
+* Fixed - Edit reply issue
+* Fixed - Work action ordering issue (Pro)
+* Fixed - Custom field required in conditional form (Pro)
+* Fixed - Conditional form rendering issue (Pro)
+* Fixed - Ticket create using API endpoint (Pro)
+* Fixed - Freshdesk migrator issue (Pro)
+* More improvements
 
 = 1.6.9 (Date: March 16, 2023) =
 * Added - Google reCAPTCHA support
@@ -252,7 +268,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Added - Fluent Support ticket summary in WP Dashboard toolbar
 * Added - Fluent Support ticket summary in WP Dashboard toolbar
 * Added - Fluent Support summary WP Dashboard Widget
-* Fixed - Customer ticket creatation page disappear on page reload
+* Fixed - Customer ticket creation page disappear on page reload
 * Improvement - Security
 * Improvement - Code Base
 
