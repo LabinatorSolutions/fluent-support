@@ -1103,6 +1103,9 @@ class Ticket extends Model
     {
         foreach ($responses as $response) {
             $response->content = links_add_target(make_clickable(wpautop($response->content, false)));
+            if(!empty($response->ccinfo)){
+                $response->cc_info = maybe_unserialize($response->ccinfo->value);
+            }
         }
 
         $ticket->content = links_add_target(make_clickable(wpautop($ticket->content, false)));
@@ -1110,7 +1113,9 @@ class Ticket extends Model
         //Get last activity by agent
         $ticket->live_activity = TicketHelper::getActivity($ticket->id, $agent->id);
         //Get all carbon copy customer
-        $ticket->carbon_copy = TicketHelper::getCarbonCopyCustomerInfo($ticket->id);
+        $ccInfo = TicketHelper::getCarbonCopyCustomerInfo($ticket->id);
+        $ticket->carbon_copy = isset($ccInfo['cc_email']) && is_array($ccInfo['cc_email']) ? implode(', ', $ccInfo['cc_email']) : '';
+        $ticket->blind_carbon_copy = isset($ccInfo['bcc_email']) && is_array($ccInfo['bcc_email']) ? implode(', ', $ccInfo['bcc_email']) : '';
 
         if (defined('FLUENTSUPPORTPRO')) {
             $ticket->custom_fields = $ticket->customData('admin', true);

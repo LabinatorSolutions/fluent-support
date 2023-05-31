@@ -343,6 +343,17 @@
                                             <span v-else-if="conversation.conversation_type == 'note'"> {{
                                                     translate('added a note')
                                                 }}</span>
+                                            <div class="carrier_info" v-if="ticket.source == 'email'">
+                                                <div class="from_info" v-if="conversation.person.person_type != 'customer'">
+                                                    <span><strong>From:</strong>{{ ticket.customer?.full_name }}&lt;{{ ticket.customer?.email }}&gt;</span>
+                                                </div>
+                                                <div class="cc_info" v-if="ticket.carbon_copy">
+                                                    <span><strong>Cc:</strong>{{ ticket.carbon_copy }}</span>
+                                                </div>
+                                                <div class="bcc_info" v-if="ticket.blind_carbon_copy">
+                                                    <span><strong>Bcc:</strong>{{ ticket.carbon_copy }}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span v-if="conversation.source" :title="'Source: ' + conversation.source" :class="'fc_source_icon fc_source_icon_'+conversation.source"><span>{{conversation.source}}</span></span>
@@ -402,6 +413,17 @@
                                     <div class="fs_thread_head">
                                         <div class="fs_thread_title">
                                             <strong>{{ ticket.customer?.full_name }}</strong> {{translate('started the conversation')}}
+                                            <div class="carrier_info" v-if="ticket.source == 'email'">
+                                                <div class="from_info">
+                                                    <span><strong>From:</strong>{{ ticket.customer?.full_name }}&lt;{{ ticket.customer?.email }}&gt;</span>
+                                                </div>
+                                                <div class="cc_info" v-if="ticket.carbon_copy">
+                                                    <span><strong>Cc:</strong>{{ ticket.carbon_copy }}</span>
+                                                </div>
+                                                <div class="bcc_info" v-if="ticket.blind_carbon_copy">
+                                                    <span><strong>Bcc:</strong>{{ ticket.carbon_copy }}</span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="fs_thread_actions">
                                             <span v-if="ticket.source" :title="'Source: ' + ticket.source" :class="'fc_source_icon fc_source_icon_'+ticket.source"><span>{{ticket.source}}</span></span>
@@ -1012,5 +1034,14 @@ export default {
 
 i.dashicons.dashicons-randomize {
     transform: rotate(90deg);
+}
+
+.carrier_info{
+    padding: 5px 0;
+    font-size: 12px;
+    color: #8b8d8f;
+}
+.carrier_info strong{
+    font-size: 13px !important;
 }
 </style>
