@@ -274,6 +274,7 @@
                     :ticket="ticket"
                     @close="show_response_box = ''"
                     :type="show_response_box"
+                    :draft = "draftData"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
                     <p>{{ translate('ticket_closed') }} {{ ticket.resolved_at }}
@@ -310,12 +311,18 @@
                                                  class="fs_thread_body"></div>
                                         </h2>
                                     </div>
-
+                                    <div>
+                                        <el-button size="small" @click="showDraftResponse(draft.value)">Edit</el-button>
+                                        <el-button size="small" @click ="discardDraftResponse(draft.id)">Discard</el-button>
+                                    </div>
                                 </section>
+
+
+
                             </section>
                         </div>
-                    </article>
 
+                    </article>
                     <!--Redesign draft mode-->
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
@@ -596,7 +603,9 @@ export default {
             close_ticket_silently: "no",
             app_ready: false,
             fetch_other_tickets: false,
-            drafts: {}
+            drafts: {},
+            draftData:{},
+            show_response_draft:false,
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -956,6 +965,30 @@ export default {
                 });
         }
 
+        const showDraftResponse = (draft) =>{
+            console.log(draft)
+            state.show_response_box = 'draft';
+            state.draftData = draft;
+        }
+
+        const discardDraftResponse = (draftID) => {
+            del('tickets/' + draftID + '/draft')
+                .then(response => {
+                    notify({
+                        message: response.message,
+                        type: "success",
+                        position: "bottom-right",
+                    });
+                    fetchDrafts();
+                })
+                .catch((error) => {
+                    handleError(error);
+                })
+                .always(() => {
+                    state.loading = false;
+                });
+        }
+
         const getTicketStatus = computed(() => {
             const status = {};
 
@@ -1005,6 +1038,8 @@ export default {
             addWatchers,
             splitToNewTicket,
             fetchDrafts,
+            showDraftResponse,
+            discardDraftResponse,
             getTicketStatus,
             translate,
         }

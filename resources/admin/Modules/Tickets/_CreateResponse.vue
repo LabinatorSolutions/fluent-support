@@ -2,6 +2,7 @@
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
                    :show-saved-replies="true"/>
+
         <div class="fs_row">
             <div class="fs_half">
                 <div style="text-align: left" class="fs_response_actions">
@@ -37,7 +38,7 @@ import {debounce} from 'lodash'
 
 export default {
     name: 'CreateResponse',
-    props: ['ticket', 'type'],
+    props: ['ticket', 'type','draft'],
     components: {
         WpEditor,
         AttachmentForm
@@ -69,35 +70,44 @@ export default {
             }
         });
 
-        if(appVars.enable_draft_mode === 'yes'){
-            const saveResponseDraft = debounce(() => {
-                const data = {
-                    content: state.response_body,
-                    conversation_type: props.type,
-                };
-                let action = `tickets/${props.ticket.id}/draft`;
-                post(action, data)
-                    .then((response) => {
+        if(appVars.enable_draft_mode === 'yes') {
+            if (props.type == 'draft') {
+                state.response_body = props.draft.content;
+            }
+                const saveResponseDraft = debounce(() => {
 
-                    })
-                    .catch((errors) => {
-                        handleError(errors);
-                    })
+                    const data = {
+                        content: state.response_body,
+                        conversation_type: props.type,
+                    };
 
-            },5000)
-            watch(saveResponseDraft)
-        }
+                    let action = `tickets/${props.ticket.id}/draft`;
+                    post(action, data)
+                        .then((response) => {
 
-        watch(state)
+                        })
+                        .catch((errors) => {
+                            handleError(errors);
+                        })
+
+                }, 5000)
+                watch(saveResponseDraft)
+            }
+
+            watch(state)
+
 
         const create = (closed = 'no') => {
-
             const data = {
                 content: state.response_body,
                 conversation_type: props.type,
                 close_ticket: closed,
                 attachments: state.attachments
             };
+
+            if(props.type == 'draft'){
+                data.content = props.draft.content
+            }
 
             let action = `tickets/${props.ticket.id}/responses`;
             if (Array.isArray(props.ticket)) {

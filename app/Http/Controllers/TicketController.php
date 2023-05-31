@@ -158,6 +158,18 @@ class TicketController extends Controller
         }
     }
 
+    public function deleteDraft(Request $request,Ticket $ticket,$draftID)
+    {
+        $draftID = intval($draftID);
+
+        try {
+            return $ticket->discardDrafts($draftID);
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+        }
+
+    }
+
     /**
      * getTicketWidgets method generate additional information for a ticket by  customer
      * @param Ticket $ticket
