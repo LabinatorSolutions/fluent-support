@@ -123,6 +123,19 @@ class Conversation extends Model
         return $this->hasMany($class, 'conversation_id', 'id');
     }
 
+    /**
+     * One2One: Conversation has cc info
+     * @return Model Collection
+     */
+    public function ccinfo()
+    {
+        $class = __NAMESPACE__ . '\Meta';
+
+        return $this->hasOne(
+            $class, 'object_id', 'id'
+        )->where('object_type', 'cc_info_in_conversation');
+    }
+
 
     /**
      * This `doBulkReplies` will handle bulk replies
