@@ -802,12 +802,25 @@ class Ticket extends Model
         return true;
     }
 
+    public function initCarbonCopyCustomer($data, $id)
+    {
+        Meta::insert([
+            'object_type' => 'init_customer_cc_info',
+            'object_id'  => $id,
+            'key'         => '_init_customer_cc_info',
+            'value'       => maybe_serialize($data)
+        ]);
+
+        return true;
+    }
+
     public function syncCarbonCopyCustomer($data, $id){
         $existing = Meta::where('object_type', 'customer_cc_info')->where('object_id', $id)->first();
         if($existing){
             $existingCustomer = maybe_unserialize($existing->value);
             $newData = array_merge($existingCustomer, $data);
-            $existing->value = maybe_serialize($newData);
+            $ccEmails = array_unique($newData);
+            $existing->value = maybe_serialize($ccEmails);
             $existing->save();
         }else{
             Meta::insert([

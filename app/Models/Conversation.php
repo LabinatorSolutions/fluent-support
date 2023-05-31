@@ -253,6 +253,26 @@ class Conversation extends Model
         ];
     }
 
+    public function syncCarbonCopyCustomer($data, $conversation_id){
+        $existing = Meta::where('object_type', 'cc_info_in_conversation')->where('object_id', $conversation_id)->first();
+        if($existing){
+            $existingCustomer = maybe_unserialize($existing->value);
+            $newData = array_merge($existingCustomer, $data);
+            $ccEmails = array_unique($newData);
+            $existing->value = maybe_serialize($ccEmails);
+            $existing->save();
+        }else{
+            Meta::insert([
+                'object_type' => 'cc_info_in_conversation',
+                'object_id'  => $conversation_id,
+                'key'         => '_cc_info_in_conversation',
+                'value'       => maybe_serialize($data)
+            ]);
+        }
+
+        return true;
+    }
+
     // This function will check agent permission to specific task regarding response response
     private function checkUserTaskPermission ( $ticketAgentId, $agentId, $task )
     {
