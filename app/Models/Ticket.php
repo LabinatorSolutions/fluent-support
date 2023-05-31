@@ -551,7 +551,7 @@ class Ticket extends Model
             if ($filter['operator'] == '=' || $filter['operator'] == '!=') {
                 $operator = $filter['operator'];
                 $query->whereHas($provider, function ($q) use ($operator, $filter) {
-                    $q->where($filter['property'], $operator , $filter['value']);
+                    $q->where($filter['property'], $operator, $filter['value']);
                 });
             }
         }
@@ -783,9 +783,9 @@ class Ticket extends Model
             } else {
                 Meta::insert([
                     'object_type' => 'ticket_meta',
-                    'object_id'   => $this->id,
-                    'key'         => $dataKey,
-                    'value'       => $validDatum
+                    'object_id' => $this->id,
+                    'key' => $dataKey,
+                    'value' => $validDatum
                 ]);
             }
         }
@@ -814,20 +814,21 @@ class Ticket extends Model
         return true;
     }
 
-    public function syncCarbonCopyCustomer($data, $id){
+    public function syncCarbonCopyCustomer($data, $id)
+    {
         $existing = Meta::where('object_type', 'customer_cc_info')->where('object_id', $id)->first();
-        if($existing){
+        if ($existing) {
             $existingCustomer = maybe_unserialize($existing->value);
             $newData = array_merge($existingCustomer, $data);
             $ccEmails = array_unique($newData);
             $existing->value = maybe_serialize($ccEmails);
             $existing->save();
-        }else{
+        } else {
             Meta::insert([
                 'object_type' => 'customer_cc_info',
-                'object_id'  => $id,
-                'key'         => '_customer_cc_info',
-                'value'       => maybe_serialize($data)
+                'object_id' => $id,
+                'key' => '_customer_cc_info',
+                'value' => maybe_serialize($data)
             ]);
         }
 
@@ -1116,9 +1117,9 @@ class Ticket extends Model
         }
 
         $data = [
-            'ticket'    => $ticket,
+            'ticket' => $ticket,
             'responses' => $responses,
-            'agent_id'  => $agent->id
+            'agent_id' => $agent->id
         ];
 
         if (defined('FLUENTSUPPORTPRO') && $ticket->watchers) {
@@ -1154,11 +1155,109 @@ class Ticket extends Model
         $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
 
         return [
-            'message'     => __('Response has been added', 'fluent-support'),
-            'response'    => $responseData['response'],
-            'ticket'      => $responseData['ticket'],
+            'message' => __('Response has been added', 'fluent-support'),
+            'response' => $responseData['response'],
+            'ticket' => $responseData['ticket'],
             'update_data' => $responseData['update_data']
         ];
+    }
+
+    /**
+     * This `createResponse` will create a response for a ticket
+     * @param array $data
+     * @param int $ticketId
+     * @return array
+     * @throws Exception
+     */
+    public function createDraft($data, $ticketId)
+    {
+        $agent = Helper::getAgentByUserId(get_current_user_id());
+        $this->checkIfValidAgent($agent);
+
+        $ticket = static::findOrFail($ticketId);
+        $this->checkAgentPermission($ticket);
+        $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
+
+
+        $previousDraft = Meta::where('object_type', '_fs_auto_draft')->where('key', $key)->first();
+
+
+//        Meta::updateOrCreate(
+//            ['object_type' => '_fs_auto_draft', 'key' => $key],
+//            ['value'       => maybe_serialize($data)]
+//        );
+//
+//        return [
+//            'message'     => __('Draft has been added', 'fluent-support'),
+//        ];
+////
+//        if($previousDraft){
+//            Meta::where('object_type', '_fs_auto_draft')->where('key',$key)->update([
+//                'value' => maybe_serialize($data)
+//            ]);
+//            return $this->sendSuccess([
+//                'message' => __('Draft has been updated .', 'fluent-support'),
+//            ]);
+//        }else{
+//            Meta::insert([
+//                'object_type' => '_fs_auto_draft',
+//                'key'         => $key,
+//                'value'       => maybe_serialize($data)
+//            ]);
+//
+//            return [
+//                'message'     => __('Draft has been added', 'fluent-support'),
+//            ];
+//        }
+
+        Meta::insert([
+            'object_type' => '_fs_auto_draft',
+            'key' => $key,
+            'value' => maybe_serialize($data)
+        ]);
+
+        return [
+            'message' => __('Draft has been added', 'fluent-support'),
+        ];
+
+    }
+
+
+    public function fetchDrafts($ticketId)
+    {
+
+        $agent = Helper::getAgentByUserId(get_current_user_id());
+        $this->checkIfValidAgent($agent);
+
+        $ticket = static::findOrFail($ticketId);
+        $this->checkAgentPermission($ticket);
+        $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
+
+        $drafts = Meta::where([
+            'object_type' => '_fs_auto_draft',
+            'key' => $key,
+        ])->get();
+
+        foreach ($drafts as $draft) {
+            if (isset($drafts)) {
+                $draft->value = maybe_unserialize($draft->value);
+            }
+        }
+
+
+//        $draftData =  Meta::where('key', $key)->first();
+
+//        dd($drafts);
+        return [
+            'draftData' => $drafts
+        ];
+//        return  $drafts;
+
+//        return [
+//            'message'     => __( $draftData, 'fluent-support'),
+//        ];
+
+//        dd($draftData);
     }
 
     // This checkIfValidAgent method will check if agent is valid or not
@@ -1186,7 +1285,7 @@ class Ticket extends Model
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close($ticket, $agent, '', $closeSilently)
+            'ticket' => (new TicketService())->close($ticket, $agent, '', $closeSilently)
         ];
     }
 
@@ -1206,7 +1305,7 @@ class Ticket extends Model
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket'  => (new TicketService())->reopen($ticket, $agent)
+            'ticket' => (new TicketService())->reopen($ticket, $agent)
         ];
     }
 
@@ -1259,7 +1358,7 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
 
         return [
-            'message'     => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
+            'message' => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
             'update_data' => $this->handlePropertyUpdate($propName, $propValue, $ticket, $assigner)
         ];
     }
@@ -1445,9 +1544,9 @@ class Ticket extends Model
     public static function getTicketsQuery()
     {
         return self::with([
-            'customer'         => function ($query) {
+            'customer' => function ($query) {
                 $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent'         => function ($query) {
+            }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
             'product',
