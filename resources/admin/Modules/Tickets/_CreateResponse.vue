@@ -70,13 +70,21 @@ export default {
         });
 
         if(appVars.enable_draft_mode === 'yes'){
-            let previousResponse = getData("ticket_no_" + props.ticket.id + "_response_draft");
-            if (previousResponse) {
-                state.response_body = previousResponse;
-            }
             const saveResponseDraft = debounce(() => {
-                saveData("ticket_no_" + props.ticket.id + "_response_draft", state.response_body);
-            }, 5000)
+                const data = {
+                    content: state.response_body,
+                    conversation_type: props.type,
+                };
+                let action = `tickets/${props.ticket.id}/draft`;
+                post(action, data)
+                    .then((response) => {
+
+                    })
+                    .catch((errors) => {
+                        handleError(errors);
+                    })
+
+            },5000)
             watch(saveResponseDraft)
         }
 
