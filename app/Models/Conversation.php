@@ -267,12 +267,25 @@ class Conversation extends Model
     }
 
     public function syncCarbonCopyCustomer($data, $conversation_id){
+        Meta::insert([
+            'object_type' => 'cc_info_in_conversation',
+            'object_id'  => $conversation_id,
+            'key'         => '_cc_info_in_conversation',
+            'value'       => maybe_serialize($data)
+        ]);
+
+        /*$cc_email = $data['cc_email'];
+        $bcc_email = $data['bcc_email'];
         $existing = Meta::where('object_type', 'cc_info_in_conversation')->where('object_id', $conversation_id)->first();
         if($existing){
             $existingCustomer = maybe_unserialize($existing->value);
-            $newData = array_merge($existingCustomer, $data);
-            $ccEmails = array_unique($newData);
-            $existing->value = maybe_serialize($ccEmails);
+            $ccData = array_merge($existingCustomer['cc_email'], $cc_email);
+            $bccData = array_merge($existingCustomer['bcc_email'], $bcc_email);
+            $ccEmails = array_unique($ccData);
+            $bccEmails = array_unique($bccData);
+            $newData['cc_email'] = $ccEmails;
+            $newData['bcc_email'] = $bccEmails;
+            $existing->value = maybe_serialize($newData);
             $existing->save();
         }else{
             Meta::insert([
@@ -281,7 +294,7 @@ class Conversation extends Model
                 'key'         => '_cc_info_in_conversation',
                 'value'       => maybe_serialize($data)
             ]);
-        }
+        }*/
 
         return true;
     }
