@@ -568,7 +568,7 @@ class Ticket extends Model
 
         return $this->hasMany(
             $class, 'ticket_id', 'id'
-        )->with('person', 'attachments')
+        )->with('person', 'attachments', 'ccinfo')
             ->latest('id');
     }
 
