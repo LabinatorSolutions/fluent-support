@@ -171,7 +171,7 @@
                                 </el-select>
 
                                 <el-button type="primary" size="small"
-                                           style="margin-top: 20px" @click="addWatchers">{{translate('Add')}}
+                                           style="margin-top: 20px" @click="addWatchers">{{ translate('Add') }}
                                 </el-button>
                             </div>
                         </el-dialog>
@@ -230,7 +230,9 @@
                                 <template #reference>
                                     <span :title="translate('Admin Priority:') + ticket.priority "
                                           :class="'fs_badge_priority_'+ticket.priority" class="fs_badge">
-                                        <el-icon style="vertical-align: middle;"><service /></el-icon> {{ ticket.priority }}</span>
+                                        <el-icon style="vertical-align: middle;"><service/></el-icon> {{
+                                            ticket.priority
+                                        }}</span>
                                 </template>
 
                                 <el-select @change="updateTicketAttr('priority')" v-model="ticket.priority"
@@ -282,7 +284,39 @@
                         {{ translate('Reopen This ticket') }}
                     </el-button>
                 </div>
+
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
+
+                    <!--Redesign draft mode-->
+
+                    <article v-for="draft in drafts"
+                             :key="draft.id"
+                             class="fs_thread"
+                    >
+                        <div class="fs_thread_content">
+                            <span class="fs_draft_header">
+                            </span>
+                            <section class="fs_thread_wrap">
+                                <section class="fs_thread_message">
+                                    <div class="fs_thread_head">
+                                        <div class="fs_thread_title">
+                                            <h2>You created a draft </h2>
+                                        </div>
+
+                                    </div>
+                                    <div class="fs_thread_body">
+                                        <h2>
+                                            <div v-html="santizeContent(draft.value.content)"
+                                                 class="fs_thread_body"></div>
+                                        </h2>
+                                    </div>
+
+                                </section>
+                            </section>
+                        </div>
+                    </article>
+
+                    <!--Redesign draft mode-->
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
@@ -540,6 +574,7 @@ export default {
             close_ticket_silently: "no",
             app_ready: false,
             fetch_other_tickets: false,
+            drafts: {}
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -578,6 +613,21 @@ export default {
                 state.loading = false;
                 handleError(error);
             })
+                .always(() => {
+                    state.loading = false;
+                });
+        };
+
+        const fetchDrafts = async () => {
+            state.loading = true;
+            await get(`tickets/${props.ticket_id}/drafts`)
+                .then(response => {
+                    state.drafts = response.draftData;
+                    console.log(state.drafts);
+                }).catch(error => {
+                    state.loading = false;
+                    handleError(error);
+                })
                 .always(() => {
                     state.loading = false;
                 });
@@ -673,7 +723,7 @@ export default {
                 });
         }
 
-        const reOpen = () =>{
+        const reOpen = () => {
             state.updating = true;
             post(`tickets/${state.ticket.id}/re-open`)
                 .then(response => {
@@ -687,7 +737,7 @@ export default {
                 });
         }
 
-        const onActivityChange = (items) =>{
+        const onActivityChange = (items) => {
             const personIds = [];
             items.forEach((item) => {
                 personIds.push(item.val());
@@ -695,12 +745,12 @@ export default {
             state.active_agents = personIds;
         }
 
-        const onTicketDataChange = (item) =>{
+        const onTicketDataChange = (item) => {
             let data = item.val();
             state.ticket[data.type] = data.data;
         }
 
-        const handleResponseActionCommand = (data) =>{
+        const handleResponseActionCommand = (data) => {
             const actionType = data.type;
             const conversation = data.conversation;
 
@@ -736,7 +786,7 @@ export default {
                 state.editing_response = conversation;
                 state.edit_response_modal = true;
                 state.conversation_type = conversation.conversation_type;
-            } else if ( actionType === 'split_ticket' ) {
+            } else if (actionType === 'split_ticket') {
                 state.split_ticket = {
                     conversation_id: conversation.id,
                     content: conversation.content,
@@ -751,7 +801,7 @@ export default {
             }
         }
 
-        const changeMailbox = (mailbox) =>{
+        const changeMailbox = (mailbox) => {
             state.loading = !state.loading;
             put(`mailboxes/${state.ticket.mailbox_id}/move_tickets`, {
                 new_box_id: mailbox,
@@ -774,7 +824,7 @@ export default {
                 });
         }
 
-        const customerTickets = () =>{
+        const customerTickets = () => {
             get('tickets/customer_tickets/' + state.ticket.customer_id, {
                 exclude_ticket_id: props.ticket_id,
                 page: state.pagination.current_page,
@@ -793,7 +843,7 @@ export default {
                 });
         }
 
-        const mergeTickets = (ticketToMerge) =>{
+        const mergeTickets = (ticketToMerge) => {
             confirm({
                 message: translate('Are you sure you want to merge these tickets?'),
                 title: translate('Merge Tickets'),
@@ -805,7 +855,7 @@ export default {
                 }
             }).then(() => {
                 state.loading = true;
-                post('tickets/' + props.ticket_id +'/merge_tickets', {
+                post('tickets/' + props.ticket_id + '/merge_tickets', {
                     ticket_to_merge: ticketToMerge,
                 })
                     .then(response => {
@@ -827,7 +877,7 @@ export default {
             });
         }
 
-        const santizeContent = (content) =>{
+        const santizeContent = (content) => {
             if (!content) {
                 return content;
             }
@@ -861,9 +911,9 @@ export default {
                 });
         }
 
-        const splitToNewTicket = () =>{
+        const splitToNewTicket = () => {
             state.loading = true;
-            post('tickets/' + state.ticket.id +'/split_ticket', {
+            post('tickets/' + state.ticket.id + '/split_ticket', {
                 split_ticket: state.split_ticket,
             })
                 .then(response => {
@@ -896,6 +946,10 @@ export default {
 
         onMounted(() => {
             fetchTicket();
+
+            if (appVars.enable_draft_mode === 'yes') {
+                fetchDrafts();
+            }
             doAction('ticket_view_entered', props.ticket_id);
         });
 
@@ -928,6 +982,7 @@ export default {
             syncCustomData,
             addWatchers,
             splitToNewTicket,
+            fetchDrafts,
             getTicketStatus,
             translate,
         }
@@ -954,6 +1009,7 @@ export default {
 .fs_conv_type_note {
     border-left: 0px solid #e6a23c;
 }
+
 i.dashicons.dashicons-randomize {
     transform: rotate(90deg);
 }
