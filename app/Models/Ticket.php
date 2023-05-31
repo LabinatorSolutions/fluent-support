@@ -1248,21 +1248,23 @@ class Ticket extends Model
                 $draft->value = maybe_unserialize($draft->value);
             }
         }
-
-
-//        $draftData =  Meta::where('key', $key)->first();
-
-//        dd($drafts);
         return [
             'draftData' => $drafts
         ];
-//        return  $drafts;
+    }
 
-//        return [
-//            'message'     => __( $draftData, 'fluent-support'),
-//        ];
+    public function discardDrafts($draftID)
+    {
+        $deleteDraft = Meta::where('id', $draftID)->delete();
+        if(!$deleteDraft){
+            return [
+                'error' => __('Discard draft successfully', 'fluent-support'),
+            ];
+        }
+        return [
+            'message' => __('Discard draft successfully', 'fluent-support'),
+        ];
 
-//        dd($draftData);
     }
 
     // This checkIfValidAgent method will check if agent is valid or not
