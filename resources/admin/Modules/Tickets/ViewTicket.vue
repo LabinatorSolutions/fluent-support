@@ -312,7 +312,7 @@
                                         </h2>
                                     </div>
                                     <div>
-                                        <el-button size="small" @click="showDraftResponse(draft.value)">Edit</el-button>
+                                        <el-button size="small" @click="showDraftResponse(draft)">Edit</el-button>
                                         <el-button size="small" @click ="discardDraftResponse(draft.id)">Discard</el-button>
                                     </div>
                                 </section>
@@ -654,7 +654,6 @@ export default {
             await get(`tickets/${props.ticket_id}/drafts`)
                 .then(response => {
                     state.drafts = response.draftData;
-                    console.log(state.drafts);
                 }).catch(error => {
                     state.loading = false;
                     handleError(error);
@@ -687,6 +686,7 @@ export default {
         }
 
         const recordNewResponse = (response, data) =>{
+
             state.conversations.unshift(response);
             state.ticket.status = data.ticket.status;
             state.show_response_box = false;
@@ -694,7 +694,7 @@ export default {
             each(data.update_data, (data, key) => {
                 state.ticket[key] = data;
             });
-
+            fetchDrafts();
             if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
                     router.go(-1);
@@ -974,11 +974,6 @@ export default {
         const discardDraftResponse = (draftID) => {
             del('tickets/' + draftID + '/draft')
                 .then(response => {
-                    notify({
-                        message: response.message,
-                        type: "success",
-                        position: "bottom-right",
-                    });
                     fetchDrafts();
                 })
                 .catch((error) => {
