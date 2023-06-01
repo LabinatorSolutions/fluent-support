@@ -191,7 +191,11 @@ export default {
         }
 
         const searchCustomerEmails = (type, query) => {
-            let emails = state.selected_cc.concat(state.selected_bcc)
+            let emails = state.selected_cc;
+            if(emails !== '' && state.selected_bcc !== ''){
+                emails = emails.concat(state.selected_bcc)
+            }
+
             get('customers', {search: query})
                 .then((response) => {
                     let customers = response.customers.data;
@@ -243,11 +247,11 @@ export default {
                 }
             }else{
                 let conversation = props.ticket.responses[0];
-                state.selected_cc = conversation.cc_info?.cc_email;
-                state.selected_bcc = conversation.cc_info?.bcc_email;
+                if(conversation.cc_info){
+                    state.selected_cc = conversation.cc_info.cc_email;
+                    state.selected_bcc = conversation.cc_info?.bcc_email;
+                }
             }
-
-            console.log(state.selected_bcc, state.selected_cc);
         })
 
         return {
