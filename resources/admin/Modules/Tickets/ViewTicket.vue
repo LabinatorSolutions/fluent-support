@@ -301,7 +301,7 @@
                     :ticket="ticket"
                     @close="show_response_box = ''"
                     :type="show_response_box"
-                    :draft="draftData"
+                    :draft="draft"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
                     <p>{{ translate('ticket_closed') }} {{ ticket.resolved_at }}
@@ -314,11 +314,7 @@
                 </div>
 
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
-
-                    <!--Redesign draft mode-->
-
-                    <article v-for="draft in drafts"
-                             :key="draft.id"
+                    <article v-if =draft
                              class="fs_saved_draft"
                     >
                         <span class="draft_title"> Saved Draft </span>
@@ -333,8 +329,8 @@
                                         </div>
                                     </div>
                                     <div class="fs_thread_body">
-                                            <div v-html="santizeContent(draft.value.content)"
-                                                 class="fs_thread_body"></div>
+                                        <div v-html="santizeContent(draft.value.content)"
+                                             class="fs_thread_body"></div>
                                     </div>
                                     <div>
                                         <el-button size="small" @click="showDraftResponse(draft)">{{translate('Edit')}}</el-button>
@@ -343,9 +339,8 @@
                                 </section>
                             </section>
                         </div>
-
                     </article>
-                    <!--Redesign draft mode-->
+
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
                              class="fs_thread"
@@ -641,7 +636,7 @@ export default {
             close_ticket_silently: "no",
             app_ready: false,
             fetch_other_tickets: false,
-            drafts: {},
+            draft: {},
             draftData: {},
             show_response_draft: false,
         });
@@ -686,10 +681,10 @@ export default {
                 });
         };
 
-        const fetchDrafts = async () => {
-            await get(`tickets/${props.ticket_id}/drafts`)
+        const fetchDraft = async () => {
+            await get(`tickets/${props.ticket_id}/draft`)
                 .then(response => {
-                    state.drafts = response.drafts;
+                    state.draft = response.draft;
                 }).catch(error => {
                     handleError(error);
                 })
@@ -726,7 +721,7 @@ export default {
             each(data.update_data, (data, key) => {
                 state.ticket[key] = data;
             });
-            fetchDrafts();
+            fetchDraft();
             if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
                     router.go(-1);
@@ -999,14 +994,14 @@ export default {
 
         const showDraftResponse = (draft) => {
             state.show_response_box = 'draft';
-            console.log(draft);
-            state.draftData = draft;
+            // console.log(draft);
+            // state.draftData = draft;
         }
 
         const discardDraft = (draftID) => {
             del('tickets/' + draftID + '/draft')
                 .then(response => {
-                    fetchDrafts();
+                    fetchDraft();
                 })
                 .catch((error) => {
                     handleError(error);
@@ -1034,7 +1029,7 @@ export default {
             fetchTicket();
 
             if (appVars.enable_draft_mode === 'yes') {
-                fetchDrafts();
+                fetchDraft();
             }
             doAction('ticket_view_entered', props.ticket_id);
         });
@@ -1068,7 +1063,7 @@ export default {
             syncCustomData,
             addWatchers,
             splitToNewTicket,
-            fetchDrafts,
+            fetchDraft,
             showDraftResponse,
             discardDraft,
             getTicketStatus,

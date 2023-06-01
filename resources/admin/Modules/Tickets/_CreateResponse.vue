@@ -109,37 +109,35 @@ export default {
         });
 
         if(appVars.enable_draft_mode === 'yes') {
-            if (props.type == 'draft') {
+            if (props.draft) {
                 state.response_body = props.draft.value.content;
                 state.draftID = props.draft.id;
                 state.selected_cc = props.draft.value.selected_cc;
                 state.selected_bcc = props.draft.value.selected_bcc;
             }
-                const saveResponseDraft = debounce(() => {
+            const saveResponseDraft = debounce(() => {
+                const data = {
+                    content: state.response_body,
+                    draftID: state.draftID,
+                    selected_cc: state.selected_cc,
+                    selected_bcc: state.selected_bcc,
+                    conversation_type: props.type,
+                };
 
-                    const data = {
-                        content: state.response_body,
-                        draftID: state.draftID,
-                        selected_cc: state.selected_cc,
-                        selected_bcc: state.selected_bcc,
-                        conversation_type: props.type,
-                    };
-
-                    let action = `tickets/${props.ticket.id}/draft`;
+                let action = `tickets/${props.ticket.id}/draft`;
+                if (data.content !== '') {
                     post(action, data)
                         .then((response) => {
-
+                            state.draftID = response.draftID;
                         })
                         .catch((errors) => {
                             handleError(errors);
                         })
-
-                }, 5000)
+                }
+            }, 5000)
 
             watch(() => state.response_body, (newDraft,oldDraft) => {
-                if (newDraft !== '') {
-                    saveResponseDraft();
-                }
+                saveResponseDraft();
             });
         }
 
