@@ -1159,8 +1159,8 @@ class Ticket extends Model
 
         $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
 
-        if($data['draftID']){
-            $this->discardDraft($data['draftID']);
+        if(isset($data['draftID'])){
+            $this->removeDraft($data['draftID']);
         }
 
         return [
@@ -1171,13 +1171,6 @@ class Ticket extends Model
         ];
     }
 
-    /**
-     * This `createResponse` will create a response for a ticket
-     * @param array $data
-     * @param int $ticketId
-     * @return array
-     * @throws Exception
-     */
     public function createDraft($data, $ticketId)
     {
 
@@ -1188,9 +1181,8 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
         $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
 
-
         if($data['draftID']){
-            $this->updateDraft($key,$data['draftID'],$data);
+            return $this->updateDraft($key,$data['draftID'],$data);
         }
 
         $draftID = Meta::insertGetId([
@@ -1208,20 +1200,17 @@ class Ticket extends Model
 
     public function updateDraft($key,$draftID,$data)
     {
-        Meta::where('key', $key)
-            ->where('id',$draftID)
-            ->update(['value' => maybe_serialize($data)]);
-
+        Meta::where('id',$draftID)->update([
+            'value' => maybe_serialize($data)
+        ]);
         return [
             'message' => __('Draft has been updated', 'fluent-support'),
             'draftID' => $draftID
         ];
     }
 
-
     public function fetchDrafts($ticketId)
     {
-
         $agent = Helper::getAgentByUserId(get_current_user_id());
         $this->checkIfValidAgent($agent);
 
@@ -1235,27 +1224,23 @@ class Ticket extends Model
         ])->get();
 
         foreach ($drafts as $draft) {
-            if (isset($drafts)) {
+            if ($draft->value) {
                 $draft->value = maybe_unserialize($draft->value);
             }
         }
+
         return [
-            'draftData' => $drafts
+            'drafts' => $drafts
         ];
     }
 
-    public function discardDraft($draftID)
+    public function removeDraft($draftID)
     {
-        $deleteDraft = Meta::where('id', $draftID)->delete();
-        if(!$deleteDraft){
-            return [
-                'error' => __('Discard draft successfully', 'fluent-support'),
-            ];
-        }
+        Meta::where('id', $draftID)->delete();
+
         return [
             'message' => __('Discard draft successfully', 'fluent-support'),
         ];
-
     }
 
     // This checkIfValidAgent method will check if agent is valid or not
