@@ -163,7 +163,7 @@ class TicketController extends Controller
         $draftID = intval($draftID);
 
         try {
-            return $ticket->discardDrafts($draftID);
+            return $ticket->discardDraft($draftID);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }

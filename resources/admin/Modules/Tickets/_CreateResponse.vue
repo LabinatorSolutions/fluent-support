@@ -67,12 +67,13 @@ export default {
                 '{{agent.last_name}}': 'Agent Last Name',
                 '{{agent.full_name}}': 'Agent Full Name',
                 '{{agent.email}}': 'Agent Email',
-            }
+            },
+            draftID:'',
         });
-
         if(appVars.enable_draft_mode === 'yes') {
             if (props.type == 'draft') {
-                state.response_body = props.draft.content;
+                state.response_body = props.draft.value.content;
+                state.draftID = props.draft.id;
             }
                 const saveResponseDraft = debounce(() => {
 
@@ -81,21 +82,27 @@ export default {
                         conversation_type: props.type,
                     };
 
+                    if(state.draftID){
+                        data.draftID = state.draftID
+                    }
+
                     let action = `tickets/${props.ticket.id}/draft`;
                     post(action, data)
                         .then((response) => {
-
+                            state.draftID = response.draftID;
                         })
                         .catch((errors) => {
                             handleError(errors);
-                        })
+                        });
 
                 }, 5000)
-                watch(saveResponseDraft)
-            }
 
-            watch(state)
-
+            watch(() => state.response_body, (newDraft,oldDraft) => {
+                if(newDraft) {
+                    saveResponseDraft();
+                }
+            });
+        }
 
         const create = (closed = 'no') => {
             const data = {
@@ -105,8 +112,8 @@ export default {
                 attachments: state.attachments
             };
 
-            if(props.type == 'draft'){
-                data.content = props.draft.content
+            if(state.draftID){
+                data.draftID = state.draftID;
             }
 
             let action = `tickets/${props.ticket.id}/responses`;
@@ -125,9 +132,6 @@ export default {
                         position: 'bottom-right',
                         offset: 50,
                     });
-                    if(appVars.enable_draft_mode === 'yes'){
-                        removeData("ticket_no_" + props.ticket.id + "_response_draft");
-                    }
                     state.response_body = '';
                     emit('created', response.response, response);
                     state.attachments = [];

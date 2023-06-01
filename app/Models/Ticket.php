@@ -1159,6 +1159,10 @@ class Ticket extends Model
 
         $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
 
+        if($data['draftID']){
+            $this->discardDraft($data['draftID']);
+        }
+
         return [
             'message' => __('Response has been added', 'fluent-support'),
             'response' => $responseData['response'],
@@ -1176,6 +1180,7 @@ class Ticket extends Model
      */
     public function createDraft($data, $ticketId)
     {
+
         $agent = Helper::getAgentByUserId(get_current_user_id());
         $this->checkIfValidAgent($agent);
 
@@ -1184,38 +1189,11 @@ class Ticket extends Model
         $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
 
 
-        $previousDraft = Meta::where('object_type', '_fs_auto_draft')->where('key', $key)->first();
+        if($data['draftID']){
+            $this->updateDraft($key,$data['draftID'],$data);
+        }
 
-
-//        Meta::updateOrCreate(
-//            ['object_type' => '_fs_auto_draft', 'key' => $key],
-//            ['value'       => maybe_serialize($data)]
-//        );
-//
-//        return [
-//            'message'     => __('Draft has been added', 'fluent-support'),
-//        ];
-////
-//        if($previousDraft){
-//            Meta::where('object_type', '_fs_auto_draft')->where('key',$key)->update([
-//                'value' => maybe_serialize($data)
-//            ]);
-//            return $this->sendSuccess([
-//                'message' => __('Draft has been updated .', 'fluent-support'),
-//            ]);
-//        }else{
-//            Meta::insert([
-//                'object_type' => '_fs_auto_draft',
-//                'key'         => $key,
-//                'value'       => maybe_serialize($data)
-//            ]);
-//
-//            return [
-//                'message'     => __('Draft has been added', 'fluent-support'),
-//            ];
-//        }
-
-        Meta::insert([
+        $draftID = Meta::insertGetId([
             'object_type' => '_fs_auto_draft',
             'key' => $key,
             'value' => maybe_serialize($data)
@@ -1223,8 +1201,21 @@ class Ticket extends Model
 
         return [
             'message' => __('Draft has been added', 'fluent-support'),
+            'draftID' => $draftID
         ];
 
+    }
+
+    public function updateDraft($key,$draftID,$data)
+    {
+        Meta::where('key', $key)
+            ->where('id',$draftID)
+            ->update(['value' => maybe_serialize($data)]);
+
+        return [
+            'message' => __('Draft has been updated', 'fluent-support'),
+            'draftID' => $draftID
+        ];
     }
 
 
@@ -1253,7 +1244,7 @@ class Ticket extends Model
         ];
     }
 
-    public function discardDrafts($draftID)
+    public function discardDraft($draftID)
     {
         $deleteDraft = Meta::where('id', $draftID)->delete();
         if(!$deleteDraft){
