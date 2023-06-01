@@ -149,7 +149,7 @@ class TicketController extends Controller
         }
     }
 
-    public function getDrafts(Request $request,Ticket $ticket, $ticketId)
+    public function getDrafts(Ticket $ticket, $ticketId)
     {
         try {
             return $ticket->fetchDrafts($ticketId);
@@ -158,12 +158,12 @@ class TicketController extends Controller
         }
     }
 
-    public function deleteDraft(Request $request,Ticket $ticket,$draftID)
+    public function deleteDraft(Ticket $ticket,$draftID)
     {
         $draftID = intval($draftID);
 
         try {
-            return $ticket->discardDraft($draftID);
+            return $ticket->removeDraft($draftID);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }

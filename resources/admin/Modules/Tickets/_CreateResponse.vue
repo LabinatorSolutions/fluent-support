@@ -110,12 +110,18 @@ export default {
 
         if(appVars.enable_draft_mode === 'yes') {
             if (props.type == 'draft') {
-                state.response_body = props.draft.content;
+                state.response_body = props.draft.value.content;
+                state.draftID = props.draft.id;
+                state.selected_cc = props.draft.value.selected_cc;
+                state.selected_bcc = props.draft.value.selected_bcc;
             }
                 const saveResponseDraft = debounce(() => {
 
                     const data = {
                         content: state.response_body,
+                        draftID: state.draftID,
+                        selected_cc: state.selected_cc,
+                        selected_bcc: state.selected_bcc,
                         conversation_type: props.type,
                     };
 
@@ -129,11 +135,13 @@ export default {
                         })
 
                 }, 5000)
-                watch(saveResponseDraft)
-            }
 
-            watch(state)
-
+            watch(() => state.response_body, (newDraft,oldDraft) => {
+                if (newDraft !== '') {
+                    saveResponseDraft();
+                }
+            });
+        }
 
         const create = (closed = 'no') => {
             const data = {
@@ -145,8 +153,8 @@ export default {
                 bcc_emails: state.selected_bcc,
             };
 
-            if(props.type == 'draft'){
-                data.content = props.draft.content
+            if(state.draftID){
+                data.draftID = state.draftID;
             }
 
             let action = `tickets/${props.ticket.id}/responses`;
