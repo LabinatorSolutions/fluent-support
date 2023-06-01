@@ -314,32 +314,36 @@
                 </div>
 
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
-                    <article v-if ="draft && !show_response_box"
-                             class="fs_saved_draft"
-                    >
-                        <span class="draft_title"> Saved Draft </span>
-                        <div class="fs_thread_content">
+                    <div v-if="appVars.enable_draft_mode === 'yes'">
+                        <article v-if ="draft && !show_response_box"
+                                 class="fs_saved_draft"
+                        >
+                            <span class="draft_title"> Saved Draft </span>
+                            <div class="fs_thread_content">
                             <span class="fs_draft_header">
                             </span>
-                            <section class="fs_thread_wrap">
-                                <section class="fs_thread_message">
-                                    <div class="fs_thread_head">
-                                        <div class="fs_thread_title">
-                                            <strong>{{translate('You created a draft')}}</strong>
+                                <section class="fs_thread_wrap">
+                                    <section class="fs_thread_message">
+                                        <div class="fs_thread_head">
+                                            <div class="fs_thread_title">
+                                                <strong>{{translate('You created a draft')}}</strong>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="fs_thread_body">
-                                        <div v-html="santizeContent(draft.value.content)"
-                                             class="fs_thread_body"></div>
-                                    </div>
-                                    <div>
-                                        <el-button size="small" @click="showDraftResponse(draft)">{{translate('Edit')}}</el-button>
-                                        <el-button size="small" @click="discardDraft(draft.id)">{{translate('Discard')}}</el-button>
-                                    </div>
+                                        <div class="fs_thread_body">
+                                            <div v-html="santizeContent(draft.value.content)"
+                                                 class="fs_thread_body"></div>
+                                        </div>
+                                        <div>
+                                            <el-button-group>
+                                                <el-button size="small" @click="showDraftResponse(draft)">{{translate('Edit')}}</el-button>
+                                                <el-button size="small" @click="discardDraft(draft.id)">{{translate('Discard')}}</el-button>
+                                            </el-button-group>
+                                        </div>
+                                    </section>
                                 </section>
-                            </section>
-                        </div>
-                    </article>
+                            </div>
+                        </article>
+                    </div>
 
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
@@ -994,8 +998,6 @@ export default {
 
         const showDraftResponse = (draft) => {
             state.show_response_box = 'draft';
-            // console.log(draft);
-            // state.draftData = draft;
         }
 
         const discardDraft = (draftID) => {
@@ -1113,7 +1115,7 @@ i.dashicons.dashicons-randomize {
 
 .fs_saved_draft {
     border-top: 1px solid #e5e9ec;
-    border-left: 4px solid #b6d6bc;
+    border-left: 4px solid #6e5d519e;
 }
 
 .draft_title {
@@ -1121,7 +1123,7 @@ i.dashicons.dashicons-randomize {
     position: relative;
     left: 0;
     top: 0;
-    background: #b6d6bc;
+    background: #6e5d519e;
     color: #fff;
     padding: 5px 10px;
     font-size: 11px;
