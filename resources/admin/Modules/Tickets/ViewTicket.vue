@@ -354,11 +354,11 @@
                                                 <div class="from_info" v-if="conversation.person.person_type != 'customer'">
                                                     <span><strong>From:</strong>{{ ticket.customer?.full_name }}&lt;{{ ticket.customer?.email }}&gt;</span>
                                                 </div>
-                                                <div class="cc_info" v-if="ticket.carbon_copy">
-                                                    <span><strong>Cc:</strong>{{ ticket.carbon_copy }}</span>
+                                                <div class="cc_info" v-if="conversation.cc_info">
+                                                    <span v-if="conversation.cc_info.cc_email"><strong>Cc:</strong>{{ conversation.cc_info.cc_email }}</span>
                                                 </div>
-                                                <div class="bcc_info" v-if="ticket.blind_carbon_copy">
-                                                    <span><strong>Bcc:</strong>{{ ticket.carbon_copy }}</span>
+                                                <div class="bcc_info" v-if="conversation.cc_info">
+                                                    <span v-if="conversation.cc_info.bcc_email"><strong>Bcc:</strong>{{ conversation.cc_info.cc_email }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -629,7 +629,6 @@ export default {
                 state.ticket = response.ticket;
                 setTitle(response.ticket.title);
                 state.conversations = response.responses;
-
                 if (appVars.fluentcrm_config) {
                     state.fluentcrm_profile = response.fluentcrm_profile;
                 }
@@ -966,7 +965,6 @@ export default {
         }
 
         const showDraftResponse = (draft) =>{
-            console.log(draft)
             state.show_response_box = 'draft';
             state.draftData = draft;
         }

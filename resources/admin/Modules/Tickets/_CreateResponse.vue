@@ -1,5 +1,39 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
+        <div class="fs_row">
+            <el-form-item :label="translate('Cc')">
+                <el-select v-model="selected_cc" multiple filterable remote
+                           placeholder="Please enter email"
+                           :remote-method="searchCcCustomerEmails"
+                           :loading="loading"
+                           style="padding-left: 10px"
+                >
+                    <el-option
+                        v-for="item in cc_emails"
+                        :key="item"
+                        :label="item"
+                        :value="item"
+                    />
+                </el-select>
+            </el-form-item>
+        </div>
+        <div class="fs_row">
+            <el-form-item :label="translate('Bcc')">
+                <el-select v-model="selected_bcc" multiple filterable remote
+                           placeholder="Please enter email"
+                           :remote-method="searchBccCustomerEmails"
+                           :loading="loading"
+                           style="padding-left: 5px"
+                >
+                    <el-option
+                        v-for="item in bcc_emails"
+                        :key="item"
+                        :label="item"
+                        :value="item"
+                    />
+                </el-select>
+            </el-form-item>
+        </div>
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
                    :show-saved-replies="true"/>
 
@@ -27,7 +61,7 @@
 
 <script type="text/babel">
 
-import {reactive, toRefs, watch} from "vue";
+import {onMounted, reactive, toRefs, watch} from "vue";
 import {
     useFluentHelper,
     useNotify,
@@ -47,13 +81,16 @@ export default {
     setup(props, {emit}) {
 
         const {
-            post, translate, handleError, saveData,
-            getData, removeData, appVars
+            post, translate, handleError, removeData, appVars, get
         } = useFluentHelper();
         const {notify} = useNotify();
 
         const state = reactive({
             response_body: '',
+            selected_cc: [],
+            selected_bcc: [],
+            cc_emails: [],
+            bcc_emails: [],
             creating: false,
             close_ticket: 'no',
             attachments: [],
@@ -68,12 +105,12 @@ export default {
                 '{{agent.full_name}}': 'Agent Full Name',
                 '{{agent.email}}': 'Agent Email',
             },
-            draftID:'',
+            draftID:''
         });
+
         if(appVars.enable_draft_mode === 'yes') {
             if (props.type == 'draft') {
-                state.response_body = props.draft.value.content;
-                state.draftID = props.draft.id;
+                state.response_body = props.draft.content;
             }
                 const saveResponseDraft = debounce(() => {
 
@@ -82,38 +119,34 @@ export default {
                         conversation_type: props.type,
                     };
 
-                    if(state.draftID){
-                        data.draftID = state.draftID
-                    }
-
                     let action = `tickets/${props.ticket.id}/draft`;
                     post(action, data)
                         .then((response) => {
-                            state.draftID = response.draftID;
+
                         })
                         .catch((errors) => {
                             handleError(errors);
-                        });
+                        })
 
                 }, 5000)
+                watch(saveResponseDraft)
+            }
 
-            watch(() => state.response_body, (newDraft,oldDraft) => {
-                if(newDraft) {
-                    saveResponseDraft();
-                }
-            });
-        }
+            watch(state)
+
 
         const create = (closed = 'no') => {
             const data = {
                 content: state.response_body,
                 conversation_type: props.type,
                 close_ticket: closed,
-                attachments: state.attachments
+                attachments: state.attachments,
+                cc_emails: state.selected_cc,
+                bcc_emails: state.selected_bcc,
             };
 
-            if(state.draftID){
-                data.draftID = state.draftID;
+            if(props.type == 'draft'){
+                data.content = props.draft.content
             }
 
             let action = `tickets/${props.ticket.id}/responses`;
@@ -132,7 +165,12 @@ export default {
                         position: 'bottom-right',
                         offset: 50,
                     });
+                    if(appVars.enable_draft_mode === 'yes'){
+                        removeData("ticket_no_" + props.ticket.id + "_response_draft");
+                    }
                     state.response_body = '';
+                    state.selected_cc = [];
+                    state.selected_bcc = [];
                     emit('created', response.response, response);
                     state.attachments = [];
                 })
@@ -144,9 +182,65 @@ export default {
                 });
         }
 
+        const searchCustomerEmails = (type, query) => {
+            let emails = state.selected_cc.concat(state.selected_bcc)
+            get('customers', {search: query})
+                .then((response) => {
+                    let customers = response.customers.data;
+                    if (type === 'cc') {
+                        customers.forEach((item) => {
+                            if(item.email && !emails.includes(item.email)){
+                                state.cc_emails.push(item.email);
+                            }
+                        });
+                    } else {
+                        customers.forEach((item) => {
+                            if(item.email && !emails.includes(item.email)){
+                                state.bcc_emails.push(item.email);
+                            }
+                        });
+                    }
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+        }
+
+        const searchCcCustomerEmails = (query) => {
+            //Need to call APi to get customer emails except selected and bcc
+            state.cc_emails = [];
+            if (query) {
+                setTimeout(() => {
+                    searchCustomerEmails('cc', query);
+                }, 200)
+            }
+        }
+
+        const searchBccCustomerEmails = (query) => {
+            state.bcc_emails = [];
+            if (query) {
+                setTimeout(() => {
+                    searchCustomerEmails('bcc', query);
+                }, 200)
+            }
+        }
+
+        onMounted(() => {
+            if(props.ticket.responses.length === 0){
+                state.selected_cc = props.ticket.carbon_copy?.split(',') || [];
+                state.selected_bcc = props.ticket.blind_carbon_copy?.split(',') || [];
+            }else{
+                let conversation = props.ticket.responses[0];
+                state.selected_cc = conversation.cc_info?.cc_email;
+                state.selected_bcc = conversation.cc_info?.bcc_email;
+            }
+        })
+
         return {
             ...toRefs(state),
             create,
+            searchCcCustomerEmails,
+            searchBccCustomerEmails,
             translate,
         };
     }
