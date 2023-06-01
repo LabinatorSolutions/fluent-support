@@ -59,6 +59,11 @@ class ResponseService
                 'cc_email'        => $cc_emails,
                 'bcc_email'       => $bcc_emails,
             ], $createdResponse->id);
+
+            $createdResponse->cc_info = [
+                'cc_email'        => $cc_emails,
+                'bcc_email'       => $bcc_emails,
+            ];
         }
 
         $createdResponse->load('person');

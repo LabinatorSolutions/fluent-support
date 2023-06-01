@@ -17,6 +17,6 @@ add_filter('fluent_support/dashboard_notice', function ($messages) {
     return $messages;
 }, 100);
 
-add_filter('fluent_support/mail_to_customer_header', function ($headers, $ticket){
-    return (new \FluentSupport\App\Hooks\Handlers\EmailNotificationHandler())->getMailerHeaderWithCc($headers, $ticket);
+add_filter('fluent_support/mail_to_customer_header', function ($headers, $data){
+    return (new \FluentSupport\App\Hooks\Handlers\EmailNotificationHandler())->getMailerHeaderWithCc($headers, $data);
 }, 10, 2);

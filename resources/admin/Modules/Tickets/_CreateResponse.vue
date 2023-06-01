@@ -235,13 +235,19 @@ export default {
 
         onMounted(() => {
             if(props.ticket.responses.length === 0){
-                state.selected_cc = props.ticket.carbon_copy?.split(',') || [];
-                state.selected_bcc = props.ticket.blind_carbon_copy?.split(',') || [];
+                if(props.ticket.carbon_copy && props.ticket.carbon_copy !== ''){
+                    state.selected_cc = props.ticket.carbon_copy?.split(',') || [];
+                }
+                if(props.ticket.blind_carbon_copy && props.ticket.blind_carbon_copy !== ''){
+                    state.selected_bcc = props.ticket.blind_carbon_copy?.split(',') || [];
+                }
             }else{
                 let conversation = props.ticket.responses[0];
                 state.selected_cc = conversation.cc_info?.cc_email;
                 state.selected_bcc = conversation.cc_info?.bcc_email;
             }
+
+            console.log(state.selected_bcc, state.selected_cc);
         })
 
         return {

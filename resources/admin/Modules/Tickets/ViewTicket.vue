@@ -375,17 +375,14 @@
                                                     translate('added a note')
                                                 }}</span>
                                             <div class="carrier_info" v-if="ticket.source == 'email'">
-                                                <div class="from_info"
-                                                     v-if="conversation.person.person_type != 'customer'">
-                                                    <span><strong>From:</strong>{{
-                                                            ticket.customer?.full_name
-                                                        }}&lt;{{ ticket.customer?.email }}&gt;</span>
+                                                <div class="from_info" v-if="conversation.person.person_type == 'customer'">
+                                                    <span><strong>From: </strong>{{ ticket.customer?.full_name }}&lt;{{ ticket.customer?.email }}&gt;</span>
                                                 </div>
                                                 <div class="cc_info" v-if="conversation.cc_info">
-                                                    <span v-if="conversation.cc_info.cc_email"><strong>Cc:</strong>{{ conversation.cc_info.cc_email }}</span>
+                                                    <span v-if="conversation.cc_info.cc_email"><strong>Cc: </strong>{{ getArrToString(conversation.cc_info.cc_email) }}</span>
                                                 </div>
                                                 <div class="bcc_info" v-if="conversation.cc_info">
-                                                    <span v-if="conversation.cc_info.bcc_email"><strong>Bcc:</strong>{{ conversation.cc_info.cc_email }}</span>
+                                                    <span v-if="conversation.cc_info.bcc_email"><strong>Bcc: </strong>{{ getArrToString(conversation.cc_info.bcc_email) }}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -1016,6 +1013,13 @@ export default {
                 })
         }
 
+        const getArrToString = (arr) => {
+            if (!arr) {
+                return '';
+            }
+            return arr.join(',');
+        }
+
         const getTicketStatus = computed(() => {
             const status = {};
 
@@ -1069,6 +1073,7 @@ export default {
             discardDraft,
             getTicketStatus,
             translate,
+            getArrToString
         }
     }
 }
@@ -1101,11 +1106,14 @@ i.dashicons.dashicons-randomize {
 .carrier_info {
     padding: 5px 0;
     font-size: 12px;
-    color: #8b8d8f;
+    color: #a5b3be;
+    font-weight: 400;
+    line-height: 1.4;
 }
 
-.carrier_info strong {
-    font-size: 13px !important;
+.fs_view_ticket .fs_ticket_body .fs_thread_wrap .fs_thread_title .carrier_info strong {
+    font-size: 13px;
+    color: #6f7b87;
 }
 
 .fs_saved_draft {
