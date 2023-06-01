@@ -37,7 +37,11 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, $ticket, 'ticket_created_email_to_customer');
+            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
+                'object_type' => 'init_customer_cc_info',
+                'object_id'   => $ticket->id,
+                'hook_type'   => 'ticket_created_email_to_customer'
+            ]);
 
             $attachments = [];
 
@@ -128,7 +132,11 @@ class EmailNotificationHandler
 
 
             $headers = $mailbox->getMailerHeader();
-            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, $ticket, 'ticket_replied_by_agent_email_to_customer');
+            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
+                'object_type' => 'cc_info_in_conversation',
+                'object_id'   => $response->id,
+                'hook_type'   => 'ticket_replied_by_agent_email_to_customer'
+            ]);
             $attachments = [];
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
@@ -176,7 +184,11 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
-            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, $ticket, 'ticket_closed_by_agent_email_to_customer');
+            $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
+                'object_type' => 'init_customer_cc_info',
+                'object_id'   => $ticket->id,
+                'hook_type'   => 'ticket_closed_by_agent_email_to_customer'
+            ]);
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
     }
@@ -357,14 +369,17 @@ class EmailNotificationHandler
         return $emogrifier->emogrify();
     }
 
-    public function getMailerHeaderWithCc($headers, $ticket){
-        $ticketId = $ticket->id;
-        $ccInfo = Meta::where('object_type', 'customer_cc_info')->where('object_id', $ticketId)->first();
+    public function getMailerHeaderWithCc($headers, $info){
+        $object_type = $info['object_type'];
+        $object_id = $info['object_id'];
+
+        $ccInfo = Meta::where('object_type', $object_type)->where('object_id', $object_id)->first();
         if($ccInfo){
-            $ccCustomers = maybe_unserialize($ccInfo->value);
-            $ccCustomerEmails = array_column($ccCustomers, 'email');
-            $CcHeaders = implode(',', $ccCustomerEmails);
+            $ccBccEmails = maybe_unserialize($ccInfo->value);
+            $CcHeaders = isset($ccBccEmails['cc_email']) && is_array($ccBccEmails['cc_email']) ? implode(', ', $ccBccEmails['cc_email']) : '';
+            $BccHeaders = isset($ccBccEmails['bcc_email']) && is_array($ccBccEmails['bcc_email']) ? implode(', ', $ccBccEmails['bcc_email']) : '';
             $headers[] = $CcHeaders ? "Cc: $CcHeaders" : '';
+            $headers[] = $BccHeaders ? "Bcc: $BccHeaders" : '';
         }
 
         return $headers;
