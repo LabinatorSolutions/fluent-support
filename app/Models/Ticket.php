@@ -1181,7 +1181,9 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
         $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
 
-        if($data['draftID']){
+        $draft = Meta::where('key',$key)->first();
+
+        if($data['draftID'] || $draft){
             return $this->updateDraft($key,$data['draftID'],$data);
         }
 
@@ -1200,7 +1202,7 @@ class Ticket extends Model
 
     public function updateDraft($key,$draftID,$data)
     {
-        Meta::where('id',$draftID)->update([
+        Meta::where('key',$key)->update([
             'value' => maybe_serialize($data)
         ]);
         return [
@@ -1209,7 +1211,7 @@ class Ticket extends Model
         ];
     }
 
-    public function fetchDrafts($ticketId)
+    public function fetchDraft($ticketId)
     {
         $agent = Helper::getAgentByUserId(get_current_user_id());
         $this->checkIfValidAgent($agent);
@@ -1218,19 +1220,17 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
         $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
 
-        $drafts = Meta::where([
+        $draft = Meta::where([
             'object_type' => '_fs_auto_draft',
             'key' => $key,
-        ])->get();
+        ])->first();
 
-        foreach ($drafts as $draft) {
-            if ($draft->value) {
-                $draft->value = maybe_unserialize($draft->value);
-            }
+        if($draft){
+            $draft->value = maybe_unserialize($draft->value);
         }
 
         return [
-            'drafts' => $drafts
+            'draft' => $draft
         ];
     }
 

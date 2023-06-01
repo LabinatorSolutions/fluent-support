@@ -149,10 +149,10 @@ class TicketController extends Controller
         }
     }
 
-    public function getDrafts(Ticket $ticket, $ticketId)
+    public function getDraft(Ticket $ticket, $ticketId)
     {
         try {
-            return $ticket->fetchDrafts($ticketId);
+            return $ticket->fetchDraft($ticketId);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
