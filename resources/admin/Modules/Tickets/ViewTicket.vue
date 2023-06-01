@@ -314,7 +314,7 @@
                 </div>
 
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
-                    <article v-if =draft
+                    <article v-if ="draft && !show_response_box"
                              class="fs_saved_draft"
                     >
                         <span class="draft_title"> Saved Draft </span>
