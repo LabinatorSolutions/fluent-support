@@ -22,6 +22,7 @@ class EmailNotificationHandler
 
         // Let's send welcome email to customer if enabled
         $emailSettings = (new Settings())->getBoxEmailSettings($mailbox, 'ticket_created_email_to_customer');
+
         if ($emailSettings && $emailSettings['status'] == 'yes') {
             $subject = apply_filters('fluent_support/parse_smartcode_data', $emailSettings['email_subject'], [
                 'customer' => $customer,
@@ -37,8 +38,9 @@ class EmailNotificationHandler
             ]);
 
             $headers = $mailbox->getMailerHeader();
+
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'object_type' => 'init_customer_cc_info',
+                'object_type' => 'beginning_cc_info',
                 'object_id'   => $ticket->id,
                 'hook_type'   => 'ticket_created_email_to_customer'
             ]);
@@ -185,7 +187,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'object_type' => 'init_customer_cc_info',
+                'object_type' => 'beginning_cc_info',
                 'object_id'   => $ticket->id,
                 'hook_type'   => 'ticket_closed_by_agent_email_to_customer'
             ]);

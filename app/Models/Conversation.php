@@ -36,6 +36,11 @@ class Conversation extends Model
                 $model->content_hash = md5($model->content);
             }
         });
+
+        static::deleting(function ($model) {
+            //Delete cc info
+            Meta::where('object_type', 'cc_info_in_conversation')->where('object_id', $model->id)->delete();
+        });
     }
 
     /**
@@ -243,6 +248,7 @@ class Conversation extends Model
         $this->checkUserTaskPermission( $ticket->agent_id, $agent->id, 'delete' );
 
         static::where('id', $response->id)->delete();
+        $response->ccinfo()->delete();
 
         return [
             'message' => __('Selected response has been deleted', 'fluent-support')
@@ -275,6 +281,13 @@ class Conversation extends Model
         ]);
 
         return true;
+    }
+
+    public static function deleteAll($ticketId){
+        $conversations = Conversation::where('ticket_id', $ticketId)->get();
+        foreach ($conversations as $conversation) {
+            $conversation->delete();
+        }
     }
 
     // This function will check agent permission to specific task regarding response response

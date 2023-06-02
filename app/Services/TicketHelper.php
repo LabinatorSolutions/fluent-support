@@ -183,7 +183,7 @@ class TicketHelper
     }
 
     public static function getCarbonCopyCustomerInfo($ticketId){
-        $existing = Meta::where('object_type', 'init_customer_cc_info')->where('object_id', $ticketId)->first();
+        $existing = Meta::where('object_type', 'beginning_cc_info')->where('object_id', $ticketId)->first();
         if($existing){
             return maybe_unserialize($existing->value, []);
         }
