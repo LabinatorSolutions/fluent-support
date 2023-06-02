@@ -64,6 +64,19 @@ class Ticket extends Model
             $model->waiting_since = current_time('mysql');
 
         });
+
+        static::deleting(function ($model) {
+            //Delete the ticket meta
+            Meta::where('object_type', 'ticket_meta')->where('object_id', $model->id)->delete();
+            //Delete all cc info for the ticket
+            Meta::where('object_type', 'customer_cc_info')->where('object_id', $model->id)->delete();
+            //Delete cc info when ticket was created
+            Meta::where('object_type', 'beginning_cc_info')->where('object_id', $model->id)->delete();
+            //Delete draft info
+            Meta::where('object_type', '_fs_auto_draft')->where('object_id', $model->id)->delete();
+            //delete the responses first
+            Conversation::deleteAll($model->id);
+        });
     }
 
     /**
@@ -662,14 +675,8 @@ class Ticket extends Model
          * @param object $ticket
          */
         do_action('fluent_support/deleting_ticket', $this);
-        // delete the responses first
-        Conversation::where('ticket_id', $this->id)->delete();
-        // Delete the ticket meta
-        Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)->delete();
-        // Delete attachments related to this ticket
-        Attachment::where('ticket_id', $this->id)->delete();
         // Delete the ticket
-        Ticket::where('id', $this->id)->delete();
+        $this->delete();
     }
 
     public static function slugify($title)
@@ -805,9 +812,9 @@ class Ticket extends Model
     public function initCarbonCopyCustomer($data, $id)
     {
         Meta::insert([
-            'object_type' => 'init_customer_cc_info',
+            'object_type' => 'beginning_cc_info',
             'object_id'  => $id,
-            'key'         => '_init_customer_cc_info',
+            'key'         => '_beginning_cc_info',
             'value'       => maybe_serialize($data)
         ]);
 
@@ -1383,8 +1390,6 @@ class Ticket extends Model
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
-        //Delete all customer cc info from meta table
-        Meta::where('object_type', 'customer_cc_info')->whereIn('object_id', $ticketIds)->delete();
 
         if (!$hasAllPermission) {
             //Filter ticket by agent_id
