@@ -318,7 +318,7 @@
                         <article v-if ="draft && !show_response_box"
                                  class="fs_saved_draft"
                         >
-                            <span class="draft_title"> Saved Draft </span>
+                            <span class="draft_title"> {{translate('Saved Draft')}} </span>
                             <div class="fs_thread_content">
                             <span class="fs_draft_header">
                             </span>
