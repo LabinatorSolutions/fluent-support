@@ -1196,6 +1196,7 @@ class Ticket extends Model
 
         $draftID = Meta::insertGetId([
             'object_type' => '_fs_auto_draft',
+            'object_id' => $ticketId,
             'key' => $key,
             'value' => maybe_serialize($data)
         ]);
