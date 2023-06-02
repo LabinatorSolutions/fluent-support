@@ -331,6 +331,7 @@ class TransStrings
             'ticket_closed'    => __('This ticket has been closed at', 'fluent-support'),
             'Reopen This ticket'    => __('Reopen This ticket', 'fluent-support'),
             'You created a draft'    => __('You created a draft', 'fluent-support'),
+            'Saved Draft'   => __('Saved Draft', 'fluent-support'),
             'bottom'    => __('bottom'),
             'added a note'    => __('added a note', 'fluent-support'),
             'No' => __('No', 'fluent-support'),

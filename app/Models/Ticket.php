@@ -1188,9 +1188,9 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
         $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
 
-        $draft = Meta::where('key',$key)->first();
+        $previousDraft = Meta::where('key',$key)->first();
 
-        if($data['draftID'] || $draft){
+        if($data['draftID'] || $previousDraft){
             return $this->updateDraft($key,$data['draftID'],$data);
         }
 
