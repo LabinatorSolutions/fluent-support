@@ -136,7 +136,7 @@ export default {
                 }
             }, 5000)
 
-            watch(() => state.response_body, (newDraft,oldDraft) => {
+            watch([() => state.response_body, () => state.cc_emails, () => state.bcc_emails], () => {
                 saveResponseDraft();
             });
         }
@@ -245,7 +245,7 @@ export default {
                 }
             }else{
                 let conversation = props.ticket.responses[0];
-                if(conversation.cc_info){
+                if(conversation.cc_info && state.selected_cc.length === 0){
                     state.selected_cc = conversation.cc_info.cc_email;
                     state.selected_bcc = conversation.cc_info?.bcc_email;
                 }
