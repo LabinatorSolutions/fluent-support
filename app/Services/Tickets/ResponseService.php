@@ -22,6 +22,9 @@ class ResponseService
             return false;
         }
 
+        $cc_emails = Arr::get($data, 'cc_emails', []);
+        $bcc_emails = Arr::get($data, 'bcc_emails', []);
+
         // Adding support for shortcode in agent response
         if ($person->person_type == 'agent') {
             $data['content'] = apply_filters('fluent_support/parse_smartcode_data', $data['content'], [
@@ -50,6 +53,23 @@ class ResponseService
         $response = apply_filters('fluent_support/new_' . $person->person_type . '_' . $convoType, $response, $ticket, $person);
 
         $createdResponse = \FluentSupport\App\Models\Conversation::create($response);
+
+        if(!empty($cc_emails) || !empty($bcc_emails)) {
+            $createdResponse->syncCarbonCopyCustomer([
+                'cc_email'        => $cc_emails,
+                'bcc_email'       => $bcc_emails,
+            ], $createdResponse->id);
+
+            $createdResponse->cc_info = [
+                'cc_email'        => $cc_emails,
+                'bcc_email'       => $bcc_emails,
+            ];
+
+            $ccAndBccEmails = array_merge($cc_emails, $bcc_emails);
+            $ccAndBccEmails = array_unique($ccAndBccEmails);
+            $ticket->syncCarbonCopyCustomer($ccAndBccEmails, $ticket->id);
+        }
+
         $createdResponse->load('person');
 
         if ($attachments = Arr::get($data, 'attachments', [])) {

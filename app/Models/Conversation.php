@@ -36,6 +36,11 @@ class Conversation extends Model
                 $model->content_hash = md5($model->content);
             }
         });
+
+        static::deleting(function ($model) {
+            //Delete cc info
+            Meta::where('object_type', 'cc_info_in_conversation')->where('object_id', $model->id)->delete();
+        });
     }
 
     /**
@@ -121,6 +126,19 @@ class Conversation extends Model
     {
         $class = __NAMESPACE__ . '\Attachment';
         return $this->hasMany($class, 'conversation_id', 'id');
+    }
+
+    /**
+     * One2One: Conversation has cc info
+     * @return Model Collection
+     */
+    public function ccinfo()
+    {
+        $class = __NAMESPACE__ . '\Meta';
+
+        return $this->hasOne(
+            $class, 'object_id', 'id'
+        )->where('object_type', 'cc_info_in_conversation');
     }
 
 
@@ -230,6 +248,7 @@ class Conversation extends Model
         $this->checkUserTaskPermission( $ticket->agent_id, $agent->id, 'delete' );
 
         static::where('id', $response->id)->delete();
+        $response->ccinfo()->delete();
 
         return [
             'message' => __('Selected response has been deleted', 'fluent-support')
@@ -251,6 +270,24 @@ class Conversation extends Model
             'message'  => __('Selected response has been updated', 'fluent-support'),
             'response' => $response
         ];
+    }
+
+    public function syncCarbonCopyCustomer($data, $conversation_id){
+        Meta::insert([
+            'object_type' => 'cc_info_in_conversation',
+            'object_id'  => $conversation_id,
+            'key'         => '_cc_info_in_conversation',
+            'value'       => maybe_serialize($data)
+        ]);
+
+        return true;
+    }
+
+    public static function deleteAll($ticketId){
+        $conversations = Conversation::where('ticket_id', $ticketId)->get();
+        foreach ($conversations as $conversation) {
+            $conversation->delete();
+        }
     }
 
     // This function will check agent permission to specific task regarding response response

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="ticket.live_activity && JSON.stringify(ticket.live_activity).length > 1" class="fs_active_agents">
+    <div v-if="ticket.live_activity && ticket.live_activity.length > 1" class="fs_active_agents">
         <ul>
             <li @click="activityOn()" v-loading="loading" class="fs_active_agent_title">
                 {{ translate('Currently Viewing') }}
