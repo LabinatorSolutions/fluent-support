@@ -64,6 +64,10 @@ class ResponseService
                 'cc_email'        => $cc_emails,
                 'bcc_email'       => $bcc_emails,
             ];
+
+            $ccAndBccEmails = array_merge($cc_emails, $bcc_emails);
+            $ccAndBccEmails = array_unique($ccAndBccEmails);
+            $ticket->syncCarbonCopyCustomer($ccAndBccEmails, $ticket->id);
         }
 
         $createdResponse->load('person');
