@@ -105,7 +105,8 @@ export default {
                 '{{agent.full_name}}': 'Agent Full Name',
                 '{{agent.email}}': 'Agent Email',
             },
-            draftID:''
+            draftID:'',
+            loading: false
         });
 
         if(appVars.enable_draft_mode === 'yes') {
@@ -193,7 +194,7 @@ export default {
             if(emails !== '' && state.selected_bcc !== ''){
                 emails = emails.concat(state.selected_bcc)
             }
-
+            state.loading = true;
             get('customers', {search: query})
                 .then((response) => {
                     let customers = response.customers.data;
@@ -210,6 +211,7 @@ export default {
                             }
                         });
                     }
+                    state.loading = false;
                 })
                 .catch((errors) => {
                     handleError(errors);
