@@ -113,7 +113,7 @@ class ExternalPages
                 die($dieMessage);
             }
 
-            ob_clean();
+            ob_end_clean();
             ob_end_flush();
 
             ini_set('user_agent', 'Fluent Support/' . FLUENT_SUPPORT_VERSION . '; ' . get_bloginfo('url'));

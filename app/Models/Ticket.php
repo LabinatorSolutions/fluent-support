@@ -64,6 +64,19 @@ class Ticket extends Model
             $model->waiting_since = current_time('mysql');
 
         });
+
+        static::deleting(function ($model) {
+            //Delete the ticket meta
+            Meta::where('object_type', 'ticket_meta')->where('object_id', $model->id)->delete();
+            //Delete all cc info for the ticket
+            Meta::where('object_type', 'customer_cc_info')->where('object_id', $model->id)->delete();
+            //Delete cc info when ticket was created
+            Meta::where('object_type', 'beginning_cc_info')->where('object_id', $model->id)->delete();
+            //Delete draft info
+            Meta::where('object_type', '_fs_auto_draft')->where('object_id', $model->id)->delete();
+            //delete the responses first
+            Conversation::deleteAll($model->id);
+        });
     }
 
     /**
@@ -551,7 +564,7 @@ class Ticket extends Model
             if ($filter['operator'] == '=' || $filter['operator'] == '!=') {
                 $operator = $filter['operator'];
                 $query->whereHas($provider, function ($q) use ($operator, $filter) {
-                    $q->where($filter['property'], $operator , $filter['value']);
+                    $q->where($filter['property'], $operator, $filter['value']);
                 });
             }
         }
@@ -568,7 +581,7 @@ class Ticket extends Model
 
         return $this->hasMany(
             $class, 'ticket_id', 'id'
-        )->with('person', 'attachments')
+        )->with('person', 'attachments', 'ccinfo')
             ->latest('id');
     }
 
@@ -662,14 +675,8 @@ class Ticket extends Model
          * @param object $ticket
          */
         do_action('fluent_support/deleting_ticket', $this);
-        // delete the responses first
-        Conversation::where('ticket_id', $this->id)->delete();
-        // Delete the ticket meta
-        Meta::where('object_type', 'ticket_meta')->where('object_id', $this->id)->delete();
-        // Delete attachments related to this ticket
-        Attachment::where('ticket_id', $this->id)->delete();
         // Delete the ticket
-        Ticket::where('id', $this->id)->delete();
+        $this->delete();
     }
 
     public static function slugify($title)
@@ -783,9 +790,9 @@ class Ticket extends Model
             } else {
                 Meta::insert([
                     'object_type' => 'ticket_meta',
-                    'object_id'   => $this->id,
-                    'key'         => $dataKey,
-                    'value'       => $validDatum
+                    'object_id' => $this->id,
+                    'key' => $dataKey,
+                    'value' => $validDatum
                 ]);
             }
         }
@@ -802,19 +809,33 @@ class Ticket extends Model
         return true;
     }
 
-    public function syncCarbonCopyCustomer($data, $id){
+    public function initCarbonCopyCustomer($data, $id)
+    {
+        Meta::insert([
+            'object_type' => 'beginning_cc_info',
+            'object_id'  => $id,
+            'key'         => '_beginning_cc_info',
+            'value'       => maybe_serialize($data)
+        ]);
+
+        return true;
+    }
+
+    public function syncCarbonCopyCustomer($data, $id)
+    {
         $existing = Meta::where('object_type', 'customer_cc_info')->where('object_id', $id)->first();
-        if($existing){
+        if ($existing) {
             $existingCustomer = maybe_unserialize($existing->value);
             $newData = array_merge($existingCustomer, $data);
-            $existing->value = maybe_serialize($newData);
+            $ccEmails = array_unique($newData);
+            $existing->value = maybe_serialize($ccEmails);
             $existing->save();
-        }else{
+        } else {
             Meta::insert([
                 'object_type' => 'customer_cc_info',
-                'object_id'  => $id,
-                'key'         => '_customer_cc_info',
-                'value'       => maybe_serialize($data)
+                'object_id' => $id,
+                'key' => '_customer_cc_info',
+                'value' => maybe_serialize($data)
             ]);
         }
 
@@ -1089,6 +1110,9 @@ class Ticket extends Model
     {
         foreach ($responses as $response) {
             $response->content = links_add_target(make_clickable(wpautop($response->content, false)));
+            if(!empty($response->ccinfo)){
+                $response->cc_info = maybe_unserialize($response->ccinfo->value);
+            }
         }
 
         $ticket->content = links_add_target(make_clickable(wpautop($ticket->content, false)));
@@ -1096,16 +1120,18 @@ class Ticket extends Model
         //Get last activity by agent
         $ticket->live_activity = TicketHelper::getActivity($ticket->id, $agent->id);
         //Get all carbon copy customer
-        $ticket->carbon_copy = TicketHelper::getCarbonCopyCustomerInfo($ticket->id);
+        $ccInfo = TicketHelper::getCarbonCopyCustomerInfo($ticket->id);
+        $ticket->carbon_copy = isset($ccInfo['cc_email']) && is_array($ccInfo['cc_email']) ? implode(', ', $ccInfo['cc_email']) : '';
+        $ticket->blind_carbon_copy = isset($ccInfo['bcc_email']) && is_array($ccInfo['bcc_email']) ? implode(', ', $ccInfo['bcc_email']) : '';
 
         if (defined('FLUENTSUPPORTPRO')) {
             $ticket->custom_fields = $ticket->customData('admin', true);
         }
 
         $data = [
-            'ticket'    => $ticket,
+            'ticket' => $ticket,
             'responses' => $responses,
-            'agent_id'  => $agent->id
+            'agent_id' => $agent->id
         ];
 
         if (defined('FLUENTSUPPORTPRO') && $ticket->watchers) {
@@ -1140,11 +1166,88 @@ class Ticket extends Model
 
         $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
 
+        if(isset($data['draftID'])){
+            $this->removeDraft($data['draftID']);
+        }
+
         return [
-            'message'     => __('Response has been added', 'fluent-support'),
-            'response'    => $responseData['response'],
-            'ticket'      => $responseData['ticket'],
+            'message' => __('Response has been added', 'fluent-support'),
+            'response' => $responseData['response'],
+            'ticket' => $responseData['ticket'],
             'update_data' => $responseData['update_data']
+        ];
+    }
+
+    public function createDraft($data, $ticketId)
+    {
+
+        $agent = Helper::getAgentByUserId(get_current_user_id());
+        $this->checkIfValidAgent($agent);
+
+        $ticket = static::findOrFail($ticketId);
+        $this->checkAgentPermission($ticket);
+        $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
+
+        $previousDraft = Meta::where('key',$key)->first();
+
+        if($data['draftID'] || $previousDraft){
+            return $this->updateDraft($key,$data['draftID'],$data);
+        }
+
+        $draftID = Meta::insertGetId([
+            'object_type' => '_fs_auto_draft',
+            'object_id' => $ticketId,
+            'key' => $key,
+            'value' => maybe_serialize($data)
+        ]);
+
+        return [
+            'message' => __('Draft has been added', 'fluent-support'),
+            'draftID' => $draftID
+        ];
+
+    }
+
+    public function updateDraft($key,$draftID,$data)
+    {
+        Meta::where('key',$key)->update([
+            'value' => maybe_serialize($data)
+        ]);
+        return [
+            'message' => __('Draft has been updated', 'fluent-support'),
+            'draftID' => $draftID
+        ];
+    }
+
+    public function fetchDraft($ticketId)
+    {
+        $agent = Helper::getAgentByUserId(get_current_user_id());
+        $this->checkIfValidAgent($agent);
+
+        $ticket = static::findOrFail($ticketId);
+        $this->checkAgentPermission($ticket);
+        $key = 'ticket_no_' . $ticketId . '_agent_id_' . $agent->id . '_response_draft';
+
+        $draft = Meta::where([
+            'object_type' => '_fs_auto_draft',
+            'key' => $key,
+        ])->first();
+
+        if($draft){
+            $draft->value = maybe_unserialize($draft->value);
+        }
+
+        return [
+            'draft' => $draft
+        ];
+    }
+
+    public function removeDraft($draftID)
+    {
+        Meta::where('id', $draftID)->delete();
+
+        return [
+            'message' => __('Discard draft successfully', 'fluent-support'),
         ];
     }
 
@@ -1173,7 +1276,7 @@ class Ticket extends Model
 
         return [
             'message' => __('Ticket has been closed', 'fluent_support'),
-            'ticket'  => (new TicketService())->close($ticket, $agent, '', $closeSilently)
+            'ticket' => (new TicketService())->close($ticket, $agent, '', $closeSilently)
         ];
     }
 
@@ -1193,7 +1296,7 @@ class Ticket extends Model
 
         return [
             'message' => __('Ticket has been opened again', 'fluent_support'),
-            'ticket'  => (new TicketService())->reopen($ticket, $agent)
+            'ticket' => (new TicketService())->reopen($ticket, $agent)
         ];
     }
 
@@ -1246,7 +1349,7 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
 
         return [
-            'message'     => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
+            'message' => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
             'update_data' => $this->handlePropertyUpdate($propName, $propValue, $ticket, $assigner)
         ];
     }
@@ -1288,8 +1391,6 @@ class Ticket extends Model
         $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
         $agent = Helper::getAgentByUserId();
         $query = Ticket::whereIn('id', $ticketIds);
-        //Delete all customer cc info from meta table
-        Meta::where('object_type', 'customer_cc_info')->whereIn('object_id', $ticketIds)->delete();
 
         if (!$hasAllPermission) {
             //Filter ticket by agent_id
@@ -1432,9 +1533,9 @@ class Ticket extends Model
     public static function getTicketsQuery()
     {
         return self::with([
-            'customer'         => function ($query) {
+            'customer' => function ($query) {
                 $query->select(['first_name', 'last_name', 'email', 'id', 'avatar']);
-            }, 'agent'         => function ($query) {
+            }, 'agent' => function ($query) {
                 $query->select(['first_name', 'last_name', 'id']);
             },
             'product',

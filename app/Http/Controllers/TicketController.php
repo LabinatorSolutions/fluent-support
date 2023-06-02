@@ -130,6 +130,47 @@ class TicketController extends Controller
     }
 
     /**
+     * createDraft method will create draft by agent for the ticket
+     * @param Request $request
+     * @param Ticket $ticket
+     * @param int $ticketId
+     * @return array
+     * @throws \FluentSupport\Framework\Validator\ValidationException
+     */
+    public function createDraft(TicketResponseRequest $request, Ticket $ticket, $ticketId)
+    {
+
+        $data = $request->sanitize();
+
+        try {
+            return $ticket->createDraft($data, $ticketId);
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+        }
+    }
+
+    public function getDraft(Ticket $ticket, $ticketId)
+    {
+        try {
+            return $ticket->fetchDraft($ticketId);
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+        }
+    }
+
+    public function deleteDraft(Ticket $ticket,$draftID)
+    {
+        $draftID = intval($draftID);
+
+        try {
+            return $ticket->removeDraft($draftID);
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+        }
+
+    }
+
+    /**
      * getTicketWidgets method generate additional information for a ticket by  customer
      * @param Ticket $ticket
      * @param $ticketId
