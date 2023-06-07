@@ -30,7 +30,7 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->get('/{ticket_id}/widgets', 'TicketController@getTicketWidgets')->int('ticket_id');
     $router->post('/{ticket_id}/responses', 'TicketController@createResponse')->int('ticket_id');
 
-    $router->post('/{ticket_id}/draft', 'TicketController@createDraft')->int('ticket_id');
+    $router->post('/{ticket_id}/draft', 'TicketController@createOrUpdatDraft')->int('ticket_id');
     $router->get('/{ticket_id}/draft', 'TicketController@getDraft')->int('ticket_id');
     $router->delete('/{draft_id}/draft', 'TicketController@deleteDraft')->int('draft_id');
 

@@ -302,6 +302,7 @@
                     @close="show_response_box = ''"
                     :type="show_response_box"
                     :draft="draft"
+                    @discardDraft="discardDraft"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
                     <p>{{ translate('ticket_closed') }} {{ ticket.resolved_at }}
@@ -314,6 +315,7 @@
                 </div>
 
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
+
                     <div v-if="appVars.enable_draft_mode === 'yes'">
                         <article v-if ="draft && !show_response_box"
                                  class="fs_saved_draft"
@@ -725,7 +727,6 @@ export default {
             each(data.update_data, (data, key) => {
                 state.ticket[key] = data;
             });
-            fetchDraft();
             if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
                     router.go(-1);
@@ -1003,7 +1004,7 @@ export default {
         const discardDraft = (draftID) => {
             del('tickets/' + draftID + '/draft')
                 .then(response => {
-                    fetchDraft();
+                    state.draft = null;
                 })
                 .catch((error) => {
                     handleError(error);
