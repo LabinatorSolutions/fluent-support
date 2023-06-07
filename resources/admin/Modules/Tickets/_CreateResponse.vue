@@ -107,6 +107,7 @@ export default {
             },
             draftID:''
         });
+        let isCreatingResponse = false;
 
         if(appVars.enable_draft_mode === 'yes') {
             if (props.draft) {
@@ -115,7 +116,7 @@ export default {
                 state.selected_cc = props.draft.value.selected_cc;
                 state.selected_bcc = props.draft.value.selected_bcc;
             }
-            const saveResponseDraft = debounce(() => {
+             const saveResponseDraft = debounce(() => {
                 const data = {
                     content: state.response_body,
                     draftID: state.draftID,
@@ -124,24 +125,34 @@ export default {
                     conversation_type: props.type,
                 };
 
-                let action = `tickets/${props.ticket.id}/draft`;
-                if (data.content !== '') {
-                    post(action, data)
-                        .then((response) => {
-                            state.draftID = response.draftID;
-                        })
-                        .catch((errors) => {
-                            handleError(errors);
-                        })
-                }
+                 if(state.response_body !== '' && isCreatingResponse === false ) {
+                     let action = `tickets/${props.ticket.id}/draft`;
+
+                     post(action, data)
+                         .then((response) => {
+                             state.draftID = response.draftID;
+                         })
+                         .catch((errors) => {
+                             handleError(errors);
+                         })
+                 }
             }, 5000)
 
             watch([() => state.response_body, () => state.cc_emails, () => state.bcc_emails], () => {
+                 if(state.response_body === '' && state.draftID ) {
+                    removeDraft();
+                }
                 saveResponseDraft();
             });
         }
 
+        const removeDraft = () => {
+            emit('discardDraft', state.draftID);
+            state.draftID = '';
+        }
+
         const create = (closed = 'no') => {
+            isCreatingResponse = true;
             const data = {
                 content: state.response_body,
                 conversation_type: props.type,
@@ -151,17 +162,12 @@ export default {
                 bcc_emails: state.selected_bcc,
             };
 
-            if(state.draftID){
-                data.draftID = state.draftID;
-            }
-
             let action = `tickets/${props.ticket.id}/responses`;
             if (Array.isArray(props.ticket)) {
                 data.ticket_ids = props.ticket;
                 data.bulk_action = 'reply_tickets';
                 action = 'tickets/bulk-reply';
             }
-
             state.creating = true;
             post(action, data)
                 .then(response => {
@@ -171,8 +177,9 @@ export default {
                         position: 'bottom-right',
                         offset: 50,
                     });
-                    if(appVars.enable_draft_mode === 'yes'){
-                        removeData("ticket_no_" + props.ticket.id + "_response_draft");
+                    isCreatingResponse = false;
+                    if(state.draftID){
+                        removeDraft();
                     }
                     state.response_body = '';
                     state.selected_cc = [];
