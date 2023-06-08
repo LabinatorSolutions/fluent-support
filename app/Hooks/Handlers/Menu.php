@@ -132,8 +132,6 @@ class Menu
                 'label'     => __('Reports', 'fluent-support'),
                 'permalink' => $baseUrl . 'reports'
             ],
-
-
         ];
 
         $hasSensitiveAccess = PermissionManager::currentUserCan('fst_sensitive_data');

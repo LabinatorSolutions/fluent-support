@@ -1166,9 +1166,9 @@ class Ticket extends Model
 
         $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
 
-        if(isset($data['draftID'])){
-            $this->removeDraft($data['draftID']);
-        }
+//        if(isset($data['draftID'])){
+//            $this->removeDraft($data['draftID']);
+//        }
 
         return [
             'message' => __('Response has been added', 'fluent-support'),
@@ -1178,9 +1178,8 @@ class Ticket extends Model
         ];
     }
 
-    public function createDraft($data, $ticketId)
+    public function addOrUpdatDraft($data, $ticketId)
     {
-
         $agent = Helper::getAgentByUserId(get_current_user_id());
         $this->checkIfValidAgent($agent);
 

@@ -137,13 +137,13 @@ class TicketController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createDraft(TicketResponseRequest $request, Ticket $ticket, $ticketId)
+    public function createOrUpdatDraft(TicketResponseRequest $request, Ticket $ticket, $ticketId)
     {
 
         $data = $request->sanitize();
 
         try {
-            return $ticket->createDraft($data, $ticketId);
+            return $ticket->addOrUpdatDraft($data, $ticketId);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
