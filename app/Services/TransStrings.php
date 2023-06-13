@@ -644,6 +644,8 @@ class TransStrings
             'API Key'   => __('API Key', 'fluent-support'),
             'Import'    => __('Import', 'fluent-support'),
             'Email Address' => __('Email Address', 'fluent-support'),
+            'default_box_set_warning'    => __('Are you sure you want to set this as default?', 'fluent-support'),
+            'Set as Default'    => __('Set as Default', 'fluent-support'),
         ];
     }
 }
