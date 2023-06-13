@@ -44,6 +44,12 @@ class MailBoxService
         $box = MailBox::findOrFail($mailBoxId);
         $fallbackBox = MailBox::findOrFail($fallbackId);
 
+        // if the mailbox is default, then make the fallback mailbox default
+        if($box->is_default == 'yes'){
+            $fallbackBox->is_default = 'yes';
+            $fallbackBox->save();
+        }
+
         /*
          * Action before delete a mailbox
          *
