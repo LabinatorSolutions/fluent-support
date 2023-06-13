@@ -124,6 +124,28 @@ class MailBoxService
     }
 
     /**
+     * This `setAsDefault` method will set a business box as default. Update is_default column to yes for the selected mailbox and no for others.
+     * @param int $mailBoxId
+     * @return array
+     */
+    public function setAsDefault ($mailBoxId )
+    {
+        $box = MailBox::findOrFail($mailBoxId);
+
+        $box->is_default = 'yes';
+        $box->save();
+
+        MailBox::where('id', '!=', $mailBoxId)
+            ->update([
+                'is_default' => 'no'
+            ]);
+
+        return [
+            'message' => __('Selected Business has been set as default', 'fluent-support')
+        ];
+    }
+
+    /**
      * This `getEmailSetups` method is used to get the email setups
      * @param int $boxId
      * @return array
