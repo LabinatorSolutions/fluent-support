@@ -28,7 +28,7 @@ class CustomerPortalController extends Controller
      */
     public function getTickets(Request $request, CustomerPortalService $customerPortalService)
     {
-        $onBehalf = $request->getSafe('on_behalf', 'intval');
+        $onBehalf = $request->getSafe('on_behalf');
         $userIP = $request->getIp();
 
         try {
@@ -70,7 +70,7 @@ class CustomerPortalController extends Controller
         $data['title'] = sanitize_text_field($data['title']);
         $data['content'] = wp_kses_post($data['content']);
 
-        $onBehalf = $request->getSafe('on_behalf', 'intval');
+        $onBehalf = $request->getSafe('on_behalf');
         $userIP = $request->getIp();
 
         try {
@@ -117,7 +117,7 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
+            'on_behalf'            => $request->getSafe('on_behalf'),
             'user_ip'              => $request->getIp()
         ];
 
@@ -142,7 +142,7 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
+            'on_behalf'            => $request->getSafe('on_behalf'),
             'user_ip'              => $request->getIp()
         ];
 
@@ -178,7 +178,7 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
+            'on_behalf'            => $request->getSafe('on_behalf'),
             'user_ip'              => $request->getIp()
         ];
         try {
@@ -201,7 +201,7 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf', 'intval'),
+            'on_behalf'            => $request->getSafe('on_behalf'),
             'user_ip'              => $request->getIp()
         ];
         try {
