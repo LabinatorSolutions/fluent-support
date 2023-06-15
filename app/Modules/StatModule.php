@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Modules;
 
+use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Product;
@@ -243,6 +244,31 @@ class StatModule
             })->count();
 
         return $awatingTicketCount;
+    }
+
+    /**
+     * This method will return a summary of today's stats of all agent
+     * @return array
+     */
+    public static function getAgentTodayStats()
+    {
+        $stats = [];
+        Agent::select(['id', 'first_name'])->get()->each(function ($agent) use (&$stats) {
+            $stats[] = [
+                'agent_name' => $agent->first_name,
+                'stats' => array_merge(
+                   [
+                       'waiting_today' => [
+                           'title' => __('Waiting Today', 'fluent-support'),
+                           'count' => static::countAwaitingTickets('agent_id', $agent->id)
+                       ]
+                   ],
+                    static::getTodayStats($agent->id)
+                )
+            ];
+        });
+
+        return $stats;
     }
 
 }
