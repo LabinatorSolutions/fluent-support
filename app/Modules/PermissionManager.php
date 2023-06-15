@@ -33,7 +33,8 @@ class PermissionManager
             'fst_manage_saved_replies',
             'fst_view_activity_logs',
             'fst_merge_tickets',
-            'fst_split_ticket'
+            'fst_split_ticket',
+            'fst_agent_today_performance'
         ];
     }
 
@@ -231,7 +232,8 @@ class PermissionManager
                 'title'       => __('Reporting', 'fluent-support'),
                 'permissions' => [
                     'fst_view_all_reports'   => __('View All Reports', 'fluent-support'),
-                    'fst_view_activity_logs' => __('View Activity Logs', 'fluent-support')
+                    'fst_view_activity_logs' => __('View Activity Logs', 'fluent-support'),
+                    'fst_agent_today_performance' => __('View Agent Today Performance', 'fluent-support'),
                 ]
             ]
         ];

@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-
+<!--        @todo: We have to refactor this code, have to make this draggable code shorter -->
         <div class="dashboard fs_box_wrapper" v-if="!loading">
             <div v-html="dashboard_notice"></div>
             <el-row :gutter="20">
@@ -204,6 +204,7 @@ import TicketStatistics from "./TicketStatistics.vue";
 import SuggestedTicket from "./SuggestedTicket.vue";
 import MentionedTicket from "./MentionedTicket.vue";
 import TicketsByProduct from "./TicketsByProduct";
+import AgentPerformance from './AgentPerformance.vue';
 import { computed, watch, onMounted, reactive, toRefs } from "vue";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 import {useRouter} from "vue-router";
@@ -216,6 +217,7 @@ export default {
         SuggestedTicket,
         MentionedTicket,
         TicketsByProduct,
+        AgentPerformance
     },
 
     setup() {
@@ -246,6 +248,7 @@ export default {
                     overall_stats: {},
                 },
                 TicketsByProduct: {},
+                AgentPerformance: {},
             },
             dashboard_param: {},
             dashboard_settings_data: {
@@ -280,6 +283,13 @@ export default {
                         heading: translate("active_tickets_by_products"),
                         active_names: "ticketsByProduct",
                     },
+                    {
+                        id: 5,
+                        component: 'AgentPerformance',
+                        show: true,
+                        heading: translate('Agent Performance'),
+                        active_names: 'agentPerformance',
+                    }
                 ],
                 greetingMessage: true,
             },
@@ -291,6 +301,7 @@ export default {
                 ticketStatistics: ["ticketStatistics"],
                 suggestedTicket: ["suggestedTicket"],
                 ticketsByProduct: ["ticketsByProduct"],
+                agentPerformance: ["agentPerformance"],
             },
         });
 
@@ -382,14 +393,19 @@ export default {
 
         function fetchStat() {
             state.loading = true;
+            let withData = [
+                "suggested_tickets",
+                "overall_stats",
+                "individual_stat",
+                "ticket_to_watch",
+                "tickets_by_products",
+            ];
+            if (appVars.me.permissions.includes("fst_agent_today_performance")) {
+                withData.push("agent_today_stats");
+            }
+
             get("tickets/my_stats", {
-                with: [
-                    "suggested_tickets",
-                    "overall_stats",
-                    "individual_stat",
-                    "ticket_to_watch",
-                    "tickets_by_products",
-                ],
+                with: withData,
             })
                 .then((response) => {
                     state.dashboard_notice = response.dashboard_notice;
@@ -403,6 +419,7 @@ export default {
                         response.individual_stat;
                     state.total_data.TicketsByProduct =
                         response.tickets_by_product;
+                    state.total_data.AgentPerformance = response.agent_today_stats;
 
                     state.app_ready = true;
                 })
