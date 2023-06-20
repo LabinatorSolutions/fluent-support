@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Services\Tickets;
 
+use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\App\Services\TicketQueryService;
@@ -173,5 +174,32 @@ class TicketService
         do_action_ref_array('fluent_support/tickets_query_by_permission_ref', [&$ticketsModel, false]);
 
         return $ticketsModel->paginate();
+    }
+    /**
+     * This `addTicketAttachments` method is responsible for adding attachments to ticket
+     * @param array $data
+     * @param array $disabledFields
+     * @param object $ticket
+     * @param object $customer
+     * @return \FluentSupport\App\Models\Ticket
+     * @since 1.5.7
+     */
+    public static function addTicketAttachments($data, $disabledFields, $ticket, $customer)
+    {
+        if (($attachments = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
+
+            Attachment::whereNull('ticket_id')
+                ->whereIn('file_hash', $attachments)
+                ->whereNull('ticket_id')
+                ->update([
+                    'ticket_id' => $ticket->id,
+                    'person_id' => $customer->id,
+                    'status'    => 'active'
+                ]);
+
+            $ticket->load('attachments');
+        }
+
+        return $ticket;
     }
 }

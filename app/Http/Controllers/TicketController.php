@@ -70,6 +70,11 @@ class TicketController extends Controller
         $data = $request->sanitize();
 
         $ticketData = $data['ticket'];
+
+        if(!empty($data['attachments'])){
+            $ticketData['attachments'] = $data['attachments'];
+        }
+
         $maybeNewCustomer = $data['newCustomer'];
 
         $createdTicket = $ticket->createTicket($ticketData, $maybeNewCustomer);
