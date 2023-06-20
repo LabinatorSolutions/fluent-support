@@ -114,6 +114,8 @@
                     <error :error="errors.get('content')"/>
                 </el-form-item>
 
+                <attachment-form :ticket="ticket" :attachments="attachments" :errors="errors"></attachment-form>
+
                 <el-row :gutter="30">
                     <el-col v-if="products.length" :md="12" :xs="24">
                         <el-form-item :label="translate('Related Product/Service')">
@@ -160,10 +162,12 @@ import CustomFieldForm from './parts/_CustomFieldForm';
 import {nextTick, reactive, toRefs} from "vue";
 import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 import {useRouter} from 'vue-router'
+import AttachmentForm from "@/admin/Modules/Tickets/_AttachmentForm.vue";
 
 export default {
     name: 'CreateTicketForm',
     components: {
+        AttachmentForm,
         WpEditor,
         RemoteSelector,
         Error,
@@ -211,7 +215,8 @@ export default {
                 data: []
             },
             searching: false,
-            searched: false
+            searched: false,
+            attachments: []
         });
 
         const create = () => {
@@ -220,6 +225,7 @@ export default {
             post('tickets', {
                 ticket: state.ticket,
                 newCustomer: state.new_customer,
+                attachments: state.attachments
             })
                 .then((response) => {
                     notify({
