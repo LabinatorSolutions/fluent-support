@@ -131,6 +131,7 @@ export default {
         min-width: unset;
         height: calc(100% - 30%);
         margin: 14% auto;
+        width: 360px;
     }
 }
 </style>
