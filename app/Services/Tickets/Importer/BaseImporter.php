@@ -23,13 +23,38 @@ abstract class BaseImporter
         $this->mailbox = Helper::getDefaultMailBox();
         $this->limit = apply_filters('fluent_support/ticket_import_chunk_limit', 50);
     }
-
+    /**
+     * This method `stats` returns an array of ticket stats of targeted helpdesk system
+     *
+     * @return array
+     */
     abstract public function stats();
 
+    /**
+     * This method `doMigration` is responsible for migrating tickets from targeted helpdesk system
+     * and it returns an array with migration response
+     *
+     * @param int $page
+     * @param string $handler
+     * @return array
+     */
     abstract public function doMigration($page, $handler);
 
+    /**
+     * This method `deleteTickets` delete tickets and related data from targeted helpdesk once the
+     * migration process done succesfully
+     *
+     * @param int $page // this will be migrated ticket page number
+     * @return array
+     */
     abstract public function deleteTickets($page);
 
+    /**
+     * This method `migrateTickets` migrate tickets on Fluent Support with the help of `migrateTicket` method
+     *
+     * @param array $tickets // array of tickets with all required data
+     * @return array
+     */
     public function migrateTickets($tickets)
     {
         $insertIds = [];
@@ -49,6 +74,12 @@ abstract class BaseImporter
         ];
     }
 
+    /**
+     * This method `migrateTicket` is responsible for migrating a single ticket in Fluent Support
+     *
+     * @param array $ticketData
+     * @return \FluentSupport\App\Models\Ticket $createdTicket
+     */
     public function migrateTicket($ticketData)
     {
         if ($this->isMigrated($ticketData['origin_id'])) {
