@@ -373,13 +373,15 @@ export default {
         const getSummaries = (param) => {
             const { columns } = param;
             const sums = [];
+
             columns.forEach((column, index) => {
                 if (index === 0) {
                     sums[index] = translate("Total Summaries");
                     return;
                 }
-                sums[index] = totals[column.property];
+                sums[index] = totals.value[column.property];
             });
+
             return sums;
         };
 
