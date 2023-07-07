@@ -4,7 +4,9 @@
             <el-form-item :label="translate('Cc')" v-if="selected_cc.length || show_cc_option">
                 <el-select v-model="selected_cc" multiple filterable remote
                            placeholder="Please enter email"
-                           :remote-method="searchCcCustomerEmails"
+                           allow-create
+                           default-first-option
+                           :reserve-keyword="false"
                            @change="handleCcChange"
                            :loading="loading"
                            style="padding-left: 10px"
@@ -192,36 +194,6 @@ export default {
             }
         }
 
-        const searchCustomerEmails = (type, query) => {
-            let emails = state.selected_cc;
-            state.loading = true;
-            get('customers', {search: query})
-                .then((response) => {
-                    let customers = response.customers.data;
-                    if (type === 'cc') {
-                        customers.forEach((item) => {
-                            if(item.email && !emails.includes(item.email)){
-                                state.cc_emails.push(item.email);
-                            }
-                        });
-                    }
-                    state.loading = false;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-        }
-
-        const searchCcCustomerEmails = (query) => {
-            //Need to call APi to get customer emails except selected and bcc
-            state.cc_emails = [];
-            if (query) {
-                setTimeout(() => {
-                    searchCustomerEmails('cc', query);
-                }, 200)
-            }
-        }
-
         onMounted(() => {
             if(props.ticket.responses.length === 0){
                 if(props.ticket.carbon_copy && props.ticket.carbon_copy !== ''){
@@ -238,7 +210,6 @@ export default {
         return {
             ...toRefs(state),
             create,
-            searchCcCustomerEmails,
             translate,
             toggleCcOption,
         };

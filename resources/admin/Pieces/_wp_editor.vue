@@ -2,7 +2,7 @@
     <div class="wp_vue_editor_wrapper">
         <div class="fs_shortcode_saved_replies">
             <div class="fs_cc_email_toggle_button" v-if="showCcToggleButton">
-                <el-button size="small" color="#626aef" v-if="!add_cc" @click="handleCc('show')">
+                <el-button size="small" type="primary" v-if="!add_cc" @click="handleCc('show')">
                     <span>{{ $t('Add Cc') }}</span>
                 </el-button>
                 <el-button size="small" type="danger" v-else @click="handleCc('hide')">
