@@ -377,10 +377,10 @@
                                                 }}</span>
                                             <div class="carrier_info" v-if="ticket.source == 'email'">
                                                 <div class="from_info" v-if="conversation.person.person_type == 'customer'">
-                                                    <span><strong>From: </strong>{{ ticket.customer?.full_name }}&lt;{{ ticket.customer?.email }}&gt;</span>
+                                                    <span><strong>From: </strong>{{ conversation.person?.full_name }}&lt;{{ conversation.person?.email }}&gt;</span>
                                                 </div>
-                                                <div class="cc_info" v-if="conversation.cc_info">
-                                                    <span v-if="conversation.cc_info.cc_email"><strong>Cc: </strong>{{ getArrToString(conversation.cc_info.cc_email) }}</span>
+                                                <div class="cc_info" v-if="conversation.cc_info.length">
+                                                    <span><strong>Cc: </strong>{{ getArrToString(conversation.cc_info) }}</span>
                                                 </div>
                                             </div>
                                         </div>

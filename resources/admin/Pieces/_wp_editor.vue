@@ -1,6 +1,14 @@
 <template>
     <div class="wp_vue_editor_wrapper">
         <div class="fs_shortcode_saved_replies">
+            <div class="fs_cc_email_toggle_button" v-if="showCcToggleButton">
+                <el-button size="small" color="#626aef" v-if="!add_cc" @click="handleCc('show')">
+                    <span>{{ $t('Add Cc') }}</span>
+                </el-button>
+                <el-button size="small" type="danger" v-else @click="handleCc('hide')">
+                    <span>{{ $t('Discard Cc') }}</span>
+                </el-button>
+            </div>
             <div class="fc_shortcode_box" v-if="showShortcodes" style="padding: 5px;">
                 <el-dropdown type="primary" trigger="click">
                     <el-button size="small" type="primary" style="margin-right: .3em;">
@@ -71,6 +79,18 @@ export default {
                 return false;
             }
         },
+        showCcToggleButton: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
+        add_cc: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
         showShortcodes: {
             type: Boolean,
             default() {
@@ -84,7 +104,7 @@ export default {
             }
         },
     },
-    emits: ['update:modelValue'],
+    emits: ['update:modelValue', 'toggleCcOption'],
     data() {
         return {
             showButtonDesigner: false,
@@ -107,7 +127,7 @@ export default {
                 '{{agent.full_name}}' : 'Agent Full Name',
                 '{{agent.email}}' : 'Agent Email',
                 '{{agent.title}}' : 'Agent Title'
-            },
+            }
         }
     },
     watch: {
@@ -170,6 +190,10 @@ export default {
         updateCursorPos() {
             var cursorPos = jQuery('.wp_vue_editor_plain').prop('selectionStart');
             this.cursorPos = cursorPos;
+        },
+
+        handleCc(command) {
+            this.$emit('toggleCcOption', command);
         },
 
         insertShortcode(content) {
