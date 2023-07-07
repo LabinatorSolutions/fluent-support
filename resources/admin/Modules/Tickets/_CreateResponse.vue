@@ -1,7 +1,7 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
-        <div class="fs_row">
-            <el-form-item :label="translate('Cc')">
+        <div class="fs_row" v-if="ticket.source == 'email'">
+            <el-form-item :label="translate('Cc')" v-if="selected_cc.length || show_cc_option">
                 <el-select v-model="selected_cc" multiple filterable remote
                            placeholder="Please enter email"
                            :remote-method="searchCcCustomerEmails"
@@ -16,23 +16,11 @@
                     />
                 </el-select>
             </el-form-item>
-        </div>
-        <div class="fs_row">
-            <el-form-item :label="translate('Bcc')">
-                <el-select v-model="selected_bcc" multiple filterable remote
-                           placeholder="Please enter email"
-                           :remote-method="searchBccCustomerEmails"
-                           :loading="loading"
-                           style="padding-left: 5px"
-                >
-                    <el-option
-                        v-for="item in bcc_emails"
-                        :key="item"
-                        :label="item"
-                        :value="item"
-                    />
-                </el-select>
-            </el-form-item>
+
+            <el-button size="small" type="success" v-else @click="show_cc_option = true">
+                <span>{{ translate('Add Cc') }}</span>
+            </el-button>
+
         </div>
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
                    :show-saved-replies="true"/>
@@ -87,10 +75,9 @@ export default {
 
         const state = reactive({
             response_body: '',
+            show_cc_option: false,
             selected_cc: [],
-            selected_bcc: [],
             cc_emails: [],
-            bcc_emails: [],
             creating: false,
             close_ticket: 'no',
             attachments: [],
@@ -115,14 +102,12 @@ export default {
                 state.response_body = props.draft.value.content;
                 state.draftID = props.draft.id;
                 state.selected_cc = props.draft.value.selected_cc;
-                state.selected_bcc = props.draft.value.selected_bcc;
             }
              const saveResponseDraft = debounce(() => {
                 const data = {
                     content: state.response_body,
                     draftID: state.draftID,
                     selected_cc: state.selected_cc,
-                    selected_bcc: state.selected_bcc,
                     conversation_type: props.type,
                 };
 
@@ -139,7 +124,7 @@ export default {
                  }
             }, 5000)
 
-            watch([() => state.response_body, () => state.cc_emails, () => state.bcc_emails], () => {
+            watch([() => state.response_body, () => state.cc_emails], () => {
                  if(state.response_body === '' && state.draftID ) {
                     removeDraft();
                 }
@@ -160,7 +145,6 @@ export default {
                 close_ticket: closed,
                 attachments: state.attachments,
                 cc_emails: state.selected_cc,
-                bcc_emails: state.selected_bcc,
             };
 
             let action = `tickets/${props.ticket.id}/responses`;
@@ -184,7 +168,6 @@ export default {
                     }
                     state.response_body = '';
                     state.selected_cc = [];
-                    state.selected_bcc = [];
                     emit('created', response.response, response);
                     state.attachments = [];
                 })
@@ -198,9 +181,6 @@ export default {
 
         const searchCustomerEmails = (type, query) => {
             let emails = state.selected_cc;
-            if(emails !== '' && state.selected_bcc !== ''){
-                emails = emails.concat(state.selected_bcc)
-            }
             state.loading = true;
             get('customers', {search: query})
                 .then((response) => {
@@ -209,12 +189,6 @@ export default {
                         customers.forEach((item) => {
                             if(item.email && !emails.includes(item.email)){
                                 state.cc_emails.push(item.email);
-                            }
-                        });
-                    } else {
-                        customers.forEach((item) => {
-                            if(item.email && !emails.includes(item.email)){
-                                state.bcc_emails.push(item.email);
                             }
                         });
                     }
@@ -235,28 +209,15 @@ export default {
             }
         }
 
-        const searchBccCustomerEmails = (query) => {
-            state.bcc_emails = [];
-            if (query) {
-                setTimeout(() => {
-                    searchCustomerEmails('bcc', query);
-                }, 200)
-            }
-        }
-
         onMounted(() => {
             if(props.ticket.responses.length === 0){
                 if(props.ticket.carbon_copy && props.ticket.carbon_copy !== ''){
                     state.selected_cc = props.ticket.carbon_copy?.split(',') || [];
                 }
-                if(props.ticket.blind_carbon_copy && props.ticket.blind_carbon_copy !== ''){
-                    state.selected_bcc = props.ticket.blind_carbon_copy?.split(',') || [];
-                }
             }else{
                 let conversation = props.ticket.responses[0];
                 if(conversation.cc_info && state.selected_cc.length === 0){
                     state.selected_cc = conversation.cc_info.cc_email;
-                    state.selected_bcc = conversation.cc_info?.bcc_email;
                 }
             }
         })
@@ -265,7 +226,6 @@ export default {
             ...toRefs(state),
             create,
             searchCcCustomerEmails,
-            searchBccCustomerEmails,
             translate,
         };
     }
