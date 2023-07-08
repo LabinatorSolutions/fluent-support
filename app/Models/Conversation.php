@@ -39,7 +39,7 @@ class Conversation extends Model
 
         static::deleting(function ($model) {
             //Delete cc info
-            Meta::where('object_type', 'cc_info_in_conversation')->where('object_id', $model->id)->delete();
+            Meta::where('object_type', 'response')->where('object_id', $model->id)->delete();
         });
     }
 
@@ -138,7 +138,7 @@ class Conversation extends Model
 
         return $this->hasOne(
             $class, 'object_id', 'id'
-        )->where('object_type', 'cc_info_in_conversation');
+        )->where('object_type', 'response')->where('key', 'settings');
     }
 
 
@@ -272,15 +272,61 @@ class Conversation extends Model
         ];
     }
 
-    public function syncCarbonCopyCustomer($data, $conversation_id){
-        Meta::insert([
-            'object_type' => 'cc_info_in_conversation',
-            'object_id'  => $conversation_id,
-            'key'         => '_cc_info_in_conversation',
-            'value'       => maybe_serialize($data)
-        ]);
+    public function getSettingsValue($valueKey = false, $default = false)
+    {
+        $exist = Meta::where('object_type', 'response')
+            ->where('key', 'settings')
+            ->where('object_id', $this->id)
+            ->first();
 
-        return true;
+        if ($exist) {
+            $value = maybe_unserialize($exist->value);
+            if ($valueKey) {
+                if (!is_array($value)) {
+                    return $default;
+                }
+                return Arr::get($value, $valueKey, $default);
+            }
+            return $value;
+        }
+
+        return $default;
+    }
+
+    public function updateSettingsValue($valueKey, $value)
+    {
+        $exist = Meta::where('object_type', 'response')
+            ->where('key', 'settings')
+            ->where('object_id', $this->id)
+            ->first();
+
+        if ($exist) {
+            $existingValue = maybe_unserialize($exist->value);
+
+            if (!is_array($existingValue)) {
+                $existingValue = [];
+            }
+
+            $existingValue[$valueKey] = $value;
+
+            $exist->value = maybe_serialize($existingValue);
+            $exist->save();
+            return $this;
+        }
+
+        $settings = [
+            'object_type' => 'response',
+            'key'         => 'settings',
+            'object_id'   => $this->id,
+            'value'       => maybe_serialize([
+                $valueKey => $value
+            ])
+        ];
+
+        Meta::create($settings);
+
+        return $this;
+
     }
 
     public static function deleteAll($ticketId){

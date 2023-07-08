@@ -40,8 +40,7 @@ class EmailNotificationHandler
             $headers = $mailbox->getMailerHeader();
 
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'object_type' => 'beginning_cc_info',
-                'object_id'   => $ticket->id,
+                'cc_email' => $ticket->getSettingsValue('cc_email', []),
                 'hook_type'   => 'ticket_created_email_to_customer'
             ]);
 
@@ -135,8 +134,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'object_type' => 'cc_info_in_conversation',
-                'object_id'   => $response->id,
+                'cc_email' => $response->getSettingsValue('cc_email', []),
                 'hook_type'   => 'ticket_replied_by_agent_email_to_customer'
             ]);
             $attachments = [];
@@ -187,8 +185,7 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'object_type' => 'beginning_cc_info',
-                'object_id'   => $ticket->id,
+                'cc_email' => $ticket->getSettingsValue('cc_email', []),
                 'hook_type'   => 'ticket_closed_by_agent_email_to_customer'
             ]);
             Mailer::send($customer->email, $subject, $emailBody, $headers);
@@ -372,16 +369,9 @@ class EmailNotificationHandler
     }
 
     public function getMailerHeaderWithCc($headers, $info){
-        $object_type = $info['object_type'];
-        $object_id = $info['object_id'];
-
-        $ccInfo = Meta::where('object_type', $object_type)->where('object_id', $object_id)->first();
-        if($ccInfo){
-            $ccBccEmails = maybe_unserialize($ccInfo->value);
-            $CcHeaders = isset($ccBccEmails['cc_email']) && is_array($ccBccEmails['cc_email']) ? implode(', ', $ccBccEmails['cc_email']) : '';
-            $BccHeaders = isset($ccBccEmails['bcc_email']) && is_array($ccBccEmails['bcc_email']) ? implode(', ', $ccBccEmails['bcc_email']) : '';
+        if(isset($info['cc_email'])){
+            $CcHeaders =  !empty($info['cc_email']) && is_array($info['cc_email']) ? implode(', ', $info['cc_email']) : '';
             $headers[] = $CcHeaders ? "Cc: $CcHeaders" : '';
-            $headers[] = $BccHeaders ? "Bcc: $BccHeaders" : '';
         }
 
         return $headers;
