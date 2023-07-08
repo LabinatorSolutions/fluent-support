@@ -272,6 +272,27 @@ class Conversation extends Model
         ];
     }
 
+    public function getSettingsValue($valueKey = false, $default = false)
+    {
+        $exist = Meta::where('object_type', 'response')
+            ->where('key', 'settings')
+            ->where('object_id', $this->id)
+            ->first();
+
+        if ($exist) {
+            $value = maybe_unserialize($exist->value);
+            if ($valueKey) {
+                if (!is_array($value)) {
+                    return $default;
+                }
+                return Arr::get($value, $valueKey, $default);
+            }
+            return $value;
+        }
+
+        return $default;
+    }
+
     public function updateSettingsValue($valueKey, $value)
     {
         $exist = Meta::where('object_type', 'response')
