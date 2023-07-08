@@ -44,6 +44,12 @@ class MailBoxService
         $box = MailBox::findOrFail($mailBoxId);
         $fallbackBox = MailBox::findOrFail($fallbackId);
 
+        // if the mailbox is default, then make the fallback mailbox default
+        if($box->is_default == 'yes'){
+            $fallbackBox->is_default = 'yes';
+            $fallbackBox->save();
+        }
+
         /*
          * Action before delete a mailbox
          *
@@ -121,6 +127,28 @@ class MailBoxService
             'message' => __('All ticket moves to the selected Business', 'fluent-support')
         ];
 
+    }
+
+    /**
+     * This `setAsDefault` method will set a business box as default. Update is_default column to yes for the selected mailbox and no for others.
+     * @param int $mailBoxId
+     * @return array
+     */
+    public function setAsDefault ($mailBoxId )
+    {
+        $box = MailBox::findOrFail($mailBoxId);
+
+        $box->is_default = 'yes';
+        $box->save();
+
+        MailBox::where('id', '!=', $mailBoxId)
+            ->update([
+                'is_default' => 'no'
+            ]);
+
+        return [
+            'message' => __('Selected Business has been set as default', 'fluent-support')
+        ];
     }
 
     /**
