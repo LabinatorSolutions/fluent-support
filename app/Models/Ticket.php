@@ -69,9 +69,7 @@ class Ticket extends Model
             //Delete the ticket meta
             Meta::where('object_type', 'ticket_meta')->where('object_id', $model->id)->delete();
             //Delete all cc info for the ticket
-            Meta::where('object_type', 'customer_cc_info')->where('object_id', $model->id)->delete();
-            //Delete cc info when ticket was created
-            Meta::where('object_type', 'beginning_cc_info')->where('object_id', $model->id)->delete();
+            Meta::where('object_type', 'ticket')->where('object_id', $model->id)->delete();
             //Delete draft info
             Meta::where('object_type', '_fs_auto_draft')->where('object_id', $model->id)->delete();
             //delete the responses first
