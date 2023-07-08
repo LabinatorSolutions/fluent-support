@@ -39,7 +39,7 @@ class Conversation extends Model
 
         static::deleting(function ($model) {
             //Delete cc info
-            Meta::where('object_type', 'cc_info_in_conversation')->where('object_id', $model->id)->delete();
+            Meta::where('object_type', 'response')->where('object_id', $model->id)->delete();
         });
     }
 
