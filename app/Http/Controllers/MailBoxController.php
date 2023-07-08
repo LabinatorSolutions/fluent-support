@@ -174,6 +174,16 @@ class MailBoxController extends Controller
         return $mailBoxService->saveEmailSettings( $emailType, $boxId, $data );
     }
 
+    /**
+     * This `setAsDefault` method will set a business box as default
+     * @param MailBoxService $mailBoxService
+     * @param $boxId
+     * @return array
+     */
+    public function setAsDefault( MailBoxService $mailBoxService, $boxId )
+    {
+        return $mailBoxService->setAsDefault( $boxId );
+    }
 
     /**
      * This `getTickets` method will return the list of tickets for a business box

@@ -55,7 +55,8 @@ import {
     Timer,
     Download,
     MuteNotification,
-    FolderAdd
+    FolderAdd,
+    FolderChecked,
 } from '@element-plus/icons-vue/dist';
 
 const icons = [
@@ -107,7 +108,8 @@ const icons = [
     Timer,
     Download,
     MuteNotification,
-    FolderAdd
+    FolderAdd,
+    FolderChecked,
 ];
 
 const app = createApp({});

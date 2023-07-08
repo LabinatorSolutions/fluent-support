@@ -909,8 +909,9 @@ class Ticket extends Model
 
         $customer = Customer::findOrFail($ticketData['customer_id']);
         $ticketData = $this->buildTicketData($ticketData, $customer);
+        $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
 
-        return $this->storeTicket($ticketData, $customer);
+        return $this->storeTicket($ticketData, $customer, $disabledFields);
     }
 
     // This is a supporting method for createTicket method
@@ -954,7 +955,7 @@ class Ticket extends Model
 
     // This is a supporting method for createTicket method
     // it will store the ticket and return the ticket object
-    private function storeTicket($ticketData, $customer)
+    private function storeTicket($ticketData, $customer, $disabledFields)
     {
         /*
          * Action before ticket create
@@ -966,6 +967,8 @@ class Ticket extends Model
         do_action('fluent_support/before_ticket_create', $ticketData, $customer);
 
         $createdTicket = Ticket::create($ticketData);
+
+        TicketService::addTicketAttachments($ticketData, $disabledFields, $createdTicket, $customer);
 
         if (defined('FLUENTSUPPORTPRO') && !empty($ticketData['custom_fields'])) {
             $createdTicket->syncCustomFields($ticketData['custom_fields']);

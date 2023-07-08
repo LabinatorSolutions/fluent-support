@@ -152,21 +152,24 @@
                             :title="translate('Merge Tickets')"
                         >
                             <div class="fs_box_body" v-if="customer_tickets.length && app_ready">
-                                <el-table :data="customer_tickets" style="width: 100%">
+                                <el-table
+                                    :data="customer_tickets"
+                                    style="width: 100%"
+                                    @selection-change="handleMergeSelectionChange"
+                                >
+                                    <el-table-column type="selection" width="55" />
                                     <el-table-column prop="id" label="ID" width="130"></el-table-column>
                                     <el-table-column prop="title" label="Title" width="250"></el-table-column>
                                     <el-table-column prop="status" label="Status" width="130"></el-table-column>
-                                    <el-table-column label="Action">
-                                        <template #default="scope">
-                                            <el-button size="default" type="primary"
-                                                       @click="mergeTickets(scope.row.id)">
-                                                {{ translate('Merge') }}
-                                            </el-button>
-                                        </template>
-                                    </el-table-column>
                                 </el-table>
-                                <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
-                                    <pagination @fetch="customerTickets" :pagination="pagination"/>
+                                <div class="fs_tk_merge_actions">
+                                    <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                                        <pagination @fetch="customerTickets" :pagination="pagination"/>
+                                    </div>
+                                    <el-button size="default" type="primary"
+                                               @click="mergeTickets()">
+                                        {{ translate('Merge') }}
+                                    </el-button>
                                 </div>
                             </div>
                             <div class="fs_box_body" v-else-if="!customer_tickets.length && app_ready">
@@ -639,6 +642,8 @@ export default {
             draft: {},
             draftData: {},
             show_response_draft: false,
+            tickets_to_merge:[],
+            filteredMergeSelectedTickets:[],
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -899,8 +904,19 @@ export default {
                     state.loading = false;
                 });
         }
+        //ticket merge
 
-        const mergeTickets = (ticketToMerge) => {
+        const handleMergeSelectionChange = (selected) => {
+            state.tickets_to_merge = selected;
+        }
+        // Get ids from 'tickets_to_merge' array when it changes and store in 'selectedTickets' array
+        watch(() => state.tickets_to_merge, (selected) => {
+            state.filteredMergeSelectedTickets = selected.map((ticket) => {
+                return parseInt(ticket.id);
+            });
+        });
+
+        const mergeTickets = () => {
             confirm({
                 message: translate('Are you sure you want to merge these tickets?'),
                 title: translate('Merge Tickets'),
@@ -913,7 +929,7 @@ export default {
             }).then(() => {
                 state.loading = true;
                 post('tickets/' + props.ticket_id + '/merge_tickets', {
-                    ticket_to_merge: ticketToMerge,
+                    ticket_to_merge: state.filteredMergeSelectedTickets,
                 })
                     .then(response => {
                         notify({
@@ -1065,7 +1081,8 @@ export default {
             discardDraft,
             getTicketStatus,
             translate,
-            getArrToString
+            getArrToString,
+            handleMergeSelectionChange
         }
     }
 }
@@ -1122,5 +1139,11 @@ i.dashicons.dashicons-randomize {
     color: #fff;
     padding: 5px 10px;
     font-size: 11px;
+}
+.fs_tk_merge_actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 25px;
 }
 </style>
