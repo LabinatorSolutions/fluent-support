@@ -23,7 +23,6 @@ class ResponseService
         }
 
         $cc_emails = Arr::get($data, 'cc_emails', []);
-        $bcc_emails = Arr::get($data, 'bcc_emails', []);
 
         // Adding support for shortcode in agent response
         if ($person->person_type == 'agent') {
@@ -54,20 +53,14 @@ class ResponseService
 
         $createdResponse = \FluentSupport\App\Models\Conversation::create($response);
 
-        if(!empty($cc_emails) || !empty($bcc_emails)) {
-            $createdResponse->syncCarbonCopyCustomer([
-                'cc_email'        => $cc_emails,
-                'bcc_email'       => $bcc_emails,
-            ], $createdResponse->id);
+        if(!empty($cc_emails)) {
+            //Store cc emails in meta settings for the response
+            $createdResponse->updateSettingsValue('cc_email', $cc_emails);
 
-            $createdResponse->cc_info = [
-                'cc_email'        => $cc_emails,
-                'bcc_email'       => $bcc_emails,
-            ];
-
-            $ccAndBccEmails = array_merge($cc_emails, $bcc_emails);
-            $ccAndBccEmails = array_unique($ccAndBccEmails);
-            $ticket->syncCarbonCopyCustomer($ccAndBccEmails, $ticket->id);
+            //Store all the carbon copy customers under the ticket
+            $existingCcEmails = $ticket->getSettingsValue('all_cc_email', []);
+            $newData = array_merge($existingCcEmails, $cc_emails);
+            $ticket->updateSettingsValue('all_cc_email', array_unique($newData));
         }
 
         $createdResponse->load('person');

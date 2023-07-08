@@ -69,9 +69,7 @@ class Ticket extends Model
             //Delete the ticket meta
             Meta::where('object_type', 'ticket_meta')->where('object_id', $model->id)->delete();
             //Delete all cc info for the ticket
-            Meta::where('object_type', 'customer_cc_info')->where('object_id', $model->id)->delete();
-            //Delete cc info when ticket was created
-            Meta::where('object_type', 'beginning_cc_info')->where('object_id', $model->id)->delete();
+            Meta::where('object_type', 'ticket')->where('object_id', $model->id)->delete();
             //Delete draft info
             Meta::where('object_type', '_fs_auto_draft')->where('object_id', $model->id)->delete();
             //delete the responses first
@@ -809,39 +807,6 @@ class Ticket extends Model
         return true;
     }
 
-    public function initCarbonCopyCustomer($data, $id)
-    {
-        Meta::insert([
-            'object_type' => 'beginning_cc_info',
-            'object_id'   => $id,
-            'key'         => '_beginning_cc_info',
-            'value'       => maybe_serialize($data)
-        ]);
-
-        return true;
-    }
-
-    public function syncCarbonCopyCustomer($data, $id)
-    {
-        $existing = Meta::where('object_type', 'customer_cc_info')->where('object_id', $id)->first();
-        if ($existing) {
-            $existingCustomer = maybe_unserialize($existing->value);
-            $newData = array_merge($existingCustomer, $data);
-            $ccEmails = array_unique($newData);
-            $existing->value = maybe_serialize($ccEmails);
-            $existing->save();
-        } else {
-            Meta::insert([
-                'object_type' => 'customer_cc_info',
-                'object_id'   => $id,
-                'key'         => '_customer_cc_info',
-                'value'       => maybe_serialize($data)
-            ]);
-        }
-
-        return true;
-    }
-
     public function getLastAgentResponse()
     {
         $query = \FluentSupport\App\App::db()->table('fs_conversations')
@@ -1111,7 +1076,14 @@ class Ticket extends Model
         foreach ($responses as $response) {
             $response->content = links_add_target(make_clickable(wpautop($response->content, false)));
             if (!empty($response->ccinfo)) {
-                $response->cc_info = maybe_unserialize($response->ccinfo->value);
+                $val = maybe_unserialize($response->ccinfo->value);
+                if(isset($val['cc_email']) && !empty($val['cc_email'])){
+                    $response->cc_info = $val['cc_email'];
+                }else{
+                    $response->cc_info = '';
+                }
+            }else {
+                $response->cc_info = '';
             }
         }
 
@@ -1120,9 +1092,9 @@ class Ticket extends Model
         //Get last activity by agent
         $ticket->live_activity = TicketHelper::getActivity($ticket->id, $agent->id);
         //Get all carbon copy customer
-        $ccInfo = TicketHelper::getCarbonCopyCustomerInfo($ticket->id);
-        $ticket->carbon_copy = isset($ccInfo['cc_email']) && is_array($ccInfo['cc_email']) ? implode(', ', $ccInfo['cc_email']) : '';
-        $ticket->blind_carbon_copy = isset($ccInfo['bcc_email']) && is_array($ccInfo['bcc_email']) ? implode(', ', $ccInfo['bcc_email']) : '';
+        $ccInfo = $ticket->getSettingsValue('cc_email', []);
+
+        $ticket->carbon_copy = !empty($ccInfo) ? implode(', ', $ccInfo) : '';
 
         if (defined('FLUENTSUPPORTPRO')) {
             $ticket->custom_fields = $ticket->customData('admin', true);
@@ -1574,15 +1546,15 @@ class Ticket extends Model
             ->first();
 
         if ($exist) {
-            $value = maybe_unserialize($exist->value);
+            $existingValue = maybe_unserialize($exist->value);
 
-            if (!is_array($value)) {
-                $value = [];
+            if (!is_array($existingValue)) {
+                $existingValue = [];
             }
 
-            $value[$valueKey] = $value;
+            $existingValue[$valueKey] = $value;
 
-            $exist->value = maybe_serialize($value);
+            $exist->value = maybe_serialize($existingValue);
             $exist->save();
             return $this;
         }
