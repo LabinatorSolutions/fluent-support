@@ -36,7 +36,7 @@ add_shortcode('fluent_support_portal', function ($args) {
 
     if($args['business_box_id']) {
         add_filter('fluent_support/customer_portal_vars', function ($vars) use($args) {
-            $vars['mailbox_id'] = $args['business_box_id'];
+            $vars['mailbox_id'] = wp_strip_all_tags($args['business_box_id']);
             return $vars;
         });
     }
