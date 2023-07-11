@@ -94,7 +94,8 @@ export default {
                 title: '',
                 content: '',
                 product_id: '',
-                client_priority: 'normal'
+                client_priority: 'normal',
+                mailbox_id: this.appVars.mailbox_id ? this.appVars.mailbox_id : null,
             },
             custom_data: {},
             attachments: [],

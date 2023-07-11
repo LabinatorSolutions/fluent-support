@@ -14,6 +14,22 @@
                 <el-skeleton :rows="5" animated />
             </div>
             <div class="fs_box_body" v-if="has_pro && webhook">
+                <el-row>
+                    <el-col :span="24">
+                        <label class="select-box-label">{{ translate("Select Business Box") }}</label>
+                    </el-col>
+                    <el-col :span="24" class="select-box">
+                        <el-select v-model="mailbox" class="m-2 el-col-23" placeholder="Select"
+                                   @change="changeBusinessBox">
+                            <el-option
+                                v-for="box in mailboxes"
+                                :key="box.id"
+                                :label="box.name+'( '+box.box_type+' )'"
+                                :value="box.id"
+                            />
+                        </el-select>
+                    </el-col>
+                </el-row>
                 <el-form>
                     <el-form-item size="small">
                         <el-input
@@ -71,6 +87,7 @@
 <script type="text/babel">
 import { onMounted, reactive, toRefs } from "vue";
 import {
+    useConfirm,
     useFluentHelper,
     useNotify,
 } from "@/admin/Composable/FluentFrameworkHelper";
@@ -81,12 +98,14 @@ export default {
     setup() {
         const { get, put, translate, handleError, setTitle, has_pro } =
             useFluentHelper();
-
+        const { confirm } = useConfirm();
         const { notify } = useNotify();
 
         const state = reactive({
             loading: false,
             webhook: "",
+            mailbox: "",
+            mailboxes: [],
             fields: [
                 {
                     field: "Ticket Title(Required)",
@@ -166,7 +185,9 @@ export default {
             await get("settings/incoming-webhook")
                 .then((response) => {
                     state.webhook = response.webhook;
-                    state.loading != state.loading;
+                    state.mailboxes = response.mailboxes;
+                    state.mailbox = response.mailbox;
+                    console.log(state.mailbox);
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -195,6 +216,37 @@ export default {
                 });
         };
 
+        const changeBusinessBox = (value) => {
+            confirm({
+                message: translate('set_mailbox_webhook'),
+                title: 'Warning',
+                options: {
+                    confirmButtonText: translate('Set Business Mailbox'),
+                    cancelButtonText: translate('Cancel'),
+                    type: 'warning'
+                }
+            }).then(() => {
+                state.loading = true;
+                 put("settings/incoming-webhook", { mailbox_id: value })
+                    .then((response) => {
+                        notify({
+                            type: "success",
+                            message: response.message,
+                            position: "bottom-right",
+                        });
+                        fetch();
+                    })
+                    .catch((errors) => {
+                        handleError(errors);
+                    })
+                    .always(() => {
+                        state.loading != state.loading;
+                    });
+            }).catch(() => {
+                // do nothing
+            });
+        };
+
         onMounted(() => {
             if (has_pro) {
                 fetch();
@@ -207,6 +259,7 @@ export default {
             translate,
             fetch,
             updateWebhook,
+            changeBusinessBox,
             has_pro,
         };
     },
@@ -214,7 +267,18 @@ export default {
 </script>
 
 <style>
-.fs_box_wrapper .fs_box_body .el-form-item__content {
-    display: contents;
-}
+    .fs_box_wrapper .fs_box_body .el-form-item__content {
+        display: contents;
+    }
+    .fs_box_body .select-box{
+        margin-bottom: 10px;
+        padding-right: 4px;
+        margin-top: 3px;
+    }
+
+    .fs_box_body .select-box-label{
+        font-size: medium;
+        font-weight: 400;
+        padding: 2px;
+    }
 </style>

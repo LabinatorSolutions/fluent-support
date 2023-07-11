@@ -17,6 +17,7 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
     $router->get('/{id}/email_settings', 'MailBoxController@getEmailSettings')->int('id');
     $router->get('/{id}/email_configs', 'MailBoxController@getEmailsSetups');
     $router->put('/{id}/email_settings', 'MailBoxController@saveEmailSettings')->int('id');
+    $router->put('/{id}/set_default', 'MailBoxController@setAsDefault')->int('id');
 });
 
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
