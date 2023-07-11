@@ -187,6 +187,7 @@ class CustomerPortalService
          * @param object $customer
          */
         $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
+        error_log(print_r($data, true));
 
         /*
          * Action before ticket create
@@ -199,38 +200,9 @@ class CustomerPortalService
 
         $ticket = Ticket::create($data);
 
-        $this->addTicketAttachments($data, $disabledFields, $ticket, $customer);
+        TicketService::addTicketAttachments($data, $disabledFields, $ticket, $customer);
         $this->addCustomData($data, $ticket);
         do_action('fluent_support/ticket_created', $ticket, $customer);
-
-        return $ticket;
-    }
-
-
-    /**
-     * This `addTicketAttachments` method is responsible for adding attachments to ticket
-     * @param array $data
-     * @param array $disabledFields
-     * @param object $ticket
-     * @param object $customer
-     * @return Ticket
-     * @since 1.5.7
-     */
-    private function addTicketAttachments($data, $disabledFields, $ticket, $customer)
-    {
-        if (($attachments = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
-
-            Attachment::whereNull('ticket_id')
-                ->whereIn('file_hash', $attachments)
-                ->whereNull('ticket_id')
-                ->update([
-                    'ticket_id' => $ticket->id,
-                    'person_id' => $customer->id,
-                    'status'    => 'active'
-                ]);
-
-            $ticket->load('attachments');
-        }
 
         return $ticket;
     }

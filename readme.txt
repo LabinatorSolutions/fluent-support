@@ -193,12 +193,18 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Added - Email verification while registering customer
 * Added - Two factor authentication in login
 * Added - Option to set maximum file upload limit
+* Added - Option to set dedicated mailbox for webhook(pro)
+* Added - Option to set mailbox in the customer portal shortcode
+* Added - Option to upload file in the ticket create form
+* Added - Mailbox added in the workflow action list(pro)
+* Added - Option to merge multiple tickets at the same time
+* Added - Summary by agent report on the dashboard
 * Added - Email CC and BCC support(Pro)
 * Added - Support file attachment upload in third party (Google Drive and Dropbox)(Pro)
 * Added - Zendesk migrator(Pro)
 * Fixed - Exception handled in route issue
 * Fixed - Edit reply issue
-* Fixed - Work action ordering issue (Pro)
+* Fixed - Workflow action ordering issue (Pro)
 * Fixed - Custom field required in conditional form (Pro)
 * Fixed - Conditional form rendering issue (Pro)
 * Fixed - Ticket create using API endpoint (Pro)

@@ -22,6 +22,7 @@
                     >
                         <div class="fs_mail_box">
                             <div class="fs_mail_title">
+                                <el-icon class="default_box_icon" v-if="'yes' === box.is_default"><FolderChecked /></el-icon>
                                 <h3>{{ box.name }}</h3>
                                 <el-dropdown
                                     @command="handleBoxCommand"
@@ -35,6 +36,15 @@
                                     </span>
                                     <template #dropdown>
                                         <el-dropdown-menu>
+                                            <el-dropdown-item
+                                                v-if="'yes' !== box.is_default"
+                                                :command="{
+                                                    type: 'set_default',
+                                                    box_id: box.id,
+                                                }"
+                                                icon="FolderChecked"
+                                            >{{ translate("Set as Default") }}
+                                            </el-dropdown-item>
                                             <el-dropdown-item
                                                 v-if="box.tickets_count > 0"
                                                 :command="{
@@ -208,7 +218,7 @@
 import MoveTicket from "./MoveTicket";
 import { computed, onMounted, reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
-import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
+import {useConfirm, useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ChooseMailBox",
@@ -218,10 +228,10 @@ export default {
     setup() {
         const router = useRouter();
 
-        const { get, translate, handleError, setTitle, post, del, has_pro } =
+        const { get, translate, handleError, setTitle, post, put, del, has_pro } =
             useFluentHelper();
         const { notify } = useNotify();
-
+        const { confirm } = useConfirm();
         const state = reactive({
             fetching: true,
             mailboxes: [],
@@ -241,6 +251,7 @@ export default {
             },
             deleteing: false,
             change_box: "",
+            set_default: "",
         });
 
         const can_create_mailbox = computed(() => {
@@ -320,6 +331,9 @@ export default {
                 state.deleting_box.show_modal = true;
             } else if (command.type == "move") {
                 state.change_box = command.box_id;
+            }else if(command.type == "set_default"){
+                state.set_default = command.box_id;
+                setDefaultBox();
             }
         };
         const deleteMailBox = () => {
@@ -358,6 +372,37 @@ export default {
         const reset_me = () => {
             state.change_box = "";
         };
+
+        const setDefaultBox = () => {
+            confirm({
+                message: translate('default_box_set_warning'),
+                title: 'Warning',
+                options: {
+                    confirmButtonText: translate('Set as Default'),
+                    cancelButtonText: translate('Cancel'),
+                    type: 'warning'
+                }
+            }).then(() => {
+                put(`mailboxes/${state.set_default}/set_default`)
+                    .then((response) => {
+                        notify({
+                            type: "success",
+                            message: response.message,
+                            position: "bottom-right",
+                        });
+                        fetch();
+                        state.set_default = "";
+                    })
+                    .catch((errors) => {
+                        handleError(errors);
+                    })
+                    .always(() => {
+                        state.deleteing = false;
+                    });
+            }).catch(() => {
+                // do nothing
+            });
+        }
 
         onMounted(() => {
             fetch();
@@ -406,6 +451,13 @@ export default {
         .fs_mail_action {
             float: right;
             line-height: 27px;
+        }
+        .default_box_icon{
+            position: relative;
+            float: left;
+            padding-top: 14px;
+            font-size: larger;
+            margin-right: 5px;
         }
     }
 

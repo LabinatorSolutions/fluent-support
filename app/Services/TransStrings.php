@@ -639,11 +639,13 @@ class TransStrings
             'Validate Captcha' => __('Validate Captcha', 'fluent-support'),
             'Clear Settings' => __('Clear Settings', 'fluent-support'),
             'Public Label' => __('Public Label', 'fluent-support'),
-            'Admin Label (Optional)' => __('Admin Label (Optional)', 'fluent-support'),
             'Zendesk Domain'    => __('Zendesk Domain', 'fluent-support'),
             'API Key'   => __('API Key', 'fluent-support'),
             'Import'    => __('Import', 'fluent-support'),
             'Email Address' => __('Email Address', 'fluent-support'),
+            'default_box_set_warning'    => __('Are you sure you want to set this as default?', 'fluent-support'),
+            'Set as Default'    => __('Set as Default', 'fluent-support'),
+            'set_mailbox_webhook'    => __('Are you sure want to set this business box for webhook?', 'fluent-support'),
         ];
     }
 }
