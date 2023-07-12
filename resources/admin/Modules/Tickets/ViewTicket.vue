@@ -453,12 +453,12 @@
                                             {{ translate('started the conversation') }}
                                             <div class="carrier_info" v-if="ticket.source == 'email'">
                                                 <div class="from_info">
-                                                    <span><strong>From:</strong>{{
+                                                    <span><strong>From: </strong>{{
                                                             ticket.customer?.full_name
                                                         }}&lt;{{ ticket.customer?.email }}&gt;</span>
                                                 </div>
                                                 <div class="cc_info" v-if="ticket.carbon_copy">
-                                                    <span><strong>Cc:</strong>{{ ticket.carbon_copy }}</span>
+                                                    <span><strong>Cc: </strong>{{ ticket.carbon_copy }}</span>
                                                 </div>
                                             </div>
                                         </div>
