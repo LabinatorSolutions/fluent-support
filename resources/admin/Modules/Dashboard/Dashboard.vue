@@ -584,6 +584,7 @@ export default {
     justify-content: space-between;
     font-style: normal;
     font-size: 14px;
+    line-height: 18px;
 }
 .fs_drawer_icon {
     width: 75%;
