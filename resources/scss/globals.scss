@@ -504,15 +504,13 @@ p.fs_customer_address {
 .fs_box_board {
     .el-collapse-item__header{
         background-color: #F5F5F5;
-        border-radius: 10px;
-        height: 60px;
+        border-radius: 8px;
         cursor: move;
         border: 1px solid rgb(226, 228, 231);
         box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
-
     }
     .el-collapse-item__header.is-active{
-        border-radius: 10px 10px 0px 0px;
+        border-radius: 8px 8px 0 0;
     }
     .el-collapse-item__header:hover{
         background-color: #EDF8F2;
@@ -523,7 +521,7 @@ p.fs_customer_address {
     .fs_box_board {
     .el-collapse-item__header{
         background-color: #F5F5F5;
-        border-radius: 10px;
+        border-radius: 8px;
         height: auto;
         cursor: move;
         border: 1px solid rgb(226, 228, 231);
@@ -531,7 +529,7 @@ p.fs_customer_address {
 
     }
     .el-collapse-item__header.is-active{
-        border-radius: 10px 10px 0px 0px;
+        border-radius: 8px 8px 0px 0px;
     }
     .el-collapse-item__header:hover{
         background-color: #EDF8F2;

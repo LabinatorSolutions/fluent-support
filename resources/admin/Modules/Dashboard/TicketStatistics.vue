@@ -44,4 +44,7 @@ export default {
 .fs_stat_helper {
     padding: 5px 30px;
 }
+ul.fs_card_list {
+    padding: 0;
+}
 </style>
