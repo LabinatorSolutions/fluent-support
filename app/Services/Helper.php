@@ -627,4 +627,16 @@ class Helper
             'Max Waiting' => __('Max Waiting', 'fluent-support'),
         ];
     }
+
+    public static function getAuthProvider()
+    {
+        if (defined('FLUENT_AUTH_PLUGIN_PATH')) {
+            $settings = \FluentAuth\App\Helpers\Helper::getAuthFormsSettings();
+            if ($settings['enabled'] == 'yes') {
+                return 'fluent_auth';
+            }
+        }
+
+        return 'fluent_support';
+    }
 }

@@ -22,6 +22,12 @@ class AuthController extends Controller
     public function signup(Request $request)
     {
 
+        if(Helper::getAuthProvider() != 'fluent_support') {
+            return $this->sendError([
+                'message' => __('You are not allowed to signup using this form', 'fluent-support')
+            ]);
+        }
+
         if (!wp_verify_nonce($request->get('_fsupport_signup_nonce'), 'fluent_support_signup_nonce')) {
             return $this->sendError([
                 'message' => __('Security verification failed. Please try again', 'fluent-support')
@@ -116,6 +122,12 @@ class AuthController extends Controller
      */
     public function handleLogin(Request $request)
     {
+        if(Helper::getAuthProvider() != 'fluent_support') {
+            return $this->sendError([
+                'message' => __('You are not allowed to login using this form', 'fluent-support')
+            ]);
+        }
+
         if (!wp_verify_nonce($request->get('_support_login_nonce'), 'fsupport_login_nonce')) {
             return $this->response([
                 'message' => __('Security verification failed', 'fluent-support')
@@ -320,6 +332,13 @@ class AuthController extends Controller
 
     public function resetPassword(Request $request)
     {
+
+        if(Helper::getAuthProvider() != 'fluent_support') {
+            return $this->sendError([
+                'message' => __('You are not allowed to reset password using this form', 'fluent-support')
+            ]);
+        }
+
         $errors = new \WP_Error();
 
         if (!wp_verify_nonce($request->get('_fsupport_reset_pass_nonce'), 'fluent_support_reset_pass_nonce')) {
@@ -629,6 +648,13 @@ class AuthController extends Controller
 
     public function verifyEmail(Request $request, EmailVerification $emailVerification)
     {
+
+        if(Helper::getAuthProvider() != 'fluent_support') {
+            return $this->sendError([
+                'message' => __('You are not allowed to use this form', 'fluent-support')
+            ]);
+        }
+
         try {
             $emailVerification->verifyEmail($request->getSafe('code'));
             return $this->sendSuccess([
@@ -643,6 +669,12 @@ class AuthController extends Controller
 
     public function resendVerificationEmail(Request $request, EmailVerification $emailVerification)
     {
+        if(Helper::getAuthProvider() != 'fluent_support') {
+            return $this->sendError([
+                'message' => __('You are not allowed to use this form', 'fluent-support')
+            ]);
+        }
+
         $emailVerification->triggerEmailVerification();
 
         return $this->sendSuccess([
