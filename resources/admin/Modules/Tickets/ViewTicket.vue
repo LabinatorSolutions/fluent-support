@@ -500,7 +500,7 @@
                                             <span class="fs_custom_check_value" v-for="value in fieldValue"
                                                   :key="value">{{ value }}</span>
                                         </span>
-                                        <span v-else v-html="fieldValue"></span>
+                                        <span v-else v-html="santizeContent(fieldValue)"></span>
                                     </li>
                                 </ul>
                                 <p v-else>{{ translate('No additional data found') }}</p>
@@ -954,7 +954,17 @@ export default {
             if (!content) {
                 return content;
             }
-            return content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
+
+            content = content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
+            // check if this is type of string
+            if (typeof content !== 'string') {
+                return string;
+            }
+
+            const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+            content= content.replace(tagRegex, '');
+
+            return window.DOMPurify.sanitize(content);
         }
 
         const syncCustomData = (data) => {

@@ -216,6 +216,8 @@ class Menu
 
         $app = App::getInstance();
         $this->enqueueAssets();
+
+        do_action('fluent_support/admin_app_loaded', $app);
         $app->view->render('admin.menu', [
             'base_url'       => $baseUrl,
             'logo'           => $assets . 'images/logo.svg',
@@ -236,6 +238,8 @@ class Menu
         $app = App::getInstance();
 
         $assets = $app['url.assets'];
+
+        wp_enqueue_script('dompurify', $assets.'libs/purify/purify.min.js', [], '2.4.3');
 
         wp_enqueue_style(
             'fluent_support_admin_app', $assets . 'admin/css/alpha-admin.css', [], FLUENT_SUPPORT_VERSION
@@ -370,8 +374,6 @@ class Menu
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
 
         wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', $appVars);
-        do_action('fluent_support/admin_app_loaded', $app);
-
     }
 
     protected function getRestInfo($app)

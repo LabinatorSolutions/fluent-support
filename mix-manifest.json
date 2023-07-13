@@ -13,13 +13,19 @@
     "/assets/images/ComponentIcons/SuggestedTicket.png": "/assets/images/ComponentIcons/SuggestedTicket.png",
     "/assets/images/ComponentIcons/TicketStatistics.png": "/assets/images/ComponentIcons/TicketStatistics.png",
     "/assets/images/ComponentIcons/TicketsByProduct.png": "/assets/images/ComponentIcons/TicketsByProduct.png",
+    "/assets/images/file.png": "/assets/images/file.png",
     "/assets/images/fluent-crm-icon.png": "/assets/images/fluent-crm-icon.png",
     "/assets/images/fluent-support-color-logo.png": "/assets/images/fluent-support-color-logo.png",
     "/assets/images/fluent-support-logo.png": "/assets/images/fluent-support-logo.png",
     "/assets/images/fluentcrm-logo.svg": "/assets/images/fluentcrm-logo.svg",
+    "/assets/images/help-scout-logo 1.svg": "/assets/images/help-scout-logo 1.svg",
+    "/assets/images/help-scout-logo.svg": "/assets/images/help-scout-logo.svg",
     "/assets/images/icons/file.svg": "/assets/images/icons/file.svg",
     "/assets/images/icons/mention.svg": "/assets/images/icons/mention.svg",
+    "/assets/images/icons/mentionnn.svg": "/assets/images/icons/mentionnn.svg",
     "/assets/images/icons/merge.svg": "/assets/images/icons/merge.svg",
     "/assets/images/logo.svg": "/assets/images/logo.svg",
-    "/assets/images/sidebar-icon.svg": "/assets/images/sidebar-icon.svg"
+    "/assets/images/sidebar-icon.svg": "/assets/images/sidebar-icon.svg",
+    "/assets/libs/purify/purify.js": "/assets/libs/purify/purify.js",
+    "/assets/libs/purify/purify.min.js": "/assets/libs/purify/purify.min.js"
 }

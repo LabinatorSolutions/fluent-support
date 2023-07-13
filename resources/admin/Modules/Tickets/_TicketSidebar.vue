@@ -454,5 +454,4 @@ export default {
 .fs_wc_order_link{
     cursor: pointer;
 }
-
 </style>

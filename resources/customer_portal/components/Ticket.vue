@@ -68,7 +68,7 @@
                                             {{ conversation.created_at }}
                                         </div>
                                     </div>
-                                    <div v-html="conversation.content" class="fs_thread_body"></div>
+                                    <div v-html="purify(conversation.content)" class="fs_thread_body"></div>
 
                                     <div class="fst_file_lists"
                                          v-if="conversation.attachments && conversation.attachments.length">
@@ -103,7 +103,7 @@
                                             {{ ticket.created_at }}
                                         </div>
                                     </div>
-                                    <div v-html="ticket.content" class="fs_thread_body"></div>
+                                    <div v-html="purify(ticket.content)" class="fs_thread_body"></div>
 
                                     <div class="fst_file_lists" v-if="ticket.attachments && ticket.attachments.length">
                                         <ul>
@@ -130,7 +130,7 @@
                                             <span class="fs_custom_check_value" v-for="value in fieldValue"
                                                   :key="value">{{ value }}</span>
                                         </span>
-                                    <span v-else v-html="fieldValue"></span>
+                                    <span v-else v-html="purify(fieldValue)"></span>
                                 </li>
                             </ul>
                         </div>
@@ -254,7 +254,18 @@ export default {
                 });
         },
         isArray,
-        isEmpty
+        isEmpty,
+        purify(string) {
+            // check if this is type of string
+            if (typeof string !== 'string') {
+                return string;
+            }
+
+            const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
+            string = string.replace(tagRegex, '');
+
+            return window.DOMPurify.sanitize(html);
+        }
     },
     mounted() {
         this.fetchTicket();
