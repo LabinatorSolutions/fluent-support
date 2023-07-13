@@ -196,7 +196,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Added - Option to set dedicated mailbox for webhook(Pro)
 * Added - Option to set mailbox in the customer portal shortcode
 * Added - Option to upload file in the ticket create form
-* Added - Mailbox added in the workflow action list(Pro)
+* Added - Mailbox added in the workflow action list (Pro)
 * Added - Option to merge multiple tickets at the same time
 * Added - Summary by agent report on the dashboard
 * Added - Email CC support(Pro)

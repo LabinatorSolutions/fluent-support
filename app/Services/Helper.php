@@ -95,7 +95,8 @@ class Helper
      *
      * @return mixed
      */
-    public static function changeableTicketStatuses(){
+    public static function changeableTicketStatuses()
+    {
         $ticketStatus = static::ticketStatusGroups();
 
         unset($ticketStatus['all']);
@@ -386,7 +387,7 @@ class Helper
         return apply_filters('fluent_support/portal_admin_base_url', admin_url('admin.php?page=fluent-support/#/'));
     }
 
-    public static function getBusinessSettings($key=null)
+    public static function getBusinessSettings($key = null)
     {
         static $settings;
 
@@ -480,7 +481,7 @@ class Helper
         // If user is logged in then return the agent by user id.
         // This `get_current_user_id` function is WP function and
         // it returns user id if user is logged in.
-        if ( get_current_user_id() ){
+        if (get_current_user_id()) {
             return Agent::where('user_id', get_current_user_id())->first();
         }
     }
@@ -490,7 +491,7 @@ class Helper
         // If user is logged in then return the customer by user id.
         // This `get_current_user_id` function is WP function and
         // it returns user id if user is logged in.
-        if ( get_current_user_id() ){ //if user is logged in
+        if (get_current_user_id()) { //if user is logged in
             return Customer::where('user_id', get_current_user_id())->first();
         }
     }
@@ -500,7 +501,7 @@ class Helper
         // If user is logged in then return the person(agent/customer) by user id.
         // This `get_current_user_id` function is WP function and
         // it returns user id if user is logged in.
-        if ( get_current_user_id() ){
+        if (get_current_user_id()) {
             return Person::where('user_id', get_current_user_id())->first();
         }
     }
@@ -534,12 +535,12 @@ class Helper
         $crmConfigs = [
             'can_add_tags' => $canAddTags,
             'tags'         => $crmTags,
-            'lists'         => $crmLists,
+            'lists'        => $crmLists,
             'logo'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluentcrm-logo.svg',
             'icon'         => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/fluent-crm-icon.png',
         ];
 
-        if (defined('FLUENTCRM')){
+        if (defined('FLUENTCRM')) {
             $crmConfigs['contacts'] = []; //(new \FluentCrm\App\Models\Subscriber)->get();
         }
 
@@ -586,7 +587,7 @@ class Helper
     {
         $data = self::getOption('global_business_settings');
 
-        if ( $data && isset($data["enable_admin_bar_summary"]) && $data["enable_admin_bar_summary"] == 'yes' ) {
+        if ($data && isset($data["enable_admin_bar_summary"]) && $data["enable_admin_bar_summary"] == 'yes') {
             return true;
         }
 
@@ -596,7 +597,7 @@ class Helper
     public static function generateMessageID($email)
     {
         $emailParts = explode('@', $email);
-        if(count($emailParts) != 2) {
+        if (count($emailParts) != 2) {
             return false;
         }
 
@@ -604,7 +605,7 @@ class Helper
         try {
             return sprintf(
                 "<%s.%s@%s>",
-                base_convert((int) microtime(true), 10, 36),
+                base_convert((int)microtime(true), 10, 36),
                 base_convert(bin2hex(openssl_random_pseudo_bytes(8)), 16, 36),
                 $emailDomain
             );
@@ -613,30 +614,32 @@ class Helper
         }
     }
 
-    public static function getExportOptions(){
+    public static function getExportOptions()
+    {
         return [
             'Agent First Name' => __('Agent First Name', 'fluent-support'),
-            'Agent Last Name' => __('Agent Last Name', 'fluent-support'),
-            'Agent Full Name' => __('Agent Full Name', 'fluent-support'),
-            'Responses' => __('Responses', 'fluent-support'),
-            'Interactions' => __('Interactions', 'fluent-support'),
-            'Open Tickets' => __('Open Tickets', 'fluent-support'),
-            'Closed' => __('Closed', 'fluent-support'),
-            'Waiting Tickets' => __('Waiting Tickets', 'fluent-support'),
-            'Average Waiting' => __('Average Waiting', 'fluent-support'),
-            'Max Waiting' => __('Max Waiting', 'fluent-support'),
+            'Agent Last Name'  => __('Agent Last Name', 'fluent-support'),
+            'Agent Full Name'  => __('Agent Full Name', 'fluent-support'),
+            'Responses'        => __('Responses', 'fluent-support'),
+            'Interactions'     => __('Interactions', 'fluent-support'),
+            'Open Tickets'     => __('Open Tickets', 'fluent-support'),
+            'Closed'           => __('Closed', 'fluent-support'),
+            'Waiting Tickets'  => __('Waiting Tickets', 'fluent-support'),
+            'Average Waiting'  => __('Average Waiting', 'fluent-support'),
+            'Max Waiting'      => __('Max Waiting', 'fluent-support'),
         ];
     }
 
     public static function getAuthProvider()
     {
+
         if (defined('FLUENT_AUTH_PLUGIN_PATH')) {
             $settings = \FluentAuth\App\Helpers\Helper::getAuthFormsSettings();
             if ($settings['enabled'] == 'yes') {
                 return 'fluent_auth';
             }
         }
-
+        
         return 'fluent_support';
     }
 }
