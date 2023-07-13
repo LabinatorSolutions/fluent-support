@@ -583,8 +583,7 @@ export default {
     align-items: center;
     justify-content: space-between;
     font-style: normal;
-    font-size: 18px;
-    line-height: 25px;
+    font-size: 14px;
 }
 .fs_drawer_icon {
     width: 75%;

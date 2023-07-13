@@ -6,6 +6,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Product;
+
 /**
  * StatModule class is responsible for getting data related to report
  * @package FluentSupport\App\Modules
@@ -80,7 +81,7 @@ class StatModule
                 'title' => __('Responses', 'fluent-support'),
                 'count' => $responses
             ],
-            'interactions'  =>[
+            'interactions'   => [
                 'title' => __('Interactions', 'fluent-support'),
                 'count' => $interactions
             ]
@@ -133,7 +134,7 @@ class StatModule
      * the result by this id
      * @return array result in array format
      */
-    public static function getTodayStats($agentId=false)
+    public static function getTodayStats($agentId = false)
     {
         $start = date('Y-m-d 00:00.01');
         $end = date('Y-m-d 23:59.59');
@@ -144,7 +145,7 @@ class StatModule
 
         $responses = Conversation::where('conversation_type', 'response')->whereBetween('created_at', [$start, $end]);
 
-        if($agentId) {
+        if ($agentId) {
             $newTickets->where('agent_id', $agentId);
             $closedTickets->where('agent_id', $agentId);
             $responses->where('person_id', $agentId);
@@ -178,16 +179,16 @@ class StatModule
 
         //Get the number of interactions/responses by agent with tickets
         $interactions_count = Conversation::where('person_id', $agentId)
-                                ->where('conversation_type', 'response')
-                                ->groupBy('ticket_id')
-                                ->get()
-                                ->count();
+            ->where('conversation_type', 'response')
+            ->groupBy('ticket_id')
+            ->get()
+            ->count();
 
         //Get the number of tickets that are closed by this agent
         $total_closed = Ticket::where('agent_id', $agentId)->where('status', 'closed')->count();
 
         return [
-            'replies_count' =>  [
+            'replies_count'      => [
                 'title' => __('Total Replies', 'fluent-support'),
                 'count' => $replies_count
             ],
@@ -195,7 +196,7 @@ class StatModule
                 'title' => __('Total Interactions', 'fluent-support'),
                 'count' => $interactions_count
             ],
-            'total_closed' => [
+            'total_closed'       => [
                 'title' => __('Total Closed', 'fluent-support'),
                 'count' => $total_closed
             ]
@@ -214,7 +215,7 @@ class StatModule
         foreach ($products as $product) {
             $result[$product->id] = [
                 'title' => $product->title,
-                'count' => static::countAwaitingTickets( 'product_id', $product->id )
+                'count' => static::countAwaitingTickets('product_id', $product->id)
             ];
         }
 
@@ -228,16 +229,16 @@ class StatModule
      * @param string $whereClauseValue // This is the value of the where clause
      * @return int $awatingTicketCount
      */
-    public static function countAwaitingTickets($whereClause = null, $whereClauseValue = null )
+    public static function countAwaitingTickets($whereClause = null, $whereClauseValue = null)
     {
         $ticket = new Ticket;
 
-        if ( $whereClause && $whereClauseValue) {
-            $ticket = $ticket->where( sanitize_text_field($whereClause), sanitize_text_field($whereClauseValue) );
+        if ($whereClause && $whereClauseValue) {
+            $ticket = $ticket->where(sanitize_text_field($whereClause), sanitize_text_field($whereClauseValue));
         }
 
-        $awatingTicketCount = $ticket->where('status', '!=' ,'closed')
-            ->where( function ($query) {
+        $awatingTicketCount = $ticket->where('status', '!=', 'closed')
+            ->where(function ($query) {
                 $query->whereColumn('last_agent_response', '<', 'last_customer_response')
                     ->orWhereNull('last_agent_response')
                     ->orWhere('status', 'new');
@@ -254,18 +255,22 @@ class StatModule
     {
         $stats = [];
         Agent::select(['id', 'first_name'])->get()->each(function ($agent) use (&$stats) {
-            $stats[] = [
-                'agent_name' => $agent->first_name,
-                'stats' => array_merge(
-                   [
-                       'waiting_today' => [
-                           'title' => __('Waiting Today', 'fluent-support'),
-                           'count' => static::countAwaitingTickets('agent_id', $agent->id)
-                       ]
-                   ],
-                    static::getTodayStats($agent->id)
-                )
-            ];
+            $agentStat = static::getTodayStats($agent->id);
+            $waiting = static::countAwaitingTickets('agent_id', $agent->id);
+            if(!empty($agentStat['responses']['count']) || $waiting) {
+                $stats[] = [
+                    'agent_name' => $agent->first_name,
+                    'stats'      => array_merge(
+                        [
+                            'waiting_today' => [
+                                'title' => __('Waiting Today', 'fluent-support'),
+                                'count' => $waiting
+                            ]
+                        ],
+                        $agentStat
+                    )
+                ];
+            }
         });
 
         return $stats;
