@@ -33,18 +33,27 @@ class AuthHandler
             return '<p>' . __('You are already logged in.', 'fluent-support') . '</p>';
         }
 
-        $this->loadAssets();
         $attributes = $this->getShortcodes($attributes);
-        $this->handleAlreadyLoggedIn($attributes);
-
-        $return = '<div class="fst_login_form_auth_wrapper">';
-        $return .= '<div id="fst_login_form" class="fst_login_wrapper">';
-
         if (!empty($attributes['redirect-to'])) {
             $redirect = $attributes['redirect-to'];
         } else {
             $redirect = Helper::getPortalBaseUrl();
         }
+
+
+        $this->handleAlreadyLoggedIn($attributes);
+
+        if ($this->authProvider() == 'fluent_auth') {
+            // Will be handled by FluentAuth plugin
+            $attributes['redirect_to'] = $redirect;
+            return (new \FluentAuth\App\Hooks\Handlers\CustomAuthHandler())->loginForm($attributes);
+        }
+
+        $this->loadAssets();
+
+        $return = '<div class="fst_login_form_auth_wrapper">';
+        $return .= '<div id="fst_login_form" class="fst_login_wrapper">';
+
 
         /*
          * Filter login form
@@ -106,6 +115,10 @@ class AuthHandler
         $attributes = $this->getShortcodes($attributes);
         $this->handleAlreadyLoggedIn($attributes);
 
+        if ($this->authProvider() == 'fluent_auth') {
+            return (new \FluentAuth\App\Hooks\Handlers\CustomAuthHandler())->registrationForm($attributes);
+        }
+
         $registrationFields = static::getSignupFields();
         $hide = $attributes['hide'] == 'true' ? 'hide' : '';
 
@@ -151,6 +164,11 @@ class AuthHandler
         }
 
         $attributes = $this->getShortcodes($attributes);
+
+        if ($this->authProvider() == 'fluent_auth') {
+            return (new \FluentAuth\App\Hooks\Handlers\CustomAuthHandler())->restPasswordForm($attributes);
+        }
+
         $this->handleAlreadyLoggedIn($attributes);
 
         $resetPasswordFields = static::resetPasswordFields();
@@ -190,6 +208,12 @@ class AuthHandler
     {
         if (get_current_user_id()) {
             return '<p>' . sprintf(__('You are already logged in. <a href="%s">Go to support portal</a>', 'fluent-support'), Helper::getPortalBaseUrl()) . '</p>';
+        }
+
+        $attributes = $this->getShortcodes($attributes);
+
+        if ($this->authProvider() == 'fluent_auth') {
+            return (new \FluentAuth\App\Hooks\Handlers\CustomAuthHandler())->authForm($attributes);
         }
 
         $authForm = do_shortcode('[fluent_support_login show-signup=true show-reset-password=true]');
@@ -356,7 +380,14 @@ class AuthHandler
             'show-reset-password' => false,
         ]);
 
-        return shortcode_atts($shortCodeDefaults, $attributes);
+        $attributes = shortcode_atts($shortCodeDefaults, $attributes);
+
+        if (isset($attributes['redirect-to'])) {
+            $attributes['redirect_to'] = $attributes['redirect-to'];
+        }
+
+        return $attributes;
+
     }
 
     protected function handleAlreadyLoggedIn($attributes)
@@ -392,27 +423,26 @@ class AuthHandler
         $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
         $reCaptchaData = ($reCaptchaSettingsData) ? maybe_unserialize($reCaptchaSettingsData->value, []) : '';
 
-        if(!empty($reCaptchaData) && isset($reCaptchaData['is_enabled']) && $reCaptchaData['is_enabled'] == "true"){
+        if (!empty($reCaptchaData) && isset($reCaptchaData['is_enabled']) && $reCaptchaData['is_enabled'] == "true") {
             unset($reCaptchaData['secretKey']);
             $recaptchaVersion = $reCaptchaData["reCaptcha_version"];
             $reCaptchaApiUrl = 'https://www.google.com/recaptcha/api.js';
 
-            if( "recaptcha_v3" === $recaptchaVersion )
-            {
+            if ("recaptcha_v3" === $recaptchaVersion) {
                 $reCaptchaApiUrl .= '?render=' . $reCaptchaData["siteKey"];
             }
 
-            wp_enqueue_script( 'recaptcha', $reCaptchaApiUrl );
+            wp_enqueue_script('recaptcha', $reCaptchaApiUrl);
         }
 
         wp_localize_script('fluent_support_login_helper', 'fluentSupportPublic', [
-            'signup'               => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
-            'login'                => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
-            'nonce'                => wp_create_nonce('wp_rest'),
-            'hide'                 => $hide,
-            'redirect_fallback'    => Helper::getPortalBaseUrl(),
-            'fsupport_login_nonce' => wp_create_nonce('fsupport_login_nonce'),
-            'resetPass'            => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
+            'signup'                => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/signup',
+            'login'                 => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/login',
+            'nonce'                 => wp_create_nonce('wp_rest'),
+            'hide'                  => $hide,
+            'redirect_fallback'     => Helper::getPortalBaseUrl(),
+            'fsupport_login_nonce'  => wp_create_nonce('fsupport_login_nonce'),
+            'resetPass'             => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/reset_pass',
             'reCaptchaSettingsData' => $reCaptchaData,
             'fs_two_fa'             => rest_url($app->config->get('app.rest_namespace') . '/' . $app->config->get('app.rest_version')) . '/two_fa'
         ]);
@@ -423,7 +453,7 @@ class AuthHandler
 
     public function maybeRenewNonce()
     {
-        if(!PermissionManager::currentUserPermissions()) {
+        if (!PermissionManager::currentUserPermissions()) {
             wp_send_json([
                 'error' => 'You do not have permission to do this'
             ], 403);
@@ -432,5 +462,10 @@ class AuthHandler
         wp_send_json([
             'nonce' => wp_create_nonce('wp_rest')
         ], 200);
+    }
+
+    private function authProvider()
+    {
+        return \FluentSupport\App\Services\Helper::getAuthProvider();
     }
 }
