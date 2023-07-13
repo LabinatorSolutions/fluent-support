@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Models\Meta;
@@ -18,6 +19,7 @@ class AuthHandler
         add_shortcode('fluent_support_signup', array($this, 'registrationForm'));
         add_shortcode('fluent_support_auth', array($this, 'authForm'));
         add_shortcode('fluent_support_reset_password', array($this, 'restPasswordForm'));
+        add_action('wp_ajax_fluent_support_renew_rest_nonce', [$this, 'maybeRenewNonce']);
     }
 
     /**
@@ -417,5 +419,18 @@ class AuthHandler
 
 
         $this->loaded = true;
+    }
+
+    public function maybeRenewNonce()
+    {
+        if(!PermissionManager::currentUserPermissions()) {
+            wp_send_json([
+                'error' => 'You do not have permission to do this'
+            ], 403);
+        }
+
+        wp_send_json([
+            'nonce' => wp_create_nonce('wp_rest')
+        ], 200);
     }
 }

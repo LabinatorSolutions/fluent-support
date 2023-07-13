@@ -27,3 +27,7 @@ router.afterEach((to, from) => {
 if(window.fluentSupportAdmin.is_frontend) {
     jQuery('body').addClass('has_fluent_support');
 }
+
+setInterval(() => {
+    window.fluentSupportAppp.$get('tickets/ping');
+}, 10000);
