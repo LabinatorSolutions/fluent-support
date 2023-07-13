@@ -2,7 +2,7 @@
     <div class="fs_box_body">
         <ul class="fs_card_list">
             <li
-                style="padding: 15px"
+                style="padding: 15px 0;"
                 v-for="(stat, statKey) in component_data"
                 :key="statKey"
             >
@@ -20,4 +20,6 @@ export default {
     },
 };
 </script>
-<style></style>
+<style>
+
+</style>

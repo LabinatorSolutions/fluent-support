@@ -92,6 +92,9 @@ export default {
 </script>
 <style scoped>
 .fs_stat_helper {
-    padding: 5px 30px;
+    padding: 5px 15px;
+}
+ul.fs_card_list {
+    padding: 15px 0 0;
 }
 </style>

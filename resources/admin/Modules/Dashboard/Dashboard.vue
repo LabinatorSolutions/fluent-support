@@ -287,7 +287,7 @@ export default {
                         id: 5,
                         component: 'AgentPerformance',
                         show: true,
-                        heading: translate('Agent Performance'),
+                        heading: translate('Agent Performance (Today)'),
                         active_names: 'agentPerformance',
                     }
                 ],
@@ -491,7 +491,7 @@ export default {
 }
 
 .draggable_component .el-collapse-item__header {
-    padding: 10px 30px;
+    padding: 8px 15px;
 }
 
 </style>
