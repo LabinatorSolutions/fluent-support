@@ -73,7 +73,6 @@ export default class FluentFramework {
                 }
             }
         });
-
         return app;
     }
 

@@ -182,4 +182,11 @@ class AgentController extends Controller
             ];
         }
     }
+
+    public function ping(Request $request)
+    {
+        return [
+            'ping' => 'pong'
+        ];
+    }
 }
