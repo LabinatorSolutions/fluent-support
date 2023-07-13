@@ -2,9 +2,9 @@
 Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
-Tested up to: 6.2.1
-Stable tag: 1.6.9
-Requires PHP: 7.1
+Tested up to: 6.2.2
+Stable tag: 1.7.0
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -188,18 +188,18 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
-= 1.7.0 (Date: May 29, 2023) =
+= 1.7.0 (Date: July 13, 2023) =
 * Added - Effortless draft mode and auto save functionality
 * Added - Email verification while registering customer
 * Added - Two factor authentication in login
 * Added - Option to set maximum file upload limit
-* Added - Option to set dedicated mailbox for webhook(pro)
+* Added - Option to set dedicated mailbox for webhook(Pro)
 * Added - Option to set mailbox in the customer portal shortcode
 * Added - Option to upload file in the ticket create form
-* Added - Mailbox added in the workflow action list(pro)
+* Added - Mailbox added in the workflow action list(Pro)
 * Added - Option to merge multiple tickets at the same time
 * Added - Summary by agent report on the dashboard
-* Added - Email CC and BCC support(Pro)
+* Added - Email CC support(Pro)
 * Added - Support file attachment upload in third party (Google Drive and Dropbox)(Pro)
 * Added - Zendesk migrator(Pro)
 * Fixed - Exception handled in route issue
