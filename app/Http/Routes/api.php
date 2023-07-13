@@ -66,6 +66,9 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->post('sync-fluentcrm-lists', 'TicketController@syncFluentCrmLists');
 
     $router->get('search-contact', 'CustomerController@searchContact');
+
+
+    $router->get('ping', 'AgentController@ping');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
