@@ -47,3 +47,4 @@ mix
     .sass('resources/scss/alpha-admin.scss', 'assets/admin/css/alpha-admin.css')
     .sass('resources/scss/all_public.scss', 'assets/admin/css/all_public.css')
     .copy('resources/images', 'assets/images')
+    .copy('resources/libs', 'assets/libs');

@@ -103,6 +103,7 @@ class CustomerPortalHandler
 
         $assets = $app['url.assets'];
 
+        wp_enqueue_script('dompurify', $assets.'libs/purify/purify.min.js', [], '2.4.3');
         wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION, true);
         wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css', [], FLUENT_SUPPORT_VERSION);
 
