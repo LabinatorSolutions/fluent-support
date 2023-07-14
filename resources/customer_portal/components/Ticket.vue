@@ -264,7 +264,7 @@ export default {
             const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
             string = string.replace(tagRegex, '');
 
-            return window.DOMPurify.sanitize(html);
+            return window.DOMPurify.sanitize(string);
         }
     },
     mounted() {
