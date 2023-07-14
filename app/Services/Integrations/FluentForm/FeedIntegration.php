@@ -282,16 +282,20 @@ class FeedIntegration extends IntegrationManagerController
             return strpos($key, 'cf_') === 0;
         }, ARRAY_FILTER_USE_KEY);
 
+
         $customFields = apply_filters('fluent_support/ticket_custom_fields', []);
 
-        foreach($customFields as $key=>$value){
-            $type = [$key=>$value][$key]['type'];
-            $slug = [$key=>$value][$key]['slug'];
+        foreach($customFields as $key => $field){
+            $type = $field['type'];
+            $slug = $field['slug'];
+            if(!isset($ticketCustomField[$slug])) {
+                continue;
+            }
 
             if( $type=='checkbox' &&  array_key_exists($slug, $ticketCustomField)) {
                 $ticketCustomField[$slug] = explode(',', Arr::get($ticketCustomField, $slug));
             } else {
-                $ticketCustomField[$slug] = $ticketCustomField;
+                $ticketCustomField[$slug] = Arr::get($ticketCustomField, $slug);
             }
         }
 
