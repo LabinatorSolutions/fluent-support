@@ -6,7 +6,12 @@
             </div>
         </div>
         <div class="fs_box_body">
-            <div class="fs_reCaptcha_settings_body">
+            <div v-if="appVars.auth_provider == 'fluent_auth'">
+                <div class="settings-body">
+                    <h3>Signin and Registration forms are handled by FluentAuth Plugin</h3>
+                </div>
+            </div>
+            <div v-else class="fs_reCaptcha_settings_body">
                 <div class="settings-body">
                     <el-form label-position="top" label-width="140px">
                         <el-switch
