@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-10 10:05+0000\n"
+"POT-Creation-Date: 2023-07-14 06:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -69,45 +69,45 @@ msgid ""
 ". You can set your actions and run the workflow actions from ticket page."
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:423
+#: app/Http/Controllers/AuthController.php:435
 #, php-format
 msgid "<p>%s</p>"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:420
+#: app/Http/Controllers/AuthController.php:432
 #, php-format
 msgid "<p>Hi %s,</p>"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:424
+#: app/Http/Controllers/AuthController.php:436
 msgid ""
 "<p>If you did not request to reset your password, please ignore this email."
 "</p>"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:421
+#: app/Http/Controllers/AuthController.php:433
 msgid ""
 "<p>Someone has requested a new password for the following account on "
 "WordPress:</p>"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:422
+#: app/Http/Controllers/AuthController.php:434
 #, php-format
 msgid "<p>Username: %s</p>"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:372
+#: app/Http/Controllers/AuthController.php:384
 msgid "<strong>Error</strong>: Invalid username or email"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:167
-#: app/Http/Controllers/AuthController.php:203
+#: app/Http/Controllers/AuthController.php:177
+#: app/Http/Controllers/AuthController.php:208
 msgid ""
 "<strong>Error</strong>: Invalid username, email address or incorrect "
 "password."
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:365
+#: app/Http/Controllers/AuthController.php:377
 msgid ""
 "<strong>Error</strong>: There is no account with that username or email "
 "address."
@@ -117,7 +117,7 @@ msgstr ""
 msgid "A"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:135
+#: app/Services/EmailNotification/Settings.php:133
 msgid "Accepted File Types"
 msgstr ""
 
@@ -141,11 +141,11 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: app/Services/TransStrings.php:270 app/Services/Helper.php:116
+#: app/Services/TransStrings.php:270 app/Services/Helper.php:117
 msgid "Active"
 msgstr ""
 
-#: app/Modules/StatModule.php:72 app/Modules/StatModule.php:115
+#: app/Modules/StatModule.php:73 app/Modules/StatModule.php:116
 #: app/Services/Tickets/TicketStats.php:25
 msgid "Active Tickets"
 msgstr ""
@@ -333,11 +333,11 @@ msgstr ""
 msgid "Agent Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:114 app/Services/Helper.php:618
+#: app/Services/TransStrings.php:114 app/Services/Helper.php:620
 msgid "Agent First Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:116 app/Services/Helper.php:620
+#: app/Services/TransStrings.php:116 app/Services/Helper.php:622
 msgid "Agent Full Name"
 msgstr ""
 
@@ -345,7 +345,7 @@ msgstr ""
 msgid "Agent Job Title( ex: Developer, Support Staff )"
 msgstr ""
 
-#: app/Services/TransStrings.php:115 app/Services/Helper.php:619
+#: app/Services/TransStrings.php:115 app/Services/Helper.php:621
 msgid "Agent Last Name"
 msgstr ""
 
@@ -354,7 +354,7 @@ msgid "Agents Reports"
 msgstr ""
 
 #: app/Services/TransStrings.php:272
-#: app/Hooks/Handlers/CustomerPortalHandler.php:112
+#: app/Hooks/Handlers/CustomerPortalHandler.php:108
 msgid "All"
 msgstr ""
 
@@ -425,7 +425,7 @@ msgstr ""
 msgid "Almost Done"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:134
+#: app/Hooks/Handlers/AuthHandler.php:149
 msgid "Already have an account?"
 msgstr ""
 
@@ -613,7 +613,7 @@ msgstr ""
 msgid "average"
 msgstr ""
 
-#: app/Services/TransStrings.php:163 app/Services/Helper.php:626
+#: app/Services/TransStrings.php:163 app/Services/Helper.php:628
 msgid "Average Waiting"
 msgstr ""
 
@@ -666,7 +666,7 @@ msgid "button to get the authorization code."
 msgstr ""
 
 #: app/Services/TransStrings.php:367
-#: app/Hooks/Handlers/CustomerPortalHandler.php:152
+#: app/Hooks/Handlers/CustomerPortalHandler.php:148
 msgid "by"
 msgstr ""
 
@@ -710,7 +710,7 @@ msgstr ""
 msgid "Click Here to Renew your License"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:111
+#: app/Hooks/Handlers/CustomerPortalHandler.php:107
 msgid "Click Here to Write a reply"
 msgstr ""
 
@@ -727,7 +727,7 @@ msgid "Click to see Available Dynamic Codes"
 msgstr ""
 
 #: app/Services/TransStrings.php:304
-#: app/Hooks/Handlers/CustomerPortalHandler.php:125
+#: app/Hooks/Handlers/CustomerPortalHandler.php:121
 msgid "Click to upload"
 msgstr ""
 
@@ -748,7 +748,7 @@ msgid "Close Selected Tickets"
 msgstr ""
 
 #: app/Services/TransStrings.php:361
-#: app/Hooks/Handlers/CustomerPortalHandler.php:122
+#: app/Hooks/Handlers/CustomerPortalHandler.php:118
 msgid "Close Ticket"
 msgstr ""
 
@@ -760,8 +760,8 @@ msgstr ""
 msgid "Close Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:160 app/Services/Helper.php:117
-#: app/Services/Helper.php:624 app/Hooks/Handlers/CustomerPortalHandler.php:114
+#: app/Services/TransStrings.php:160 app/Services/Helper.php:118
+#: app/Services/Helper.php:626 app/Hooks/Handlers/CustomerPortalHandler.php:110
 msgid "Closed"
 msgstr ""
 
@@ -769,8 +769,8 @@ msgstr ""
 msgid "Closed by Customer"
 msgstr ""
 
-#: app/Modules/StatModule.php:76 app/Modules/StatModule.php:119
-#: app/Modules/StatModule.php:159 app/Services/Tickets/TicketStats.php:43
+#: app/Modules/StatModule.php:77 app/Modules/StatModule.php:120
+#: app/Modules/StatModule.php:160 app/Services/Tickets/TicketStats.php:43
 msgid "Closed Tickets"
 msgstr ""
 
@@ -825,7 +825,7 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:110
+#: app/Hooks/Handlers/CustomerPortalHandler.php:106
 msgid "Conversation"
 msgstr ""
 
@@ -862,7 +862,7 @@ msgstr ""
 msgid "Create"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:150
+#: app/Hooks/Handlers/CustomerPortalHandler.php:146
 msgid "Create a New Ticket"
 msgstr ""
 
@@ -874,12 +874,12 @@ msgstr ""
 msgid "Create a Ticket"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:67
+#: app/Hooks/Handlers/AuthHandler.php:78
 msgid "Create an Account"
 msgstr ""
 
 #: app/Services/TransStrings.php:50
-#: app/Hooks/Handlers/CustomerPortalHandler.php:135
+#: app/Hooks/Handlers/CustomerPortalHandler.php:131
 msgid "Create Customer"
 msgstr ""
 
@@ -926,7 +926,7 @@ msgid "Create Support Ticket"
 msgstr ""
 
 #: app/Services/TransStrings.php:355
-#: app/Hooks/Handlers/CustomerPortalHandler.php:148
+#: app/Hooks/Handlers/CustomerPortalHandler.php:144
 msgid "Create Ticket"
 msgstr ""
 
@@ -946,7 +946,7 @@ msgstr ""
 msgid "Critical"
 msgstr ""
 
-#: app/Services/Helper.php:188
+#: app/Services/Helper.php:189
 msgid "CSV"
 msgstr ""
 
@@ -1031,7 +1031,7 @@ msgstr ""
 msgid "Customer Management"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:48
+#: app/Hooks/Handlers/CustomerPortalHandler.php:43
 msgid ""
 "Customer Portal is only accessible by Customers. Looks like you are a "
 "support staff"
@@ -1057,7 +1057,7 @@ msgid "Dashboard"
 msgstr ""
 
 #: app/Services/TransStrings.php:317
-#: app/Hooks/Handlers/CustomerPortalHandler.php:115
+#: app/Hooks/Handlers/CustomerPortalHandler.php:111
 msgid "Date"
 msgstr ""
 
@@ -1069,11 +1069,11 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:154
+#: app/Services/EmailNotification/Settings.php:152
 msgid "Delete all attachments on ticket close"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:133
+#: app/Hooks/Handlers/CustomerPortalHandler.php:129
 msgid "Delete Customer"
 msgstr ""
 
@@ -1102,7 +1102,7 @@ msgstr ""
 msgid "Disable Activity Logs"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:129
+#: app/Services/EmailNotification/Settings.php:127
 msgid "Disable Public Ticket interaction"
 msgstr ""
 
@@ -1168,8 +1168,8 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:645 app/Hooks/Handlers/AuthHandler.php:281
-#: app/Hooks/Handlers/AuthHandler.php:308
+#: app/Services/TransStrings.php:645 app/Hooks/Handlers/AuthHandler.php:307
+#: app/Hooks/Handlers/AuthHandler.php:334
 msgid "Email Address"
 msgstr ""
 
@@ -1177,7 +1177,7 @@ msgstr ""
 msgid "Email address has been assigned to other customer"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:141
+#: app/Http/Controllers/AuthController.php:151
 msgid "Email and Password is required"
 msgstr ""
 
@@ -1193,8 +1193,8 @@ msgstr ""
 msgid "Email Marketing Automation, Newsletter and CRM Plugin for WordPress"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:172
-#: app/Http/Controllers/AuthController.php:261
+#: app/Http/Controllers/AuthController.php:182
+#: app/Http/Controllers/AuthController.php:266
 msgid "Email or Password is not valid. Please try again"
 msgstr ""
 
@@ -1210,14 +1210,6 @@ msgstr ""
 msgid "Email Subject"
 msgstr ""
 
-#: app/Services/EmailVerification.php:11
-msgid "Email Verification"
-msgstr ""
-
-#: app/Http/Controllers/AuthController.php:635
-msgid "Email verification successful."
-msgstr ""
-
 #: app/Services/TransStrings.php:552
 msgid "Email:"
 msgstr ""
@@ -1230,15 +1222,11 @@ msgstr ""
 msgid "Enable Conditional Logics"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:175
+#: app/Services/EmailNotification/Settings.php:166
 msgid "Enable Draft Mode"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:168
-msgid "Enable Email Verification"
-msgstr ""
-
-#: app/Services/EmailNotification/Settings.php:161
+#: app/Services/EmailNotification/Settings.php:159
 msgid "Enable Fluent Summary In Admin Bar"
 msgstr ""
 
@@ -1248,10 +1236,6 @@ msgstr ""
 
 #: app/Services/TransStrings.php:85
 msgid "Enable This Email Notification"
-msgstr ""
-
-#: app/Services/EmailNotification/Settings.php:182
-msgid "Enable Two-Factor Authentication"
 msgstr ""
 
 #: app/Services/TransStrings.php:155
@@ -1356,8 +1340,8 @@ msgstr ""
 msgid "First Name"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:261
-#: app/Hooks/Handlers/AuthHandler.php:263
+#: app/Hooks/Handlers/AuthHandler.php:287
+#: app/Hooks/Handlers/AuthHandler.php:289
 msgid "First name"
 msgstr ""
 
@@ -1437,7 +1421,7 @@ msgid ""
 "the latest ticket. A new ticket should be created with confirmation code."
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:73
+#: app/Hooks/Handlers/AuthHandler.php:84
 msgid "Forgot your password?"
 msgstr ""
 
@@ -1449,13 +1433,13 @@ msgstr ""
 msgid "From Email Address"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:305
+#: app/Hooks/Handlers/Menu.php:309
 msgid ""
 "Get activity notification to Slack Channel and keep your support team super "
 "engaged"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:298
+#: app/Hooks/Handlers/Menu.php:302
 msgid ""
 "Get activity notification to Telegram Messenger and reply directly from "
 "Telegram inbox"
@@ -1485,7 +1469,7 @@ msgstr ""
 msgid "Go to Dashboard"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:50
+#: app/Hooks/Handlers/CustomerPortalHandler.php:45
 msgid "Go to Support Admin Page"
 msgstr ""
 
@@ -1513,11 +1497,6 @@ msgstr ""
 msgid "Have a new license Key?"
 msgstr ""
 
-#: app/Hooks/Handlers/TwoFaHandler.php:148
-#, php-format
-msgid "Hello %s,"
-msgstr ""
-
 #: app/Services/TransStrings.php:11
 msgid "Here Are A Few Tickets You May Want To Take A Look At"
 msgstr ""
@@ -1542,10 +1521,6 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: app/Hooks/Handlers/TwoFaHandler.php:158
-msgid "If you did not request this login code, please ignore this email."
-msgstr ""
-
 #: app/Services/TransStrings.php:617
 msgid ""
 "If you don't select any agents then all the agents report will be displayed "
@@ -1556,37 +1531,25 @@ msgstr ""
 msgid "If you don't select any column, by default system will take all."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:176
+#: app/Services/EmailNotification/Settings.php:167
 msgid ""
 "If you enable this setting, then if an agent close a ticket accidentally "
 "then the written response will be saved as draft."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:169
-msgid ""
-"If you enable this setting, then user can create tickets only after "
-"verifying the email address."
-msgstr ""
-
-#: app/Services/EmailNotification/Settings.php:183
-msgid ""
-"If you enable this setting, users will be required to submit a second form "
-"of authentication, such as a code sent to their email, to login."
-msgstr ""
-
-#: app/Services/EmailNotification/Settings.php:130
+#: app/Services/EmailNotification/Settings.php:128
 msgid ""
 "If you enable this then only logged in user can reply the tickets. Otherwise,"
 " url will be signed and intended user can reply without logging in"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:155
+#: app/Services/EmailNotification/Settings.php:153
 msgid ""
 "If you enable this then when a ticket get closed it will delete all the "
 "attachments associated with the particular ticket."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:162
+#: app/Services/EmailNotification/Settings.php:160
 msgid ""
 "If you enable this, logged in user can see the ticket summary from top nav "
 "bar."
@@ -1598,7 +1561,7 @@ msgid ""
 "ticket or any response"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:120
+#: app/Hooks/Handlers/CustomerPortalHandler.php:116
 msgid "If you still have related issues. Please reopen this ticket and reply"
 msgstr ""
 
@@ -1704,8 +1667,8 @@ msgstr ""
 msgid "Integration Settings"
 msgstr ""
 
-#: app/Modules/StatModule.php:84 app/Services/TransStrings.php:158
-#: app/Services/Helper.php:622
+#: app/Modules/StatModule.php:85 app/Services/TransStrings.php:158
+#: app/Services/Helper.php:624
 msgid "Interactions"
 msgstr ""
 
@@ -1718,12 +1681,8 @@ msgstr ""
 msgid "Invalid Support Portal URL"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:347
+#: app/Http/Controllers/AuthController.php:359
 msgid "Invalid username or email"
-msgstr ""
-
-#: app/Services/EmailVerification.php:31
-msgid "Invalid verification code"
 msgstr ""
 
 #: app/Services/Tickets/CustomFieldsService.php:25
@@ -1765,7 +1724,7 @@ msgstr ""
 msgid "Job Title"
 msgstr ""
 
-#: app/Services/Helper.php:217
+#: app/Services/Helper.php:218
 msgid "JSON"
 msgstr ""
 
@@ -1809,12 +1768,12 @@ msgstr ""
 msgid "Last Month"
 msgstr ""
 
-#: app/Services/TransStrings.php:53 app/Hooks/Handlers/AuthHandler.php:267
+#: app/Services/TransStrings.php:53 app/Hooks/Handlers/AuthHandler.php:293
 #: app/Hooks/Handlers/PrivacyHandler.php:212
 msgid "Last Name"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:269
+#: app/Hooks/Handlers/AuthHandler.php:295
 msgid "Last name"
 msgstr ""
 
@@ -1830,28 +1789,23 @@ msgstr ""
 msgid "License Management"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:76
+#: app/Hooks/Handlers/CustomerPortalHandler.php:71
 msgid "Loading Customer Portal. Please wait..."
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:136
-#: app/Hooks/Handlers/TwoFaHandler.php:194
+#: app/Hooks/Handlers/AuthHandler.php:151
 msgid "Login"
-msgstr ""
-
-#: app/Hooks/Handlers/TwoFaHandler.php:186
-msgid "Login Code"
 msgstr ""
 
 #: app/Services/TransStrings.php:637
 msgid "Login Form"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:139
+#: app/Hooks/Handlers/CustomerPortalHandler.php:135
 msgid "Looking for similar articles..."
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:131
+#: app/Hooks/Handlers/CustomerPortalHandler.php:127
 msgid "Looks like you did not open any support tickets yet"
 msgstr ""
 
@@ -1943,7 +1897,7 @@ msgstr ""
 msgid "Match Value"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:142
+#: app/Services/EmailNotification/Settings.php:140
 msgid "Max File Size (in MegaByte)"
 msgstr ""
 
@@ -1951,11 +1905,11 @@ msgstr ""
 msgid "max wait time"
 msgstr ""
 
-#: app/Services/TransStrings.php:164 app/Services/Helper.php:627
+#: app/Services/TransStrings.php:164 app/Services/Helper.php:629
 msgid "Max Waiting"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:148
+#: app/Services/EmailNotification/Settings.php:146
 msgid "Maximum File Upload"
 msgstr ""
 
@@ -1979,7 +1933,7 @@ msgstr ""
 msgid "Merge Tickets"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:122
+#: app/Services/EmailNotification/Settings.php:120
 msgid "Message for non logged in users"
 msgstr ""
 
@@ -2007,7 +1961,7 @@ msgstr ""
 msgid "Name:"
 msgstr ""
 
-#: app/Services/TransStrings.php:271 app/Services/Helper.php:115
+#: app/Services/TransStrings.php:271 app/Services/Helper.php:116
 msgid "New"
 msgstr ""
 
@@ -2015,13 +1969,13 @@ msgstr ""
 msgid "New Option"
 msgstr ""
 
-#: app/Modules/StatModule.php:68 app/Modules/StatModule.php:111
-#: app/Modules/StatModule.php:155 app/Services/Tickets/TicketStats.php:31
+#: app/Modules/StatModule.php:69 app/Modules/StatModule.php:112
+#: app/Modules/StatModule.php:156 app/Services/Tickets/TicketStats.php:31
 msgid "New Tickets"
 msgstr ""
 
 #: app/Services/TransStrings.php:629
-#: app/Hooks/Handlers/CustomerPortalHandler.php:117
+#: app/Hooks/Handlers/CustomerPortalHandler.php:113
 msgid "Next"
 msgstr ""
 
@@ -2045,7 +1999,7 @@ msgstr ""
 msgid "No Custom Fields Found"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:132
+#: app/Hooks/Handlers/CustomerPortalHandler.php:128
 msgid "No support tickets found for this filter"
 msgstr ""
 
@@ -2065,7 +2019,7 @@ msgstr ""
 msgid "Not Includes In"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:65
+#: app/Hooks/Handlers/AuthHandler.php:76
 msgid "Not registered?"
 msgstr ""
 
@@ -2087,16 +2041,16 @@ msgid "Only %s files are allowed."
 msgstr ""
 
 #: app/Services/TransStrings.php:366
-#: app/Hooks/Handlers/CustomerPortalHandler.php:119
+#: app/Hooks/Handlers/CustomerPortalHandler.php:115
 msgid "Only you and official support agents can view this conversation"
 msgstr ""
 
 #: app/Services/TransStrings.php:269
-#: app/Hooks/Handlers/CustomerPortalHandler.php:113
+#: app/Hooks/Handlers/CustomerPortalHandler.php:109
 msgid "Open"
 msgstr ""
 
-#: app/Services/TransStrings.php:159 app/Services/Helper.php:623
+#: app/Services/TransStrings.php:159 app/Services/Helper.php:625
 msgid "Open Tickets"
 msgstr ""
 
@@ -2124,8 +2078,8 @@ msgstr ""
 msgid "Overall Activities"
 msgstr ""
 
-#: app/Services/TransStrings.php:81 app/Hooks/Handlers/AuthHandler.php:288
-#: app/Hooks/Handlers/AuthHandler.php:290
+#: app/Services/TransStrings.php:81 app/Hooks/Handlers/AuthHandler.php:314
+#: app/Hooks/Handlers/AuthHandler.php:316
 msgid "Password"
 msgstr ""
 
@@ -2133,7 +2087,7 @@ msgstr ""
 msgid "Password (Leave blank for auto generated email)"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:385
+#: app/Http/Controllers/AuthController.php:397
 msgid "Password reset is not allowed for this user"
 msgstr ""
 
@@ -2145,7 +2099,7 @@ msgstr ""
 msgid "Payment Via"
 msgstr ""
 
-#: app/Services/Helper.php:199
+#: app/Services/Helper.php:200
 msgid "PDF/Docs"
 msgstr ""
 
@@ -2165,7 +2119,7 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: app/Services/Helper.php:176
+#: app/Services/Helper.php:177
 msgid "Photos"
 msgstr ""
 
@@ -2177,14 +2131,8 @@ msgstr ""
 msgid "Placeholder"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:441
+#: app/Http/Controllers/AuthController.php:453
 msgid "Please check your email for the reset link"
-msgstr ""
-
-#: app/Hooks/Handlers/TwoFaHandler.php:179
-msgid ""
-"Please check your email inbox and enter the 2-factor authentication code "
-"below:"
 msgstr ""
 
 #: app/Services/TransStrings.php:491
@@ -2239,12 +2187,8 @@ msgid ""
 "WordPress"
 msgstr ""
 
-#: app/Hooks/Handlers/TwoFaHandler.php:94
-msgid "Please provide a valid login code"
-msgstr ""
-
 #: app/Services/TransStrings.php:358
-#: app/Hooks/Handlers/CustomerPortalHandler.php:145
+#: app/Hooks/Handlers/CustomerPortalHandler.php:141
 msgid "Please provide details about your problem"
 msgstr ""
 
@@ -2256,7 +2200,7 @@ msgstr ""
 msgid "Please provide fallback box"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:123
+#: app/Services/EmailNotification/Settings.php:121
 msgid ""
 "Please provide message for not logged in users. You can place login "
 "shortcode too Use shortcode <code>[fluent_support_login]</code> to show "
@@ -2271,7 +2215,7 @@ msgid ""
 "email settings"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:118
+#: app/Services/EmailNotification/Settings.php:116
 msgid ""
 "Please provide the page id where you want to show the tickets for your "
 "customers. Use shortcode <code>[fluent_support_portal]</code> in that page"
@@ -2303,7 +2247,7 @@ msgstr ""
 msgid "Please setup your support portal first"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:114
+#: app/Services/EmailNotification/Settings.php:112
 msgid "Portal Page"
 msgstr ""
 
@@ -2315,7 +2259,7 @@ msgstr ""
 msgid "Press enter to save"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:118
+#: app/Hooks/Handlers/CustomerPortalHandler.php:114
 msgid "Prev"
 msgstr ""
 
@@ -2324,7 +2268,7 @@ msgid "Previous Conversations"
 msgstr ""
 
 #: app/Services/TransStrings.php:292
-#: app/Hooks/Handlers/CustomerPortalHandler.php:147
+#: app/Hooks/Handlers/CustomerPortalHandler.php:143
 msgid "Priority"
 msgstr ""
 
@@ -2337,7 +2281,7 @@ msgid "Priority (Customer)"
 msgstr ""
 
 #: app/Services/TransStrings.php:363
-#: app/Hooks/Handlers/CustomerPortalHandler.php:127
+#: app/Hooks/Handlers/CustomerPortalHandler.php:123
 msgid "Private"
 msgstr ""
 
@@ -2418,17 +2362,17 @@ msgid "Recaptcha Version"
 msgstr ""
 
 #: app/Services/TransStrings.php:353
-#: app/Hooks/Handlers/CustomerPortalHandler.php:146
+#: app/Hooks/Handlers/CustomerPortalHandler.php:142
 msgid "Related Product/Service"
 msgstr ""
 
 #: app/Services/TransStrings.php:332
-#: app/Hooks/Handlers/CustomerPortalHandler.php:151
+#: app/Hooks/Handlers/CustomerPortalHandler.php:147
 msgid "Reopen This ticket"
 msgstr ""
 
 #: app/Services/TransStrings.php:338
-#: app/Hooks/Handlers/CustomerPortalHandler.php:123
+#: app/Hooks/Handlers/CustomerPortalHandler.php:119
 msgid "replied"
 msgstr ""
 
@@ -2436,7 +2380,7 @@ msgstr ""
 msgid "Replied By Agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:225
+#: app/Services/EmailNotification/Settings.php:209
 msgid "Replied by Agent (To Customer)"
 msgstr ""
 
@@ -2444,7 +2388,7 @@ msgstr ""
 msgid "Replied By Customer"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:249
+#: app/Services/EmailNotification/Settings.php:233
 msgid "Replied by Customer (To Agent/Admin)"
 msgstr ""
 
@@ -2457,7 +2401,7 @@ msgid "replies and"
 msgstr ""
 
 #: app/Services/TransStrings.php:362
-#: app/Hooks/Handlers/CustomerPortalHandler.php:129
+#: app/Hooks/Handlers/CustomerPortalHandler.php:125
 msgid "Reply"
 msgstr ""
 
@@ -2502,7 +2446,7 @@ msgstr ""
 msgid "Reset Filters"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:75 app/Hooks/Handlers/AuthHandler.php:173
+#: app/Hooks/Handlers/AuthHandler.php:86 app/Hooks/Handlers/AuthHandler.php:193
 msgid "Reset Password"
 msgstr ""
 
@@ -2510,12 +2454,12 @@ msgstr ""
 msgid "Reset To Default Gravatar"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:402
+#: app/Http/Controllers/AuthController.php:414
 #, php-format
 msgid "Reset your password for %s"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:418
+#: app/Http/Controllers/AuthController.php:430
 #, php-format
 msgid "Reset your password for %s support portal"
 msgstr ""
@@ -2544,9 +2488,9 @@ msgstr ""
 msgid "Response Title"
 msgstr ""
 
-#: app/Modules/StatModule.php:80 app/Modules/StatModule.php:123
-#: app/Modules/StatModule.php:163 app/Services/TransStrings.php:157
-#: app/Services/Helper.php:621
+#: app/Modules/StatModule.php:81 app/Modules/StatModule.php:124
+#: app/Modules/StatModule.php:164 app/Services/TransStrings.php:157
+#: app/Services/Helper.php:623
 msgid "Responses"
 msgstr ""
 
@@ -2618,12 +2562,12 @@ msgstr ""
 msgid "Search Tags"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:121
+#: app/Http/Controllers/AuthController.php:131
 msgid "Security verification failed"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:27
-#: app/Http/Controllers/AuthController.php:327
+#: app/Http/Controllers/AuthController.php:31
+#: app/Http/Controllers/AuthController.php:339
 msgid "Security verification failed. Please try again"
 msgstr ""
 
@@ -2685,12 +2629,12 @@ msgstr ""
 msgid "Select Option"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:116
+#: app/Services/EmailNotification/Settings.php:114
 msgid "Select Portal Page"
 msgstr ""
 
 #: app/Services/TransStrings.php:354
-#: app/Hooks/Handlers/CustomerPortalHandler.php:141
+#: app/Hooks/Handlers/CustomerPortalHandler.php:137
 msgid "Select Priority"
 msgstr ""
 
@@ -2699,7 +2643,7 @@ msgid "Select Product"
 msgstr ""
 
 #: app/Services/TransStrings.php:135
-#: app/Hooks/Handlers/CustomerPortalHandler.php:138
+#: app/Hooks/Handlers/CustomerPortalHandler.php:134
 msgid "Select related Product/Service"
 msgstr ""
 
@@ -2749,13 +2693,13 @@ msgstr ""
 msgid "Send Attachments(Not Recommended)"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:297
+#: app/Hooks/Handlers/Menu.php:301
 msgid ""
 "Send Telegram notifications to Group, Channel or individual person inbox and "
 "reply from Telegram inbox"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:304
+#: app/Hooks/Handlers/Menu.php:308
 msgid "Send ticket activity notifications to slack"
 msgstr ""
 
@@ -2811,7 +2755,7 @@ msgstr ""
 msgid "Show Filters"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:126
+#: app/Hooks/Handlers/AuthHandler.php:141
 msgid "Signup"
 msgstr ""
 
@@ -2819,7 +2763,7 @@ msgstr ""
 msgid "Signup Form"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:303
+#: app/Hooks/Handlers/Menu.php:307
 msgid "Slack"
 msgstr ""
 
@@ -2837,13 +2781,6 @@ msgstr ""
 
 #: app/Services/TransStrings.php:202
 msgid "Slug (Optional)"
-msgstr ""
-
-#: app/Hooks/Handlers/TwoFaHandler.php:149
-#, php-format
-msgid ""
-"Someone requested to login to %s and here is the Login code that you can use "
-"in the login form"
 msgstr ""
 
 #: app/Http/Controllers/CustomerPortalController.php:157
@@ -2868,10 +2805,6 @@ msgstr ""
 msgid "Sorry, this customer has one ticket only"
 msgstr ""
 
-#: app/Hooks/Handlers/TwoFaHandler.php:119
-msgid "Sorry, your login code has been expired. Please try to login again"
-msgstr ""
-
 #: app/Hooks/Handlers/ExternalPages.php:112
 msgid ""
 "Sorry, Your secure sign is invalid, Please reload the previous page and get "
@@ -2887,7 +2820,7 @@ msgid "Start"
 msgstr ""
 
 #: app/Services/TransStrings.php:368
-#: app/Hooks/Handlers/CustomerPortalHandler.php:124
+#: app/Hooks/Handlers/CustomerPortalHandler.php:120
 msgid "started the conversation"
 msgstr ""
 
@@ -2901,18 +2834,18 @@ msgid "Stats"
 msgstr ""
 
 #: app/Services/TransStrings.php:75
-#: app/Hooks/Handlers/CustomerPortalHandler.php:116
+#: app/Hooks/Handlers/CustomerPortalHandler.php:112
 #: app/Hooks/Handlers/PrivacyHandler.php:220
 msgid "Status"
 msgstr ""
 
 #: app/Services/TransStrings.php:346
-#: app/Hooks/Handlers/CustomerPortalHandler.php:143
+#: app/Hooks/Handlers/CustomerPortalHandler.php:139
 msgid "Subject"
 msgstr ""
 
 #: app/Services/TransStrings.php:356
-#: app/Hooks/Handlers/CustomerPortalHandler.php:149
+#: app/Hooks/Handlers/CustomerPortalHandler.php:145
 msgid "Submit a Support Ticket"
 msgstr ""
 
@@ -2920,11 +2853,11 @@ msgstr ""
 msgid "Subscribed"
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:105
+#: app/Http/Controllers/AuthController.php:109
 msgid "Successfully registered to the site."
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:140
+#: app/Hooks/Handlers/CustomerPortalHandler.php:136
 msgid "Suggested articles"
 msgstr ""
 
@@ -2981,7 +2914,7 @@ msgstr ""
 msgid "Support Type"
 msgstr ""
 
-#: app/Services/Helper.php:169
+#: app/Services/Helper.php:170
 #, php-format
 msgid "Supported Types: %s and max file size: %.01fMB"
 msgstr ""
@@ -3006,7 +2939,7 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:296
+#: app/Hooks/Handlers/Menu.php:300
 msgid "Telegram"
 msgstr ""
 
@@ -3041,38 +2974,33 @@ msgstr ""
 msgid "The Ultimate Support Plugin For Your WordPress."
 msgstr ""
 
-#: app/Hooks/Handlers/TwoFaHandler.php:154
-#, php-format
-msgid "This code will expire in %d minutes and can only be used once."
-msgstr ""
-
-#: app/Services/EmailNotification/Settings.php:250
+#: app/Services/EmailNotification/Settings.php:234
 msgid ""
 "This email will be sent to Assigned Agent or Admin when a customer reply to "
 "a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:258
+#: app/Services/EmailNotification/Settings.php:242
 msgid "This email will be sent to newly assigned agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:218
+#: app/Services/EmailNotification/Settings.php:202
 msgid "This email will be sent when a customer submit a support ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:234
+#: app/Services/EmailNotification/Settings.php:218
 msgid "This email will be sent when an agent close a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:266
+#: app/Services/EmailNotification/Settings.php:250
 msgid "This email will be sent when an agent create a ticket for a customer"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:226
+#: app/Services/EmailNotification/Settings.php:210
 msgid "This email will be sent when an agent reply to a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:242
+#: app/Services/EmailNotification/Settings.php:226
 msgid ""
 "This email will be sent when the business when a new ticket has been "
 "submitted"
@@ -3097,11 +3025,11 @@ msgid "This migrator will migrate total"
 msgstr ""
 
 #: app/Services/TransStrings.php:331
-#: app/Hooks/Handlers/CustomerPortalHandler.php:121
+#: app/Hooks/Handlers/CustomerPortalHandler.php:117
 msgid "This ticket has been closed at"
 msgstr ""
 
-#: app/Hooks/Handlers/CustomerPortalHandler.php:126
+#: app/Hooks/Handlers/CustomerPortalHandler.php:122
 msgid "This ticket is"
 msgstr ""
 
@@ -3109,7 +3037,7 @@ msgstr ""
 msgid "This will permanently delete response. Continue?"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:257
+#: app/Services/EmailNotification/Settings.php:241
 msgid "Ticket Agent Change (To Agent)"
 msgstr ""
 
@@ -3125,7 +3053,7 @@ msgstr ""
 msgid "Ticket Closed By Agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:233
+#: app/Services/EmailNotification/Settings.php:217
 msgid "Ticket Closed by Agent (To Customer)"
 msgstr ""
 
@@ -3133,11 +3061,11 @@ msgstr ""
 msgid "Ticket Content"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:241
+#: app/Services/EmailNotification/Settings.php:225
 msgid "Ticket Created (To Admin)"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:217
+#: app/Services/EmailNotification/Settings.php:201
 msgid "Ticket Created (To Customer)"
 msgstr ""
 
@@ -3153,7 +3081,7 @@ msgstr ""
 msgid "Ticket created at "
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:265
+#: app/Services/EmailNotification/Settings.php:249
 msgid "Ticket Created by Agent (To Customer)"
 msgstr ""
 
@@ -3166,7 +3094,7 @@ msgid "Ticket Description (you can use any smart code)"
 msgstr ""
 
 #: app/Services/TransStrings.php:350
-#: app/Hooks/Handlers/CustomerPortalHandler.php:144
+#: app/Hooks/Handlers/CustomerPortalHandler.php:140
 msgid "Ticket Details"
 msgstr ""
 
@@ -3344,15 +3272,15 @@ msgstr ""
 msgid "Today's Active Tickets By Products"
 msgstr ""
 
-#: app/Modules/StatModule.php:199
+#: app/Modules/StatModule.php:200
 msgid "Total Closed"
 msgstr ""
 
-#: app/Modules/StatModule.php:195
+#: app/Modules/StatModule.php:196
 msgid "Total Interactions"
 msgstr ""
 
-#: app/Modules/StatModule.php:191
+#: app/Modules/StatModule.php:192
 msgid "Total Replies"
 msgstr ""
 
@@ -3370,10 +3298,6 @@ msgstr ""
 
 #: app/Services/TransStrings.php:529
 msgid "Twilio Integration"
-msgstr ""
-
-#: app/Hooks/Handlers/TwoFaHandler.php:182
-msgid "Two-Factor Authentication Code"
 msgstr ""
 
 #: app/Services/TransStrings.php:395
@@ -3413,7 +3337,7 @@ msgid "Uncheck all"
 msgstr ""
 
 #: app/Services/TransStrings.php:370
-#: app/Hooks/Handlers/CustomerPortalHandler.php:153
+#: app/Hooks/Handlers/CustomerPortalHandler.php:149
 msgid "Unknown error. Please reload this page"
 msgstr ""
 
@@ -3426,7 +3350,7 @@ msgid "Update Custom Field"
 msgstr ""
 
 #: app/Services/TransStrings.php:49
-#: app/Hooks/Handlers/CustomerPortalHandler.php:134
+#: app/Hooks/Handlers/CustomerPortalHandler.php:130
 msgid "Update Customer"
 msgstr ""
 
@@ -3474,8 +3398,8 @@ msgstr ""
 msgid "Use shortcode"
 msgstr ""
 
-#: app/Services/TransStrings.php:80 app/Hooks/Handlers/AuthHandler.php:274
-#: app/Hooks/Handlers/AuthHandler.php:276
+#: app/Services/TransStrings.php:80 app/Hooks/Handlers/AuthHandler.php:300
+#: app/Hooks/Handlers/AuthHandler.php:302
 msgid "Username"
 msgstr ""
 
@@ -3485,10 +3409,6 @@ msgstr ""
 
 #: app/Services/TransStrings.php:639
 msgid "Validate Captcha"
-msgstr ""
-
-#: app/Http/Controllers/AuthController.php:649
-msgid "Verification email has been sent to your email address."
 msgstr ""
 
 #: app/Services/TransStrings.php:397
@@ -3532,7 +3452,7 @@ msgid "View Settings"
 msgstr ""
 
 #: app/Services/TransStrings.php:369
-#: app/Hooks/Handlers/CustomerPortalHandler.php:154
+#: app/Hooks/Handlers/CustomerPortalHandler.php:150
 msgid "View Your Tickets"
 msgstr ""
 
@@ -3544,7 +3464,7 @@ msgstr ""
 msgid "Waiting for Reply"
 msgstr ""
 
-#: app/Services/TransStrings.php:162 app/Services/Helper.php:625
+#: app/Services/TransStrings.php:162 app/Services/Helper.php:627
 msgid "Waiting Tickets"
 msgstr ""
 
@@ -3552,7 +3472,7 @@ msgstr ""
 msgid "Waiting Time"
 msgstr ""
 
-#: app/Modules/StatModule.php:262
+#: app/Modules/StatModule.php:266
 msgid "Waiting Today"
 msgstr ""
 
@@ -3577,7 +3497,7 @@ msgid "Web Based"
 msgstr ""
 
 #: app/Services/TransStrings.php:347
-#: app/Hooks/Handlers/CustomerPortalHandler.php:137
+#: app/Hooks/Handlers/CustomerPortalHandler.php:133
 msgid "What's this support ticket about?"
 msgstr ""
 
@@ -3633,7 +3553,7 @@ msgid "WPManageNinja LLC"
 msgstr ""
 
 #: app/Services/TransStrings.php:360
-#: app/Hooks/Handlers/CustomerPortalHandler.php:128
+#: app/Hooks/Handlers/CustomerPortalHandler.php:124
 msgid "Write a reply"
 msgstr ""
 
@@ -3662,7 +3582,7 @@ msgid "Yesterday"
 msgstr ""
 
 #: app/Services/TransStrings.php:371
-#: app/Hooks/Handlers/CustomerPortalHandler.php:130
+#: app/Hooks/Handlers/CustomerPortalHandler.php:126
 msgid "You"
 msgstr ""
 
@@ -3670,14 +3590,26 @@ msgstr ""
 msgid "You are adding internal Note. Only support staff can see this note"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:31 app/Hooks/Handlers/AuthHandler.php:101
-#: app/Hooks/Handlers/AuthHandler.php:148
+#: app/Hooks/Handlers/AuthHandler.php:33 app/Hooks/Handlers/AuthHandler.php:112
+#: app/Hooks/Handlers/AuthHandler.php:163
 msgid "You are already logged in."
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:190
+#: app/Hooks/Handlers/AuthHandler.php:210
 #, php-format
 msgid "You are already logged in. <a href=\"%s\">Go to support portal</a>"
+msgstr ""
+
+#: app/Http/Controllers/AuthController.php:125
+msgid "You are not allowed to login using this form"
+msgstr ""
+
+#: app/Http/Controllers/AuthController.php:331
+msgid "You are not allowed to reset password using this form"
+msgstr ""
+
+#: app/Http/Controllers/AuthController.php:25
+msgid "You are not allowed to signup using this form"
 msgstr ""
 
 #: app/Services/TransStrings.php:495
@@ -3732,8 +3664,8 @@ msgstr ""
 msgid "Your Business Details"
 msgstr ""
 
-#: app/Hooks/Handlers/AuthHandler.php:283
-#: app/Hooks/Handlers/AuthHandler.php:310
+#: app/Hooks/Handlers/AuthHandler.php:309
+#: app/Hooks/Handlers/AuthHandler.php:336
 msgid "Your Email Address"
 msgstr ""
 
@@ -3751,15 +3683,6 @@ msgstr ""
 
 #: app/Services/TransStrings.php:535
 msgid "Your license key is valid and activated"
-msgstr ""
-
-#: app/Hooks/Handlers/TwoFaHandler.php:144
-#, php-format
-msgid "Your Login code for %1s - %d"
-msgstr ""
-
-#: app/Hooks/Handlers/TwoFaHandler.php:152
-msgid "Your Login Code:"
 msgstr ""
 
 #: app/Services/TransStrings.php:477
@@ -3782,20 +3705,12 @@ msgstr ""
 msgid "Your Overview For Today"
 msgstr ""
 
-#: app/Http/Controllers/TwofaController.php:20
-msgid "Your provided code is not valid. Please try again"
-msgstr ""
-
-#: app/Hooks/Handlers/TwoFaHandler.php:103
-msgid "Your provided code or url is not valid"
-msgstr ""
-
 #: app/Http/Controllers/SettingsController.php:289
 msgid "Your recaptcha details are already saved."
 msgstr ""
 
-#: app/Http/Controllers/AuthController.php:60
-#: app/Http/Controllers/AuthController.php:134
+#: app/Http/Controllers/AuthController.php:64
+#: app/Http/Controllers/AuthController.php:144
 msgid "Your recaptcha is not verified"
 msgstr ""
 
@@ -3823,7 +3738,7 @@ msgstr ""
 msgid "Zendesk Domain"
 msgstr ""
 
-#: app/Services/Helper.php:211 app/Hooks/Handlers/PrivacyHandler.php:244
+#: app/Services/Helper.php:212 app/Hooks/Handlers/PrivacyHandler.php:244
 msgid "Zip"
 msgstr ""
 
