@@ -33,7 +33,7 @@ class ReCaptchaHandler
         $result = json_decode(wp_remote_retrieve_body($response), true);
 
         if ('recaptcha_v3' === $recaptchaVersion) {
-            $score = $result['score'];
+            $score = $result['score'] ?? 0;
             $checkScore = apply_filters('fluent_support/recaptcha_v3_ref_score', 0.5);
 
             return $score >= $checkScore;
