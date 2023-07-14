@@ -186,11 +186,6 @@ class AuthController extends Controller
 
         }
 
-        $twoFactorEnabled = Helper::getBusinessSettings('enable_two_fa');
-        if ('yes' == $twoFactorEnabled) {
-            (new TwoFaHandler)->maybe2FaRedirect($user);
-        }
-
         if (apply_filters('fluent_support_use_native_login', true)) {
             $user = wp_signon();
             if (is_wp_error($user)) {
