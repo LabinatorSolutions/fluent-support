@@ -111,7 +111,7 @@ class SettingsController extends Controller
                     'post_author'    => get_current_user_id(),
                     'post_title'     => __('Support Portal', 'fluent-support'),
                     'post_status'    => 'publish',
-                    'post_content'   => '[fluent_support_portal]',
+                    'post_content'   => '<!-- wp:shortcode -->[fluent_support_portal]<!-- /wp:shortcode -->',
                     'post_type'      => 'page'
                 )
             );
