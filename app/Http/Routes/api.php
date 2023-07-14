@@ -160,8 +160,6 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
     $router->get('me', 'TicketController@me');
 
     $router->post('logout', 'CustomerPortalController@logout');
-    $router->post('verify_email', 'AuthController@verifyEmail');
-    $router->post('resend_verify_email', 'AuthController@resendVerificationEmail');
 });
 
 $router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
@@ -178,8 +176,6 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
-
-$router->post('two_fa', 'TwofaController@verify2fa')->withPolicy('PublicPolicy');
 
 $router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');
 

@@ -1,5 +1,5 @@
 .idea
-vendor
+vendor/composer
 node_modules
 svn/*
 dist/
