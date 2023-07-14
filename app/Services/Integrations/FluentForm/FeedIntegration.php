@@ -261,7 +261,7 @@ class FeedIntegration extends IntegrationManagerController
             'component'          => 'map_fields',
             'field_label_remote'  => __('Fluent Support Custom Field', 'fluent-support'),
             'field_label_local'   => __('Form Field', 'fluent-support'),
-            'primary_fields'      => $fields
+            'primary_fileds'      => $fields
         ];
     }
 
