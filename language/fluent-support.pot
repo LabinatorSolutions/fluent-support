@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-14 06:43+0000\n"
+"POT-Creation-Date: 2023-07-14 12:05+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -67,6 +67,12 @@ msgstr ""
 #: app/Services/TransStrings.php:585
 msgid ""
 ". You can set your actions and run the workflow actions from ticket page."
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:165
+msgid ""
+"<h4>Please provide the ticket provider info. If user is logged in then it "
+"will use that info. For Public users you can set your customer info</h4>"
 msgstr ""
 
 #: app/Http/Controllers/AuthController.php:435
@@ -649,6 +655,10 @@ msgstr ""
 msgid "Bug Report"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:107
+msgid "Business"
+msgstr ""
+
 #: app/Services/TransStrings.php:24
 msgid "Business Email"
 msgstr ""
@@ -794,6 +804,10 @@ msgstr ""
 msgid "Conditions"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:52
+msgid "Configuration required!"
+msgstr ""
+
 #: app/Services/TransStrings.php:591
 msgid "confirm"
 msgstr ""
@@ -925,6 +939,10 @@ msgstr ""
 msgid "Create Support Ticket"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:38
+msgid "Create Support Ticket From Your Form Submission in FluentSupport"
+msgstr ""
+
 #: app/Services/TransStrings.php:355
 #: app/Hooks/Handlers/CustomerPortalHandler.php:144
 msgid "Create Ticket"
@@ -986,6 +1004,10 @@ msgstr ""
 msgid "Customer avatar reset to gravatar default"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:170
+msgid "Customer Data"
+msgstr ""
+
 #: app/Models/Traits/CustomerTrait.php:183
 msgid "Customer Deleted Successfully"
 msgstr ""
@@ -1029,6 +1051,10 @@ msgstr ""
 
 #: app/Services/TransStrings.php:381
 msgid "Customer Management"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:195
+msgid "Customer Other Fields"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:43
@@ -1170,6 +1196,7 @@ msgstr ""
 
 #: app/Services/TransStrings.php:645 app/Hooks/Handlers/AuthHandler.php:307
 #: app/Hooks/Handlers/AuthHandler.php:334
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:178
 msgid "Email Address"
 msgstr ""
 
@@ -1226,6 +1253,10 @@ msgstr ""
 msgid "Enable Draft Mode"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:126
+msgid "Enable Dynamic Product Selection"
+msgstr ""
+
 #: app/Services/EmailNotification/Settings.php:159
 msgid "Enable Fluent Summary In Admin Bar"
 msgstr ""
@@ -1276,6 +1307,10 @@ msgstr ""
 
 #: app/Services/Tickets/CustomFieldsService.php:18
 msgid "Feature Request"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:100
+msgid "Feed Name"
 msgstr ""
 
 #: app/Services/TransStrings.php:540
@@ -1337,6 +1372,7 @@ msgid "Filter By Ticket Type"
 msgstr ""
 
 #: app/Services/TransStrings.php:52 app/Hooks/Handlers/PrivacyHandler.php:208
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:184
 msgid "First Name"
 msgstr ""
 
@@ -1374,12 +1410,20 @@ msgstr ""
 msgid "Fluent Support Conversations Exporter"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:262
+msgid "Fluent Support Custom Field"
+msgstr ""
+
 #: app/Hooks/Handlers/PrivacyHandler.php:200
 msgid "Fluent Support Customer"
 msgstr ""
 
 #: app/Hooks/Handlers/PrivacyHandler.php:31
 msgid "Fluent Support Customer Exporter"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:197
+msgid "Fluent Support Field"
 msgstr ""
 
 #: app/Hooks/Handlers/PrivacyHandler.php:41
@@ -1415,6 +1459,12 @@ msgstr ""
 msgid "FluentCRM plugin has been installed and activated successfully"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:54
+msgid ""
+"FluentSupport is not configured yet! Please configure your FluentSupport api "
+"first"
+msgstr ""
+
 #: app/Services/TransStrings.php:474
 msgid ""
 "For the confirmation email from your email service provider, please check "
@@ -1423,6 +1473,12 @@ msgstr ""
 
 #: app/Hooks/Handlers/AuthHandler.php:84
 msgid "Forgot your password?"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:174
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:198
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:263
+msgid "Form Field"
 msgstr ""
 
 #: app/Services/TransStrings.php:570
@@ -1770,6 +1826,7 @@ msgstr ""
 
 #: app/Services/TransStrings.php:53 app/Hooks/Handlers/AuthHandler.php:293
 #: app/Hooks/Handlers/PrivacyHandler.php:212
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:188
 msgid "Last Name"
 msgstr ""
 
@@ -1823,6 +1880,10 @@ msgstr ""
 
 #: app/Http/Controllers/MailBoxController.php:78
 msgid "Mailbox has been saved"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:159
+msgid "Make sure form field values match with Fluent Support priorities"
 msgstr ""
 
 #: app/Services/TransStrings.php:76
@@ -2165,6 +2226,10 @@ msgstr ""
 msgid "Please input"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:151
+msgid "Please input your file upload or image upload field shortcode here"
+msgstr ""
+
 #: app/Services/Tickets/CustomFieldsService.php:13
 msgid "Please let us know about this support type"
 msgstr ""
@@ -2179,6 +2244,16 @@ msgstr ""
 
 #: app/Services/TransStrings.php:25
 msgid "Please make sure your website can send emails from this email address"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:171
+msgid ""
+"Please Map Your Customer Data for this form. If your customer already logged "
+"in you can leave this"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:260
+msgid "Please Map Your Ticket Custom Field Data for this form."
 msgstr ""
 
 #: app/Services/TransStrings.php:537
@@ -2286,6 +2361,7 @@ msgid "Private"
 msgstr ""
 
 #: app/Services/TransStrings.php:184
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:117
 msgid "Product"
 msgstr ""
 
@@ -2586,6 +2662,7 @@ msgid "Select All"
 msgstr ""
 
 #: app/Services/TransStrings.php:345
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:108
 msgid "Select Business"
 msgstr ""
 
@@ -2647,6 +2724,14 @@ msgstr ""
 msgid "Select related Product/Service"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:118
+msgid "Select Support Product"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:109
+msgid "Select the Business you would like to add your Support Ticket to."
+msgstr ""
+
 #: app/Http/Controllers/SettingsController.php:196
 msgid ""
 "Select the default status for new contacts. If you select pending and it's a "
@@ -2705,6 +2790,14 @@ msgstr ""
 
 #: app/Services/TransStrings.php:647
 msgid "Set as Default"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:55
+msgid "Set FluentSupport"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:128
+msgid "Set Product"
 msgstr ""
 
 #: app/Services/TransStrings.php:581
@@ -2873,6 +2966,10 @@ msgstr ""
 msgid "Support Channel"
 msgstr ""
 
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:173
+msgid "Support Customer Field"
+msgstr ""
+
 #: app/Services/TransStrings.php:402
 msgid "Support From Email"
 msgstr ""
@@ -2903,6 +3000,14 @@ msgstr ""
 
 #: app/Http/Controllers/AgentController.php:67
 msgid "Support Staff has been updated"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:361
+msgid "Support ticket creation failed, because customer email is blocked"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:345
+msgid "Support ticket creation failed, because no valid customer email found"
 msgstr ""
 
 #: app/Services/TransStrings.php:413
@@ -3046,6 +3151,8 @@ msgid "Ticket Assigned"
 msgstr ""
 
 #: app/Hooks/Handlers/PrivacyHandler.php:83
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:149
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:150
 msgid "Ticket Attachments"
 msgstr ""
 
@@ -3058,6 +3165,8 @@ msgid "Ticket Closed by Agent (To Customer)"
 msgstr ""
 
 #: app/Services/TransStrings.php:110 app/Hooks/Handlers/PrivacyHandler.php:79
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:142
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:143
 msgid "Ticket Content"
 msgstr ""
 
@@ -3083,6 +3192,10 @@ msgstr ""
 
 #: app/Services/EmailNotification/Settings.php:249
 msgid "Ticket Created by Agent (To Customer)"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:259
+msgid "Ticket Custom Fields"
 msgstr ""
 
 #: app/Services/Integrations/FluentCrm/CreateTicketAction.php:85
@@ -3148,6 +3261,8 @@ msgid "Ticket Mailbox"
 msgstr ""
 
 #: app/Services/TransStrings.php:111 app/Hooks/Handlers/PrivacyHandler.php:99
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:157
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:158
 msgid "Ticket Priority"
 msgstr ""
 
@@ -3184,6 +3299,8 @@ msgid "Ticket Tags"
 msgstr ""
 
 #: app/Services/TransStrings.php:109 app/Hooks/Handlers/PrivacyHandler.php:75
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:135
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:136
 #: app/Services/Integrations/FluentCrm/CreateTicketAction.php:80
 msgid "Ticket Title"
 msgstr ""
@@ -3671,6 +3788,10 @@ msgstr ""
 
 #: app/Services/TransStrings.php:492
 msgid "your email piping settings first"
+msgstr ""
+
+#: app/Services/Integrations/FluentForm/FeedIntegration.php:102
+msgid "Your Feed Name"
 msgstr ""
 
 #: app/Services/TransStrings.php:89
