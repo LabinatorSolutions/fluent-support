@@ -188,10 +188,8 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
-= 1.7.0 (Date: July 13, 2023) =
+= 1.7.0 (Date: July 14, 2023) =
 * Added - Effortless draft mode and auto save functionality
-* Added - Email verification while registering customer
-* Added - Two factor authentication in login
 * Added - Option to set maximum file upload limit
 * Added - Option to set dedicated mailbox for webhook(Pro)
 * Added - Option to set mailbox in the customer portal shortcode
