@@ -10,8 +10,8 @@ class IntegrationInit
             (new \FluentSupport\App\Services\Integrations\FluentCrm\FluentCRMWidgets())->boot();
         }
 
-        if(defined('FLUENTFORM')) {
-            new \FluentSupport\App\Services\Integrations\FluentForm\FeedIntegration(wpFluentForm());
+        if(defined('FLUENTFORM_FRAMEWORK_UPGRADE')) {
+            new \FluentSupport\App\Services\Integrations\FluentForm\FeedIntegration();
         }
     }
 

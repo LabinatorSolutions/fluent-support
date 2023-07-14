@@ -2,8 +2,7 @@
 
 namespace FluentSupport\App\Services\Integrations\FluentForm;
 
-use FluentForm\App\Services\Integrations\IntegrationManager;
-use FluentForm\Framework\Foundation\Application;
+use FluentForm\App\Http\Controllers\IntegrationManagerController;
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Customer;
@@ -12,14 +11,14 @@ use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\Framework\Support\Arr;
 
-class FeedIntegration extends IntegrationManager
+class FeedIntegration extends IntegrationManagerController
 {
 
     public $hasGlobalMenu = false;
 
     public $disableGlobalSettings = 'yes';
 
-    public function __construct(Application $app)
+    public function __construct($app = null)
     {
         parent::__construct(
             $app,
@@ -36,11 +35,11 @@ class FeedIntegration extends IntegrationManager
 
         $this->logo = $assets.'/images/fluent-support-color-logo.png';
 
-        $this->description = __('Create Support Ticket From Your Form Submission in FluentSupport', 'fluentform');
+        $this->description = __('Create Support Ticket From Your Form Submission in FluentSupport', 'fluent-support');
 
         $this->registerAdminHooks();
 
-        add_filter('fluentform_notifying_async_fluent_support', '__return_false');
+        add_filter('fluentform/notifying_async_fluent_support', '__return_false');
 
     }
 
@@ -50,10 +49,10 @@ class FeedIntegration extends IntegrationManager
             'title'                 => $this->title . ' Integration',
             'logo'                  => $this->logo,
             'is_active'             => $this->isConfigured(),
-            'configure_title'       => __('Configuration required!', 'fluentform'),
+            'configure_title'       => __('Configuration required!', 'fluent-support'),
             'global_configure_url'  => '#',
-            'configure_message'     => __('FluentSupport is not configured yet! Please configure your FluentSupport api first', 'fluentform'),
-            'configure_button_text' => __('Set FluentSupport', 'fluentform')
+            'configure_message'     => __('FluentSupport is not configured yet! Please configure your FluentSupport api first', 'fluent-support'),
+            'configure_button_text' => __('Set FluentSupport', 'fluent-support')
         ];
         return $integrations;
     }
@@ -98,16 +97,16 @@ class FeedIntegration extends IntegrationManager
             'fields'              => [
                 [
                     'key'         => 'name',
-                    'label'       => __('Feed Name', 'fluentform'),
+                    'label'       => __('Feed Name', 'fluent-support'),
                     'required'    => true,
-                    'placeholder' => __('Your Feed Name', 'fluentform'),
+                    'placeholder' => __('Your Feed Name', 'fluent-support'),
                     'component'   => 'text'
                 ],
                 [
                     'key'         => 'list_id',
-                    'label'       => __('Business', 'fluentform'),
-                    'placeholder' => __('Select Business', 'fluentform'),
-                    'tips'        => __('Select the Business you would like to add your Support Ticket to.', 'fluentform'),
+                    'label'       => __('Business', 'fluent-support'),
+                    'placeholder' => __('Select Business', 'fluent-support'),
+                    'tips'        => __('Select the Business you would like to add your Support Ticket to.', 'fluent-support'),
                     'component'   => 'select',
                     'required'    => true,
                     'options'     => $this->geMailBoxes(),
@@ -115,8 +114,8 @@ class FeedIntegration extends IntegrationManager
                 [
                     'key'                => 'product_id',
                     'require_list'       => false,
-                    'label'              => __('Product', 'fluentform'),
-                    'placeholder'        => __('Select Support Product', 'fluentform'),
+                    'label'              => __('Product', 'fluent-support'),
+                    'placeholder'        => __('Select Support Product', 'fluent-support'),
                     'component'          => 'selection_routing',
                     'simple_component'   => 'select',
                     'routing_input_type' => 'select',
@@ -124,79 +123,79 @@ class FeedIntegration extends IntegrationManager
                     'settings_key'       => 'product_routers',
                     'is_multiple'        => false,
                     'labels'             => [
-                        'choice_label'      => __('Enable Dynamic Product Selection', 'fluentform'),
+                        'choice_label'      => __('Enable Dynamic Product Selection', 'fluent-support'),
                         'input_label'       => '',
-                        'input_placeholder' => __('Set Product', 'fluentform')
+                        'input_placeholder' => __('Set Product', 'fluent-support')
                     ],
                     'options'            => $this->getProducts()
                 ],
                 [
                     'key'          => 'ticket_title',
                     'require_list' => false,
-                    'label'        => __('Ticket Title', 'fluentform'),
-                    'placeholder'  => __('Ticket Title', 'fluentform'),
+                    'label'        => __('Ticket Title', 'fluent-support'),
+                    'placeholder'  => __('Ticket Title', 'fluent-support'),
                     'component'    => 'value_text'
                 ],
                 [
                     'key'          => 'ticket_content',
                     'require_list' => false,
-                    'label'        => __('Ticket Content', 'fluentform'),
-                    'placeholder'  => __('Ticket Content', 'fluentform'),
+                    'label'        => __('Ticket Content', 'fluent-support'),
+                    'placeholder'  => __('Ticket Content', 'fluent-support'),
                     'component'    => 'value_textarea'
                 ],
                 [
                     'key'            => 'ticket_attachments',
                     'require_list'   => false,
-                    'label'          => __('Ticket Attachments', 'fluentform'),
-                    'Placeholder'    => __('Ticket Attachments', 'fluentform'),
-                    'tips'           => __('Please input your file upload or image upload field shortcode here', 'fluentform'),
+                    'label'          => __('Ticket Attachments', 'fluent-support'),
+                    'Placeholder'    => __('Ticket Attachments', 'fluent-support'),
+                    'tips'           => __('Please input your file upload or image upload field shortcode here', 'fluent-support'),
                     'component'      => 'value_text'
                 ],
                 [
                     'key'            => 'client_priority',
                     'require_list'   => false,
-                    'label'          => __('Ticket Priority', 'fluentform'),
-                    'Placeholder'    => __('Ticket Priority', 'fluentform'),
-                    'tips'           => __('Make sure form field values match with Fluent Support priorities', 'fluentform'),
+                    'label'          => __('Ticket Priority', 'fluent-support'),
+                    'Placeholder'    => __('Ticket Priority', 'fluent-support'),
+                    'tips'           => __('Make sure form field values match with Fluent Support priorities', 'fluent-support'),
                     'component'      => 'value_text'
                 ],
                 $this->getCustomField(), //Getting Fluent Support Custom Field To Map
                 [
                     'component' => 'html_info',
-                    'html_info' => __('<h4>Please provide the ticket provider info. If user is logged in then it will use that info. For Public users you can set your customer info</h4>', 'fluentform')
+                    'html_info' => __('<h4>Please provide the ticket provider info. If user is logged in then it will use that info. For Public users you can set your customer info</h4>', 'fluent-support')
                 ],
                 [
                     'key'                => 'CustomerFields',
                     'require_list'       => false,
-                    'label'              => __('Customer Data', 'fluentform'),
-                    'tips'               => __('Please Map Your Customer Data for this form. If your customer already logged in you can leave this', 'fluentform'),
+                    'label'              => __('Customer Data', 'fluent-support'),
+                    'tips'               => __('Please Map Your Customer Data for this form. If your customer already logged in you can leave this', 'fluent-support'),
                     'component'          => 'map_fields',
-                    'field_label_remote' => __('Support Customer Field', 'fluentform'),
-                    'field_label_local'  => __('Form Field', 'fluentform'),
+                    'field_label_remote' => __('Support Customer Field', 'fluent-support'),
+                    'field_label_local'  => __('Form Field', 'fluent-support'),
                     'primary_fileds'     => [
                         [
                             'key'           => 'email',
-                            'label'         => __('Email Address', 'fluentform'),
+                            'label'         => __('Email Address', 'fluent-support'),
                             'required'      => true,
                             'input_options' => 'emails'
                         ],
                         [
                             'key'   => 'first_name',
-                            'label' => __('First Name', 'fluentform')
+                            'label' => __('First Name', 'fluent-support')
                         ],
                         [
                             'key'   => 'last_name',
-                            'label' => __('Last Name', 'fluentform')
+                            'label' => __('Last Name', 'fluent-support')
                         ]
                     ]
                 ],
                 [
                     'key'                => 'customer_other_fields',
                     'require_list'       => false,
-                    'label'              => __('Customer Other Fields', 'fluentform'),
+                    'label'              => __('Customer Other Fields', 'fluent-support'),
                     'tips'               => 'Select which Fluent Forms fields pair with their<br /> respective Fluent Support fields.',
-                    'field_label_remote' => __('Fluent Support Field', 'fluentform'),
-                    'field_label_local'  => __('Form Field', 'fluentform'),
+                    'field_label_remote' => __('Fluent Support Field', 'fluent-support'),
+                    'field_label_local'  => __('Form Field', 'fluent-support'),
                     'component'          => 'dropdown_many_fields',
                     'options'            => $fieldOptions
                 ],
@@ -247,22 +246,22 @@ class FeedIntegration extends IntegrationManager
 
             $fields[] = [
                 'key'      => $customFieldValue['slug'],
-                'label'    => __($customFieldValue['label'], 'fluentform')
+                'label'    => __($customFieldValue['label'], 'fluent-support')
             ];
         }
 
         $fields = array_map('array_filter', $fields);
         $fields = array_filter( $fields );
 
-        return  $customFieldsMapping = [
+        return [
             'key'                => 'TicketCustomFields',
             'require_list'       => false,
-            'label'              => __('Ticket Custom Fields', 'fluentform'),
-            'tips'               => __('Please Map Your Ticket Custom Field Data for this form.', 'fluentform'),
+            'label'              => __('Ticket Custom Fields', 'fluent-support'),
+            'tips'               => __('Please Map Your Ticket Custom Field Data for this form.', 'fluent-support'),
             'component'          => 'map_fields',
-            'field_label_remote'  => __('Fluent Support Custom Field', 'fluentform'),
-            'field_label_local'   => __('Form Field', 'fluentform'),
-            'primary_fileds'      => $fields
+            'field_label_remote'  => __('Fluent Support Custom Field', 'fluent-support'),
+            'field_label_local'   => __('Form Field', 'fluent-support'),
+            'primary_fields'      => $fields
         ];
     }
 
@@ -288,8 +287,12 @@ class FeedIntegration extends IntegrationManager
         foreach($customFields as $key=>$value){
             $type = [$key=>$value][$key]['type'];
             $slug = [$key=>$value][$key]['slug'];
-            $type=='checkbox' &&  array_key_exists($slug, $ticketCustomField) ?
-                $ticketCustomField[$slug] = explode(',', Arr::get($ticketCustomField, $slug)) : $ticketCustomField;
+
+            if( $type=='checkbox' &&  array_key_exists($slug, $ticketCustomField)) {
+                $ticketCustomField[$slug] = explode(',', Arr::get($ticketCustomField, $slug));
+            } else {
+                $ticketCustomField[$slug] = $ticketCustomField;
+            }
         }
 
         $ticketData = [
@@ -335,7 +338,7 @@ class FeedIntegration extends IntegrationManager
             do_action('ff_log_data', [
                 'title'            => $feed['settings']['name'],
                 'status'           => 'failed',
-                'description'      => __('Support ticket creation failed, because no valid customer email found', 'fluentform'),
+                'description'      => __('Support ticket creation failed, because no valid customer email found', 'fluent-support'),
                 'parent_source_id' => $form->id,
                 'source_id'        => $entry->id,
                 'component'        => $this->integrationKey,
@@ -351,7 +354,7 @@ class FeedIntegration extends IntegrationManager
             do_action('ff_log_data', [
                 'title'            => $feed['settings']['name'],
                 'status'           => 'failed',
-                'description'      => __('Support ticket creation failed, because customer email is blocked', 'fluentform'),
+                'description'      => __('Support ticket creation failed, because customer email is blocked', 'fluent-support'),
                 'parent_source_id' => $form->id,
                 'source_id'        => $entry->id,
                 'component'        => $this->integrationKey,
@@ -384,7 +387,7 @@ class FeedIntegration extends IntegrationManager
         do_action('ff_log_data', [
             'title'            => $feed['settings']['name'],
             'status'           => 'success',
-            'description'      => __('Support ticket has been created at Fluent Support. Ticket ID: '.$ticket->id, 'fluentform'),
+            'description'      => __('Support ticket has been created at Fluent Support. Ticket ID: '.$ticket->id, 'fluent-support'),
             'parent_source_id' => $form->id,
             'source_id'        => $entry->id,
             'component'        => $this->integrationKey,
