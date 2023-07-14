@@ -239,7 +239,7 @@ class Menu
 
         $assets = $app['url.assets'];
 
-        wp_enqueue_script('dompurify', $assets.'libs/purify/purify.min.js', [], '2.4.3');
+        wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '2.4.3');
 
         wp_enqueue_style(
             'fluent_support_admin_app', $assets . 'admin/css/alpha-admin.css', [], FLUENT_SUPPORT_VERSION
@@ -336,36 +336,37 @@ class Menu
          * @param array $appVars
          */
         $appVars = apply_filters('fluent_support_app_vars', array(
-            'slug'                      => $slug = $app->config->get('app.slug'),
-            'nonce'                     => wp_create_nonce($slug),
-            'rest'                      => $this->getRestInfo($app),
-            'brand_logo'                => $this->getMenuIcon(),
-            'firstEntry'                => '',
-            'lastEntry'                 => '',
-            'asset_url'                 => $assets,
-            'support_agents'            => $agents,
-            'support_products'          => Product::select(['id', 'title'])->get(),
-            'client_priorities'         => Helper::customerTicketPriorities(),
-            'ticket_statuses'           => Helper::ticketStatuses(),
-            'ticket_statuses_group'     => Helper::ticketStatusGroups(),
-            'changeable_ticket_statuses'=> Helper::changeableTicketStatuses(),
-            'admin_priorities'          => Helper::adminTicketPriorities(),
-            'mailboxes'                 => MailBox::select(['id', 'name', 'settings'])->get(),
-            'me'                        => $me,
-            'pref'                      => [
+            'slug'                       => $slug = $app->config->get('app.slug'),
+            'nonce'                      => wp_create_nonce($slug),
+            'rest'                       => $this->getRestInfo($app),
+            'brand_logo'                 => $this->getMenuIcon(),
+            'firstEntry'                 => '',
+            'lastEntry'                  => '',
+            'asset_url'                  => $assets,
+            'support_agents'             => $agents,
+            'support_products'           => Product::select(['id', 'title'])->get(),
+            'client_priorities'          => Helper::customerTicketPriorities(),
+            'ticket_statuses'            => Helper::ticketStatuses(),
+            'ticket_statuses_group'      => Helper::ticketStatusGroups(),
+            'changeable_ticket_statuses' => Helper::changeableTicketStatuses(),
+            'admin_priorities'           => Helper::adminTicketPriorities(),
+            'mailboxes'                  => MailBox::select(['id', 'name', 'settings'])->get(),
+            'me'                         => $me,
+            'pref'                       => [
                 'go_back_after_reply' => 'yes'
             ],
-            'notification_integrations' => $integrationDrivers,
-            'server_time'               => current_time('mysql'),
-            'has_email_parser'          => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
-            'ticket_tags'               => $tags,
-            'i18n'                      => $i18ns,
-            'custom_fields'             => apply_filters('fluent_support/ticket_custom_fields', []),
-            'has_file_upload'           => !!Helper::ticketAcceptedFileMiles(),
-            'repost_export_options'     => Helper::getExportOptions(),
-            'enable_draft_mode'         => Helper::getBusinessSettings('enable_draft_mode', 'no'),
-            'max_file_upload'           => Helper::getBusinessSettings('max_file_upload', 3),
-            'ajaxurl' => admin_url('admin-ajax.php'),
+            'notification_integrations'  => $integrationDrivers,
+            'server_time'                => current_time('mysql'),
+            'has_email_parser'           => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
+            'ticket_tags'                => $tags,
+            'i18n'                       => $i18ns,
+            'custom_fields'              => apply_filters('fluent_support/ticket_custom_fields', []),
+            'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
+            'repost_export_options'      => Helper::getExportOptions(),
+            'enable_draft_mode'          => Helper::getBusinessSettings('enable_draft_mode', 'no'),
+            'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
+            'ajaxurl'                    => admin_url('admin-ajax.php'),
+            'auth_provider'              => Helper::getAuthProvider()
         ));
 
         if (defined('FLUENTCRM')) {

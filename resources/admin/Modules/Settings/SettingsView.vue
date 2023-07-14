@@ -50,11 +50,6 @@ export default {
                     route_query: {},
                 },
                 {
-                    title: translate("Recaptcha"),
-                    route_name: "reCaptcha",
-                    icon: "Key",
-                },
-                {
                     title: translate("Ticket Form Config"),
                     route_name: "ticket-form-config",
                     icon: "Setting",
@@ -109,6 +104,11 @@ export default {
                     title: translate("Ticket Importer"),
                     route_name: "ticket_importer",
                     icon: "Download",
+                },
+                {
+                    title: translate("Recaptcha"),
+                    route_name: "reCaptcha",
+                    icon: "Key",
                 },
             ],
         });
