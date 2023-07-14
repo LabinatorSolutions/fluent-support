@@ -1,14 +1,14 @@
 <?php defined('ABSPATH') or die;
-/*
-Plugin Name: Fluent Support
-Description: The Ultimate Support Plugin For Your WordPress.
-Version: 1.7.0
-Author: WPManageNinja LLC
-Author URI: https://wpmanageninja.com
-Plugin URI: https://fluentsupport.com
-License: GPLv2 or later
-Text Domain: fluent-support
-Domain Path: /language
+/**
+ * Plugin Name: Fluent Support
+ * Description: The Ultimate Support Plugin For Your WordPress.
+ * Version: 1.7.0
+ * Author: WPManageNinja LLC
+ * Author URI: https://wpmanageninja.com
+ * Plugin URI: https://fluentsupport.com
+ * License: GPLv2 or later
+ * Text Domain: fluent-support
+ * Domain Path: /language
 */
 
 define('FLUENT_SUPPORT_VERSION', '1.7.0');
