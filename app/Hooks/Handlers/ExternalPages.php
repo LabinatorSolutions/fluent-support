@@ -113,8 +113,7 @@ class ExternalPages
                 die($dieMessage);
             }
 
-            ob_end_clean();
-            ob_end_flush();
+            ob_get_clean();
 
             ini_set('user_agent', 'Fluent Support/' . FLUENT_SUPPORT_VERSION . '; ' . get_bloginfo('url'));
             header("Content-Type: $attachment->file_type");
