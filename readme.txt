@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.2
-Stable tag: 1.7.0
+Stable tag: 1.7.1
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.7.1 (Date: July 15, 2023) =
+* File Attachment view issue fixed
+* remove error_log for debugging
+
 = 1.7.0 (Date: July 14, 2023) =
 * Added - Effortless draft mode and auto save functionality
 * Added - Option to set maximum file upload limit
