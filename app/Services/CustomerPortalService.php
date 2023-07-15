@@ -187,7 +187,6 @@ class CustomerPortalService
          * @param object $customer
          */
         $data = apply_filters('fluent_support/create_ticket_data', $data, $customer);
-        error_log(print_r($data, true));
 
         /*
          * Action before ticket create
