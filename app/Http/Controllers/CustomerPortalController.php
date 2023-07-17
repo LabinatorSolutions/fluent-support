@@ -57,13 +57,24 @@ class CustomerPortalController extends Controller
                 'title'   => 'required',
                 'content' => 'required'
             ],
-            'error_messages'  => []
+            'error_messages'  => [
+                'title.required'   => __('Title is required', 'fluent-support'),
+                'content.required' => __('Content is required', 'fluent-support')
+            ]
         ]);
 
         $dataRules = $this->app->applyCustomFilters('custom_field_required_by_conditions_before_ticket_create',[
+            'required_fields' => $dataRules['required_fields'],
+            'error_messages'  => $dataRules['error_messages'],
             'custom_data' => $request->get('custom_data'),
-            'dataRules' => $dataRules
         ]);
+
+        if(!isset($dataRules['required_fields']) && !isset($dataRules['error_messages'])){
+            return $this->sendError([
+                'message'    => __('Invalid form data submitted', 'fluent-support'),
+                'error_type' => '400'
+            ]);
+        }
 
         $data = $this->validate($request->get(), $dataRules['required_fields'], $dataRules['error_messages']);
 
