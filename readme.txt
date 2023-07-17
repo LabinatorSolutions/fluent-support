@@ -189,6 +189,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 
 == Changelog ==
 
+= 1.7.2 (Date: July 17, 2023) =
+* Fixed - Create ticket issue for required fields
+* Fixed - Edit button in draft mode
+* Fixed - Add cc or Discard cc button not showing
+
 = 1.7.1 (Date: July 15, 2023) =
 * File Attachment view issue fixed
 * remove error_log for debugging

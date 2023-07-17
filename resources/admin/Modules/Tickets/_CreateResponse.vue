@@ -1,7 +1,7 @@
 <template>
     <div class="fs_create_response" :class="'fs_reply_type_'+type">
         <div class="fs_row" v-if="ticket.source === 'email'">
-            <el-form-item :label="translate('Cc')" v-if="selected_cc.length || show_cc_option">
+            <el-form-item :label="translate('Cc')" v-if="selected_cc?.length || show_cc_option">
                 <el-select v-model="selected_cc" multiple filterable remote
                            placeholder="Please enter email"
                            allow-create
@@ -22,7 +22,7 @@
         </div>
 
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
-                   :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type === 'response'" :add_cc="selected_cc.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
+                   :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
 
         <div class="fs_row">
             <div class="fs_half">
@@ -123,7 +123,7 @@ export default {
                  }
             }, 5000)
 
-            watch([() => state.response_body, () => state.cc_emails], () => {
+            watch([() => state.response_body, () => state.selected_cc], () => {
                  if(state.response_body === '' && state.draftID ) {
                     removeDraft();
                 }
@@ -142,6 +142,7 @@ export default {
             emit('discardDraft', state.draftID);
             state.draftID = '';
         }
+
 
         const toggleCcOption = (command) => {
             if(command === 'show'){
@@ -208,7 +209,7 @@ export default {
                 }
             }else{
                 let conversation = props.ticket.responses[0];
-                if(conversation.cc_info && state.selected_cc.length === 0){
+                if(conversation.cc_info && state.selected_cc?.length === 0){
                     state.selected_cc = conversation.cc_info;
                 }
             }
@@ -218,7 +219,7 @@ export default {
             ...toRefs(state),
             create,
             translate,
-            toggleCcOption,
+            toggleCcOption
         };
     }
 }
