@@ -22,7 +22,7 @@
         </div>
 
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
-                   :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type === 'response'" :add_cc="selected_cc.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
+                   :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type === 'response'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
 
         <div class="fs_row">
             <div class="fs_half">
