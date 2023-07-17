@@ -51,7 +51,7 @@
                             <template #default="scope">
                                 <el-button
                                     class="fs_custom_field_action_btn"
-                                    text                 
+                                    text
                                     @click="updateFieldModal(scope.$index)"
                                     icon="EditPen"
                                 ></el-button>
@@ -126,6 +126,7 @@
                 form_type="new"
                 :field_types="field_types"
                 :item="new_item"
+                :fields="fields"
             ></custom-field-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="createField()" type="success" size="small">{{
