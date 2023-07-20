@@ -63,10 +63,16 @@ class CustomerPortalController extends Controller
             ]
         ]);
 
+        $defaultData = [
+            'ticket_title' => $request->get('title'),
+            'ticket_content' => $request->get('content')
+        ];
+
         $dataRules = $this->app->applyCustomFilters('custom_field_required_by_conditions_before_ticket_create',[
             'required_fields' => $dataRules['required_fields'],
             'error_messages'  => $dataRules['error_messages'],
             'custom_data' => $request->get('custom_data'),
+            'default_data' => $defaultData
         ]);
 
         if(!isset($dataRules['required_fields']) && !isset($dataRules['error_messages'])){
