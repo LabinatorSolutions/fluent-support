@@ -113,7 +113,7 @@ export default {
                 if (this.dependancyPass(condition)) {
                     singlePass = true;
                 } else {
-                    this.custom_data[field.slug] = '';
+                    this.custom_data[field.slug] = [];
                     allPassed = false;
                 }
             });
