@@ -68,7 +68,7 @@ export default {
     setup(props, {emit}) {
 
         const {
-            post, translate, handleError, removeData, appVars, get
+            post, translate, handleError, appVars,
         } = useFluentHelper();
         const {notify} = useNotify();
 
@@ -127,7 +127,10 @@ export default {
                  if(state.response_body === '' && state.draftID ) {
                     removeDraft();
                 }
-                saveResponseDraft();
+
+                 if(props.type === 'response'){
+                     saveResponseDraft();
+                 }
             });
 
             watch(() => props.type, (type) => {
