@@ -348,7 +348,7 @@
                                         </div>
                                         <div>
                                             <el-button-group>
-                                                <el-button size="small" @click="showDraftResponse(draft)">{{translate('Edit')}}</el-button>
+                                                <el-button size="small" @click="show_response_box = 'response'">{{translate('Edit')}}</el-button>
                                                 <el-button size="small" @click="discardDraft(draft.id)">{{translate('Discard')}}</el-button>
                                             </el-button-group>
                                         </div>
@@ -1052,10 +1052,6 @@ export default {
                 });
         }
 
-        const showDraftResponse = (draft) => {
-            state.show_response_box = 'draft';
-        }
-
         const discardDraft = (draftID) => {
             del('tickets/' + draftID + '/draft')
                 .then(response => {
@@ -1122,7 +1118,6 @@ export default {
             addWatchers,
             splitToNewTicket,
             fetchDraft,
-            showDraftResponse,
             discardDraft,
             getTicketStatus,
             translate,
