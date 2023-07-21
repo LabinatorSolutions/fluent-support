@@ -559,7 +559,6 @@ export default {
             readable,
             deleteAgent,
             confirmDeleteAgent,
-            handleAvatarSuccess,
             showIcon,
             hideIcon,
             confirmResetProfile,
