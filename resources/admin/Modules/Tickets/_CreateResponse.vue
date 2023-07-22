@@ -55,7 +55,7 @@ import {
 } from "@/admin/Composable/FluentFrameworkHelper";
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
-import {debounce} from 'lodash'
+// import {debounce} from 'lodash';
 
 export default {
     name: 'CreateResponse',
@@ -102,26 +102,35 @@ export default {
                 state.draftID = props.draft.id;
                 state.selected_cc = props.draft.value.selected_cc;
             }
-             const saveResponseDraft = debounce(() => {
-                const data = {
-                    content: state.response_body,
-                    draftID: state.draftID,
-                    selected_cc: state.selected_cc,
-                    conversation_type: props.type,
-                };
 
-                 if(state.response_body !== '' && isCreatingResponse === false ) {
-                     let action = `tickets/${props.ticket.id}/draft`;
+            let saveResponseDraftTimer = null;
 
-                     post(action, data)
-                         .then((response) => {
-                             state.draftID = response.draftID;
-                         })
-                         .catch((errors) => {
-                             handleError(errors);
-                         })
-                 }
-            }, 5000)
+            const saveResponseDraft = () => {
+                if (saveResponseDraftTimer) {
+                    clearTimeout(saveResponseDraftTimer);
+                }
+
+                saveResponseDraftTimer = setTimeout(() => {
+                    const data = {
+                        content: state.response_body,
+                        draftID: state.draftID,
+                        selected_cc: state.selected_cc,
+                        conversation_type: props.type,
+                    };
+
+                    if (state.response_body !== '' && isCreatingResponse === false) {
+                        let action = `tickets/${props.ticket.id}/draft`;
+
+                        post(action, data)
+                            .then((response) => {
+                                state.draftID = response.draftID;
+                            })
+                            .catch((errors) => {
+                                handleError(errors);
+                            });
+                    }
+                }, 5000);
+            };
 
             watch([() => state.response_body, () => state.selected_cc], () => {
                  if(state.response_body === '' && state.draftID ) {
@@ -145,7 +154,6 @@ export default {
             emit('discardDraft', state.draftID);
             state.draftID = '';
         }
-
 
         const toggleCcOption = (command) => {
             if(command === 'show'){
