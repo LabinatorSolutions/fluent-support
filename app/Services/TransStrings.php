@@ -340,6 +340,8 @@ class TransStrings
             'Edit Response'    => __('Edit Response', 'fluent-support'),
             'Delete Response'    => __('Delete Response', 'fluent-support'),
             'response_delete_warning'    => __('This will permanently delete response. Continue?', 'fluent-support'),
+            'Delete Ticket'    => __('Delete Ticket', 'fluent-support'),
+            'single_ticket_delete_warning'    => __('Are you sure to delete this Ticket?', 'fluent-support'),
             'error_msg_on_closed_ticket_edit'    => __('You can not edit responses when it is in close state', 'fluent-support'),
             'Select Customer'    => __('Select Customer', 'fluent-support'),
             'Select Business'    => __('Select Business', 'fluent-support'),
