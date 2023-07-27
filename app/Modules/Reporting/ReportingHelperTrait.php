@@ -73,13 +73,25 @@ trait ReportingHelperTrait
      * @param string $dateField
      * @return array
      */
-    protected function prepareSelect($frequency, $dateField = 'created_at')
+    protected function prepareSelect($frequency, $dateField = 'created_at', $type = 'count_id')
     {
+        switch ($type) {
+            case 'count_id':
+                $countField = 'COUNT(id) AS count';
+                break;
+            case 'response_count':
+                $countField = 'response_count AS count';
+                break;
+            default:
+                $countField = 'COUNT(id) AS count';
+        }
+
         $select = [
-            $this->db()->raw('COUNT(id) AS count'),
+            $this->db()->raw($countField),
             $this->db()->raw('DATE('.$dateField.') AS date'),
             $this->db()->raw('TIME('.$dateField.') AS time')
         ];
+
 
         if ($frequency == static::$hourly) {
             $select[] = $this->db()->raw('HOUR(created_at) hourly');

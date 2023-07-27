@@ -33,20 +33,20 @@
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
-                                <div class="fs_agent_report_rh_filter">
+                                <div class="fs_product_report_rh_filter">
                                     <el-select
                                         clearable
                                         filterable
-                                        placeholder="All Agent"
+                                        placeholder="All Product"
                                         @change="filterReport"
-                                        v-model="agent"
-                                        class="fs_report_by_agent"
+                                        v-model="product"
+                                        class="fs_report_by_product"
                                     >
                                         <el-option
-                                            v-for="agent in appVars.support_agents"
-                                            :key="agent.id"
-                                            :value="agent.id"
-                                            :label="agent.full_name"
+                                            v-for="product in appVars.support_products"
+                                            :key="product.id"
+                                            :value="product.id"
+                                            :label="product.title"
                                         ></el-option>
                                     </el-select>
 
@@ -69,67 +69,16 @@
                                 v-if="showing_charts"
                                 :is="currently_showing"
                                 :date_range="date_range"
-                                :url="'reports'"
-                                :agent_id="agent"
+                                :url="'product-reports'"
+                                :product_id="product"
                             ></component>
                         </div>
                     </div>
-                    <agent-reports
-                        :url="'reports/agents-summary'"
+                    <product-report-summary
+                        :url="'product-reports/product-reports-summary'"
                         :show_settings="true"
                         :show_export_btn="true"
                     />
-                </el-col>
-                <el-col :sm="24" :md="8" :lg="6">
-                    <div class="fs_box">
-                        <div class="fs_box_header" style="margin-top: 1.25em">
-                            <div class="fs_header_title">
-                                {{ translate("Quick Stats") }}
-                            </div>
-                        </div>
-                        <div class="fs_box_body">
-                            <ul v-if="!loading" class="fs_card_list">
-                                <li
-                                    style="padding: 15px"
-                                    v-for="(stat, stat_type) in overall_reports"
-                                    :key="stat_type"
-                                >
-                                    <b>{{ stat.title }}:</b> {{ stat.count }}
-                                </li>
-                            </ul>
-                            <div class="fs_padded_20" v-else>
-                                <el-skeleton :rows="3" animated />
-                            </div>
-                        </div>
-
-                        <div
-                            class="fs_box fs_today_stats"
-                            style="margin-top: 1.25em"
-                        >
-                            <div class="fs_box_header">
-                                <div class="fs_header_title">
-                                    {{ translate("Today Stats") }}
-                                </div>
-                            </div>
-                            <div class="fs_box_body">
-                                <ul v-if="!loading" class="fs_card_list">
-                                    <li
-                                        style="padding: 15px"
-                                        v-for="(
-                                            stat, stat_type
-                                        ) in today_reports"
-                                        :key="stat_type"
-                                    >
-                                        <b>{{ stat.title }}:</b>
-                                        {{ stat.count }}
-                                    </li>
-                                </ul>
-                                <div class="fs_padded_20" v-else>
-                                    <el-skeleton :rows="3" animated />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </el-col>
             </el-row>
         </div>
@@ -141,7 +90,7 @@
                 rel="noopener"
                 href="https://fluentsupport.com"
                 class="el-button el-button--success"
-                >{{ translate("Upgrade To Pro") }}</a
+            >{{ translate("Upgrade To Pro") }}</a
             >
         </div>
     </div>
@@ -151,20 +100,20 @@
 import TicketsChart from "./Charts/TicketsGrowth";
 import ResponseChart from "./Charts/ResponseGrowth";
 import ResolveChart from "./Charts/ResolveGrowth";
-import AgentReports from "./AgentReports";
+import ProductReportSummary from "./ProductReportSumary"
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
-import {reactive, toRefs, onMounted, nextTick} from "vue";
+import { reactive, toRefs, onMounted, nextTick } from "vue";
 
 export default {
-    name: "Reports",
+    name: "ProductReports",
     components: {
         TicketsChart,
         ResponseChart,
         ResolveChart,
-        AgentReports,
+        ProductReportSummary
     },
     setup() {
-        const { get, translate, handleError, setTitle } =
+        const { translate, handleError, setTitle } =
             useFluentHelper();
 
         const state = reactive({
@@ -179,24 +128,9 @@ export default {
                 "resolve-chart": "Resolve Stats",
                 "response-chart": "Response Stats",
             },
-            agent: "",
+            product: "",
             today_reports: {},
         });
-
-        const fetchReports = () => {
-            state.loading = true;
-            get("reports")
-                .then((response) => {
-                    state.overall_reports = response.overall_reports;
-                    state.today_reports = response.today_reports;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {
-                    state.loading = false;
-                });
-        };
 
         const handleComponentChange = (item) => {
             state.currently_showing = item;
@@ -207,20 +141,19 @@ export default {
             state.currently_showing = {
                 render: () => {},
             };
+
             nextTick(() => {
                 state.currently_showing = current;
             })
         };
 
         onMounted(() => {
-            fetchReports();
             setTitle("Reports");
         });
 
         return {
             ...toRefs(state),
             translate,
-            fetchReports,
             handleComponentChange,
             filterReport,
         };
@@ -229,10 +162,10 @@ export default {
 </script>
 
 <style lang="scss">
-.fs_agent_report_rh_filter {
+.fs_product_report_rh_filter {
     display: flex;
     align-items: center;
-    .fs_report_by_agent {
+    .fs_report_by_product {
         width: auto;
         margin-right: 0.3em;
     }
@@ -242,7 +175,7 @@ export default {
         flex-wrap: nowrap;
         justify-content: center;
         padding: 0.7em;
-        .fs_report_by_agent {
+        .fs_report_by_product {
             width: auto;
             margin-right: 0;
             margin-bottom: 0.4em;

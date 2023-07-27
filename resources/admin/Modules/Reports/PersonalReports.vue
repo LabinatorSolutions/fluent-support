@@ -116,7 +116,7 @@ import ResponseChart from "./Charts/ResponseGrowth";
 import ResolveChart from "./Charts/ResolveGrowth";
 import AgentReports from "./AgentReports";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
-import { reactive, toRefs, onMounted } from "vue";
+import { reactive, toRefs, onMounted, nextTick } from "vue";
 
 export default {
     name: "PersonalReports",
@@ -128,7 +128,7 @@ export default {
     },
 
     setup(props) {
-        const { get, translate, handleError, nextTick, setTitle, appVars } =
+        const { get, translate, handleError, setTitle, appVars } =
             useFluentHelper();
 
         const state = reactive({

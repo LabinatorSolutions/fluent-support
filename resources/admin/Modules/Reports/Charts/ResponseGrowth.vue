@@ -15,13 +15,13 @@ import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 import { reactive, toRefs, onMounted } from "vue";
 export default {
     name: "ResponseGrowth",
-    props: ["date_range", "url", "agent_id"],
+    props: ["date_range", "url", "agent_id", "product_id"],
     components: {
         BarChartBase,
     },
 
     setup(props) {
-        
+
         const { get } = useFluentHelper();
 
         const state = reactive({
@@ -82,6 +82,7 @@ export default {
             await get(props.url + "/response-growth", {
                 date_range: props.date_range,
                 agent_id: props.agent_id,
+                product_id: props.product_id
             }).then((response) => {
                 setupChartItems(response.stats);
             });
