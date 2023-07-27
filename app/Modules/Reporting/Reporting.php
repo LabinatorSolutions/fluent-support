@@ -2,8 +2,10 @@
 
 namespace FluentSupport\App\Modules\Reporting;
 
+use FluentSupport\App\Api\Classes\Tickets;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\Framework\Support\Arr;
@@ -133,6 +135,37 @@ class Reporting
             if (!empty($filters['person_id'])) {
                 $query->where('person_id', $filters['person_id']);
             }
+
+            if (!empty($filters['product_id'])) {
+                $query->where('product_id', $filters['product_id']);
+            }
+        }
+
+        $items = $query->get();
+
+
+        return $this->getResult($period, $items);
+    }
+
+    public function getProductReposnseGrowth($from = false, $to = false, $filters = [])
+    {
+        $period = $this->makeDatePeriod(
+            $from = $this->makeFromDate($from),
+            $to = $this->makeToDate($to),
+            $frequency = $this->getFrequency($from, $to)
+        );
+
+        list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
+
+        $query = $this->db()->table('fs_tickets')
+              ->select($this->prepareSelect($frequency,'created_at','response_count'))
+              ->whereBetween('created_at', $this->prepareBetween($frequency, $from, $to))
+              ->havingRaw('COUNT(response_count) > 0')
+              ->groupBy($groupBy)
+              ->oldest($orderBy);
+
+        if (!empty($filters['product_id'])) {
+            $query->where('product_id', $filters['product_id']);
         }
 
         $items = $query->get();
@@ -213,7 +246,7 @@ class Reporting
         }
 
         $agentIds = array_keys($reports);
-        
+
         if ($agent) {
             $agentIds = array_map('intval', explode(',', $agent));
         }
@@ -240,6 +273,88 @@ class Reporting
         return $agents;
     }
 
+    public function productSummary($from = false, $to = false)
+    {
+        if(!$from) {
+            $from = current_time('Y-m-d');
+        }
+
+        if(!$to) {
+            $to = current_time('Y-m-d');
+        }
+
+        $from .= ' 00:00:00';
+        $to .= ' 23:59:59';
+        $reports = [];
+
+        $resolves = $this->db()->table('fs_tickets')
+                         ->select([
+                             $this->db()->raw('COUNT(id) AS count'),
+                             'product_id',
+                         ])
+                         ->groupBy('product_id')
+                         ->where('status', 'closed')
+                         ->whereBetween('resolved_at', [$from, $to])
+                         ->get();
+
+        $reports = $this->pushProductReport('closed', $resolves, $reports);
+
+        $openTickets = $this->db()->table('fs_tickets')
+                            ->select([
+                                $this->db()->raw('COUNT(id) AS count'),
+                                'product_id'
+                            ])
+                            ->groupBy('product_id')
+                            ->where('status', '!=', 'closed')
+                            ->get();
+
+        $reports = $this->pushProductReport('opens', $openTickets, $reports);
+
+        $responses = $this->db()->table('fs_tickets')
+                         ->select([
+                             $this->db()->raw('response_count AS count'),
+                             'product_id',
+                         ])
+                         ->groupBy('product_id')
+                         ->whereBetween('created_at', [$from, $to])
+                         ->get();
+
+        $reports = $this->pushProductReport('responses', $responses, $reports);
+
+        $tickets = $this->db()->table('fs_tickets')
+                        ->select([
+                            $this->db()->raw('COUNT(id) AS count'),
+                            'product_id',
+                        ])
+                        ->groupBy('product_id')
+                        ->whereNotIn('status', ['closed'])
+                        ->whereBetween('created_at', [$from, $to])
+                        ->get();
+
+        $reports = $this->pushProductReport('tickets', $tickets, $reports);
+
+        $productIds = array_keys($reports);
+
+        $products = Product::select(['id', 'title'])
+                       ->whereIn('id', $productIds)
+                       ->get();
+
+        foreach ($products as $product) {
+            $report = NULL;
+            if(isset($reports[$product->id])) {
+                $report = wp_parse_args($reports[$product->id], [
+                    'responses' => 0,
+                    'opens' => 0,
+                    'closed' => 0,
+                    'tickets' => 0
+                ]);
+            }
+            $product->stats = $report;
+            $product->active_stat = '';
+        }
+
+        return $products;
+    }
 
     /**
      * pushAgentsReport method will format the ticket summary report by agent
@@ -260,6 +375,24 @@ class Reporting
             }
 
             $reports[$ticket->agent_id][$type] = $ticket->count;
+        }
+
+
+        return $reports;
+    }
+
+    private function pushProductReport($type, $tickets, $reports)
+    {
+        foreach ($tickets as $ticket) {
+            if(!$ticket->product_id) {
+                continue;
+            }
+
+            if(!isset($reports[$ticket->product_id])) {
+                $reports[$ticket->product_id] = [];
+            }
+
+            $reports[$ticket->product_id][$type] = $ticket->count;
         }
 
         return $reports;
