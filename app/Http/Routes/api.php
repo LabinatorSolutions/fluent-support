@@ -55,6 +55,7 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->delete('/{ticket_id}/tags/{tag_id}', 'TicketController@detachTag')->int('ticket_id')->int('tag_id');
 
     $router->post('/{ticket_id}/close', 'TicketController@closeTicket')->int('ticket_id');
+    $router->delete('/{ticket_id}/delete', 'TicketController@deleteTicket')->int('ticket_id');
     $router->post('/{ticket_id}/re-open', 'TicketController@reOpenTicket')->int('ticket_id');
     $router->put('/{ticket_id}/change-customer', 'TicketController@changeTicketCustomer')->int('ticket_id');
     $router->get('/{ticket_id}/custom-data', 'TicketController@getTicketCustomData')->int('ticket_id');

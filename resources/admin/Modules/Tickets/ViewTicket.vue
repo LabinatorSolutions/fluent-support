@@ -59,14 +59,22 @@
                                    icon="Refresh"
                                    class="fs_refresh_tk_page"
                                    size="small"></el-button>
+
                         <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
                                    v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">
                             {{ translate('Close') }}
                         </el-button>
+
+                        <el-button v-loading="deleting" :disabled="deleting" @click="deleteTicket()"
+                                   class="fs_delete_btn" type="danger" size="small">
+                            {{ translate('Delete') }}
+                        </el-button>
+
                         <el-popover
                             placement="bottom"
                             :width="400"
                             trigger="click"
+                            v-if="products.length"
                         >
                             <template #reference>
                                 <span style="margin-right: 10px;"><el-icon style="vertical-align: middle;"><goods/></el-icon> {{
@@ -616,6 +624,7 @@ export default {
             admin_priorities: appVars.admin_priorities,
             client_priorities: appVars.client_priorities,
             updating: false,
+            deleting: false,
             active_agents: [],
             edit_response_modal: false,
             editing_response: false,
@@ -783,6 +792,32 @@ export default {
                 .always(() => {
                     state.updating = false;
                 });
+        }
+
+        const deleteTicket = () => {
+            confirm({
+                message: translate('single_ticket_delete_warning'),
+                title: 'Warning',
+                options: {
+                    confirmButtonText: translate('Delete Ticket'),
+                    cancelButtonText: translate('Cancel'),
+                    type: 'warning',
+                    confirmButtonClass: 'el-button--danger',
+                }
+            }).then(() => {
+                state.deleting = true;
+                del(`tickets/${state.ticket.id}/delete`)
+                    .then(response => {
+                        notify({
+                            message: response.message,
+                            type: "success",
+                            position: "bottom-right",
+                        });
+                        if (window.history.state.back) {
+                            router.push({name: 'tickets'});
+                        }
+                    })
+            });
         }
 
         const reOpen = () => {
@@ -958,7 +993,7 @@ export default {
             content = content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
             // check if this is type of string
             if (typeof content !== 'string') {
-                return string;
+                return content;
             }
 
             const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
@@ -1092,7 +1127,8 @@ export default {
             getTicketStatus,
             translate,
             getArrToString,
-            handleMergeSelectionChange
+            handleMergeSelectionChange,
+            deleteTicket,
         }
     }
 }

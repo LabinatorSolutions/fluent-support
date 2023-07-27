@@ -259,6 +259,21 @@ class TicketController extends Controller
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
+    /**
+     * deleteTicket method will delete a ticket
+     * @param Request $request
+     * @param TicketService $ticketService
+     * @return array
+     */
+    public function deleteTicket(TicketService $ticketService, $ticketId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        try {
+            return $ticketService->delete($ticket);
+        } catch (\Exception $e) {
+            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+        }
+    }
 
     /**
      * doBulkReplies method will create response for bulk tickets
