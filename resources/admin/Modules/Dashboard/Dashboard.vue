@@ -286,7 +286,7 @@ export default {
                     {
                         id: 5,
                         component: 'AgentPerformance',
-                        show: true,
+                        show: appVars.me.permissions.includes('fst_agent_today_performance'),
                         heading: translate('Agent Performance (Today)'),
                         active_names: 'agentPerformance',
                     }
