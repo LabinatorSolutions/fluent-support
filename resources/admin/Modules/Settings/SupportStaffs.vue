@@ -207,6 +207,7 @@
             v-model="agent_modal"
             v-if="editing_agent"
             width="60%"
+            @close="resetAgentModal()"
         >
             <el-form label-position="top" :data="editing_agent">
                 <el-form-item :label="translate('Email')">
@@ -237,30 +238,6 @@
                         :placeholder="translate('agent_title')"
                         v-model="editing_agent.title"
                     />
-                </el-form-item>
-
-                <el-form-item :label="translate('Permissions')">
-                    <el-checkbox-group
-                        class="fs_permission_groups"
-                        v-model="editing_agent.permissions"
-                    >
-                        <div
-                            v-for="permissionSet in permissions"
-                            class="fs_each_permission_set"
-                        >
-                            <h4 style="font-size: 15px">
-                                {{ permissionSet.title }}
-                            </h4>
-                            <el-checkbox
-                                v-for="(
-                                    permissionLabel, permissionkey
-                                ) in permissionSet.permissions"
-                                :label="permissionkey"
-                                :key="permissionkey"
-                                >{{ permissionLabel }}</el-checkbox
-                            >
-                        </div>
-                    </el-checkbox-group>
                 </el-form-item>
 
                 <div
@@ -304,6 +281,18 @@
                         />
                     </el-form-item>
                 </div>
+
+                <el-form-item :label="translate('Permissions')">
+                    <el-tree
+                        :data="treeData"
+                        show-checkbox
+                        node-key="id"
+                        :props="defaultProps"
+                        default-expand-all
+                        :default-checked-keys="editing_agent.permissions"
+                        @check-change="handleCheckChange"
+                    />
+                </el-form-item>
             </el-form>
 
             <template #footer>
@@ -328,7 +317,7 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import {  ElMessageBox } from 'element-plus'
-import { onMounted, reactive, toRefs } from "vue";
+import {computed, onMounted, reactive, toRefs} from "vue";
 import {
     useFluentHelper,
     useNotify,
@@ -439,6 +428,7 @@ export default {
                         position: "bottom-right",
                     });
                     fetchAgents();
+                    state.editing_agent = false;
                     state.agent_modal = false;
                 })
                 .catch((errors) => {
@@ -546,6 +536,50 @@ export default {
             setTitle("Support Staff");
         });
 
+        const defaultProps = {
+            children: 'children',
+            label: 'label',
+        };
+
+        const treeData = computed(() => {
+            return [{
+                    id: 0,
+                    label: 'All Permissions',
+                    children: [
+                        ...getFormattedPermissionData()
+                    ],
+                }];
+        });
+
+        const getFormattedPermissionData = () => {
+            return state.permissions.map((permission, key) => {
+                let childPermissions = permission.permissions;
+                return {
+                    id: key,
+                    label: permission.title,
+                    children: Object.keys(childPermissions).map((permission_id) => {
+                        return {
+                            id: permission_id,
+                            label: childPermissions[permission_id],
+                        }
+                    })
+                }
+            });
+        };
+
+        const handleCheckChange = (data, checked, _) => {
+            if(checked && isNaN(data.id) && !state.editing_agent.permissions.includes(data.id) ) {
+                state.editing_agent.permissions.push(data.id);
+            } else if(!checked && isNaN(data.id) && state.editing_agent.permissions.includes(data.id)) {
+                state.editing_agent.permissions = state.editing_agent.permissions.filter((permission) => permission !== data.id);
+            }
+        };
+
+        const resetAgentModal = () => {
+            state.editing_agent = false;
+            state.agent_modal = false;
+        };
+
         return {
             ...toRefs(state),
             translate,
@@ -559,10 +593,13 @@ export default {
             readable,
             deleteAgent,
             confirmDeleteAgent,
-            handleAvatarSuccess,
             showIcon,
             hideIcon,
             confirmResetProfile,
+            defaultProps,
+            treeData,
+            handleCheckChange,
+            resetAgentModal,
         };
     },
 };
