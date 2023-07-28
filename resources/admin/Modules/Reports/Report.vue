@@ -9,6 +9,9 @@
         <el-tab-pane :label="translate('Products Reports')" name="product-reports" :lazy="true">
             <product-reports :url="'product-reports'"/>
         </el-tab-pane>
+        <el-tab-pane :label="translate('Business Box Reports')" name="mailbox-reports" :lazy="true">
+            <business-box-reports :url="'mailbox-reports'"/>
+        </el-tab-pane>
     </el-tabs>
 </template>
 
@@ -16,6 +19,7 @@
 import Reports from "./Reports";
 import PersonalReports from "./PersonalReports";
 import ProductReports from "./ProductReports";
+import BusinessBoxReports from "./BusinessBoxReports";
 import {
     useFluentHelper,
 } from "@/admin/Composable/FluentFrameworkHelper";
@@ -23,7 +27,12 @@ import { reactive, toRefs } from "vue";
 
 export default {
     name: 'Report',
-    components:{ Reports, PersonalReports, ProductReports },
+    components:{
+        Reports,
+        PersonalReports,
+        ProductReports,
+        BusinessBoxReports
+    },
 
     setup(){
         const {

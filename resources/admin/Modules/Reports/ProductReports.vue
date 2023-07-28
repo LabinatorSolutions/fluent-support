@@ -80,6 +80,9 @@
                         :show_export_btn="true"
                     />
                 </el-col>
+                <el-col :sm="24" :md="8" :lg="6">
+                    <SideBar/>
+                </el-col>
             </el-row>
         </div>
         <div class="fs_narrow_promo" style="background: white" v-else>
@@ -101,6 +104,7 @@ import TicketsChart from "./Charts/TicketsGrowth";
 import ResponseChart from "./Charts/ResponseGrowth";
 import ResolveChart from "./Charts/ResolveGrowth";
 import ProductReportSummary from "./ProductReportSumary"
+import SideBar from "./Parts/_SideBar"
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 import { reactive, toRefs, onMounted, nextTick } from "vue";
 
@@ -110,7 +114,8 @@ export default {
         TicketsChart,
         ResponseChart,
         ResolveChart,
-        ProductReportSummary
+        ProductReportSummary,
+        SideBar
     },
     setup() {
         const { translate, handleError, setTitle } =
@@ -119,7 +124,6 @@ export default {
         const state = reactive({
             loading: false,
             stat_loading: false,
-            overall_reports: {},
             currently_showing: "tickets-chart",
             date_range: ["", ""],
             showing_charts: true,
@@ -129,22 +133,10 @@ export default {
                 "response-chart": "Response Stats",
             },
             product: "",
-            today_reports: {},
         });
 
         const handleComponentChange = (item) => {
             state.currently_showing = item;
-        };
-
-        const filterReport = () => {
-            const current = state.currently_showing;
-            state.currently_showing = {
-                render: () => {},
-            };
-
-            nextTick(() => {
-                state.currently_showing = current;
-            })
         };
 
         onMounted(() => {
@@ -155,7 +147,6 @@ export default {
             ...toRefs(state),
             translate,
             handleComponentChange,
-            filterReport,
         };
     },
 };
