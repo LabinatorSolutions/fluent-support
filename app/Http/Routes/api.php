@@ -136,6 +136,13 @@ $router->prefix('product-reports')->withPolicy('AgentTicketPolicy')->group(funct
     $router->get('/product-reports-summary', 'ReportingController@getProductsSummary');
 });
 
+$router->prefix('mailbox-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {
+    $router->get('/tickets-growth', 'ReportingController@getTicketsChart');
+    $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
+    $router->get('/response-growth', 'ReportingController@getResponseChartForProducts');
+    $router->get('/mailbox-reports-summary', 'ReportingController@getMailBoxesSummary');
+});
+
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'CustomerController@index');
     $router->post('/', 'CustomerController@create');

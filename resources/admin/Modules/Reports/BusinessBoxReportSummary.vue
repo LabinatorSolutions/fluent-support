@@ -4,7 +4,7 @@
             <div class="fs_box">
                 <div class="fs_box_header">
                     <div class="fs_box_head">
-                        {{ translate('Product Summary') }}
+                        {{ translate('Business Box Summary') }}
                     </div>
                     <div class="fs_box_actions">
                         <el-date-picker
@@ -29,9 +29,9 @@
                         @sort-change="handleSorting"
                         v-loading="loading"
                         style="width: 100%">
-                        <el-table-column min-width="200px" :label="translate('Product')">
+                        <el-table-column min-width="200px" :label="translate('MailBox')">
                             <template #default="scope">
-                                {{ scope.row.title }}
+                                {{ scope.row.name }}
                             </template>
                         </el-table-column>
                         <el-table-column sortable="custom" prop="responses" :label="translate('Responses')">
@@ -55,12 +55,6 @@
                                 {{ scope.row.stats.closed }}
                             </template>
                         </el-table-column>
-
-<!--                        <el-table-column min-width="150px" prop="tickets" :label="translate('Interactions')">-->
-<!--                            <template #default="scope">-->
-<!--                                {{ scope.row.stats.interactions }}-->
-<!--                            </template>-->
-<!--                        </el-table-column>-->
                     </el-table>
                 </div>
             </div>
@@ -79,7 +73,7 @@ import { computed, onMounted, reactive, toRefs } from "vue";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
-    name: "ProductReportSummary",
+    name: "BusinessBoxReportSummary",
     components: { Modal },
     props: ["url", "show_settings", "show_export_btn"],
 
@@ -221,7 +215,6 @@ export default {
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
-                summary.tickets += parseInt(report.stats.interactions);
             });
             return summary;
         });

@@ -16,7 +16,7 @@ import { reactive, toRefs, onMounted } from "vue";
 
 export default {
     name: "TicketsGrowthChart",
-    props: ["date_range", "agent_id", "product_id", "url"],
+    props: ["date_range", "agent_id", "product_id", "mailbox_id", "url"],
     components: {
         BarChartBase,
     },
@@ -82,6 +82,7 @@ export default {
                 date_range: props.date_range,
                 agent_id: props.agent_id,
                 product_id: props.product_id,
+                mailbox_id: props.mailbox_id,
             }).then((response) => {
                 setupChartItems(response.stats);
             });
