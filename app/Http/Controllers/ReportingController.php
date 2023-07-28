@@ -46,11 +46,11 @@ class ReportingController extends Controller
     public function getTicketsChart(Request $request, Reporting $reporting)
     {
         list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
-        $filter = [];
 
         $filter = [
             'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
             'product_id' => $request->getSafe('product_id', 'intval') ?: null,
+            'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
         ];
 
         $stats = $reporting->getTicketsGrowth($from, $to, $filter);
@@ -69,11 +69,11 @@ class ReportingController extends Controller
     public static function getResolveChart(Request $request, Reporting $reporting): array
     {
         list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
-        $filter = [];
 
         $filter = [
             'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
             'product_id' => $request->getSafe('product_id', 'intval') ?: null,
+            'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
         ];
 
         $stats = $reporting->getTicketResolveGrowth($from, $to, $filter);
@@ -145,7 +145,10 @@ class ReportingController extends Controller
         $product_id = $request->getSafe('product_id', 'intval');
         list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
 
-        $filter = $product_id ? ['product_id' => $product_id] : [];
+        $filter = [
+            'product_id' => $request->getSafe('product_id', 'intval') ?: null,
+            'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
+        ];
 
         $stats = $reporting->getProductReposnseGrowth($from, $to, $filter);
 
@@ -156,7 +159,7 @@ class ReportingController extends Controller
 
     /**
      * getProductsSummary method will generate summary for product
-     * This method will count closed tickets, open tickets, responses with ticket by agent within a date range
+     * This method will count closed tickets, open tickets, responses, interactions with ticket by agent within a date range
      * @param Request $request
      * @param Reporting $reporting
      * @return array
@@ -164,7 +167,22 @@ class ReportingController extends Controller
     public static function getProductsSummary(Request $request,Reporting $reporting): array
     {
         return [
-            'summary' =>  $reporting->productSummary($request->getSafe('from'), $request->getSafe('to'))
+            'summary' =>  $reporting->getSummary('product',$request->getSafe('from'), $request->getSafe('to'))
+        ];
+
+    }
+
+    /**
+     * getMailBoxesSummary method will generate summary for mailbox
+     * This method will count closed tickets, open tickets, responses, interactions with ticket by agent within a date range
+     * @param Request $request
+     * @param Reporting $reporting
+     * @return array
+     */
+    public static function getMailBoxesSummary(Request $request,Reporting $reporting): array
+    {
+        return [
+            'summary' =>  $reporting->getSummary('mailbox',$request->getSafe('from'), $request->getSafe('to'))
         ];
     }
 
