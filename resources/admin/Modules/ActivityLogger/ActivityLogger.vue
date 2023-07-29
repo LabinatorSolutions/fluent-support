@@ -195,11 +195,19 @@ export default {
                 return false;
             }
 
-            if (route == "#view_ticket") {
-                router.push({
+            const routerData = {
                     name: "view_ticket",
                     params: { ticket_id: activity.object_id },
-                });
+                };
+
+            if (state.settings.open_link_in_new_tab == 'no' && route == '#view_ticket') {
+                router.push(routerData);
+            }
+
+            if (state.settings.open_link_in_new_tab == 'yes' && route == '#view_ticket') {
+                const routeData = router.resolve(routerData);
+
+                window.open(routeData.href, '_blank');
             }
         };
 

@@ -18,6 +18,15 @@
                     {{ translate("Disable Activity Logs") }}
                 </el-checkbox>
             </el-form-item>
+            <el-form-item>
+                <el-checkbox
+                    true-label="yes"
+                    false-label="no"
+                    v-model="activity_settings.open_link_in_new_tab"
+                >
+                    {{ translate("Open Ticket in New Tab") }}
+                </el-checkbox>
+            </el-form-item>
         </el-form>
 
         <span class="dialog-footer">
