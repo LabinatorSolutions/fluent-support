@@ -648,6 +648,7 @@ class TransStrings
             'default_box_set_warning'    => __('Are you sure you want to set this as default?', 'fluent-support'),
             'Set as Default'    => __('Set as Default', 'fluent-support'),
             'set_mailbox_webhook'    => __('Are you sure want to set this business box for webhook?', 'fluent-support'),
+            'Open Ticket in New Tab'    => __('Open Ticket in New Tab', 'fluent-support'),
         ];
     }
 }
