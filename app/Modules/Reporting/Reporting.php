@@ -78,7 +78,7 @@ class Reporting
      * @param array $filters
      * @return array
      */
-    public function getTicketResolveGrowth($from = false, $to = false, $filters = [])
+    public function getTicketResolveGrowth($from = false, $to = false, $filters = [], $type = '')
     {
         $period = $this->makeDatePeriod(
             $from = $this->makeFromDate($from),//Date from
@@ -88,11 +88,14 @@ class Reporting
 
         list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);//Get group by and order by i.e date,week, month
 
+        $filterColumn = (!empty($type)) ? $type.'_id' : 'id';
+
         //get the closed ticket statistics within the date range
         $query = $this->db()->table('fs_tickets')
             ->select($this->prepareSelect($frequency, 'resolved_at'))
             ->whereBetween('resolved_at', $this->prepareBetween($frequency, $from, $to))
             ->where('status', 'closed')
+            ->where($filterColumn, '>', 0)
             ->groupBy($groupBy)
             ->oldest($orderBy);
 
@@ -156,7 +159,7 @@ class Reporting
         return $this->getResult($period, $items);
     }
 
-    public function getProductReposnseGrowth($from = false, $to = false, $filters = [])
+    public function getResponseGrowthChart($from = false, $to = false, $filters = [], $type): array
     {
         $period = $this->makeDatePeriod(
             $from = $this->makeFromDate($from),
@@ -166,10 +169,13 @@ class Reporting
 
         list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
 
+        $filterColumn = $type."_id";
+
         $query = $this->db()->table('fs_tickets')
               ->select($this->prepareSelect($frequency,'created_at','response_count'))
               ->whereBetween('created_at', $this->prepareBetween($frequency, $from, $to))
-              ->havingRaw('COUNT(response_count) > 0')
+              ->havingRaw('COUNT(response_count)> 0')
+              ->where($filterColumn, '>', 0)
               ->groupBy($groupBy)
               ->oldest($orderBy);
 
@@ -363,17 +369,24 @@ class Reporting
         }
 
         $ids = array_keys($reports);
-        $model = $type == 'product' ? Product::class : MailBox::class;
 
-        if ($type == 'product') {
-            $items = $model::select(['id', 'title'])
-                           ->whereIn('id', $ids)
-                           ->get();
-        } else {
-            $items = $model::select(['id', 'name'])
-                           ->whereIn('id', $ids)
-                           ->get();
-        }
+        $types = [
+            'product' => [
+                'model' => Product::class,
+                'fields' => ['id', 'title'],
+            ],
+            'mailbox' => [
+                'model' => MailBox::class,
+                'fields' => ['id', 'name'],
+            ],
+        ];
+
+        $model = $types[$type]['model'];
+        $fields = $types[$type]['fields'];
+
+        $items = $model::select($fields)
+                       ->whereIn('id', $ids)
+                       ->get();
 
         foreach ($items as $item) {
             $report = isset($reports[$item->id]) ? $reports[$item->id] : [];

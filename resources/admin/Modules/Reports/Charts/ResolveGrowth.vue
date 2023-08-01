@@ -15,7 +15,7 @@ import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 import { reactive, toRefs, onMounted } from "vue";
 export default {
     name: "ResolveGrowth",
-    props: ["date_range", "url", "agent_id", "product_id", "mailbox_id"],
+    props: ["date_range", "url", "agent_id", "product_id", "mailbox_id", "type"],
     components: {
         BarChartBase,
     },
@@ -78,12 +78,17 @@ export default {
 
         const fetchReport = async () => {
             state.fetching = true;
-            await get(props.url + "/tickets-resolve-growth", {
+
+            const data = {
                 date_range: props.date_range,
                 agent_id: props.agent_id,
                 product_id: props.product_id,
                 mailbox_id: props.mailbox_id,
-            }).then((response) => {
+                type: props.type
+            };
+
+            await get(props.url + "/tickets-resolve-growth", data
+            ).then((response) => {
                 setupChartItems(response.stats);
             });
         };

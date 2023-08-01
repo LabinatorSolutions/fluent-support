@@ -9,7 +9,7 @@
         <el-tab-pane :label="translate('Products Reports')" name="product-reports" :lazy="true">
             <product-reports :url="'product-reports'"/>
         </el-tab-pane>
-        <el-tab-pane :label="translate('Business Box Reports')" name="mailbox-reports" :lazy="true">
+        <el-tab-pane :label="translate('Business Boxes Reports')" name="mailbox-reports" :lazy="true">
             <business-box-reports :url="'mailbox-reports'"/>
         </el-tab-pane>
     </el-tabs>

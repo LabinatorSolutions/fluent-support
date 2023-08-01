@@ -68,6 +68,7 @@ class ReportingController extends Controller
      */
     public static function getResolveChart(Request $request, Reporting $reporting): array
     {
+        $type = $request->getSafe('type');
         list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
 
         $filter = [
@@ -76,7 +77,7 @@ class ReportingController extends Controller
             'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
         ];
 
-        $stats = $reporting->getTicketResolveGrowth($from, $to, $filter);
+        $stats = $reporting->getTicketResolveGrowth($from, $to, $filter,$type);
 
         return [
             'stats' => $stats
@@ -135,14 +136,14 @@ class ReportingController extends Controller
     }
 
     /**
-     * getResponseChartForProducts method will generate response statistics for ticket by date range for product
+     * getResponseGrowthChart method will generate response statistics for ticket by date range for product or mailbox
      * @param Request $request
      * @param Reporting $reporting
      * @return array
      */
-    public static function getResponseChartForProducts(Request $request,Reporting $reporting): array
+    public static function getResponseGrowthChart(Request $request,Reporting $reporting): array
     {
-        $product_id = $request->getSafe('product_id', 'intval');
+        $type = $request->getSafe('type');
         list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
 
         $filter = [
@@ -150,7 +151,7 @@ class ReportingController extends Controller
             'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
         ];
 
-        $stats = $reporting->getProductReposnseGrowth($from, $to, $filter);
+        $stats = $reporting->getResponseGrowthChart($from, $to, $filter,$type);
 
         return [
             'stats' => $stats
