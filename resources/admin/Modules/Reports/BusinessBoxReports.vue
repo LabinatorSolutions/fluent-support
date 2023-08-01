@@ -37,7 +37,7 @@
                                     <el-select
                                         clearable
                                         filterable
-                                        placeholder="All Product"
+                                        placeholder="All Business Box"
                                         @change="filterReport"
                                         v-model="mailbox"
                                         class="fs_report_by_product"
@@ -71,6 +71,7 @@
                                 :date_range="date_range"
                                 :url="'mailbox-reports'"
                                 :mailbox_id="mailbox"
+                                type="mailbox"
                             ></component>
                         </div>
                     </div>
@@ -137,6 +138,16 @@ export default {
             mailbox: "",
         });
 
+        const filterReport = () => {
+            const current = state.currently_showing;
+            state.currently_showing = {
+                render: () => {},
+            };
+            nextTick(() => {
+                state.currently_showing = current;
+            })
+        };
+
         const handleComponentChange = (item) => {
             state.currently_showing = item;
         };
@@ -149,6 +160,7 @@ export default {
             ...toRefs(state),
             translate,
             handleComponentChange,
+            filterReport
         };
     },
 };

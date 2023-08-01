@@ -80,7 +80,7 @@ trait ReportingHelperTrait
                 $countField = 'COUNT(id) AS count';
                 break;
             case 'response_count':
-                $countField = 'response_count AS count';
+                $countField = 'SUM(response_count) AS count';
                 break;
             default:
                 $countField = 'COUNT(id) AS count';
@@ -91,7 +91,6 @@ trait ReportingHelperTrait
             $this->db()->raw('DATE('.$dateField.') AS date'),
             $this->db()->raw('TIME('.$dateField.') AS time')
         ];
-
 
         if ($frequency == static::$hourly) {
             $select[] = $this->db()->raw('HOUR(created_at) hourly');

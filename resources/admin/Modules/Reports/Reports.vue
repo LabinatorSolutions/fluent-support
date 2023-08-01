@@ -71,6 +71,7 @@
                                 :date_range="date_range"
                                 :url="'reports'"
                                 :agent_id="agent"
+                                type="agent"
                             ></component>
                         </div>
                     </div>
