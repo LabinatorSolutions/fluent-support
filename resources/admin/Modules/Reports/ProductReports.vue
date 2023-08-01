@@ -71,6 +71,7 @@
                                 :date_range="date_range"
                                 :url="'product-reports'"
                                 :product_id="product"
+                                type="product"
                             ></component>
                         </div>
                     </div>
@@ -135,6 +136,16 @@ export default {
             product: "",
         });
 
+        const filterReport = () => {
+            const current = state.currently_showing;
+            state.currently_showing = {
+                render: () => {},
+            };
+            nextTick(() => {
+                state.currently_showing = current;
+            })
+        };
+
         const handleComponentChange = (item) => {
             state.currently_showing = item;
         };
@@ -147,6 +158,7 @@ export default {
             ...toRefs(state),
             translate,
             handleComponentChange,
+            filterReport,
         };
     },
 };

@@ -1,6 +1,6 @@
 <template>
     <div class="fs_box">
-        <div class="fs_box_header" style="margin-top: 1.25em">
+        <div class="fs_box_header">
             <div class="fs_header_title">
                 {{ translate("Quick Stats") }}
             </div>

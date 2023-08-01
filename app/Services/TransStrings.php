@@ -178,6 +178,8 @@ class TransStrings
             'Your Overall Stats'    => __('Your Overall Stats', 'fluent-support'),
             'Agents Reports'    => __('Agents Reports', 'fluent-support'),
             'Personal Reports'    => __('Personal Reports', 'fluent-support'),
+            'Products Reports'    => __('Products Reports', 'fluent-support'),
+            'Business Boxes Reports'    => __('Business Boxes Reports', 'fluent-support'),
             'Quick Stats'    => __('Quick Stats', 'fluent-support'),
             'Saved Replies'    => __('Saved Replies', 'fluent-support'),
             'Create New'    => __('Create New', 'fluent-support'),
