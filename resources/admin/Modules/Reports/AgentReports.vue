@@ -41,23 +41,23 @@
                         </el-table-column>
                         <el-table-column sortable="custom" prop="responses" :label="translate('Responses')">
                             <template #default="scope">
-                                {{ scope.row.stats.responses }}
+                                {{ scope.row.stats?.responses }}
                             </template>
                         </el-table-column>
                         <el-table-column sortable="custom" prop="interactions" :label="translate('Interactions')">
                             <template #default="scope">
-                                {{ scope.row.stats.interactions }}
+                                {{ scope.row.stats?.interactions }}
                             </template>
                         </el-table-column>
                         <el-table-column sortable="custom" prop="opens" :label="translate('Open Tickets')">
                             <template #default="scope">
-                                {{ scope.row.stats.opens }}
+                                {{ scope.row.stats?.opens }}
                             </template>
                         </el-table-column>
 
                         <el-table-column sortable="custom" prop="closed" :label="translate('Closed')">
                             <template #default="scope">
-                                {{ scope.row.stats.closed }}
+                                {{ scope.row.stats?.closed }}
                             </template>
                         </el-table-column>
 
