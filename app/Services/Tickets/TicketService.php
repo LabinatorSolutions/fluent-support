@@ -104,6 +104,7 @@ class TicketService
         $tickets = $this->getTicketsByQuery($queryArgs);
 
         foreach ($tickets as $ticket) {
+            $ticket = apply_filters('fluent_support/ticket_with_last_response', $ticket);
             if (Arr::get($data, 'per_page') < 15) {
                 if ($ticket->status != 'closed') {
                     $ticket->live_activity = TicketHelper::getActivity($ticket->id);

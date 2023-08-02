@@ -253,6 +253,7 @@ class TransStrings
             'Please Provide Fallback Agent ID'    => __('Please Provide Fallback Agent ID', 'fluent-support'),
             'Fallback Agent ID'    => __('Fallback Agent ID', 'fluent-support'),
             'Ticket Tags'    => __('Ticket Tags', 'fluent-support'),
+            'Ticket Form Config'    => __('Ticket Form Config', 'fluent-support'),
             'segment_ticket_by_tags'    => __('Add Tags and segment your tickets by tags filter then you can also do bulk actions', 'fluent-support'),
             'Edit Tag'    => __('Edit Tag', 'fluent-support'),
             'Create New Ticket Tag'    => __('Create New Ticket Tag', 'fluent-support'),
@@ -646,6 +647,7 @@ class TransStrings
             'default_box_set_warning'    => __('Are you sure you want to set this as default?', 'fluent-support'),
             'Set as Default'    => __('Set as Default', 'fluent-support'),
             'set_mailbox_webhook'    => __('Are you sure want to set this business box for webhook?', 'fluent-support'),
+            'Advanced Filter'    => __('Advanced Filter', 'fluent-support'),
         ];
     }
 }

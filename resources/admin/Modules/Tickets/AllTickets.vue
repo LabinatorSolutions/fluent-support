@@ -17,7 +17,7 @@
                         v-model="filter_type"
                         active-value="advanced"
                         inactive-value="simple"
-                        active-text="Advanced Filter"
+                        :active-text="translate('Advanced Filter')"
                         inactive-text=""
                         style="margin-left: 0.6em;"
                     />
@@ -132,6 +132,15 @@
                                     placement="top"
                                 >
                                     <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox?.settings.color || '#a3b2bd'}" v-html="getExcerptBox(scope.row.mailbox?.name)"></span>
+                                </el-tooltip>
+
+                                <el-tooltip
+                                    v-if="scope.row.follow_up"
+                                    class="box-item"
+                                    effect="dark"
+                                    :content="getFollowUpMessage(scope.row.follow_up)"
+                                    placement="top">
+                                    <span class="fs_follow_up_identifier">Follow Up</span>
                                 </el-tooltip>
 
                                 <span v-if="scope.row.source" style="margin-right: 5px;" :title="'Source: ' + scope.row.source" :class="'fc_source_icon fc_source_icon_'+scope.row.source"></span>
@@ -554,6 +563,11 @@ export default {
             return text.substring(0, 3).padEnd(5, '.');
         }
 
+        const getFollowUpMessage = (follow_up) => {
+            let date = follow_up.date ? follow_up.date : '';
+            return translate('Follow Up message sent')+' '+humanDiffTime(date);
+        }
+
         onMounted(() => {
             state.app_ready = true;
             setFromSaveFilters();
@@ -657,7 +671,8 @@ export default {
             closeSelected,
             getExcerpt,
             resetFilters,
-            getExcerptBox
+            getExcerptBox,
+            getFollowUpMessage,
         }
     }
 }
@@ -695,5 +710,18 @@ export default {
     flex-direction: column;
     justify-content: space-evenly;
     margin-right: 6px;
+}
+.fs_follow_up_identifier{
+    min-width: 45px;
+    height: 19px;
+    padding: 9px;
+    color: #fff;
+    border-radius: 3px;
+    opacity: 0.8;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-right: 6px;
+    background: #f6c343;
 }
 </style>
