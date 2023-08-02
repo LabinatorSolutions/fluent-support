@@ -29,7 +29,7 @@
 
 <script type="text/babel">
 import {computed} from "vue";
-import {useRoute} from "vue-router";
+import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
@@ -38,8 +38,12 @@ export default {
         const {
             appVars,
             translate,
+            saveData,
+            getData
         } = useFluentHelper();
         const route = useRoute();
+
+        const router = useRouter();
 
         const isAll = computed(() => {
             return route.query.agent_id;
@@ -56,6 +60,29 @@ export default {
         const isMentioned = computed(() => {
             return !(route.query.watcher === 'watcher' && appVars.me.id === parseInt(route.query.agent_id));
         });
+
+        const saveQueryToLocalStorage = () => {
+            const currentQuery = router.currentRoute.value.query;
+            saveData("routesQuery", JSON.stringify(currentQuery));
+        };
+
+        const loadQueryFromLocalStorage = () => {
+            const savedQuery = getData('routesQuery');
+            if (savedQuery) {
+                const parsedQuery = JSON.parse(savedQuery);
+                if ("agent_id" in parsedQuery && parsedQuery.agent_id !== 'unassigned') {
+                    parsedQuery.agent_id = appVars.me.id;
+                }
+                router.replace({ name: 'tickets', query: parsedQuery });
+            }
+        };
+
+        onBeforeRouteLeave((to, from, next) => {
+            saveQueryToLocalStorage();
+            next();
+        });
+
+        loadQueryFromLocalStorage();
 
         return {
             appVars,
