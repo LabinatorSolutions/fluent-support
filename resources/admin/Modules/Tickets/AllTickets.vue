@@ -134,15 +134,6 @@
                                     <span class="fs_inbox_identifier" :style="{backgroundColor: scope.row.mailbox?.settings.color || '#a3b2bd'}" v-html="getExcerptBox(scope.row.mailbox?.name)"></span>
                                 </el-tooltip>
 
-                                <el-tooltip
-                                    v-if="scope.row.follow_up"
-                                    class="box-item"
-                                    effect="dark"
-                                    :content="getFollowUpMessage(scope.row.follow_up)"
-                                    placement="top">
-                                    <span class="fs_follow_up_identifier">Follow Up</span>
-                                </el-tooltip>
-
                                 <span v-if="scope.row.source" style="margin-right: 5px;" :title="'Source: ' + scope.row.source" :class="'fc_source_icon fc_source_icon_'+scope.row.source"></span>
 
                                 <ticket-tags :tags="scope.row.tags" :ticket_id="scope.row.id"></ticket-tags>
@@ -563,11 +554,6 @@ export default {
             return text.substring(0, 3).padEnd(5, '.');
         }
 
-        const getFollowUpMessage = (follow_up) => {
-            let date = follow_up.date ? follow_up.date : '';
-            return translate('Follow Up message sent')+' '+humanDiffTime(date);
-        }
-
         onMounted(() => {
             state.app_ready = true;
             setFromSaveFilters();
@@ -672,7 +658,6 @@ export default {
             getExcerpt,
             resetFilters,
             getExcerptBox,
-            getFollowUpMessage,
         }
     }
 }
