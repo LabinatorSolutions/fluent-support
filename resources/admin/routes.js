@@ -1,4 +1,3 @@
-
 import Dashboard from './Modules/Dashboard/Dashboard.vue';
 import Setup from './Components/Setup';
 import TicketsView from './Modules/Tickets/TicketsView';
