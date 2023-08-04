@@ -238,7 +238,7 @@ class Reporting
             ->where('status', '!=', 'closed')
             ->get();
 
-        $reports = $this->pushReportData('opens', $resolves, $reports, 'agent_id');
+        $reports = $this->pushReportData('opens', $openTickets, $reports, 'agent_id');
         //Get response by agent
         $responses = Conversation::select([
             $this->db()->raw('COUNT(id) AS count'),
@@ -253,7 +253,7 @@ class Reporting
             ->groupBy('agent_id')
             ->get();
 
-        $reports = $this->pushReportData('responses', $resolves, $reports, 'agent_id');
+        $reports = $this->pushReportData('responses', $responses, $reports, 'agent_id');
         //Get interactions/responses by individual agents
         foreach ($responses as $response) {
             $reports[$response->agent_id]['interactions'] = Conversation::where('person_id', $response->agent_id)
