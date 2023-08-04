@@ -130,14 +130,14 @@ $router->prefix('my-reports')->withPolicy('AgentTicketPolicy')->group(function (
     $router->get('/my-summary', 'ReportingController@getPersonalSummary');
 });
 
-$router->prefix('product-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {
+$router->prefix('product-reports')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/tickets-growth', 'ReportingController@getTicketsChart');
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
     $router->get('/response-growth', 'ReportingController@getResponseGrowthChart');
     $router->get('/product-reports-summary', 'ReportingController@getProductsSummary');
 });
 
-$router->prefix('mailbox-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {
+$router->prefix('mailbox-reports')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/tickets-growth', 'ReportingController@getTicketsChart');
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
     $router->get('/response-growth', 'ReportingController@getResponseGrowthChart');
