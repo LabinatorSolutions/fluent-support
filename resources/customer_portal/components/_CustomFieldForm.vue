@@ -1,8 +1,8 @@
 <template>
     <div class="fs_custom_fields_wrap">
         <div v-if="appReady" class="fs_custom_fields fs_tk_row">
-            <template v-for="(field, fieldName) in fields" :key="fieldName">
-                <div v-if="isRenderable(field, fieldName)" class="fs_tk_col">
+            <template v-for="(field, fieldName) in computedFields" :key="fieldName">
+                <div v-if="field.is_renderable" class="fs_tk_col">
                     <el-form-item :label="field.label" :required="field.required=='yes'">
                         <el-input
                             v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
@@ -103,7 +103,7 @@ export default {
 
             this.appReady = true;
         },
-        isRenderable(field, fieldName) {
+        isRenderable(field) {
             if (field.has_logics != 'yes' || !field.conditions || !field.conditions.length) {
                 return true;
             }
@@ -118,7 +118,7 @@ export default {
                 }
             });
 
-            if (field.match_type == 'yes') {
+            if (field.match_type == 'all') {
                 return singlePass && allPassed;
             }
 
@@ -129,13 +129,18 @@ export default {
          & @return {Boolean}
          */
         compare(sourceVal, operator, givenVal) {
-
             if (typeof sourceVal == 'string') {
                 sourceVal = sourceVal.toLowerCase();
             }
 
             if (typeof givenVal == 'string') {
                 givenVal = givenVal.toLowerCase();
+            }
+
+            if(isArray(givenVal)) {
+                givenVal = givenVal.map((val) => {
+                    return val.toLowerCase();
+                });
             }
 
             switch (operator) {
@@ -197,6 +202,18 @@ export default {
                 return false;
             }
             return true;
+        }
+    },
+    computed: {
+        computedFields() {
+            let x = Object.keys(this.fields);
+            let data = this.fields;
+            x.forEach((i) => {
+                let field = data[i];
+                data[i].is_renderable = this.isRenderable(field);
+            });
+
+            return data;
         }
     },
     mounted() {
