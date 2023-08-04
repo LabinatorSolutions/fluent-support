@@ -129,6 +129,9 @@ export default {
          & @return {Boolean}
          */
         compare(sourceVal, operator, givenVal) {
+            if(givenVal === undefined) {
+                return false;
+            }
             if (typeof sourceVal == 'string') {
                 sourceVal = sourceVal.toLowerCase();
             }
@@ -153,11 +156,14 @@ export default {
                     if (isArray(givenVal)) {
                         return givenVal.indexOf(sourceVal) === -1;
                     }
+                    if(sourceVal !== '' && (givenVal === '' || givenVal === undefined)){
+                        return false;
+                    }
                     return sourceVal != givenVal
                 case 'contains':
                     sourceVal = sourceVal.toString();
                     return givenVal.indexOf(sourceVal) !== -1;
-                case 'nt_contains':
+                case 'not_contains':
                     sourceVal = sourceVal.toString();
                     return givenVal.indexOf(sourceVal) === -1;
                 case 'lt':
@@ -177,7 +183,6 @@ export default {
         dependancyPass(condition) {
             if (condition && condition.item_key && condition.operator) {
                 let itemKey = condition.item_key;
-
                 let sourceValue = '';
 
                 if (itemKey.indexOf('ticket_') === 0) { // it's a ticket property
@@ -206,11 +211,10 @@ export default {
     },
     computed: {
         computedFields() {
-            let x = Object.keys(this.fields);
+            let fieldData = Object.keys(this.fields);
             let data = this.fields;
-            x.forEach((i) => {
-                let field = data[i];
-                data[i].is_renderable = this.isRenderable(field);
+            fieldData.forEach((i) => {
+                data[i].is_renderable = this.isRenderable(data[i]);
             });
 
             return data;
