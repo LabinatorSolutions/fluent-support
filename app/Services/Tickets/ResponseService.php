@@ -97,8 +97,12 @@ class ResponseService
             }
 
             if ($convoType == 'response') {
-                $ticket->last_agent_response = current_time('mysql');
-                $ticket->waiting_since = current_time('mysql');
+                $resetWaitingSince = apply_filters('fluent_support/reset_waiting_since', true, $response);
+
+                if($resetWaitingSince){
+                    $ticket->last_agent_response = current_time('mysql');
+                    $ticket->waiting_since = current_time('mysql');
+                }
             }
         } else {
 
