@@ -17,7 +17,7 @@
                         v-model="filter_type"
                         active-value="advanced"
                         inactive-value="simple"
-                        active-text="Advanced Filter"
+                        :active-text="translate('Advanced Filter')"
                         inactive-text=""
                         style="margin-left: 0.6em;"
                     />
@@ -657,7 +657,7 @@ export default {
             closeSelected,
             getExcerpt,
             resetFilters,
-            getExcerptBox
+            getExcerptBox,
         }
     }
 }
@@ -695,5 +695,18 @@ export default {
     flex-direction: column;
     justify-content: space-evenly;
     margin-right: 6px;
+}
+.fs_follow_up_identifier{
+    min-width: 45px;
+    height: 19px;
+    padding: 9px;
+    color: #fff;
+    border-radius: 3px;
+    opacity: 0.8;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-right: 6px;
+    background: #f6c343;
 }
 </style>
