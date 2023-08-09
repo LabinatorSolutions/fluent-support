@@ -53,10 +53,7 @@
                                     placement="bottom-start"
                                 >
                                     <el-icon
-                                        :class="
-                                            'fs_agent_avatar_upload fs_agent_avatar_upload-' +
-                                            scope.row.id
-                                        "
+                                        :class=" 'fs_agent_avatar_upload fs_agent_avatar_upload-' + scope.row.id "
                                     >
                                         <Camera />
                                     </el-icon>
@@ -67,48 +64,27 @@
                                             <el-dropdown-item>
                                                 <el-upload
                                                     class="fs-avatar-uploader"
-                                                    :action="
-                                                        upload_url +
-                                                        scope.row.id +
-                                                        `/avatar`
-                                                    "
-                                                    :on-success="
-                                                        handleAvatarSuccess
-                                                    "
-                                                    :on-error="
-                                                        handleAvatarError
-                                                    "
+                                                    :action="upload_url + scope.row.id +'/avatar'"
+                                                    :on-success="handleAvatarSuccess"
+                                                    :on-error="handleAvatarError"
                                                     :headers="requestHeaders"
                                                     :show-file-list="false"
-                                                    drag
                                                 >
-                                                    {{
-                                                        translate(
-                                                            "Upload a Custom Picture"
-                                                        )
-                                                    }}
+                                                    {{ translate("Upload a Custom Picture") }}
                                                 </el-upload>
                                             </el-dropdown-item>
                                             <el-dropdown-item
                                                 v-if="scope.row.avatar"
                                             >
-                                                <!--                                                    Reset To Default Gravatar-->
+                                                <!-- Reset To Default Gravatar -->
                                                 <el-popconfirm
                                                     confirm-button-text="Yes"
                                                     cancel-button-text="No"
                                                     title="Reset to gravatar?"
-                                                    @confirm="
-                                                        confirmResetProfile(
-                                                            scope.row
-                                                        )
-                                                    "
+                                                    @confirm="confirmResetProfile(scope.row)"
                                                 >
                                                     <template #reference>
-                                                        {{
-                                                            translate(
-                                                                "Reset To Default Gravatar"
-                                                            )
-                                                        }}
+                                                        {{ translate("Reset To Default Gravatar") }}
                                                     </template>
                                                 </el-popconfirm>
                                             </el-dropdown-item>
@@ -126,16 +102,12 @@
                 </el-table-column>
                 <el-table-column :label="translate('Name')" width="120">
                     <template #default="scope">
-                        <a :href="scope.row.user_profile">{{
-                            scope.row.full_name
-                        }}</a>
+                        <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                     </template>
                 </el-table-column>
                 <el-table-column :label="translate('Title')">
                     <template #default="scope">
-                        <span style="font-size: 14px; color: #56c288">{{
-                            scope.row.title
-                        }}</span>
+                        <span style="font-size: 14px; color: #56c288">{{ scope.row.title }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="translate('Permissions')" width="160">
@@ -145,14 +117,14 @@
                                 <p>{{ translate("Assigned Permissions") }}</p>
                                 <span
                                     style="display: block"
-                                    v-for="permission in scope.row.permissions"
-                                    >{{ readable(permission) }}</span
-                                >
+                                    v-for="permission in scope.row.permissions">
+                                    {{ readable(permission) }}
+                                </span>
                             </template>
-                            <el-button type="default" size="small"
-                                >{{ scope.row.permissions.length }}
-                                {{ translate("Permissions") }}</el-button
-                            >
+                            <el-button type="default" size="small">
+                                {{ scope.row.permissions.length }}
+                                {{ translate("Permissions") }}
+                            </el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -189,11 +161,7 @@
                 <pagination @fetch="fetchAgents()" :pagination="pagination" />
             </div>
         </div>
-        <div
-            style="padding: 20px; background: white"
-            class="fs_box_body"
-            v-else
-        >
+        <div style="padding: 20px; background: white" class="fs_box_body" v-else>
             <el-skeleton :rows="5" animated />
         </div>
 
@@ -303,9 +271,7 @@
                         type="success"
                         @click="createOrUpdateAgent()"
                     >
-                        <span v-if="editing_agent.id">{{
-                            translate("Update")
-                        }}</span>
+                        <span v-if="editing_agent.id">{{ translate("Update") }}</span>
                         <span v-else>{{ translate("Create") }}</span>
                     </el-button>
                 </span>
