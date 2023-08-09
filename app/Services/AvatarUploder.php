@@ -48,7 +48,7 @@ class AvatarUploder
     private function validateExtension($file)
     {
         /**
-         * Filter customer profile picture upload types
+         * Filter profile picture upload types
          * @param array $allowedExtension
          */
         $allowedExtension = apply_filters('fluent_support/allowed_customer_profile_picture_file_type', 
