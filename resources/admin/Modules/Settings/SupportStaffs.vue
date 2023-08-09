@@ -479,11 +479,11 @@ export default {
             let id = res.agent.id;
             let index = state.agents.findIndex((row) => row.id === id);
 
-            state.agents[index].photo = URL.createObjectURL(file.raw);
+            state.agents[index].photo = res.image;
 
             notify({
                 type: "success",
-                message: "Profile picture has been updated successfully",
+                message: res.message,
                 position: "bottom-right",
             });
         };
