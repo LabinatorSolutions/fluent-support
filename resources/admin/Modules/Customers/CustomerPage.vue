@@ -203,18 +203,19 @@ export default {
         };
 
         const handleAvatarSuccess = (response, file) => {
-            state.customer.photo = URL.createObjectURL(file.raw);
+            state.customer.photo = response.image;
                 notify({
                     title: translate('Success'),
-                    message: translate('Profile picture has been updated successfully'),
+                    message: translate(response.message),
                     type: 'success'
                 });
-                state.canOpenProfileUploadPopup = true;
+            state.canOpenProfileUploadPopup = true;
         };
 
-        const handleAvatarError = (err, _) => {
+        const handleAvatarError = (err, file) => {
             let errorMessage = JSON.parse(err.message);
             notify({
+                title: 'Error',
                 message: translate(errorMessage.message),
                 type: 'error'
             });

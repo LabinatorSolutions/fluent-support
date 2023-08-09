@@ -118,8 +118,10 @@ class CustomerController extends Controller
             return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id'), 'customer');
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
-            ]);
+                'message' => __($e->getMessage(), 'fluent-support'),
+            ],
+            $e->getCode()
+        );
         }
     }
 
