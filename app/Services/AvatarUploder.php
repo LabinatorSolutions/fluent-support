@@ -26,7 +26,7 @@ class AvatarUploder
 
 
         if ( !$uploadedImage ) {
-            throw new \Exception('Something went wrong while updating the profile picture', 403);
+            throw new Exception('Something went wrong while updating the profile picture', 403);
         }
 
         $user->avatar = $uploadedImage[0]['url'];
@@ -47,18 +47,17 @@ class AvatarUploder
      */
     private function validateExtension($file)
     {
-        $allowExtension = [
-            'jpeg', 'jpe', 'jpg', 'png'
-        ];
+        /**
+         * Filter customer profile picture upload types
+         * @param array $allowedExtension
+         */
+        $allowedExtension = apply_filters('fluent_support/allowed_customer_profile_picture_file_type', 
+        array('jpeg', 'jpe', 'jpg', 'png'));
 
         $ext = $file['file']->getClientOriginalExtension();
 
-        if( !in_array($ext, $allowExtension) ) {
-            throw new \Exception('Unsupported file submitted, please select an image file');
-        }
-
-        if( !in_array($ext, $allowExtension) ) {
-            return false;
+        if( !in_array($ext, $allowedExtension) ) {
+            throw new Exception('Unsupported file submitted, allowed image file types are ' . implode(", ", $allowedExtension), 403);
         }
 
         return true;
