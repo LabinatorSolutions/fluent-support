@@ -70,11 +70,7 @@
                                     :cancel-button-text="translate('No')"
                                     icon="InfoFilled"
                                     icon-color="red"
-                                    :title="
-                                        translate(
-                                            'Are you sure to delete this? All associate data will be deleted'
-                                        )
-                                    "
+                                    :title="translate('Are you sure to delete this? All associate data will be deleted')"
                                     @confirm="deleteWorkflow(scope.row.id)"
                                 >
                                     <template #reference>

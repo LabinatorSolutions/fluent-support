@@ -237,10 +237,10 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :title="translate('Client Priority: ') + ticket.client_priority "
+                                    <span :title="translate('Client Priority: ') + translate(ticket.client_priority) "
                                           :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge">
                                         <el-icon style="vertical-align: middle;"><user/></el-icon> {{
-                                            ticket.client_priority
+                                            translate(ticket.client_priority)
                                         }}</span>
                                 </template>
 
@@ -261,10 +261,10 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :title="translate('Admin Priority:') + ticket.priority "
+                                    <span :title="translate('Admin Priority:') + translate(ticket.priority) "
                                           :class="'fs_badge_priority_'+ticket.priority" class="fs_badge">
                                         <el-icon style="vertical-align: middle;"><service/></el-icon> {{
-                                            ticket.priority
+                                            translate(ticket.priority)
                                         }}</span>
                                 </template>
 
@@ -286,7 +286,7 @@
                             >
                                 <template #reference>
                                     <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{
-                                            ticket.status
+                                            translate(ticket.status)
                                         }}</span>
                                 </template>
 
