@@ -158,6 +158,7 @@ class TransStrings
             'Interactions'    => __('Interactions', 'fluent-support'),
             'Open Tickets'    => __('Open Tickets', 'fluent-support'),
             'Closed'    => __('Closed', 'fluent-support'),
+            'closed' => __('closed', 'fluent-support'),
             'Current Overall'    => __('Current Overall', 'fluent-support'),
             'Waiting Tickets'    => __('Waiting Tickets', 'fluent-support'),
             'Average Waiting'    => __('Average Waiting', 'fluent-support'),
@@ -253,6 +254,7 @@ class TransStrings
             'Confirm Delete'    => __('Confirm Delete', 'fluent-support'),
             'Invalid ID'    => __('Invalid ID', 'fluent-support'),
             'Please Provide Fallback Agent ID'    => __('Please Provide Fallback Agent ID', 'fluent-support'),
+            'Ticket Form Config'    => __('Ticket Form Config', 'fluent-support'),
             'Fallback Agent ID'    => __('Fallback Agent ID', 'fluent-support'),
             'Ticket Tags'    => __('Ticket Tags', 'fluent-support'),
             'segment_ticket_by_tags'    => __('Add Tags and segment your tickets by tags filter then you can also do bulk actions', 'fluent-support'),
@@ -573,6 +575,7 @@ class TransStrings
             'Pick a day' => __('Pick a day', 'fluent-support'),
             'From' => __('From', 'fluent-support'),
             'OR' => __('OR', 'fluent-support'),
+            'And' => __('And', 'fluent-support'),
             'Continue' => __('Continue', 'fluent-support'),
             'Almost Done'   => __('Almost Done', 'fluent-support'),
             'Thank you again for configuring your own Support System in WordPress. You may install companion
@@ -651,6 +654,14 @@ class TransStrings
             'Set as Default'    => __('Set as Default', 'fluent-support'),
             'set_mailbox_webhook'    => __('Are you sure want to set this business box for webhook?', 'fluent-support'),
             'Open Ticket in New Tab'    => __('Open Ticket in New Tab', 'fluent-support'),
+            'Advanced Filter' => __('Advanced Filter', 'fluent-support'),
+            'medium' => __('medium', 'fluent-support'),
+            'normal' => __('normal', 'fluent-support'),
+            'critical' => __('critical', 'fluent-support'),
+            'new' => __('new', 'fluent-support'),
+            'open' => __('open', 'fluent-support'),
+            'Waiting' => __('Waiting', 'fluent-support'),
+            'waiting' => __('waiting', 'fluent-support'),
         ];
     }
 }

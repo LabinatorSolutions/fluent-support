@@ -79,7 +79,7 @@ class CustomerPortalController extends Controller
             return $this->sendError([
                 'message'    => __('Invalid form data submitted', 'fluent-support'),
                 'error_type' => '400'
-            ]);
+            ], 400);
         }
 
         $data = $this->validate($request->get(), $dataRules['required_fields'], $dataRules['error_messages']);
