@@ -28,7 +28,7 @@
 </template>
 
 <script type="text/babel">
-import {computed} from "vue";
+import {computed, watch} from "vue";
 import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
@@ -61,12 +61,18 @@ export default {
             return !(route.query.watcher === 'watcher' && appVars.me.id === parseInt(route.query.agent_id));
         });
 
+        const watchRouter =  watch(() => {
+            if (router.currentRoute.value.fullPath === '/tickets') {
+                loadQueryFromLocalStorage();
+            }
+        })
+        
         const saveQueryToLocalStorage = () => {
             const currentQuery = router.currentRoute.value.query;
             saveData("routesQuery", JSON.stringify(currentQuery));
         };
 
-        const loadQueryFromLocalStorage = () => {
+        function loadQueryFromLocalStorage() {
             const savedQuery = getData('routesQuery');
             if (savedQuery) {
                 const parsedQuery = JSON.parse(savedQuery);
@@ -75,14 +81,13 @@ export default {
                 }
                 router.replace({ name: 'tickets', query: parsedQuery });
             }
-        };
+        }
 
         onBeforeRouteLeave((to, from, next) => {
             saveQueryToLocalStorage();
             next();
         });
 
-        loadQueryFromLocalStorage();
 
         return {
             appVars,
@@ -91,6 +96,7 @@ export default {
             isUnassigned,
             isMentioned,
             translate,
+            watchRouter
         }
     }
 }
