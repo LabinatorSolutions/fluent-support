@@ -167,7 +167,6 @@ class TransStrings
             'Yesterday'    => __('Yesterday', 'fluent-support'),
             'Yes'       => __('Yes', 'fluent-support'),
             'Import from other Support Tickets Plugins'  => __('Import from other Support Tickets Plugins', 'fluent-support'),
-            'all'   => __('all', 'fluent-support'),
             'If you want to migrate tickets from other ticketing system like'   => __('If you want to migrate tickets from other ticketing system like', 'fluent-support'),
             'Awesome Support'   =>__('Awesome Support', 'fluent-support'),
             'Last Week'    => __('Last Week', 'fluent-support'),
@@ -272,8 +271,11 @@ class TransStrings
             'No available tags found'    => __('No available tags found', 'fluent-support'),
             'Open'    => __('Open', 'fluent-support'),
             'Active'    => __('Active', 'fluent-support'),
+            'active'    => __('active', 'fluent-support'),
             'New'    => __('New', 'fluent-support'),
+            'new'    => __('new', 'fluent-support'),
             'All'    => __('All', 'fluent-support'),
+            'all'    => __('all', 'fluent-support'),
             'All Products'    => __('All Products', 'fluent-support'),
             'All Support Staff'    => __('All Support Staff', 'fluent-support'),
             'Un-Assigned'    => __('Un-Assigned', 'fluent-support'),
@@ -658,10 +660,12 @@ class TransStrings
             'medium' => __('medium', 'fluent-support'),
             'normal' => __('normal', 'fluent-support'),
             'critical' => __('critical', 'fluent-support'),
-            'new' => __('new', 'fluent-support'),
             'open' => __('open', 'fluent-support'),
             'Waiting' => __('Waiting', 'fluent-support'),
             'waiting' => __('waiting', 'fluent-support'),
+            'Agent Performance (Today)' => __('Agent Performance (Today)', 'fluent-support'),
+            'Thread Starter' => __('Thread Starter', 'fluent-support'),
+            'Thread Follower' => __('Thread Follower', 'fluent-support'),
         ];
     }
 }

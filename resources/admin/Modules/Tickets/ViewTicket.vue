@@ -362,7 +362,7 @@
                              :key="conversation.id"
                              class="fs_thread"
                              :class="(conversation.person.title && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation, ticket) ">
-
+                        <span :class="getRibbonClass(conversation, ticket)" >{{getTextByPerson(conversation, ticket)}}</span>
                         <span class="agent_title"
                               v-if="conversation.person.title && !['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)"> {{
                                 conversation.person.title
@@ -703,6 +703,37 @@ export default {
                     handleError(error);
                 })
         };
+
+        const getTextByPerson = (conversation, ticket) => {
+            if (conversation?.person.person_type === 'agent') {
+                return translate('Support Staff')
+            }else{
+                if (ticket.customer_id == conversation.person_id) {
+                    return translate('Thread Starter')
+                } else {
+                    return translate('Thread Follower')
+                }
+            }
+        }
+
+        const getRibbonClass = (conversation, ticket) => {
+            const classes = [
+                'fs_thread_ribbon'
+            ];
+
+            if (conversation.person) {
+                if (conversation.person.person_type === 'agent') {
+                    classes.push('fs_thread_ribbon_agent');
+                } else {
+                    if (ticket.customer_id == conversation.person_id) {
+                        classes.push('fs_thread_ribbon_customer');
+                    } else {
+                        classes.push('fs_thread_ribbon_customer_cc');
+                    }
+                }
+            }
+            return classes;
+        }
 
         const getTicketClasses = (conversation, ticket) => {
             const classes = [
@@ -1124,6 +1155,8 @@ export default {
             getArrToString,
             handleMergeSelectionChange,
             deleteTicket,
+            getRibbonClass,
+            getTextByPerson,
         }
     }
 }
@@ -1186,5 +1219,20 @@ i.dashicons.dashicons-randomize {
     align-items: center;
     justify-content: space-between;
     margin-top: 25px;
+}
+.fs_thread_ribbon{
+    position: relative;
+    left: 0px;
+    top: 0px;
+    background: #1785EB;
+    color: #fff;
+    font-size: 10px;
+    padding: 5px 10px;
+}
+.fs_thread_ribbon_customer{
+    background: #15BE7C;
+}
+.fs_thread_ribbon_customer_cc{
+    background: #EC5c03;
 }
 </style>
