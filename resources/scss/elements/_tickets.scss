@@ -458,6 +458,9 @@ img.tk_customer_avatar {
     &.fs_tk_profile_card {
         padding-top: 45px;
         margin-top: 30px;
+        i {
+            cursor: pointer;
+        }
     }
 
     &.fs_tk_other_tickets_card {
