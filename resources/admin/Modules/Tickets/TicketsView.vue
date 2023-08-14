@@ -3,7 +3,7 @@
         <div class="inner_sidebar">
             <ul>
                 <li>
-                    <router-link :class="{router_not_exactly_matched: isAll}" :to="{ name: 'tickets' }"><el-icon style="vertical-align: middle;"> <Tickets/> </el-icon>{{translate('All Tickets')}}</router-link>
+                    <router-link :class="{router_not_exactly_matched: isAll}" :to="{ name: 'tickets' }" @click="handleRouteData('All Tickets')"><el-icon style="vertical-align: middle;"> <Tickets/> </el-icon>{{translate('All Tickets')}}</router-link>
                 </li>
                 <li>
                     <router-link :class="{router_not_exactly_matched: isMine}" :to="{ name: 'tickets', query: { agent_id: appVars.me.id } }"><el-icon> <User/> </el-icon>{{translate('My Tickets')}}</router-link>
@@ -61,33 +61,37 @@ export default {
             return !(route.query.watcher === 'watcher' && appVars.me.id === parseInt(route.query.agent_id));
         });
 
-        const watchRouter =  watch(() => {
-            if (router.currentRoute.value.fullPath === '/tickets') {
-                loadQueryFromLocalStorage();
+        const saveRoutDataToLocalStorage = () => {
+            const currentRoute = router.currentRoute.value.query;
+            if (Object.keys(currentRoute).length > 0) {
+                saveData("routesData", JSON.stringify(currentRoute));
             }
-        })
-        
-        const saveQueryToLocalStorage = () => {
-            const currentQuery = router.currentRoute.value.query;
-            saveData("routesQuery", JSON.stringify(currentQuery));
         };
 
-        function loadQueryFromLocalStorage() {
-            const savedQuery = getData('routesQuery');
-            if (savedQuery) {
-                const parsedQuery = JSON.parse(savedQuery);
-                if ("agent_id" in parsedQuery && parsedQuery.agent_id !== 'unassigned') {
-                    parsedQuery.agent_id = appVars.me.id;
+        const loadRouteDataFromLocalStorage = () => {
+            const savedRoute = getData('routesData');
+            if (Object.keys(savedRoute).length > 0) {
+                const parsedRoute = JSON.parse(savedRoute);
+                if ("agent_id" in parsedRoute && parsedRoute.agent_id !== 'unassigned') {
+                    parsedRoute.agent_id = appVars.me.id;
                 }
-                router.replace({ name: 'tickets', query: parsedQuery });
+                router.replace({ name: 'tickets', query: parsedRoute });
             }
         }
 
-        onBeforeRouteLeave((to, from, next) => {
-            saveQueryToLocalStorage();
-            next();
+        const handleRouteData = () => {
+            saveData("routesData", '');
+        }
+
+        const watchRouter = watch ( () => {
+            if (route.matched[1].components.default.name === 'AllTickets') {
+                loadRouteDataFromLocalStorage();
+            }
         });
 
+        router.afterEach(() => {
+            saveRoutDataToLocalStorage();
+        });
 
         return {
             appVars,
@@ -96,7 +100,8 @@ export default {
             isUnassigned,
             isMentioned,
             translate,
-            watchRouter
+            watchRouter,
+            handleRouteData
         }
     }
 }
