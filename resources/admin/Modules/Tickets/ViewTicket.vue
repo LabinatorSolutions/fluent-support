@@ -498,7 +498,7 @@
                             </section>
                             <div v-if="has_pro && !isEmpty(appVars.custom_fields)" class="fc_custom_data_wrap">
                                 <h3>{{ translate('Additional Data') }}
-                                    <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text"
+                                    <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" :text="true"
                                                icon="EditPen" size="small"></el-button>
                                 </h3>
                                 <ul v-if="!isEmpty(ticket.custom_fields)">

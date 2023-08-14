@@ -83,7 +83,7 @@ export default {
             saveData("routesData", '');
         }
 
-        const watchRouter = watch (() => {
+        watch (() => {
             if(router.currentRoute.value.name === 'tickets'){
                 loadRouteDataFromLocalStorage();
             }
@@ -100,7 +100,6 @@ export default {
             isUnassigned,
             isMentioned,
             translate,
-            watchRouter,
             handleRouteData
         }
     }
