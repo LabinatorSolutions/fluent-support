@@ -102,6 +102,10 @@ trait CustomerTrait
             'customer' => $customer
         ];
 
+        if (!$with) {
+            return $data;
+        }
+        
         return $this->getCustomerAdditionalData($with, $customer, $data);
     }
 
