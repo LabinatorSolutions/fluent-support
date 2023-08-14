@@ -11,12 +11,13 @@
                             </h2>
                             <div class="fs_tk_tags">
                                 <span v-if="ticket.product" class="fs_badge">{{ ticket.product.title }}</span>
-                                <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
+                                <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ $t(ticket.status) }}</span>
                             </div>
                         </div>
                         <div class="fs_tk_actions">
                             <el-button v-loading="fetching" @click="fetchTicket()" icon="Refresh"
-                                       size="small"></el-button>                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">All</a>
+                                       size="small"></el-button>
+                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">{{$t('All')}}</a>
                             <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
                                        @click="closeTicket()" size="small"
                                        type="danger">{{$t('Close Ticket')}}
