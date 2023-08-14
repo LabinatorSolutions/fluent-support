@@ -50,7 +50,7 @@
                     </td>
                     <td class="fs_tk_status">
                         <el-tag size="small" :type="getStatus(ticket.status)" :effect="getEffect(ticket.status)">
-                            {{ ticket.status }}
+                            {{ $t(ticket.status) }}
                         </el-tag>
                     </td>
                     <td class="fs_tk_date">
