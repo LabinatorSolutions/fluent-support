@@ -360,14 +360,8 @@
 
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
-                             class="fs_thread"
-                             :class="(conversation.person.title && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation, ticket) ">
+                             :class="getTicketClasses(conversation, ticket) ">
                         <span :class="getRibbonClass(conversation, ticket)" >{{getTextByPerson(conversation, ticket)}}</span>
-                        <span class="agent_title"
-                              v-if="conversation.person.title && !['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)"> {{
-                                conversation.person.title
-                            }} </span>
-
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
                                 <img v-if="conversation.person" :src="conversation.person?.photo"
@@ -706,7 +700,7 @@ export default {
 
         const getTextByPerson = (conversation, ticket) => {
             if (conversation?.person.person_type === 'agent') {
-                return translate('Support Staff')
+                return conversation.person.title ? conversation.person.title : translate('Support Staff');
             }else{
                 if (ticket.customer_id == conversation.person_id) {
                     return translate('Thread Starter')
@@ -743,14 +737,17 @@ export default {
             if (conversation.person) {
                 if (conversation.person.person_type === 'agent') {
                     classes.push('fs_person_agent');
-                } else {
+                    classes.push('fs_agent');
+                }
+                else {
                     if (ticket.customer_id == conversation.person_id) {
                         classes.push('fs_person_customer');
+                        classes.push('fs_customer');
                     } else {
                         classes.push('fs_person_customer_cc');
+                        classes.push('fs_cc_customer');
                     }
                 }
-                classes.push('fs_person_' + conversation.person.person_type);
             }
 
             classes.push('fs_conv_type_' + conversation.conversation_type);
@@ -1177,6 +1174,12 @@ export default {
 .fs_agent {
     border-left: 4px solid #1785EB;
 }
+.fs_customer{
+    border-left: 4px solid #15BE7C;
+}
+.fs_cc_customer {
+    border-left: 4px solid #EC5c03;
+}
 
 .fs_conv_type_note {
     border-left: 0px solid #e6a23c;
@@ -1222,12 +1225,14 @@ i.dashicons.dashicons-randomize {
 }
 .fs_thread_ribbon{
     position: relative;
-    left: 0px;
-    top: 0px;
-    background: #1785EB;
+    left: 0;
+    top: 0;
     color: #fff;
     font-size: 10px;
     padding: 5px 10px;
+}
+.fs_thread_ribbon_agent{
+    background: #1785EB;
 }
 .fs_thread_ribbon_customer{
     background: #15BE7C;

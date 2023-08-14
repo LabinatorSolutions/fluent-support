@@ -194,36 +194,6 @@
                 }
             }
 
-            &.fs_person_agent:after {
-                content: "";
-                width: 4px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                top: 0;
-                background: #1785EB;
-            }
-
-            &.fs_person_customer:after {
-                content: "";
-                width: 4px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                top: 0;
-                background: #15BE7C;
-            }
-
-            &.fs_person_customer_cc:after {
-                content: "";
-                width: 4px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                top: 0;
-                background: #ec5c03;
-            }
-
             &.fs_conv_type_note {
                 background: #ffffc7;
 

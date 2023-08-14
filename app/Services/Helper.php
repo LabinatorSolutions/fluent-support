@@ -527,6 +527,7 @@ class Helper
 
         $canAddTags = apply_filters('fluent_support/can_user_add_tags_to_customer', $canAddTags);
         $crmTags = [];
+        $crmLists = [];
         if ($canAddTags) {
             $crmTags = \FluentCrm\App\Models\Tag::select(['id', 'title'])->oldest('title')->get();
             $crmLists = \FluentCrm\App\Models\Lists::select(['id', 'title'])->oldest('title')->get();
@@ -639,7 +640,7 @@ class Helper
                 return 'fluent_auth';
             }
         }
-        
+
         return 'fluent_support';
     }
 }
