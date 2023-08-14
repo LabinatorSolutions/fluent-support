@@ -125,7 +125,7 @@
             </el-row>
 
             <el-drawer
-                custom-class="fs_dashboard_settings"
+                class="fs_dashboard_settings"
                 v-model="drawer"
                 :with-header="false"
                 size="25%"
