@@ -29,7 +29,7 @@
 
 <script type="text/babel">
 import {computed, watch} from "vue";
-import {onBeforeRouteLeave, useRoute, useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
@@ -83,8 +83,8 @@ export default {
             saveData("routesData", '');
         }
 
-        const watchRouter = watch ( () => {
-            if (route.matched[1].components.default.name === 'AllTickets') {
+        const watchRouter = watch (() => {
+            if(router.currentRoute.value.name === 'tickets'){
                 loadRouteDataFromLocalStorage();
             }
         });
