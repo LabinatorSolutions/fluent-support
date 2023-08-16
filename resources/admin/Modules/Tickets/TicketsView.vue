@@ -28,7 +28,7 @@
 </template>
 
 <script type="text/babel">
-import {computed, watch} from "vue";
+import {onMounted, computed} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
@@ -83,14 +83,14 @@ export default {
             saveData("routesData", '');
         }
 
-        watch (() => {
+        router.afterEach(() => {
+            saveRoutDataToLocalStorage();
+        });
+
+        onMounted(() => {
             if(router.currentRoute.value.name === 'tickets'){
                 loadRouteDataFromLocalStorage();
             }
-        });
-
-        router.afterEach(() => {
-            saveRoutDataToLocalStorage();
         });
 
         return {
