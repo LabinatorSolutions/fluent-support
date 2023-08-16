@@ -4,7 +4,7 @@
                    layout="total, sizes, prev, pager, next"
                    @current-change="changePage"
                    @size-change="changeSize"
-                   :hide-on-single-page="true"
+                   :hide-on-single-page="false"
                    :current-page.sync="pagination.current_page"
                    :page-sizes="page_sizes"
                    :page-size="pagination.per_page"
