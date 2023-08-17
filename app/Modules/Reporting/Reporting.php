@@ -159,7 +159,7 @@ class Reporting
         return $this->getResult($period, $items);
     }
 
-    public function getResponseGrowthChart($from = false, $to = false, $filters = [], $type): array
+    public function getResponseGrowthChart($from = false, $to = false, $filters = [], $type = ''): array
     {
         $period = $this->makeDatePeriod(
             $from = $this->makeFromDate($from),
