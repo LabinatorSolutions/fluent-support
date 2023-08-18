@@ -28,7 +28,7 @@
 </template>
 
 <script type="text/babel">
-import {onMounted, computed} from "vue";
+import {onMounted, computed, watch} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
@@ -69,15 +69,25 @@ export default {
         };
 
         const loadRouteDataFromLocalStorage = () => {
+            const routeName = router.currentRoute.value.name;
             const savedRoute = getData('routesData');
-            if (Object.keys(savedRoute).length > 0) {
-                const parsedRoute = JSON.parse(savedRoute);
-                if ("agent_id" in parsedRoute && parsedRoute.agent_id !== 'unassigned') {
-                    parsedRoute.agent_id = appVars.me.id;
-                }
-                router.replace({ name: 'tickets', query: parsedRoute });
+
+            if (routeName !== 'tickets' || Object.keys(savedRoute).length === 0) {
+                return;
             }
+
+            const parsedRoute = JSON.parse(savedRoute);
+
+            if ("agent_id" in parsedRoute && parsedRoute.agent_id !== 'unassigned') {
+                parsedRoute.agent_id = appVars.me.id;
+            }
+
+            router.replace({ name: 'tickets', query: parsedRoute });
         }
+
+        watch(() => router.currentRoute.value.name, (newRouteName) => {
+            loadRouteDataFromLocalStorage();
+        });
 
         const handleRouteData = () => {
             saveData("routesData", '');
@@ -88,9 +98,7 @@ export default {
         });
 
         onMounted(() => {
-            if(router.currentRoute.value.name === 'tickets'){
-                loadRouteDataFromLocalStorage();
-            }
+            loadRouteDataFromLocalStorage();
         });
 
         return {
