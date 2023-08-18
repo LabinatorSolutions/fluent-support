@@ -675,7 +675,6 @@ class Ticket extends Model
         do_action('fluent_support/deleting_ticket', $this);
         // Delete the ticket
         $this->delete();
-        do_action('fluent_support/ticket_deleted', $this);
     }
 
     public static function slugify($title)
