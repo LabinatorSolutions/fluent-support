@@ -675,6 +675,7 @@ class Ticket extends Model
         do_action('fluent_support/deleting_ticket', $this);
         // Delete the ticket
         $this->delete();
+        do_action('fluent_support/ticket_deleted', $this);
     }
 
     public static function slugify($title)
@@ -1379,7 +1380,7 @@ class Ticket extends Model
         if ($action == 'close_tickets') {
             return $this->bulkCloseTickets($query->get(), $agent);
         } else if ($action == 'delete_tickets') {
-            return $this->bulkDeleteTickets($query->get());
+            return (new TicketService)->deleteTickets($query->get());
         } else if ($action == 'assign_agent') {
             return $this->bulkAssignAgent($query);
         } else if ($action == 'assign_tags') {
@@ -1403,22 +1404,6 @@ class Ticket extends Model
 
         return [
             'message' => sprintf(__('%d tickets have been closed', 'fluent-support'), count($tickets))
-        ];
-    }
-
-    /**
-     * This `bulkDeleteTickets` will delete all given or selected tickets
-     * @param object $tickets
-     * @return array
-     */
-    public function bulkDeleteTickets($tickets)
-    {
-        $tickets->each(function ($ticket) {
-            $ticket->deleteTicket();
-        });
-
-        return [
-            'message' => __(count($tickets) . ' tickets have been deleted', 'fluent-support')
         ];
     }
 
