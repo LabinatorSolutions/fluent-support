@@ -1,14 +1,12 @@
 <?php return array(
     'root' => array(
         'name' => 'wpfluent/wpfluent',
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
-        'reference' => '88586107f12914c5d53cb630d13fdc1efdca2ef0',
+        'pretty_version' => '1.7.4.x-dev',
+        'version' => '1.7.4.9999999-dev',
+        'reference' => 'ee2a1a482df4b62ef8a4a2da4013d25f07c729c9',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
-        'aliases' => array(
-            0 => '1.0.x-dev',
-        ),
+        'aliases' => array(),
         'dev' => true,
     ),
     'versions' => array(
@@ -265,23 +263,21 @@
             'dev_requirement' => true,
         ),
         'wpfluent/framework' => array(
-            'pretty_version' => '1.2.3',
-            'version' => '1.2.3.0',
-            'reference' => '29c3f0b5fb553f4c4f88f89ca2abc44c195099c1',
+            'pretty_version' => '2.0.16',
+            'version' => '2.0.16.0',
+            'reference' => 'c3f43c4490053013d4c304148bc95ef5e897fc56',
             'type' => 'library',
             'install_path' => __DIR__ . '/../wpfluent/framework',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'wpfluent/wpfluent' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => '88586107f12914c5d53cb630d13fdc1efdca2ef0',
+            'pretty_version' => '1.7.4.x-dev',
+            'version' => '1.7.4.9999999-dev',
+            'reference' => 'ee2a1a482df4b62ef8a4a2da4013d25f07c729c9',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
-            'aliases' => array(
-                0 => '1.0.x-dev',
-            ),
+            'aliases' => array(),
             'dev_requirement' => false,
         ),
         'yoast/phpunit-polyfills' => array(

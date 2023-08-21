@@ -19,12 +19,12 @@ class Route
     protected $uri = null;
     
     protected $compiled = null;
-    
-    protected $name = '';
 
     protected $meta = [];
 
     protected $handler = null;
+    
+    protected $action = null;
 
     protected $method = null;
     
@@ -32,6 +32,8 @@ class Route
 
     protected $wheres = [];
 
+    protected $namespace = null;
+    
     protected $policyHandler = null;
 
     protected $predefinedNamedRegx = [
@@ -42,26 +44,18 @@ class Route
     ];
 
 
-    public function __construct($app, $restNamespace, $uri, $handler, $method, $name = '')
+    public function __construct($app, $restNamespace, $uri, $handler, $method)
     {
         $this->app = $app;
         $this->restNamespace = $restNamespace;
         $this->uri = $uri;
         $this->handler = $handler;
         $this->method = $method;
-        $this->name = $name;
     }
 
-    public static function create($app, $namespace, $uri, $handler, $method, $name)
+    public static function create($app, $namespace, $uri, $handler, $method)
     {
-        return new static($app, $namespace, $uri, $handler, $method, $name);
-    }
-
-    public function name($name)
-    {
-        $this->name .= $name;
-
-        return $this;
+        return new static($app, $namespace, $uri, $handler, $method);
     }
 
     public function meta($key, $value = null)
@@ -75,15 +69,27 @@ class Route
 
     public function getMeta($key = '')
     {
-        if ($key) {
-            if (isset($this->meta[$key])) {
-                return $this->meta[$key];
-            }
-
-            return;
+        if ($key && isset($this->meta[$key])) {
+            return $this->meta[$key];
         }
         
         return $this->meta;
+    }
+
+    public function getOptions($key = null)
+    {
+        return $key ? $this->options[$key] : $this->options;
+    }
+
+    public function getAction($key = '')
+    {
+        $action = $this->getOptions('args')['action'];
+
+        if ($key && isset($action[$key])) {
+            return $action[$key];
+        }
+        
+        return $action;
     }
 
     public function where($identifier, $value = null)
@@ -146,6 +152,11 @@ class Route
     public function withPolicy($handler)
     {
         $this->policyHandler = $handler;
+    }
+
+    public function withNamespace($ns)
+    {
+        $this->namespace = implode('\\', $ns);
     }
 
     public function register()
@@ -249,13 +260,13 @@ class Route
             $this->setRestRequest($request);
 
             $response = $this->app->call(
-                $this->app->parseRestHandler($this->handler),
-                array_values($request->get_url_params())
+                $this->parseRestHandler($request),
+                $request->get_url_params()
             );
 
             if (!($response instanceof WP_REST_Response)) {
                 if (is_wp_error($response)) {
-                    $response = $this->sendWPError($response);
+                    $response = $this->app->response->wpErrorToResponse($response);
                 } else {
                     $response = $this->app->response->sendSuccess($response);
                 }
@@ -290,25 +301,44 @@ class Route
             $this->getPolicyHandler($this->policyHandler)
         );
 
+        $this->parseRestHandler($request);
+
         return $this->app->call($policyHandler, $request->get_url_params());
     }
 
-    protected function setRestRequest($request)
+    protected function setRestRequest(WP_REST_Request $request)
     {
         if (!$this->app->bound('wprestrequest')) {
-            unset($this->options['args']['__meta__']);
-            $this->app->instance('wprestrequest', $request);
             $this->app->instance('route', $this);
+            $this->app->instance('wprestrequest', $request);
+            $this->app->request->mergeInputsFromRestRequest($request);
         }
     }
 
-    protected function sendWPError($response)
+    protected function parseRestHandler($request)
     {
-        $code = $response->get_error_code();
+        if (!empty($this->action)) return $this->action;
 
-        return $this->app->response->sendError(
-            $response->get_error_messages(),
-            is_numeric($code) ? $code : null
-        );
+        $handler = $this->app->parseRestHandler($this->handler, $this->namespace);
+
+        if ($handler instanceof Closure) {
+            $action = 'Closure';
+        } else {
+            $action = explode('@', $handler);
+        }
+
+        $pieces = explode('\\', $action[0]);
+
+        $config = $this->app->config->get('app');
+
+        $this->options['args']['action'] = [
+            'handler' => trim($handler, '\\'),
+            'controller' => end($pieces),
+            'method' => $action[1],
+            'path' => $this->uri,
+            'full_uri' => $request->get_route()
+        ];
+
+        return $this->action = $handler;
     }
 }
