@@ -93,6 +93,7 @@
                     <div
                         style="padding-bottom: 20px"
                         class="fframe_pagination_wrapper"
+                        v-if="activities.length"
                     >
                         <pagination
                             @fetch="fetchActivities()"

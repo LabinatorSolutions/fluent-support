@@ -171,7 +171,7 @@
                                     <el-table-column prop="status" label="Status" width="130"></el-table-column>
                                 </el-table>
                                 <div class="fs_tk_merge_actions">
-                                    <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                                    <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper" v-if="customer_tickets.length">
                                         <pagination @fetch="customerTickets" :pagination="pagination"/>
                                     </div>
                                     <el-button size="default" type="primary"

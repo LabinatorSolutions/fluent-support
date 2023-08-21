@@ -188,7 +188,7 @@
                     <el-skeleton :rows="10" animated/>
                 </div>
 
-                <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper" v-if="tickets.length">
                     <pagination @fetch="fetchTickets()" :pagination="pagination"/>
                 </div>
             </div>
