@@ -85,7 +85,7 @@
                                 </template>
                             </el-table-column>
                         </el-table>
-                        <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                        <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper" v-if="tickets.length">
                             <pagination @fetch="showTicket('Custom')" :pagination="pagination"/>
                         </div>
                     </div>
