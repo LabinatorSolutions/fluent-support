@@ -4,6 +4,8 @@ namespace FluentSupport\App\Services\Tickets;
 
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\Framework\Support\Arr;
@@ -20,7 +22,6 @@ class TicketService
      */
 
     public function close($ticket, $person, $internalNote = '', $silently = 'no')
-
     {
         if ($ticket->status != 'closed') {
             $ticket->status = 'closed';
@@ -201,5 +202,40 @@ class TicketService
         }
 
         return $ticket;
+    }
+
+    /**
+     * This `delete` method is responsible for deleting the ticket by ticket id
+     * @param int $id
+     * @return array
+     */
+    public function delete($ticket)
+    {
+        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+        $agent = Helper::getAgentByUserId();
+        if (!$hasAllPermission && $ticket->agent_id != $agent->id) {
+            throw new \Exception(__('You are not allowed to delete this ticket', 'fluent-support'));
+        }
+        $ticketData = [
+            'id' => $ticket->id,
+            'title' => $ticket->title
+        ];
+        do_action('fluent_support/deleting_ticket', $ticket);
+        $ticket->delete();
+        do_action('fluent_support/ticket_deleted', $agent, $ticketData);
+
+        return [
+            'message' => __('Ticket has been deleted successfully', 'fluent-support')
+        ];
+    }
+
+    public function deleteTickets($tickets)  {
+        $tickets->each(function ($ticket) {
+            $this->delete($ticket);
+        });
+
+        return [
+            'message' => __(count($tickets) . ' tickets have been deleted', 'fluent-support')
+        ];
     }
 }

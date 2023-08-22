@@ -1,4 +1,3 @@
-
 import Dashboard from './Modules/Dashboard/Dashboard.vue';
 import Setup from './Components/Setup';
 import TicketsView from './Modules/Tickets/TicketsView';
@@ -258,8 +257,8 @@ export default [
         props: true,
     },
     {
-        path: "/:catchAll(.*)",
-        name: 'dashboard',
+        path: "/:catchAll(.*)*",
+        name: 'not_found',
         component: Dashboard,
         meta: {
             active: 'dashboard'

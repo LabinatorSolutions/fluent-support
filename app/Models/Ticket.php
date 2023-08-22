@@ -1144,10 +1144,6 @@ class Ticket extends Model
 
         $responseData['response']->content = wp_specialchars_decode(wpautop($responseData['response']->content, false));
 
-//        if(isset($data['draftID'])){
-//            $this->removeDraft($data['draftID']);
-//        }
-
         return [
             'message'     => __('Response has been added', 'fluent-support'),
             'response'    => $responseData['response'],
@@ -1383,7 +1379,7 @@ class Ticket extends Model
         if ($action == 'close_tickets') {
             return $this->bulkCloseTickets($query->get(), $agent);
         } else if ($action == 'delete_tickets') {
-            return $this->bulkDeleteTickets($query->get());
+            return (new TicketService)->deleteTickets($query->get());
         } else if ($action == 'assign_agent') {
             return $this->bulkAssignAgent($query);
         } else if ($action == 'assign_tags') {
@@ -1407,22 +1403,6 @@ class Ticket extends Model
 
         return [
             'message' => sprintf(__('%d tickets have been closed', 'fluent-support'), count($tickets))
-        ];
-    }
-
-    /**
-     * This `bulkDeleteTickets` will delete all given or selected tickets
-     * @param object $tickets
-     * @return array
-     */
-    public function bulkDeleteTickets($tickets)
-    {
-        $tickets->each(function ($ticket) {
-            $ticket->deleteTicket();
-        });
-
-        return [
-            'message' => __(count($tickets) . ' tickets have been deleted', 'fluent-support')
         ];
     }
 

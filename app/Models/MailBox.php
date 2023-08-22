@@ -47,7 +47,11 @@ class MailBox extends Model
 
     public function getSettingsAttribute($value)
     {
-        return \maybe_unserialize($this->attributes['settings']);
+        if (array_key_exists('settings', $this->attributes)) {
+            return \maybe_unserialize($this->attributes['settings']);
+        }
+
+        return [];
     }
 
     public static function slugify($title)

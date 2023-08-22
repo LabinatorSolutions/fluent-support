@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.2
-Stable tag: 1.7.2
+Stable tag: 1.7.3
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,21 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.7.3 (Date: August 10, 2023) =
+* Added - Option to delete ticket from inside view ticket
+* Added - Re-design permission page
+* Added - Report by Product(Pro)
+* Added - Report by Business Inbox(Pro)
+* Added - Support RTL email template
+* Fixed - Hide agent performance report from dashboard if the user doesn't have permission
+* Fixed - Tickets page - search not working in some case
+* Fixed - Issue in Customer Fields required with conditions(Pro)
+* Fixed - Save as draft in reply ticket not working
+* Fixed - Manage Customer - upload avatar for customer not working
+* Fixed - Add media button is not working for wp-editor
+* Fixed - Attachment not working from email for 3rd party(Pro)
+* Fixed - The issues in inner sidebar while route changing
 
 = 1.7.2 (Date: July 17, 2023) =
 * Fixed - Create ticket issue for required fields

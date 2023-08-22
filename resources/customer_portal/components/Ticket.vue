@@ -11,12 +11,13 @@
                             </h2>
                             <div class="fs_tk_tags">
                                 <span v-if="ticket.product" class="fs_badge">{{ ticket.product.title }}</span>
-                                <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ ticket.status }}</span>
+                                <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{ $t(ticket.status) }}</span>
                             </div>
                         </div>
                         <div class="fs_tk_actions">
                             <el-button v-loading="fetching" @click="fetchTicket()" icon="Refresh"
-                                       size="small"></el-button>                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">All</a>
+                                       size="small"></el-button>
+                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">{{$t('All')}}</a>
                             <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
                                        @click="closeTicket()" size="small"
                                        type="danger">{{$t('Close Ticket')}}
@@ -39,17 +40,11 @@
                 <inline-reply v-else @created="recordNewResponse" :ticket="ticket"/>
 
                 <div class="fs_threads_container">
+
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
-                             class="fs_thread"
-                             :class="(conversation.person.title!=='' && conversation.person.person_type !== 'customer'
-                             && !['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type))
-                             ? 'fs_agent' : getTicketClasses(conversation)">
-
-                        <span class="agent_title"
-                              v-if="!['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type) && conversation.person.title">
-                            {{ conversation.person.title }}
-                        </span>
+                             :class="getTicketClasses(conversation, ticket) ">
+                        <span :class="getRibbonClass(conversation, ticket)" >{{getTextByPerson(conversation, ticket)}}</span>
 
                         <div class="fs_thread_content">
                             <section class="fs_avatar" v-if="!['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)">
@@ -195,21 +190,28 @@ export default {
                     this.fetching = false;
                 });
         },
-        getTicketClasses(conversation) {
+        getTicketClasses(conversation, ticket) {
             const classes = [
                 'fs_thread'
             ];
 
             if (conversation.person) {
-                classes.push('fs_person_' + conversation.person.person_type);
-            }
-
-            if (conversation.person.id == this.signon_id) {
-                classes.push('fs_person_own');
+                if (conversation.person.person_type === 'agent') {
+                    classes.push('fs_person_agent');
+                    classes.push('fs_agent');
+                }
+                else {
+                    if (ticket.customer_id == conversation.person_id) {
+                        classes.push('fs_person_customer');
+                        classes.push('fs_customer');
+                    } else {
+                        classes.push('fs_person_customer_cc');
+                        classes.push('fs_cc_customer');
+                    }
+                }
             }
 
             classes.push('fs_conv_type_' + conversation.conversation_type);
-
             return classes;
         },
         getHumanName(person) {
@@ -253,6 +255,35 @@ export default {
                     this.updating = false;
                 });
         },
+        getRibbonClass(conversation, ticket){
+            const classes = [
+                'fs_thread_ribbon'
+            ];
+
+            if (conversation.person) {
+                if (conversation.person.person_type === 'agent') {
+                    classes.push('fs_thread_ribbon_agent');
+                } else {
+                    if (ticket.customer_id == conversation.person_id) {
+                        classes.push('fs_thread_ribbon_customer');
+                    } else {
+                        classes.push('fs_thread_ribbon_customer_cc');
+                    }
+                }
+            }
+            return classes;
+        },
+        getTextByPerson(conversation, ticket){
+            if (conversation?.person.person_type === 'agent') {
+                return this.$t('Support Staff')
+            }else{
+                if (ticket.customer_id == conversation.person_id) {
+                    return this.$t('Thread Starter')
+                } else {
+                    return this.$t('Thread Follower')
+                }
+            }
+        },
         isArray,
         isEmpty,
         purify(string) {
@@ -286,5 +317,27 @@ export default {
 
 .fs_agent {
     border-left: 4px solid #1785EB;
+}
+
+.fs_customer{
+    border-left: 4px solid #15BE7C;
+}
+
+.fs_thread_ribbon{
+    position: relative;
+    left: 0;
+    top: -6px;
+    color: #fff;
+    font-size: 10px;
+    padding: 5px 10px;
+}
+.fs_thread_ribbon_agent{
+    background: #1785EB;
+}
+.fs_thread_ribbon_customer{
+    background: #15BE7C;
+}
+.fs_thread_ribbon_customer_cc{
+    background: #EC5c03;
 }
 </style>

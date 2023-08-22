@@ -156,27 +156,8 @@
             }
         }
 
-        &.fs_person_agent:after {
-            content: "";
-            width: 4px;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            background: #1785EB;
-        }
-
-        &.fs_person_agent:before {
-            content: "Support Staff";
-            position: relative;
-            left: 0px;
-            top: 0px;
-            background: #1785EB;
-            color: #fff;
-            font-size: 10px;
-            padding: 5px 10px;
-        }
-        &.fs_person_agent.fs_conv_type_ticket_merge_activity, &.fs_person_agent.fs_conv_type_ticket_split_activity {
+        &.fs_person_agent.fs_conv_type_ticket_merge_activity,
+        &.fs_person_agent.fs_conv_type_ticket_split_activity {
             padding: 15px 0;
             &:after {
                 display: none;

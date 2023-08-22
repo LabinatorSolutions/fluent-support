@@ -157,7 +157,7 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <div class="fframe_pagination_wrapper">
+                    <div class="fframe_pagination_wrapper" v-if="customers.length">
                         <pagination
                             @fetch="fetchCustomers()"
                             :pagination="pagination"

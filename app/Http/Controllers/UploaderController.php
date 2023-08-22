@@ -3,13 +3,11 @@
 namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\Attachment;
-use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\App\Services\Includes\FileSystem;
 use FluentSupport\Framework\Request\Request;
-use FluentSupportPro\App\Services\FileUploadIntegration\Drivers;
+use FluentSupport\App\Services\Includes\UploadService;
 
 /**
  * UploaderController class is responsible for uploading file
@@ -42,6 +40,7 @@ class UploaderController extends Controller
         ]);
 
 
+
         //get ticket by ticket id
         $ticketId = $request->getSafe('ticket_id', 'intval');
 
@@ -67,21 +66,7 @@ class UploaderController extends Controller
             }
         }
         //Move file into the directory
-        $isLocalUploadDisable =  Meta::where('key', 'disable_local_upload')
-            ->where('object_type', 'enabled_upload_drivers')
-            ->exists();
-        $integratedDrivers =  Meta::where('key', '!=' ,'disable_local_upload')
-            ->where('object_type', 'enabled_upload_drivers')
-            ->exists();
-
-        if (defined('FLUENTSUPPORTPRO') && $isLocalUploadDisable && $integratedDrivers) {
-            $uploadedFiles = $this->uploadToCloud($files, $ticketId);
-        } elseif (defined('FLUENTSUPPORTPRO') && !$isLocalUploadDisable && $integratedDrivers) {
-            $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
-            $this->uploadToCloud($files, $ticketId);
-        } else {
-            $uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($files);
-        }
+        $uploadedFiles = UploadService::handleFileUpload($files, $ticketId);
 
         $attachments = [];
         //Create records in attachment table
@@ -91,7 +76,7 @@ class UploaderController extends Controller
                 'person_id' => intval($person->id),
                 'file_type' => $file['type'],
                 'file_path' => $file['file_path'],
-                'full_url'  => sanitize_url($file['url']),
+                'full_url'  => esc_url($file['url']),
                 'title'     => sanitize_file_name($file['name']),
                 'driver'    => isset($file['driver']) ? $file['driver'] : 'local',
                 'status'    => 'in-active'
@@ -105,28 +90,5 @@ class UploaderController extends Controller
             'attachments' => $attachments
         ];
 
-    }
-
-    /**
-     * Upload files to integrated cloud storage
-     * @param $file
-     * @return array
-     */
-    public function uploadToCloud($files, $ticketId)
-    {
-        $enabledDrivers = Drivers::enabledDrivers();
-
-        if (!is_array($enabledDrivers)) {
-            $enabledDrivers = [$enabledDrivers];
-        }
-
-        $results = [];
-
-        foreach ($enabledDrivers as $driver) {
-            $driverClass = Drivers::getDriverInstance($driver['key']);
-            $results[] = $driverClass->upload($files, $ticketId);
-        }
-
-        return $results;
     }
 }

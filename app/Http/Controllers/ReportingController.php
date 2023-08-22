@@ -46,13 +46,15 @@ class ReportingController extends Controller
     public function getTicketsChart(Request $request, Reporting $reporting)
     {
         list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
-        $filter = [];
-        $stats = $reporting->getTicketsGrowth($from, $to);
 
-        if($agent_id = $request->getSafe('agent_id', 'intval')) {
-            $filter['agent_id'] = $agent_id;
-            $stats = $reporting->getTicketsGrowth($from, $to, $filter);
-        }
+        $filter = [
+            'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
+            'product_id' => $request->getSafe('product_id', 'intval') ?: null,
+            'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
+        ];
+
+        $stats = $reporting->getTicketsGrowth($from, $to, $filter);
+
         return [
             'stats' => $stats
         ];
@@ -64,16 +66,18 @@ class ReportingController extends Controller
      * @param Reporting $reporting
      * @return array
      */
-    public function getResolveChart(Request $request, Reporting $reporting)
+    public static function getResolveChart(Request $request, Reporting $reporting): array
     {
+        $type = $request->getSafe('type');
         list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
-        $filter = [];
-        $stats = $reporting->getTicketResolveGrowth($from, $to);
 
-        if($agent_id = $request->getSafe('agent_id', 'intval')) {
-            $filter['agent_id'] = $agent_id;
-            $stats = $reporting->getTicketResolveGrowth($from, $to, $filter);
-        }
+        $filter = [
+            'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
+            'product_id' => $request->getSafe('product_id', 'intval') ?: null,
+            'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
+        ];
+
+        $stats = $reporting->getTicketResolveGrowth($from, $to, $filter,$type);
 
         return [
             'stats' => $stats
@@ -121,13 +125,65 @@ class ReportingController extends Controller
      * @param Request $request
      * @return array
      */
-    public function getAgentOverallReports(Request $request)
+    public function getAgentOverallReports(Request $request): array
     {
         $agent =  Helper::getAgentByUserId(get_current_user_id());
 
         return [
             'overall_reports' => StatModule::getAgentOverallStats($agent->id),
             'today_reports' => StatModule::getTodayStats($agent->id)
+        ];
+    }
+
+    /**
+     * getResponseGrowthChart method will generate response statistics for ticket by date range for product or mailbox
+     * @param Request $request
+     * @param Reporting $reporting
+     * @return array
+     */
+    public static function getResponseGrowthChart(Request $request,Reporting $reporting): array
+    {
+        $type = $request->getSafe('type');
+        list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
+
+        $filter = [
+            'product_id' => $request->getSafe('product_id', 'intval') ?: null,
+            'mailbox_id' => $request->getSafe('mailbox_id', 'intval') ?: null,
+        ];
+
+        $stats = $reporting->getResponseGrowthChart($from, $to, $filter,$type);
+
+        return [
+            'stats' => $stats
+        ];
+    }
+
+    /**
+     * getProductsSummary method will generate summary for product
+     * This method will count closed tickets, open tickets, responses, interactions with ticket by agent within a date range
+     * @param Request $request
+     * @param Reporting $reporting
+     * @return array
+     */
+    public static function getProductsSummary(Request $request,Reporting $reporting): array
+    {
+        return [
+            'summary' =>  $reporting->getSummary('product',$request->getSafe('from'), $request->getSafe('to'))
+        ];
+
+    }
+
+    /**
+     * getMailBoxesSummary method will generate summary for mailbox
+     * This method will count closed tickets, open tickets, responses, interactions with ticket by agent within a date range
+     * @param Request $request
+     * @param Reporting $reporting
+     * @return array
+     */
+    public static function getMailBoxesSummary(Request $request,Reporting $reporting): array
+    {
+        return [
+            'summary' =>  $reporting->getSummary('mailbox',$request->getSafe('from'), $request->getSafe('to'))
         ];
     }
 

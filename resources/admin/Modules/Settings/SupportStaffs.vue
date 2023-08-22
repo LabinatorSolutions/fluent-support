@@ -53,10 +53,7 @@
                                     placement="bottom-start"
                                 >
                                     <el-icon
-                                        :class="
-                                            'fs_agent_avatar_upload fs_agent_avatar_upload-' +
-                                            scope.row.id
-                                        "
+                                        :class=" 'fs_agent_avatar_upload fs_agent_avatar_upload-' + scope.row.id "
                                     >
                                         <Camera />
                                     </el-icon>
@@ -67,48 +64,27 @@
                                             <el-dropdown-item>
                                                 <el-upload
                                                     class="fs-avatar-uploader"
-                                                    :action="
-                                                        upload_url +
-                                                        scope.row.id +
-                                                        `/avatar`
-                                                    "
-                                                    :on-success="
-                                                        handleAvatarSuccess
-                                                    "
-                                                    :on-error="
-                                                        handleAvatarError
-                                                    "
+                                                    :action="upload_url + scope.row.id +'/avatar'"
+                                                    :on-success="handleAvatarSuccess"
+                                                    :on-error="handleAvatarError"
                                                     :headers="requestHeaders"
                                                     :show-file-list="false"
-                                                    drag
                                                 >
-                                                    {{
-                                                        translate(
-                                                            "Upload a Custom Picture"
-                                                        )
-                                                    }}
+                                                    {{ translate("Upload a Custom Picture") }}
                                                 </el-upload>
                                             </el-dropdown-item>
                                             <el-dropdown-item
                                                 v-if="scope.row.avatar"
                                             >
-                                                <!--                                                    Reset To Default Gravatar-->
+                                                <!-- Reset To Default Gravatar -->
                                                 <el-popconfirm
                                                     confirm-button-text="Yes"
                                                     cancel-button-text="No"
                                                     title="Reset to gravatar?"
-                                                    @confirm="
-                                                        confirmResetProfile(
-                                                            scope.row
-                                                        )
-                                                    "
+                                                    @confirm="confirmResetProfile(scope.row)"
                                                 >
                                                     <template #reference>
-                                                        {{
-                                                            translate(
-                                                                "Reset To Default Gravatar"
-                                                            )
-                                                        }}
+                                                        {{ translate("Reset To Default Gravatar") }}
                                                     </template>
                                                 </el-popconfirm>
                                             </el-dropdown-item>
@@ -126,16 +102,12 @@
                 </el-table-column>
                 <el-table-column :label="translate('Name')" width="120">
                     <template #default="scope">
-                        <a :href="scope.row.user_profile">{{
-                            scope.row.full_name
-                        }}</a>
+                        <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
                     </template>
                 </el-table-column>
                 <el-table-column :label="translate('Title')">
                     <template #default="scope">
-                        <span style="font-size: 14px; color: #56c288">{{
-                            scope.row.title
-                        }}</span>
+                        <span style="font-size: 14px; color: #56c288">{{ scope.row.title }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column :label="translate('Permissions')" width="160">
@@ -145,14 +117,14 @@
                                 <p>{{ translate("Assigned Permissions") }}</p>
                                 <span
                                     style="display: block"
-                                    v-for="permission in scope.row.permissions"
-                                    >{{ readable(permission) }}</span
-                                >
+                                    v-for="permission in scope.row.permissions">
+                                    {{ readable(permission) }}
+                                </span>
                             </template>
-                            <el-button type="default" size="small"
-                                >{{ scope.row.permissions.length }}
-                                {{ translate("Permissions") }}</el-button
-                            >
+                            <el-button type="default" size="small">
+                                {{ scope.row.permissions.length }}
+                                {{ translate("Permissions") }}
+                            </el-button>
                         </el-tooltip>
                     </template>
                 </el-table-column>
@@ -185,15 +157,11 @@
                 </el-table-column>
             </el-table>
 
-            <div class="fframe_pagination_wrapper">
+            <div class="fframe_pagination_wrapper" v-if="agents.length">
                 <pagination @fetch="fetchAgents()" :pagination="pagination" />
             </div>
         </div>
-        <div
-            style="padding: 20px; background: white"
-            class="fs_box_body"
-            v-else
-        >
+        <div style="padding: 20px; background: white" class="fs_box_body" v-else>
             <el-skeleton :rows="5" animated />
         </div>
 
@@ -207,6 +175,7 @@
             v-model="agent_modal"
             v-if="editing_agent"
             width="60%"
+            @close="resetAgentModal()"
         >
             <el-form label-position="top" :data="editing_agent">
                 <el-form-item :label="translate('Email')">
@@ -237,30 +206,6 @@
                         :placeholder="translate('agent_title')"
                         v-model="editing_agent.title"
                     />
-                </el-form-item>
-
-                <el-form-item :label="translate('Permissions')">
-                    <el-checkbox-group
-                        class="fs_permission_groups"
-                        v-model="editing_agent.permissions"
-                    >
-                        <div
-                            v-for="permissionSet in permissions"
-                            class="fs_each_permission_set"
-                        >
-                            <h4 style="font-size: 15px">
-                                {{ permissionSet.title }}
-                            </h4>
-                            <el-checkbox
-                                v-for="(
-                                    permissionLabel, permissionkey
-                                ) in permissionSet.permissions"
-                                :label="permissionkey"
-                                :key="permissionkey"
-                                >{{ permissionLabel }}</el-checkbox
-                            >
-                        </div>
-                    </el-checkbox-group>
                 </el-form-item>
 
                 <div
@@ -304,6 +249,18 @@
                         />
                     </el-form-item>
                 </div>
+
+                <el-form-item :label="translate('Permissions')">
+                    <el-tree
+                        :data="treeData"
+                        show-checkbox
+                        node-key="id"
+                        :props="defaultProps"
+                        default-expand-all
+                        :default-checked-keys="editing_agent.permissions"
+                        @check-change="handleCheckChange"
+                    />
+                </el-form-item>
             </el-form>
 
             <template #footer>
@@ -314,9 +271,7 @@
                         type="success"
                         @click="createOrUpdateAgent()"
                     >
-                        <span v-if="editing_agent.id">{{
-                            translate("Update")
-                        }}</span>
+                        <span v-if="editing_agent.id">{{ translate("Update") }}</span>
                         <span v-else>{{ translate("Create") }}</span>
                     </el-button>
                 </span>
@@ -328,7 +283,7 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import {  ElMessageBox } from 'element-plus'
-import { onMounted, reactive, toRefs } from "vue";
+import {computed, onMounted, reactive, toRefs} from "vue";
 import {
     useFluentHelper,
     useNotify,
@@ -439,6 +394,7 @@ export default {
                         position: "bottom-right",
                     });
                     fetchAgents();
+                    state.editing_agent = false;
                     state.agent_modal = false;
                 })
                 .catch((errors) => {
@@ -489,11 +445,11 @@ export default {
             let id = res.agent.id;
             let index = state.agents.findIndex((row) => row.id === id);
 
-            state.agents[index].photo = URL.createObjectURL(file.raw);
+            state.agents[index].photo = res.image;
 
             notify({
                 type: "success",
-                message: "Profile picture has been updated successfully",
+                message: res.message,
                 position: "bottom-right",
             });
         };
@@ -546,6 +502,50 @@ export default {
             setTitle("Support Staff");
         });
 
+        const defaultProps = {
+            children: 'children',
+            label: 'label',
+        };
+
+        const treeData = computed(() => {
+            return [{
+                    id: 0,
+                    label: 'All Permissions',
+                    children: [
+                        ...getFormattedPermissionData()
+                    ],
+                }];
+        });
+
+        const getFormattedPermissionData = () => {
+            return state.permissions.map((permission, key) => {
+                let childPermissions = permission.permissions;
+                return {
+                    id: key,
+                    label: permission.title,
+                    children: Object.keys(childPermissions).map((permission_id) => {
+                        return {
+                            id: permission_id,
+                            label: childPermissions[permission_id],
+                        }
+                    })
+                }
+            });
+        };
+
+        const handleCheckChange = (data, checked, _) => {
+            if(checked && isNaN(data.id) && !state.editing_agent.permissions.includes(data.id) ) {
+                state.editing_agent.permissions.push(data.id);
+            } else if(!checked && isNaN(data.id) && state.editing_agent.permissions.includes(data.id)) {
+                state.editing_agent.permissions = state.editing_agent.permissions.filter((permission) => permission !== data.id);
+            }
+        };
+
+        const resetAgentModal = () => {
+            state.editing_agent = false;
+            state.agent_modal = false;
+        };
+
         return {
             ...toRefs(state),
             translate,
@@ -559,10 +559,13 @@ export default {
             readable,
             deleteAgent,
             confirmDeleteAgent,
-            handleAvatarSuccess,
             showIcon,
             hideIcon,
             confirmResetProfile,
+            defaultProps,
+            treeData,
+            handleCheckChange,
+            resetAgentModal,
         };
     },
 };

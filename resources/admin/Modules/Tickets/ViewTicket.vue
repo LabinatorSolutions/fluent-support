@@ -59,14 +59,22 @@
                                    icon="Refresh"
                                    class="fs_refresh_tk_page"
                                    size="small"></el-button>
+
                         <el-button v-loading="updating" :disabled="updating" @click="closeTicket()"
                                    v-if="ticket.status != 'closed'" class="fs_close_btn" type="info" size="small">
                             {{ translate('Close') }}
                         </el-button>
+
+                        <el-button v-loading="deleting" :disabled="deleting" @click="deleteTicket()"
+                                   class="fs_delete_btn" type="danger" size="small">
+                            {{ translate('Delete') }}
+                        </el-button>
+
                         <el-popover
                             placement="bottom"
                             :width="400"
                             trigger="click"
+                            v-if="products.length"
                         >
                             <template #reference>
                                 <span style="margin-right: 10px;"><el-icon style="vertical-align: middle;"><goods/></el-icon> {{
@@ -163,7 +171,7 @@
                                     <el-table-column prop="status" label="Status" width="130"></el-table-column>
                                 </el-table>
                                 <div class="fs_tk_merge_actions">
-                                    <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                                    <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper" v-if="customer_tickets.length">
                                         <pagination @fetch="customerTickets" :pagination="pagination"/>
                                     </div>
                                     <el-button size="default" type="primary"
@@ -229,10 +237,10 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :title="translate('Client Priority: ') + ticket.client_priority "
+                                    <span :title="translate('Client Priority: ') + translate(ticket.client_priority) "
                                           :class="'fs_badge_priority_'+ticket.client_priority" class="fs_badge">
                                         <el-icon style="vertical-align: middle;"><user/></el-icon> {{
-                                            ticket.client_priority
+                                            translate(ticket.client_priority)
                                         }}</span>
                                 </template>
 
@@ -253,10 +261,10 @@
                                 trigger="click"
                             >
                                 <template #reference>
-                                    <span :title="translate('Admin Priority:') + ticket.priority "
+                                    <span :title="translate('Admin Priority:') + translate(ticket.priority) "
                                           :class="'fs_badge_priority_'+ticket.priority" class="fs_badge">
                                         <el-icon style="vertical-align: middle;"><service/></el-icon> {{
-                                            ticket.priority
+                                            translate(ticket.priority)
                                         }}</span>
                                 </template>
 
@@ -278,7 +286,7 @@
                             >
                                 <template #reference>
                                     <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{
-                                            ticket.status
+                                            translate(ticket.status)
                                         }}</span>
                                 </template>
 
@@ -340,7 +348,7 @@
                                         </div>
                                         <div>
                                             <el-button-group>
-                                                <el-button size="small" @click="showDraftResponse(draft)">{{translate('Edit')}}</el-button>
+                                                <el-button size="small" @click="show_response_box = 'response'">{{translate('Edit')}}</el-button>
                                                 <el-button size="small" @click="discardDraft(draft.id)">{{translate('Discard')}}</el-button>
                                             </el-button-group>
                                         </div>
@@ -352,14 +360,8 @@
 
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
-                             class="fs_thread"
-                             :class="(conversation.person.title && conversation.person.person_type != 'customer' ) ? 'fs_agent fs_conv_type_'+conversation.conversation_type : getTicketClasses(conversation, ticket) ">
-
-                        <span class="agent_title"
-                              v-if="conversation.person.title && !['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)"> {{
-                                conversation.person.title
-                            }} </span>
-
+                             :class="getTicketClasses(conversation, ticket) ">
+                        <span :class="getRibbonClass(conversation, ticket)" >{{getTextByPerson(conversation, ticket)}}</span>
                         <div class="fs_thread_content">
                             <section class="fs_avatar">
                                 <img v-if="conversation.person" :src="conversation.person?.photo"
@@ -490,7 +492,7 @@
                             </section>
                             <div v-if="has_pro && !isEmpty(appVars.custom_fields)" class="fc_custom_data_wrap">
                                 <h3>{{ translate('Additional Data') }}
-                                    <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" type="text"
+                                    <el-button @click="showCustomDataEditForm = !showCustomDataEditForm" :text="true"
                                                icon="EditPen" size="small"></el-button>
                                 </h3>
                                 <ul v-if="!isEmpty(ticket.custom_fields)">
@@ -616,6 +618,7 @@ export default {
             admin_priorities: appVars.admin_priorities,
             client_priorities: appVars.client_priorities,
             updating: false,
+            deleting: false,
             active_agents: [],
             edit_response_modal: false,
             editing_response: false,
@@ -695,6 +698,37 @@ export default {
                 })
         };
 
+        const getTextByPerson = (conversation, ticket) => {
+            if (conversation?.person.person_type === 'agent') {
+                return conversation.person.title ? conversation.person.title : translate('Support Staff');
+            }else{
+                if (ticket.customer_id == conversation.person_id) {
+                    return translate('Thread Starter')
+                } else {
+                    return translate('Thread Follower')
+                }
+            }
+        }
+
+        const getRibbonClass = (conversation, ticket) => {
+            const classes = [
+                'fs_thread_ribbon'
+            ];
+
+            if (conversation.person) {
+                if (conversation.person.person_type === 'agent') {
+                    classes.push('fs_thread_ribbon_agent');
+                } else {
+                    if (ticket.customer_id == conversation.person_id) {
+                        classes.push('fs_thread_ribbon_customer');
+                    } else {
+                        classes.push('fs_thread_ribbon_customer_cc');
+                    }
+                }
+            }
+            return classes;
+        }
+
         const getTicketClasses = (conversation, ticket) => {
             const classes = [
                 'fs_thread'
@@ -703,14 +737,17 @@ export default {
             if (conversation.person) {
                 if (conversation.person.person_type === 'agent') {
                     classes.push('fs_person_agent');
-                } else {
+                    classes.push('fs_agent');
+                }
+                else {
                     if (ticket.customer_id == conversation.person_id) {
                         classes.push('fs_person_customer');
+                        classes.push('fs_customer');
                     } else {
                         classes.push('fs_person_customer_cc');
+                        classes.push('fs_cc_customer');
                     }
                 }
-                classes.push('fs_person_' + conversation.person.person_type);
             }
 
             classes.push('fs_conv_type_' + conversation.conversation_type);
@@ -783,6 +820,32 @@ export default {
                 .always(() => {
                     state.updating = false;
                 });
+        }
+
+        const deleteTicket = () => {
+            confirm({
+                message: translate('single_ticket_delete_warning'),
+                title: 'Warning',
+                options: {
+                    confirmButtonText: translate('Delete Ticket'),
+                    cancelButtonText: translate('Cancel'),
+                    type: 'warning',
+                    confirmButtonClass: 'el-button--danger',
+                }
+            }).then(() => {
+                state.deleting = true;
+                del(`tickets/${state.ticket.id}/delete`)
+                    .then(response => {
+                        notify({
+                            message: response.message,
+                            type: "success",
+                            position: "bottom-right",
+                        });
+                        if (window.history.state.back) {
+                            router.push({name: 'tickets'});
+                        }
+                    })
+            });
         }
 
         const reOpen = () => {
@@ -958,7 +1021,7 @@ export default {
             content = content.replace(/\n\s*\n/g, '\n').replace(/\n\s*\n/g, '\n');
             // check if this is type of string
             if (typeof content !== 'string') {
-                return string;
+                return content;
             }
 
             const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
@@ -1015,10 +1078,6 @@ export default {
                 .always(() => {
                     state.loading = false;
                 });
-        }
-
-        const showDraftResponse = (draft) => {
-            state.show_response_box = 'draft';
         }
 
         const discardDraft = (draftID) => {
@@ -1087,12 +1146,14 @@ export default {
             addWatchers,
             splitToNewTicket,
             fetchDraft,
-            showDraftResponse,
             discardDraft,
             getTicketStatus,
             translate,
             getArrToString,
-            handleMergeSelectionChange
+            handleMergeSelectionChange,
+            deleteTicket,
+            getRibbonClass,
+            getTextByPerson,
         }
     }
 }
@@ -1112,6 +1173,12 @@ export default {
 
 .fs_agent {
     border-left: 4px solid #1785EB;
+}
+.fs_customer{
+    border-left: 4px solid #15BE7C;
+}
+.fs_cc_customer {
+    border-left: 4px solid #EC5c03;
 }
 
 .fs_conv_type_note {
@@ -1155,5 +1222,22 @@ i.dashicons.dashicons-randomize {
     align-items: center;
     justify-content: space-between;
     margin-top: 25px;
+}
+.fs_thread_ribbon{
+    position: relative;
+    left: 0;
+    top: 0;
+    color: #fff;
+    font-size: 10px;
+    padding: 5px 10px;
+}
+.fs_thread_ribbon_agent{
+    background: #1785EB;
+}
+.fs_thread_ribbon_customer{
+    background: #15BE7C;
+}
+.fs_thread_ribbon_customer_cc{
+    background: #EC5c03;
 }
 </style>

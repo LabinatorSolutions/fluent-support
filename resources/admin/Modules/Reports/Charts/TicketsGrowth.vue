@@ -16,7 +16,7 @@ import { reactive, toRefs, onMounted } from "vue";
 
 export default {
     name: "TicketsGrowthChart",
-    props: ["date_range", "agent_id"],
+    props: ["date_range", "agent_id", "product_id", "mailbox_id", "url"],
     components: {
         BarChartBase,
     },
@@ -78,9 +78,11 @@ export default {
 
         const fetchReport = async () => {
             state.fetching = true;
-            await get("reports/tickets-growth", {
+            await get(props.url+"/tickets-growth", {
                 date_range: props.date_range,
                 agent_id: props.agent_id,
+                product_id: props.product_id,
+                mailbox_id: props.mailbox_id,
             }).then((response) => {
                 setupChartItems(response.stats);
             });

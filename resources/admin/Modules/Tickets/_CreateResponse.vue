@@ -55,7 +55,6 @@ import {
 } from "@/admin/Composable/FluentFrameworkHelper";
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
-import {debounce} from 'lodash'
 
 export default {
     name: 'CreateResponse',
@@ -68,7 +67,7 @@ export default {
     setup(props, {emit}) {
 
         const {
-            post, translate, handleError, removeData, appVars, get
+            post, translate, handleError, appVars,
         } = useFluentHelper();
         const {notify} = useNotify();
 
@@ -92,57 +91,68 @@ export default {
                 '{{agent.email}}': 'Agent Email',
             },
             draftID:'',
-            loading: false
+            loading: false,
         });
         let isCreatingResponse = false;
 
-        if(appVars.enable_draft_mode === 'yes') {
+        if(appVars.enable_draft_mode === 'yes' && Array.isArray(props.ticket) === false) {
             if (props.draft) {
                 state.response_body = props.draft.value.content;
                 state.draftID = props.draft.id;
                 state.selected_cc = props.draft.value.selected_cc;
             }
-             const saveResponseDraft = debounce(() => {
-                const data = {
-                    content: state.response_body,
-                    draftID: state.draftID,
-                    selected_cc: state.selected_cc,
-                    conversation_type: props.type,
-                };
 
-                 if(state.response_body !== '' && isCreatingResponse === false ) {
-                     let action = `tickets/${props.ticket.id}/draft`;
+            let saveResponseDraftTimer = null;
 
-                     post(action, data)
-                         .then((response) => {
-                             state.draftID = response.draftID;
-                         })
-                         .catch((errors) => {
-                             handleError(errors);
-                         })
-                 }
-            }, 5000)
+            const saveResponseDraft = () => {
+                if (saveResponseDraftTimer) {
+                    clearTimeout(saveResponseDraftTimer);
+                }
+
+                saveResponseDraftTimer = setTimeout(() => {
+                    const data = {
+                        content: state.response_body,
+                        draftID: state.draftID,
+                        selected_cc: state.selected_cc,
+                        conversation_type: props.type,
+                    };
+
+                    if (state.response_body !== '' && isCreatingResponse === false) {
+                        let action = `tickets/${props.ticket.id}/draft`;
+
+                        post(action, data)
+                            .then((response) => {
+                                state.draftID = response.draftID;
+                            })
+                            .catch((errors) => {
+                                handleError(errors);
+                            });
+                    }
+                }, 5000);
+            };
 
             watch([() => state.response_body, () => state.selected_cc], () => {
                  if(state.response_body === '' && state.draftID ) {
                     removeDraft();
                 }
-                saveResponseDraft();
-            });
 
-            watch(() => props.type, (type) => {
-                if(type === 'note') {
-                    state.show_cc_option = false;
-                    state.selected_cc = [];
-                }
-            })
+                 if(props.type === 'response'){
+                     saveResponseDraft();
+                 }
+            });
         }
+
+        watch(() => props.type, (type) => {
+            if(type === 'note') {
+                state.show_cc_option = false;
+                state.selected_cc = [];
+            }
+        })
 
         const removeDraft = () => {
             emit('discardDraft', state.draftID);
             state.draftID = '';
         }
-
 
         const toggleCcOption = (command) => {
             if(command === 'show'){
@@ -203,15 +213,19 @@ export default {
         }
 
         onMounted(() => {
-            if(props.ticket.responses.length === 0){
-                if(props.ticket.carbon_copy && props.ticket.carbon_copy !== ''){
-                    state.selected_cc = props.ticket.carbon_copy?.split(',') || [];
+            if(!Array.isArray(props.ticket)){
+                if(props.ticket.responses.length === 0){
+                    if(props.ticket.carbon_copy && props.ticket.carbon_copy !== ''){
+                        state.selected_cc = props.ticket.carbon_copy?.split(',') || [];
+                    }
+                }else{
+                    let conversation = props.ticket.responses[0];
+                    if(conversation.cc_info && state.selected_cc?.length === 0){
+                        state.selected_cc = conversation.cc_info;
+                    }
                 }
             }else{
-                let conversation = props.ticket.responses[0];
-                if(conversation.cc_info && state.selected_cc?.length === 0){
-                    state.selected_cc = conversation.cc_info;
-                }
+                state.selected_cc = [];
             }
         })
 
@@ -219,7 +233,8 @@ export default {
             ...toRefs(state),
             create,
             translate,
-            toggleCcOption
+            toggleCcOption,
+            handleCcChange,
         };
     }
 }

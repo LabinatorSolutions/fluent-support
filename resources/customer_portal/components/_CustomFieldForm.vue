@@ -1,8 +1,8 @@
 <template>
     <div class="fs_custom_fields_wrap">
         <div v-if="appReady" class="fs_custom_fields fs_tk_row">
-            <template v-for="(field, fieldName) in fields" :key="fieldName">
-                <div v-if="isRenderable(field, fieldName)" class="fs_tk_col">
+            <template v-for="(field, fieldName) in computedFields" :key="fieldName">
+                <div v-if="field.is_renderable" class="fs_tk_col">
                     <el-form-item :label="field.label" :required="field.required=='yes'">
                         <el-input
                             v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
@@ -103,7 +103,7 @@ export default {
 
             this.appReady = true;
         },
-        isRenderable(field, fieldName) {
+        isRenderable(field) {
             if (field.has_logics != 'yes' || !field.conditions || !field.conditions.length) {
                 return true;
             }
@@ -113,12 +113,12 @@ export default {
                 if (this.dependancyPass(condition)) {
                     singlePass = true;
                 } else {
-                    this.custom_data[field.slug] = '';
+                    this.custom_data[field.slug] = [];
                     allPassed = false;
                 }
             });
 
-            if (field.match_type == 'yes') {
+            if (field.match_type == 'all') {
                 return singlePass && allPassed;
             }
 
@@ -129,13 +129,21 @@ export default {
          & @return {Boolean}
          */
         compare(sourceVal, operator, givenVal) {
-
+            if(givenVal === undefined) {
+                return false;
+            }
             if (typeof sourceVal == 'string') {
                 sourceVal = sourceVal.toLowerCase();
             }
 
             if (typeof givenVal == 'string') {
                 givenVal = givenVal.toLowerCase();
+            }
+
+            if(isArray(givenVal)) {
+                givenVal = givenVal.map((val) => {
+                    return val.toLowerCase();
+                });
             }
 
             switch (operator) {
@@ -148,11 +156,14 @@ export default {
                     if (isArray(givenVal)) {
                         return givenVal.indexOf(sourceVal) === -1;
                     }
+                    if(sourceVal !== '' && (givenVal === '' || givenVal === undefined)){
+                        return false;
+                    }
                     return sourceVal != givenVal
                 case 'contains':
                     sourceVal = sourceVal.toString();
                     return givenVal.indexOf(sourceVal) !== -1;
-                case 'nt_contains':
+                case 'not_contains':
                     sourceVal = sourceVal.toString();
                     return givenVal.indexOf(sourceVal) === -1;
                 case 'lt':
@@ -172,7 +183,6 @@ export default {
         dependancyPass(condition) {
             if (condition && condition.item_key && condition.operator) {
                 let itemKey = condition.item_key;
-
                 let sourceValue = '';
 
                 if (itemKey.indexOf('ticket_') === 0) { // it's a ticket property
@@ -197,6 +207,17 @@ export default {
                 return false;
             }
             return true;
+        }
+    },
+    computed: {
+        computedFields() {
+            let fieldData = Object.keys(this.fields);
+            let data = this.fields;
+            fieldData.forEach((i) => {
+                data[i].is_renderable = this.isRenderable(data[i]);
+            });
+
+            return data;
         }
     },
     mounted() {

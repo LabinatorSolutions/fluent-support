@@ -35,6 +35,8 @@ class Conversation extends Model
             if(empty($model->content_hash)) {
                 $model->content_hash = md5($model->content);
             }
+            $model->created_at = current_time('mysql');
+            $model->updated_at = current_time('mysql');
         });
 
         static::deleting(function ($model) {

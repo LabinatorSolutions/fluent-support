@@ -67,7 +67,8 @@
                                 <el-button
                                     @click="editModal(scope.row)"
                                     icon="EditPen"
-                                    type="text"
+                                    :text="true"
+                                    style="color: var(--el-color-primary);"
                                 ></el-button>
                                 <el-popconfirm
                                     confirm-button-type="danger"
@@ -87,7 +88,7 @@
                                                 margin-left: 10px;
                                                 color: red;
                                             "
-                                            type="text"
+                                            :text="true"
                                             icon="Delete"
                                         ></el-button>
                                     </template>
@@ -95,7 +96,7 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <div class="fframe_pagination_wrapper">
+                    <div class="fframe_pagination_wrapper" v-if="replies.length">
                         <pagination @fetch="fetch()" :pagination="pagination" />
                     </div>
                 </div>
@@ -325,3 +326,9 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.el-button.is-text{
+    padding: 5px;
+}
+</style>
