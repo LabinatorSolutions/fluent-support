@@ -84,7 +84,7 @@
                             </template>
                         </el-table-column>
                     </el-table>
-                    <div class="fframe_pagination_wrapper">
+                    <div class="fframe_pagination_wrapper" v-if="tags.length">
                         <pagination
                             @fetch="fetchTags()"
                             :pagination="pagination"
@@ -222,7 +222,7 @@ export default {
                 ...state.editing_tag,
             })
                 .then((response) => {
-                    
+
                     notify({
                         message: response.message,
                         type: "success",

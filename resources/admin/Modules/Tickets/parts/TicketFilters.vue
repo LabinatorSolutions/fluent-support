@@ -4,7 +4,7 @@
             <label>{{$t('Status')}}</label>
             <el-radio-group @change="fetchTickets()" v-model="filters.status_type">
                 <el-radio-button v-for="(status, statusKey) in ticket_statuses_group" :label=statusKey>
-                    {{ucFirst(statusKey)}}
+                    {{translate(ucFirst(statusKey))}}
                 </el-radio-button>
             </el-radio-group>
         </div>

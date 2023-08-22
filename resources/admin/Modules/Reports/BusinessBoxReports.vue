@@ -33,20 +33,20 @@
                                         </el-dropdown-menu>
                                     </template>
                                 </el-dropdown>
-                                <div class="fs_agent_report_rh_filter">
+                                <div class="fs_product_report_rh_filter">
                                     <el-select
                                         clearable
                                         filterable
-                                        placeholder="All Agent"
+                                        placeholder="All Business Box"
                                         @change="filterReport"
-                                        v-model="agent"
-                                        class="fs_report_by_agent"
+                                        v-model="mailbox"
+                                        class="fs_report_by_product"
                                     >
                                         <el-option
-                                            v-for="agent in appVars.support_agents"
-                                            :key="agent.id"
-                                            :value="agent.id"
-                                            :label="agent.full_name"
+                                            v-for="mailbox in appVars.mailboxes"
+                                            :key="mailbox.id"
+                                            :value="mailbox.id"
+                                            :label="mailbox.name"
                                         ></el-option>
                                     </el-select>
 
@@ -69,14 +69,14 @@
                                 v-if="showing_charts"
                                 :is="currently_showing"
                                 :date_range="date_range"
-                                :url="'reports'"
-                                :agent_id="agent"
-                                type="agent"
+                                :url="'mailbox-reports'"
+                                :mailbox_id="mailbox"
+                                type="mailbox"
                             ></component>
                         </div>
                     </div>
-                    <agent-reports
-                        :url="'reports/agents-summary'"
+                    <business-box-report-summary
+                        :url="'mailbox-reports/mailbox-reports-summary'"
                         :show_settings="true"
                         :show_export_btn="true"
                     />
@@ -84,6 +84,7 @@
                 <el-col :sm="24" :md="8" :lg="6">
                     <SideBar/>
                 </el-col>
+
             </el-row>
         </div>
         <div class="fs_narrow_promo" style="background: white" v-else>
@@ -94,7 +95,7 @@
                 rel="noopener"
                 href="https://fluentsupport.com"
                 class="el-button el-button--success"
-                >{{ translate("Upgrade To Pro") }}</a
+            >{{ translate("Upgrade To Pro") }}</a
             >
         </div>
     </div>
@@ -104,22 +105,23 @@
 import TicketsChart from "./Charts/TicketsGrowth";
 import ResponseChart from "./Charts/ResponseGrowth";
 import ResolveChart from "./Charts/ResolveGrowth";
-import AgentReports from "./AgentReports";
 import SideBar from "./Parts/_SideBar"
+
+import BusinessBoxReportSummary from "./BusinessBoxReportSummary";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
-import {reactive, toRefs, onMounted, nextTick} from "vue";
+import { reactive, toRefs, onMounted, nextTick } from "vue";
 
 export default {
-    name: "Reports",
+    name: "BusinessBoxReports",
     components: {
         TicketsChart,
         ResponseChart,
         ResolveChart,
-        AgentReports,
+        BusinessBoxReportSummary,
         SideBar
     },
     setup() {
-        const { get, translate, handleError, setTitle } =
+        const { translate, handleError, setTitle } =
             useFluentHelper();
 
         const state = reactive({
@@ -133,12 +135,8 @@ export default {
                 "resolve-chart": "Resolve Stats",
                 "response-chart": "Response Stats",
             },
-            agent: "",
+            mailbox: "",
         });
-
-        const handleComponentChange = (item) => {
-            state.currently_showing = item;
-        };
 
         const filterReport = () => {
             const current = state.currently_showing;
@@ -150,6 +148,10 @@ export default {
             })
         };
 
+        const handleComponentChange = (item) => {
+            state.currently_showing = item;
+        };
+
         onMounted(() => {
             setTitle("Reports");
         });
@@ -158,17 +160,17 @@ export default {
             ...toRefs(state),
             translate,
             handleComponentChange,
-            filterReport,
+            filterReport
         };
     },
 };
 </script>
 
 <style lang="scss">
-.fs_agent_report_rh_filter {
+.fs_product_report_rh_filter {
     display: flex;
     align-items: center;
-    .fs_report_by_agent {
+    .fs_report_by_product {
         width: auto;
         margin-right: 0.3em;
     }
@@ -178,7 +180,7 @@ export default {
         flex-wrap: nowrap;
         justify-content: center;
         padding: 0.7em;
-        .fs_report_by_agent {
+        .fs_report_by_product {
             width: auto;
             margin-right: 0;
             margin-bottom: 0.4em;
@@ -186,3 +188,4 @@ export default {
     }
 }
 </style>
+

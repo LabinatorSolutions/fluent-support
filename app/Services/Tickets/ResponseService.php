@@ -35,7 +35,8 @@ class ResponseService
         $convoType = Arr::get($data, 'conversation_type', 'response');
 
         $content = wp_unslash(wp_kses_post($data['content']));
-
+        $resetWaitingSince = apply_filters('fluent_support/reset_waiting_since', true, $content);
+        $content = apply_filters('fluent_support/response_content_before_use_anywhere', $content);
         $response = [
             'person_id'         => $person->id,
             'ticket_id'         => $ticket->id,
@@ -97,8 +98,10 @@ class ResponseService
             }
 
             if ($convoType == 'response') {
-                $ticket->last_agent_response = current_time('mysql');
-                $ticket->waiting_since = current_time('mysql');
+                if($resetWaitingSince){
+                    $ticket->last_agent_response = current_time('mysql');
+                    $ticket->waiting_since = current_time('mysql');
+                }
             }
         } else {
 

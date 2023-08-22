@@ -6,6 +6,10 @@
     margin: 15px 0;
 }
 
+.rtl-align {
+    text-align: right;
+}
+
 .alignleft {
     float: left;
 }

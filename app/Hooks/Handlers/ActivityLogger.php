@@ -153,6 +153,19 @@ class ActivityLogger
                 Activity::create($log);
             }
         }, 20, 3);
+
+        add_action('fluent_support/ticket_deleted', function($agent, $ticketData) {
+            $description = sprintf('%s deleted %s(#%d) at %s', $this->getPersonMarkup($agent), $ticketData['title'], $ticketData['id'], current_time('mysql'));
+            $log = [
+                'event_type' => 'fluent_support/ticket_deleted',
+                'person_id' => $agent->id,
+                'person_type' => 'agent',
+                'object_id' => $ticketData['id'],
+                'object_type' => 'ticket',
+                'description' => $description
+                ];
+                Activity::create($log);
+        }, 20, 2);
     }
 
     /**

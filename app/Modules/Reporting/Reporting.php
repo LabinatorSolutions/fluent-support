@@ -2,8 +2,11 @@
 
 namespace FluentSupport\App\Modules\Reporting;
 
+use FluentSupport\App\Api\Classes\Tickets;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\MailBox;
+use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\Framework\Support\Arr;
@@ -57,6 +60,10 @@ class Reporting
             if (!empty($filters['agent_id'])) {
                 $query->where('agent_id', $filters['agent_id']);
             }
+
+            if (!empty($filters['mailbox_id'])) {
+                $query->where('mailbox_id', $filters['mailbox_id']);
+            }
         }
 
         $items = $query->get();
@@ -71,7 +78,7 @@ class Reporting
      * @param array $filters
      * @return array
      */
-    public function getTicketResolveGrowth($from = false, $to = false, $filters = [])
+    public function getTicketResolveGrowth($from = false, $to = false, $filters = [], $type = '')
     {
         $period = $this->makeDatePeriod(
             $from = $this->makeFromDate($from),//Date from
@@ -81,11 +88,14 @@ class Reporting
 
         list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);//Get group by and order by i.e date,week, month
 
+        $filterColumn = (!empty($type)) ? $type.'_id' : 'id';
+
         //get the closed ticket statistics within the date range
         $query = $this->db()->table('fs_tickets')
             ->select($this->prepareSelect($frequency, 'resolved_at'))
             ->whereBetween('resolved_at', $this->prepareBetween($frequency, $from, $to))
             ->where('status', 'closed')
+            ->where($filterColumn, '>', 0)
             ->groupBy($groupBy)
             ->oldest($orderBy);
 
@@ -97,6 +107,10 @@ class Reporting
 
             if (!empty($filters['agent_id'])) {
                 $query->where('agent_id', $filters['agent_id']);
+            }
+
+            if (!empty($filters['mailbox_id'])) {
+                $query->where('mailbox_id', $filters['mailbox_id']);
             }
         }
 
@@ -132,6 +146,46 @@ class Reporting
         if ($filters) {
             if (!empty($filters['person_id'])) {
                 $query->where('person_id', $filters['person_id']);
+            }
+
+            if (!empty($filters['product_id'])) {
+                $query->where('product_id', $filters['product_id']);
+            }
+        }
+
+        $items = $query->get();
+
+
+        return $this->getResult($period, $items);
+    }
+
+    public function getResponseGrowthChart($from = false, $to = false, $filters = [], $type = ''): array
+    {
+        $period = $this->makeDatePeriod(
+            $from = $this->makeFromDate($from),
+            $to = $this->makeToDate($to),
+            $frequency = $this->getFrequency($from, $to)
+        );
+
+        list($groupBy, $orderBy) = $this->getGroupAndOrder($frequency);
+
+        $filterColumn = $type."_id";
+
+        $query = $this->db()->table('fs_tickets')
+              ->select($this->prepareSelect($frequency,'created_at','response_count'))
+              ->whereBetween('created_at', $this->prepareBetween($frequency, $from, $to))
+              ->havingRaw('COUNT(response_count)> 0')
+              ->where($filterColumn, '>', 0)
+              ->groupBy($groupBy)
+              ->oldest($orderBy);
+
+        if ($filters) {
+            if (!empty($filters['product_id'])) {
+                $query->where('product_id', $filters['product_id']);
+            }
+
+            if (!empty($filters['mailbox_id'])) {
+                $query->where('mailbox_id', $filters['mailbox_id']);
             }
         }
 
@@ -172,7 +226,7 @@ class Reporting
             ->whereBetween('resolved_at', [$from, $to])
             ->get();
 
-        $reports = $this->pushAgentsReport('closed', $resolves, $reports);
+        $reports = $this->pushReportData('closed', $resolves, $reports, 'agent_id');
 
         //get statistics for all except closed ticket
         $openTickets = $this->db()->table('fs_tickets')
@@ -184,8 +238,7 @@ class Reporting
             ->where('status', '!=', 'closed')
             ->get();
 
-        $reports = $this->pushAgentsReport('opens', $openTickets, $reports);
-
+        $reports = $this->pushReportData('opens', $openTickets, $reports, 'agent_id');
         //Get response by agent
         $responses = Conversation::select([
             $this->db()->raw('COUNT(id) AS count'),
@@ -200,8 +253,7 @@ class Reporting
             ->groupBy('agent_id')
             ->get();
 
-        $reports = $this->pushAgentsReport('responses', $responses, $reports);
-
+        $reports = $this->pushReportData('responses', $responses, $reports, 'agent_id');
         //Get interactions/responses by individual agents
         foreach ($responses as $response) {
             $reports[$response->agent_id]['interactions'] = Conversation::where('person_id', $response->agent_id)
@@ -213,7 +265,7 @@ class Reporting
         }
 
         $agentIds = array_keys($reports);
-        
+
         if ($agent) {
             $agentIds = array_map('intval', explode(',', $agent));
         }
@@ -240,26 +292,140 @@ class Reporting
         return $agents;
     }
 
+    public function getSummary($type, $from = null, $to = null)
+    {
+        if (!$from) {
+            $from = current_time('Y-m-d');
+        }
+
+        if (!$to) {
+            $to = current_time('Y-m-d');
+        }
+
+        $from .= ' 00:00:00';
+        $to .= ' 23:59:59';
+        $reports = [];
+
+        $groupByField = $type == 'product' ? 'product_id' : 'mailbox_id';
+
+        $resolves = $this->db()->table('fs_tickets')
+                         ->select([
+                             $this->db()->raw('COUNT(id) AS count'),
+                             $groupByField,
+                         ])
+                         ->groupBy($groupByField)
+                         ->where('status', 'closed')
+                         ->whereBetween('resolved_at', [$from, $to])
+                         ->get();
+
+        $reports = $this->pushReportData('closed', $resolves, $reports, $groupByField);
+
+        $openTickets = $this->db()->table('fs_tickets')
+                            ->select([
+                                $this->db()->raw('COUNT(id) AS count'),
+                                $groupByField
+                            ])
+                            ->groupBy($groupByField)
+                            ->where('status', '!=', 'closed')
+                            ->whereBetween('created_at', [$from, $to])
+                            ->get();
+
+        $reports = $this->pushReportData('opens', $openTickets, $reports, $groupByField);
+
+        $responses = $this->db()->table('fs_tickets')
+                          ->select([
+                              $this->db()->raw('SUM(response_count) AS count'),
+                              $groupByField,
+                          ])
+                          ->groupBy($groupByField)
+                          ->whereBetween('created_at', [$from, $to])
+                          ->get();
+
+        $reports = $this->pushReportData('responses', $responses, $reports, $groupByField);
+
+        $ticketIds = $this->db()->table('fs_tickets')
+                          ->select([
+                              $groupByField,
+                              $this->db()->raw('GROUP_CONCAT(id) AS ticket_ids'),
+                          ])
+                          ->where($groupByField, '!=', 0)
+                          ->groupBy($groupByField)
+                          ->get();
+
+        $result = [];
+        foreach ($ticketIds as $item) {
+            $result[$item->{$groupByField}] = explode(',', $item->ticket_ids);
+        }
+
+        foreach ($result as $id => $ticketIds) {
+            $interactions = Conversation::whereIn('ticket_id', $ticketIds)
+                ->where('conversation_type', 'response')
+                ->whereBetween('created_at', [$from, $to])
+                ->groupBy('ticket_id')
+                ->get()
+                ->count();
+
+            $reports[$id]['interactions'] = $interactions;
+        }
+
+        $ids = array_keys($reports);
+
+        $types = [
+            'product' => [
+                'model' => Product::class,
+                'fields' => ['id', 'title'],
+            ],
+            'mailbox' => [
+                'model' => MailBox::class,
+                'fields' => ['id', 'name'],
+            ],
+        ];
+
+        $model = $types[$type]['model'];
+        $fields = $types[$type]['fields'];
+
+        $items = $model::select($fields)
+                       ->whereIn('id', $ids)
+                       ->get();
+
+        foreach ($items as $item) {
+            $report = isset($reports[$item->id]) ? $reports[$item->id] : [];
+
+            $report = wp_parse_args($report, [
+                'responses' => 0,
+                'opens' => 0,
+                'closed' => 0,
+                'interactions' => 0
+            ]);
+            $item->stats = $report;
+            $item->active_stat = '';
+        }
+
+        return $items;
+    }
 
     /**
-     * pushAgentsReport method will format the ticket summary report by agent
+     * pushReportData method will format the ticket summary report
      * @param $type
      * @param $tickets
      * @param $reports
+     * @param $groupByField
      * @return array
      */
-    private function pushAgentsReport($type, $tickets, $reports)
+    private function pushReportData($type, $tickets, $reports, $groupByField): array
     {
         foreach ($tickets as $ticket) {
-            if(!$ticket->agent_id) {
+            $groupKey = $ticket->{$groupByField};
+
+            if (!$groupKey) {
                 continue;
             }
 
-            if(!isset($reports[$ticket->agent_id])) {
-                $reports[$ticket->agent_id] = [];
+            if (!isset($reports[$groupKey])) {
+                $reports[$groupKey] = [];
             }
 
-            $reports[$ticket->agent_id][$type] = $ticket->count;
+            $reports[$groupKey][$type] = $ticket->count;
         }
 
         return $reports;

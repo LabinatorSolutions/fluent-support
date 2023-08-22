@@ -93,6 +93,7 @@
                     <div
                         style="padding-bottom: 20px"
                         class="fframe_pagination_wrapper"
+                        v-if="activities.length"
                     >
                         <pagination
                             @fetch="fetchActivities()"
@@ -195,11 +196,17 @@ export default {
                 return false;
             }
 
-            if (route == "#view_ticket") {
-                router.push({
+            const routerData = {
                     name: "view_ticket",
                     params: { ticket_id: activity.object_id },
-                });
+                };
+
+            if (state.settings.open_link_in_new_tab == 'yes' && route == '#view_ticket') {
+                const routeData = router.resolve(routerData);
+
+                window.open(routeData.href, '_blank');
+            } else {
+                router.push(routerData);
             }
         };
 

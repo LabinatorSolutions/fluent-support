@@ -194,65 +194,6 @@
                 }
             }
 
-            &.fs_person_agent:after {
-                content: "";
-                width: 4px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                top: 0;
-                background: #1785EB;
-            }
-
-            &.fs_person_agent:before {
-                content: "Support Staff";
-                position: relative;
-                left: 0px;
-                top: 0px;
-                background: #1785EB;
-                color: #fff;
-                font-size: 10px;
-                padding: 5px 10px;
-            }
-            &.fs_person_customer:after {
-                content: "";
-                width: 4px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                top: 0;
-                background: #15BE7C;
-            }
-            &.fs_person_customer:before {
-                content: "Thread Starter";
-                position: relative;
-                left: 0px;
-                top: 0px;
-                background: #15BE7C;
-                color: #fff;
-                font-size: 10px;
-                padding: 5px 10px;
-            }
-            &.fs_person_customer_cc:after {
-                content: "";
-                width: 4px;
-                height: 100%;
-                position: absolute;
-                left: 0;
-                top: 0;
-                background: #ec5c03;
-            }
-            &.fs_person_customer_cc:before {
-                content: "Thread Follower";
-                position: relative;
-                left: 0px;
-                top: 0px;
-                background: #ec5c03;
-                color: #fff;
-                font-size: 10px;
-                padding: 5px 10px;
-            }
-
             &.fs_conv_type_note {
                 background: #ffffc7;
 
@@ -424,7 +365,7 @@
         }
     }
 
-    .fs_close_btn {
+    .fs_delete_btn {
         margin-right: 10px;
     }
 }
@@ -517,6 +458,9 @@ img.tk_customer_avatar {
     &.fs_tk_profile_card {
         padding-top: 45px;
         margin-top: 30px;
+        i {
+            cursor: pointer;
+        }
     }
 
     &.fs_tk_other_tickets_card {

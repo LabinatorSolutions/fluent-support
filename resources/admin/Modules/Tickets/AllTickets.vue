@@ -17,9 +17,10 @@
                         v-model="filter_type"
                         active-value="advanced"
                         inactive-value="simple"
-                        active-text="Advanced Filter"
+                        :active-text="translate('Advanced Filter')"
                         inactive-text=""
                         style="margin-left: 0.6em;"
+                        :disabled="!has_pro"
                     />
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
@@ -46,13 +47,13 @@
                                     <rich-filter @maybeRemove="maybeRemoveGroup(filterIndex)" :items="rich_filter"/>
                                 </div>
                                 <div class="fs_cond_or" v-if="(filterIndex+1) != advanced_filters.length">
-                                    <em>OR</em>
+                                    <em>{{ translate('OR') }}</em>
                                 </div>
                             </div>
                         </div>
                         <div class="fs_cond_or">
                             <em @click="addConditionGroup()"
-                                style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> OR</em>
+                                style="cursor: pointer; color: rgb(0, 119, 204); font-weight: bold;"><el-icon><Plus /></el-icon> {{ translate('OR') }}</em>
                         </div>
 
                         <el-button type="primary" @click="fetchTickets()">{{ translate('Filter') }}
@@ -158,14 +159,14 @@
                     <el-table-column width="120" :label="translate('Status')">
                         <template #default="scope">
                             <span class="fs_badge fs_badge_new" v-if="getWaitingStatus(scope.row)">
-                                    {{ getWaitingStatus(scope.row) }}
+                                    {{ translate(getWaitingStatus(scope.row)) }}
                                 </span>
                             <span v-else class="fs_badge" :class="'fs_badge_'+scope.row.status">{{
-                                    scope.row.status
+                                    translate(scope.row.status)
                                 }}</span>
-                            <span class="fs_badge" :title="translate('Client Priority: ') + scope.row.client_priority "
+                            <span class="fs_badge" :title="translate('Client Priority: ') + translate(scope.row.client_priority) "
                                   :class="'fs_badge_priority_'+scope.row.client_priority"> <el-icon><User/></el-icon>
-                                <el-icon><Flag/></el-icon>  {{ scope.row.client_priority }}
+                                <el-icon><Flag/></el-icon>  {{ translate(scope.row.client_priority) }}
                             </span>
                         </template>
                     </el-table-column>
@@ -187,7 +188,7 @@
                     <el-skeleton :rows="10" animated/>
                 </div>
 
-                <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper">
+                <div style="padding-bottom: 20px;" class="fframe_pagination_wrapper" v-if="tickets.length">
                     <pagination @fetch="fetchTickets()" :pagination="pagination"/>
                 </div>
             </div>
@@ -657,7 +658,7 @@ export default {
             closeSelected,
             getExcerpt,
             resetFilters,
-            getExcerptBox
+            getExcerptBox,
         }
     }
 }
@@ -695,5 +696,18 @@ export default {
     flex-direction: column;
     justify-content: space-evenly;
     margin-right: 6px;
+}
+.fs_follow_up_identifier{
+    min-width: 45px;
+    height: 19px;
+    padding: 9px;
+    color: #fff;
+    border-radius: 3px;
+    opacity: 0.8;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    margin-right: 6px;
+    background: #f6c343;
 }
 </style>

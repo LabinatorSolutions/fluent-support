@@ -21,7 +21,9 @@
                             <div class="fs_cs_profile_picture" @mouseover="showIcon" @mouseout="hideIcon">
                                 <div class="fs_customer_avatar">
 
-                                    <el-dropdown trigger="click" :hide-on-click="false" placement="bottom-start">
+                                    <el-dropdown trigger="click" :hide-on-click="false"
+                                        placement="bottom-start"
+                                        v-if="canOpenProfileUploadPopup">
                                         <el-icon class="fs_customer_avatar_upload"> <Camera /> </el-icon>
                                         <template #dropdown>
                                             <el-dropdown-menu class="fs-cs-avatar-actions">
@@ -33,7 +35,7 @@
                                                         :on-error="handleAvatarError"
                                                         :headers="requestHeaders"
                                                         :show-file-list="false"
-                                                        drag
+                                                        :before-upload="beforeAvatarUpload"
                                                     >
                                                         Upload a Custom Picture
                                                     </el-upload>
@@ -173,8 +175,9 @@ export default {
             loading: false,
             upload_url: appVars.rest.url+`/customers/profile_image/${customer_id}`,
             requestHeaders: {
-                //'X-WP-Nonce': fluentcrm.nonce
-            }
+                'X-WP-Nonce': appVars.rest.nonce
+            },
+            canOpenProfileUploadPopup: true
         });
 
         const fetchCustomer = async () => {
@@ -200,23 +203,23 @@ export default {
         };
 
         const handleAvatarSuccess = (response, file) => {
-            if (response.success) {
-                state.customer.photo = URL.createObjectURL(file.raw);
+            state.customer.photo = response.image;
                 notify({
                     title: translate('Success'),
-                    message: translate('Profile picture has been updated successfully'),
+                    message: translate(response.message),
                     type: 'success'
                 });
-            }
+            state.canOpenProfileUploadPopup = true;
         };
 
-        const handleAvatarError = (err, _) => {
+        const handleAvatarError = (err, file) => {
             let errorMessage = JSON.parse(err.message);
             notify({
+                title: 'Error',
                 message: translate(errorMessage.message),
-                position: 'bottom-right',
                 type: 'error'
             });
+            state.canOpenProfileUploadPopup = true;
         };
 
         const showIcon = () => {
@@ -231,7 +234,7 @@ export default {
             try {
                 await post(`customers/reset_avatar/${customer_id}`)
                     .then(response => {
-                        notify.success({
+                        notify({
                             message: translate(response.message),
                             position: 'bottom-right',
                             type: 'success'
@@ -248,11 +251,16 @@ export default {
             }
         }
 
+        const beforeAvatarUpload = () => {
+            state.canOpenProfileUploadPopup = false;
+        }
+
         onMounted(() => {
             fetchCustomer();
         });
 
         return {
+            ...toRefs(state),
             fetchCustomer,
             handleAvatarSuccess,
             handleAvatarError,
@@ -263,7 +271,7 @@ export default {
             post,
             handleError,
             notify,
-            ...toRefs(state)
+            beforeAvatarUpload
         }
     },
 }
