@@ -189,7 +189,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 
 == Changelog ==
 
-= 1.7.3 (Date: August 10, 2023) =
+= 1.7.3 (Date: August 23, 2023) =
 * Added - Option to delete ticket from inside view ticket
 * Added - Re-design permission page
 * Added - Report by Product(Pro)
@@ -203,6 +203,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Fixed - Add media button is not working for wp-editor
 * Fixed - Attachment not working from email for 3rd party(Pro)
 * Fixed - The issues in inner sidebar while route changing
+* Fixed - Added missing translations
 
 = 1.7.2 (Date: July 17, 2023) =
 * Fixed - Create ticket issue for required fields
