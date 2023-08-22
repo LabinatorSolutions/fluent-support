@@ -163,12 +163,12 @@ class TicketController extends Controller
         }
     }
 
-    public function deleteDraft(Ticket $ticket, $draftID)
+    public function deleteDraft(Ticket $ticket, $draft_id)
     {
-        $draftID = intval($draftID);
+        $draft_id = intval($draft_id);
 
         try {
-            return $ticket->removeDraft($draftID);
+            return $ticket->removeDraft($draft_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -302,13 +302,13 @@ class TicketController extends Controller
      * @param Request $request
      * @param Conversation $conversation
      * @param $ticket_id
-     * @param $responseId
+     * @param $response_id
      * @return array
      */
-    public function deleteResponse(Conversation $conversation, $ticket_id, $responseId)
+    public function deleteResponse(Conversation $conversation, $ticket_id, $response_id)
     {
         try {
-            return $conversation->deleteResponse($ticket_id, $responseId);
+            return $conversation->deleteResponse($ticket_id, $response_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -319,16 +319,16 @@ class TicketController extends Controller
      * @param Request $request
      * @param Conversation $conversation
      * @param int $ticket_id
-     * @param int $responseId
+     * @param int $response_id
      * @return array
      * @throws \Exception
      */
-    public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $responseId)
+    public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id)
     {
         $data = $request->get();
 
         try {
-            return $conversation->updateResponse($data, $ticket_id, $responseId);
+            return $conversation->updateResponse($data, $ticket_id, $response_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -386,13 +386,13 @@ class TicketController extends Controller
     /**
      * detachTag method will remove all tags from tickets
      * @param $ticket_id
-     * @param $tagId
+     * @param $tag_id
      * @return array
      */
-    public function detachTag($ticket_id, $tagId)
+    public function detachTag($ticket_id, $tag_id)
     {
         $ticket = Ticket::findOrFail($ticket_id);
-        $ticket->detachTags($tagId);
+        $ticket->detachTags($tag_id);
 
         return [
             'message' => __('Tag has been removed from this ticket', 'fluent-support'),

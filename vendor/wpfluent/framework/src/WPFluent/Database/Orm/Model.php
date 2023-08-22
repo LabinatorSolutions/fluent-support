@@ -205,7 +205,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
     {
         $this->bootIfNotBooted();
 
-        $this->initializeTraits();
+        // $this->initializeTraits();
 
         $this->syncOriginal();
 
