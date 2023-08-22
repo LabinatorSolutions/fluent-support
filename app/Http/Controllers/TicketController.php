@@ -42,7 +42,7 @@ class TicketController extends Controller
 
         $withPortalSettings = $request->getSafe('with_portal_settings');
 
-        return $profileInfoService->me( $settings, $withPortalSettings );
+        return $profileInfoService->me($settings, $withPortalSettings);
     }
 
     /**
@@ -71,7 +71,7 @@ class TicketController extends Controller
 
         $ticketData = $data['ticket'];
 
-        if(!empty($data['attachments'])){
+        if (!empty($data['attachments'])) {
             $ticketData['attachments'] = $data['attachments'];
         }
 
@@ -94,10 +94,10 @@ class TicketController extends Controller
     /**
      * getTicket method will return ticket information by ticket id
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function getTicket(Request $request, Ticket $ticket, $ticketId)
+    public function getTicket(Request $request, Ticket $ticket, $ticket_id)
     {
         try {
             $ticketWith = $request->getSafe('with');
@@ -108,7 +108,7 @@ class TicketController extends Controller
             }
             $withCrmData = in_array('fluentcrm_profile', $request->query('with_data', []));
 
-            return $ticket->getTicket($ticketWith, $withCrmData, $ticketId);
+            return $ticket->getTicket($ticketWith, $withCrmData, $ticket_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -118,17 +118,17 @@ class TicketController extends Controller
      * createResponse method will create response by agent for the ticket
      * @param Request $request
      * @param Ticket $ticket
-     * @param int $ticketId
+     * @param int $ticket_id
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createResponse(TicketResponseRequest $request, Ticket $ticket, $ticketId)
+    public function createResponse(TicketResponseRequest $request, Ticket $ticket, $ticket_id)
     {
 
         $data = $request->sanitize();
 
         try {
-            return $ticket->createResponse($data, $ticketId);
+            return $ticket->createResponse($data, $ticket_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -138,32 +138,32 @@ class TicketController extends Controller
      * createDraft method will create draft by agent for the ticket
      * @param Request $request
      * @param Ticket $ticket
-     * @param int $ticketId
+     * @param int $ticket_id
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createOrUpdatDraft(TicketResponseRequest $request, Ticket $ticket, $ticketId)
+    public function createOrUpdatDraft(TicketResponseRequest $request, Ticket $ticket, $ticket_id)
     {
 
         $data = $request->sanitize();
 
         try {
-            return $ticket->addOrUpdatDraft($data, $ticketId);
+            return $ticket->addOrUpdatDraft($data, $ticket_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
-    public function getDraft(Ticket $ticket, $ticketId)
+    public function getDraft(Ticket $ticket, $ticket_id)
     {
         try {
-            return $ticket->fetchDraft($ticketId);
+            return $ticket->fetchDraft($ticket_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
     }
 
-    public function deleteDraft(Ticket $ticket,$draftID)
+    public function deleteDraft(Ticket $ticket, $draftID)
     {
         $draftID = intval($draftID);
 
@@ -172,19 +172,18 @@ class TicketController extends Controller
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
-
     }
 
     /**
      * getTicketWidgets method generate additional information for a ticket by  customer
      * @param Ticket $ticket
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function getTicketWidgets(Ticket $ticket, $ticketId)
+    public function getTicketWidgets(Ticket $ticket, $ticket_id)
     {
         try {
-            return $ticket->getTicketWidgets($ticketId);
+            return $ticket->getTicketWidgets($ticket_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -194,16 +193,16 @@ class TicketController extends Controller
      * updateTicketProperty method will update ticket property
      * @param Request $request
      * @param Ticket $ticket
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function updateTicketProperty(Request $request, Ticket $ticket, $ticketId)
+    public function updateTicketProperty(Request $request, Ticket $ticket, $ticket_id)
     {
         $propName = $request->getSafe('prop_name');
         $propValue = $request->getSafe('prop_value');
 
         try {
-            return $ticket->updateTicketProperty($propName, $propValue, $ticketId);
+            return $ticket->updateTicketProperty($propName, $propValue, $ticket_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -212,13 +211,13 @@ class TicketController extends Controller
     /**
      * closeTicket method close the ticket by id
      * @param Ticket $ticket
-     * @param int $ticketId
+     * @param int $ticket_id
      * @return array
      */
-    public function closeTicket(Ticket $ticket, $ticketId)
+    public function closeTicket(Ticket $ticket, $ticket_id)
     {
         try {
-            return $ticket->closeTicket($ticketId, $this->request->getSafe('close_ticket_silently'));
+            return $ticket->closeTicket($ticket_id, $this->request->getSafe('close_ticket_silently'));
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -227,13 +226,13 @@ class TicketController extends Controller
     /**
      * reOpenTicket method will reopen a closed ticket
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function reOpenTicket(Ticket $ticket, $ticketId)
+    public function reOpenTicket(Ticket $ticket, $ticket_id)
     {
         try {
-            return $ticket->reOpenTicket($ticketId);
+            return $ticket->reOpenTicket($ticket_id);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -250,8 +249,8 @@ class TicketController extends Controller
     public function doBulkActions(Request $request, Ticket $ticket)
     {
         $action = $request->getSafe('bulk_action'); //get action
-        $ticketIds = $request->get('ticket_ids', []);
-        $sanitizedTicketIds = array_map('intval', $ticketIds);
+        $ticket_ids = $request->get('ticket_ids', []);
+        $sanitizedTicketIds = array_map('intval', $ticket_ids);
 
         try {
             return $ticket->handleBulkActions($action, $sanitizedTicketIds);
@@ -265,9 +264,9 @@ class TicketController extends Controller
      * @param TicketService $ticketService
      * @return array
      */
-    public function deleteTicket(TicketService $ticketService, $ticketId)
+    public function deleteTicket(TicketService $ticketService, $ticket_id)
     {
-        $ticket = Ticket::findOrFail($ticketId);
+        $ticket = Ticket::findOrFail($ticket_id);
         try {
             return $ticketService->delete($ticket);
         } catch (\Exception $e) {
@@ -302,14 +301,14 @@ class TicketController extends Controller
      * deleteResponse method will remove a response from ticket by ticket id and response id
      * @param Request $request
      * @param Conversation $conversation
-     * @param $ticketId
+     * @param $ticket_id
      * @param $responseId
      * @return array
      */
-    public function deleteResponse(Conversation $conversation, $ticketId, $responseId)
+    public function deleteResponse(Conversation $conversation, $ticket_id, $responseId)
     {
         try {
-            return $conversation->deleteResponse($ticketId, $responseId);
+            return $conversation->deleteResponse($ticket_id, $responseId);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -319,17 +318,17 @@ class TicketController extends Controller
      * updateResponse method will update ticket response using ticket and response id
      * @param Request $request
      * @param Conversation $conversation
-     * @param int $ticketId
+     * @param int $ticket_id
      * @param int $responseId
      * @return array
      * @throws \Exception
      */
-    public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticketId, $responseId)
+    public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $responseId)
     {
         $data = $request->get();
 
         try {
-            return $conversation->updateResponse($data, $ticketId, $responseId);
+            return $conversation->updateResponse($data, $ticket_id, $responseId);
         } catch (\Exception $e) {
             return $this->sendError(__($e->getMessage(), 'fluent-support'));
         }
@@ -338,30 +337,30 @@ class TicketController extends Controller
     /**
      * getLiveActivity method will return the activity in a ticket by agents
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function getLiveActivity(Request $request, $ticketId)
+    public function getLiveActivity(Request $request, $ticket_id)
     {
         $agent = Helper::getAgentByUserId();
 
         return [
-            'live_activity' => TicketHelper::getActivity($ticketId, $agent->id)
+            'live_activity' => TicketHelper::getActivity($ticket_id, $agent->id)
         ];
     }
 
     /**
      * removeLiveActivity method will remove activities that
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function removeLiveActivity(Request $request, $ticketId)
+    public function removeLiveActivity(Request $request, $ticket_id)
     {
         $agent = Helper::getAgentByUserId();
 
         return [
-            'result'   => TicketHelper::removeFromActivities($ticketId, $agent->id),
+            'result'   => TicketHelper::removeFromActivities($ticket_id, $agent->id),
             'agent_id' => $agent->id
         ];
     }
@@ -369,12 +368,12 @@ class TicketController extends Controller
     /**
      * addTag method will add tag in ticket by ticket id
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function addTag(Request $request, $ticketId)
+    public function addTag(Request $request, $ticket_id)
     {
-        $ticket = Ticket::findOrFail($ticketId);
+        $ticket = Ticket::findOrFail($ticket_id);
 
         $ticket->applyTags($request->getSafe('tag_id', 'intval'));
 
@@ -386,13 +385,13 @@ class TicketController extends Controller
 
     /**
      * detachTag method will remove all tags from tickets
-     * @param $ticketId
+     * @param $ticket_id
      * @param $tagId
      * @return array
      */
-    public function detachTag($ticketId, $tagId)
+    public function detachTag($ticket_id, $tagId)
     {
-        $ticket = Ticket::findOrFail($ticketId);
+        $ticket = Ticket::findOrFail($ticket_id);
         $ticket->detachTags($tagId);
 
         return [
@@ -420,10 +419,10 @@ class TicketController extends Controller
     /**
      * getTicketCustomData method will return the custom data by ticket id
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array|array[]
      */
-    public function getTicketCustomData(Request $request, $ticketId)
+    public function getTicketCustomData(Request $request, $ticket_id)
     {
         if (!defined('FLUENTSUPPORTPRO')) {
             return [
@@ -432,7 +431,7 @@ class TicketController extends Controller
             ];
         }
 
-        $ticket = Ticket::findOrFail($ticketId);
+        $ticket = Ticket::findOrFail($ticket_id);
 
         return [
             'custom_data'     => (object)$ticket->customData(),
