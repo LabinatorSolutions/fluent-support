@@ -195,15 +195,18 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Added - Report by Product(Pro)
 * Added - Report by Business Inbox(Pro)
 * Added - Support RTL email template
+* Added - Option to open activity on new tab
+* Added - Record delete log on activity
+* Added - Store Route State on inner sidebar
 * Fixed - Hide agent performance report from dashboard if the user doesn't have permission
-* Fixed - Tickets page - search not working in some case
-* Fixed - Issue in Customer Fields required with conditions(Pro)
+* Fixed - Issue in Custom Fields required with conditions(Pro)
 * Fixed - Save as draft in reply ticket not working
 * Fixed - Manage Customer - upload avatar for customer not working
 * Fixed - Add media button is not working for wp-editor
 * Fixed - Attachment not working from email for 3rd party(Pro)
-* Fixed - The issues in inner sidebar while route changing
-* Fixed - Added missing translations
+* Fixed - Greek encoding issue(Pro)
+* Improvement - Added missing translations
+* More improvements & small fixes
 
 = 1.7.2 (Date: July 17, 2023) =
 * Fixed - Create ticket issue for required fields
