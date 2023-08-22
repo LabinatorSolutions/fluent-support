@@ -110,7 +110,9 @@ export default {
         }
 
         function editEmail(email) {
-            get(`mailboxes/${props.box_id}/email_settings?email_type=${email.key}`)
+            get(`mailboxes/${props.box_id}/email_settings`,{
+                email_type: email.key,
+            })
                 .then(response => {
                     state.active_email_settings = response.email_settings;
                     state.edit_modal = !state.edit_modal;
