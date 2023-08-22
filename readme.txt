@@ -2,9 +2,9 @@
 Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
-Tested up to: 6.2
+Tested up to: 6.3
 Stable tag: 1.7.3
-Requires PHP: 7.3
+Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -205,6 +205,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Fixed - Add media button is not working for wp-editor
 * Fixed - Attachment not working from email for 3rd party(Pro)
 * Fixed - Greek encoding issue(Pro)
+* Fixed - Displaying incorrect time
 * Improvement - Added missing translations
 * More improvements & small fixes
 
