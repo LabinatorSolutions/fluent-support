@@ -127,10 +127,10 @@ class CustomerPortalController extends Controller
     /**
      * getTicket method will get the ticket information with customer and agent as well as response in a ticket by ticket id
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function getTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
+    public function getTicket(Request $request, CustomerPortalService $customerPortalService, $ticket_id)
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
@@ -139,7 +139,7 @@ class CustomerPortalController extends Controller
         ];
 
         try {
-            return $customerPortalService->getTicket($customerAdditionalData, $ticketId);
+            return $customerPortalService->getTicket($customerAdditionalData, $ticket_id);
         } catch (Exception $e) {
             return $this->sendError([
                 'message'    => $e->getMessage(),
@@ -151,11 +151,11 @@ class CustomerPortalController extends Controller
     /**
      * createResponse method will create response by customer in a ticket by ticket id
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function createResponse(TicketResponseRequest $request, CustomerPortalService $customerPortalService, $ticketId)
+    public function createResponse(TicketResponseRequest $request, CustomerPortalService $customerPortalService, $ticket_id)
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
@@ -163,7 +163,7 @@ class CustomerPortalController extends Controller
             'user_ip'              => $request->getIp()
         ];
 
-        $ticket = Ticket::findOrFail($ticketId);
+        $ticket = Ticket::findOrFail($ticket_id);
         $data = $request->sanitize();
 
         $canCreateResponse = apply_filters('fluent_support/can_customer_create_response', true, $ticket->customer, $ticket, $data);
@@ -176,7 +176,7 @@ class CustomerPortalController extends Controller
         }
 
         try {
-            return $customerPortalService->createResponse($customerAdditionalData, $ticketId, $data);
+            return $customerPortalService->createResponse($customerAdditionalData, $ticket_id, $data);
         } catch (Exception $e) {
             return $this->sendError([
                 'message'    => $e->getMessage(),
@@ -188,10 +188,10 @@ class CustomerPortalController extends Controller
     /**
      * This `closeTicket` is responsible for closing ticket by ticket id
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function closeTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
+    public function closeTicket(Request $request, CustomerPortalService $customerPortalService, $ticket_id)
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
@@ -199,7 +199,7 @@ class CustomerPortalController extends Controller
             'user_ip'              => $request->getIp()
         ];
         try {
-            return $customerPortalService->closeTicket($customerAdditionalData, $ticketId);
+            return $customerPortalService->closeTicket($customerAdditionalData, $ticket_id);
         } catch (Exception $e) {
             return $this->sendError([
                 'message'    => $e->getMessage(),
@@ -211,10 +211,10 @@ class CustomerPortalController extends Controller
     /**
      * closeTicket method will re-open a ticket by customer using ticket id
      * @param Request $request
-     * @param $ticketId
+     * @param $ticket_id
      * @return array
      */
-    public function reOpenTicket(Request $request, CustomerPortalService $customerPortalService, $ticketId)
+    public function reOpenTicket(Request $request, CustomerPortalService $customerPortalService, $ticket_id)
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
@@ -222,7 +222,7 @@ class CustomerPortalController extends Controller
             'user_ip'              => $request->getIp()
         ];
         try {
-            return $customerPortalService->reOpenTicket($customerAdditionalData, $ticketId);
+            return $customerPortalService->reOpenTicket($customerAdditionalData, $ticket_id);
         } catch (Exception $e) {
             return $this->sendError([
                 'message'    => $e->getMessage(),

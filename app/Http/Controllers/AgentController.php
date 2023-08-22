@@ -53,13 +53,13 @@ class AgentController extends Controller
      * updateAgent method will update the information of an exiting agent
      * @param AgentCreateRequest $request
      * @param Agent $agent
-     * @param $agentId
+     * @param $agent_id
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function updateAgent(AgentCreateRequest $request, Agent $agent, $agentId)
+    public function updateAgent(AgentCreateRequest $request, Agent $agent, $agent_id)
     {
-        $agent = $agent::findOrFail($agentId);
+        $agent = $agent::findOrFail($agent_id);
 
         if ($agent) {
             try {
@@ -80,14 +80,14 @@ class AgentController extends Controller
      * deleteAgent will delete an exiting agent and add an alternative agent as replacement
      * @param Request $request
      * @param Agent $agent
-     * @param $agentId
+     * @param $agent_id
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function deleteAgent(Request $request, Agent $agent, $agentId)
+    public function deleteAgent(Request $request, Agent $agent, $agent_id)
     {
         try {
-            $agent->deleteAgent($request->getSafe('fallback_agent_id', 'intval'), $agentId);
+            $agent->deleteAgent($request->getSafe('fallback_agent_id', 'intval'), $agent_id);
 
             return [
                 'message' => __('Support Staff has been deleted', 'fluent-support')
@@ -131,17 +131,17 @@ class AgentController extends Controller
     //  * getAgentStat method will return ticket statistics by an agent id
     //  *
     //  * @param Request $request
-    //  * @param $agentId
+    //  * @param $agent_id
     //  * @return array
     //  */
-    // public function getAgentStat(Request $request, $agentId)
+    // public function getAgentStat(Request $request, $agent_id)
     // {
 
-    //     $stats = StatModule::getAgentStat($agentId); //Get ticket statistics
+    //     $stats = StatModule::getAgentStat($agent_id); //Get ticket statistics
 
     //     $with = $request->getSafe('with', []);
 
-    //     return (new Agent())->getAgentStat($stats, $with, $agentId);
+    //     return (new Agent())->getAgentStat($stats, $with, $agent_id);
     // }
 
     /**

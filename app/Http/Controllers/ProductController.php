@@ -22,12 +22,12 @@ class ProductController extends Controller
     /**
      * get method will get product by id and return
      * @param Product $product
-     * @param int $productId
+     * @param int $product_id
      * @return array
      */
-    public function get ( Product $product, $productId )
+    public function get ( Product $product, $product_id )
     {
-        return $product->getProduct( $productId );
+        return $product->getProduct( $product_id );
     }
 
     /**
@@ -49,25 +49,25 @@ class ProductController extends Controller
      * update methd will update an exiting product by id
      * @param Request $request
      * @param Product $product
-     * @param int $productId
+     * @param int $product_id
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function update ( ProductRequest  $request, Product $product, $productId )
+    public function update ( ProductRequest  $request, Product $product, $product_id )
     {
         $data = $request->all();
 
-        return $product->updateProduct( $productId, $data );
+        return $product->updateProduct( $product_id, $data );
     }
 
     /**
      * delete method will delete an existing product by id
      * @param Product $product
-     * @param int $productId
+     * @param int $product_id
      * @return array
      */
-    public function delete ( Product $product, $productId )
+    public function delete ( Product $product, $product_id )
     {
-        return $product->deleteProduct( $productId );
+        return $product->deleteProduct( $product_id );
     }
 }
