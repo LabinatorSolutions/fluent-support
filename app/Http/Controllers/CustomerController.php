@@ -84,7 +84,7 @@ class CustomerController extends Controller
             ];
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support'),
+                'message' => $e->getMessage(),
                 'errors'  => [
                     'email' => [
                         'unique' => __('Email address has been assigned to other customer', 'fluent-support'),
@@ -118,7 +118,7 @@ class CustomerController extends Controller
             return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id'), 'customer');
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support'),
+                'message' => $e->getMessage(),
             ],
             $e->getCode()
         );
@@ -142,7 +142,7 @@ class CustomerController extends Controller
             ];
         } catch (\Exception $e) {
             return [
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ];
         }
     }
