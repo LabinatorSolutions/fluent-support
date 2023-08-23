@@ -353,6 +353,8 @@ class FeedIntegration extends IntegrationManagerController
 
         $customerData['last_ip_address'] = $entry->ip;
 
+        $customer = Customer::maybeCreateCustomer($customerData);
+
         // Don't create a ticket if customer is blocked
         if($this->isBlockedCustomer($customerData['email'])) {
             do_action('ff_log_data', [
@@ -366,8 +368,6 @@ class FeedIntegration extends IntegrationManagerController
             ]);
             return false;
         }
-
-        $customer = Customer::maybeCreateCustomer($customerData);
 
         $ticketData['customer_id'] = $customer->id;
 
@@ -439,7 +439,7 @@ class FeedIntegration extends IntegrationManagerController
     {
         $customer = Customer::where('email', $customerEmail)->first();
 
-        if('inactive' == $customer->status) {
+        if('inactive' == $customer->status || !$customer->status) {
             return true;
         }
 
