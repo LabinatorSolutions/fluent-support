@@ -32,11 +32,12 @@ class IntegrationController extends Controller
         $settings = IntegrationSettingsModule::saveSettings($settingsKey, $settings);
 
         if(!$settings || is_wp_error($settings)) {
-            $errorMessage = (is_wp_error($settings)) ? $settings->get_error_message() : 'Settings failed to save';
+            $errorMessage = (is_wp_error($settings)) ? $settings->get_error_message() : __('Settings failed to save', 'fluent-support');
             return $this->sendError([
-                'message' => __($errorMessage, 'fluent-support')
+                'message' => $errorMessage
             ]);
         }
+        
 
         return [
             'message' => __('Settings has been updated', 'fluent-support'),
