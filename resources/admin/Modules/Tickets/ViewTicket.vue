@@ -65,11 +65,6 @@
                             {{ translate('Close') }}
                         </el-button>
 
-                        <el-button v-loading="deleting" :disabled="deleting" @click="deleteTicket()"
-                                   class="fs_delete_btn" type="danger" size="small">
-                            {{ translate('Delete') }}
-                        </el-button>
-
                         <el-popover
                             placement="bottom"
                             :width="400"
@@ -150,6 +145,11 @@
                                         </el-icon>
                                         {{ translate('Close Ticket Silently') }}
                                     </el-dropdown-item>
+
+                                    <el-dropdown-item @click="deleteTicket()" v-loading="deleting">
+                                        {{ translate('Delete') }}
+                                    </el-dropdown-item>
+
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
@@ -841,9 +841,7 @@ export default {
                             type: "success",
                             position: "bottom-right",
                         });
-                        if (window.history.state.back) {
-                            router.push({name: 'tickets'});
-                        }
+                        router.push({name: 'tickets'});
                     })
             });
         }
