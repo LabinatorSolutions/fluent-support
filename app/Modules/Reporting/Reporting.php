@@ -292,6 +292,15 @@ class Reporting
         return $agents;
     }
 
+    /**
+     * @param $type
+     * @param $from
+     * @param $to
+     * This method will get the summary count of open, closed, response and react
+     * Used for Product and Business Inbox report
+     * @return mixed
+     */
+
     public function getSummary($type, $from = null, $to = null)
     {
         if (!$from) {
@@ -338,7 +347,7 @@ class Reporting
                               $groupByField,
                           ])
                           ->groupBy($groupByField)
-                          ->whereBetween('created_at', [$from, $to])
+                          ->whereBetween('updated_at', [$from, $to])
                           ->get();
 
         $reports = $this->pushReportData('responses', $responses, $reports, $groupByField);
