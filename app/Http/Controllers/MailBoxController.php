@@ -132,9 +132,9 @@ class MailBoxController extends Controller
      * @param $boxId
      * @return array
      */
-    public function getEmailSettings(Request $request, Settings $settings, $boxId)
+    public function getEmailSettings(Request $request, Settings $settings, $id)
     {
-        $box = MailBox::findOrFail($boxId);
+        $box = MailBox::findOrFail($id);
         $emailType = $request->getSafe('email_type');
 
         return [
@@ -148,9 +148,9 @@ class MailBoxController extends Controller
      * @param $boxId
      * @return array
      */
-    public function getEmailsSetups( MailBoxService $mailBoxService, $boxId )
+    public function getEmailsSetups( MailBoxService $mailBoxService, $id )
     {
-       return $mailBoxService->getEmailsSetups($boxId);
+       return $mailBoxService->getEmailsSetups($id);
     }
 
     /**
@@ -161,7 +161,7 @@ class MailBoxController extends Controller
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function saveEmailSettings( Request $request, MailBoxService $mailBoxService, $boxId )
+    public function saveEmailSettings( Request $request, MailBoxService $mailBoxService, $id )
     {
         $data = wp_unslash($request->getSafe('email_settings'));
         $emailType = $request->getSafe('email_type');
@@ -171,7 +171,7 @@ class MailBoxController extends Controller
             'email_body' => 'required'
         ]);
 
-        return $mailBoxService->saveEmailSettings( $emailType, $boxId, $data );
+        return $mailBoxService->saveEmailSettings( $emailType, $id, $data );
     }
 
     /**
@@ -180,9 +180,9 @@ class MailBoxController extends Controller
      * @param $boxId
      * @return array
      */
-    public function setAsDefault( MailBoxService $mailBoxService, $boxId )
+    public function setAsDefault( MailBoxService $mailBoxService, $id )
     {
-        return $mailBoxService->setAsDefault( $boxId );
+        return $mailBoxService->setAsDefault( $id );
     }
 
     /**
@@ -192,8 +192,8 @@ class MailBoxController extends Controller
      * @param int $boxId
      * @return array
      */
-    public function getTickets(Request $request, MailBoxService $mailBoxService, $boxId)
+    public function getTickets(Request $request, MailBoxService $mailBoxService, $id)
     {
-        return $mailBoxService->getTickets( $request->getSafe('filters'), $boxId );
+        return $mailBoxService->getTickets( $request->getSafe('filters'), $id );
     }
 }
