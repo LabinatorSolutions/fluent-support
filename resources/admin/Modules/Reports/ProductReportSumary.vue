@@ -181,18 +181,6 @@ export default {
         const sortedReports = computed(() => {
             let reports = state.reports;
 
-            const settings = getData("agents_summary_setting");
-
-            if (props.url != "my-reports/my-summary" && settings) {
-                let reportsToInclude = [];
-                each(reports, (report) => {
-                    if (settings.agents.includes(report.id)) {
-                        reportsToInclude.push(report);
-                    }
-                });
-                reports = reportsToInclude;
-            }
-
             if (state.sort_type == "ascending") {
                 return reports.sort((a, b) =>
                     parseInt(a.stats[state.sort_column]) >
