@@ -60,11 +60,11 @@ class MailBoxController extends Controller
      * This `update` method will update existing information for a business by mailbox id
      * @param Request $request
      * @param MailBox $mailBox
-     * @param int $mailBoxId
+     * @param int $id
      * @return array
      * @throws \Exception
      */
-    public function update(Request $request, MailBox $mailBox, $mailBoxId)
+    public function update(Request $request, MailBox $mailBox, $id)
     {
         try{
             $data = wp_unslash( $request->getSafe('business') );
@@ -76,7 +76,7 @@ class MailBoxController extends Controller
 
             return [
                 'message' => __( 'Mailbox has been saved', 'fluent-support' ),
-                'mailbox' => $mailBox->updateMailBox( $data, $mailBoxId )
+                'mailbox' => $mailBox->updateMailBox( $data, $id )
             ];
         }catch (\Exception $e){
             return [
@@ -89,14 +89,14 @@ class MailBoxController extends Controller
      * This `delete` method will delete a business from mailbox and replaced with alternative
      * @param Request $request
      * @param MailBoxService $mailBoxService
-     * @param int $mailBoxId
+     * @param int $id
      * @throws \Exception
      * @return array
      */
-    public function delete(Request $request, MailBoxService $mailBoxService, $mailBoxId)
+    public function delete(Request $request, MailBoxService $mailBoxService, $id)
     {
         try {
-            return $mailBoxService->deleteMailBox( $mailBoxId, $request->getSafe('fallback_id', 'intval') );
+            return $mailBoxService->deleteMailBox( $id, $request->getSafe('fallback_id', 'intval') );
         } catch (\Exception $e) {
             return [
                 'message' => __( $e->getMessage(), 'fluent-support' ),
@@ -109,15 +109,15 @@ class MailBoxController extends Controller
      * This `moveTickets` method will move tickets from one mailbox to another
      * @param Request $request
      * @param MailBoxService $mailBoxService
-     * @param int $mailBoxId
+     * @param int $id
      * @throws \Exception
      * @return array
      */
-    public function moveTickets(Request $request, MailBoxService $mailBoxService, $mailBoxId)
+    public function moveTickets(Request $request, MailBoxService $mailBoxService, $id)
     {
         try {
             $data = $request->only(['ticket_ids', 'new_box_id', 'move_type']);
-            return $mailBoxService->moveTickets( $data, $mailBoxId );
+            return $mailBoxService->moveTickets( $data, $id );
         } catch (\Exception $e) {
             return [
                 'message' => __( $e->getMessage(), 'fluent-support' ),
@@ -129,7 +129,7 @@ class MailBoxController extends Controller
      * This `getEmailSettings` method will get and return the mailbox email settings
      * @param Request $request
      * @param Settings $settings
-     * @param $boxId
+     * @param $id
      * @return array
      */
     public function getEmailSettings(Request $request, Settings $settings, $id)
@@ -145,7 +145,7 @@ class MailBoxController extends Controller
     /**
      * This `getEmailsSetups` method will return email settings for a business box by box id
      * @param MailBoxService $mailBoxService
-     * @param $boxId
+     * @param $id
      * @return array
      */
     public function getEmailsSetups( MailBoxService $mailBoxService, $id )
@@ -157,7 +157,7 @@ class MailBoxController extends Controller
      * This `saveEmailSettings` method will save the email settings for a business box using box id
      * @param Request $request
      * @param Settings $settings
-     * @param $boxId
+     * @param $id
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
@@ -177,7 +177,7 @@ class MailBoxController extends Controller
     /**
      * This `setAsDefault` method will set a business box as default
      * @param MailBoxService $mailBoxService
-     * @param $boxId
+     * @param $id
      * @return array
      */
     public function setAsDefault( MailBoxService $mailBoxService, $id )
@@ -189,7 +189,7 @@ class MailBoxController extends Controller
      * This `getTickets` method will return the list of tickets for a business box
      * @param Request $request
      * @param MailBox $mailBox
-     * @param int $boxId
+     * @param int $id
      * @return array
      */
     public function getTickets(Request $request, MailBoxService $mailBoxService, $id)
