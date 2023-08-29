@@ -1,0 +1,21 @@
+{
+    "apiVersion": 1,
+    "name": "fluent-support/customer-portal",
+    "version": "0.1.0",
+    "title": "Fs Customer Portal",
+    "category": "design",
+    "icon": "flag",
+    "description": "Customer Portal Editor",
+    "supports": {
+        "html": false
+    },
+    "textdomain": "fluent-support",
+    "attributes": {
+        "message": {
+            "type": "string",
+            "source": "text",
+            "selector": "div",
+            "default": ""
+        }
+    }
+}

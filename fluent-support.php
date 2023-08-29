@@ -31,3 +31,14 @@ add_action('wp_insert_site', function ($new_site) {
         restore_current_blog();
     }
 });
+function create_block_gutenpride_block_init() {
+    wp_register_script(
+        'fluent-support/customer-portal',
+        plugin_dir_url(__FILE__) . '/assets/block-editor/js/fst_block.js',
+        array( 'wp-blocks', 'wp-element' )
+    );
+    register_block_type( 'fluent-support/customer-portal' , array(
+        'editor_script' => 'fluent-support/customer-portal',
+    ));
+}
+add_action( 'init', 'create_block_gutenpride_block_init' );
