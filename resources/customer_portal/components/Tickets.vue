@@ -3,20 +3,20 @@
         <div class="fs_tk_actions fs_tk_header">
             <div class="fs_tk_left">
                 <div class="fs_button_groups">
-                    <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'all' }"
+                    <button class="fs_btn fs_btn_all" :class="{ fs_btn_active: filter_type == 'all' }"
                             @click="filter_type = 'all'">{{$t('All')}}
                     </button>
-                    <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'open' }"
+                    <button class="fs_btn fs_btn_open" :class="{ fs_btn_active: filter_type == 'open' }"
                             @click="filter_type = 'open'">{{$t('Open')}}
                     </button>
-                    <button class="fs_btn" :class="{ fs_btn_active: filter_type == 'closed' }"
+                    <button class="fs_btn fs_btn_closed" :class="{ fs_btn_active: filter_type == 'closed' }"
                             @click="filter_type = 'closed'">{{$t('Closed')}}
                     </button>
                 </div>
             </div>
             <div class="fs_tk_right">
                 <button v-if="appVars.show_logout" @click="logout" class="fs_btn fs_btn_logout"> {{$t('Logout')}} </button>
-                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success">
+                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success fs_btn_create_ticket">
                     {{ $t('create_ticket_cta') }}
                 </button>
             </div>

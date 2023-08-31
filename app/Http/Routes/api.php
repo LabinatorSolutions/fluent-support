@@ -104,6 +104,7 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
 
     $router->get('/fluentcrm-settings', 'SettingsController@getFluentCRMSettings');
     $router->post('/intsall-fluentcrm', 'SettingsController@installFluentCRM');
+    $router->post('/custom-css', 'SettingsController@customCss');
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
