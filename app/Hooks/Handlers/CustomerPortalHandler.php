@@ -4,7 +4,6 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Customer;
-use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
@@ -68,26 +67,8 @@ class CustomerPortalHandler
             }
 
             $this->enqueueScripts();
-            $customData = [
-                "fs_btn_all" => [
-                    "background-color" => "#f5f5f5",
-                    "color" => "#000000",
-                ],
-                "fs_btn_open" => [
-                    "background-color" => "green",
-                    "color" => "#ffffff",
-                ],
-            ];
-            $all_css = '';
-            foreach ($customData as $class => $css) {
-                $all_css .= '.' . $class . '{';
-                foreach ($css as $key => $value) {
-                    $all_css .= $key . ':' . $value . '!important;';
-                }
-                $all_css .= '}';
-            }
-            $all_css = '<style>' . $all_css . '</style>';
-            return $all_css.'<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
+
+            return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
         } else {
 
             $businessSettings = Helper::getBusinessSettings();

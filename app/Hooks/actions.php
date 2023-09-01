@@ -81,3 +81,4 @@ if(defined('LSCWP_V')){
     });
 }
 
+$app->addAction('init', 'BlockEditorHandler@init');
