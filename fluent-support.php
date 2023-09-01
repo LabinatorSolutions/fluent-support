@@ -44,21 +44,3 @@ add_filter('block_categories_all', function ($categories, $post) {
     );
 
 }, 1, 2);
-function create_block_gutenberg_block_init() {
-    wp_register_script(
-        'fluent-support/customer-portal',
-        plugin_dir_url(__FILE__) . '/assets/block-editor/js/fst_block.js',
-        array( 'wp-blocks', 'wp-element')
-    );
-    wp_localize_script(
-        'fluent-support/customer-portal',
-        'rest_url',
-        array(
-            'url' => 'https://www.fs.test/index.php?rest_route=/fluent-support/v2',
-        )
-    );
-    register_block_type( 'fluent-support/customer-portal' , array(
-        'editor_script' => 'fluent-support/customer-portal',
-    ));
-}
-add_action( 'init', 'create_block_gutenberg_block_init' );
