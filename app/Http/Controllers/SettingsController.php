@@ -442,46 +442,6 @@ class SettingsController extends Controller
         }
     }
 
-    public function customCss(Request $request)
-    {
-        $customCss = $request->get('custom_css');
-        $customCss = trim($customCss);
-        $customCss = stripslashes($customCss);
-        $customCss = wp_kses_post($customCss);
-        $demoData = [
-            "fs_btn_all" => [
-                "background-color" => "#f5f5f5",
-                "color" => "#000000",
-            ],
-            "fs_btn_open" => [
-                "background-color" => "#000000",
-                "color" => "#ffffff",
-            ],
-        ];
-
-        $demoData = maybe_serialize($demoData);
-
-        $exist = Meta::where('object_type', '_fluent_support_custom_css')->first();
-        if($exist){
-            Meta::where('object_type', '_fluent_support_custom_css')->update([
-                'value' => maybe_serialize($demoData)
-            ]);
-            return $this->sendSuccess([
-                'message' => __('Custom CSS has been updated successfully.', 'fluent-support'),
-            ]);
-        }else {
-            Meta::insert([
-                'object_type' => '_fluent_support_custom_css',
-                'key'         => '_fluent_support_custom_css',
-                'value'       => maybe_serialize($demoData)
-            ]);
-        }
-
-        return $this->sendSuccess([
-            'message' => __('Custom CSS has been updated successfully', 'fluent-support')
-        ]);
-
-    }
     private function backgroundInstaller($plugin_to_install, $plugin_id)
     {
         if (!empty($plugin_to_install['repo-slug'])) {
