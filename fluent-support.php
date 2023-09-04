@@ -31,16 +31,3 @@ add_action('wp_insert_site', function ($new_site) {
         restore_current_blog();
     }
 });
-
-add_filter('block_categories_all', function ($categories, $post) {
-    return array_merge(
-        array(
-            array(
-                'slug'  => 'fluent-support',
-                'title' => __('Fluent Support', 'fluent-support')
-            ),
-        ),
-        $categories
-    );
-
-}, 1, 2);

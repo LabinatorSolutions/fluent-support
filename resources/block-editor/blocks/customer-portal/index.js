@@ -3,14 +3,13 @@ const { __ } = wp.i18n;
 import Edit from './edit';
 import attributes from './attributes';
 import metadata from './block.json';
-
-//import 'bootstrap/dist/css/bootstrap.min.css';
+import icons from '../../icons';
 registerBlockType( metadata.name, {
-    title: __('All Tickets'),
-    description: __('Customer Portal Editor Block'),
+    title: __('Customer Portal'),
+    description: __('Add the Customer Portal from where user will submit tickets and manage their tickets.'),
     textdomain: 'fluent-support',
-    category: 'fluent-support',
-    icon: 'smiley',
+    category: 'design',
+    icon: icons.fluentSupport,
     attributes,
     /**
      * @see ./edit.js
