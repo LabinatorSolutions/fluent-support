@@ -119,6 +119,14 @@ class AuthHandler
             return (new \FluentAuth\App\Hooks\Handlers\CustomAuthHandler())->registrationForm($attributes);
         }
 
+        $customFieldsKey =  Helper::getBusinessSettings('custom_registration_form_field');
+
+        if (!empty($customFieldsKey)) {
+            add_filter('fluent_support/registration_form_fields', function($fields) use ($customFieldsKey) {
+                return $this->addCustomFieldsToRegistrationForm($fields,$customFieldsKey);
+            });
+        }
+
         $registrationFields = static::getSignupFields();
         $hide = $attributes['hide'] == 'true' ? 'hide' : '';
 
@@ -316,6 +324,63 @@ class AuthHandler
                 'placeholder' => __('Password', 'fluent-support')
             ]
         ]);
+    }
+
+    private function addCustomFieldsToRegistrationForm($fields, $customFieldsKey) {
+        $customFields = $this->allCustomFields();
+
+        foreach ($customFieldsKey as $key) {
+            $fields[$key] = $customFields[$key];
+        }
+
+        return $fields;
+    }
+
+    public static function allCustomFields(): array {
+        return [
+            'address_line_1' => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('Address Line 1', 'your-text-domain'),
+                'id'          => 'fst_address_line_1',
+                'placeholder' => __('Address Line 1', 'your-text-domain'),
+            ],
+            'address_line_2' => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('Address Line 2', 'your-text-domain'),
+                'id'          => 'fst_address_line_2',
+                'placeholder' => __('Address Line 2', 'your-text-domain'),
+            ],
+            'city'      => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('City', 'your-text-domain'),
+                'id'          => 'fst_city',
+                'placeholder' => __('City', 'your-text-domain'),
+            ],
+            'zip'   => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('Zip', 'your-text-domain'),
+                'id'          => 'fst_zip',
+                'placeholder' => __('Zip', 'your-text-domain'),
+            ],
+            'state'   => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('State', 'your-text-domain'),
+                'id'          => 'fst_state',
+                'placeholder' => __('State', 'your-text-domain'),
+            ],
+            'country'   => [
+                'required'    => false,
+                'type'        => 'country-selector',
+                'label'       => __('Country', 'your-text-domain'),
+                'id'          => 'fst_country',
+                'placeholder' => __('Country', 'your-text-domain'),
+            ]
+        ];
     }
 
     public static function resetPasswordFields()

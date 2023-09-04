@@ -241,6 +241,30 @@ class CustomerPortalHandler
             'last_ip_address' => $request->getIp()
         ];
 
+        $customFields = Helper::getBusinessSettings('custom_registration_form_field');
+
+        if (!empty($customFields)) {
+            $onBehalf = $this->processCustomFields($customFields, $onBehalf);
+        }
+
         return Customer::maybeCreateCustomer($onBehalf);
+    }
+
+    private function processCustomFields($customFields, $onBehalf)
+    {
+        $userMeta = get_user_meta(get_current_user_id());
+        $customData = [];
+
+        foreach ($customFields as $field) {
+            if (isset($userMeta[$field])) {
+                $customData[$field] = is_array($userMeta[$field]) ? $userMeta[$field][0] : $userMeta[$field];
+            }
+        }
+
+        if ($customData) {
+            $onBehalf = array_merge($onBehalf, $customData);
+        }
+
+        return $onBehalf;
     }
 }
