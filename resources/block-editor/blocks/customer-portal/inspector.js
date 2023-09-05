@@ -3,11 +3,35 @@ const { InspectorControls } = wp.blockEditor;
 const { PanelBody, TextControl, BaseControl, ColorPalette } = wp.components;
 
 const Inspector = ({ attributes, setAttributes }) => {
-    //const { buttonAllBgColor, buttonAllTextColor,  } = attributes;
 
     return (
         <InspectorControls>
-            <PanelBody title={__('Fs All Tickets Settings ', 'fluent-support')}>
+            <PanelBody title={__('Ticket Header', 'fluent-support')}>
+                <BaseControl label={__('Background Color', 'fluent-support')} id="color">
+                    <ColorPalette
+                        colors={[
+                            { name: 'red', color: '#f00' },
+                            { name: 'white', color: '#fff' },
+                            { name: 'blue', color: '#00f' },
+                        ]}
+                        value={attributes.ticketHeaderBgColor}
+                        onChange={(v) => setAttributes({ ticketHeaderBgColor: v })}
+                    />
+                </BaseControl>
+
+                <BaseControl label={__('Text Color', 'fluent-support')} id="text_color">
+                    <ColorPalette
+                        colors={[
+                            { name: 'red', color: '#f00' },
+                            { name: 'white', color: '#fff' },
+                            { name: 'blue', color: '#00f' },
+                        ]}
+                        value={attributes.buttonAllTextColor}
+                        onChange={(v) => setAttributes({ buttonAllTextColor: v })}
+                    />
+                </BaseControl>
+            </PanelBody>
+            <PanelBody title={__('All', 'fluent-support')}>
                 <BaseControl label={__('Background Color', 'fluent-support')} id="color">
                     <ColorPalette
                         colors={[
@@ -33,7 +57,7 @@ const Inspector = ({ attributes, setAttributes }) => {
                 </BaseControl>
             </PanelBody>
 
-            <PanelBody title={__('Open Tickets Button Settings ', 'fluent-support')}>
+            <PanelBody title={__('Open', 'fluent-support')}>
                 <BaseControl label={__('Background Color', 'fluent-support')} id="btn_bg_color">
                     <ColorPalette
                         colors={[

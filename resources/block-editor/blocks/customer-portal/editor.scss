@@ -1,0 +1,49 @@
+.block-wrapper {
+    width: 70%;
+    background-color: #ebeef4;
+    border: 1px solid #f9f6f6;
+    min-height: 300px;
+    margin: 0 auto;
+}
+.ticket-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    background-color: #426fca;
+    height: 60px;
+    padding: 5px 5px 0 5px;
+}
+
+.ticket-table{
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #f9f6f6;
+    text-align: center;
+}
+
+.ticket-table-header th{
+    background-color: #426fca;
+    color: #fff;
+    padding: 5px;
+    text-align: center;
+    border-collapse: collapse;
+    border: 1px solid #f9f6f6;
+}
+
+.ticket-table tbody td{
+    padding: 5px;
+    border-collapse: collapse;
+    border: 1px solid #f9f6f6;
+    text-align: center;
+}
+
+.ticket-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    background-color: #426fca;
+    height: 60px;
+    padding: 5px 5px 0 5px;
+}
