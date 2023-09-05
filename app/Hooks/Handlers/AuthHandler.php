@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\CountryNames;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Models\Meta;
 
@@ -241,38 +242,74 @@ class AuthHandler
         $isRequired = Arr::get($field, 'required');
         $isRequired = $isRequired ? 'is-required' : '';
 
-        $textTypes = ['text', 'email', 'password'];
-
         $html = '<div class="fst_field_group fst_field_' . $fieldName . '">';
+
         if ($label = Arr::get($field, 'label')) {
             $html .= '<div class="fst_field_label ' . $isRequired . '"><label for="' . Arr::get($field, 'id') . '">' . $label . '</label></div>';
         }
 
+        $textTypes = ['text', 'email', 'password'];
+        $selectTypes = ['select']; // Add 'select' type for dropdowns
+
         if (in_array($fieldType, $textTypes)) {
-
-            $inputAtts = array_filter([
-                'type'        => esc_attr($fieldType),
-                'id'          => esc_attr(Arr::get($field, 'id')),
-                'placeholder' => esc_attr(Arr::get($field, 'placeholder')),
-                'name'        => esc_attr($fieldName)
-            ]);
-
-            $atts = '';
-
-            foreach ($inputAtts as $attKey => $att) {
-                $atts .= $attKey . '="' . $att . '" ';
-            }
-
-            if (Arr::get($field, 'required')) {
-                $atts .= 'required';
-            }
-
-            $html .= '<div class="fs_input_wrap"><input ' . $atts . '/></div>';
+            $html .= $this->renderTextInput($fieldName, $field);
+        } elseif (in_array($fieldType, $selectTypes)) {
+            $html .= $this->renderSelectInput($fieldName, $field);
         } else {
             return '';
         }
 
         return $html . '</div>';
+    }
+
+    private function renderTextInput($fieldName, $field)
+    {
+        $inputAtts = array_filter([
+            'type'        => esc_attr(Arr::get($field, 'type')),
+            'id'          => esc_attr(Arr::get($field, 'id')),
+            'placeholder' => esc_attr(Arr::get($field, 'placeholder')),
+            'name'        => esc_attr($fieldName),
+            'required'    => Arr::get($field, 'required') ? 'required' : '',
+        ]);
+
+        $atts = '';
+
+        foreach ($inputAtts as $attKey => $att) {
+            $atts .= $attKey . '="' . $att . '" ';
+        }
+
+        return '<div class="fs_input_wrap"><input ' . $atts . ' /></div>';
+    }
+
+    private function renderSelectInput($fieldName, $field)
+    {
+        $options = '';
+        $choices = Arr::get($field, 'options', []);
+
+        foreach ($choices as $value => $label) {
+            $options .= '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
+        }
+
+        $selectAtts = array_filter([
+            'id'       => esc_attr(Arr::get($field, 'id')),
+            'name'     => esc_attr($fieldName),
+            'required' => Arr::get($field, 'required') ? 'required' : '',
+        ]);
+
+        $select = '<div class="fs_input_wrap"><select ' . $this->renderAttributes($selectAtts) . '>' . $options . '</select></div>';
+
+        return $select;
+    }
+
+    private function renderAttributes($attributes)
+    {
+        $atts = '';
+
+        foreach ($attributes as $attKey => $att) {
+            $atts .= $attKey . '="' . $att . '" ';
+        }
+
+        return $atts;
     }
 
     /**
@@ -337,6 +374,8 @@ class AuthHandler
     }
 
     public static function allCustomFields(): array {
+        $countryList = CountryNames::get();
+
         return [
             'address_line_1' => [
                 'required'    => false,
@@ -373,13 +412,14 @@ class AuthHandler
                 'id'          => 'fst_state',
                 'placeholder' => __('State', 'your-text-domain'),
             ],
-            'country'   => [
-                'required'    => false,
-                'type'        => 'country-selector',
-                'label'       => __('Country', 'your-text-domain'),
-                'id'          => 'fst_country',
-                'placeholder' => __('Country', 'your-text-domain'),
-            ]
+            'country' => [
+                'required' => false,
+                'type' => 'select',
+                'label' => __('Country', 'your-text-domain'),
+                'id' => 'fst_country',
+                'placeholder' => __('Select a Country', 'your-text-domain'),
+                'options' => $countryList,
+            ],
         ];
     }
 
