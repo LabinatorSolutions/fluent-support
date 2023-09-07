@@ -99,6 +99,46 @@ const attributes = {
     createTicketFormHeaderBgColor: {
         type: 'string',
         default: '#16c410',
+    },
+    refreshButtonBgColor: {
+        type: 'string',
+        default: '#bac5d0',
+    },
+    refreshButtonTextColor: {
+        type: 'string',
+        default: '#000000',
+    },
+    allButtonBgColor: {
+        type: 'string',
+        default: '#bac5d0',
+    },
+    allButtonTextColor: {
+        type: 'string',
+        default: '#ffffff',
+    },
+    closeTicketButtonBgColor: {
+        type: 'string',
+        default: '#f56c6c',
+    },
+    closeTicketTextColor: {
+        type: 'string',
+        default: '#ffffff',
+    },
+    viewTicketHeaderStyleBgColor: {
+        type: 'string',
+        default: '#dedee7',
+    },
+    viewTicketHeaderStyleTextColor: {
+        type: 'string',
+        default: '#000000',
+    },
+    replyBoxBgColor: {
+        type: 'string',
+        default: '#ffffff',
+    },
+    threadContentBgColor: {
+        type: 'string',
+        default: '#ffffff',
     }
 };
 

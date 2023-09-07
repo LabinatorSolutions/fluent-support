@@ -49,3 +49,152 @@
     }
 }
 
+.block-wrapper {
+    display: block;
+    overflow: hidden;
+    background: #ebeef4;
+    padding: 10px 20px;
+    border-top-right-radius: 5px;
+    border-top-left-radius: 5px;
+
+    .show-ticket-header {
+        .show-th-header {
+            border-left: 0;
+            border-right: 0;
+            position: relative;
+
+            .show-tk-subject {
+                zoom: 1;
+                word-break: break-word;
+                padding-right: 215px;
+
+                h2 {
+                    color: #314351;
+                    font-weight: 400;
+                    line-height: 30px;
+                    word-wrap: break-word;
+                    font-size: 20px;
+                    display: inline-block;
+                    margin: 0;
+
+                    .show-ticket-id {
+                        margin-right: 10px;
+                        font-size: 20px;
+                        color: #93a1b0;
+                    }
+                }
+                .show-tk-tags {
+                    padding-left: 20px;
+                    display: inline-block;
+
+                    .show-badge {
+                        background: #a5b2bd;
+                        border-radius: 2px;
+                        color: #fff;
+                        display: inline-block;
+                        font-size: 12.5px;
+                        font-weight: 400;
+                        padding: 4px 8px;
+                        cursor: pointer;
+                        line-height: 14px;
+                        margin: 0 4px 0 0;
+                    }
+                    .show-badge-new {
+                        text-transform: capitalize;
+                        background: #f56c6c;
+                    }
+                }
+            }
+            .show-tk-actions{
+                margin: 0;
+                position: absolute;
+                right: 0;
+                top: -5px;
+                width: auto;
+            }
+
+        }
+    }
+    .show-ticket-body {
+        border: 1px solid #ebeef3;
+        background: #ebeef3;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+
+        .show-reply-box {
+            .show-reply-text {
+                width: 100% !important;
+                height: 60px !important;
+                border: 1px solid #e5e9ec;
+                background: #e5e9ec;
+                padding: 15px 20px;
+            }
+        }
+        .show-threads-container {
+            background: white;
+
+            .show-thread  {
+                display: block;
+                overflow: hidden;
+                clear: both;
+                position: relative;
+                width: 100%;
+                border-top: 1px solid #e5e9ec;
+
+                .show-thread-content {
+                    .show-avatar {
+                        background: #f1f3f5;
+                        border-radius: 50%;
+                        box-shadow: none;
+                        height: 46px;
+                        width: 46px;
+                        float: left;
+                        margin: 25px 20px 25px 25px;
+
+                        img {
+                            border-radius: 50%;
+                        }
+                    }
+                    .show-thread-wrap {
+                        margin: 0 25px 0 72px;
+                        padding: 25px;
+
+                        .show-thread-message {
+                            width: 100%;
+                            overflow: auto;
+                            line-height: 150%;
+
+                            .show-thread-head {
+                                zoom: 1;
+                                min-height: 40px;
+
+                                .show-thread-title {
+                                    color: #8494a5;
+                                    font-weight: 400;
+                                    font-size: 18px;
+                                    line-height: 1.2em;
+                                    margin-bottom: 12px;
+                                    display: inline-block;
+                                }
+                                .show-thread-actions {
+                                    float: right;
+                                    color: #a5b2bd;
+                                    text-align: right;
+                                    font-size: 12px;
+                                }
+                            }
+                            .show-thread-body {
+                                color: #253642;
+                                font-size: 14px;
+                                line-height: 1.45em;
+                                overflow-y: hidden;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
