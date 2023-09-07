@@ -1,12 +1,12 @@
 const { __ } = wp.i18n;
 const { InspectorControls } = wp.blockEditor;
-const { PanelBody, TextControl, BaseControl, ColorPalette } = wp.components;
+const { Panel, PanelBody, BaseControl, ColorPalette } = wp.components;
 
 const Inspector = ({ attributes, setAttributes }) => {
 
     return (
         <InspectorControls>
-            <PanelBody title={__('Ticket Header', 'fluent-support')}>
+            <PanelBody title={__('Ticket Header', 'fluent-support')} initialOpen={ false }>
                 <BaseControl label={__('Background Color', 'fluent-support')} id="color">
                     <ColorPalette
                         colors={[

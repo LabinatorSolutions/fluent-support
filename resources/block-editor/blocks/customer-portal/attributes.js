@@ -84,6 +84,22 @@ const attributes = {
         type: 'string',
         default: '#ffffff',
     },
+    buttonCreateTicketBorderColor: {
+        type: 'string',
+        default: '#16c410',
+    },
+    buttonCreateTicketHoverBgColor: {
+        type: 'string',
+        default: '#16c410',
+    },
+    buttonCreateTicketHoverTextColor: {
+        type: 'string',
+        default: '#ffffff',
+    },
+    createTicketFormHeaderBgColor: {
+        type: 'string',
+        default: '#16c410',
+    }
 };
 
 export default attributes;

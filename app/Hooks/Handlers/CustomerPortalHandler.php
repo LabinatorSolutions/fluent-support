@@ -38,9 +38,10 @@ class CustomerPortalHandler
              * @param string $agentPermissionErrMessage
              * @return string
              */
+            $msg = __('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support');
             $agentPermissionErrMessage = apply_filters(
                 'fluent_support/customer_portal_agent_permission_error_message',
-                esc_html__('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support')
+                $msg
             );
             return '<div style="text-align: center;"><h3>' . $agentPermissionErrMessage . '</h3><a href="' . $adminPortalUrl . '">' . esc_html__('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
@@ -67,8 +68,8 @@ class CustomerPortalHandler
             }
 
             $this->enqueueScripts();
-
-            return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
+            $cs = "<style>.fs_btn_all{background-color:#ff00FF;color:#ffffff}.fs_btn_open{background-color:#ff00FF!important;color:#ffffff}.fs_btn_closed{background-color:#ff00FF;color:#ffffff}.fs_btn_create_ticket{background-color:#ff00FF;color:#ffffff}</style>";
+            return $cs.'<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
         } else {
 
             $businessSettings = Helper::getBusinessSettings();
