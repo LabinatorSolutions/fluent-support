@@ -64,7 +64,6 @@ export default function Edit({attributes, setAttributes}) {
         setShowTicket(true);
     }
 
-
     const refreshButtonStyle = {
         padding: '3px 10px',
         backgroundColor: attributes.refreshButtonBgColor,
@@ -114,6 +113,44 @@ export default function Edit({attributes, setAttributes}) {
         background: attributes.threadContentBgColor,
     }
 
+    const allTicketsAllButtonStyle = {
+        color: attributes.allTicketsAllButtonTextColor,
+        background: attributes.allTicketsAllButtonBgColor,
+    }
+
+    const allTicketsHeaderStyle = {
+        background: attributes.allTicketsHeaderBgColor,
+    }
+
+    const allTicketsOpenButtonStyle = {
+        color: attributes.allTicketsOpenButtonTextColor,
+        background: attributes.allTicketsOpenButtonBgColor,
+    }
+
+    const allTicketsClosedButtonStyle = {
+        color: attributes.allTicketsClosedButtonTextColor,
+        background: attributes.allTicketsClosedButtonBgColor,
+    }
+
+    const allTicketsLogoutButtonStyle = {
+        color: attributes.allTicketsLogoutButtonTextColor,
+        background: attributes.allTicketsLogoutButtonBgColor,
+    }
+
+    const allTicketsCreateTicketButtonStyle = {
+        color: attributes.allTicketsCreateTicketButtonTextColor,
+        background: attributes.allTicketsCreateTicketButtonBgColor,
+    }
+
+    const allTicketsTableHeaderStyle = {
+        color: attributes.allTicketsTableHeaderTextColor,
+        background: attributes.allTicketsTableHeaderBgColor,
+    }
+
+    const allTicketsFooterStyle = {
+        background: attributes.allTicketsFooterBgColor,
+    }
+
     useEffect(() => {
         setShowTickets(true);
     }, true);
@@ -123,22 +160,22 @@ export default function Edit({attributes, setAttributes}) {
             <Inspector attributes={attributes} setAttributes={setAttributes}/>
             {showTickets === true ?
                 <div className={'block-wrapper'}>
-                    <div className={"all-tickets-header"}>
+                    <div className={"all-tickets-header"} style={allTicketsHeaderStyle}>
                         <div class="all-tickets-header-left">
                             <div class="all-tickets-button-groups">
-                                <button className="all-tickets btn-all btn-active">All</button>
-                                <button className="all-tickets btn-open">Open</button>
-                                <button className="all-tickets btn-closed">Closed</button>
+                                <button className="all-tickets btn-all btn-active" style={allTicketsAllButtonStyle}>All</button>
+                                <button className="all-tickets btn-open" style={allTicketsOpenButtonStyle}>Open</button>
+                                <button className="all-tickets btn-closed" style={allTicketsClosedButtonStyle}>Closed</button>
                             </div>
                         </div>
                         <div className="all-tickets-header-right">
-                            <button className="all-tickets btn-logout">Logout</button>
-                            <button className="all-tickets btn-success btn-create-ticket">Create a New Ticket</button>
+                            <button className="all-tickets btn-logout" style={allTicketsLogoutButtonStyle}>Logout</button>
+                            <button className="all-tickets btn-success btn-create-ticket" style={allTicketsCreateTicketButtonStyle}>Create a New Ticket</button>
                         </div>
                     </div>
                     <div className={"all-tickets-body"}>
                         <table className="all-tickets-table table_stripe">
-                            <thead>
+                            <thead style={allTicketsTableHeaderStyle}>
                             <tr>
                                 <th>Conversation</th>
                                 <th></th>
@@ -172,7 +209,7 @@ export default function Edit({attributes, setAttributes}) {
                             </tbody>
                         </table>
                     </div>
-                    <div class="all-tickets-footer"></div>
+                    <div class="all-tickets-footer" style={allTicketsFooterStyle}></div>
 
                 </div>
                 : showForm === true ?

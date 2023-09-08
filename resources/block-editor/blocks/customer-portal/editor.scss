@@ -212,7 +212,6 @@
         overflow: hidden;
         border-top-left-radius: 5px;
         border-top-right-radius: 5px;
-        background: #c8ccd3;
         padding: 10px 20px;
     }
 
@@ -223,9 +222,7 @@
             width: 100%;
 
             thead {
-                background-color: white;
                 border-bottom: 2px solid #dddddd;
-                color: #646568;
             }
 
             tbody {
@@ -272,7 +269,6 @@
         padding: 25px;
         margin-top: -23px;
         text-align: right;
-        background-color: #c8ccd3;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
     }
@@ -296,22 +292,14 @@
         border-radius: 4px;
 
         &.btn-all {
-            color: #fff;
-            background-color: #409eff;
             border-color: #409eff;
             box-shadow: -1px 0 0 0 #409eff;
         }
 
         &.btn-logout {
-            color: #fff;
-            background-color: #f56c6c;
-            border-color: #f56c6c;
             margin-right: 2px;
         }
 
-        &.btn-open {
-            // Add styles for .btn-open here
-        }
     }
 
     .all-tickets-header-left {
