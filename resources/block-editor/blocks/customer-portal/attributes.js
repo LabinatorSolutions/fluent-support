@@ -139,7 +139,72 @@ const attributes = {
     threadContentBgColor: {
         type: 'string',
         default: '#ffffff',
-    }
+    },
+    allTicketsHeaderBgColor: {
+        type: 'string',
+        default: '#c8ccd3',
+    },
+    allTicketsAllButtonBgColor: {
+        type: 'string',
+        default: '#409eff'
+    },
+    allTicketsAllButtonTextColor: {
+        type: 'string',
+        default: '#fff',
+    },
+    allTicketsOpenButtonBgColor: {
+        type: 'string',
+        default: '#fff'
+    },
+    allTicketsOpenButtonTextColor: {
+        type: 'string',
+        default: '#606266',
+    },
+    allTicketsClosedButtonBgColor: {
+        type: 'string',
+        default: '#fff'
+    },
+    allTicketsClosedButtonTextColor: {
+        type: 'string',
+        default: '#606266',
+    },
+    allTicketsLogoutButtonBgColor: {
+        type: 'string',
+        default: '#f56c6c',
+
+    },
+    allTicketsLogoutButtonTextColor: {
+        type: 'string',
+        default: '#fff',
+    },
+    allTicketsCreateTicketButtonBgColor: {
+        type: 'string',
+        default: '#67c23a',
+
+    },
+    allTicketsCreateTicketButtonTextColor: {
+        type: 'string',
+        default: '#fff',
+    },
+
+    allTicketsTableHeaderBgColor: {
+        type: 'string',
+        default: '#ffffff',
+
+    },
+    allTicketsTableHeaderTextColor: {
+        type: 'string',
+        default: '#646568',
+    },
+    allTicketsFooterBgColor: {
+        type: 'string',
+        default: '#c8ccd3',
+
+    },
+
+
+
+
 };
 
 export default attributes;
