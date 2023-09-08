@@ -1,87 +1,105 @@
 const { __ } = wp.i18n;
 const { InspectorControls } = wp.blockEditor;
-const { Panel, PanelBody, BaseControl, ColorPalette } = wp.components;
+const { PanelBody, BasePanel, ToggleControl, ColorPalette } = wp.components;
 
 const Inspector = ({ attributes, setAttributes }) => {
 
     return (
         <InspectorControls>
             <PanelBody title={__('Ticket Header', 'fluent-support')} initialOpen={ false }>
-                <BaseControl label={__('Background Color', 'fluent-support')} id="color">
-                    <ColorPalette
-                        colors={[
-                            { name: 'red', color: '#f00' },
-                            { name: 'white', color: '#fff' },
-                            { name: 'blue', color: '#00f' },
-                        ]}
-                        value={attributes.ticketHeaderBgColor}
-                        onChange={(v) => setAttributes({ ticketHeaderBgColor: v })}
-                    />
-                </BaseControl>
-
-                <BaseControl label={__('Text Color', 'fluent-support')} id="text_color">
-                    <ColorPalette
-                        colors={[
-                            { name: 'red', color: '#f00' },
-                            { name: 'white', color: '#fff' },
-                            { name: 'blue', color: '#00f' },
-                        ]}
-                        value={attributes.buttonAllTextColor}
-                        onChange={(v) => setAttributes({ buttonAllTextColor: v })}
-                    />
-                </BaseControl>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.allTicketsHeaderBgColor}
+                              onChange={(v) => setAttributes({ allTicketsHeaderBgColor: v })}
+                />
             </PanelBody>
-            <PanelBody title={__('All', 'fluent-support')}>
-                <BaseControl label={__('Background Color', 'fluent-support')} id="color">
-                    <ColorPalette
-                        colors={[
-                            { name: 'red', color: '#f00' },
-                            { name: 'white', color: '#fff' },
-                            { name: 'blue', color: '#00f' },
-                        ]}
-                        value={attributes.buttonAllBgColor}
-                        onChange={(v) => setAttributes({ buttonAllBgColor: v })}
-                    />
-                </BaseControl>
-
-                <BaseControl label={__('Text Color', 'fluent-support')} id="text_color">
-                    <ColorPalette
-                        colors={[
-                            { name: 'red', color: '#f00' },
-                            { name: 'white', color: '#fff' },
-                            { name: 'blue', color: '#00f' },
-                        ]}
-                        value={attributes.buttonAllTextColor}
-                        onChange={(v) => setAttributes({ buttonAllTextColor: v })}
-                    />
-                </BaseControl>
+            <PanelBody title={__('All', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.filterButtonAllBgColor}
+                              onChange={(v) => setAttributes({ filterButtonAllBgColor: v })}
+                />
+                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.filterButtonAllTextColor}
+                              onChange={(v) => setAttributes({ filterButtonAllTextColor: v })}
+                />
             </PanelBody>
 
-            <PanelBody title={__('Open', 'fluent-support')}>
-                <BaseControl label={__('Background Color', 'fluent-support')} id="btn_bg_color">
-                    <ColorPalette
-                        colors={[
-                            { name: 'red', color: '#f00' },
-                            { name: 'white', color: '#fff' },
-                            { name: 'blue', color: '#00f' },
-                        ]}
-                        value={attributes.buttonOpenBgColor}
-                        onChange={(v) => setAttributes({ buttonOpenBgColor: v })}
-                    />
-                </BaseControl>
-
-                <BaseControl label={__('Text Color', 'fluent-support')} id="open_btn_text_color">
-                    <ColorPalette
-                        colors={[
-                            { name: 'red', color: '#f00' },
-                            { name: 'white', color: '#fff' },
-                            { name: 'blue', color: '#00f' },
-                        ]}
-                        value={attributes.buttonOpenTextColor}
-                        onChange={(v) => setAttributes({ buttonOpenTextColor: v })}
-                    />
-                </BaseControl>
+            <PanelBody title={__('Open', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.filterButtonOpenBgColor}
+                              onChange={(v) => setAttributes({ filterButtonOpenBgColor: v })}
+                />
+                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.filterButtonOpenTextColor}
+                              onChange={(v) => setAttributes({ filterButtonOpenTextColor: v })}
+                />
             </PanelBody>
+
+            <PanelBody title={__('Closed', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.filterButtonClosedBgColor}
+                              onChange={(v) => setAttributes({ filterButtonClosedBgColor: v })}
+                />
+                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.filterButtonClosedTextColor}
+                              onChange={(v) => setAttributes({ filterButtonClosedTextColor: v })}
+                />
+            </PanelBody>
+
+            <PanelBody title={__('Logout', 'fluent-support')} initialOpen={ false }>
+                <ToggleControl
+                    label="Show Logout"
+                    checked={ attributes.allTicketsLogoutButtonVisibility }
+                    onChange={(v) => setAttributes({ allTicketsLogoutButtonVisibility: v })}
+                />
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.allTicketsLogoutButtonBgColor}
+                              onChange={(v) => setAttributes({ allTicketsLogoutButtonBgColor: v })}
+                />
+                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.allTicketsLogoutButtonTextColor}
+                              onChange={(v) => setAttributes({ allTicketsLogoutButtonTextColor: v })}
+                />
+            </PanelBody>
+
+            <PanelBody title={__('Create a New Ticket', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.buttonCreateTicketBgColor}
+                              onChange={(v) => setAttributes({ buttonCreateTicketBgColor: v })}
+                />
+                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.buttonCreateTicketTextColor}
+                              onChange={(v) => setAttributes({ buttonCreateTicketTextColor: v })}
+                />
+            </PanelBody>
+
+            <PanelBody title={__('Tickets Table', 'fluent-support')} initialOpen={ false }>
+                <PanelBody title={__('Header', 'fluent-support')} initialOpen={ false }>
+                    <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                    <ColorPalette value={attributes.allTicketsTableHeaderBgColor}
+                                    onChange={(v) => setAttributes({ allTicketsTableHeaderBgColor: v })}
+                    />
+                    <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                    <ColorPalette value={attributes.allTicketsTableHeaderTextColor}
+                                    onChange={(v) => setAttributes({ allTicketsTableHeaderTextColor: v })}
+                    />
+                    <p><strong>{__('Text Align', 'fluent-support')}</strong></p>
+                    <select value={attributes.allTicketsTableHeaderTextAlign}
+                            onChange={(v) => setAttributes({ allTicketsTableHeaderTextAlign: v.target.value })}
+                    >
+                        <option value="left">{__('Left', 'fluent-support')}</option>
+                        <option value="center">{__('Center', 'fluent-support')}</option>
+                        <option value="right">{__('Right', 'fluent-support')}</option>
+                    </select>
+                </PanelBody>
+            </PanelBody>
+
+            <PanelBody title={__('Ticket Page Footer', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.allTicketsFooterBgColor}
+                              onChange={(v) => setAttributes({ allTicketsFooterBgColor: v })}
+                />
+            </PanelBody>
+
         </InspectorControls>
     );
 };
