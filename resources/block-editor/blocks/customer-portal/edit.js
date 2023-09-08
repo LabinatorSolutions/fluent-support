@@ -64,6 +64,39 @@ export default function Edit({attributes, setAttributes}) {
         setShowTicket(true);
     }
 
+    const allTicketsHeaderStyle = {
+        background: attributes.allTicketsHeaderBgColor,
+    }
+
+    const allTicketsAllButtonStyle = {
+        color: attributes.filterButtonAllTextColor,
+        background: attributes.filterButtonAllBgColor,
+    }
+
+    const allTicketsOpenButtonStyle = {
+        color: attributes.filterButtonOpenTextColor,
+        background: attributes.filterButtonOpenBgColor,
+    }
+
+    const allTicketsClosedButtonStyle = {
+        color: attributes.filterButtonClosedTextColor,
+        background: attributes.filterButtonClosedBgColor,
+    }
+
+    const allTicketsLogoutButtonStyle = {
+        color: attributes.allTicketsLogoutButtonTextColor,
+        background: attributes.allTicketsLogoutButtonBgColor,
+    }
+
+    const allTicketsCreateTicketButtonStyle = {
+        color: attributes.buttonCreateTicketTextColor,
+        background: attributes.buttonCreateTicketBgColor,
+    }
+//Table styles
+    const allTicketsFooterStyle = {
+        background: attributes.allTicketsFooterBgColor,
+    }
+
     const refreshButtonStyle = {
         padding: '3px 10px',
         backgroundColor: attributes.refreshButtonBgColor,
@@ -113,44 +146,11 @@ export default function Edit({attributes, setAttributes}) {
         background: attributes.threadContentBgColor,
     }
 
-    const allTicketsAllButtonStyle = {
-        color: attributes.allTicketsAllButtonTextColor,
-        background: attributes.allTicketsAllButtonBgColor,
-    }
-
-    const allTicketsHeaderStyle = {
-        background: attributes.allTicketsHeaderBgColor,
-    }
-
-    const allTicketsOpenButtonStyle = {
-        color: attributes.allTicketsOpenButtonTextColor,
-        background: attributes.allTicketsOpenButtonBgColor,
-    }
-
-    const allTicketsClosedButtonStyle = {
-        color: attributes.allTicketsClosedButtonTextColor,
-        background: attributes.allTicketsClosedButtonBgColor,
-    }
-
-    const allTicketsLogoutButtonStyle = {
-        color: attributes.allTicketsLogoutButtonTextColor,
-        background: attributes.allTicketsLogoutButtonBgColor,
-    }
-
-    const allTicketsCreateTicketButtonStyle = {
-        color: attributes.allTicketsCreateTicketButtonTextColor,
-        background: attributes.allTicketsCreateTicketButtonBgColor,
-    }
-
     const allTicketsTableHeaderStyle = {
-        color: attributes.allTicketsTableHeaderTextColor,
         background: attributes.allTicketsTableHeaderBgColor,
+        textAlign: attributes.allTicketsTableHeaderTextAlign,
+        color: attributes.allTicketsTableHeaderTextColor,
     }
-
-    const allTicketsFooterStyle = {
-        background: attributes.allTicketsFooterBgColor,
-    }
-
     useEffect(() => {
         setShowTickets(true);
     }, true);
@@ -161,8 +161,8 @@ export default function Edit({attributes, setAttributes}) {
             {showTickets === true ?
                 <div className={'block-wrapper'}>
                     <div className={"all-tickets-header"} style={allTicketsHeaderStyle}>
-                        <div class="all-tickets-header-left">
-                            <div class="all-tickets-button-groups">
+                        <div className="all-tickets-header-left">
+                            <div className="all-tickets-button-groups">
                                 <button className="all-tickets btn-all btn-active" style={allTicketsAllButtonStyle}>All</button>
                                 <button className="all-tickets btn-open" style={allTicketsOpenButtonStyle}>Open</button>
                                 <button className="all-tickets btn-closed" style={allTicketsClosedButtonStyle}>Closed</button>
@@ -170,12 +170,12 @@ export default function Edit({attributes, setAttributes}) {
                         </div>
                         <div className="all-tickets-header-right">
                             <button className="all-tickets btn-logout" style={allTicketsLogoutButtonStyle}>Logout</button>
-                            <button className="all-tickets btn-success btn-create-ticket" style={allTicketsCreateTicketButtonStyle}>Create a New Ticket</button>
+                            <button className="all-tickets btn-success btn-create-ticket" style={allTicketsCreateTicketButtonStyle} onClick={showCreateTicket}>Create a New Ticket</button>
                         </div>
                     </div>
                     <div className={"all-tickets-body"}>
                         <table className="all-tickets-table table_stripe">
-                            <thead style={allTicketsTableHeaderStyle}>
+                            <thead style={ allTicketsTableHeaderStyle }>
                             <tr>
                                 <th>Conversation</th>
                                 <th></th>
@@ -209,7 +209,7 @@ export default function Edit({attributes, setAttributes}) {
                             </tbody>
                         </table>
                     </div>
-                    <div class="all-tickets-footer" style={allTicketsFooterStyle}></div>
+                    <div className="all-tickets-footer" style={allTicketsFooterStyle}></div>
 
                 </div>
                 : showForm === true ?
