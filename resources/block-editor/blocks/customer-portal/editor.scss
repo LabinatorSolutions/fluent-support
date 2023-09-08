@@ -83,6 +83,7 @@
                         color: #93a1b0;
                     }
                 }
+
                 .show-tk-tags {
                     padding-left: 20px;
                     display: inline-block;
@@ -99,13 +100,15 @@
                         line-height: 14px;
                         margin: 0 4px 0 0;
                     }
+
                     .show-badge-new {
                         text-transform: capitalize;
                         background: #f56c6c;
                     }
                 }
             }
-            .show-tk-actions{
+
+            .show-tk-actions {
                 margin: 0;
                 position: absolute;
                 right: 0;
@@ -115,6 +118,7 @@
 
         }
     }
+
     .show-ticket-body {
         border: 1px solid #ebeef3;
         background: #ebeef3;
@@ -130,10 +134,11 @@
                 padding: 15px 20px;
             }
         }
+
         .show-threads-container {
             background: white;
 
-            .show-thread  {
+            .show-thread {
                 display: block;
                 overflow: hidden;
                 clear: both;
@@ -155,6 +160,7 @@
                             border-radius: 50%;
                         }
                     }
+
                     .show-thread-wrap {
                         margin: 0 25px 0 72px;
                         padding: 25px;
@@ -176,6 +182,7 @@
                                     margin-bottom: 12px;
                                     display: inline-block;
                                 }
+
                                 .show-thread-actions {
                                     float: right;
                                     color: #a5b2bd;
@@ -183,6 +190,7 @@
                                     font-size: 12px;
                                 }
                             }
+
                             .show-thread-body {
                                 color: #253642;
                                 font-size: 14px;
@@ -195,6 +203,124 @@
                 }
             }
         }
+    }
+}
+
+.block-wrapper {
+    .all-tickets-header {
+        display: block;
+        overflow: hidden;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        background: #c8ccd3;
+        padding: 10px 20px;
+    }
+
+    .all-tickets-body {
+        .all-tickets-table {
+            border-collapse: collapse;
+            color: #606266;
+            width: 100%;
+
+            thead {
+                background-color: white;
+                border-bottom: 2px solid #dddddd;
+                color: #646568;
+            }
+
+            tbody {
+                tr {
+                    background-color: white;
+                    border-bottom: 1px solid #dddddd;
+
+                    .ticket-preview {
+                        text-decoration: underline;
+                        color: #314351;
+                        font-size: 15px;
+                    }
+
+                    .ticket-thread-count, .ticket-status, .ticket-create-date {
+                        min-width: 100px;
+                    }
+
+                    .ticket-thread-count .thread-count {
+                        min-width: 25px;
+                        text-align: center;
+                        display: inline-block;
+                        background: #f1f3f5;
+                        border: 1px solid #d5dce1;
+                        color: #a5b2bd;
+                        font-size: 11px;
+                        font-weight: 400;
+                        padding: 0.1em 0.4em;
+                        border-radius: 4px;
+                    }
+
+                    .ticket-status .ticket-status-content {
+                        padding: 0 7px;
+                        height: 20px;
+                        color: #409eff;
+                        border: .5px solid #409eff;
+                        border-radius: 3px;
+                    }
+                }
+            }
+        }
+    }
+
+    .all-tickets-footer {
+        padding: 25px;
+        margin-top: -23px;
+        text-align: right;
+        background-color: #c8ccd3;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+
+    .all-tickets {
+        line-height: 1;
+        white-space: nowrap;
+        vertical-align: middle;
+        background: #fff;
+        border: 1px solid #dcdfe6;
+        font-weight: 500;
+        color: #606266;
+        -webkit-appearance: none;
+        text-align: center;
+        box-sizing: border-box;
+        margin: 0;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        padding: 12px 20px;
+        font-size: 14px;
+        border-radius: 4px;
+
+        &.btn-all {
+            color: #fff;
+            background-color: #409eff;
+            border-color: #409eff;
+            box-shadow: -1px 0 0 0 #409eff;
+        }
+
+        &.btn-logout {
+            color: #fff;
+            background-color: #f56c6c;
+            border-color: #f56c6c;
+            margin-right: 2px;
+        }
+
+        &.btn-open {
+            // Add styles for .btn-open here
+        }
+    }
+
+    .all-tickets-header-left {
+        width: 50%;
+        float: left;
+    }
+
+    .all-tickets-header-right {
+        float: right;
     }
 }
 
