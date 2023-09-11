@@ -20,27 +20,43 @@ class BlockEditorHandler
             'editor_script' => 'fluent-support/customer-portal',
             'render_callback' => array($this, 'fst_render_block'),
             'attributes' => [
-                'buttonAllBgColor' => [
+                'allTicketsHeaderBgColor' => [
                     'type' => 'string',
                     'default' => '#16c410',
                 ],
-                'buttonAllTextColor' => [
+                'filterButtonAllBgColor' => [
+                    'type' => 'string',
+                    'default' => '#16c410',
+                ],
+                'filterButtonAllTextColor' => [
                     'type' => 'string',
                     'default' => '#ffffff',
                 ],
-                'buttonOpenBgColor' => [
+                'filterButtonOpenBgColor' => [
                     'type' => 'string',
                     'default' => '#16c410',
                 ],
-                'buttonOpenTextColor' => [
+                'filterButtonOpenTextColor' => [
                     'type' => 'string',
                     'default' => '#ffffff',
                 ],
-                'buttonClosedBgColor' => [
+                'filterButtonClosedBgColor' => [
                     'type' => 'string',
                     'default' => '#16c410',
                 ],
-                'buttonClosedTextColor' => [
+                'filterButtonClosedTextColor' => [
+                    'type' => 'string',
+                    'default' => '#ffffff',
+                ],
+                'allTicketsLogoutButtonVisibility' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                ],
+                'allTicketsLogoutButtonBgColor' => [
+                    'type' => 'string',
+                    'default' => '#16c410',
+                ],
+                'allTicketsLogoutButtonTextColor' => [
                     'type' => 'string',
                     'default' => '#ffffff',
                 ],
@@ -52,12 +68,29 @@ class BlockEditorHandler
                     'type' => 'string',
                     'default' => '#ffffff',
                 ],
+                'allTicketsTableHeaderBgColor' => [
+                    'type' => 'string',
+                    'default' => '#16c410',
+                ],
+                'allTicketsTableHeaderTextColor' => [
+                    'type' => 'string',
+                    'default' => '#ffffff',
+                ],
+                'allTicketsTableHeaderTextAlign' => [
+                    'type' => 'string',
+                    'default' => 'center',
+                ],
+                'allTicketsFooterBgColor' => [
+                    'type' => 'string',
+                    'default' => '#c8ccd3',
+                ],
+
             ]
         ));
     }
 
     public function fst_render_block($attributes)
     {
-        return do_shortcode('[fluent_support_portal]');
+        return do_shortcode("[fluent_support_portal attributes='".json_encode($attributes)."']");
     }
 }
