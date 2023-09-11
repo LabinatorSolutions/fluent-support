@@ -158,6 +158,98 @@ const Inspector = ({ attributes, setAttributes }) => {
 
             </PanelBody>
 
+            <PanelBody title={__('View Ticket Page Header', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketHeaderStyleBgColor}
+                              onChange={(v) => setAttributes({ viewTicketHeaderStyleBgColor: v })}
+                />
+
+                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketHeaderStyleTextColor}
+                              onChange={(v) => setAttributes({ viewTicketHeaderStyleTextColor: v })}
+                />
+
+                <p><strong>{__('Ticket Id Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketHeaderIdTextColor}
+                              onChange={(v) => setAttributes({ viewTicketHeaderIdTextColor: v })}
+                />
+
+                <p><strong>{__('Badge Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketHeaderBadgeBgColor}
+                              onChange={(v) => setAttributes({ viewTicketHeaderBadgeBgColor: v })}
+                />
+
+                <p><strong>{__('Badge Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketHeaderBadgeTextColor}
+                              onChange={(v) => setAttributes({ viewTicketHeaderBadgeTextColor: v })}
+                />
+
+                <p><strong>{__('Refresh Button Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.refreshButtonBgColor}
+                              onChange={(v) => setAttributes({ refreshButtonBgColor: v })}
+                />
+
+                <p><strong>{__('Refresh Button Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.refreshButtonTextColor}
+                              onChange={(v) => setAttributes({ refreshButtonTextColor: v })}
+                />
+
+                <p><strong>{__('All Button Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.allButtonBgColor}
+                              onChange={(v) => setAttributes({ allButtonBgColor: v })}
+                />
+
+                <p><strong>{__('All Button Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.allButtonTextColor}
+                              onChange={(v) => setAttributes({ allButtonTextColor: v })}
+                />
+
+                <p><strong>{__('Close Button Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.closeTicketButtonBgColor}
+                              onChange={(v) => setAttributes({ closeTicketButtonBgColor: v })}
+                />
+
+                <p><strong>{__('Close Button Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.closeTicketButtonTextColor}
+                              onChange={(v) => setAttributes({ closeTicketButtonTextColor: v })}
+                />
+
+
+
+
+
+
+            </PanelBody>
+
+
+            <PanelBody title={__('View Ticket Page Body', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Reply Box Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.replyBoxBgColor}
+                              onChange={(v) => setAttributes({ replyBoxBgColor: v })}
+                />
+
+                <p><strong>{__('Thread Content Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.threadContentBgColor}
+                              onChange={(v) => setAttributes({ threadContentBgColor: v })}
+                />
+
+
+                <p><strong>{__('Thread Title Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketThreadTitleTextColor}
+                              onChange={(v) => setAttributes({ viewTicketThreadTitleTextColor: v })}
+                />
+
+                <p><strong>{__('Thread Date Time Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketThreadDateTimeTextColor}
+                              onChange={(v) => setAttributes({ viewTicketThreadDateTimeTextColor: v })}
+                />
+
+                <p><strong>{__('Thread Body Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.viewTicketThreadBodyTextColor}
+                              onChange={(v) => setAttributes({ viewTicketThreadBodyTextColor: v })}
+                />
+
+            </PanelBody>
         </InspectorControls>
     );
 };

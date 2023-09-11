@@ -117,17 +117,30 @@ const attributes = {
         type: 'string',
         default: '#f56c6c',
     },
-    closeTicketTextColor: {
+    closeTicketButtonTextColor: {
         type: 'string',
         default: '#ffffff',
     },
+    //View Ticket style start here
     viewTicketHeaderStyleBgColor: {
         type: 'string',
-        default: '#dedee7',
+        default: '#f56c6c',
     },
     viewTicketHeaderStyleTextColor: {
         type: 'string',
         default: '#000000',
+    },
+    viewTicketHeaderIdTextColor: {
+        type: 'string',
+        default: '#93a1b0',
+    },
+    viewTicketHeaderBadgeBgColor: {
+        type: 'string',
+        default: '#93a1b0',
+    },
+    viewTicketHeaderBadgeTextColor: {
+        type: 'string',
+        default: '#ffffff',
     },
     replyBoxBgColor: {
         type: 'string',
@@ -137,6 +150,21 @@ const attributes = {
         type: 'string',
         default: '#ffffff',
     },
+    viewTicketThreadTitleTextColor: {
+        type: 'string',
+        default: '#8494a5',
+    },
+    viewTicketThreadDateTimeTextColor: {
+        type: 'string',
+        default: '#a5b2bd',
+    },
+    viewTicketThreadBodyTextColor: {
+        type: 'string',
+        default: '#253642',
+    },
+    //View Ticket style end here
+
+    //Create Ticket style start here
     createTicketHeaderBgColor: {
         type: 'string',
         default: '#acccd4',
@@ -181,7 +209,7 @@ const attributes = {
         type: 'string',
         default: '#ffffff',
     },
-
+//Create Ticket style end here
 };
 
 export default attributes;
