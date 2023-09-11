@@ -1,7 +1,7 @@
 const attributes = {
     allTicketsHeaderBgColor: {
         type: 'string',
-        default: '#c8ccd3',
+        default: '#ced3dd',
     },
     filterButtonAllBgColor: {
         type: 'string',
@@ -13,19 +13,19 @@ const attributes = {
     },
     filterButtonOpenBgColor: {
         type: 'string',
-        default: '#10efc6',
+        default: '#ffffff',
     },
     filterButtonOpenTextColor: {
         type: 'string',
-        default: '#ffffff',
+        default: '#606266',
     },
     filterButtonClosedBgColor: {
         type: 'string',
-        default: '#010500',
+        default: '#ffffff',
     },
     filterButtonClosedTextColor: {
         type: 'string',
-        default: '#ffffff',
+        default: '#606266',
     },
     allTicketsLogoutButtonVisibility: {
         type: 'boolean',
@@ -99,7 +99,7 @@ const attributes = {
     },
     refreshButtonBgColor: {
         type: 'string',
-        default: '#bac5d0',
+        default: '#ffffff',
     },
     refreshButtonTextColor: {
         type: 'string',
@@ -107,11 +107,11 @@ const attributes = {
     },
     allButtonBgColor: {
         type: 'string',
-        default: '#bac5d0',
+        default: '#ffffff',
     },
     allButtonTextColor: {
         type: 'string',
-        default: '#ffffff',
+        default: '#606266',
     },
     closeTicketButtonBgColor: {
         type: 'string',
@@ -124,7 +124,7 @@ const attributes = {
     //View Ticket style start here
     viewTicketHeaderStyleBgColor: {
         type: 'string',
-        default: '#f56c6c',
+        default: '#ced3dd',
     },
     viewTicketHeaderStyleTextColor: {
         type: 'string',
@@ -136,7 +136,7 @@ const attributes = {
     },
     viewTicketHeaderBadgeBgColor: {
         type: 'string',
-        default: '#93a1b0',
+        default: '#f56c6c',
     },
     viewTicketHeaderBadgeTextColor: {
         type: 'string',
@@ -167,7 +167,7 @@ const attributes = {
     //Create Ticket style start here
     createTicketHeaderBgColor: {
         type: 'string',
-        default: '#acccd4',
+        default: '#ced3dd',
     },
     createTicketHeaderTextBgColor: {
         type: 'string',
