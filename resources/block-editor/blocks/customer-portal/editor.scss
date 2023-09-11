@@ -58,6 +58,10 @@
     border-top-left-radius: 5px;
 
     .show-ticket-header {
+        display: block;
+        padding: 20px 20px;
+        border-top-right-radius: 5px;
+        border-top-left-radius: 5px;
         .show-th-header {
             border-left: 0;
             border-right: 0;
@@ -80,7 +84,7 @@
                     .show-ticket-id {
                         margin-right: 10px;
                         font-size: 20px;
-                        color: #93a1b0;
+                        //color: #93a1b0;
                     }
                 }
 
@@ -89,9 +93,7 @@
                     display: inline-block;
 
                     .show-badge {
-                        background-color: #a5b2bd;
                         border-radius: 2px;
-                        color: #fff;
                         display: inline-block;
                         font-size: 12.5px;
                         font-weight: 400;
@@ -103,7 +105,6 @@
 
                     .show-badge-new {
                         text-transform: capitalize;
-                        background: #f56c6c;
                     }
                 }
             }
@@ -175,7 +176,7 @@
                                 min-height: 40px;
 
                                 .show-thread-title {
-                                    color: #8494a5;
+                                    //color: #8494a5;
                                     font-weight: 400;
                                     font-size: 18px;
                                     line-height: 1.2em;
@@ -185,14 +186,12 @@
 
                                 .show-thread-actions {
                                     float: right;
-                                    color: #a5b2bd;
                                     text-align: right;
                                     font-size: 12px;
                                 }
                             }
 
                             .show-thread-body {
-                                color: #253642;
                                 font-size: 14px;
                                 line-height: 1.45em;
                                 overflow-y: hidden;

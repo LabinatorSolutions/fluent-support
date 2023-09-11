@@ -119,19 +119,24 @@ export default function Edit({attributes, setAttributes}) {
         padding: '5px 11px',
         borderRadius: 'calc(0.25em - 1px)',
         backgroundColor: attributes.closeTicketButtonBgColor,
-        color: attributes.closeTicketTextColor,
+        color: attributes.closeTicketButtonTextColor,
         border: 'none',
         cursor: 'pointer',
     };
 
     const viewTicketHeaderStyle = {
-        display: 'block',
         backgroundColor: attributes.viewTicketHeaderStyleBgColor,
         color: attributes.viewTicketHeaderStyleTextColor,
-        padding: '20px 20px',
-        borderTopRightRadius: '5px',
-        borderTopLeftRadius: '5px',
     };
+
+    const viewTicketHeaderIdStyle = {
+        color: attributes.viewTicketHeaderIdTextColor
+    }
+
+    const viewTicketHeaderBadgeStyle = {
+        background: attributes.viewTicketHeaderBadgeBgColor,
+        color: attributes.viewTicketHeaderBadgeTextColor,
+    }
 
     const replyBoxStyle = {
         background: attributes.replyBoxBgColor,
@@ -140,6 +145,18 @@ export default function Edit({attributes, setAttributes}) {
 
     const threadContentStyle = {
         background: attributes.threadContentBgColor,
+    }
+
+    const viewTicketThreadTitleStyle = {
+        color: attributes.viewTicketThreadTitleTextColor,
+    }
+
+    const viewTicketThreadDateTimeStyle = {
+        color: attributes.viewTicketThreadDateTimeTextColor,
+    }
+
+    const viewTicketThreadBodyStyle = {
+        color: attributes.viewTicketThreadBodyTextColor,
     }
 
     const allTicketsTableHeaderStyle = {
@@ -318,11 +335,11 @@ export default function Edit({attributes, setAttributes}) {
                                 <div className={'show-th-header'}>
                                     <hgroup>
                                         <div className={'show-tk-subject'}>
-                                            <h2 title="show-tk-edit-subject">
-                                                <span className="show-ticket-id">#746</span> Check htttp
+                                            <h2 title="show-tk-edit-subject" style={viewTicketHeaderStyle}>
+                                                <span className="show-ticket-id" style={viewTicketHeaderIdStyle} >#746</span> Check htttp
                                             </h2>
                                             <div className={"show-tk-tags"}>
-                                        <span className={"show-badge show-badge-new"}>
+                                        <span className={"show-badge show-badge-new"} style={viewTicketHeaderBadgeStyle}>
                                             new
                                         </span>
                                             </div>
@@ -361,13 +378,13 @@ export default function Edit({attributes, setAttributes}) {
                                             <section className="show-thread-wrap">
                                                 <section className="show-thread-message">
                                                     <div className="show-thread-head">
-                                                        <div className="show-thread-title">
+                                                        <div className="show-thread-title" style={viewTicketThreadTitleStyle}>
                                                             <strong>You</strong> started the conversation
                                                         </div>
-                                                        <div className="show-thread-actions">2023-08-30T09:32:16+00:00
+                                                        <div className="show-thread-actions" style={viewTicketThreadDateTimeStyle}>2023-08-30T09:32:16+00:00
                                                         </div>
                                                     </div>
-                                                    <div className="show-thread-body">
+                                                    <div className="show-thread-body" style={viewTicketThreadBodyStyle}>
                                                         <p>Check htttp</p>
                                                     </div>
                                                 </section>
