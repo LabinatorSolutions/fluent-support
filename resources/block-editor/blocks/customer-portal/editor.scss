@@ -354,13 +354,12 @@
 
     .create-ticket-body {
         border: 1px solid #ebeef3;
-        background: #ffffff;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         padding: 20px;
 
         .create-ticket-form {
-            color: #43454b;
+            //color: #43454b;
             font-family: "Source Sans Pro","HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
             line-height: 1.618;
             text-rendering: optimizeLegibility;
@@ -406,24 +405,18 @@
                         min-height: 100px;
                         border: 1px solid #cbd5e0;
                     }
-
-
                 }
                 p {
                     font-size: 12px;
-                    color: #606266;
                     margin-top: 7px;
                 }
                 .create-ticket-button {
                     .create-ticket-button-inner {
-                        color: #FFF;
-                        background: #67C23A;
                         border-radius: 4px;
                         border: none;
                         line-height: 15px;
                         padding: 8px 17px;
                     }
-
                 }
             }
 
@@ -432,8 +425,6 @@
 
                 .create-ticket-upload {
                     .create-ticket-upload-button {
-                        background-color: #409eff;
-                        color: #ffffff;
                         padding: 8px 15px;
                         font-size: 14px;
                         border-radius: 4px ;
@@ -443,7 +434,6 @@
 
                 .create-ticket-upload-tip {
                     font-size: 12px;
-                    color: #606266;
                     margin-top: 7px;
                 }
             }

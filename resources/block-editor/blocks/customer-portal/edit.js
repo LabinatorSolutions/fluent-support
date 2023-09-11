@@ -148,6 +148,7 @@ export default function Edit({attributes, setAttributes}) {
         color: attributes.allTicketsTableHeaderTextColor,
     }
 
+    //Create ticket styles
     const createTicketHeaderStyle = {
         background: attributes.createTicketHeaderBgColor,
     }
@@ -159,6 +160,28 @@ export default function Edit({attributes, setAttributes}) {
     const createTicketViewAllButtonStyle = {
         color: attributes.createTicketViewAllButtonTextColor,
         background: attributes.createTicketViewAllButtonBgColor,
+    }
+
+    const createTicketBodyStyle = {
+        background: attributes.createTicketBodyBgColor,
+    }
+
+    const createTicketFormStyle = {
+        color: attributes.createTicketInputHeaderTextColor,
+    }
+
+    const createTicketTipMessageStyle = {
+        color: attributes.createTicketTipMessageTextColor,
+    }
+
+    const createTicketUploadButtonStyle = {
+        color: attributes.createTicketUploadButtonTextColor,
+        background: attributes.createTicketUploadButtonBgColor
+    }
+
+    const createTicketCreateButtonStyle = {
+        color: attributes.createTicketCreateButtonTextColor,
+        background: attributes.createTicketCreateButtonBgColor
     }
 
     useEffect(() => {
@@ -241,8 +264,8 @@ export default function Edit({attributes, setAttributes}) {
                                 </button>
                             </div>
                         </div>
-                        <div className={'create-ticket-body'}>
-                            <form className="create-ticket-form">
+                        <div className={'create-ticket-body'} style={createTicketBodyStyle}>
+                            <form className="create-ticket-form" style={createTicketFormStyle}>
                                 <div className="create-ticket-form-item">
                                     <label htmlFor="subject" className="create-ticket-label">
                                         Subject heading new
@@ -265,22 +288,15 @@ export default function Edit({attributes, setAttributes}) {
                                               className="create-ticket-textarea-inner"
                                           ></textarea>
                                     </div>
-                                    <p className="create-ticket-help">Content help message</p>
+                                    <p className="create-ticket-help" style={createTicketTipMessageStyle}>Content help message</p>
                                 </div>
                                 <div className="create-ticket-attachments">
                                     <div className="create-ticket-upload">
-                                        <button className="create-ticket-upload-button" type="button">
+                                        <button className="create-ticket-upload-button" style={createTicketUploadButtonStyle} type="button">
                                             Click to upload
                                         </button>
-                                        {/*<input*/}
-                                        {/*    className="create-ticket-upload-input"*/}
-                                        {/*    name="file"*/}
-                                        {/*    multiple*/}
-                                        {/*    accept*/}
-                                        {/*    type="file"*/}
-                                        {/*/>*/}
                                     </div>
-                                    <div className="create-ticket-upload-tip">
+                                    <div className="create-ticket-upload-tip" style={createTicketTipMessageStyle}>
                                         Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max file size: 2.0MB
                                     </div>
                                     <ul className="create-ticket-upload-list"></ul>
@@ -288,18 +304,12 @@ export default function Edit({attributes, setAttributes}) {
                                 <div className="create-ticket-custom-fields"></div>
                                 <div className="create-ticket-form-item">
                                     <div className="create-ticket-button">
-                                        <button className="create-ticket-button-inner" type="button">
+                                        <button className="create-ticket-button-inner" style={createTicketCreateButtonStyle} type="button">
                                             Create
                                         </button>
                                     </div>
                                 </div>
                             </form>
-
-                            {/*<div className={'create-ticket-body-left'}>*/}
-                            {/*    <div className={'create-ticket-body-left-header'}>*/}
-                            {/*        <h3>General</h3>*/}
-                            {/*    </div>*/}
-                            {/*</div>*/}
                         </div>
                     </div>
                     : showTicket === true ?

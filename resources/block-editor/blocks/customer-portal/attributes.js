@@ -152,7 +152,35 @@ const attributes = {
     createTicketViewAllButtonTextColor: {
         type: 'string',
         default: '#ffffff',
-    }
+    },
+    createTicketBodyBgColor: {
+        type: 'string',
+        default: '#ffffff',
+    },
+    createTicketInputHeaderTextColor: {
+        type: 'string',
+        default: '#43454b',
+    },
+    createTicketTipMessageTextColor: {
+        type: 'string',
+        default: '#606266',
+    },
+    createTicketUploadButtonBgColor: {
+        type: 'string',
+        default: '#409eff',
+    },
+    createTicketUploadButtonTextColor: {
+        type: 'string',
+        default: '#ffffff',
+    },
+    createTicketCreateButtonBgColor: {
+        type: 'string',
+        default: '#67C23A',
+    },
+    createTicketCreateButtonTextColor: {
+        type: 'string',
+        default: '#ffffff',
+    },
 
 };
 
