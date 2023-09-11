@@ -38,10 +38,6 @@ export default function Edit({attributes, setAttributes}) {
         padding: '10px 20px',
     }
 
-    const createTicketHeaderStyle = {
-        backgroundColor: attributes.createTicketFormHeaderBgColor,
-    }
-
     const [showTickets, setShowTickets] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
@@ -151,6 +147,20 @@ export default function Edit({attributes, setAttributes}) {
         textAlign: attributes.allTicketsTableHeaderTextAlign,
         color: attributes.allTicketsTableHeaderTextColor,
     }
+
+    const createTicketHeaderStyle = {
+        background: attributes.createTicketHeaderBgColor,
+    }
+
+    const createTicketHeaderTextStyle = {
+        color: attributes.createTicketHeaderTextBgColor,
+    }
+
+    const createTicketViewAllButtonStyle = {
+        color: attributes.createTicketViewAllButtonTextColor,
+        background: attributes.createTicketViewAllButtonBgColor,
+    }
+
     useEffect(() => {
         setShowTickets(true);
     }, true);
@@ -163,19 +173,26 @@ export default function Edit({attributes, setAttributes}) {
                     <div className={"all-tickets-header"} style={allTicketsHeaderStyle}>
                         <div className="all-tickets-header-left">
                             <div className="all-tickets-button-groups">
-                                <button className="all-tickets btn-all btn-active" style={allTicketsAllButtonStyle}>All</button>
+                                <button className="all-tickets btn-all btn-active"
+                                        style={allTicketsAllButtonStyle}>All
+                                </button>
                                 <button className="all-tickets btn-open" style={allTicketsOpenButtonStyle}>Open</button>
-                                <button className="all-tickets btn-closed" style={allTicketsClosedButtonStyle}>Closed</button>
+                                <button className="all-tickets btn-closed" style={allTicketsClosedButtonStyle}>Closed
+                                </button>
                             </div>
                         </div>
                         <div className="all-tickets-header-right">
-                            <button className="all-tickets btn-logout" style={allTicketsLogoutButtonStyle}>Logout</button>
-                            <button className="all-tickets btn-success btn-create-ticket" style={allTicketsCreateTicketButtonStyle} onClick={showCreateTicket}>Create a New Ticket</button>
+                            <button className="all-tickets btn-logout" style={allTicketsLogoutButtonStyle}>Logout
+                            </button>
+                            <button className="all-tickets btn-success btn-create-ticket"
+                                    style={allTicketsCreateTicketButtonStyle} onClick={showCreateTicket}>Create a New
+                                Ticket
+                            </button>
                         </div>
                     </div>
                     <div className={"all-tickets-body"}>
                         <table className="all-tickets-table table_stripe">
-                            <thead style={ allTicketsTableHeaderStyle }>
+                            <thead style={allTicketsTableHeaderStyle}>
                             <tr>
                                 <th>Conversation</th>
                                 <th></th>
@@ -214,20 +231,75 @@ export default function Edit({attributes, setAttributes}) {
                 </div>
                 : showForm === true ?
                     <div className={'block-wrapper'}>
-                        <div className={'create-ticket-header'}>
+                        <div className={'create-ticket-header'} style={createTicketHeaderStyle}>
                             <div className={'create-ticket-header-left'}>
-                                <h3>Submit a Support Ticket</h3>
+                                <h3 style={createTicketHeaderTextStyle}>Submit a Support Ticket</h3>
                             </div>
                             <div className={'create-ticket-header-right'}>
-                                <button onClick={() => showTicketsList()}>View All</button>
+                                <button className={'create-ticket-view-all'} style={createTicketViewAllButtonStyle}
+                                        onClick={() => showTicketsList()}>View All
+                                </button>
                             </div>
                         </div>
                         <div className={'create-ticket-body'}>
-                            <div className={'create-ticket-body-left'}>
-                                <div className={'create-ticket-body-left-header'}>
-                                    <h3>General</h3>
+                            <form className="create-ticket-form">
+                                <div className="create-ticket-form-item">
+                                    <label htmlFor="subject" className="create-ticket-label">
+                                        Subject heading new
+                                    </label>
+                                    <div className="create-ticket-input">
+                                        <input
+                                            type="text"
+                                            id="subject"
+                                            placeholder="What's this support ticket about?"
+                                            className="create-ticket-input-inner"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                                <div className="create-ticket-form-item">
+                                    <div className="create-ticket-label">Form content heading</div>
+                                    <div className="create-ticket-textarea">
+                                          <textarea
+                                              id="content"
+                                              placeholder="Enter your content here"
+                                              className="create-ticket-textarea-inner"
+                                          ></textarea>
+                                    </div>
+                                    <p className="create-ticket-help">Content help message</p>
+                                </div>
+                                <div className="create-ticket-attachments">
+                                    <div className="create-ticket-upload">
+                                        <button className="create-ticket-upload-button" type="button">
+                                            Click to upload
+                                        </button>
+                                        {/*<input*/}
+                                        {/*    className="create-ticket-upload-input"*/}
+                                        {/*    name="file"*/}
+                                        {/*    multiple*/}
+                                        {/*    accept*/}
+                                        {/*    type="file"*/}
+                                        {/*/>*/}
+                                    </div>
+                                    <div className="create-ticket-upload-tip">
+                                        Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max file size: 2.0MB
+                                    </div>
+                                    <ul className="create-ticket-upload-list"></ul>
+                                </div>
+                                <div className="create-ticket-custom-fields"></div>
+                                <div className="create-ticket-form-item">
+                                    <div className="create-ticket-button">
+                                        <button className="create-ticket-button-inner" type="button">
+                                            Create
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+
+                            {/*<div className={'create-ticket-body-left'}>*/}
+                            {/*    <div className={'create-ticket-body-left-header'}>*/}
+                            {/*        <h3>General</h3>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
                     : showTicket === true ?
