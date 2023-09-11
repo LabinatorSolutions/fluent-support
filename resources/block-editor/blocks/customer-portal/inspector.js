@@ -122,6 +122,42 @@ const Inspector = ({ attributes, setAttributes }) => {
                 />
             </PanelBody>
 
+            <PanelBody title={__('Create Ticket Page Body', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketBodyBgColor}
+                              onChange={(v) => setAttributes({ createTicketBodyBgColor: v })}
+                />
+
+                <p><strong>{__('Form Input Header Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketInputHeaderTextColor}
+                              onChange={(v) => setAttributes({ createTicketInputHeaderTextColor: v })}
+                />
+
+                <p><strong>{__('Tip Message Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketTipMessageTextColor}
+                              onChange={(v) => setAttributes({ createTicketTipMessageTextColor: v })}
+                />
+
+                <p><strong>{__('Upload Button Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketUploadButtonBgColor}
+                              onChange={(v) => setAttributes({ createTicketUploadButtonBgColor: v })}
+                />
+                <p><strong>{__('Upload Button Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketUploadButtonTextColor}
+                              onChange={(v) => setAttributes({ createTicketUploadButtonTextColor: v })}
+                />
+
+                <p><strong>{__('Create Button Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketCreateButtonBgColor}
+                              onChange={(v) => setAttributes({ createTicketCreateButtonBgColor: v })}
+                />
+                <p><strong>{__('Create Button Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketCreateButtonTextColor}
+                              onChange={(v) => setAttributes({ createTicketCreateButtonTextColor: v })}
+                />
+
+            </PanelBody>
+
         </InspectorControls>
     );
 };
