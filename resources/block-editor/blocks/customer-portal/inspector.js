@@ -100,6 +100,28 @@ const Inspector = ({ attributes, setAttributes }) => {
                 />
             </PanelBody>
 
+            <PanelBody title={__('Create Ticket Page Header', 'fluent-support')} initialOpen={ false }>
+                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketHeaderBgColor}
+                              onChange={(v) => setAttributes({ createTicketHeaderBgColor: v })}
+                />
+
+                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketHeaderTextBgColor}
+                              onChange={(v) => setAttributes({ createTicketHeaderTextBgColor: v })}
+                />
+
+                <p><strong>{__('View All Button Text Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketViewAllButtonTextColor}
+                              onChange={(v) => setAttributes({ createTicketViewAllButtonTextColor: v })}
+                />
+
+                <p><strong>{__('View All Button Background Color', 'fluent-support')}</strong></p>
+                <ColorPalette value={attributes.createTicketViewAllButtonBgColor}
+                              onChange={(v) => setAttributes({ createTicketViewAllButtonBgColor: v })}
+                />
+            </PanelBody>
+
         </InspectorControls>
     );
 };

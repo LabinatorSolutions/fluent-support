@@ -137,6 +137,23 @@ const attributes = {
         type: 'string',
         default: '#ffffff',
     },
+    createTicketHeaderBgColor: {
+        type: 'string',
+        default: '#acccd4',
+    },
+    createTicketHeaderTextBgColor: {
+        type: 'string',
+        default: '#314351',
+    },
+    createTicketViewAllButtonBgColor: {
+        type: 'string',
+        default: '#909399',
+    },
+    createTicketViewAllButtonTextColor: {
+        type: 'string',
+        default: '#ffffff',
+    }
+
 };
 
 export default attributes;
