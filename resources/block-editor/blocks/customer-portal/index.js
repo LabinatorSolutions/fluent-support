@@ -1,7 +1,6 @@
 const { registerBlockType } = wp.blocks;
 const { __ } = wp.i18n;
 import Edit from './edit';
-import attributes from './attributes';
 import icons from '../../icons';
 registerBlockType( 'fluent-support/customer-portal', {
     apiVersion: 2,
@@ -14,7 +13,6 @@ registerBlockType( 'fluent-support/customer-portal', {
     /**
      * @see ./attributes.js
      */
-    attributes,
     /**
      * @see ./edit.js
      */
