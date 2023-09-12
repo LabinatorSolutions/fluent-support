@@ -6,12 +6,13 @@ use FluentSupport\App\App;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\BlockHelper;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 
 class CustomerPortalHandler
 {
-    public function renderPortal($args)
+    public function renderPortal($args = [])
     {
         /**
          * This hook filter customer portal access permission error message.
@@ -66,7 +67,11 @@ class CustomerPortalHandler
             if (!$person) {
                 $this->maybeCreateCustomer();
             }
-            $this->processStyleFromAttributes($args['attributes']);
+
+            if( isset($args['attributes']) && !empty($args['attributes']) ) {
+                BlockHelper::processAttributesAndPrepareStyle($args['attributes']);
+            }
+
             $this->enqueueScripts();
             return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
         } else {
@@ -79,31 +84,6 @@ class CustomerPortalHandler
             return do_shortcode($loggedInMessage);
         }
     }
-
-    public function processStyleFromAttributes($attributes)
-    {?>
-        <style type="text/css">
-            #fluent_support_client_app {
-                .fs_btn_all {
-                    background-color:<?php echo $attributes['filterButtonAllBgColor']; ?>;
-                    color:<?php echo $attributes['filterButtonAllTextColor']; ?>;
-                }
-                .fs_btn_open {
-                    background-color:<?php echo $attributes['filterButtonOpenBgColor']; ?>;
-                    color:<?php echo $attributes['filterButtonOpenTextColor']; ?>;
-                }
-                .fs_btn_closed {
-                    background-color:<?php echo $attributes['filterButtonClosedBgColor']; ?>;
-                    color:<?php echo $attributes['filterButtonClosedTextColor']; ?>;
-                }
-
-                .fs_btn_create_ticket {
-                    background-color:<?php echo $attributes['buttonCreateTicketBgColor']; ?>;
-                    color:<?php echo $attributes['buttonCreateTicketTextColor']; ?>;
-                }
-            }
-        </style>
-    <?php }
 
     public function enqueueScripts()
     {
@@ -209,8 +189,6 @@ class CustomerPortalHandler
          * @param array $data
          */
         $data = apply_filters('fluent_support/customer_portal_vars', $data);
-
-        $data = apply_filters('fluent_support/customer_portal_settings', $data);
 
         if (!empty($data['has_rich_text_editor'])) {
             wp_tinymce_inline_scripts();
