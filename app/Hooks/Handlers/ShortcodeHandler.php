@@ -17,7 +17,7 @@ class ShortcodeHandler
         ), $args );
 
         if ($args['attributes']) {
-            add_filter('fluent_support/customer_portal_settings', function ($vars) use($args) {
+            add_filter('fluent_support/customer_portal_vars', function ($vars) use($args) {
 
                 $vars['attributes'] = $args['attributes'];
                 return $vars;
