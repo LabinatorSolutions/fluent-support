@@ -221,6 +221,26 @@ const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewT
                     <ColorPalette value={attributes.viewTicketPageBodyBgColor}
                                   onChange={(v) => setAttributes({ viewTicketPageBodyBgColor: v })}
                     />
+
+
+
+                    <PanelBody title={__('Customer Thread Ribbon ', 'fluent-support')} initialOpen={ false }>
+                        <p><strong>{__(' Color', 'fluent-support')}</strong></p>
+                        <ColorPalette value={attributes.CustomerThreadRibbonColor}
+                                      onChange={(v) => setAttributes({ CustomerThreadRibbonColor: v })}
+                        />
+
+                    </PanelBody>
+
+                    <PanelBody title={__('Agent Thread Ribbon ', 'fluent-support')} initialOpen={ false }>
+                        <p><strong>{__(' Color', 'fluent-support')}</strong></p>
+                        <ColorPalette value={attributes.AgentThreadRibbonColor}
+                                      onChange={(v) => setAttributes({ AgentThreadRibbonColor: v })}
+                        />
+
+                    </PanelBody>
+
+
                     <PanelBody title={__('Support Staff', 'fluent-support')} initialOpen={ false }>
                         <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
                         <ColorPalette value={attributes.ribbonSupportStaffBgColor}

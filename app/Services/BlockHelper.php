@@ -67,6 +67,10 @@ class BlockHelper
                 'type' => 'string',
                 'default' => 'center',
             ],
+            'allTicketsTableRowBgColor' => [
+                'type' => 'string',
+                'default' => '#ffffff',
+            ],
             'allTicketsFooterBgColor' => [
                 'type' => 'string',
                 'default' => '#c8ccd3',
@@ -165,6 +169,14 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'CustomerThreadRibbonColor' => [
+                'type' => 'string',
+                'default' => '#15BE7C',
+            ],
+            'AgentThreadRibbonColor' => [
+                'type' => 'string',
+                'default' => '#1785EB',
+            ],
             'ribbonSupportStaffBgColor' => [
                 'type' => 'string',
                 'default' => '#1785EB',
@@ -229,6 +241,11 @@ class BlockHelper
                     text-align:<?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
                 }
 
+                .fs_table thead th{
+                    background-color:<?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
+                    color:<?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
+                    text-align:<?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
+                }
                 .fst_pagi_wrapper{
                     background-color:<?php echo esc_attr($attributes['allTicketsFooterBgColor']); ?>;
                     margin: 0 auto;

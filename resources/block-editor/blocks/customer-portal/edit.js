@@ -10,7 +10,22 @@ import {
     getAllTicketsOpenButtonStyle,
     getAllTicketsClosedButtonStyle,
     getAllTicketsLogoutButtonStyle,
-    getAllTicketsCreateTicketButtonStyle, getAllTicketsFooterStyle,
+    getAllTicketsCreateTicketButtonStyle,
+    getAllTicketsFooterStyle,
+    getAllTicketsTableRowStyle,
+
+    // Import the View Ticket style her
+    getViewTicketHeaderStyle,
+    getViewTicketIdStyle,
+    getViewTicketRefreshButtonStyle,
+    getViewTicketAllButtonStyle,
+    getViewTicketCloseButtonStyle,
+    getViewTicketPageBodyStyle,
+    getViewTicketCustomerThreadRibbonTailStyle,
+    getViewTicketCustomerThreadRibbonHeaderStyle,
+    getViewTicketAgentThreadRibbonTailStyle,
+    getViewTicketAgentThreadRibbonHeaderStyle
+
     // Import other style functions here...
 } from './style';
 
@@ -40,54 +55,9 @@ export default function Edit({attributes, setAttributes}) {
         setShowTicket(true);
     }
 
-    const refreshButtonStyle = {
-        padding: '3px 10px',
-        backgroundColor: attributes.refreshButtonBgColor,
-        color: attributes.refreshButtonTextColor,
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        marginRight: '12px',
-    };
-
-    const allButtonStyle = {
-        fontSize: '12px',
-        padding: '5px 11px',
-        borderRadius: 'calc(0.25em - 1px)',
-        backgroundColor: attributes.allButtonBgColor,
-        color: attributes.allButtonTextColor,
-        border: 'none',
-        cursor: 'pointer',
-        marginRight: '12px',
-    };
-
-    const closeTicketButton = {
-        fontSize: '12px',
-        padding: '5px 11px',
-        borderRadius: 'calc(0.25em - 1px)',
-        backgroundColor: attributes.closeTicketButtonBgColor,
-        color: attributes.closeTicketButtonTextColor,
-        border: 'none',
-        cursor: 'pointer',
-    };
-
-    const viewTicketHeaderStyle = {
-        backgroundColor: attributes.viewTicketHeaderStyleBgColor,
-        color: attributes.viewTicketHeaderStyleTextColor,
-    };
-
-    const viewTicketHeaderIdStyle = {
-        color: attributes.viewTicketHeaderIdTextColor
-    }
-
     const viewTicketHeaderBadgeStyle = {
         background: attributes.viewTicketHeaderBadgeBgColor,
         color: attributes.viewTicketHeaderBadgeTextColor,
-    }
-
-    const viewTicketPageBodyStyle = {
-        background: attributes.viewTicketPageBodyBgColor,
-        padding: '15px 20px'
     }
 
     const ribbonSupportStaffStyle = {
@@ -154,7 +124,8 @@ export default function Edit({attributes, setAttributes}) {
 
     return (
         <Fragment>
-            <Inspector attributes={attributes} setAttributes={setAttributes} showTickets={showTickets} createTicket={showForm} viewTicket={showTicket}/>
+            <Inspector attributes={attributes} setAttributes={setAttributes} showTickets={showTickets}
+                       createTicket={showForm} viewTicket={showTicket}/>
             {showTickets === true ?
                 <div className={'block-wrapper'}>
                     <div className={"all-tickets-header"} style={getAllTicketsHeaderStyle(attributes)}>
@@ -163,16 +134,21 @@ export default function Edit({attributes, setAttributes}) {
                                 <button className="all-tickets btn-all btn-active"
                                         style={getAllTicketsAllButtonStyle(attributes)}>All
                                 </button>
-                                <button className="all-tickets btn-open" style={getAllTicketsOpenButtonStyle(attributes)}>Open</button>
-                                <button className="all-tickets btn-closed" style={getAllTicketsClosedButtonStyle(attributes)}>Closed
+                                <button className="all-tickets btn-open"
+                                        style={getAllTicketsOpenButtonStyle(attributes)}>Open
+                                </button>
+                                <button className="all-tickets btn-closed"
+                                        style={getAllTicketsClosedButtonStyle(attributes)}>Closed
                                 </button>
                             </div>
                         </div>
                         <div className="all-tickets-header-right">
-                            <button className="all-tickets btn-logout" style={getAllTicketsLogoutButtonStyle(attributes)}>Logout
+                            <button className="all-tickets btn-logout"
+                                    style={getAllTicketsLogoutButtonStyle(attributes)}>Logout
                             </button>
                             <button className="all-tickets btn-success btn-create-ticket"
-                                    style={getAllTicketsCreateTicketButtonStyle(attributes)} onClick={showCreateTicket}>Create a New
+                                    style={getAllTicketsCreateTicketButtonStyle(attributes)}
+                                    onClick={showCreateTicket}>Create a New
                                 Ticket
                             </button>
                         </div>
@@ -181,14 +157,14 @@ export default function Edit({attributes, setAttributes}) {
                         <table className="all-tickets-table table_stripe">
                             <thead style={allTicketsTableHeaderStyle}>
                             <tr>
-                                <th>Conversation</th>
-                                <th></th>
-                                <th>Status</th>
-                                <th>Date</th>
+                                <th style={allTicketsTableHeaderStyle}>Conversation</th>
+                                <th style={allTicketsTableHeaderStyle}></th>
+                                <th style={allTicketsTableHeaderStyle}>Status</th>
+                                <th style={allTicketsTableHeaderStyle}>Date</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr onClick={viewTicket}>
+                            <tr onClick={viewTicket} style={getAllTicketsTableRowStyle(attributes)}>
                                 <td><a className={"ticket-preview"}><strong>Test ticket 1</strong>
                                     <div className="prev_text_parent"><p className="ticket-preview-text">Test ticket
                                         1</p>
@@ -252,11 +228,13 @@ export default function Edit({attributes, setAttributes}) {
                                               className="create-ticket-textarea-inner"
                                           ></textarea>
                                     </div>
-                                    <p className="create-ticket-help" style={createTicketTipMessageStyle}>Content help message</p>
+                                    <p className="create-ticket-help" style={createTicketTipMessageStyle}>Content help
+                                        message</p>
                                 </div>
                                 <div className="create-ticket-attachments">
                                     <div className="create-ticket-upload">
-                                        <button className="create-ticket-upload-button" style={createTicketUploadButtonStyle} type="button">
+                                        <button className="create-ticket-upload-button"
+                                                style={createTicketUploadButtonStyle} type="button">
                                             Click to upload
                                         </button>
                                     </div>
@@ -268,7 +246,8 @@ export default function Edit({attributes, setAttributes}) {
                                 <div className="create-ticket-custom-fields"></div>
                                 <div className="create-ticket-form-item">
                                     <div className="create-ticket-button">
-                                        <button className="create-ticket-button-inner" style={createTicketCreateButtonStyle} type="button">
+                                        <button className="create-ticket-button-inner"
+                                                style={createTicketCreateButtonStyle} type="button">
                                             Create
                                         </button>
                                     </div>
@@ -278,29 +257,33 @@ export default function Edit({attributes, setAttributes}) {
                     </div>
                     : showTicket === true ?
                         <div className={'block-wrapper'}>
-                            <div className={'show-ticket-header'} style={viewTicketHeaderStyle}>
+                            <div className={'show-ticket-header'} style={getViewTicketHeaderStyle(attributes)}>
                                 <div className={'show-th-header'}>
                                     <hgroup>
                                         <div className={'show-tk-subject'}>
-                                            <h2 title="show-tk-edit-subject" style={viewTicketHeaderStyle}>
-                                                <span className="show-ticket-id" style={viewTicketHeaderIdStyle} >#746</span> Check htttp
+                                            <h2 title="show-tk-edit-subject"
+                                                style={getViewTicketHeaderStyle(attributes)}>
+                                                <span className="show-ticket-id"
+                                                      style={getViewTicketIdStyle(attributes)}>#746</span> Check htttp
                                             </h2>
                                             <div className={"show-tk-tags"}>
                                                 <span className={"show-badge show-badge-new"}>  new </span>
                                             </div>
                                         </div>
                                         <div className={"show-tk-actions"}>
-                                            <button style={refreshButtonStyle}>
+                                            <button className={"show-refresh-button"}
+                                                    style={getViewTicketRefreshButtonStyle(attributes)}>
                                                 &#8635;
                                             </button>
                                             <a
                                                 onClick={showTicketsList}
-                                                style={allButtonStyle}
+                                                style={getViewTicketAllButtonStyle(attributes)}
                                             >
                                                 All
                                             </a>
                                             <button
-                                                style={closeTicketButton}
+                                                className={"show-close-button"}
+                                                style={getViewTicketCloseButtonStyle(attributes)}
                                             >
                                                 Close Ticket
                                             </button>
@@ -308,12 +291,62 @@ export default function Edit({attributes, setAttributes}) {
                                     </hgroup>
                                 </div>
                             </div>
-                            <div className={'show-ticket-body'} style={viewTicketPageBodyStyle}>
+                            <div className={'show-ticket-body'} style={getViewTicketPageBodyStyle(attributes)}>
                                 <div className={'show-reply-box'}>
                                     <textarea className="show-reply-text"
                                               placeholder="Click Here to Write a reply"></textarea>
                                 </div>
+
                                 <div className="show-threads-container">
+                                    <article className="show-thread fs_customer fs_conv_type_response" style={getViewTicketCustomerThreadRibbonTailStyle(attributes)}
+                                    >
+                                        <span
+                                            className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketCustomerThreadRibbonHeaderStyle(attributes)}>Thread Starter</span>
+                                        <div className="show-thread-content">
+                                            <section className="show-avatar"><img
+                                                src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
+                                                alt="auth test"/>
+                                            </section>
+                                            <section className="show-thread-wrap">
+                                                <section className="show-thread-message">
+                                                    <div className="show-thread-head">
+                                                        <div className="show-thread-title">
+                                                            <strong>You</strong> replied
+                                                        </div>
+                                                        <div className="show-thread-actions"
+                                                        >2023-09-07T10:32:49+00:00
+                                                        </div>
+                                                    </div>
+                                                    <div className="show-thread-body"><p>new reply</p>
+                                                    </div>
+                                                </section>
+                                            </section>
+                                        </div>
+                                    </article>
+                                    <article className="show-thread fs_agent fs_conv_type_response" style={getViewTicketAgentThreadRibbonTailStyle(attributes)}
+                                    >
+                                        <span className="fs_thread_ribbon fs_thread_ribbon_agent" style={getViewTicketAgentThreadRibbonHeaderStyle(attributes)}>Support Staff</span>
+                                        <div className="show-thread-content">
+                                            <section className="show-avatar"><img
+                                                src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
+                                                alt="auth test"/>
+                                            </section>
+                                            <section className="show-thread-wrap">
+                                                <section className="show-thread-message">
+                                                    <div className="show-thread-head">
+                                                        <div className="show-thread-title">
+                                                            <strong>Bijit Deb</strong> replied
+                                                        </div>
+                                                        <div className="show-thread-actions"
+                                                        >2023-09-07T10:32:49+00:00
+                                                        </div>
+                                                    </div>
+                                                    <div className="show-thread-body"><p>check workflow</p>
+                                                    </div>
+                                                </section>
+                                            </section>
+                                        </div>
+                                    </article>
                                     <article className="show-thread conversion-starter">
                                         <div className="show-thread-content">
                                             <section className="show-avatar">
@@ -326,7 +359,8 @@ export default function Edit({attributes, setAttributes}) {
                                                         <div className="show-thread-title">
                                                             <strong>You</strong> started the conversation
                                                         </div>
-                                                        <div className="show-thread-actions" style={viewTicketThreadDateTimeStyle}>2023-08-30T09:32:16+00:00
+                                                        <div className="show-thread-actions"
+                                                             style={viewTicketThreadDateTimeStyle}>2023-08-30T09:32:16+00:00
                                                         </div>
                                                     </div>
                                                     <div className="show-thread-body" style={viewTicketThreadBodyStyle}>
