@@ -104,6 +104,8 @@
                     }
 
                     .show-badge-new {
+                        background-color: #f56c6c;
+                        color: #ffffff;
                         text-transform: capitalize;
                     }
                 }
@@ -115,6 +117,31 @@
                 right: 0;
                 top: -5px;
                 width: auto;
+
+                a{
+                    font-size: 12px;
+                    padding: 5px 11px;
+                    border-radius: 4px;
+                    border: none;
+                    cursor: pointer;
+                    margin-right: 12px;
+                }
+
+                .show-refresh-button {
+                    padding: 3px 10px;
+                    border: none;
+                    border-radius: 5px;
+                    cursor: pointer;
+                    margin-right: 12px;
+                }
+
+                .show-close-button {
+                    font-size: 12px;
+                    padding: 5px 11px;
+                    border-radius: calc(0.25em - 1px);
+                    border: none;
+                    cursor: pointer;
+                }
             }
 
         }
@@ -127,13 +154,15 @@
         border-bottom-right-radius: 5px;
 
         .show-reply-box {
+            padding: 15px 20px;
             .show-reply-text {
                 width: 100% !important;
                 height: 60px !important;
                 border: 1px solid #e5e9ec;
                 background: #e5e9ec;
                 padding: 15px 20px;
-            }
+                }
+
         }
 
         .show-threads-container {
@@ -146,6 +175,23 @@
                 position: relative;
                 width: 100%;
                 border-top: 1px solid #e5e9ec;
+
+                .fs_thread_ribbon {
+                    position: relative;
+                    left: 0;
+                    top: -6px;
+                    color: #fff;
+                    font-size: 10px;
+                    padding: 5px 10px;
+                }
+
+                .fs_thread_ribbon_agent {
+                   // background: #1785EB;
+                }
+
+                .fs_thread_ribbon_customer {
+                    //background: #15BE7C;
+                }
 
                 .show-thread-content {
                     .show-avatar {
@@ -201,6 +247,12 @@
                     }
                 }
             }
+            .fs_agent {
+                border-left: 4px solid #1785EB;
+            }
+            .fs_customer {
+                //border-left: 4px solid #15BE7C;
+            }
         }
     }
 }
@@ -226,7 +278,7 @@
 
             tbody {
                 tr {
-                    background-color: white;
+                    //background-color: white;
                     border-bottom: 1px solid #dddddd;
 
                     .ticket-preview {
