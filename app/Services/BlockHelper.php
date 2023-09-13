@@ -197,6 +197,9 @@ class BlockHelper
         ?>
         <style type="text/css">
             #fluent_support_client_app {
+                .fs_tk_header {
+                    background-color:<?php echo esc_attr($attributes['allTicketsHeaderBgColor']); ?>;
+                }
                 .fs_btn_all {
                     background-color:<?php echo esc_attr($attributes['filterButtonAllBgColor']); ?>;
                     color:<?php echo esc_attr($attributes['filterButtonAllTextColor']); ?>;
@@ -210,15 +213,25 @@ class BlockHelper
                     color:<?php echo esc_attr($attributes['filterButtonClosedTextColor']); ?>;
                 }
 
+                .fs_btn_logout {
+                    background-color:<?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
+                    color:<?php echo esc_attr($attributes['allTicketsLogoutButtonTextColor']); ?>;
+                }
+
                 .fs_btn_create_ticket {
                     background-color:<?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
                     color:<?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
                 }
 
                 .fs_table thead{
-                    background-color:<?php echo $attributes['allTicketsTableHeaderBgColor']; ?>;
-                    color:<?php echo $attributes['allTicketsTableHeaderTextColor']; ?>;
-                    text-align:<?php echo $attributes['allTicketsTableHeaderTextAlign']; ?>;
+                    background-color:<?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
+                    color:<?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
+                    text-align:<?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
+                }
+
+                .fst_pagi_wrapper{
+                    background-color:<?php echo esc_attr($attributes['allTicketsFooterBgColor']); ?>;
+                    margin: 0 auto;
                 }
             }
         </style>
