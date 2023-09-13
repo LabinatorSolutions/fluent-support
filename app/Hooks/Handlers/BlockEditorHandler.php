@@ -26,6 +26,11 @@ class BlockEditorHandler
 
     public function fst_render_block($attributes)
     {
-        return do_shortcode("[fluent_support_portal attributes='".json_encode($attributes)."']");
+        $param = '';
+        if(isset($attributes['allTicketsLogoutButtonVisibility']) && $attributes['allTicketsLogoutButtonVisibility']) {
+            $param = "show_logout=yes ";
+        }
+        $param .= "attributes='".json_encode($attributes)."'";
+        return do_shortcode("[fluent_support_portal $param]");
     }
 }

@@ -1,43 +1,23 @@
 const {Fragment, useState, useEffect} = wp.element;
 //Import styles
+
 import './editor.scss';
+
+// Import the style functions from styles.js
+import {
+    getAllTicketsHeaderStyle,
+    getAllTicketsAllButtonStyle,
+    getAllTicketsOpenButtonStyle,
+    getAllTicketsClosedButtonStyle,
+    getAllTicketsLogoutButtonStyle,
+    getAllTicketsCreateTicketButtonStyle, getAllTicketsFooterStyle,
+    // Import other style functions here...
+} from './style';
+
 //Import Inspector controls
 import Inspector from './inspector';
 
 export default function Edit({attributes, setAttributes}) {
-    const ticketHeaderStyle = {
-        backgroundColor: attributes.ticketHeaderBgColor,
-    }
-    const ticketHeaderLeftStyle = {
-        float: 'left',
-    }
-    const ticketHeaderRightStyle = {
-        float: 'right',
-    }
-    const allBtnStyle = {
-        backgroundColor: attributes.buttonAllBgColor,
-        color: attributes.buttonAllTextColor,
-        padding: '10px 20px',
-    }
-
-    const openBtnStyle = {
-        backgroundColor: attributes.buttonOpenBgColor,
-        color: attributes.buttonOpenTextColor,
-        padding: '10px 20px',
-    }
-
-    const closedBtnStyle = {
-        backgroundColor: attributes.buttonClosedBgColor,
-        color: attributes.buttonClosedTextColor,
-        padding: '10px 20px',
-    }
-
-    const createTicketBtnStyle = {
-        backgroundColor: attributes.buttonCreateTicketBgColor,
-        color: attributes.buttonCreateTicketTextColor,
-        padding: '10px 20px',
-    }
-
     const [showTickets, setShowTickets] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
@@ -58,39 +38,6 @@ export default function Edit({attributes, setAttributes}) {
         setShowForm(false);
         setShowTickets(false);
         setShowTicket(true);
-    }
-
-    const allTicketsHeaderStyle = {
-        background: attributes.allTicketsHeaderBgColor,
-    }
-
-    const allTicketsAllButtonStyle = {
-        color: attributes.filterButtonAllTextColor,
-        background: attributes.filterButtonAllBgColor,
-    }
-
-    const allTicketsOpenButtonStyle = {
-        color: attributes.filterButtonOpenTextColor,
-        background: attributes.filterButtonOpenBgColor,
-    }
-
-    const allTicketsClosedButtonStyle = {
-        color: attributes.filterButtonClosedTextColor,
-        background: attributes.filterButtonClosedBgColor,
-    }
-
-    const allTicketsLogoutButtonStyle = {
-        color: attributes.allTicketsLogoutButtonTextColor,
-        background: attributes.allTicketsLogoutButtonBgColor,
-    }
-
-    const allTicketsCreateTicketButtonStyle = {
-        color: attributes.buttonCreateTicketTextColor,
-        background: attributes.buttonCreateTicketBgColor,
-    }
-//Table styles
-    const allTicketsFooterStyle = {
-        background: attributes.allTicketsFooterBgColor,
     }
 
     const refreshButtonStyle = {
@@ -210,22 +157,22 @@ export default function Edit({attributes, setAttributes}) {
             <Inspector attributes={attributes} setAttributes={setAttributes} showTickets={showTickets} createTicket={showForm} viewTicket={showTicket}/>
             {showTickets === true ?
                 <div className={'block-wrapper'}>
-                    <div className={"all-tickets-header"} style={allTicketsHeaderStyle}>
+                    <div className={"all-tickets-header"} style={getAllTicketsHeaderStyle(attributes)}>
                         <div className="all-tickets-header-left">
                             <div className="all-tickets-button-groups">
                                 <button className="all-tickets btn-all btn-active"
-                                        style={allTicketsAllButtonStyle}>All
+                                        style={getAllTicketsAllButtonStyle(attributes)}>All
                                 </button>
-                                <button className="all-tickets btn-open" style={allTicketsOpenButtonStyle}>Open</button>
-                                <button className="all-tickets btn-closed" style={allTicketsClosedButtonStyle}>Closed
+                                <button className="all-tickets btn-open" style={getAllTicketsOpenButtonStyle(attributes)}>Open</button>
+                                <button className="all-tickets btn-closed" style={getAllTicketsClosedButtonStyle(attributes)}>Closed
                                 </button>
                             </div>
                         </div>
                         <div className="all-tickets-header-right">
-                            <button className="all-tickets btn-logout" style={allTicketsLogoutButtonStyle}>Logout
+                            <button className="all-tickets btn-logout" style={getAllTicketsLogoutButtonStyle(attributes)}>Logout
                             </button>
                             <button className="all-tickets btn-success btn-create-ticket"
-                                    style={allTicketsCreateTicketButtonStyle} onClick={showCreateTicket}>Create a New
+                                    style={getAllTicketsCreateTicketButtonStyle(attributes)} onClick={showCreateTicket}>Create a New
                                 Ticket
                             </button>
                         </div>
@@ -266,7 +213,7 @@ export default function Edit({attributes, setAttributes}) {
                             </tbody>
                         </table>
                     </div>
-                    <div className="all-tickets-footer" style={allTicketsFooterStyle}></div>
+                    <div className="all-tickets-footer" style={getAllTicketsFooterStyle(attributes)}></div>
 
                 </div>
                 : showForm === true ?
