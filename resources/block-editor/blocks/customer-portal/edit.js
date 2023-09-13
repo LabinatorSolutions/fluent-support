@@ -21,10 +21,12 @@ import {
     getViewTicketAllButtonStyle,
     getViewTicketCloseButtonStyle,
     getViewTicketPageBodyStyle,
-    getViewTicketCustomerThreadRibbonTailStyle,
-    getViewTicketCustomerThreadRibbonHeaderStyle,
     getViewTicketAgentThreadRibbonTailStyle,
-    getViewTicketAgentThreadRibbonHeaderStyle
+    getViewTicketAgentThreadRibbonHeaderStyle,
+    getViewTicketThreadStarterStyle,
+    getViewTicketThreadStarterTailStyle,
+    getViewTicketThreadFollowerTailStyle,
+    getViewTicketThreadFollowerStyle
 
     // Import other style functions here...
 } from './style';
@@ -297,11 +299,36 @@ export default function Edit({attributes, setAttributes}) {
                                               placeholder="Click Here to Write a reply"></textarea>
                                 </div>
 
-                                <div className="show-threads-container">
-                                    <article className="show-thread fs_customer fs_conv_type_response" style={getViewTicketCustomerThreadRibbonTailStyle(attributes)}
+                                <div className="show-threads-container" style={getViewTicketPageBodyStyle(attributes)}>
+                                    <article className="show-thread fs_customer fs_conv_type_response" style={getViewTicketThreadFollowerTailStyle(attributes)}
                                     >
                                         <span
-                                            className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketCustomerThreadRibbonHeaderStyle(attributes)}>Thread Starter</span>
+                                            className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketThreadFollowerStyle(attributes)}>Thread Follower</span>
+                                        <div className="show-thread-content">
+                                            <section className="show-avatar"><img
+                                                src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
+                                                alt="auth test"/>
+                                            </section>
+                                            <section className="show-thread-wrap">
+                                                <section className="show-thread-message">
+                                                    <div className="show-thread-head">
+                                                        <div className="show-thread-title">
+                                                            <strong>You</strong> replied
+                                                        </div>
+                                                        <div className="show-thread-actions"
+                                                        >2023-09-07T10:32:49+00:00
+                                                        </div>
+                                                    </div>
+                                                    <div className="show-thread-body"><p>new reply</p>
+                                                    </div>
+                                                </section>
+                                            </section>
+                                        </div>
+                                    </article>
+                                    <article className="show-thread fs_customer fs_conv_type_response" style={getViewTicketThreadStarterTailStyle(attributes)}
+                                    >
+                                        <span
+                                            className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketThreadStarterStyle(attributes)}>Thread Starter</span>
                                         <div className="show-thread-content">
                                             <section className="show-avatar"><img
                                                 src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"

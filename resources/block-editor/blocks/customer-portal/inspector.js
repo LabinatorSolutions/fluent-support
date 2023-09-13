@@ -1,6 +1,6 @@
 const { __ } = wp.i18n;
 const { InspectorControls } = wp.blockEditor;
-const { PanelBody, BasePanel, ToggleControl, ColorPalette } = wp.components;
+const { PanelBody, Button, ToggleControl, ColorPalette } = wp.components;
 
 const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewTicket}) => {
     const allTickets = {
@@ -221,52 +221,28 @@ const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewT
                     <ColorPalette value={attributes.viewTicketPageBodyBgColor}
                                   onChange={(v) => setAttributes({ viewTicketPageBodyBgColor: v })}
                     />
-
-
-
-                    <PanelBody title={__('Customer Thread Ribbon ', 'fluent-support')} initialOpen={ false }>
+                    <PanelBody title={__('Support Staff ', 'fluent-support')} initialOpen={ false }>
                         <p><strong>{__(' Color', 'fluent-support')}</strong></p>
-                        <ColorPalette value={attributes.CustomerThreadRibbonColor}
-                                      onChange={(v) => setAttributes({ CustomerThreadRibbonColor: v })}
-                        />
-
-                    </PanelBody>
-
-                    <PanelBody title={__('Agent Thread Ribbon ', 'fluent-support')} initialOpen={ false }>
-                        <p><strong>{__(' Color', 'fluent-support')}</strong></p>
-                        <ColorPalette value={attributes.AgentThreadRibbonColor}
-                                      onChange={(v) => setAttributes({ AgentThreadRibbonColor: v })}
-                        />
-
-                    </PanelBody>
-
-
-                    <PanelBody title={__('Support Staff', 'fluent-support')} initialOpen={ false }>
-                        <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
                         <ColorPalette value={attributes.ribbonSupportStaffBgColor}
                                       onChange={(v) => setAttributes({ ribbonSupportStaffBgColor: v })}
                         />
-
                         <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
                         <ColorPalette value={attributes.ribbonSupportStaffTextColor}
                                       onChange={(v) => setAttributes({ ribbonSupportStaffTextColor: v })}
                         />
                     </PanelBody>
-
                     <PanelBody title={__('Thread Starter', 'fluent-support')} initialOpen={ false }>
-                        <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                        <p><strong>{__('Color', 'fluent-support')}</strong></p>
                         <ColorPalette value={attributes.viewTicketThreadStarterBgColor}
                                       onChange={(v) => setAttributes({ viewTicketThreadStarterBgColor: v })}
                         />
-
                         <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
                         <ColorPalette value={attributes.viewTicketThreadStarterTextColor}
                                       onChange={(v) => setAttributes({ viewTicketThreadStarterTextColor: v })}
                         />
                     </PanelBody>
-
                     <PanelBody title={__('Thread Follower', 'fluent-support')} initialOpen={ false }>
-                        <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                        <p><strong>{__('Color', 'fluent-support')}</strong></p>
                         <ColorPalette value={attributes.viewTicketThreadFollowerBgColor}
                                       onChange={(v) => setAttributes({ viewTicketThreadFollowerBgColor: v })}
                         />
@@ -278,6 +254,7 @@ const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewT
                     </PanelBody>
             </PanelBody>
             </div>
+            <Button>{__('Reset to Default', 'fluent-support')}</Button>
         </InspectorControls>
     );
 };

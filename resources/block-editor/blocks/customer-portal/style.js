@@ -67,23 +67,32 @@ export const getViewTicketPageBodyStyle = (attributes)  =>({
     background: attributes.viewTicketPageBodyBgColor,
 });
 
-export const getViewTicketCustomerThreadRibbonTailStyle = (attributes)  =>({
-    borderLeft: '4px solid ' + attributes.CustomerThreadRibbonColor,
+export const getViewTicketThreadStarterTailStyle = (attributes)  =>({
+    borderLeft: '4px solid ' + attributes.viewTicketThreadStarterBgColor,
 });
 
-export const getViewTicketCustomerThreadRibbonHeaderStyle = (attributes)  =>({
-    background: attributes.CustomerThreadRibbonColor,
+export const getViewTicketThreadStarterStyle = (attributes)  =>({
+    background: attributes.viewTicketThreadStarterBgColor,
+    color: attributes.viewTicketThreadStarterTextColor,
 });
 
 export const getViewTicketAgentThreadRibbonTailStyle = (attributes)  =>({
-    borderLeft: '4px solid ' + attributes.AgentThreadRibbonColor,
+    borderLeft: '4px solid ' + attributes.ribbonSupportStaffBgColor,
 });
 
 export const getViewTicketAgentThreadRibbonHeaderStyle = (attributes)  =>({
-    background: attributes.AgentThreadRibbonColor,
+    background: attributes.ribbonSupportStaffBgColor,
+    color: attributes.ribbonSupportStaffTextColor,
 });
 
+export const getViewTicketThreadFollowerTailStyle = (attributes)  =>({
+    borderLeft: '4px solid ' + attributes.viewTicketThreadFollowerBgColor,
+});
 
+export const getViewTicketThreadFollowerStyle = (attributes)  =>({
+    background: attributes.viewTicketThreadFollowerBgColor,
+    color: attributes.viewTicketThreadFollowerTextColor,
+});
 
 
 
