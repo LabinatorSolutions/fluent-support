@@ -138,13 +138,13 @@ export default function Edit({attributes, setAttributes}) {
         color: attributes.viewTicketHeaderBadgeTextColor,
     }
 
-    const replyBoxStyle = {
-        background: attributes.replyBoxBgColor,
+    const viewTicketPageBodyStyle = {
+        background: attributes.viewTicketPageBodyBgColor,
         padding: '15px 20px'
     }
 
-    const threadContentStyle = {
-        background: attributes.threadContentBgColor,
+    const ribbonSupportStaffStyle = {
+        background: attributes.ribbonSupportStaffBgColor,
     }
 
     const viewTicketThreadTitleStyle = {
@@ -171,7 +171,7 @@ export default function Edit({attributes, setAttributes}) {
     }
 
     const createTicketHeaderTextStyle = {
-        color: attributes.createTicketHeaderTextBgColor,
+        color: attributes.createTicketHeaderTextColor,
     }
 
     const createTicketViewAllButtonStyle = {
@@ -184,7 +184,7 @@ export default function Edit({attributes, setAttributes}) {
     }
 
     const createTicketFormStyle = {
-        color: attributes.createTicketInputHeaderTextColor,
+        color: attributes.createTicketInputLabelTextColor,
     }
 
     const createTicketTipMessageStyle = {
@@ -207,7 +207,7 @@ export default function Edit({attributes, setAttributes}) {
 
     return (
         <Fragment>
-            <Inspector attributes={attributes} setAttributes={setAttributes}/>
+            <Inspector attributes={attributes} setAttributes={setAttributes} showTickets={showTickets} createTicket={showForm} viewTicket={showTicket}/>
             {showTickets === true ?
                 <div className={'block-wrapper'}>
                     <div className={"all-tickets-header"} style={allTicketsHeaderStyle}>
@@ -272,8 +272,8 @@ export default function Edit({attributes, setAttributes}) {
                 : showForm === true ?
                     <div className={'block-wrapper'}>
                         <div className={'create-ticket-header'} style={createTicketHeaderStyle}>
-                            <div className={'create-ticket-header-left'}>
-                                <h3 style={createTicketHeaderTextStyle}>Submit a Support Ticket</h3>
+                            <div className={'create-ticket-header-left'} style={createTicketHeaderTextStyle}>
+                                <h3>Submit a Support Ticket</h3>
                             </div>
                             <div className={'create-ticket-header-right'}>
                                 <button className={'create-ticket-view-all'} style={createTicketViewAllButtonStyle}
@@ -339,9 +339,7 @@ export default function Edit({attributes, setAttributes}) {
                                                 <span className="show-ticket-id" style={viewTicketHeaderIdStyle} >#746</span> Check htttp
                                             </h2>
                                             <div className={"show-tk-tags"}>
-                                        <span className={"show-badge show-badge-new"} style={viewTicketHeaderBadgeStyle}>
-                                            new
-                                        </span>
+                                                <span className={"show-badge show-badge-new"}>  new </span>
                                             </div>
                                         </div>
                                         <div className={"show-tk-actions"}>
@@ -363,14 +361,14 @@ export default function Edit({attributes, setAttributes}) {
                                     </hgroup>
                                 </div>
                             </div>
-                            <div className={'show-ticket-body'}>
-                                <div className={'show-reply-box'} style={replyBoxStyle}>
+                            <div className={'show-ticket-body'} style={viewTicketPageBodyStyle}>
+                                <div className={'show-reply-box'}>
                                     <textarea className="show-reply-text"
                                               placeholder="Click Here to Write a reply"></textarea>
                                 </div>
                                 <div className="show-threads-container">
                                     <article className="show-thread conversion-starter">
-                                        <div className="show-thread-content" style={threadContentStyle}>
+                                        <div className="show-thread-content">
                                             <section className="show-avatar">
                                                 <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
                                                      alt="auth test"/>
@@ -378,7 +376,7 @@ export default function Edit({attributes, setAttributes}) {
                                             <section className="show-thread-wrap">
                                                 <section className="show-thread-message">
                                                     <div className="show-thread-head">
-                                                        <div className="show-thread-title" style={viewTicketThreadTitleStyle}>
+                                                        <div className="show-thread-title">
                                                             <strong>You</strong> started the conversation
                                                         </div>
                                                         <div className="show-thread-actions" style={viewTicketThreadDateTimeStyle}>2023-08-30T09:32:16+00:00
