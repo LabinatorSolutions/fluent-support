@@ -57,11 +57,11 @@ class BlockHelper
             ],
             'allTicketsTableHeaderBgColor' => [
                 'type' => 'string',
-                'default' => '#16c410',
+                'default' => '#fefefe',
             ],
             'allTicketsTableHeaderTextColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#000000',
             ],
             'allTicketsTableHeaderTextAlign' => [
                 'type' => 'string',
@@ -200,6 +200,10 @@ class BlockHelper
             'viewTicketThreadFollowerTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'businessBoxId' => [
+                'type' => 'string',
+                'default' => '',
             ],
         ];
     }

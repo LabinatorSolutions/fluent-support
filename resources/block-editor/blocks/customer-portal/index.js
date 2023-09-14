@@ -16,7 +16,15 @@ registerBlockType( 'fluent-support/customer-portal', {
     /**
      * @see ./edit.js
      */
-    edit: Edit,
+    edit: function (props) {
+        const { attributes, setAttributes } = props;
+        return (
+            <Edit
+                attributes={attributes}
+                setAttributes={setAttributes}
+            />
+        );
+    },
     save: function (props) {
         return null;
     },

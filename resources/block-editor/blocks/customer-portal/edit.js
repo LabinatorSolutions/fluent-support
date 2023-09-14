@@ -1,4 +1,6 @@
 const {Fragment, useState, useEffect} = wp.element;
+const { apiFetch } = wp;
+const restUrl = window.fluent_support_vars.rest.url;
 //Import styles
 
 import './editor.scss';
@@ -49,7 +51,18 @@ export default function Edit({attributes, setAttributes}) {
     const [showTickets, setShowTickets] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
+    const [mailboxes, setMailboxes] = useState([]);
+    useEffect(() => {
+        apiFetch({
+            path: restUrl + '/mailboxes',
+        }).then((res) => {
+            setMailboxes(res.mailboxes)
+        });
+    }, []);
 
+    useEffect(() => {
+        setShowTickets(true);
+    }, true);
     const showCreateTicket = () => {
         setShowForm(true);
         setShowTickets(false);
@@ -68,14 +81,19 @@ export default function Edit({attributes, setAttributes}) {
         setShowTicket(true);
     }
 
-    useEffect(() => {
-        setShowTickets(true);
-    }, true);
+    const inspectorProps = {
+        attributes,
+        setAttributes,
+        showTickets,
+        showCreateTicket,
+        showTicketsList,
+        viewTicket,
+        mailboxes
+    }
 
     return (
         <Fragment>
-            <Inspector attributes={attributes} setAttributes={setAttributes} showTickets={showTickets}
-                       createTicket={showForm} viewTicket={showTicket}/>
+            <Inspector inspectorProps={inspectorProps}/>
             {showTickets === true ?
                 <div className={'block-wrapper'}>
                     <div className={"all-tickets-header"} style={getAllTicketsHeaderStyle(attributes)}>
