@@ -1,24 +1,16 @@
 const { __ } = wp.i18n;
 const { InspectorControls } = wp.blockEditor;
-const { PanelBody, Button, ToggleControl, ColorPalette } = wp.components;
+const { PanelBody, ToggleControl, ColorPalette } = wp.components;
+import {
+    showAllTickets,
+    showCreateTicketForm, viewTicketPage,
+} from './style';
 const Inspector = ({inspectorProps}) => {
-    const { attributes, setAttributes, showTickets, createTicket, viewTicket, mailboxes} = inspectorProps;
-
-    const allTickets = {
-        display: showTickets === true ? '': 'none',
-    }
-
-    const ticketForm = {
-        display: createTicket === true ? '': 'none',
-    }
-
-    const ticketPage = {
-        display: viewTicket === true ? '': 'none',
-    }
-
+    const { attributes, setAttributes, showTickets, showTicket, showForm, mailboxes} = inspectorProps;
+    console.log('viewTicket', showForm);
     return (
         <InspectorControls>
-            <div style={allTickets}>
+            <div style={showAllTickets(showTickets)}>
                 <PanelBody title={__('Page Header', 'fluent-support')} initialOpen={ false }>
                     <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
                     <ColorPalette value={attributes.allTicketsHeaderBgColor}
@@ -107,7 +99,7 @@ const Inspector = ({inspectorProps}) => {
                     />
                 </PanelBody>
             </div>
-            <div style={ticketForm}>
+            <div style={showCreateTicketForm(showTicket)}>
                 <PanelBody title={__('Page Header', 'fluent-support')} initialOpen={ false }>
                     <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
                     <ColorPalette value={attributes.createTicketHeaderBgColor}
@@ -169,7 +161,7 @@ const Inspector = ({inspectorProps}) => {
                     </PanelBody>
                 </PanelBody>
             </div>
-            <div style={ticketPage}>
+            <div style={viewTicketPage(showForm)}>
                 <PanelBody title={__('Page Header', 'fluent-support')} initialOpen={ false }>
                     <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
                     <ColorPalette value={attributes.viewTicketHeaderStyleBgColor}

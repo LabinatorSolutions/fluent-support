@@ -128,6 +128,18 @@ export const getAllTicketsTableHeaderStyle = (attributes) =>({
     color: attributes.allTicketsTableHeaderTextColor,
 });
 
+export const showAllTickets = (showTickets)  =>({
+    display: showTickets === true ? '': 'none',
+});
+
+export const showCreateTicketForm = (createTicket) =>({
+    display: createTicket === true ? '': 'none',
+});
+
+export const viewTicketPage = (ticketPage) =>({
+    display: ticketPage === true ? '': 'none',
+});
+
 
 
 

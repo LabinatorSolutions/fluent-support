@@ -11,7 +11,7 @@ import {
 } from '../style';
 
 export default function CreateTicket(props) {
-    const {showTicketsList} = props;
+    const {attributes, showTicketsList} = props;
     return (
         <div className={'block-wrapper'}>
             <div className={'create-ticket-header'} style={getCreateTicketHeaderStyle(attributes)}>
