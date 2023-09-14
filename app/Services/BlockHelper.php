@@ -67,10 +67,6 @@ class BlockHelper
                 'type' => 'string',
                 'default' => 'center',
             ],
-            'allTicketsTableRowBgColor' => [
-                'type' => 'string',
-                'default' => '#ffffff',
-            ],
             'allTicketsFooterBgColor' => [
                 'type' => 'string',
                 'default' => '#c8ccd3',

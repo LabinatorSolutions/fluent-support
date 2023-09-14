@@ -28,13 +28,6 @@ export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
     background: attributes.buttonCreateTicketBgColor,
 });
 
-export const getAllTicketsTableRowStyle = (attributes) => ({
-    background: attributes.allTicketsTableRowBgColor,
-    // background: attributes.buttonCreateTicketBgColor,
-});
-
-
-
 export const getAllTicketsFooterStyle = (attributes)  =>({
     background: attributes.allTicketsFooterBgColor,
 });
