@@ -12,8 +12,8 @@ class ShortcodeHandler
 
         $args = shortcode_atts( array(
             'show_logout' => 'no',
-            'business_box_id' => null,
-            'attributes' => $args['attributes'] ?? [],
+            'business_box_id' => $args['business_box_id'] ?? null,
+            'attributes' => [],
         ), $args );
 
         if ($args['attributes']) {

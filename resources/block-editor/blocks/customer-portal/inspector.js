@@ -1,8 +1,9 @@
 const { __ } = wp.i18n;
 const { InspectorControls } = wp.blockEditor;
 const { PanelBody, Button, ToggleControl, ColorPalette } = wp.components;
+const Inspector = ({inspectorProps}) => {
+    const { attributes, setAttributes, showTickets, createTicket, viewTicket, mailboxes} = inspectorProps;
 
-const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewTicket}) => {
     const allTickets = {
         display: showTickets === true ? '': 'none',
     }
@@ -14,6 +15,7 @@ const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewT
     const ticketPage = {
         display: viewTicket === true ? '': 'none',
     }
+
     return (
         <InspectorControls>
             <div style={allTickets}>
@@ -255,7 +257,18 @@ const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewT
                     </PanelBody>
             </PanelBody>
             </div>
-            <Button>{__('Reset to Default', 'fluent-support')}</Button>
+            <PanelBody title={__('Default Business Inbox', 'fluent-support')} initialOpen={ false }>
+                <select value={attributes.businessBoxId}
+                        onChange={(v) => setAttributes({ businessBoxId: v.target.value })}
+                >
+                    <option value="">{__('Select a mailbox', 'fluent-support')}</option>
+                    {mailboxes.map((mailbox) => {
+                        return (
+                            <option value={mailbox.id} key={mailbox.id}>{mailbox.name +' ('+ mailbox.box_type +')' }</option>
+                        );
+                    })}
+                </select>
+            </PanelBody>
         </InspectorControls>
     );
 };
