@@ -100,7 +100,7 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#43454b',
             ],
-            'createTicketTipMessageTextColor' => [
+            'createTicketHintMessageTextColor' => [
                 'type' => 'string',
                 'default' => '#606266',
             ],

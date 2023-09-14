@@ -94,6 +94,74 @@ export const getViewTicketThreadFollowerStyle = (attributes)  =>({
     color: attributes.viewTicketThreadFollowerTextColor,
 });
 
+export const getCreateTicketHeaderStyle = (attributes)  =>({
+    background: attributes.createTicketHeaderBgColor,
+});
+
+export const getCreateTicketHeaderTextStyle = (attributes)  =>({
+    color: attributes.createTicketHeaderTextColor,
+});
+
+export const getCreateTicketViewAllButtonStyle = (attributes)  =>({
+    background: attributes.createTicketViewAllButtonBgColor,
+    color: attributes.createTicketViewAllButtonTextColor,
+});
+
+export const getCreateTicketBodyStyle = (attributes)  =>({
+    background: attributes.createTicketBodyBgColor,
+});
+
+export const getCreateTicketFormStyle = (attributes)  =>({
+    color: attributes.createTicketInputLabelTextColor,
+});
+
+export const getCreateTicketHintMessageStyle = (attributes)  =>({
+    color: attributes.createTicketHintMessageTextColor,
+});
+
+export const getCreateTicketUploadButtonStyle = (attributes) =>({
+    color: attributes.createTicketUploadButtonTextColor,
+    background: attributes.createTicketUploadButtonBgColor
+});
+
+export const getCreateTicketCreateButtonStyle = (attributes) =>({
+    color: attributes.createTicketCreateButtonTextColor,
+    background: attributes.createTicketCreateButtonBgColor
+});
+
+export const getAllTicketsTableHeaderStyle = (attributes) =>({
+    background: attributes.allTicketsTableHeaderBgColor,
+    textAlign: attributes.allTicketsTableHeaderTextAlign,
+    color: attributes.allTicketsTableHeaderTextColor,
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

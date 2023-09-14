@@ -117,15 +117,16 @@ const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewT
                                   onChange={(v) => setAttributes({ createTicketHeaderTextColor: v })}
                     />
                     <PanelBody title={__('View All', 'fluent-support')} initialOpen={ false }>
+                        <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+                        <ColorPalette value={attributes.createTicketViewAllButtonBgColor}
+                                      onChange={(v) => setAttributes({ createTicketViewAllButtonBgColor: v })}
+                        />
+
                         <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
                         <ColorPalette value={attributes.createTicketViewAllButtonTextColor}
                                       onChange={(v) => setAttributes({ createTicketViewAllButtonTextColor: v })}
                         />
 
-                        <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
-                        <ColorPalette value={attributes.createTicketViewAllButtonBgColor}
-                                      onChange={(v) => setAttributes({ createTicketViewAllButtonBgColor: v })}
-                        />
                     </PanelBody>
                 </PanelBody>
                 <PanelBody title={__('Page Body', 'fluent-support')} initialOpen={ false }>
@@ -140,8 +141,8 @@ const Inspector = ({ attributes, setAttributes, showTickets, createTicket, viewT
                     />
 
                     <p><strong>{__('Hint Message Text Color', 'fluent-support')}</strong></p>
-                    <ColorPalette value={attributes.createTicketTipMessageTextColor}
-                                  onChange={(v) => setAttributes({ createTicketTipMessageTextColor: v })}
+                    <ColorPalette value={attributes.createTicketHintMessageTextColor}
+                                  onChange={(v) => setAttributes({ createTicketHintMessageTextColor: v })}
                     />
 
                     <PanelBody title={__('Click to upload', 'fluent-support')} initialOpen={ false }>

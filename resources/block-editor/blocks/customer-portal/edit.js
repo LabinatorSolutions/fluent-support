@@ -11,10 +11,11 @@ import {
     getAllTicketsClosedButtonStyle,
     getAllTicketsLogoutButtonStyle,
     getAllTicketsCreateTicketButtonStyle,
+    getAllTicketsTableHeaderStyle,
     getAllTicketsFooterStyle,
     getAllTicketsTableRowStyle,
 
-    // Import the View Ticket style her
+    // Import  View Ticket style from here
     getViewTicketHeaderStyle,
     getViewTicketIdStyle,
     getViewTicketRefreshButtonStyle,
@@ -26,7 +27,17 @@ import {
     getViewTicketThreadStarterStyle,
     getViewTicketThreadStarterTailStyle,
     getViewTicketThreadFollowerTailStyle,
-    getViewTicketThreadFollowerStyle
+    getViewTicketThreadFollowerStyle,
+
+    //Import create ticket style from here
+    getCreateTicketHeaderStyle,
+    getCreateTicketHeaderTextStyle,
+    getCreateTicketViewAllButtonStyle,
+    getCreateTicketBodyStyle,
+    getCreateTicketFormStyle,
+    getCreateTicketHintMessageStyle,
+    getCreateTicketUploadButtonStyle,
+    getCreateTicketCreateButtonStyle
 
     // Import other style functions here...
 } from './style';
@@ -55,69 +66,6 @@ export default function Edit({attributes, setAttributes}) {
         setShowForm(false);
         setShowTickets(false);
         setShowTicket(true);
-    }
-
-    const viewTicketHeaderBadgeStyle = {
-        background: attributes.viewTicketHeaderBadgeBgColor,
-        color: attributes.viewTicketHeaderBadgeTextColor,
-    }
-
-    const ribbonSupportStaffStyle = {
-        background: attributes.ribbonSupportStaffBgColor,
-    }
-
-    const viewTicketThreadTitleStyle = {
-        color: attributes.viewTicketThreadTitleTextColor,
-    }
-
-    const viewTicketThreadDateTimeStyle = {
-        color: attributes.viewTicketThreadDateTimeTextColor,
-    }
-
-    const viewTicketThreadBodyStyle = {
-        color: attributes.viewTicketThreadBodyTextColor,
-    }
-
-    const allTicketsTableHeaderStyle = {
-        background: attributes.allTicketsTableHeaderBgColor,
-        textAlign: attributes.allTicketsTableHeaderTextAlign,
-        color: attributes.allTicketsTableHeaderTextColor,
-    }
-
-    //Create ticket styles
-    const createTicketHeaderStyle = {
-        background: attributes.createTicketHeaderBgColor,
-    }
-
-    const createTicketHeaderTextStyle = {
-        color: attributes.createTicketHeaderTextColor,
-    }
-
-    const createTicketViewAllButtonStyle = {
-        color: attributes.createTicketViewAllButtonTextColor,
-        background: attributes.createTicketViewAllButtonBgColor,
-    }
-
-    const createTicketBodyStyle = {
-        background: attributes.createTicketBodyBgColor,
-    }
-
-    const createTicketFormStyle = {
-        color: attributes.createTicketInputLabelTextColor,
-    }
-
-    const createTicketTipMessageStyle = {
-        color: attributes.createTicketTipMessageTextColor,
-    }
-
-    const createTicketUploadButtonStyle = {
-        color: attributes.createTicketUploadButtonTextColor,
-        background: attributes.createTicketUploadButtonBgColor
-    }
-
-    const createTicketCreateButtonStyle = {
-        color: attributes.createTicketCreateButtonTextColor,
-        background: attributes.createTicketCreateButtonBgColor
     }
 
     useEffect(() => {
@@ -157,12 +105,12 @@ export default function Edit({attributes, setAttributes}) {
                     </div>
                     <div className={"all-tickets-body"}>
                         <table className="all-tickets-table table_stripe">
-                            <thead style={allTicketsTableHeaderStyle}>
+                            <thead style={getAllTicketsTableHeaderStyle(attributes)}>
                             <tr>
-                                <th style={allTicketsTableHeaderStyle}>Conversation</th>
-                                <th style={allTicketsTableHeaderStyle}></th>
-                                <th style={allTicketsTableHeaderStyle}>Status</th>
-                                <th style={allTicketsTableHeaderStyle}>Date</th>
+                                <th style={getAllTicketsTableHeaderStyle(attributes)}>Conversation</th>
+                                <th style={getAllTicketsTableHeaderStyle(attributes)}></th>
+                                <th style={getAllTicketsTableHeaderStyle(attributes)}>Status</th>
+                                <th style={getAllTicketsTableHeaderStyle(attributes)}>Date</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -196,18 +144,18 @@ export default function Edit({attributes, setAttributes}) {
                 </div>
                 : showForm === true ?
                     <div className={'block-wrapper'}>
-                        <div className={'create-ticket-header'} style={createTicketHeaderStyle}>
-                            <div className={'create-ticket-header-left'} style={createTicketHeaderTextStyle}>
-                                <h3>Submit a Support Ticket</h3>
+                        <div className={'create-ticket-header'} style={getCreateTicketHeaderStyle(attributes)}>
+                            <div className={'create-ticket-header-left'}>
+                                <h3 style={getCreateTicketHeaderTextStyle(attributes)}>Submit a Support Ticket</h3>
                             </div>
                             <div className={'create-ticket-header-right'}>
-                                <button className={'create-ticket-view-all'} style={createTicketViewAllButtonStyle}
+                                <button className={'create-ticket-view-all'} style={getCreateTicketViewAllButtonStyle(attributes)}
                                         onClick={() => showTicketsList()}>View All
                                 </button>
                             </div>
                         </div>
-                        <div className={'create-ticket-body'} style={createTicketBodyStyle}>
-                            <form className="create-ticket-form" style={createTicketFormStyle}>
+                        <div className={'create-ticket-body'} style={getCreateTicketBodyStyle(attributes)}>
+                            <form className="create-ticket-form" style={getCreateTicketFormStyle(attributes)}>
                                 <div className="create-ticket-form-item">
                                     <label htmlFor="subject" className="create-ticket-label">
                                         Subject heading new
@@ -230,17 +178,17 @@ export default function Edit({attributes, setAttributes}) {
                                               className="create-ticket-textarea-inner"
                                           ></textarea>
                                     </div>
-                                    <p className="create-ticket-help" style={createTicketTipMessageStyle}>Content help
+                                    <p className="create-ticket-help" style={getCreateTicketHintMessageStyle(attributes)}>Content help
                                         message</p>
                                 </div>
                                 <div className="create-ticket-attachments">
                                     <div className="create-ticket-upload">
                                         <button className="create-ticket-upload-button"
-                                                style={createTicketUploadButtonStyle} type="button">
+                                             style={getCreateTicketUploadButtonStyle(attributes)} type="button">
                                             Click to upload
                                         </button>
                                     </div>
-                                    <div className="create-ticket-upload-tip" style={createTicketTipMessageStyle}>
+                                    <div className="create-ticket-upload-tip" style={getCreateTicketHintMessageStyle(attributes)}>
                                         Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max file size: 2.0MB
                                     </div>
                                     <ul className="create-ticket-upload-list"></ul>
@@ -249,7 +197,7 @@ export default function Edit({attributes, setAttributes}) {
                                 <div className="create-ticket-form-item">
                                     <div className="create-ticket-button">
                                         <button className="create-ticket-button-inner"
-                                                style={createTicketCreateButtonStyle} type="button">
+                                                style={getCreateTicketCreateButtonStyle(attributes)} type="button">
                                             Create
                                         </button>
                                     </div>
@@ -387,10 +335,10 @@ export default function Edit({attributes, setAttributes}) {
                                                             <strong>You</strong> started the conversation
                                                         </div>
                                                         <div className="show-thread-actions"
-                                                             style={viewTicketThreadDateTimeStyle}>2023-08-30T09:32:16+00:00
+                                                             >2023-08-30T09:32:16+00:00
                                                         </div>
                                                     </div>
-                                                    <div className="show-thread-body" style={viewTicketThreadBodyStyle}>
+                                                    <div className="show-thread-body">
                                                         <p>Check htttp</p>
                                                     </div>
                                                 </section>
