@@ -48,9 +48,8 @@ export default function Edit({attributes, setAttributes}) {
         attributes,
         setAttributes,
         showTickets,
-        showCreateTicket,
-        showTicketsList,
-        viewTicket,
+        showForm,
+        showTicket,
         mailboxes
     }
 
