@@ -6,7 +6,7 @@ import AllTickets from './components/AllTickets';
 import CreateTicket from './components/CreateTicket';
 import ViewTicket from './components/ViewTicket';
 //Import Inspector controls
-import Inspector from './inspector';
+import Index from './inspectors';
 //Import editor styles
 import './editor.scss';
 
@@ -44,18 +44,16 @@ export default function Edit({attributes, setAttributes}) {
         setShowTicket(true);
     }
 
-    const inspectorProps = {
-        attributes,
-        setAttributes,
-        showTickets,
-        showForm,
-        showTicket,
-        mailboxes
-    }
-
     return (
         <Fragment>
-            <Inspector inspectorProps={inspectorProps}/>
+            <Index
+                attributes={attributes}
+                setAttributes={setAttributes}
+                showTickets={showTickets}
+                showForm={showForm}
+                showTicket={showTicket}
+                mailboxes={mailboxes}
+            />
 
             {showTickets === true ?
                 <AllTickets
