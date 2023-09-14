@@ -8,17 +8,20 @@
         <div v-if="!loading" class="fs_box_wrapper">
             <div v-if="fields">
                 <div class="fs_g_drive_redirect_url">
-                    <strong>oAuth2 Authorised redirect URI</strong>: <code>{{redirect_uri}}</code>
+                    <strong>{{ translate('oAuth2 Authorised redirect URI') }}</strong>: <code>{{redirect_uri}}</code>
                 </div>
                 <form-builder :fields="fields.fields" :formData="settings"/>
                 <el-button v-if="!settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="verify()">
-                    Connect
+                    {{ translate('Connect') }}
                 </el-button>
                 <el-button v-else-if="settings.access_token && settings.refresh_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="verify()">
-                    Reconnect
+                    {{ translate('Reconnect') }}
                 </el-button>
                 <el-button v-if="settings.access_token && settings.refresh_token" v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
                     {{fields.button_text}}
+                </el-button>
+                <el-button v-if="settings && !settings.refresh_token" v-loading="deleting" type="danger" @click="deleteSettings()">
+                    {{ translate('Delete Settings') }}
                 </el-button>
             </div>
             <div  v-else>
@@ -48,7 +51,7 @@ export default {
 
     setup() {
 
-        const {get, post, translate, handleError, setTitle, appVars} =
+        const {get, post, del, translate, handleError, setTitle, appVars} =
             useFluentHelper();
 
         const {notify} = useNotify();
@@ -60,6 +63,7 @@ export default {
             settings: false,
             fields: false,
             saving: false,
+            deleting: false,
             drivers: appVars.upload_drivers,
             redirect_uri: appVars.rest.url + '/public/google_auth',
         });
@@ -117,6 +121,27 @@ export default {
                 });
         };
 
+        const deleteSettings = () => {
+            state.deleting = true;
+            del('settings/upload_integration', {
+                integration_key: state.integration_key,
+            })
+                .then(response => {
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                    fetchSettings();
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {
+                    state.deleting = false;
+                });
+        }
+
         const verify = () => {
             saveSettings();
             const client_id = state.settings.client_id;
@@ -149,6 +174,7 @@ export default {
             translate,
             fetchSettings,
             saveSettings,
+            deleteSettings,
             verify,
             switchIntegration,
             current_integration,
