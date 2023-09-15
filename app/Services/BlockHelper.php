@@ -304,8 +304,14 @@ class BlockHelper
                 color: <?php echo esc_attr($attributes['viewTicketThreadStarterTextColor']); ?>;
             }
 
-            /*Todo: Add thread follower style*/
+            .fs_cc_customer {
+                background-color:  <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['viewTicketThreadFollowerTextColor']); ?>;
+            }
 
+            .fs_thread_ribbon_customer_cc {
+                background-color:  <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;
+            }
 
             /*Create Ticket style*/
             .fs_tk_create_head {
@@ -324,7 +330,7 @@ class BlockHelper
             .fs_tk_body {
                 background-color:  <?php echo esc_attr($attributes['createTicketBodyBgColor']); ?>;
             }
-                
+
             .fs_input_label, .fs_input_label label {
                 color: <?php echo esc_attr($attributes['createTicketInputLabelTextColor']); ?>;
             }
