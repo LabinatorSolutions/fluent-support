@@ -228,6 +228,11 @@
                                     line-height: 1.2em;
                                     margin-bottom: 12px;
                                     display: inline-block;
+
+                                    strong {
+                                        font-weight: 500;
+                                        color: #253642;
+                                    }
                                 }
 
                                 .show-thread-actions {
