@@ -15,9 +15,9 @@
             :file-list="file_lists"
             list-type="picture"
         >
-            <el-button size="default" type="primary">{{$t('Click to upload')}}</el-button>
+            <el-button class="fs_attachment_button" size="default" type="primary">{{$t('Click to upload')}}</el-button>
             <template #tip>
-                <div class="el-upload__tip">{{$t('allowed_files_and_size')}}</div>
+                <div class="el-upload__tip fs_tk_upload_help">{{$t('allowed_files_and_size')}}</div>
             </template>
         </el-upload>
         <p style="color: red;" v-if="error_message" @click="error_message = ''">{{ error_message }}</p>
