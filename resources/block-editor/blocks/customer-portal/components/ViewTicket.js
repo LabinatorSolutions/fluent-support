@@ -13,11 +13,10 @@ import {
     getViewTicketThreadFollowerTailStyle,
     getViewTicketThreadFollowerStyle,
 } from '../style';
-
 export default function ViewTicket(props) {
     const { attributes, showTicketsList } = props;
     return (
-        <div className={'block-wrapper'}>
+        <div className={'customer-portal-block-wrapper'}>
             <div className={'show-ticket-header'} style={getViewTicketHeaderStyle(attributes)}>
                 <div className={'show-th-header'}>
                     <hgroup>

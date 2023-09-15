@@ -9,11 +9,10 @@ import {
     getCreateTicketUploadButtonStyle,
     getCreateTicketCreateButtonStyle
 } from '../style';
-
 export default function CreateTicket(props) {
     const {attributes, showTicketsList} = props;
     return (
-        <div className={'block-wrapper'}>
+        <div className={'customer-portal-block-wrapper'}>
             <div className={'create-ticket-header'} style={getCreateTicketHeaderStyle(attributes)}>
                 <div className={'create-ticket-header-left'}>
                     <h3 style={getCreateTicketHeaderTextStyle(attributes)}>Submit a Support Ticket</h3>
