@@ -254,7 +254,7 @@ class BlockHelper
 
             /*View Ticket style*/
 
-            .fs_tk_header {
+            .fst_client_portal .fs_ticket .fs_tk_header {
                 background-color: <?php echo esc_attr($attributes['viewTicketHeaderStyleBgColor']); ?>;
 
             }
@@ -306,6 +306,46 @@ class BlockHelper
 
             /*Todo: Add thread follower style*/
 
+
+            /*Create Ticket style*/
+            .fs_tk_create_head {
+                background-color:  <?php echo esc_attr($attributes['createTicketHeaderBgColor']); ?>;
+            }
+
+            .fs_tk_left h3 {
+                color: <?php echo esc_attr($attributes['createTicketHeaderTextColor']); ?>;
+            }
+
+            .fs_tk_right .fs_view_all_button {
+                background-color:  <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['createTicketViewAllButtonTextColor']); ?>;
+            }
+
+            .fs_tk_body {
+                background-color:  <?php echo esc_attr($attributes['createTicketBodyBgColor']); ?>;
+            }
+
+            .fs_input_form label {
+                color: <?php echo esc_attr($attributes['createTicketInputLabelTextColor']); ?>;
+            }
+
+            .fs_details_label {
+                color: <?php echo esc_attr($attributes['createTicketInputLabelTextColor']); ?>;
+            }
+
+            .fs_tk_help,.fs_tk_upload_help {
+                color: <?php echo esc_attr($attributes['createTicketHintMessageTextColor']); ?>;
+            }
+
+            .fs_attachment_button {
+                background-color:  <?php echo esc_attr($attributes['createTicketUploadButtonBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['createTicketUploadButtonTextColor']); ?>;
+            }
+
+            .fs_create_button {
+                background-color:  <?php echo esc_attr($attributes['createTicketCreateButtonBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['createTicketCreateButtonTextColor']); ?>;
+            }
 
             }
         </style>

@@ -5,12 +5,12 @@
                 <h3>{{$t('submit_heading')}}</h3>
             </div>
             <div class="fs_tk_right">
-                <el-button @click="$router.push({ name: 'dashboard' })" size="small" type="info">{{$t('View All')}}</el-button>
+                <el-button class="fs_view_all_button" @click="$router.push({ name: 'dashboard' })" size="small" type="info">{{$t('View All')}}</el-button>
             </div>
         </div>
-        <div style="background: white; padding: 20px;" class="fs_tk_body">
+        <div style=" padding: 20px;" class="fs_tk_body">
             <el-form :data="ticket" label-position="top">
-                <el-form-item :label="$t('subject')">
+                <el-form-item class="fs_input_form" :label="$t('subject')">
                     <el-input :placeholder="$t('subject_placeholder')" type="text" v-model="ticket.title"></el-input>
                     <error :error="errors.get('title')"/>
                 </el-form-item>
@@ -31,7 +31,10 @@
                     </template>
                 </div>
 
-                <el-form-item :label="$t('ticket_details')">
+                <el-form-item class="fs_tk_suggestions" >
+                    <template #label>
+                        <label class="fs_details_label"> {{$t('ticket_details')}}</label>
+                    </template>
                     <wp-editor :height="150" :media-buttons="false" v-model="ticket.content"/>
                     <p class="fs_tk_help">{{$t('details_help')}}</p>
                     <error :error="errors.get('content')"/>
@@ -61,7 +64,7 @@
                 <custom-fields-form :ticket="ticket" :custom_data="custom_data" :exceptions="exceptions" />
 
                 <el-form-item>
-                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('btn_text')}}</el-button>
+                    <el-button class="fs_create_button" @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('btn_text')}}</el-button>
                 </el-form-item>
 
             </el-form>
