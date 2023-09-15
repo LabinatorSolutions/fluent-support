@@ -9,11 +9,11 @@ class BlockHelper
         return [
             'allTicketsHeaderBgColor' => [
                 'type' => 'string',
-                'default' => '#f4f6f4',
+                'default' => '#ebeef4',
             ],
             'filterButtonAllBgColor' => [
                 'type' => 'string',
-                'default' => '#16c410',
+                'default' => '#409eff',
             ],
             'filterButtonAllTextColor' => [
                 'type' => 'string',
@@ -21,19 +21,19 @@ class BlockHelper
             ],
             'filterButtonOpenBgColor' => [
                 'type' => 'string',
-                'default' => '#16c410',
+                'default' => '#ffffff',
             ],
             'filterButtonOpenTextColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#606266',
             ],
             'filterButtonClosedBgColor' => [
                 'type' => 'string',
-                'default' => '#16c410',
+                'default' => '#ffffff',
             ],
             'filterButtonClosedTextColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#606266',
             ],
             'allTicketsLogoutButtonVisibility' => [
                 'type' => 'boolean',
@@ -41,7 +41,7 @@ class BlockHelper
             ],
             'allTicketsLogoutButtonBgColor' => [
                 'type' => 'string',
-                'default' => '#16c410',
+                'default' => '#f56c6c',
             ],
             'allTicketsLogoutButtonTextColor' => [
                 'type' => 'string',
@@ -49,7 +49,7 @@ class BlockHelper
             ],
             'buttonCreateTicketBgColor' => [
                 'type' => 'string',
-                'default' => '#16c410',
+                'default' => '#67c23a',
             ],
             'buttonCreateTicketTextColor' => [
                 'type' => 'string',
@@ -57,11 +57,11 @@ class BlockHelper
             ],
             'allTicketsTableHeaderBgColor' => [
                 'type' => 'string',
-                'default' => '#fefefe',
+                'default' => '#f8f8f8',
             ],
             'allTicketsTableHeaderTextColor' => [
                 'type' => 'string',
-                'default' => '#000000',
+                'default' => '#646568',
             ],
             'allTicketsTableHeaderTextAlign' => [
                 'type' => 'string',
@@ -69,12 +69,12 @@ class BlockHelper
             ],
             'allTicketsFooterBgColor' => [
                 'type' => 'string',
-                'default' => '#c8ccd3',
+                'default' => '#ebeef4',
             ],
             //Create Ticket form attributes
             'createTicketHeaderBgColor' => [
                 'type' => 'string',
-                'default' => '#ced3dd',
+                'default' => '#ebeef4',
             ],
             'createTicketHeaderTextColor' => [
                 'type' => 'string',
@@ -94,11 +94,11 @@ class BlockHelper
             ],
             'createTicketInputLabelTextColor' => [
                 'type' => 'string',
-                'default' => '#43454b',
+                'default' => '#606266',
             ],
             'createTicketHintMessageTextColor' => [
                 'type' => 'string',
-                'default' => '#606266',
+                'default' => '#76777b',
             ],
             'createTicketUploadButtonBgColor' => [
                 'type' => 'string',
@@ -134,7 +134,7 @@ class BlockHelper
             ],
             'createTicketCreateButtonBgColor' => [
                 'type' => 'string',
-                'default' => '#67C23A',
+                'default' => '#67c23a',
             ],
             'createTicketCreateButtonTextColor' => [
                 'type' => 'string',
@@ -143,11 +143,11 @@ class BlockHelper
             //View ticket Page attributes
             'viewTicketHeaderStyleBgColor' => [
                 'type' => 'string',
-                'default' => '#ced3dd',
+                'default' => '#ebeef4',
             ],
             'viewTicketHeaderStyleTextColor' => [
                 'type' => 'string',
-                'default' => '#000000',
+                'default' => '#314351',
             ],
             'viewTicketHeaderIdTextColor' => [
                 'type' => 'string',
