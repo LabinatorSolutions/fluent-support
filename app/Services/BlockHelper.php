@@ -324,12 +324,8 @@ class BlockHelper
             .fs_tk_body {
                 background-color:  <?php echo esc_attr($attributes['createTicketBodyBgColor']); ?>;
             }
-
-            .fs_input_form label {
-                color: <?php echo esc_attr($attributes['createTicketInputLabelTextColor']); ?>;
-            }
-
-            .fs_details_label {
+                
+            .fs_input_label, .fs_input_label label {
                 color: <?php echo esc_attr($attributes['createTicketInputLabelTextColor']); ?>;
             }
 
