@@ -209,6 +209,7 @@ class BlockHelper
         ?>
         <style type="text/css">
             #fluent_support_client_app {
+            /*Tickets List style*/
                 .fs_tk_header {
                     background-color:<?php echo esc_attr($attributes['allTicketsHeaderBgColor']); ?>;
                 }
@@ -250,6 +251,62 @@ class BlockHelper
                     background-color:<?php echo esc_attr($attributes['allTicketsFooterBgColor']); ?>;
                     margin: 0 auto;
                 }
+
+            /*View Ticket style*/
+
+            .fs_tk_header {
+                background-color: <?php echo esc_attr($attributes['viewTicketHeaderStyleBgColor']); ?>;
+
+            }
+
+            .fs_tk_header h2 {
+                color: <?php echo esc_attr($attributes['viewTicketHeaderStyleTextColor']); ?>
+            }
+
+            .fs_ticket_id {
+                color: <?php echo esc_attr($attributes['viewTicketHeaderIdTextColor']); ?>;
+            }
+
+            .fs_refresh_button {
+                background-color: <?php echo esc_attr($attributes['refreshButtonBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['refreshButtonTextColor']); ?>;
+            }
+
+            .fs_all_button {
+                background-color: <?php echo esc_attr($attributes['allButtonBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['allButtonTextColor']); ?>;
+            }
+
+            .fs_close_button {
+                background-color: <?php echo esc_attr($attributes['closeTicketButtonBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['closeTicketButtonTextColor']); ?>;
+            }
+
+            .fst_reply_box, .fs_threads_container {
+                background-color: <?php echo esc_attr($attributes['viewTicketPageBodyBgColor']); ?>;
+            }
+
+            .fs_agent {
+                border-left: 4px solid <?php echo esc_attr($attributes['ribbonSupportStaffBgColor']); ?>;
+            }
+
+            .fs_conv_type_response .fs_thread_ribbon_agent{
+                background-color:  <?php echo esc_attr($attributes['ribbonSupportStaffBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['ribbonSupportStaffTextColor']); ?>;
+            }
+
+            .fs_customer {
+                border-left: 4px solid <?php echo esc_attr($attributes['viewTicketThreadStarterBgColor']); ?>;
+            }
+
+            .fs_conv_type_response .fs_thread_ribbon_customer{
+                background-color:  <?php echo esc_attr($attributes['viewTicketThreadStarterBgColor']); ?>;
+                color: <?php echo esc_attr($attributes['viewTicketThreadStarterTextColor']); ?>;
+            }
+
+            /*Todo: Add thread follower style*/
+
+
             }
         </style>
     <?php }
