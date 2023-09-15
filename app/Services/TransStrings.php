@@ -666,6 +666,10 @@ class TransStrings
             'Agent Performance (Today)' => __('Agent Performance (Today)', 'fluent-support'),
             'Thread Starter' => __('Thread Starter', 'fluent-support'),
             'Thread Follower' => __('Thread Follower', 'fluent-support'),
+            'Delete Settings' => __('Delete Settings', 'fluent-support'),
+            'Reconnect' => __('Reconnect', 'fluent-support'),
+            'Connect' => __('Connect', 'fluent-support'),
+            'oAuth2 Authorised redirect URI' => __('oAuth2 Authorised redirect URI', 'fluent-support'),
         ];
     }
 }
