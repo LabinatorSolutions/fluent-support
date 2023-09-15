@@ -1,4 +1,5 @@
 const {Fragment, useState, useEffect} = wp.element;
+const {useBlockProps} = wp.blockEditor;
 const { apiFetch } = wp;
 const restUrl = window.fluent_support_vars.rest.url;
 
@@ -6,7 +7,7 @@ import AllTickets from './components/AllTickets';
 import CreateTicket from './components/CreateTicket';
 import ViewTicket from './components/ViewTicket';
 //Import Inspector controls
-import Index from './inspectors';
+import Inspector from './inspectors/Inspector';
 //Import editor styles
 import './editor.scss';
 
@@ -46,7 +47,7 @@ export default function Edit({attributes, setAttributes}) {
 
     return (
         <Fragment>
-            <Index
+            <Inspector
                 attributes={attributes}
                 setAttributes={setAttributes}
                 showTickets={showTickets}
@@ -54,7 +55,7 @@ export default function Edit({attributes, setAttributes}) {
                 showTicket={showTicket}
                 mailboxes={mailboxes}
             />
-
+            <div {...useBlockProps()}>
             {showTickets === true ?
                 <AllTickets
                     attributes={attributes}
@@ -72,6 +73,7 @@ export default function Edit({attributes, setAttributes}) {
                             showTicketsList={showTicketsList}
                         />
                         : null}
+            </div>
         </Fragment>
     );
 }

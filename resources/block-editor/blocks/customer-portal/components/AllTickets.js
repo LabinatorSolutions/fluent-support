@@ -8,11 +8,10 @@ import {
     getAllTicketsTableHeaderStyle,
     getAllTicketsFooterStyle,
 } from '../style';
-
 export default function AllTickets( props ) {
     const {attributes, showCreateTicket, viewTicket} = props;
     return (
-        <div className={'block-wrapper'}>
+        <div className={'customer-portal-block-wrapper'}>
             <div className={"all-tickets-header"} style={getAllTicketsHeaderStyle(attributes)}>
                 <div className="all-tickets-header-left">
                     <div className="all-tickets-button-groups">

@@ -4,7 +4,7 @@ const { PanelBody } = wp.components;
 import AllTicketsInspectorControls from './AllTicketsInspectorControls';
 import CreateTicketInspectorControls from './CreateTicketInspectorControls';
 import ViewTicketInspectorControls from './ViewTicketInspectorControls';
-const Index = (inspectorProps) => {
+const Inspector = (inspectorProps) => {
     const { attributes, setAttributes, showTickets, showTicket, showForm, mailboxes} = inspectorProps;
     return (
         <InspectorControls>
@@ -31,4 +31,4 @@ const Index = (inspectorProps) => {
     );
 };
 
-export default Index;
+export default Inspector;
