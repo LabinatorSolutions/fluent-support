@@ -1342,6 +1342,11 @@ class Ticket extends Model
             $ticket->load('product');
             $updateData['product'] = $ticket->product;
         } else if ($propName == 'agent_id') {
+            if (!PermissionManager::currentUserCan('fst_assign_agents')) {
+                wp_send_json_error( [
+                    'message' => __('You do not have permission to assign agent', 'fluent-support')
+                ], 400  );
+            }
             $ticket->load('agent');
             $updateData['agent'] = $ticket->agent;
             $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
