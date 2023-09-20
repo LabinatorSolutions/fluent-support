@@ -1051,7 +1051,13 @@ class Ticket extends Model
     {
         $agent = Helper::getAgentByUserId();
 
-        $ticket = $this->with($ticketWith)->findOrFail($ticketId);
+        try {
+            $ticket = $this->with($ticketWith)->findOrFail($ticketId);
+        } catch (Exception $e) {
+            wp_send_json_error( [
+                'error' => __('Ticket not found', 'fluent-support')
+            ], 404  );
+        }
 
         $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl($ticket->customer); //Get and set customer profile url
         $this->checkAgentPermission($ticket); // Check Agent Permission
