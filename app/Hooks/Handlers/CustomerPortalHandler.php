@@ -114,6 +114,9 @@ class CustomerPortalHandler
             'Open'                        => __('Open', 'fluent-support'),
             'open'                        => __('open', 'fluent-support'),
             'Closed'                      => __('Closed', 'fluent-support'),
+            'new'                         => __('new', 'fluent-support'),
+            'active'                      => __('active', 'fluent-support'),
+            'on-hold'                     => __('on-hold', 'fluent-support'),
             'closed'                      => __('closed', 'fluent-support'),
             'Date'                        => __('Date', 'fluent-support'),
             'Status'                      => __('Status', 'fluent-support'),
@@ -156,7 +159,6 @@ class CustomerPortalHandler
             'Unknown error. Please reload this page' => __('Unknown error. Please reload this page', 'fluent-support'),
             'View Your Tickets' => __('View Your Tickets', 'fluent-support'),
             'View All' => __('View All', 'fluent-support'),
-            'active' => __('active', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
