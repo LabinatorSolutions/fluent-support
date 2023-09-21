@@ -211,41 +211,47 @@ class BlockHelper
             #fluent_support_client_app {
             /*Tickets List style*/
                 .fs_tk_header {
-                    background-color:<?php echo esc_attr($attributes['allTicketsHeaderBgColor']); ?>;
+                    background-color: <?php echo esc_attr($attributes['allTicketsHeaderBgColor']); ?>;
                 }
                 .fs_btn_all {
-                    background-color:<?php echo esc_attr($attributes['filterButtonAllBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['filterButtonAllTextColor']); ?>;
+                    background-color: <?php echo esc_attr($attributes['filterButtonAllBgColor']); ?>;
+                    color: <?php echo esc_attr($attributes['filterButtonAllTextColor']); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['filterButtonAllBgColor']); ?>;
+                    box-shadow: -1px 0 0 0 <?php echo esc_attr($attributes['filterButtonAllBgColor']); ?>;
                 }
                 .fs_btn_open {
-                    background-color:<?php echo esc_attr($attributes['filterButtonOpenBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['filterButtonOpenTextColor']); ?>;
+                    background-color: <?php echo esc_attr($attributes['filterButtonOpenBgColor']); ?>;
+                    color: <?php echo esc_attr($attributes['filterButtonOpenTextColor']); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['filterButtonOpenBgColor']); ?>;
                 }
                 .fs_btn_closed {
-                    background-color:<?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['filterButtonClosedTextColor']); ?>;
+                    background-color: <?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
+                    color: <?php echo esc_attr($attributes['filterButtonClosedTextColor']); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
                 }
 
                 .fs_btn_logout {
-                    background-color:<?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['allTicketsLogoutButtonTextColor']); ?>;
+                    background-color: <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
+                    color: <?php echo esc_attr($attributes['allTicketsLogoutButtonTextColor']); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
                 }
 
                 .fs_btn_create_ticket {
-                    background-color:<?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
+                    background-color: <?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
+                    color: <?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
                 }
 
                 .fs_table thead{
-                    background-color:<?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
-                    text-align:<?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
+                    background-color: <?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
+                    color: <?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
+                    text-align: <?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
                 }
 
                 .fs_table thead th{
-                    background-color:<?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
-                    text-align:<?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
+                    background-color: <?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
+                    color: <?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
+                    text-align: <?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
                 }
                 .fst_pagi_wrapper{
                     background-color:<?php echo esc_attr($attributes['allTicketsFooterBgColor']); ?>;
@@ -280,6 +286,7 @@ class BlockHelper
             .fs_close_button {
                 background-color: <?php echo esc_attr($attributes['closeTicketButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['closeTicketButtonTextColor']); ?>;
+                border: 1px solid <?php echo esc_attr($attributes['closeTicketButtonBgColor']); ?>;
             }
 
             .fst_reply_box, .fs_threads_container {
@@ -323,8 +330,9 @@ class BlockHelper
             }
 
             .fs_tk_right .fs_view_all_button {
-                background-color:  <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor']); ?>;
+                background-color: <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketViewAllButtonTextColor']); ?>;
+                border: 1px solid <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor']); ?>;
             }
 
             .fs_tk_body {
@@ -340,13 +348,15 @@ class BlockHelper
             }
 
             .fs_attachment_button {
-                background-color:  <?php echo esc_attr($attributes['createTicketUploadButtonBgColor']); ?>;
+                background-color: <?php echo esc_attr($attributes['createTicketUploadButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketUploadButtonTextColor']); ?>;
+                border: 1px solid <?php echo esc_attr($attributes['createTicketUploadButtonBgColor']); ?>;
             }
 
             .fs_create_button {
-                background-color:  <?php echo esc_attr($attributes['createTicketCreateButtonBgColor']); ?>;
+                background-color: <?php echo esc_attr($attributes['createTicketCreateButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketCreateButtonTextColor']); ?>;
+                border: 1px solid <?php echo esc_attr($attributes['createTicketCreateButtonBgColor']); ?>;
             }
 
             }
