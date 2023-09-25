@@ -210,6 +210,12 @@ class BlockHelper
         <style type="text/css">
             #fluent_support_client_app {
             /*Tickets List style*/
+                .fs_button_groups > .fs_btn_active {
+                    background-color: #409eff;
+                    border-color: #409eff;
+                    box-shadow: -1px 0 0 0 #409eff;
+                    color: #fff;
+                }
                 .fs_tk_header {
                     background-color: <?php echo esc_attr($attributes['allTicketsHeaderBgColor'] ?? '#ebeef4'); ?>;
                 }
@@ -275,16 +281,19 @@ class BlockHelper
             .fs_refresh_button {
                 background-color: <?php echo esc_attr($attributes['refreshButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['refreshButtonTextColor']); ?>;
+                border: 1px solid <?php echo esc_attr($attributes['refreshButtonBgColor'] ?? '#ffffff'); ?>;
             }
 
             .fs_all_button {
-                background-color: <?php echo esc_attr($attributes['allButtonBgColor']); ?>;
+                background-color: <?php echo esc_attr($attributes['allButtonBgColor'] ?? '#ffffff'); ?>;
                 color: <?php echo esc_attr($attributes['allButtonTextColor']); ?>;
+                border: 1px solid <?php echo esc_attr($attributes['allButtonBgColor'] ?? '#ffffff'); ?>;
             }
 
             .fs_close_button {
-                background-color: <?php echo esc_attr($attributes['closeTicketButtonBgColor']); ?>;
+                background-color: <?php echo esc_attr($attributes['closeTicketButtonBgColor'] ?? '#f56c6c'); ?>;
                 color: <?php echo esc_attr($attributes['closeTicketButtonTextColor']); ?>;
+                border: 1px solid <?php echo esc_attr($attributes['closeTicketButtonBgColor'] ?? '#f56c6c'); ?>;
             }
 
             .fst_reply_box, .fs_threads_container {

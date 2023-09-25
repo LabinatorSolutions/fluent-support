@@ -1,5 +1,6 @@
-const { __ } = wp.i18n;
-const { PanelBody, ToggleControl, ColorPalette } = wp.components;
+import { __ } from '@wordpress/i18n';
+import { PanelBody, ToggleControl } from '@wordpress/components';
+import { ColorPalette } from '@wordpress/block-editor';
 export default function AllTicketsInspectorControls({ attributes, setAttributes}) {
     return (
         <div>

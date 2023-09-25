@@ -1,5 +1,6 @@
-const { __ } = wp.i18n;
-const { PanelBody, ColorPalette } = wp.components;
+import { __ } from '@wordpress/i18n';
+import { ColorPalette } from '@wordpress/block-editor';
+import { PanelBody } from '@wordpress/components';
 export default function ViewTicketInspectorControls({ attributes, setAttributes}) {
     return (
         <div>
