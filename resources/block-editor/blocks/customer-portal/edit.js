@@ -1,6 +1,6 @@
-const {Fragment, useState, useEffect} = wp.element;
-const {useBlockProps} = wp.blockEditor;
-const { apiFetch } = wp;
+import  {Fragment, useState, useEffect} from '@wordpress/element';
+import { useBlockProps } from '@wordpress/block-editor';
+import apiFetch from '@wordpress/api-fetch';
 const restUrl = window.fluent_support_vars.rest.url;
 
 import AllTickets from './components/AllTickets';

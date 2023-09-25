@@ -1,5 +1,5 @@
-const { __ } = wp.i18n;
-const { PanelBody, ColorPalette } = wp.components;
+import { __ } from '@wordpress/i18n';
+import { PanelBody } from '@wordpress/components';
 
 export default function CreateTicketInspectorControls({ attributes, setAttributes}) {
     return (
