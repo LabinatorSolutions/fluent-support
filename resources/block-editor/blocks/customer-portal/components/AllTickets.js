@@ -9,19 +9,26 @@ import {
     getAllTicketsFooterStyle,
 } from '../style';
 export default function AllTickets( props ) {
-    const {attributes, showCreateTicket, viewTicket} = props;
+    const {attributes, showCreateTicket, viewTicket, toggleInspector, selectedInspector} = props;
     return (
         <div className={'customer-portal-block-wrapper'}>
             <div className={"all-tickets-header"} style={getAllTicketsHeaderStyle(attributes)}>
                 <div className="all-tickets-header-left">
                     <div className="all-tickets-button-groups">
-                        <button className="all-tickets btn-all btn-active"
-                                style={getAllTicketsAllButtonStyle(attributes)}>All
-                        </button>
-                        <button className="all-tickets btn-open"
-                                style={getAllTicketsOpenButtonStyle(attributes)}>Open
-                        </button>
+                        <div className={"all-tickets-button-groups-btn-all" + (selectedInspector === 0 ? ' fst-block-active-components' : '')}
+                             onClick={() => toggleInspector(0)}>
+                            <button className="all-tickets btn-all btn-active"
+                                    style={getAllTicketsAllButtonStyle(attributes)}>All
+                            </button>
+                        </div>
+                        <div className={"all-tickets-button-groups-btn-open" + (selectedInspector === 1 ? ' fst-block-active-components' : '')}
+                             onClick={() => toggleInspector(1)}>
+                            <button className="all-tickets btn-open"
+                                    style={getAllTicketsOpenButtonStyle(attributes)}>Open
+                            </button>
+                        </div>
                         <button className="all-tickets btn-closed"
+                                onClick={() => toggleInspector(2)}
                                 style={getAllTicketsClosedButtonStyle(attributes)}>Closed
                         </button>
                     </div>

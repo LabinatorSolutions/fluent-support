@@ -1,69 +1,38 @@
-const { __ } = wp.i18n;
-const { PanelBody, ColorPalette } = wp.components;
+import StyleInspectorControls from "@/block-editor/blocks/customer-portal/inspectors/StyleInspectorControls";
 
-export default function CreateTicketInspectorControls({ attributes, setAttributes}) {
+const { __ } = wp.i18n;
+const { TabPanel } = wp.components;
+
+export default function CreateTicketInspectorControls({ attributes, setAttributes, selectedInspector }) {
     return (
         <div>
-            <PanelBody title={__('Page Header', 'fluent-support')} initialOpen={ false }>
-                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
-                <ColorPalette value={attributes.createTicketHeaderBgColor}
-                              onChange={(v) => setAttributes({ createTicketHeaderBgColor: v })}
-                />
+            <TabPanel
+                className="fst-block-tab-panels"
+                activeClass="active-tab"
+                tabs={[
+                    {
+                        name: "styleInspector",
+                        title: "Style",
+                        className: "tab-panel"
+                    },
+                    {
+                        name: "advancedInspector",
+                        title: "Advanced",
+                        className: "tab-panel"
+                    }
+                ]}
+            >
 
-                <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
-                <ColorPalette value={attributes.createTicketHeaderTextColor}
-                              onChange={(v) => setAttributes({ createTicketHeaderTextColor: v })}
-                />
-                <PanelBody title={__('View All', 'fluent-support')} initialOpen={ false }>
-                    <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
-                    <ColorPalette value={attributes.createTicketViewAllButtonBgColor}
-                                  onChange={(v) => setAttributes({ createTicketViewAllButtonBgColor: v })}
-                    />
-
-                    <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
-                    <ColorPalette value={attributes.createTicketViewAllButtonTextColor}
-                                  onChange={(v) => setAttributes({ createTicketViewAllButtonTextColor: v })}
-                    />
-
-                </PanelBody>
-            </PanelBody>
-            <PanelBody title={__('Page Body', 'fluent-support')} initialOpen={ false }>
-                <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
-                <ColorPalette value={attributes.createTicketBodyBgColor}
-                              onChange={(v) => setAttributes({ createTicketBodyBgColor: v })}
-                />
-
-                <p><strong>{__('Input Label Color', 'fluent-support')}</strong></p>
-                <ColorPalette value={attributes.createTicketInputLabelTextColor}
-                              onChange={(v) => setAttributes({ createTicketInputLabelTextColor: v })}
-                />
-
-                <p><strong>{__('Hint Message Text Color', 'fluent-support')}</strong></p>
-                <ColorPalette value={attributes.createTicketHintMessageTextColor}
-                              onChange={(v) => setAttributes({ createTicketHintMessageTextColor: v })}
-                />
-
-                <PanelBody title={__('Click to upload', 'fluent-support')} initialOpen={ false }>
-                    <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
-                    <ColorPalette value={attributes.createTicketUploadButtonBgColor}
-                                  onChange={(v) => setAttributes({ createTicketUploadButtonBgColor: v })}
-                    />
-                    <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
-                    <ColorPalette value={attributes.createTicketUploadButtonTextColor}
-                                  onChange={(v) => setAttributes({ createTicketUploadButtonTextColor: v })}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Create', 'fluent-support')} initialOpen={ false }>
-                    <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
-                    <ColorPalette value={attributes.createTicketCreateButtonBgColor}
-                                  onChange={(v) => setAttributes({ createTicketCreateButtonBgColor: v })}
-                    />
-                    <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
-                    <ColorPalette value={attributes.createTicketCreateButtonTextColor}
-                                  onChange={(v) => setAttributes({ createTicketCreateButtonTextColor: v })}
-                    />
-                </PanelBody>
-            </PanelBody>
+                {tab => {
+                    let tabLayout;
+                    if (tab.name === "styleInspector") {
+                        tabLayout = <StyleInspectorControls  attributes={attributes} setAttributes={setAttributes} selectedInspector={selectedInspector}/>;
+                    } else {
+                        tabLayout = '<div>Content for Tab 3</div>';
+                    }
+                    return tabLayout;
+                }}
+            </TabPanel>
         </div>
     )
 }
