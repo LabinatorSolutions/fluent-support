@@ -1,7 +1,8 @@
 const {Fragment, useState, useEffect} = wp.element;
 const {useBlockProps} = wp.blockEditor;
 const { apiFetch } = wp;
-const restUrl = window.fluent_support_vars.rest.url;
+const restInfo = window.fluent_support_vars.rest;
+const basePath = restInfo.namespace+'/'+restInfo.version+'/';
 
 import AllTickets from './components/AllTickets';
 import CreateTicket from './components/CreateTicket';
@@ -19,7 +20,7 @@ export default function Edit({attributes, setAttributes}) {
 
     useEffect(() => {
         apiFetch({
-            path: restUrl + '/mailboxes',
+            path: basePath + 'mailboxes',
         }).then((res) => {
             setMailboxes(res.mailboxes)
         });
