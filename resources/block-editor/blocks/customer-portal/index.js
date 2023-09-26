@@ -1,5 +1,5 @@
-import { registerBlockType } from '@wordpress/blocks';
-import { __ } from '@wordpress/i18n';
+const { registerBlockType } = wp.blocks;
+const { __ } = wp.i18n;
 import Edit from './edit';
 import icons from '../../icons';
 registerBlockType( 'fluent-support/customer-portal', {

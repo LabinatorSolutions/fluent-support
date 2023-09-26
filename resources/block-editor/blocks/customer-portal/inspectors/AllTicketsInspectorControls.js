@@ -1,9 +1,43 @@
-import { __ } from '@wordpress/i18n';
-import { PanelBody, ToggleControl } from '@wordpress/components';
-import { ColorPalette } from '@wordpress/block-editor';
+const { __ } = wp.i18n;
+const { PanelBody, TabPanel, ToggleControl, ColorPalette } = wp.components;
 export default function AllTicketsInspectorControls({ attributes, setAttributes}) {
     return (
         <div>
+            <TabPanel
+                className="enhanced-tab-panels"
+                activeClass="active-tab"
+                tabs={[
+                    {
+                        name: "layoutInspector",
+                        title: "Layout",
+                        className: "tab-panel"
+                    },
+                    {
+                        name: "styleInspector",
+                        title: "Style",
+                        className: "tab-panel"
+                    },
+                    {
+                        name: "advancedInspector",
+                        title: "Advanced",
+                        className: "tab-panel"
+                    }
+                ]}
+            >
+
+                {tab => {
+                    let tabLayout;
+
+                    if (tab.name == "layoutInspector") {
+                        tabLayout = '<div>Content for Tab 1</div>';
+                    } else if (tab.name == "styleInspector") {
+                        tabLayout = '<div>Content for Tab 2</div>';
+                    } else {
+                        tabLayout = '<div>Content for Tab 3</div>';
+                    }
+                    return tabLayout;
+                }}
+            </TabPanel>
             <PanelBody title={__('Page Header', 'fluent-support')} initialOpen={ false }>
                 <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
                 <ColorPalette value={attributes.allTicketsHeaderBgColor}

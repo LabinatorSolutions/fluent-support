@@ -1,6 +1,6 @@
-import { __ } from '@wordpress/i18n';
-import { InspectorControls } from '@wordpress/block-editor';
-import { PanelBody } from '@wordpress/components';
+const { __ } = wp.i18n;
+const { InspectorControls } = wp.blockEditor;
+const { PanelBody } = wp.components;
 import AllTicketsInspectorControls from './AllTicketsInspectorControls';
 import CreateTicketInspectorControls from './CreateTicketInspectorControls';
 import ViewTicketInspectorControls from './ViewTicketInspectorControls';
