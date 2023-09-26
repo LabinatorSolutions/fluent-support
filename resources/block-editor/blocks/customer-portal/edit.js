@@ -17,7 +17,6 @@ export default function Edit({attributes, setAttributes}) {
     const [showForm, setShowForm] = useState(false);
     const [showTicket, setShowTicket] = useState(false);
     const [mailboxes, setMailboxes] = useState([]);
-
     useEffect(() => {
         apiFetch({
             path: basePath + 'mailboxes',
@@ -46,6 +45,11 @@ export default function Edit({attributes, setAttributes}) {
         setShowTicket(true);
     }
 
+    const [selectedInspector, setSelectedInspector] = useState(false);
+    const toggleInspector = (ind) => {
+        setSelectedInspector(ind);
+    }
+
     return (
         <Fragment>
             <Inspector
@@ -55,6 +59,7 @@ export default function Edit({attributes, setAttributes}) {
                 showForm={showForm}
                 showTicket={showTicket}
                 mailboxes={mailboxes}
+                selectedInspector={selectedInspector}
             />
             <div {...useBlockProps()}>
             {showTickets === true ?
@@ -62,6 +67,8 @@ export default function Edit({attributes, setAttributes}) {
                     attributes={attributes}
                     showCreateTicket={showCreateTicket}
                     viewTicket={viewTicket}
+                    toggleInspector={toggleInspector}
+                    selectedInspector={selectedInspector}
                 />
                 : showForm === true ?
                     <CreateTicket

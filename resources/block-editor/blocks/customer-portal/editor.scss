@@ -358,6 +358,11 @@
     .all-tickets-header-left {
         width: 50%;
         float: left;
+        .all-tickets-button-groups-btn-all {
+            border: 1px solid rgb(64, 158, 255);
+            padding: 4px;
+            position: relative;
+        }
     }
 
     .all-tickets-header-right {

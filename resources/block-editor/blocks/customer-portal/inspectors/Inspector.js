@@ -1,20 +1,28 @@
 const { __ } = wp.i18n;
 const { InspectorControls } = wp.blockEditor;
 const { PanelBody } = wp.components;
+
 import AllTicketsInspectorControls from './AllTicketsInspectorControls';
 import CreateTicketInspectorControls from './CreateTicketInspectorControls';
 import ViewTicketInspectorControls from './ViewTicketInspectorControls';
 const Inspector = (inspectorProps) => {
-    const { attributes, setAttributes, showTickets, showTicket, showForm, mailboxes} = inspectorProps;
+    const { attributes, setAttributes, showTickets, showTicket, showForm, mailboxes, selectedInspector} = inspectorProps;
+
     return (
         <InspectorControls>
             {showTickets === true ?
-                <AllTicketsInspectorControls attributes={attributes} setAttributes={setAttributes}/> :
+                <AllTicketsInspectorControls
+                    attributes={attributes}
+                    setAttributes={setAttributes}
+                    selectedInspector={selectedInspector}/> :
                 showForm === true ?
-                    <CreateTicketInspectorControls attributes={attributes} setAttributes={setAttributes}/> :
+                    <CreateTicketInspectorControls attributes={attributes} setAttributes={setAttributes}
+                                                   selectedInspector={selectedInspector}/> :
                     showTicket === true ?
-                    <ViewTicketInspectorControls attributes={attributes} setAttributes={setAttributes}/>: null
+                        <ViewTicketInspectorControls attributes={attributes} setAttributes={setAttributes}
+                                                     selectedInspector={selectedInspector}/>: null
             }
+
             <PanelBody title={__('Default Business Inbox', 'fluent-support')} initialOpen={ false }>
                 <select value={attributes.businessBoxId}
                         onChange={(v) => setAttributes({ businessBoxId: v.target.value })}
