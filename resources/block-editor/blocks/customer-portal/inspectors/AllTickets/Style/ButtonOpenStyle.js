@@ -1,6 +1,6 @@
 const { __ } = wp.i18n;
 const { PanelBody, ColorPalette } = wp.components;
-export default function ButtonOpen( { attributes, setAttributes} ) {
+export default function ButtonOpenStyle( { attributes, setAttributes} ) {
     return (
         <PanelBody title={__('Open', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>

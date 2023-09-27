@@ -1,16 +1,16 @@
-import ButtonAll from './buttonAll';
-import ButtonOpen from "./ButtonOpen";
-import ButtonClosed from "./ButtonClosed";
-export default function StyleInspector({ attributes, setAttributes, selectedInspector}){
+import ButtonAllStyle from './AllTickets/Style/ButtonAllStyle';
+import ButtonOpen from './AllTickets/Style/ButtonOpenStyle';
+import ButtonClosedStyle from "./AllTickets/Style/ButtonClosedStyle";
+export default function StyleInspectorControls({ attributes, setAttributes, selectedInspector}){
     const inspectorsList =  [
-        ButtonAll({attributes, setAttributes}),
+        ButtonAllStyle({attributes, setAttributes}),
         ButtonOpen({attributes, setAttributes}),
-        ButtonClosed({attributes, setAttributes}),
+        ButtonClosedStyle({attributes, setAttributes}),
     ];
-    const childInspector = inspectorsList[selectedInspector];
+
     return (
         <div>
-            {childInspector}
+            {inspectorsList[selectedInspector]}
         </div>
     );
 }

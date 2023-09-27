@@ -55,9 +55,6 @@ export default function Edit({attributes, setAttributes}) {
             <Inspector
                 attributes={attributes}
                 setAttributes={setAttributes}
-                showTickets={showTickets}
-                showForm={showForm}
-                showTicket={showTicket}
                 mailboxes={mailboxes}
                 selectedInspector={selectedInspector}
             />

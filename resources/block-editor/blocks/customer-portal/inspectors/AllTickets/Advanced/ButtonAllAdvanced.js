@@ -1,9 +1,9 @@
 const { __ } = wp.i18n;
 const { PanelBody, ColorPalette } = wp.components;
-export default function ButtonAll({ attributes, setAttributes}) {
+export default function ButtonAllAdvanced({ attributes, setAttributes}) {
     return (
         <PanelBody title={__('All', 'fluent-support')}>
-            <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
+            <p><strong>{__('Border Width', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.filterButtonAllBgColor}
                           onChange={(v) => setAttributes({ filterButtonAllBgColor: v })}
             />
