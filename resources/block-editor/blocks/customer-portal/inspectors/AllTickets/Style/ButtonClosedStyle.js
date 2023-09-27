@@ -5,10 +5,22 @@ export default function ButtonClosedStyle( { attributes, setAttributes} ) {
         <PanelBody title={__('Closed', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.filterButtonClosedBgColor}
+                          colors={[
+                              { name: 'green', color: '#67C23A' },
+                              { name: 'black', color: '#000000' },
+                              { name: 'gray', color: '#777777' },
+                              { name: 'red', color: '#ff0000' },
+                          ]}
                           onChange={(v) => setAttributes({ filterButtonClosedBgColor: v })}
             />
             <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.filterButtonClosedTextColor}
+                          colors={[
+                              { name: 'green', color: '#67C23A' },
+                              { name: 'black', color: '#000000' },
+                              { name: 'gray', color: '#777777' },
+                              { name: 'red', color: '#ff0000' },
+                          ]}
                           onChange={(v) => setAttributes({ filterButtonClosedTextColor: v })}
             />
         </PanelBody>
