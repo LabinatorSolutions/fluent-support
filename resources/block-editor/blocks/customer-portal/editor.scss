@@ -509,3 +509,12 @@
     }
 }
 
+.fst-block-tab-panels{
+    .fst-block-tab-panel:hover{
+        text-decoration: underline 5px solid #426fca;
+    }
+    .fst-block-tab-panel.fst-block-active-tab{
+        text-decoration: underline 5px solid #426fca;
+    }
+}
+

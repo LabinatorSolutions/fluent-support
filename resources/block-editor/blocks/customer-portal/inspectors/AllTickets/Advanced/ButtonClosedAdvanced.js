@@ -1,6 +1,6 @@
 const { __ } = wp.i18n;
 const { PanelBody, ColorPalette } = wp.components;
-export default function ButtonClosed( { attributes, setAttributes} ) {
+export default function ButtonClosedAdvanced( { attributes, setAttributes} ) {
     return (
         <PanelBody title={__('Closed', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
