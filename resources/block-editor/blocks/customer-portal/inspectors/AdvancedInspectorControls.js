@@ -1,13 +1,7 @@
-import ButtonAllAdvanced from './AllTickets/Advanced/ButtonAllAdvanced';
-import ButtonOpenAdvanced from './AllTickets/Advanced/ButtonOpenAdvanced';
-import ButtonClosedAdvanced from "./AllTickets/Advanced/ButtonClosedAdvanced";
+import InspectorsList from "../utils/inspectorsList";
 export default function AdvancedInspectorControls({ attributes, setAttributes, selectedInspector}){
-    const inspectorsList =  [
-        ButtonAllAdvanced({attributes, setAttributes}),
-        ButtonOpenAdvanced({attributes, setAttributes}),
-        ButtonClosedAdvanced({attributes, setAttributes}),
-    ];
-
+    const inspectorsList = InspectorsList({attributes, setAttributes});
+    selectedInspector = selectedInspector.replace('Style', 'Advanced');
     return (
         <div>
             {inspectorsList[selectedInspector]}
