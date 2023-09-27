@@ -11,7 +11,7 @@ import ViewTicket from './components/ViewTicket';
 import Inspector from './inspectors/Inspector';
 //Import editor styles
 import './editor.scss';
-import InspectorsList from "./utils/inspectorsList";
+import InspectorContainer from "./utils/InspectorContainer";
 
 export default function Edit({attributes, setAttributes}) {
     const [showTickets, setShowTickets] = useState(false);
@@ -46,9 +46,9 @@ export default function Edit({attributes, setAttributes}) {
         setShowTicket(true);
     }
 
-    const [selectedInspector, setSelectedInspector] = useState(false);
+    const [selectedInspector, setSelectedInspector] = useState('allTicketsStyle');
     const toggleInspector = (ind) => {
-        const inspectorsList = InspectorsList({attributes, setAttributes});
+        const inspectorsList = InspectorContainer({attributes, setAttributes});
         if (inspectorsList[ind] === undefined) {
             return;
         }
