@@ -5,7 +5,7 @@ import ButtonAllAdvanced from "../inspectors/AllTickets/Advanced/ButtonAllAdvanc
 import ButtonOpenAdvanced from "../inspectors/AllTickets/Advanced/ButtonOpenAdvanced";
 import ButtonClosedAdvanced from "../inspectors/AllTickets/Advanced/ButtonClosedAdvanced";
 
-export default function InspectorsList({attributes, setAttributes}) {
+export default function InspectorContainer({attributes, setAttributes}) {
     return {
         buttonAllStyle: ButtonAllStyle({attributes, setAttributes}),
         buttonAllAdvanced: ButtonAllAdvanced({attributes, setAttributes}),

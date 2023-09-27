@@ -10,25 +10,31 @@ import {
 } from '../style';
 export default function AllTickets( props ) {
     const {attributes, showCreateTicket, viewTicket, toggleInspector, selectedInspector} = props;
+    const getActiveClass = (ind) => {
+        if (selectedInspector === ind) {
+            return ' fst-block-active-components';
+        }
+        return '';
+    }
     return (
         <div className={'customer-portal-block-wrapper'}>
             <div className={"all-tickets-header"} style={getAllTicketsHeaderStyle(attributes)}>
                 <div className="all-tickets-header-left">
                     <div className="all-tickets-button-groups">
-                        <div className={"all-tickets-button-groups-btn" + (selectedInspector === 'buttonAll' ? ' fst-block-active-components' : '')}
-                             onClick={() => toggleInspector('buttonAll')}>
+                        <div className={"all-tickets-button-groups-btn" + getActiveClass('buttonAllStyle')}
+                             onClick={() => toggleInspector('buttonAllStyle')}>
                             <button className="all-tickets btn-all btn-active"
                                     style={getAllTicketsAllButtonStyle(attributes)}>All
                             </button>
                         </div>
-                        <div className={"all-tickets-button-groups-btn" + (selectedInspector === 'buttonOpen' ? ' fst-block-active-components' : '')}
-                             onClick={() => toggleInspector('buttonOpen')}>
+                        <div className={"all-tickets-button-groups-btn" + getActiveClass('buttonOpenStyle')}
+                             onClick={() => toggleInspector('buttonOpenStyle')}>
                             <button className="all-tickets btn-open"
                                     style={getAllTicketsOpenButtonStyle(attributes)}>Open
                             </button>
                         </div>
-                        <div className={"all-tickets-button-groups-btn" + (selectedInspector === 'buttonClosed' ? ' fst-block-active-components' : '')}
-                             onClick={() => toggleInspector('buttonClosed')}>
+                        <div className={"all-tickets-button-groups-btn" + getActiveClass('buttonClosedStyle')}
+                             onClick={() => toggleInspector('buttonClosedStyle')}>
                             <button className="all-tickets btn-closed"
                                     style={getAllTicketsClosedButtonStyle(attributes)}>Closed
                             </button>

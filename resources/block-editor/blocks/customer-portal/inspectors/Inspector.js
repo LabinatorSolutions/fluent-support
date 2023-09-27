@@ -1,6 +1,4 @@
-import StyleInspectorControls from "./StyleInspectorControls";
-import AdvancedInspectorControls from "./AdvancedInspectorControls";
-
+import InspectorContainer from "../utils/InspectorContainer";
 const { __ } = wp.i18n;
 const { InspectorControls } = wp.blockEditor;
 const { TabPanel, PanelBody } = wp.components;
@@ -26,15 +24,14 @@ const Inspector = (inspectorProps) => {
                         }
                     ]}
                 >
-
                     {tab => {
-                        let tabLayout;
                         if (tab.name === "styleInspector") {
-                            tabLayout = <StyleInspectorControls  attributes={attributes} setAttributes={setAttributes} selectedInspector={selectedInspector}/>;
+                            let selectedInd = selectedInspector.replace('Advanced', 'Style');
+                            return InspectorContainer({attributes, setAttributes})[selectedInd];
                         } else {
-                            tabLayout = <AdvancedInspectorControls attributes={attributes} setAttributes={setAttributes} selectedInspector={selectedInspector}/>;
+                            let selectedInd = selectedInspector.replace('Style', 'Advanced');
+                            return InspectorContainer({attributes, setAttributes})[selectedInd];
                         }
-                        return tabLayout;
                     }}
                 </TabPanel>
 
