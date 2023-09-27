@@ -2,7 +2,9 @@ const { __ } = wp.i18n;
 const { PanelBody, ColorPalette } = wp.components;
 export default function ButtonClosedAdvanced( { attributes, setAttributes} ) {
     return (
-        <PanelBody title={__('Closed', 'fluent-support')}>
+        <PanelBody title={__('Closed', 'fluent-support')}
+                   className="fst-buttonAll-tab"
+        >
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.filterButtonClosedBgColor}
                           onChange={(v) => setAttributes({ filterButtonClosedBgColor: v })}

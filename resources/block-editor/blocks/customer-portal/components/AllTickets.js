@@ -8,7 +8,8 @@ import {
     getAllTicketsTableHeaderStyle,
     getAllTicketsFooterStyle,
 } from '../style';
-export default function AllTickets( props ) {
+
+export default function AllTickets(props) {
     const {attributes, showCreateTicket, viewTicket, toggleInspector, selectedInspector} = props;
     const getActiveClass = (ind) => {
         if (selectedInspector === ind) {
@@ -42,14 +43,20 @@ export default function AllTickets( props ) {
                     </div>
                 </div>
                 <div className="all-tickets-header-right">
-                    <button className="all-tickets btn-logout"
-                            style={getAllTicketsLogoutButtonStyle(attributes)}>Logout
-                    </button>
-                    <button className="all-tickets btn-success btn-create-ticket"
-                            style={getAllTicketsCreateTicketButtonStyle(attributes)}
-                            onClick={showCreateTicket}>Create a New
-                        Ticket
-                    </button>
+                        <div className={"all-tickets-action-button-group" + getActiveClass('buttonLogoutStyle')}
+                             onClick={() => toggleInspector('buttonLogoutStyle')}>
+                            <button className="all-tickets btn-logout"
+                                    style={getAllTicketsLogoutButtonStyle(attributes)}>Logout
+                            </button>
+                        </div>
+                        <div className={"all-tickets-action-button-group" + getActiveClass('buttonCreateTicketStyle')}
+                             onClick={() => toggleInspector('buttonCreateTicketStyle')}>
+                            <button className="all-tickets btn-success btn-create-ticket"
+                                    style={getAllTicketsCreateTicketButtonStyle(attributes)}
+                                    onClick={showCreateTicket}>Create a New
+                                Ticket
+                            </button>
+                        </div>
                 </div>
             </div>
             <div className={"all-tickets-body"}>

@@ -4,6 +4,8 @@ import ButtonClosedStyle from "../inspectors/AllTickets/Style/ButtonClosedStyle"
 import ButtonAllAdvanced from "../inspectors/AllTickets/Advanced/ButtonAllAdvanced";
 import ButtonOpenAdvanced from "../inspectors/AllTickets/Advanced/ButtonOpenAdvanced";
 import ButtonClosedAdvanced from "../inspectors/AllTickets/Advanced/ButtonClosedAdvanced";
+import ButtonLogoutStyle from "../inspectors/AllTickets/Style/ButtonLogoutStyle"
+import ButtonCreateTicketStyle from "../inspectors/AllTickets/Style/ButtonCreateTicket";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -13,5 +15,7 @@ export default function InspectorContainer({attributes, setAttributes}) {
         buttonOpenAdvanced: ButtonOpenAdvanced({attributes, setAttributes}),
         buttonClosedStyle: ButtonClosedStyle({attributes, setAttributes}),
         buttonClosedAdvanced: ButtonClosedAdvanced({attributes, setAttributes}),
+        buttonLogoutStyle: ButtonLogoutStyle({attributes, setAttributes}),
+        buttonCreateTicketStyle: ButtonCreateTicketStyle({attributes, setAttributes}),
     };
 }
