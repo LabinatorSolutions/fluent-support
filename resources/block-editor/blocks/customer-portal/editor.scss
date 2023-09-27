@@ -377,7 +377,17 @@
     }
 
     .all-tickets-header-right {
+        display: flex;
         float: right;
+
+        .all-tickets-action-button-group{
+            padding: 6px;
+            position: relative;
+        }
+        .all-tickets-action-button-group:hover {
+            border: 1px solid rgb(64, 158, 255);
+            cursor: pointer;
+        }
     }
 
 }
@@ -511,11 +521,19 @@
 }
 
 .fst-block-tab-panels{
-    .fst-block-tab-panel:hover{
-        text-decoration: underline 5px solid #426fca;
+    .components-tab-panel__tabs{
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
     }
+
+    .fst-block-tab-panel:hover{
+        color: #1E22FB;
+    }
+
     .fst-block-tab-panel.fst-block-active-tab{
-        text-decoration: underline 5px solid #426fca;
+        border-bottom: 2px solid #4B4EFC;
+        color: #1E22FB;
     }
 }
 
