@@ -6,7 +6,8 @@ import ButtonOpenAdvanced from "../inspectors/AllTickets/Advanced/ButtonOpenAdva
 import ButtonClosedAdvanced from "../inspectors/AllTickets/Advanced/ButtonClosedAdvanced";
 import ButtonLogoutStyle from "../inspectors/AllTickets/Style/ButtonLogoutStyle"
 import ButtonCreateTicketStyle from "../inspectors/AllTickets/Style/ButtonCreateTicket";
-import TableHeaderStyle from "../inspectors/AllTickets/Style/TableHeaderStyle";
+import AllTicketsTableHeaderStyle from "../inspectors/AllTickets/Style/AllTicketsTableHeaderStyle";
+import AllTicketsFooterStyle from "../inspectors/AllTickets/Style/AllTicketsFooterStyle";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -18,6 +19,7 @@ export default function InspectorContainer({attributes, setAttributes}) {
         buttonClosedAdvanced: ButtonClosedAdvanced({attributes, setAttributes}),
         buttonLogoutStyle: ButtonLogoutStyle({attributes, setAttributes}),
         buttonCreateTicketStyle: ButtonCreateTicketStyle({attributes, setAttributes}),
-        tableHeaderStyle: TableHeaderStyle({attributes, setAttributes})
+        allTicketsTableHeaderStyle: AllTicketsTableHeaderStyle({attributes, setAttributes}),
+        allTicketsFooterStyle: AllTicketsFooterStyle({attributes, setAttributes})
     };
 }
