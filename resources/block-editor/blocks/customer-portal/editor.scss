@@ -390,11 +390,13 @@
         }
     }
 
-    .all-tickets-table-header:hover {
-        border: 1px solid rgb(64, 158, 255) !important;
-        cursor: pointer;
+    .all-tickets-header-style-container {
+        padding: 6px;
+        position: relative;
     }
 
+    .all-tickets-header:hover,
+    .all-tickets-table-header:hover,
     .all-tickets-footer:hover {
         border: 1px solid rgb(64, 158, 255) !important;
         cursor: pointer;

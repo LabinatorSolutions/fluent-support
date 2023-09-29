@@ -20,7 +20,7 @@ export default function AllTickets(props) {
     }
     return (
         <div className={'customer-portal-block-wrapper'}>
-            <div className={"all-tickets-header"} style={getAllTicketsHeaderStyle(attributes)}>
+            <div className={"all-tickets-header" + getActiveClass('allTicketsHeaderStyle')} style={getAllTicketsHeaderStyle(attributes)} onClick={() => toggleInspector('allTicketsHeaderStyle')}>
                 <div className="all-tickets-header-left">
                     <div className="all-tickets-button-groups">
                         <div className={"all-tickets-button-groups-btn" + getActiveClass('buttonAllStyle')}
