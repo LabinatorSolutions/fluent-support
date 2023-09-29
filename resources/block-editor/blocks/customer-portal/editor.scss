@@ -390,6 +390,16 @@
         }
     }
 
+    .all-tickets-table-header:hover {
+        border: 1px solid rgb(64, 158, 255) !important;
+        cursor: pointer;
+    }
+
+    .fst-block-active-components {
+        border: 1px solid rgb(64, 158, 255) !important;
+        cursor: pointer;
+    }
+
 }
 
 .customer-portal-block-wrapper {

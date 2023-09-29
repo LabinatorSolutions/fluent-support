@@ -61,14 +61,15 @@ export default function AllTickets(props) {
             </div>
             <div className={"all-tickets-body"}>
                 <table className="all-tickets-table table_stripe">
-                    <thead>
-                    <tr>
-                        <th style={getAllTicketsTableHeaderStyle(attributes)}>Conversation</th>
-                        <th style={getAllTicketsTableHeaderStyle(attributes)}></th>
-                        <th style={getAllTicketsTableHeaderStyle(attributes)}>Status</th>
-                        <th style={getAllTicketsTableHeaderStyle(attributes)}>Date</th>
-                    </tr>
-                    </thead>
+                        <thead className={"all-tickets-table-header" + getActiveClass('tableHeaderStyle')}
+                               onClick={() => toggleInspector('tableHeaderStyle')}>
+                        <tr>
+                            <th style={getAllTicketsTableHeaderStyle(attributes)}>Conversation</th>
+                            <th style={getAllTicketsTableHeaderStyle(attributes)}></th>
+                            <th style={getAllTicketsTableHeaderStyle(attributes)}>Status</th>
+                            <th style={getAllTicketsTableHeaderStyle(attributes)}>Date</th>
+                        </tr>
+                        </thead>
                     <tbody>
                     <tr onClick={viewTicket}>
                         <td><a className={"ticket-preview"}><strong>Test ticket 1</strong>
