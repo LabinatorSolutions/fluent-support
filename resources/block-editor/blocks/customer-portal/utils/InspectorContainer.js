@@ -8,6 +8,7 @@ import ButtonLogoutStyle from "../inspectors/AllTickets/Style/ButtonLogoutStyle"
 import ButtonCreateTicketStyle from "../inspectors/AllTickets/Style/ButtonCreateTicket";
 import AllTicketsTableHeaderStyle from "../inspectors/AllTickets/Style/AllTicketsTableHeaderStyle";
 import AllTicketsFooterStyle from "../inspectors/AllTickets/Style/AllTicketsFooterStyle";
+import AllTicketsHeaderStyle from "../inspectors/AllTickets/Style/AllTicketsheaderStyle";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -20,6 +21,7 @@ export default function InspectorContainer({attributes, setAttributes}) {
         buttonLogoutStyle: ButtonLogoutStyle({attributes, setAttributes}),
         buttonCreateTicketStyle: ButtonCreateTicketStyle({attributes, setAttributes}),
         allTicketsTableHeaderStyle: AllTicketsTableHeaderStyle({attributes, setAttributes}),
-        allTicketsFooterStyle: AllTicketsFooterStyle({attributes, setAttributes})
+        allTicketsFooterStyle: AllTicketsFooterStyle({attributes, setAttributes}),
+        allTicketsHeaderStyle: AllTicketsHeaderStyle({attributes, setAttributes})
     };
 }

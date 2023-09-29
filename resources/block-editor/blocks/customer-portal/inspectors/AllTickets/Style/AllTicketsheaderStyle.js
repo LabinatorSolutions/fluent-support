@@ -1,17 +1,17 @@
 const {__} = wp.i18n;
 const {PanelBody, ColorPalette} = wp.components;
-export default function AllTicketsFooterStyle({attributes, setAttributes}) {
+export default function AllTicketsHeaderStyle({attributes, setAttributes}) {
     return (
-        <PanelBody title={__('Page Footer', 'fluent-support')}>
+        <PanelBody title={__('Page Header', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
-            <ColorPalette value={attributes.allTicketsFooterBgColor}
+            <ColorPalette value={attributes.allTicketsHeaderBgColor}
                           colors={[
                               { name: 'green', color: '#67C23A' },
                               { name: 'black', color: '#000000' },
                               { name: 'gray', color: '#777777' },
                               { name: 'red', color: '#ff0000' },
                           ]}
-                          onChange={(v) => setAttributes({ allTicketsFooterBgColor: v })}
+                          onChange={(v) => setAttributes({ allTicketsHeaderBgColor: v })}
             />
         </PanelBody>
     )
