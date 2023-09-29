@@ -8,6 +8,7 @@ import {
     getAllTicketsTableHeaderStyle,
     getAllTicketsFooterStyle,
 } from '../style';
+// import AllTicketsFooterStyle from "../inspectors/AllTickets/Style/AllTicketsFooterStyle";
 
 export default function AllTickets(props) {
     const {attributes, showCreateTicket, viewTicket, toggleInspector, selectedInspector} = props;
@@ -61,8 +62,8 @@ export default function AllTickets(props) {
             </div>
             <div className={"all-tickets-body"}>
                 <table className="all-tickets-table table_stripe">
-                        <thead className={"all-tickets-table-header" + getActiveClass('tableHeaderStyle')}
-                               onClick={() => toggleInspector('tableHeaderStyle')}>
+                        <thead className={"all-tickets-table-header" + getActiveClass('allTicketsTableHeaderStyle')}
+                               onClick={() => toggleInspector('allTicketsTableHeaderStyle')}>
                         <tr>
                             <th style={getAllTicketsTableHeaderStyle(attributes)}>Conversation</th>
                             <th style={getAllTicketsTableHeaderStyle(attributes)}></th>
@@ -96,7 +97,7 @@ export default function AllTickets(props) {
                     </tbody>
                 </table>
             </div>
-            <div className="all-tickets-footer" style={getAllTicketsFooterStyle(attributes)}></div>
+                <div className={"all-tickets-footer" + getActiveClass('allTicketsFooterStyle')} style={getAllTicketsFooterStyle(attributes)} onClick={() => toggleInspector('allTicketsFooterStyle')}></div>
         </div>
     );
 }
