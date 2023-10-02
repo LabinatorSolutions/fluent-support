@@ -436,20 +436,9 @@
             width: 50%;
             float: right;
             text-align: right;
-
-
         }
 
-        .create-tickets-button-groups-btn{
-            padding: 6px;
-            position: relative;
-            display: inline-block;
-        }
 
-        .create-tickets-button-groups-btn:hover {
-            border: 1px solid rgb(64, 158, 255);
-            cursor: pointer;
-        }
 
         .create-ticket-view-all {
             padding: 5px 11px;
@@ -462,13 +451,23 @@
             padding: 6px;
             position: relative;
         }
-        .create-tickets-button-groups-btn
+
 
         .fst-block-active-components {
             border: 1px solid rgb(64, 158, 255) !important;
             cursor: pointer;
         }
 
+    }
+    .create-ticket-button-groups-btn{
+        padding: 6px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .create-ticket-button-groups-btn:hover {
+        border: 1px solid rgb(64, 158, 255);
+        cursor: pointer;
     }
 
     .create-ticket-body {
@@ -559,7 +558,8 @@
         }
     }
     .create-ticket-header:hover,
-    .create-ticket-body:hover {
+    .create-ticket-body:hover,
+    .create-ticket-form-style:hover{
         border: 1px solid rgb(64, 158, 255) !important;
         cursor: pointer;
     }
