@@ -12,6 +12,8 @@ import AllTicketsHeaderStyle from "../inspectors/AllTickets/Style/AllTicketshead
 import CreateTicketsHeaderStyle from "../inspectors/CreateTicket/Style/CreateTicketHeaderStyle";
 import ButtonViewAllStyle from "../inspectors/CreateTicket/Style/ButtonViewAllStyle";
 import CreateTicketsBodyStyle from "../inspectors/CreateTicket/Style/CreateTicketBodyStyle";
+import ButtonClickToUploadStyle from "../inspectors/CreateTicket/Style/ButtonClickToUploadStyle";
+import ButtonCreateStyle from "../inspectors/CreateTicket/Style/ButtonCreateStyle";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -29,5 +31,7 @@ export default function InspectorContainer({attributes, setAttributes}) {
         createTicketsHeaderStyle: CreateTicketsHeaderStyle({attributes, setAttributes}),
         buttonViewAllStyle: ButtonViewAllStyle({attributes, setAttributes}),
         createTicketsBodyStyle: CreateTicketsBodyStyle({attributes, setAttributes}),
+        buttonClickToUploadStyle: ButtonClickToUploadStyle({attributes, setAttributes}),
+        buttonCreateStyle: ButtonCreateStyle({attributes, setAttributes}),
     };
 }
