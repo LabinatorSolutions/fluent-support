@@ -18,25 +18,31 @@ export default function AllTickets(props) {
         }
         return '';
     }
+
+    const handleInspectorButtonClick = (inspector) => (e) => {
+        e.stopPropagation();
+        toggleInspector(inspector);
+    };
     return (
         <div className={'customer-portal-block-wrapper'}>
-            <div className={"all-tickets-header" + getActiveClass('allTicketsHeaderStyle')} style={getAllTicketsHeaderStyle(attributes)} onClick={() => toggleInspector('allTicketsHeaderStyle')}>
+            <div className={"all-tickets-header" + getActiveClass('allTicketsHeaderStyle')} style={getAllTicketsHeaderStyle(attributes)}
+                 onClick={() => toggleInspector('allTicketsHeaderStyle')}>
                 <div className="all-tickets-header-left">
                     <div className="all-tickets-button-groups">
                         <div className={"all-tickets-button-groups-btn" + getActiveClass('buttonAllStyle')}
-                             onClick={() => toggleInspector('buttonAllStyle')}>
+                             onClick={handleInspectorButtonClick('buttonAllStyle')}>
                             <button className="all-tickets btn-all btn-active"
                                     style={getAllTicketsAllButtonStyle(attributes)}>All
                             </button>
                         </div>
                         <div className={"all-tickets-button-groups-btn" + getActiveClass('buttonOpenStyle')}
-                             onClick={() => toggleInspector('buttonOpenStyle')}>
+                             onClick={handleInspectorButtonClick('buttonOpenStyle')}>
                             <button className="all-tickets btn-open"
                                     style={getAllTicketsOpenButtonStyle(attributes)}>Open
                             </button>
                         </div>
                         <div className={"all-tickets-button-groups-btn" + getActiveClass('buttonClosedStyle')}
-                             onClick={() => toggleInspector('buttonClosedStyle')}>
+                             onClick={handleInspectorButtonClick('buttonClosedStyle')}>
                             <button className="all-tickets btn-closed"
                                     style={getAllTicketsClosedButtonStyle(attributes)}>Closed
                             </button>
@@ -45,13 +51,13 @@ export default function AllTickets(props) {
                 </div>
                 <div className="all-tickets-header-right">
                         <div className={"all-tickets-action-button-group" + getActiveClass('buttonLogoutStyle')}
-                             onClick={() => toggleInspector('buttonLogoutStyle')}>
+                             onClick={handleInspectorButtonClick('buttonLogoutStyle')}>
                             <button className="all-tickets btn-logout"
                                     style={getAllTicketsLogoutButtonStyle(attributes)}>Logout
                             </button>
                         </div>
                         <div className={"all-tickets-action-button-group" + getActiveClass('buttonCreateTicketStyle')}
-                             onClick={() => toggleInspector('buttonCreateTicketStyle')}>
+                             onClick={handleInspectorButtonClick('buttonCreateTicketStyle')}>
                             <button className="all-tickets btn-success btn-create-ticket"
                                     style={getAllTicketsCreateTicketButtonStyle(attributes)}
                                     onClick={showCreateTicket}>Create a New
