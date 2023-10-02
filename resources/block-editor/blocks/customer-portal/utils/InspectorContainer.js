@@ -9,6 +9,9 @@ import ButtonCreateTicketStyle from "../inspectors/AllTickets/Style/ButtonCreate
 import AllTicketsTableHeaderStyle from "../inspectors/AllTickets/Style/AllTicketsTableHeaderStyle";
 import AllTicketsFooterStyle from "../inspectors/AllTickets/Style/AllTicketsFooterStyle";
 import AllTicketsHeaderStyle from "../inspectors/AllTickets/Style/AllTicketsheaderStyle";
+import CreateTicketsHeaderStyle from "../inspectors/CreateTicket/Style/CreateTicketHeaderStyle";
+import ButtonViewAllStyle from "../inspectors/CreateTicket/Style/ButtonViewAllStyle";
+import CreateTicketsBodyStyle from "../inspectors/CreateTicket/Style/CreateTicketBodyStyle";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -22,6 +25,9 @@ export default function InspectorContainer({attributes, setAttributes}) {
         buttonCreateTicketStyle: ButtonCreateTicketStyle({attributes, setAttributes}),
         allTicketsTableHeaderStyle: AllTicketsTableHeaderStyle({attributes, setAttributes}),
         allTicketsFooterStyle: AllTicketsFooterStyle({attributes, setAttributes}),
-        allTicketsHeaderStyle: AllTicketsHeaderStyle({attributes, setAttributes})
+        allTicketsHeaderStyle: AllTicketsHeaderStyle({attributes, setAttributes}),
+        createTicketsHeaderStyle: CreateTicketsHeaderStyle({attributes, setAttributes}),
+        buttonViewAllStyle: ButtonViewAllStyle({attributes, setAttributes}),
+        createTicketsBodyStyle: CreateTicketsBodyStyle({attributes, setAttributes}),
     };
 }

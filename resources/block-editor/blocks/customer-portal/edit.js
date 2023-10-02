@@ -76,6 +76,8 @@ export default function Edit({attributes, setAttributes}) {
                     <CreateTicket
                         attributes={attributes}
                         showTicketsList={showTicketsList}
+                        toggleInspector={toggleInspector}
+                        selectedInspector={selectedInspector}
                     />
                     : showTicket === true ?
                         <ViewTicket

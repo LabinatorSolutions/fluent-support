@@ -10,20 +10,39 @@ import {
     getCreateTicketCreateButtonStyle
 } from '../style';
 export default function CreateTicket(props) {
-    const {attributes, showTicketsList} = props;
+    const {attributes, showTicketsList,toggleInspector, selectedInspector} = props;
+    const getActiveClass = (ind) => {
+        if (selectedInspector === ind) {
+            return ' fst-block-active-components';
+        }
+        return '';
+    }
+
+    const handleInspectorButtonClick = (inspector) => (e) => {
+        e.stopPropagation();
+        toggleInspector(inspector);
+    };
+
     return (
         <div className={'customer-portal-block-wrapper'}>
-            <div className={'create-ticket-header'} style={getCreateTicketHeaderStyle(attributes)}>
+            <div className={'create-ticket-header' + getActiveClass('createTicketsHeaderStyle')} style={getCreateTicketHeaderStyle(attributes)}
+                 onClick={() => toggleInspector('createTicketsHeaderStyle')}>
                 <div className={'create-ticket-header-left'}>
                     <h3 style={getCreateTicketHeaderTextStyle(attributes)}>Submit a Support Ticket</h3>
                 </div>
                 <div className={'create-ticket-header-right'}>
-                    <button className={'create-ticket-view-all'} style={getCreateTicketViewAllButtonStyle(attributes)}
-                            onClick={() => showTicketsList()}>View All
-                    </button>
+                    <div className={'create-tickets-button-groups-btn' +  getActiveClass('buttonViewAllStyle')}
+                         onClick={handleInspectorButtonClick('buttonViewAllStyle')}
+                    >
+                        <button className={'create-ticket-view-all'} style={getCreateTicketViewAllButtonStyle(attributes)}
+                                onClick={() => showTicketsList()}>View All
+                        </button>
+                    </div>
+
                 </div>
             </div>
-            <div className={'create-ticket-body'} style={getCreateTicketBodyStyle(attributes)}>
+            <div className={'create-ticket-body' +  getActiveClass('createTicketsBodyStyle')} style={getCreateTicketBodyStyle(attributes)}
+                 onClick={() => toggleInspector('createTicketsBodyStyle')}>
                 <form className="create-ticket-form" style={getCreateTicketFormStyle(attributes)}>
                     <div className="create-ticket-form-item">
                         <label htmlFor="subject" className="create-ticket-label">
