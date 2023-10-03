@@ -117,6 +117,7 @@
                 right: 0;
                 top: -5px;
                 width: auto;
+                float: right;
 
                 a{
                     font-size: 12px;
@@ -147,6 +148,39 @@
         }
     }
 
+    .show-ticket-header:hover,
+    .show-ticket-body:hover {
+        border: 1px solid rgb(64, 158, 255) !important;
+        cursor: pointer;
+    }
+
+    .fs_thread_ribbon_agent_style:hover,
+    .fs_thread_starter_style:hover,
+    .fs_thread_follower_style:hover{
+        padding: 0 6px 0 0;
+        border: 1px solid rgb(64, 158, 255) !important;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .fs_thread_ribbon_agent_style,
+    .fs_thread_starter_style,
+    .fs_thread_follower_style {
+        padding: 0 6px 0 0;
+        display: inline-block;
+    }
+
+    .show-ticket-button-groups-btn{
+        padding: 6px;
+        position: relative;
+        display: inline-block;
+    }
+
+    .show-ticket-button-groups-btn:hover {
+        border: 1px solid rgb(64, 158, 255);
+        cursor: pointer;
+    }
+
     .show-ticket-body {
         border: 1px solid #ebeef3;
         background: #ebeef3;
@@ -161,7 +195,7 @@
                 border: 1px solid #e5e9ec;
                 background: #e5e9ec;
                 padding: 15px 20px;
-                }
+            }
 
         }
 
