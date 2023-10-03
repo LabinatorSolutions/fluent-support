@@ -14,6 +14,14 @@ import ButtonViewAllStyle from "../inspectors/CreateTicket/Style/ButtonViewAllSt
 import CreateTicketsBodyStyle from "../inspectors/CreateTicket/Style/CreateTicketBodyStyle";
 import ButtonClickToUploadStyle from "../inspectors/CreateTicket/Style/ButtonClickToUploadStyle";
 import ButtonCreateStyle from "../inspectors/CreateTicket/Style/ButtonCreateStyle";
+import ViewTicketHeaderStyle from "../inspectors/ViewTicket/Style/ViewTicketHeaderStyle";
+import ButtonRefreshStyle from "../inspectors/ViewTicket/Style/ButtonRefreshStyle";
+import ViewTicketButtonAllStyle from "../inspectors/ViewTicket/Style/ViewTicketButtonAllStyle";
+import ButtonCloseTicketStyle from "../inspectors/ViewTicket/Style/ButtonCloseTicketStyle";
+import ViewTicketBodyStyle from "../inspectors/ViewTicket/Style/ViewTicketBodyStyle";
+import RibbonSupportStaffStyle from "../inspectors/ViewTicket/Style/RibbonSupportStaffStyle";
+import RibbonThreadStarterStyle from "../inspectors/ViewTicket/Style/RibbonThreadStarterStyle";
+import RibbonThreadFollowerStyle from "../inspectors/ViewTicket/Style/RibbonThreadFollowerStyle";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -33,5 +41,13 @@ export default function InspectorContainer({attributes, setAttributes}) {
         createTicketsBodyStyle: CreateTicketsBodyStyle({attributes, setAttributes}),
         buttonClickToUploadStyle: ButtonClickToUploadStyle({attributes, setAttributes}),
         buttonCreateStyle: ButtonCreateStyle({attributes, setAttributes}),
+        viewTicketHeaderStyle: ViewTicketHeaderStyle({attributes, setAttributes}),
+        buttonRefreshStyle: ButtonRefreshStyle({attributes, setAttributes}),
+        viewTicketButtonAllStyle: ViewTicketButtonAllStyle({attributes, setAttributes}),
+        buttonCloseTicketStyle: ButtonCloseTicketStyle({attributes, setAttributes}),
+        viewTicketBodyStyle: ViewTicketBodyStyle({attributes, setAttributes}),
+        ribbonSupportStaffStyle: RibbonSupportStaffStyle({attributes, setAttributes}),
+        ribbonThreadStarterStyle: RibbonThreadStarterStyle({attributes, setAttributes}),
+        ribbonThreadFollowerStyle: RibbonThreadFollowerStyle({attributes, setAttributes}),
     };
 }

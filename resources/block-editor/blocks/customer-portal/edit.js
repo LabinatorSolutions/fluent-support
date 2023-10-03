@@ -83,6 +83,8 @@ export default function Edit({attributes, setAttributes}) {
                         <ViewTicket
                             attributes={attributes}
                             showTicketsList={showTicketsList}
+                            toggleInspector={toggleInspector}
+                            selectedInspector={selectedInspector}
                         />
                         : null}
             </div>
