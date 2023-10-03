@@ -2,7 +2,7 @@ const {__} = wp.i18n;
 const {PanelBody, ColorPalette} = wp.components;
 export default function ButtonClickToUploadStyle({attributes, setAttributes}) {
     return (
-        <PanelBody title={__('Click to upload', 'fluent-support')} initialOpen={ false }>
+        <PanelBody title={__('Click to upload', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.createTicketUploadButtonBgColor}
                           colors={[

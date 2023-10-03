@@ -2,7 +2,7 @@ const {__} = wp.i18n;
 const {PanelBody, ColorPalette} = wp.components;
 export default function ViewTicketBodyStyle({attributes, setAttributes}) {
     return (
-        <PanelBody title={__('Page Body', 'fluent-support')} initialOpen={ false }>
+        <PanelBody title={__('Page Body', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.viewTicketPageBodyBgColor}
                           colors={[

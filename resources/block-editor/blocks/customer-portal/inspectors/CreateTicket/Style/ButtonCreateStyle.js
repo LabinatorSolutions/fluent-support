@@ -2,7 +2,7 @@ const { __ } = wp.i18n;
 const { PanelBody, ColorPalette } = wp.components;
 export default function ButtonCreateStyle({ attributes, setAttributes}) {
     return (
-        <PanelBody title={__('Create', 'fluent-support')} initialOpen={ false }>
+        <PanelBody title={__('Create', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.createTicketCreateButtonBgColor}
                           colors={[
