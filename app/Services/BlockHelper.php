@@ -2,6 +2,8 @@
 
 namespace FluentSupport\App\Services;
 
+use function GuzzleHttp\default_ca_bundle;
+
 class BlockHelper
 {
     public static function CustomerPortalBlockAttributes()
@@ -34,6 +36,10 @@ class BlockHelper
             'filterButtonClosedTextColor' => [
                 'type' => 'string',
                 'default' => '#606266',
+            ],
+            'filterButtonClosedBorderRadius' => [
+                'type' => 'string',
+                'default' => '0',
             ],
             'allTicketsLogoutButtonVisibility' => [
                 'type' => 'boolean',

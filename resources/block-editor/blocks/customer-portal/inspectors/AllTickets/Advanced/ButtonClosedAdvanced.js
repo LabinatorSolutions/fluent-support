@@ -1,5 +1,5 @@
 const { __ } = wp.i18n;
-const { PanelBody, ColorPalette } = wp.components;
+const { PanelBody, ColorPalette,RangeControl } = wp.components;
 export default function ButtonClosedAdvanced( { attributes, setAttributes} ) {
     return (
         <PanelBody title={__('Closed', 'fluent-support')}
@@ -12,6 +12,13 @@ export default function ButtonClosedAdvanced( { attributes, setAttributes} ) {
             <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.filterButtonClosedTextColor}
                           onChange={(v) => setAttributes({ filterButtonClosedTextColor: v })}
+            />
+            <p><strong>{__('Border Radius', 'fluent-support')}</strong></p>
+            <RangeControl
+                value={ attributes.filterButtonClosedBorderRadius }
+                onChange={(v) => setAttributes({ filterButtonClosedBorderRadius: v })}
+                min={ 0 }
+                max={ 15 }
             />
         </PanelBody>
     );
