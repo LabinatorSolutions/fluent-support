@@ -150,6 +150,14 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'closeTicketButtonBorderWidth' => [
+                'type' => 'string',
+                'default' => 1,
+            ],
+            'closeTicketButtonBorderRadius' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
             'createTicketCreateButtonBgColor' => [
                 'type' => 'string',
                 'default' => '#67c23a',

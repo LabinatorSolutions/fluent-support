@@ -14,10 +14,12 @@ import ButtonViewAllStyle from "../inspectors/CreateTicket/Style/ButtonViewAllSt
 import CreateTicketsBodyStyle from "../inspectors/CreateTicket/Style/CreateTicketBodyStyle";
 import ButtonClickToUploadStyle from "../inspectors/CreateTicket/Style/ButtonClickToUploadStyle";
 import ButtonCreateStyle from "../inspectors/CreateTicket/Style/ButtonCreateStyle";
+//View Ticket
 import ViewTicketHeaderStyle from "../inspectors/ViewTicket/Style/ViewTicketHeaderStyle";
 import ButtonRefreshStyle from "../inspectors/ViewTicket/Style/ButtonRefreshStyle";
 import ViewTicketButtonAllStyle from "../inspectors/ViewTicket/Style/ViewTicketButtonAllStyle";
 import ButtonCloseTicketStyle from "../inspectors/ViewTicket/Style/ButtonCloseTicketStyle";
+import ButtonCloseTicketAdvanced from "../inspectors/ViewTicket/Advanced/ButtonCloseTicketAdvanced";
 import ViewTicketBodyStyle from "../inspectors/ViewTicket/Style/ViewTicketBodyStyle";
 import RibbonSupportStaffStyle from "../inspectors/ViewTicket/Style/RibbonSupportStaffStyle";
 import RibbonThreadStarterStyle from "../inspectors/ViewTicket/Style/RibbonThreadStarterStyle";
@@ -27,6 +29,7 @@ import ButtonCreateTicketAdvanced from "../inspectors/AllTickets/Advanced/Button
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
+        //View All tickets
         buttonAllStyle: ButtonAllStyle({attributes, setAttributes}),
         buttonAllAdvanced: ButtonAllAdvanced({attributes, setAttributes}),
         buttonOpenStyle: ButtonOpenStyle({attributes, setAttributes}),
@@ -45,10 +48,13 @@ export default function InspectorContainer({attributes, setAttributes}) {
         createTicketsBodyStyle: CreateTicketsBodyStyle({attributes, setAttributes}),
         buttonClickToUploadStyle: ButtonClickToUploadStyle({attributes, setAttributes}),
         buttonCreateStyle: ButtonCreateStyle({attributes, setAttributes}),
+
+        //View Ticket
         viewTicketHeaderStyle: ViewTicketHeaderStyle({attributes, setAttributes}),
         buttonRefreshStyle: ButtonRefreshStyle({attributes, setAttributes}),
         viewTicketButtonAllStyle: ViewTicketButtonAllStyle({attributes, setAttributes}),
         buttonCloseTicketStyle: ButtonCloseTicketStyle({attributes, setAttributes}),
+        buttonCloseTicketAdvanced: ButtonCloseTicketAdvanced({attributes, setAttributes}),
         viewTicketBodyStyle: ViewTicketBodyStyle({attributes, setAttributes}),
         ribbonSupportStaffStyle: RibbonSupportStaffStyle({attributes, setAttributes}),
         ribbonThreadStarterStyle: RibbonThreadStarterStyle({attributes, setAttributes}),
