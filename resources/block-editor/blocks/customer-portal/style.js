@@ -48,11 +48,15 @@ export const getViewTicketIdStyle = (attributes)  =>({
 export const getViewTicketRefreshButtonStyle = (attributes)  =>({
     background: attributes.refreshButtonBgColor,
     color: attributes.refreshButtonTextColor,
+    border: attributes.refreshButtonBorderWidth + 'px solid ' + attributes.refreshButtonBgColor,
+    borderRadius: attributes.refreshButtonBorderRadius + 'px',
 });
 
 export const getViewTicketAllButtonStyle = (attributes)  =>({
     background: attributes.allButtonBgColor,
     color: attributes.allButtonTextColor,
+    border: attributes.allButtonBorderWidth + 'px solid ' + attributes.allButtonBgColor,
+    borderRadius: attributes.allButtonBorderRadius + 'px',
 });
 
 export const getViewTicketCloseButtonStyle = (attributes)  =>({
@@ -67,12 +71,13 @@ export const getViewTicketPageBodyStyle = (attributes)  =>({
 });
 
 export const getViewTicketThreadStarterTailStyle = (attributes)  =>({
-    borderLeft: '4px solid ' + attributes.viewTicketThreadStarterBgColor,
+    borderLeft: attributes.viewTicketThreadStarterBorderWidth+'px solid ' + attributes.viewTicketThreadStarterBgColor,
 });
 
 export const getViewTicketThreadStarterStyle = (attributes)  =>({
     background: attributes.viewTicketThreadStarterBgColor,
     color: attributes.viewTicketThreadStarterTextColor,
+    padding: attributes.viewTicketThreadStarterPaddingBottom + 'px ' + attributes.viewTicketThreadStarterPaddingLeft + 'px',
 });
 
 export const getViewTicketAgentThreadRibbonTailStyle = (attributes)  =>({
@@ -85,7 +90,7 @@ export const getViewTicketAgentThreadRibbonHeaderStyle = (attributes)  =>({
 });
 
 export const getViewTicketThreadFollowerTailStyle = (attributes)  =>({
-    borderLeft: '4px solid ' + attributes.viewTicketThreadFollowerBgColor,
+    borderLeft: attributes.viewTicketThreadStarterBorderWidth+'px solid ' + attributes.viewTicketThreadFollowerBgColor,
 });
 
 export const getViewTicketThreadFollowerStyle = (attributes)  =>({

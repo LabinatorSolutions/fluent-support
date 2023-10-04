@@ -134,6 +134,14 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#000000',
             ],
+            'refreshButtonBorderWidth' => [
+                'type' => 'string',
+                'default' => 1,
+            ],
+            'refreshButtonBorderRadius' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
             'allButtonBgColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
@@ -141,6 +149,14 @@ class BlockHelper
             'allButtonTextColor' => [
                 'type' => 'string',
                 'default' => '#606266',
+            ],
+            'allButtonBorderWidth' => [
+                'type' => 'string',
+                'default' => 1,
+            ],
+            'allButtonBorderRadius' => [
+                'type' => 'string',
+                'default' => 5,
             ],
             'closeTicketButtonBgColor' => [
                 'type' => 'string',
@@ -214,6 +230,18 @@ class BlockHelper
             'viewTicketThreadStarterTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'viewTicketThreadStarterBorderWidth' => [
+                'type' => 'string',
+                'default' => 1,
+            ],
+            'viewTicketThreadStarterPaddingBottom' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
+            'viewTicketThreadStarterPaddingLeft' => [
+                'type' => 'string',
+                'default' => 10,
             ],
             'viewTicketThreadFollowerBgColor' => [
                 'type' => 'string',
