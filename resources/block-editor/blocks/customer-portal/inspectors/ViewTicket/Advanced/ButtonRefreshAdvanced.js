@@ -1,20 +1,20 @@
 const {__} = wp.i18n;
 const {PanelBody, RangeControl} = wp.components;
-export default function ButtonCloseTicketAdvanced({attributes, setAttributes}) {
+export default function ButtonRefreshAdvanced({attributes, setAttributes}) {
     return (
-        <PanelBody title={__('Close Ticket', 'fluent-support')}>
+        <PanelBody title={__('Refresh', 'fluent-support')}>
             <p><strong>{__('Border Width', 'fluent-support')}</strong></p>
             <RangeControl
-                value={ attributes.closeTicketButtonBorderWidth }
-                onChange={(v) => setAttributes({ closeTicketButtonBorderWidth: v })}
+                value={ attributes.refreshButtonBorderWidth }
+                onChange={(v) => setAttributes({ refreshButtonBorderWidth: v })}
                 min={ 1 }
                 max={ 5 }
             />
 
             <p><strong>{__('Border Radius', 'fluent-support')}</strong></p>
             <RangeControl
-                value={ attributes.closeTicketButtonBorderRadius }
-                onChange={(v) => setAttributes({ closeTicketButtonBorderRadius: v })}
+                value={ attributes.refreshButtonBorderRadius }
+                onChange={(v) => setAttributes({ refreshButtonBorderRadius: v })}
                 min={ 0 }
                 max={ 15 }
             />
