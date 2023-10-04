@@ -23,7 +23,6 @@ import RibbonSupportStaffStyle from "../inspectors/ViewTicket/Style/RibbonSuppor
 import RibbonThreadStarterStyle from "../inspectors/ViewTicket/Style/RibbonThreadStarterStyle";
 import RibbonThreadFollowerStyle from "../inspectors/ViewTicket/Style/RibbonThreadFollowerStyle";
 import ButtonLogoutAdvanced from "../inspectors/AllTickets/Advanced/ButtonLogoutAdvanced";
-import ButtonCreateTicket from "../inspectors/AllTickets/Advanced/ButtonCreateTicket";
 import ButtonCreateTicketAdvanced from "../inspectors/AllTickets/Advanced/ButtonCreateTicketAdvanced";
 
 export default function InspectorContainer({attributes, setAttributes}) {
