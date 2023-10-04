@@ -15,7 +15,7 @@ class BlockEditorHandler
         wp_register_script(
             'fluent-support/customer-portal',
             $assets . 'block-editor/js/fst_block.js',
-            array('jquery', 'wp-blocks', 'wp-element')
+            array('jquery', 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-i18n', 'wp-api-fetch'),
         );
 
         wp_localize_script('fluent-support/customer-portal', 'fluent_support_vars', [
