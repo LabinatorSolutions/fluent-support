@@ -6,6 +6,7 @@ export const getAllTicketsHeaderStyle = (attributes) => ({
 export const getAllTicketsAllButtonStyle = (attributes) => ({
     color: attributes.filterButtonAllTextColor,
     background: attributes.filterButtonAllBgColor,
+    border: `1px solid ${attributes.filterButtonAllBorderColor}`,
 });
 
 export const getAllTicketsOpenButtonStyle = (attributes) => ({
@@ -22,11 +23,13 @@ export const getAllTicketsClosedButtonStyle = (attributes) => ({
 export const getAllTicketsLogoutButtonStyle = (attributes) => ({
     color: attributes.allTicketsLogoutButtonTextColor,
     background: attributes.allTicketsLogoutButtonBgColor,
+    border: `1px solid ${attributes.allTicketsLogoutButtonBorderColor}`
 });
 
 export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
     color: attributes.buttonCreateTicketTextColor,
     background: attributes.buttonCreateTicketBgColor,
+    border: `1px solid ${attributes.buttonCreateTicketBorderColor}`
 });
 
 export const getAllTicketsFooterStyle = (attributes)  =>({
@@ -115,12 +118,13 @@ export const getCreateTicketHintMessageStyle = (attributes)  =>({
 
 export const getCreateTicketUploadButtonStyle = (attributes) =>({
     color: attributes.createTicketUploadButtonTextColor,
-    background: attributes.createTicketUploadButtonBgColor
+    background: attributes.createTicketUploadButtonBgColor,
+    border: `1 px solid ${attributes.allTicketsLogoutButtonBorderColor}`
 });
 
 export const getCreateTicketCreateButtonStyle = (attributes) =>({
     color: attributes.createTicketCreateButtonTextColor,
-    background: attributes.createTicketCreateButtonBgColor
+    background: attributes.createTicketCreateButtonBgColor,
 });
 
 export const getAllTicketsTableHeaderStyle = (attributes) =>({

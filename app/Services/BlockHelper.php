@@ -2,7 +2,7 @@
 
 namespace FluentSupport\App\Services;
 
-use function GuzzleHttp\default_ca_bundle;
+//use function GuzzleHttp\default_ca_bundle;
 
 class BlockHelper
 {
@@ -18,6 +18,10 @@ class BlockHelper
                 'default' => '#409eff',
             ],
             'filterButtonAllTextColor' => [
+                'type' => 'string',
+                'default' => '#ffffff',
+            ],
+            'filterButtonAllBorderColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
@@ -41,6 +45,10 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '0',
             ],
+            'filterButtonClosedBorderColor' => [
+                'type' => 'string',
+                'default' => '#ffffff',
+            ],
             'allTicketsLogoutButtonVisibility' => [
                 'type' => 'boolean',
                 'default' => true,
@@ -52,6 +60,10 @@ class BlockHelper
             'allTicketsLogoutButtonTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'allTicketsLogoutButtonBorderColor' => [
+                'type' => 'string',
+                'default' => '#f56c6c',
             ],
             'buttonCreateTicketBgColor' => [
                 'type' => 'string',
@@ -228,29 +240,32 @@ class BlockHelper
                 .fs_btn_all {
                     background-color: <?php echo esc_attr($attributes['filterButtonAllBgColor'] ?? '#409eff'); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonAllTextColor'] ?? '#ffffff'); ?>;
-                    border: 1px solid <?php echo esc_attr($attributes['filterButtonAllBgColor'] ?? '#409eff'); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['filterButtonAllBorderColor'] ?? '#409eff'); ?>;
                     box-shadow: 1px 0 0 0 <?php echo esc_attr($attributes['filterButtonAllBgColor'] ?? '#409eff'); ?>;
                 }
                 .fs_btn_open {
                     background-color: <?php echo esc_attr($attributes['filterButtonOpenBgColor'] ?? '#ffffff'); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonOpenTextColor'] ?? '#606266'); ?>;
-                    border: 1px solid <?php echo esc_attr($attributes['filterButtonOpenBgColor'] ?? '#ffffff'); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['filterButtonOpenBorderColor'] ?? '#ffffff'); ?>;
                 }
                 .fs_btn_closed {
                     background-color: <?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonClosedTextColor']); ?>;
                     border: 1px solid <?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
+                    border-radius: <?php echo esc_attr($attributes['filterButtonClosedBorderRadius'] ?? 4) . 'px'; ?>;
+                    border-color: <?php echo esc_attr($attributes['filterButtonClosedBorderColor'] ?? '#ffffff'); ?>;
                 }
 
                 .fs_btn_logout {
                     background-color: <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
                     color: <?php echo esc_attr($attributes['allTicketsLogoutButtonTextColor']); ?>;
-                    border: 1px solid <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['allTicketsLogoutButtonBorderColor']); ?>;
                 }
 
                 .fs_btn_create_ticket {
                     background-color:<?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
                     color:<?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
+                    border: 1px solid <?php echo esc_attr($attributes['buttonCreateTicketBorderColor']); ?>;
                 }
 
                 .fs_table thead{
