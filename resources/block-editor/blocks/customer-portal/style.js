@@ -23,7 +23,7 @@ export const getAllTicketsClosedButtonStyle = (attributes) => ({
 export const getAllTicketsLogoutButtonStyle = (attributes) => ({
     color: attributes.allTicketsLogoutButtonTextColor,
     background: attributes.allTicketsLogoutButtonBgColor,
-    border: `1px solid ${attributes.allTicketsLogoutButtonBorderColor}`
+    // border: `1px solid ${attributes.allTicketsLogoutButtonBorderColor}`
 });
 
 export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
