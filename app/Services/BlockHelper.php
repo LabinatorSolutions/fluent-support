@@ -134,13 +134,45 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#314351',
             ],
+            'createTicketHeaderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
+            'createTicketHeaderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
+            'createTicketHeaderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'createTicketHeaderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
             'createTicketViewAllButtonBgColor' => [
                 'type' => 'string',
                 'default' => '#909399',
             ],
+            'createTicketViewAllButtonBorderWidth' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'createTicketViewAllButtonBorderRadius' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
             'createTicketViewAllButtonTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'createTicketCreateButtonBorderWidth' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'createTicketCreateButtonBorderRadius' => [
+                'type' => 'number',
+                'default' => 0,
             ],
             'createTicketBodyBgColor' => [
                 'type' => 'string',
@@ -161,6 +193,14 @@ class BlockHelper
             'createTicketUploadButtonTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'createTicketUploadButtonBorderWidth' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'createTicketUploadButtonBorderRadius' => [
+                'type' => 'number',
+                'default' => 0,
             ],
             'refreshButtonBgColor' => [
                 'type' => 'string',
@@ -402,7 +442,7 @@ class BlockHelper
                     box-shadow: -1px 0 0 0 #409eff;
                     color: #fff;
                 }
-                .fs_tk_header {
+            .fst_tickets .fs_all_tickets .fs_tk_header {
                     background-color: <?php echo esc_attr($attributes['allTicketsHeaderBgColor'] ?? '#ebeef4'); ?>;
                     border-radius: <?php echo esc_attr($attributes['allTicketsHeaderRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['allTicketsHeaderRadiusTopRight']); ?>px <?php echo esc_attr($attributes['allTicketsHeaderRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['allTicketsHeaderRadiusBottomLeft']); ?>px;
                 }
@@ -464,7 +504,7 @@ class BlockHelper
                 border-radius: <?php echo esc_attr($attributes['viewTicketHeaderRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusTopRight']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusBottomLeft']); ?>px;
             }
 
-            .fs_tk_header h2 {
+            .fs_all_tickets .fs_tk_header h2 {
                 color: <?php echo esc_attr($attributes['viewTicketHeaderStyleTextColor']); ?>
             }
 
@@ -531,6 +571,7 @@ class BlockHelper
             /*Create Ticket style*/
             .fs_tk_create_head {
                 background-color:  <?php echo esc_attr($attributes['createTicketHeaderBgColor']); ?>;
+                border-radius: <?php echo esc_attr($attributes['createTicketHeaderRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['createTicketHeaderRadiusTopRight']); ?>px <?php echo esc_attr($attributes['createTicketHeaderRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['createTicketHeaderRadiusBottomLeft']); ?>px;
             }
 
             .fs_tk_left h3 {
@@ -540,6 +581,8 @@ class BlockHelper
             .fs_tk_right .fs_view_all_button {
                 background-color:  <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketViewAllButtonTextColor']); ?>;
+                border: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor'] ?? '#f56c6c'); ?>;
+                border-radius: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderRadius']); ?>px;
             }
 
             .fs_tk_body {
@@ -557,11 +600,15 @@ class BlockHelper
             .fs_attachment_button {
                 background-color:  <?php echo esc_attr($attributes['createTicketUploadButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketUploadButtonTextColor']); ?>;
+                border: <?php echo esc_attr($attributes['createTicketUploadButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['createTicketUploadButtonBgColor'] ?? '#f56c6c'); ?>;
+                border-radius: <?php echo esc_attr($attributes['createTicketUploadButtonBorderRadius']); ?>px;
             }
 
             .fs_create_button {
                 background-color:  <?php echo esc_attr($attributes['createTicketCreateButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketCreateButtonTextColor']); ?>;
+                border: <?php echo esc_attr($attributes['createTicketCreateButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['createTicketCreateButtonBgColor'] ?? '#f56c6c'); ?>;
+                border-radius: <?php echo esc_attr($attributes['createTicketCreateButtonBorderRadius']); ?>px;
             }
 
             }
