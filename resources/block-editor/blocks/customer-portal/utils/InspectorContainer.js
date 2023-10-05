@@ -24,9 +24,11 @@ import ButtonCloseTicketStyle from "../inspectors/ViewTicket/Style/ButtonCloseTi
 import ButtonCloseTicketAdvanced from "../inspectors/ViewTicket/Advanced/ButtonCloseTicketAdvanced";
 import ViewTicketBodyStyle from "../inspectors/ViewTicket/Style/ViewTicketBodyStyle";
 import RibbonSupportStaffStyle from "../inspectors/ViewTicket/Style/RibbonSupportStaffStyle";
+import RibbonSupportStaffAdvanced from "../inspectors/ViewTicket/Advanced/RibbonSupportStaffAdvanced";
 import RibbonThreadStarterStyle from "../inspectors/ViewTicket/Style/RibbonThreadStarterStyle";
 import RibbonThreadStarterAdvanced from "../inspectors/ViewTicket/Advanced/RibbonThreadStarterAdvanced";
 import RibbonThreadFollowerStyle from "../inspectors/ViewTicket/Style/RibbonThreadFollowerStyle";
+import RibbonThreadFollowerAdvanced from "../inspectors/ViewTicket/Advanced/RibbonThreadFollowerAdvanced";
 import ButtonLogoutAdvanced from "../inspectors/AllTickets/Advanced/ButtonLogoutAdvanced";
 import ButtonCreateTicketAdvanced from "../inspectors/AllTickets/Advanced/ButtonCreateTicketAdvanced";
 
@@ -62,8 +64,10 @@ export default function InspectorContainer({attributes, setAttributes}) {
         buttonCloseTicketAdvanced: ButtonCloseTicketAdvanced({attributes, setAttributes}),
         viewTicketBodyStyle: ViewTicketBodyStyle({attributes, setAttributes}),
         ribbonSupportStaffStyle: RibbonSupportStaffStyle({attributes, setAttributes}),
+        ribbonSupportStaffAdvanced: RibbonSupportStaffAdvanced({attributes, setAttributes}),
         ribbonThreadStarterStyle: RibbonThreadStarterStyle({attributes, setAttributes}),
         ribbonThreadStarterAdvanced: RibbonThreadStarterAdvanced({attributes, setAttributes}),
         ribbonThreadFollowerStyle: RibbonThreadFollowerStyle({attributes, setAttributes}),
+        ribbonThreadFollowerAdvanced: RibbonThreadFollowerAdvanced({attributes, setAttributes}),
     };
 }

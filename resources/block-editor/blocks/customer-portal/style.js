@@ -77,31 +77,42 @@ export const getViewTicketPageBodyStyle = (attributes)  =>({
 });
 
 export const getViewTicketThreadStarterTailStyle = (attributes)  =>({
-    borderLeft: attributes.viewTicketThreadStarterBorderWidth+'px solid ' + attributes.viewTicketThreadStarterBgColor,
+    borderLeft: attributes.viewTicketThreadStarterTailWidth+'px solid ' + attributes.viewTicketThreadStarterBgColor,
 });
 
 export const getViewTicketThreadStarterStyle = (attributes)  =>({
     background: attributes.viewTicketThreadStarterBgColor,
     color: attributes.viewTicketThreadStarterTextColor,
-    padding: attributes.viewTicketThreadStarterPaddingBottom + 'px ' + attributes.viewTicketThreadStarterPaddingLeft + 'px',
+    PaddingTop: attributes.viewTicketThreadStarterPaddingTop + 'px',
+    paddingRight: attributes.viewTicketThreadStarterPaddingRight + 'px',
+    paddingBottom: attributes.viewTicketThreadStarterPaddingBottom + 'px',
+    paddingLeft: attributes.viewTicketThreadStarterPaddingLeft + 'px',
 });
 
 export const getViewTicketAgentThreadRibbonTailStyle = (attributes)  =>({
-    borderLeft: '4px solid ' + attributes.ribbonSupportStaffBgColor,
+    borderLeft: attributes.ribbonSupportStaffTailWidth+'px solid ' + attributes.ribbonSupportStaffBgColor,
 });
 
 export const getViewTicketAgentThreadRibbonHeaderStyle = (attributes)  =>({
     background: attributes.ribbonSupportStaffBgColor,
     color: attributes.ribbonSupportStaffTextColor,
+    paddingTop: attributes.ribbonSupportStaffPaddingTop,
+    paddingRight: attributes.ribbonSupportStaffPaddingRight,
+    paddingBottom: attributes.ribbonSupportStaffPaddingBottom,
+    paddingLeft: attributes.ribbonSupportStaffPaddingLeft,
 });
 
 export const getViewTicketThreadFollowerTailStyle = (attributes)  =>({
-    borderLeft: attributes.viewTicketThreadStarterBorderWidth+'px solid ' + attributes.viewTicketThreadFollowerBgColor,
+    borderLeft: attributes.viewTicketThreadFollowerTailWidth+'px solid ' + attributes.viewTicketThreadFollowerBgColor,
 });
 
 export const getViewTicketThreadFollowerStyle = (attributes)  =>({
     background: attributes.viewTicketThreadFollowerBgColor,
     color: attributes.viewTicketThreadFollowerTextColor,
+    paddingTop: attributes.viewTicketThreadFollowerPaddingTop + 'px ',
+    paddingRight: attributes.viewTicketThreadFollowerPaddingRight + 'px',
+    paddingBottom: attributes.viewTicketThreadFollowerPaddingBottom + 'px',
+    paddingLeft: attributes.viewTicketThreadFollowerPaddingLeft + 'px',
 });
 
 export const getCreateTicketHeaderStyle = (attributes)  =>({
