@@ -45,6 +45,10 @@ export const getAllTicketsFooterStyle = (attributes)  =>({
 export const getViewTicketHeaderStyle = (attributes)  =>({
     background: attributes.viewTicketHeaderStyleBgColor,
     color: attributes.viewTicketHeaderStyleTextColor,
+    borderTopLeftRadius: attributes.viewTicketHeaderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.viewTicketHeaderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.viewTicketHeaderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.viewTicketHeaderRadiusBottomLeft + 'px',
 });
 
 export const getViewTicketIdStyle = (attributes)  =>({

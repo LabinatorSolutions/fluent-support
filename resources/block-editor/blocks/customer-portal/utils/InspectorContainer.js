@@ -16,6 +16,7 @@ import ButtonClickToUploadStyle from "../inspectors/CreateTicket/Style/ButtonCli
 import ButtonCreateStyle from "../inspectors/CreateTicket/Style/ButtonCreateStyle";
 //View Ticket
 import ViewTicketHeaderStyle from "../inspectors/ViewTicket/Style/ViewTicketHeaderStyle";
+import ViewTicketHeaderAdvanced from "../inspectors/ViewTicket/Advanced/ViewTicketHeaderAdvanced";
 import ButtonRefreshStyle from "../inspectors/ViewTicket/Style/ButtonRefreshStyle";
 import ButtonRefreshAdvanced from "../inspectors/ViewTicket/Advanced/ButtonRefreshAdvanced";
 import ViewTicketButtonAllStyle from "../inspectors/ViewTicket/Style/ViewTicketButtonAllStyle";
@@ -58,6 +59,7 @@ export default function InspectorContainer({attributes, setAttributes}) {
 
         //View Ticket
         viewTicketHeaderStyle: ViewTicketHeaderStyle({attributes, setAttributes}),
+        viewTicketHeaderAdvanced: ViewTicketHeaderAdvanced({attributes, setAttributes}),
         buttonRefreshStyle: ButtonRefreshStyle({attributes, setAttributes}),
         buttonRefreshAdvanced: ButtonRefreshAdvanced({attributes, setAttributes}),
         viewTicketButtonAllStyle: ViewTicketButtonAllStyle({attributes, setAttributes}),
