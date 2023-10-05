@@ -259,6 +259,26 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'ribbonSupportStaffTailWidth' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
+            'ribbonSupportStaffPaddingTop' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
+            'ribbonSupportStaffPaddingBottom' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
+            'ribbonSupportStaffPaddingLeft' => [
+                'type' => 'string',
+                'default' => 10,
+            ],
+            'ribbonSupportStaffPaddingRight' => [
+                'type' => 'string',
+                'default' => 10,
+            ],
             'viewTicketThreadStarterBgColor' => [
                 'type' => 'string',
                 'default' => '#15BE7C',
@@ -267,9 +287,13 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
-            'viewTicketThreadStarterBorderWidth' => [
+            'viewTicketThreadStarterTailWidth' => [
                 'type' => 'string',
-                'default' => 1,
+                'default' => 5,
+            ],
+            'viewTicketThreadStarterPaddingTop' => [
+                'type' => 'string',
+                'default' => 5,
             ],
             'viewTicketThreadStarterPaddingBottom' => [
                 'type' => 'string',
@@ -279,13 +303,37 @@ class BlockHelper
                 'type' => 'string',
                 'default' => 10,
             ],
+            'viewTicketThreadStarterPaddingRight' => [
+                'type' => 'string',
+                'default' => 10,
+            ],
             'viewTicketThreadFollowerBgColor' => [
                 'type' => 'string',
-                'default' => '#15BE7C',
+                'default' => '#ff00ff',
             ],
             'viewTicketThreadFollowerTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'viewTicketThreadFollowerTailWidth' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
+            'viewTicketThreadFollowerPaddingTop' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
+            'viewTicketThreadFollowerPaddingBottom' => [
+                'type' => 'string',
+                'default' => 5,
+            ],
+            'viewTicketThreadFollowerPaddingLeft' => [
+                'type' => 'string',
+                'default' => 10,
+            ],
+            'viewTicketThreadFollowerPaddingRight' => [
+                'type' => 'string',
+                'default' => 10,
             ],
             'businessBoxId' => [
                 'type' => 'string',
@@ -394,7 +442,7 @@ class BlockHelper
             }
 
             .fs_agent {
-                border-left: 4px solid <?php echo esc_attr($attributes['ribbonSupportStaffBgColor']); ?>;
+                border-left: <?php echo esc_attr($attributes['ribbonSupportStaffTailWidth']); ?>px solid <?php echo esc_attr($attributes['ribbonSupportStaffBgColor']); ?>;
             }
 
             .fs_conv_type_response .fs_thread_ribbon_agent{
@@ -403,7 +451,7 @@ class BlockHelper
             }
 
             .fs_customer {
-                border-left: 4px solid <?php echo esc_attr($attributes['viewTicketThreadStarterBgColor']); ?>;
+                border-left: <?php echo esc_attr($attributes['viewTicketThreadStarterTailWidth']); ?>px solid <?php echo esc_attr($attributes['viewTicketThreadStarterBgColor']); ?>;
             }
 
             .fs_conv_type_response .fs_thread_ribbon_customer{
@@ -414,6 +462,7 @@ class BlockHelper
             .fs_cc_customer {
                 background-color:  <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['viewTicketThreadFollowerTextColor']); ?>;
+                border-left: <?php echo esc_attr($attributes['viewTicketThreadFollowerTailWidth']); ?>px solid <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;;
             }
 
             .fs_thread_ribbon_customer_cc {

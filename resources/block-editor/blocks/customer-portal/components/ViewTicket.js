@@ -83,7 +83,7 @@ export default function ViewTicket(props) {
                 </div>
 
                 <div className="show-threads-container" style={getViewTicketPageBodyStyle(attributes)}>
-                    <article className="show-thread fs_customer fs_conv_type_response" style={getViewTicketThreadFollowerTailStyle(attributes)}
+                    <article className="show-thread fs_cc_customer fs_conv_type_response" style={getViewTicketThreadFollowerTailStyle(attributes)}
                     >
                         <div className={"fs_thread_follower_style" + getActiveClass('ribbonThreadFollowerStyle')} onClick={handleInspectorClick('ribbonThreadFollowerStyle')}>
                             <span className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketThreadFollowerStyle(attributes)}>
