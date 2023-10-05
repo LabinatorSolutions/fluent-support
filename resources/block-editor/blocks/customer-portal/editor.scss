@@ -616,3 +616,23 @@
     }
 }
 
+.alignment-button{
+
+    border: 1px solid var(--neutral-300, #D1D5DB);
+    background: var(--generic-white, #FFF);
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    padding: 6px 14px;
+}
+
+.left-button{
+    border-radius: 8px 0px 0px 8px;
+}
+
+.right-button{
+    border-radius: 0px 8px 8px 0px;
+}
+
+.alignment-button.active{
+    background-color: #047AE7;
+    color: #FFFFFF;
+}

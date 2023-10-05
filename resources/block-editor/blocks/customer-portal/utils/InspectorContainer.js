@@ -31,6 +31,7 @@ import RibbonThreadFollowerStyle from "../inspectors/ViewTicket/Style/RibbonThre
 import RibbonThreadFollowerAdvanced from "../inspectors/ViewTicket/Advanced/RibbonThreadFollowerAdvanced";
 import ButtonLogoutAdvanced from "../inspectors/AllTickets/Advanced/ButtonLogoutAdvanced";
 import ButtonCreateTicketAdvanced from "../inspectors/AllTickets/Advanced/ButtonCreateTicketAdvanced";
+import AllTicketsTableHeaderAdvanced from "../inspectors/AllTickets/Advanced/AllTicketsTableHeaderAdvanced";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -53,6 +54,7 @@ export default function InspectorContainer({attributes, setAttributes}) {
         createTicketsBodyStyle: CreateTicketsBodyStyle({attributes, setAttributes}),
         buttonClickToUploadStyle: ButtonClickToUploadStyle({attributes, setAttributes}),
         buttonCreateStyle: ButtonCreateStyle({attributes, setAttributes}),
+        allTicketsTableHeaderAdvanced: AllTicketsTableHeaderAdvanced({attributes, setAttributes}),
 
         //View Ticket
         viewTicketHeaderStyle: ViewTicketHeaderStyle({attributes, setAttributes}),
