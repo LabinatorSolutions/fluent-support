@@ -6,30 +6,36 @@ export const getAllTicketsHeaderStyle = (attributes) => ({
 export const getAllTicketsAllButtonStyle = (attributes) => ({
     color: attributes.filterButtonAllTextColor,
     background: attributes.filterButtonAllBgColor,
-    border: `1px solid ${attributes.filterButtonAllBorderColor}`,
+    border: attributes.filterButtonAllBorderWidth + 'px solid ' + attributes.filterButtonAllBgColor,
+    borderRadius: attributes.filterButtonAllBorderRadius + 'px'
 });
 
 export const getAllTicketsOpenButtonStyle = (attributes) => ({
     color: attributes.filterButtonOpenTextColor,
     background: attributes.filterButtonOpenBgColor,
+    border: attributes.filterButtonOpenBorderWidth + 'px solid ' + attributes.filterButtonOpenBgColor,
+    borderRadius: attributes.filterButtonOpenBorderRadius + 'px',
 });
 
 export const getAllTicketsClosedButtonStyle = (attributes) => ({
     color: attributes.filterButtonClosedTextColor,
     background: attributes.filterButtonClosedBgColor,
+    border: attributes.filterButtonClosedBorderWidth + 'px solid ' + attributes.filterButtonClosedBgColor,
     borderRadius: attributes.filterButtonClosedBorderRadius + 'px',
 });
 
 export const getAllTicketsLogoutButtonStyle = (attributes) => ({
     color: attributes.allTicketsLogoutButtonTextColor,
     background: attributes.allTicketsLogoutButtonBgColor,
-    // border: `1px solid ${attributes.allTicketsLogoutButtonBorderColor}`
+    border: attributes.filterButtonLogoutBorderWidth + 'px solid ' + attributes.allTicketsLogoutButtonBgColor,
+    borderRadius: attributes.filterButtonLogoutBorderRadius + 'px',
 });
 
 export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
     color: attributes.buttonCreateTicketTextColor,
     background: attributes.buttonCreateTicketBgColor,
-    border: `1px solid ${attributes.buttonCreateTicketBorderColor}`
+    border: attributes.buttonCreateTicketBorderWidth + 'px solid ' + attributes.buttonCreateTicketBgColor,
+    borderRadius: attributes.buttonCreateTicketBorderRadius + 'px',
 });
 
 export const getAllTicketsFooterStyle = (attributes)  =>({
