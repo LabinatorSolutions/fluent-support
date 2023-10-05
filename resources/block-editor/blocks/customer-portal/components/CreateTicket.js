@@ -26,7 +26,7 @@ export default function CreateTicket(props) {
     return (
         <div className={'customer-portal-block-wrapper'}>
             <div className={'create-ticket-header' + getActiveClass('createTicketsHeaderStyle')} style={getCreateTicketHeaderStyle(attributes)}
-                 onClick={() => toggleInspector('createTicketsHeaderStyle')}>
+                 onClick={() => toggleInspector('createTicketHeaderStyle')}>
                 <div className={'create-ticket-header-left'}>
                     <h3 style={getCreateTicketHeaderTextStyle(attributes)}>Submit a Support Ticket</h3>
                 </div>

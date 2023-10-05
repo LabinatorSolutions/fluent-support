@@ -129,6 +129,10 @@ export const getViewTicketThreadFollowerStyle = (attributes)  =>({
 
 export const getCreateTicketHeaderStyle = (attributes)  =>({
     background: attributes.createTicketHeaderBgColor,
+    borderTopLeftRadius: attributes.createTicketHeaderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.createTicketHeaderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.createTicketHeaderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.createTicketHeaderRadiusBottomLeft + 'px',
 });
 
 export const getCreateTicketHeaderTextStyle = (attributes)  =>({
@@ -138,6 +142,8 @@ export const getCreateTicketHeaderTextStyle = (attributes)  =>({
 export const getCreateTicketViewAllButtonStyle = (attributes)  =>({
     background: attributes.createTicketViewAllButtonBgColor,
     color: attributes.createTicketViewAllButtonTextColor,
+    border: attributes.createTicketViewAllButtonBorderWidth + 'px solid ' + attributes.createTicketViewAllButtonBgColor,
+    borderRadius: attributes.createTicketViewAllButtonBorderRadius + 'px',
 });
 
 export const getCreateTicketBodyStyle = (attributes)  =>({
@@ -155,12 +161,15 @@ export const getCreateTicketHintMessageStyle = (attributes)  =>({
 export const getCreateTicketUploadButtonStyle = (attributes) =>({
     color: attributes.createTicketUploadButtonTextColor,
     background: attributes.createTicketUploadButtonBgColor,
-    border: `1 px solid ${attributes.allTicketsLogoutButtonBorderColor}`
+    border: attributes.createTicketUploadButtonBorderWidth + 'px solid ' + attributes.createTicketUploadButtonBgColor,
+    borderRadius: attributes.createTicketUploadButtonBorderRadius + 'px',
 });
 
 export const getCreateTicketCreateButtonStyle = (attributes) =>({
     color: attributes.createTicketCreateButtonTextColor,
     background: attributes.createTicketCreateButtonBgColor,
+    border: attributes.createTicketCreateButtonBorderWidth + 'px solid ' + attributes.createTicketCreateButtonBgColor,
+    borderRadius: attributes.createTicketCreateButtonBorderRadius + 'px',
 });
 
 export const getAllTicketsTableHeaderStyle = (attributes) =>({

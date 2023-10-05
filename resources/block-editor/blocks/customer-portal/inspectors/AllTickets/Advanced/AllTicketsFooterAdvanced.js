@@ -2,7 +2,7 @@ const {__} = wp.i18n;
 const {PanelBody, RangeControl} = wp.components;
 export default function AllTicketsFooterAdvanced({attributes, setAttributes}) {
     return (
-        <PanelBody title={__('Header', 'fluent-support')}>
+        <PanelBody title={__('Footer', 'fluent-support')}>
             <p><strong>{__('Top Left', 'fluent-support')}</strong></p>
             <RangeControl
                 value={ attributes.allTicketsFooterRadiusTopLeft }

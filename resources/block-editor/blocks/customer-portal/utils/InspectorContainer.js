@@ -35,6 +35,12 @@ import ButtonCreateTicketAdvanced from "../inspectors/AllTickets/Advanced/Button
 import AllTicketsTableHeaderAdvanced from "../inspectors/AllTickets/Advanced/AllTicketsTableHeaderAdvanced";
 import AllTicketsHeaderAdvanced from "../inspectors/AllTickets/Advanced/AllTicketsHeaderAdvanced";
 import AllTicketsFooterAdvanced from "../inspectors/AllTickets/Advanced/AllTicketsFooterAdvanced";
+import ButtonViewAllAdvanced from "../inspectors/CreateTicket/Advanced/ButtonViewAllAdvanced";
+
+import CreateTicketHeaderAdvanced from "../inspectors/CreateTicket/Advanced/CreateTicketHeaderAdvanced";
+import CreateTicketHeaderStyle from "../inspectors/CreateTicket/Style/CreateTicketHeaderStyle";
+import ButtonCreateAdvanced from "../inspectors/CreateTicket/Advanced/ButtonCreateAdvanced";
+import ButtonClickToUploadAdvanced from "../inspectors/CreateTicket/Advanced/ButtonClickToUploadAdvanced";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -52,14 +58,20 @@ export default function InspectorContainer({attributes, setAttributes}) {
         allTicketsTableHeaderStyle: AllTicketsTableHeaderStyle({attributes, setAttributes}),
         allTicketsFooterStyle: AllTicketsFooterStyle({attributes, setAttributes}),
         allTicketsHeaderStyle: AllTicketsHeaderStyle({attributes, setAttributes}),
-        createTicketsHeaderStyle: CreateTicketsHeaderStyle({attributes, setAttributes}),
+        allTicketsTableHeaderAdvanced: AllTicketsTableHeaderAdvanced({attributes, setAttributes}),
+        allTicketsHeaderAdvanced: AllTicketsHeaderAdvanced({attributes, setAttributes}),
+        allTicketsFooterAdvanced: AllTicketsFooterAdvanced({attributes, setAttributes}),
+
+        //Create Ticket
+        createTicketHeaderStyle: CreateTicketHeaderStyle({attributes, setAttributes}),
         buttonViewAllStyle: ButtonViewAllStyle({attributes, setAttributes}),
         createTicketsBodyStyle: CreateTicketsBodyStyle({attributes, setAttributes}),
         buttonClickToUploadStyle: ButtonClickToUploadStyle({attributes, setAttributes}),
         buttonCreateStyle: ButtonCreateStyle({attributes, setAttributes}),
-        allTicketsTableHeaderAdvanced: AllTicketsTableHeaderAdvanced({attributes, setAttributes}),
-        allTicketsHeaderAdvanced: AllTicketsHeaderAdvanced({attributes, setAttributes}),
-        allTicketsFooterAdvanced: AllTicketsFooterAdvanced({attributes, setAttributes}),
+        buttonViewAllAdvanced:ButtonViewAllAdvanced({attributes, setAttributes}),
+        createTicketHeaderAdvanced: CreateTicketHeaderAdvanced({attributes, setAttributes}),
+        buttonCreateAdvanced: ButtonCreateAdvanced({attributes, setAttributes}),
+        buttonClickToUploadAdvanced: ButtonClickToUploadAdvanced({attributes, setAttributes}),
 
         //View Ticket
         viewTicketHeaderStyle: ViewTicketHeaderStyle({attributes, setAttributes}),
