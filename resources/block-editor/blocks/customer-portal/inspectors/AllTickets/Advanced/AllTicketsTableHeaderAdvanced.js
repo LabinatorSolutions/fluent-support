@@ -9,7 +9,8 @@ export default function AllTicketsTableHeaderAdvanced({attributes, setAttributes
                     className={`alignment-button left-button ${attributes.allTicketsTableHeaderTextAlign === 'left' ? 'active' : ''}`}
                     onClick={() => setAttributes({allTicketsTableHeaderTextAlign: 'left'})}
                 >
-                    <svg width="17" height="14" viewBox="0 0 17 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg width="17" height="14" viewBox="0 0 17 14" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
                         <g id="Frame" clip-path="url(#clip0_225_1898)">
                             <g id="Shape">
                                 <path

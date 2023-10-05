@@ -255,6 +255,38 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 0,
             ],
+            'allTicketsHeaderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
+            'allTicketsHeaderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
+            'allTicketsHeaderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'allTicketsHeaderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'allTicketsFooterRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'allTicketsFooterRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'allTicketsFooterRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
+            'allTicketsFooterRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
             'viewTicketPageBodyBgColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
