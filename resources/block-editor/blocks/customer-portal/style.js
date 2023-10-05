@@ -1,6 +1,10 @@
 // styles.js
 export const getAllTicketsHeaderStyle = (attributes) => ({
     background: attributes.allTicketsHeaderBgColor,
+    borderTopLeftRadius: attributes.allTicketsHeaderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.allTicketsHeaderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.allTicketsHeaderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.allTicketsHeaderRadiusBottomLeft + 'px',
 });
 
 export const getAllTicketsAllButtonStyle = (attributes) => ({
@@ -40,6 +44,10 @@ export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
 
 export const getAllTicketsFooterStyle = (attributes)  =>({
     background: attributes.allTicketsFooterBgColor,
+    borderTopLeftRadius: attributes.allTicketsFooterRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.allTicketsFooterRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.allTicketsFooterRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.allTicketsFooterRadiusBottomLeft + 'px',
 });
 
 export const getViewTicketHeaderStyle = (attributes)  =>({
