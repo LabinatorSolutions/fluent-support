@@ -31,8 +31,8 @@ export const getAllTicketsClosedButtonStyle = (attributes) => ({
 export const getAllTicketsLogoutButtonStyle = (attributes) => ({
     color: attributes.allTicketsLogoutButtonTextColor,
     background: attributes.allTicketsLogoutButtonBgColor,
-    border: attributes.filterButtonLogoutBorderWidth + 'px solid ' + attributes.allTicketsLogoutButtonBgColor,
-    borderRadius: attributes.filterButtonLogoutBorderRadius + 'px',
+    border: attributes.allTicketsLogoutButtonBorderWidth + 'px solid ' + attributes.allTicketsLogoutButtonBgColor,
+    borderRadius: attributes.allTicketsLogoutButtonBorderRadius + 'px',
 });
 
 export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
