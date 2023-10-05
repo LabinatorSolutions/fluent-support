@@ -2,7 +2,7 @@ const {__} = wp.i18n;
 const {PanelBody, ColorPalette} = wp.components;
 export default function ViewTicketHeaderStyle({attributes, setAttributes}) {
     return (
-        <PanelBody title={__('Page Footer', 'fluent-support')}>
+        <PanelBody title={__('Header', 'fluent-support')}>
             <p><strong>{__('Background Color', 'fluent-support')}</strong></p>
             <ColorPalette value={attributes.viewTicketHeaderStyleBgColor}
                           colors={[

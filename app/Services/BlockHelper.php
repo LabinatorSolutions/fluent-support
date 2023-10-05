@@ -26,11 +26,11 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'filterButtonAllBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0,
             ],
             'filterButtonAllBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0,
             ],
             'filterButtonOpenBgColor' => [
@@ -42,11 +42,11 @@ class BlockHelper
                 'default' => '#606266',
             ],
             'filterButtonOpenBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0,
             ],
             'filterButtonOpenBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0,
             ],
             'filterButtonClosedBgColor' => [
@@ -62,11 +62,11 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'filterButtonClosedBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0,
             ],
             'filterButtonClosedBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0
             ],
             'allTicketsLogoutButtonVisibility' => [
@@ -86,11 +86,11 @@ class BlockHelper
                 'default' => '#f56c6c',
             ],
             'filterButtonLogoutBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0
             ],
             'filterButtonLogoutBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0
             ],
             'buttonCreateTicketBgColor' => [
@@ -102,11 +102,11 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'buttonCreateTicketBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0,
             ],
             'buttonCreateTicketBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 0,
             ],
             'allTicketsTableHeaderBgColor' => [
@@ -171,11 +171,11 @@ class BlockHelper
                 'default' => '#000000',
             ],
             'refreshButtonBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 1,
             ],
             'refreshButtonBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'allButtonBgColor' => [
@@ -187,11 +187,11 @@ class BlockHelper
                 'default' => '#606266',
             ],
             'allButtonBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 1,
             ],
             'allButtonBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'closeTicketButtonBgColor' => [
@@ -203,15 +203,15 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'closeTicketButtonBorderWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 1,
             ],
             'closeTicketButtonBorderRadius' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'createTicketCreateButtonBgColor' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => '#67c23a',
             ],
             'createTicketCreateButtonTextColor' => [
@@ -239,6 +239,22 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'viewTicketHeaderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 20,
+            ],
+            'viewTicketHeaderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 30,
+            ],
+            'viewTicketHeaderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'viewTicketHeaderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
             'viewTicketPageBodyBgColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
@@ -260,23 +276,23 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'ribbonSupportStaffTailWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'ribbonSupportStaffPaddingTop' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'ribbonSupportStaffPaddingBottom' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'ribbonSupportStaffPaddingLeft' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 10,
             ],
             'ribbonSupportStaffPaddingRight' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 10,
             ],
             'viewTicketThreadStarterBgColor' => [
@@ -288,23 +304,23 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'viewTicketThreadStarterTailWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'viewTicketThreadStarterPaddingTop' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'viewTicketThreadStarterPaddingBottom' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'viewTicketThreadStarterPaddingLeft' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 10,
             ],
             'viewTicketThreadStarterPaddingRight' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 10,
             ],
             'viewTicketThreadFollowerBgColor' => [
@@ -316,27 +332,27 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'viewTicketThreadFollowerTailWidth' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'viewTicketThreadFollowerPaddingTop' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'viewTicketThreadFollowerPaddingBottom' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 5,
             ],
             'viewTicketThreadFollowerPaddingLeft' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 10,
             ],
             'viewTicketThreadFollowerPaddingRight' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => 10,
             ],
             'businessBoxId' => [
-                'type' => 'string',
+                'type' => 'number',
                 'default' => '',
             ],
         ];
@@ -408,7 +424,7 @@ class BlockHelper
 
             .fst_client_portal .fs_ticket .fs_tk_header {
                 background-color: <?php echo esc_attr($attributes['viewTicketHeaderStyleBgColor']); ?>;
-
+                border-radius: <?php echo esc_attr($attributes['viewTicketHeaderRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusTopRight']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusBottomLeft']); ?>px;
             }
 
             .fs_tk_header h2 {
@@ -422,19 +438,22 @@ class BlockHelper
             .fs_refresh_button {
                 background-color: <?php echo esc_attr($attributes['refreshButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['refreshButtonTextColor']); ?>;
-                border: 1px solid <?php echo esc_attr($attributes['refreshButtonBgColor'] ?? '#ffffff'); ?>;
+                border: <?php echo esc_attr($attributes['refreshButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['refreshButtonBgColor'] ?? '#ffffff'); ?>;
+                border-radius: <?php echo esc_attr($attributes['refreshButtonBorderRadius']); ?>px;
             }
 
             .fs_all_button {
                 background-color: <?php echo esc_attr($attributes['allButtonBgColor'] ?? '#ffffff'); ?>;
                 color: <?php echo esc_attr($attributes['allButtonTextColor']); ?>;
-                border: 1px solid <?php echo esc_attr($attributes['allButtonBgColor'] ?? '#ffffff'); ?>;
+                border: <?php echo esc_attr($attributes['allButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['allButtonBgColor'] ?? '#ffffff'); ?>;
+                border-radius: <?php echo esc_attr($attributes['allButtonBorderRadius']); ?>px;
             }
 
             .fs_close_button {
                 background-color: <?php echo esc_attr($attributes['closeTicketButtonBgColor'] ?? '#f56c6c'); ?>;
                 color: <?php echo esc_attr($attributes['closeTicketButtonTextColor']); ?>;
-                border: 1px solid <?php echo esc_attr($attributes['closeTicketButtonBgColor'] ?? '#f56c6c'); ?>;
+                border: <?php echo esc_attr($attributes['closeTicketButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['closeTicketButtonBgColor'] ?? '#f56c6c'); ?>;
+                border-radius: <?php echo esc_attr($attributes['closeTicketButtonBorderRadius']); ?>px;
             }
 
             .fst_reply_box, .fs_threads_container {
@@ -448,6 +467,7 @@ class BlockHelper
             .fs_conv_type_response .fs_thread_ribbon_agent{
                 background-color:  <?php echo esc_attr($attributes['ribbonSupportStaffBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['ribbonSupportStaffTextColor']); ?>;
+                padding: <?php echo esc_attr($attributes['ribbonSupportStaffPaddingTop']); ?>px <?php echo esc_attr($attributes['ribbonSupportStaffPaddingRight']); ?>px <?php echo esc_attr($attributes['ribbonSupportStaffPaddingBottom']); ?>px <?php echo esc_attr($attributes['ribbonSupportStaffPaddingLeft']); ?>px;
             }
 
             .fs_customer {
@@ -457,6 +477,7 @@ class BlockHelper
             .fs_conv_type_response .fs_thread_ribbon_customer{
                 background-color:  <?php echo esc_attr($attributes['viewTicketThreadStarterBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['viewTicketThreadStarterTextColor']); ?>;
+                padding: <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingTop']); ?>px <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingRight']); ?>px <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingBottom']); ?>px <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingLeft']); ?>px;
             }
 
             .fs_cc_customer {
@@ -467,6 +488,7 @@ class BlockHelper
 
             .fs_thread_ribbon_customer_cc {
                 background-color:  <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;
+                padding: <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingTop']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingRight']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingBottom']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingLeft']); ?>px;
             }
 
             /*Create Ticket style*/
