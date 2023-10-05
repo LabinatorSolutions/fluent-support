@@ -25,6 +25,14 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'filterButtonAllBorderRadius' => [
+                'type' => 'string',
+                'default' => 0,
+            ],
+            'filterButtonAllBorderWidth' => [
+                'type' => 'string',
+                'default' => 0,
+            ],
             'filterButtonOpenBgColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
@@ -32,6 +40,14 @@ class BlockHelper
             'filterButtonOpenTextColor' => [
                 'type' => 'string',
                 'default' => '#606266',
+            ],
+            'filterButtonOpenBorderWidth' => [
+                'type' => 'string',
+                'default' => 0,
+            ],
+            'filterButtonOpenBorderRadius' => [
+                'type' => 'string',
+                'default' => 0,
             ],
             'filterButtonClosedBgColor' => [
                 'type' => 'string',
@@ -41,13 +57,17 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#606266',
             ],
-            'filterButtonClosedBorderRadius' => [
-                'type' => 'string',
-                'default' => '0',
-            ],
             'filterButtonClosedBorderColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'filterButtonClosedBorderRadius' => [
+                'type' => 'string',
+                'default' => 0,
+            ],
+            'filterButtonClosedBorderWidth' => [
+                'type' => 'string',
+                'default' => 0
             ],
             'allTicketsLogoutButtonVisibility' => [
                 'type' => 'boolean',
@@ -65,6 +85,14 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#f56c6c',
             ],
+            'filterButtonLogoutBorderRadius' => [
+                'type' => 'string',
+                'default' => 0
+            ],
+            'filterButtonLogoutBorderWidth' => [
+                'type' => 'string',
+                'default' => 0
+            ],
             'buttonCreateTicketBgColor' => [
                 'type' => 'string',
                 'default' => '#67c23a',
@@ -72,6 +100,14 @@ class BlockHelper
             'buttonCreateTicketTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
+            ],
+            'buttonCreateTicketBorderRadius' => [
+                'type' => 'string',
+                'default' => 0,
+            ],
+            'buttonCreateTicketBorderWidth' => [
+                'type' => 'string',
+                'default' => 0,
             ],
             'allTicketsTableHeaderBgColor' => [
                 'type' => 'string',
@@ -288,8 +324,8 @@ class BlockHelper
                     background-color: <?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonClosedTextColor']); ?>;
                     border: 1px solid <?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
-                    border-radius: <?php echo esc_attr($attributes['filterButtonClosedBorderRadius'] ?? 4) . 'px'; ?>;
-                    border-color: <?php echo esc_attr($attributes['filterButtonClosedBorderColor'] ?? '#ffffff'); ?>;
+                    /*border-radius: */<?php //echo esc_attr($attributes['filterButtonClosedBorderRadius'] ?? 4) . 'px'; ?>/*;*/
+                    /*border-color: */<?php //echo esc_attr($attributes['filterButtonClosedBorderColor'] ?? '#ffffff'); ?>/*;*/
                 }
 
                 .fs_btn_logout {
