@@ -703,7 +703,15 @@
     cursor: pointer;
     width: 60px;
 }
-
+.fst-range-control-multiplebox{
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1.4;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: calc(8px);
+    padding: 0;
+}
 .multiplebox-tab-panels {
     .components-tab-panel__tabs-item {
         border: 1px solid var(--neutral-300, #D1D5DB);

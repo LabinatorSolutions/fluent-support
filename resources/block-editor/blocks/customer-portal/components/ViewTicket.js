@@ -1,6 +1,7 @@
 // Import the style functions from styles.js
 import {
     getViewTicketHeaderStyle,
+    getViewTicketIdAndTitleStyle,
     getViewTicketIdStyle,
     getViewTicketRefreshButtonStyle,
     getViewTicketAllButtonStyle,
@@ -34,7 +35,7 @@ export default function ViewTicket(props) {
                     <hgroup>
                         <div className={'show-tk-subject'}>
                             <h2 title="show-tk-edit-subject"
-                                style={getViewTicketHeaderStyle(attributes)}>
+                                style={getViewTicketIdAndTitleStyle(attributes)}>
                                                 <span className="show-ticket-id"
                                                       style={getViewTicketIdStyle(attributes)}>#746</span> Check htttp
                             </h2>

@@ -14,6 +14,7 @@ export default function ButtonCloseTicketAdvanced({attributes, setAttributes}) {
                     attributeName: 'closeTicketButtonBorderColor',
                 }}
             />
+
             <EnhanceMultiRangeControl attributes={attributes} setAttributes={setAttributes} props={{
                 title: __('Border Width(px)', 'fluent-support'),
                 parentAttribute: 'closeTicketButtonBorderWidth',

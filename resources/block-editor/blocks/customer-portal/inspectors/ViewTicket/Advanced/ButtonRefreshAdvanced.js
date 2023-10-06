@@ -1,23 +1,57 @@
 const {__} = wp.i18n;
-const {PanelBody, RangeControl} = wp.components;
+const { PanelBody } = wp.components;
+import icons from "../../../utils/icons";
+import EnhanceMultiRangeControl from "../../../utils/EnhanceMultiRangeControl";
+import EnhancedColorPicker from "../../../utils/EnhancedColorPicker";
 export default function ButtonRefreshAdvanced({attributes, setAttributes}) {
     return (
         <PanelBody title={__('Refresh', 'fluent-support')}>
-            <p><strong>{__('Border Width', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.refreshButtonBorderWidth }
-                onChange={(v) => setAttributes({ refreshButtonBorderWidth: v })}
-                min={ 1 }
-                max={ 5 }
+            <EnhancedColorPicker
+                attributes={attributes}
+                setAttributes={setAttributes}
+                props={{
+                    title: __('Border Color', 'fluent-support'),
+                    attributeName: 'refreshButtonBorderColor',
+                }}
             />
 
-            <p><strong>{__('Border Radius', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.refreshButtonBorderRadius }
-                onChange={(v) => setAttributes({ refreshButtonBorderRadius: v })}
-                min={ 0 }
-                max={ 15 }
-            />
+            <EnhanceMultiRangeControl attributes={attributes} setAttributes={setAttributes} props={{
+                title: __('Border Width(px)', 'fluent-support'),
+                parentAttribute: 'refreshButtonBorderWidth',
+                TopAttribute: 'Top',
+                RightAttribute: 'Right',
+                BottomAttribute: 'Bottom',
+                LeftAttribute: 'Left',
+                icons: {
+                    all: icons.SelectAll,
+                    top: icons.BorderTop,
+                    right: icons.BorderRight,
+                    bottom: icons.BorderBottom,
+                    left: icons.BorderLeft,
+                },
+                min: 0,
+                max: 15,
+                inc: 1
+            }}/>
+
+            <EnhanceMultiRangeControl attributes={attributes} setAttributes={setAttributes} props={{
+                title: __('Border Radius (px)', 'fluent-support'),
+                parentAttribute: 'refreshButtonBorderRadius',
+                TopAttribute: 'TopLeft',
+                RightAttribute: 'TopRight',
+                BottomAttribute: 'BottomRight',
+                LeftAttribute: 'BottomLeft',
+                icons: {
+                    all: icons.SelectAll,
+                    top: icons.BorderRadiusTopLeft,
+                    right: icons.BorderRadiusTopRight,
+                    bottom: icons.BorderRadiusBottomRight,
+                    left: icons.BorderRadiusBottomLeft,
+                },
+                min: 0,
+                max: 50,
+                inc: 1
+            }}/>
         </PanelBody>
     )
 }

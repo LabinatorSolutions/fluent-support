@@ -1,46 +1,36 @@
 const {__} = wp.i18n;
-const {PanelBody, RangeControl} = wp.components;
+const { PanelBody, RangeControl} = wp.components;
+import icons from "../../../utils/icons";
+import EnhanceMultiRangeControl from "../../../utils/EnhanceMultiRangeControl";
 export default function RibbonSupportStaffAdvanced({attributes, setAttributes}) {
     return (
         <PanelBody title={__('Support Staff', 'fluent-support')}>
-            <p><strong>{__('Ribbon Tail Width', 'fluent-support')}</strong></p>
             <RangeControl
+                label={__('Ribbon Tail Width', 'fluent-support')}
                 value={ attributes.ribbonSupportStaffTailWidth }
                 onChange={(v) => setAttributes({ ribbonSupportStaffTailWidth: v })}
                 min={ 1 }
                 max={ 10 }
             />
 
-            <p><strong>{__('Padding Top', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.ribbonSupportStaffPaddingTop }
-                onChange={(v) => setAttributes({ ribbonSupportStaffPaddingTop: v })}
-                min={ 0 }
-                max={ 15 }
-            />
-
-            <p><strong>{__('Padding Bottom', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.ribbonSupportStaffPaddingBottom }
-                onChange={(v) => setAttributes({ ribbonSupportStaffPaddingBottom: v })}
-                min={ 0 }
-                max={ 15 }
-            />
-            <p><strong>{__('Padding Right', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.ribbonSupportStaffPaddingRight }
-                onChange={(v) => setAttributes({ ribbonSupportStaffPaddingRight: v })}
-                min={ 0 }
-                max={ 15 }
-            />
-
-            <p><strong>{__('Padding Left', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.ribbonSupportStaffPaddingLeft }
-                onChange={(v) => setAttributes({ ribbonSupportStaffPaddingLeft: v })}
-                min={ 0 }
-                max={ 15 }
-            />
+            <EnhanceMultiRangeControl attributes={attributes} setAttributes={setAttributes} props={{
+                title: __('Padding(px)', 'fluent-support'),
+                parentAttribute: 'ribbonSupportStaffPadding',
+                TopAttribute: 'Top',
+                RightAttribute: 'Right',
+                BottomAttribute: 'Bottom',
+                LeftAttribute: 'Left',
+                icons: {
+                    all: icons.SelectAll,
+                    top: icons.BorderTop,
+                    right: icons.BorderRight,
+                    bottom: icons.BorderBottom,
+                    left: icons.BorderLeft,
+                },
+                min: 0,
+                max: 15,
+                inc: 1
+            }}/>
         </PanelBody>
     )
 }

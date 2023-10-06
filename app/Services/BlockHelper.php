@@ -210,13 +210,49 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#000000',
             ],
+            'refreshButtonBorderColor' => [
+                'type' => 'string',
+                'default' => '#ffffff',
+            ],
             'refreshButtonBorderWidth' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'refreshButtonBorderWidthTop' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'refreshButtonBorderWidthRight' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'refreshButtonBorderWidthBottom' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'refreshButtonBorderWidthLeft' => [
                 'type' => 'number',
                 'default' => 1,
             ],
             'refreshButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 4,
+            ],
+            'refreshButtonBorderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'refreshButtonBorderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'refreshButtonBorderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 6,
+            ],
+            'refreshButtonBorderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 4,
             ],
             'allButtonBgColor' => [
                 'type' => 'string',
@@ -226,7 +262,27 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#606266',
             ],
+            'allButtonBorderColor' => [
+                'type' => 'string',
+                'default' => '#ffffff',
+            ],
             'allButtonBorderWidth' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'allButtonBorderWidthTop' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'allButtonBorderWidthRight' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'allButtonBorderWidthBottom' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'allButtonBorderWidthLeft' => [
                 'type' => 'number',
                 'default' => 1,
             ],
@@ -315,13 +371,41 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'viewTicketHeaderBorderColor' => [
+                'type' => 'string',
+                'default' => '#ebeef4',
+            ],
+            'viewTicketHeaderBorderWidth' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'viewTicketHeaderBorderWidthTop' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'viewTicketHeaderBorderWidthRight' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'viewTicketHeaderBorderWidthBottom' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'viewTicketHeaderBorderWidthLeft' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'viewTicketHeaderRadius' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
             'viewTicketHeaderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 20,
+                'default' => 0,
             ],
             'viewTicketHeaderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 30,
+                'default' => 0,
             ],
             'viewTicketHeaderRadiusBottomLeft' => [
                 'type' => 'number',
@@ -387,6 +471,10 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 5,
             ],
+            'ribbonSupportStaffPadding' => [
+                'type' => 'number',
+                'default' => 5,
+            ],
             'ribbonSupportStaffPaddingTop' => [
                 'type' => 'number',
                 'default' => 5,
@@ -415,6 +503,10 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 5,
             ],
+            'viewTicketThreadStarterPadding' => [
+                'type' => 'number',
+                'default' => 5,
+            ],
             'viewTicketThreadStarterPaddingTop' => [
                 'type' => 'number',
                 'default' => 5,
@@ -440,6 +532,10 @@ class BlockHelper
                 'default' => '#ffffff',
             ],
             'viewTicketThreadFollowerTailWidth' => [
+                'type' => 'number',
+                'default' => 5,
+            ],
+            'viewTicketThreadFollowerPadding' => [
                 'type' => 'number',
                 'default' => 5,
             ],
