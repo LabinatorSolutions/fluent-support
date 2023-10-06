@@ -8,7 +8,7 @@ export default function EnhanceMultiRangeControl({attributes, setAttributes, pro
             setAttributes({
                 [boxName] : parseInt(value)
             })
-        }else {console.log('parentAttribute', parentAttribute)
+        }else {
             setAttributes({
                 [parentAttribute] : parseInt(value),
                 [parentAttribute+TopAttribute] : parseInt(value),

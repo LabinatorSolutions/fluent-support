@@ -11,8 +11,8 @@ export default function ViewTicketButtonAllAdvanced({attributes, setAttributes})
                 max={ 5 }
             />
 
-            <p><strong>{__('Border Radius', 'fluent-support')}</strong></p>
             <RangeControl
+                label={__('Border Radius', 'fluent-support')}
                 value={ attributes.allButtonBorderRadius }
                 onChange={(v) => setAttributes({ allButtonBorderRadius: v })}
                 min={ 0 }
