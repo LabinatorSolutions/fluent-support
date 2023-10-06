@@ -1,22 +1,42 @@
 const {__} = wp.i18n;
-const {PanelBody, RangeControl} = wp.components;
+const { PanelBody } = wp.components;
 import icons from "../../../utils/icons";
 import EnhanceMultiRangeControl from "../../../utils/EnhanceMultiRangeControl";
+import EnhancedColorPicker from "../../../utils/EnhancedColorPicker";
 export default function ButtonCloseTicketAdvanced({attributes, setAttributes}) {
     return (
         <PanelBody title={__('Close Ticket', 'fluent-support')}>
-            <p><strong>{__('Border Width', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.closeTicketButtonBorderWidth }
-                onChange={(v) => setAttributes({ closeTicketButtonBorderWidth: v })}
-                min={ 1 }
-                max={ 5 }
+            <EnhancedColorPicker
+                attributes={attributes}
+                setAttributes={setAttributes}
+                props={{
+                    title: __('Border Color', 'fluent-support'),
+                    attributeName: 'closeTicketButtonBorderColor',
+                }}
             />
+            <EnhanceMultiRangeControl attributes={attributes} setAttributes={setAttributes} props={{
+                title: __('Border Width(px)', 'fluent-support'),
+                parentAttribute: 'closeTicketButtonBorderWidth',
+                TopAttribute: 'Top',
+                RightAttribute: 'Right',
+                BottomAttribute: 'Bottom',
+                LeftAttribute: 'Left',
+                icons: {
+                    all: icons.SelectAll,
+                    top: icons.BorderTop,
+                    right: icons.BorderRight,
+                    bottom: icons.BorderBottom,
+                    left: icons.BorderLeft,
+                },
+                min: 0,
+                max: 15,
+                inc: 1
+            }}/>
 
             <EnhanceMultiRangeControl attributes={attributes} setAttributes={setAttributes} props={{
-                title: __('Border Radius', 'fluent-support'),
+                title: __('Border Radius (px)', 'fluent-support'),
                 parentAttribute: 'closeTicketButtonBorderRadius',
-                TopAttribute: 'TopLeft',//closeTicketButtonBorderRadiusTopLeft
+                TopAttribute: 'TopLeft',
                 RightAttribute: 'TopRight',
                 BottomAttribute: 'BottomRight',
                 LeftAttribute: 'BottomLeft',
@@ -28,7 +48,7 @@ export default function ButtonCloseTicketAdvanced({attributes, setAttributes}) {
                     left: icons.BorderRadiusBottomLeft,
                 },
                 min: 0,
-                max: 15,
+                max: 50,
                 inc: 1
             }}/>
         </PanelBody>

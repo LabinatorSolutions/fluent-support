@@ -80,8 +80,10 @@ export const getViewTicketAllButtonStyle = (attributes)  =>({
 export const getViewTicketCloseButtonStyle = (attributes)  =>({
     background: attributes.closeTicketButtonBgColor,
     color: attributes.closeTicketButtonTextColor,
-    border: attributes.closeTicketButtonBorderWidth + 'px solid ' + attributes.closeTicketButtonBgColor,
-    //borderRadius: attributes.closeTicketButtonBorderRadius + 'px',
+    borderTop: attributes.closeTicketButtonBorderWidthTop + 'px solid ' + attributes.closeTicketButtonBorderColor,
+    borderRight: attributes.closeTicketButtonBorderWidthRight + 'px solid ' + attributes.closeTicketButtonBorderColor,
+    borderBottom: attributes.closeTicketButtonBorderWidthBottom + 'px solid ' + attributes.closeTicketButtonBorderColor,
+    borderLeft: attributes.closeTicketButtonBorderWidthLeft + 'px solid ' + attributes.closeTicketButtonBorderColor,
     borderTopLeftRadius: attributes.closeTicketButtonBorderRadiusTopLeft + 'px',
     borderTopRightRadius: attributes.closeTicketButtonBorderRadiusTopRight + 'px',
     borderBottomRightRadius: attributes.closeTicketButtonBorderRadiusBottomRight + 'px',

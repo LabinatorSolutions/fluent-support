@@ -79,7 +79,7 @@ icons.BorderRadiusBottomLeft = <svg width="20" height="20" viewBox="0 0 20 20" f
     <path d="M0 0H20H0ZM20 22H10C3.37258 22 -2 16.6274 -2 10H2C2 14.4183 5.58172 18 10 18H20V22ZM10 22C3.37258 22 -2 16.6274 -2 10V0H2V10C2 14.4183 5.58172 18 10 18V22ZM20 0V20V0Z" fill="#15BE7B" mask="url(#path-1-inside-1_250_4611)"/>
 </svg>
 
-icons.Top = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+icons.BorderTop = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="path-1-inside-1_235_4428" fill="white">
         <path d="M0 2C0 0.89543 0.895431 0 2 0H20C21.1046 0 22 0.895431 22 2V20C22 21.1046 21.1046 22 20 22H2C0.89543 22 0 21.1046 0 20V2Z"/>
     </mask>
@@ -87,7 +87,7 @@ icons.Top = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="h
     <path d="M0 2C0 -1.31371 2.68629 -4 6 -4H16C19.3137 -4 22 -1.31371 22 2V4C22 4 21.1046 4 20 4H2C0.895431 4 0 4 0 4V2ZM22 22H0H22ZM0 22V0V22ZM22 0V22V0Z" fill="#15BE7B" mask="url(#path-1-inside-1_235_4428)"/>
 </svg>
 
-icons.Right = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+icons.BorderRight = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="path-1-inside-1_235_4433" fill="white">
         <path d="M0 2C0 0.89543 0.895431 0 2 0H20C21.1046 0 22 0.895431 22 2V20C22 21.1046 21.1046 22 20 22H2C0.89543 22 0 21.1046 0 20V2Z"/>
     </mask>
@@ -95,7 +95,7 @@ icons.Right = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns=
     <path d="M0 0H22H0ZM22 22H0H22ZM0 22V0V22ZM20 0C23.3137 0 26 2.68629 26 6V16C26 19.3137 23.3137 22 20 22H18C18 22 18 21.1046 18 20V2C18 0.895431 18 0 18 0H20Z" fill="#15BE7B" mask="url(#path-1-inside-1_235_4433)"/>
 </svg>
 
-icons.Bottom = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+icons.BorderBottom = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="path-1-inside-1_235_4435" fill="white">
         <path d="M0 2C0 0.89543 0.895431 0 2 0H20C21.1046 0 22 0.895431 22 2V20C22 21.1046 21.1046 22 20 22H2C0.89543 22 0 21.1046 0 20V2Z"/>
     </mask>
@@ -103,7 +103,7 @@ icons.Bottom = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns
     <path d="M0 0H22H0ZM22 20C22 23.3137 19.3137 26 16 26H6C2.68629 26 0 23.3137 0 20V18C0 18 0.895431 18 2 18H20C21.1046 18 22 18 22 18V20ZM0 22V0V22ZM22 0V22V0Z" fill="#15BE7B" mask="url(#path-1-inside-1_235_4435)"/>
 </svg>
 
-icons.Left = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+icons.BorderLeft = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
     <mask id="path-1-inside-1_235_4431" fill="white">
         <path d="M0 2C0 0.89543 0.895431 0 2 0H20C21.1046 0 22 0.895431 22 2V20C22 21.1046 21.1046 22 20 22H2C0.89543 22 0 21.1046 0 20V2Z"/>
     </mask>
@@ -114,7 +114,5 @@ icons.Left = <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="
 icons.SelectAll = <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" viewBox="0 0 20 21" fill="none">
     <path d="M9.99957 13.2083V15.0139M4.5829 18.625H15.4162C16.4134 18.625 17.2218 17.8166 17.2218 16.8194V11.4028C17.2218 10.4056 16.4134 9.59722 15.4162 9.59722H4.5829C3.58572 9.59722 2.77734 10.4056 2.77734 11.4028V16.8194C2.77734 17.8166 3.58572 18.625 4.5829 18.625ZM13.6107 9.59722V5.98611C13.6107 3.99175 11.9939 2.375 9.99957 2.375C8.0052 2.375 6.38845 3.99175 6.38845 5.98611V9.59722H13.6107Z" stroke="#15BE7B" stroke-width="1.25" stroke-linecap="round"/>
 </svg>
-
-
 
 export default icons;

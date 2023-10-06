@@ -242,7 +242,27 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'closeTicketButtonBorderColor' => [
+                'type' => 'string',
+                'default' => '#f56c6c',
+            ],
             'closeTicketButtonBorderWidth' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'closeTicketButtonBorderWidthTop' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'closeTicketButtonBorderWidthRight' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'closeTicketButtonBorderWidthBottom' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'closeTicketButtonBorderWidthLeft' => [
                 'type' => 'number',
                 'default' => 1,
             ],
