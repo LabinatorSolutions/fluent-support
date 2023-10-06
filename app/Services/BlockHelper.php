@@ -27,7 +27,7 @@ class BlockHelper
             ],
             'filterButtonAllBorderRadius' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonAllBorderWidth' => [
                 'type' => 'number',
@@ -47,7 +47,7 @@ class BlockHelper
             ],
             'filterButtonOpenBorderRadius' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonClosedBgColor' => [
                 'type' => 'string',
@@ -63,11 +63,11 @@ class BlockHelper
             ],
             'filterButtonClosedBorderRadius' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonClosedBorderWidth' => [
                 'type' => 'number',
-                'default' => 0
+                'default' => 0,
             ],
             'allTicketsLogoutButtonVisibility' => [
                 'type' => 'boolean',
@@ -87,11 +87,11 @@ class BlockHelper
             ],
             'allTicketsLogoutButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 0
+                'default' => 4,
             ],
             'allTicketsLogoutButtonBorderWidth' => [
                 'type' => 'number',
-                'default' => 0
+                'default' => 0,
             ],
             'buttonCreateTicketBgColor' => [
                 'type' => 'string',
@@ -103,7 +103,7 @@ class BlockHelper
             ],
             'buttonCreateTicketBorderRadius' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'buttonCreateTicketBorderWidth' => [
                 'type' => 'number',
@@ -160,7 +160,7 @@ class BlockHelper
             ],
             'createTicketViewAllButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'createTicketViewAllButtonTextColor' => [
                 'type' => 'string',
@@ -172,7 +172,7 @@ class BlockHelper
             ],
             'createTicketCreateButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'createTicketBodyBgColor' => [
                 'type' => 'string',
@@ -200,7 +200,7 @@ class BlockHelper
             ],
             'createTicketUploadButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'refreshButtonBgColor' => [
                 'type' => 'string',
@@ -472,7 +472,6 @@ class BlockHelper
                     border: <?php echo esc_attr($attributes['allTicketsLogoutButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor'] ?? '#ffffff'); ?>;
                     border-radius: <?php echo esc_attr($attributes['allTicketsLogoutButtonBorderRadius']); ?>px;
                 }
-
                 .fs_btn_create_ticket {
                     background-color:<?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
                     color:<?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
