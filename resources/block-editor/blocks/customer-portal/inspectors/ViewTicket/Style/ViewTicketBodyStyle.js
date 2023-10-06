@@ -1,5 +1,5 @@
 const {__} = wp.i18n;
-const {PanelBody, ColorPalette} = wp.components;
+const {PanelBody} = wp.components;
 import EnhancedColorPicker from "../../../utils/EnhancedColorPicker";
 export default function ViewTicketBodyStyle({attributes, setAttributes}) {
     return (
