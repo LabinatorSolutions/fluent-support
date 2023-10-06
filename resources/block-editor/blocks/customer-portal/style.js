@@ -53,10 +53,18 @@ export const getAllTicketsFooterStyle = (attributes)  =>({
 export const getViewTicketHeaderStyle = (attributes)  =>({
     background: attributes.viewTicketHeaderStyleBgColor,
     color: attributes.viewTicketHeaderStyleTextColor,
+    borderTop: attributes.viewTicketHeaderBorderWidthTop + 'px solid ' + attributes.viewTicketHeaderBorderColor,
+    borderRight: attributes.viewTicketHeaderBorderWidthRight + 'px solid ' + attributes.viewTicketHeaderBorderColor,
+    borderBottom: attributes.viewTicketHeaderBorderWidthBottom + 'px solid ' + attributes.viewTicketHeaderBorderColor,
+    borderLeft: attributes.viewTicketHeaderBorderWidthLeft + 'px solid ' + attributes.viewTicketHeaderBorderColor,
     borderTopLeftRadius: attributes.viewTicketHeaderRadiusTopLeft + 'px',
     borderTopRightRadius: attributes.viewTicketHeaderRadiusTopRight + 'px',
     borderBottomRightRadius: attributes.viewTicketHeaderRadiusBottomRight + 'px',
     borderBottomLeftRadius: attributes.viewTicketHeaderRadiusBottomLeft + 'px',
+});
+
+export const getViewTicketIdAndTitleStyle = (attributes)  =>({
+    color: attributes.viewTicketHeaderStyleTextColor,
 });
 
 export const getViewTicketIdStyle = (attributes)  =>({
@@ -66,15 +74,27 @@ export const getViewTicketIdStyle = (attributes)  =>({
 export const getViewTicketRefreshButtonStyle = (attributes)  =>({
     background: attributes.refreshButtonBgColor,
     color: attributes.refreshButtonTextColor,
-    border: attributes.refreshButtonBorderWidth + 'px solid ' + attributes.refreshButtonBgColor,
-    borderRadius: attributes.refreshButtonBorderRadius + 'px',
+    borderTop: attributes.refreshButtonBorderWidthTop + 'px solid ' + attributes.refreshButtonBorderColor,
+    borderRight: attributes.refreshButtonBorderWidthRight + 'px solid ' + attributes.refreshButtonBorderColor,
+    borderBottom: attributes.refreshButtonBorderWidthBottom + 'px solid ' + attributes.refreshButtonBorderColor,
+    borderLeft: attributes.refreshButtonBorderWidthLeft + 'px solid ' + attributes.refreshButtonBorderColor,
+    borderTopLeftRadius: attributes.refreshButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.refreshButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.refreshButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.refreshButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getViewTicketAllButtonStyle = (attributes)  =>({
     background: attributes.allButtonBgColor,
     color: attributes.allButtonTextColor,
-    border: attributes.allButtonBorderWidth + 'px solid ' + attributes.allButtonBgColor,
-    borderRadius: attributes.allButtonBorderRadius + 'px',
+    borderTop: attributes.allButtonBorderWidthTop + 'px solid ' + attributes.allButtonBorderColor,
+    borderRight: attributes.allButtonBorderWidthRight + 'px solid ' + attributes.allButtonBorderColor,
+    borderBottom: attributes.allButtonBorderWidthBottom + 'px solid ' + attributes.allButtonBorderColor,
+    borderLeft: attributes.allButtonBorderWidthLeft + 'px solid ' + attributes.allButtonBorderColor,
+    borderTopLeftRadius: attributes.allButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.allButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.allButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.allButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getViewTicketCloseButtonStyle = (attributes)  =>({
