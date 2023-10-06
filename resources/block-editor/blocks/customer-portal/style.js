@@ -154,6 +154,7 @@ export const getCreateTicketViewAllButtonStyle = (attributes)  =>({
 
 export const getCreateTicketBodyStyle = (attributes)  =>({
     background: attributes.createTicketBodyBgColor,
+    color: attributes.createTicketInputLabelTextColor,
 });
 
 export const getCreateTicketFormStyle = (attributes)  =>({
