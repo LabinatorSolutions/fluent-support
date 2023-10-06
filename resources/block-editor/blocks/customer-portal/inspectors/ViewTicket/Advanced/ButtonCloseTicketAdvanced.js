@@ -21,7 +21,7 @@ export default function ButtonCloseTicketAdvanced({attributes, setAttributes}) {
                 BottomAttribute: 'BottomRight',
                 LeftAttribute: 'BottomLeft',
                 icons: {
-                    all: 'all',
+                    all: icons.SelectAll,
                     top: icons.TextAlignCenter,
                     right: icons.TextAlignRight,
                     bottom: icons.TextAlignCenter,
