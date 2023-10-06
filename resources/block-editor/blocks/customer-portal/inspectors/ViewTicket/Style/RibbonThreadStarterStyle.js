@@ -1,28 +1,27 @@
 const {__} = wp.i18n;
 const {PanelBody, ColorPalette} = wp.components;
+import EnhancedColorPicker from "../../../utils/EnhancedColorPicker";
 export default function RibbonThreadStarterStyle({attributes, setAttributes}) {
     return (
         <PanelBody title={__('Thread Starter', 'fluent-support')}>
-            <p><strong>{__('Color', 'fluent-support')}</strong></p>
-            <ColorPalette value={attributes.viewTicketThreadStarterBgColor}
-                          colors={[
-                              { name: 'green', color: '#67C23A' },
-                              { name: 'black', color: '#000000' },
-                              { name: 'gray', color: '#777777' },
-                              { name: 'red', color: '#ff0000' },
-                          ]}
-                          onChange={(v) => setAttributes({ viewTicketThreadStarterBgColor: v })}
+            <EnhancedColorPicker
+                attributes={attributes}
+                setAttributes={setAttributes}
+                props={{
+                    title: __('Background Color', 'fluent-support'),
+                    attributeName: 'viewTicketThreadStarterBgColor',
+                }}
             />
-            <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
-            <ColorPalette value={attributes.viewTicketThreadStarterTextColor}
-                          colors={[
-                              { name: 'green', color: '#67C23A' },
-                              { name: 'black', color: '#000000' },
-                              { name: 'gray', color: '#777777' },
-                              { name: 'red', color: '#ff0000' },
-                          ]}
-                          onChange={(v) => setAttributes({ viewTicketThreadStarterTextColor: v })}
+
+            <EnhancedColorPicker
+                attributes={attributes}
+                setAttributes={setAttributes}
+                props={{
+                    title: __('Text Color', 'fluent-support'),
+                    attributeName: 'viewTicketThreadStarterTextColor',
+                }}
             />
+
         </PanelBody>
     )
 }
