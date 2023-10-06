@@ -250,6 +250,22 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 5,
             ],
+            'closeTicketButtonBorderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 3,
+            ],
+            'closeTicketButtonBorderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'closeTicketButtonBorderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 6,
+            ],
+            'closeTicketButtonBorderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 7,
+            ],
             'createTicketCreateButtonBgColor' => [
                 'type' => 'number',
                 'default' => '#67c23a',
