@@ -1,28 +1,25 @@
 const {__} = wp.i18n;
-const {PanelBody, ColorPalette} = wp.components;
+const {PanelBody} = wp.components;
+import EnhancedColorPicker from "../../../utils/EnhancedColorPicker";
 export default function RibbonThreadFollowerStyle({attributes, setAttributes}) {
     return (
         <PanelBody title={__('Thread Follower', 'fluent-support')}>
-            <p><strong>{__('Color', 'fluent-support')}</strong></p>
-            <ColorPalette value={attributes.viewTicketThreadFollowerBgColor}
-                          colors={[
-                              { name: 'green', color: '#67C23A' },
-                              { name: 'black', color: '#000000' },
-                              { name: 'gray', color: '#777777' },
-                              { name: 'red', color: '#ff0000' },
-                          ]}
-                          onChange={(v) => setAttributes({ viewTicketThreadFollowerBgColor: v })}
+            <EnhancedColorPicker
+                attributes={attributes}
+                setAttributes={setAttributes}
+                props={{
+                    title: __('Background Color', 'fluent-support'),
+                    attributeName: 'viewTicketThreadFollowerBgColor',
+                }}
             />
 
-            <p><strong>{__('Text Color', 'fluent-support')}</strong></p>
-            <ColorPalette value={attributes.viewTicketThreadFollowerTextColor}
-                          colors={[
-                              { name: 'green', color: '#67C23A' },
-                              { name: 'black', color: '#000000' },
-                              { name: 'gray', color: '#777777' },
-                              { name: 'red', color: '#ff0000' },
-                          ]}
-                          onChange={(v) => setAttributes({ viewTicketThreadFollowerTextColor: v })}
+            <EnhancedColorPicker
+                attributes={attributes}
+                setAttributes={setAttributes}
+                props={{
+                    title: __('Text Color', 'fluent-support'),
+                    attributeName: 'viewTicketThreadFollowerTextColor',
+                }}
             />
         </PanelBody>
     )
