@@ -415,6 +415,10 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 0,
             ],
+            'allTicketsHeaderRadius' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
             'allTicketsHeaderRadiusTopLeft' => [
                 'type' => 'number',
                 'default' => 10,
@@ -428,6 +432,10 @@ class BlockHelper
                 'default' => 0,
             ],
             'allTicketsHeaderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 0,
+            ],
+            'allTicketsFooterRadius' => [
                 'type' => 'number',
                 'default' => 0,
             ],
