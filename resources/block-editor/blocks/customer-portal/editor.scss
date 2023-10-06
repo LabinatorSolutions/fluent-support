@@ -615,31 +615,46 @@
         color: #1E22FB;
     }
 }
+.fst-text-alignment-buttons-group{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    p{
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1.4;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: calc(8px);
+        padding: 0;
+    }
+    .alignment-button{
+        border: 1px solid var(--neutral-300, #D1D5DB);
+        background: var(--generic-white, #FFF);
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+        padding: 6px 14px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
 
-.alignment-button{
-    border: 1px solid var(--neutral-300, #D1D5DB);
-    background: var(--generic-white, #FFF);
-    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-    padding: 6px 14px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
+    .left-button{
+        border-radius: 8px 0 0 8px;
+    }
 
-.left-button{
-    border-radius: 8px 0px 0px 8px;
-}
+    .right-button{
+        border-radius: 0 8px 8px 0;
+    }
 
-.right-button{
-    border-radius: 0px 8px 8px 0px;
-}
+    .alignment-button.active{
+        color: #FFFFFF;
+        border: 2px solid #047AE7;
+        background-color: #2d95f5;
+    }
 
-.alignment-button.active{
-    color: #FFFFFF;
-    border: 2px solid #047AE7;
-}
-
-.alignment-button:hover {
-    color: #FFFFFF;
-    border: 2px solid #047AE7;
+    .alignment-button:hover {
+        color: #FFFFFF;
+        border: 2px solid #047AE7;
+    }
 }
 
 .fst-block-color-field{
@@ -647,8 +662,13 @@
     justify-content: space-between;
     align-items: center;
     span{
-        display: block;
-        margin-bottom: 5px;
+        font-size: 11px;
+        font-weight: 500;
+        line-height: 1.4;
+        text-transform: uppercase;
+        display: inline-block;
+        margin-bottom: calc(8px);
+        padding: 0;
     }
     margin-bottom: 10px;
     .fst-block-color-preview-box{

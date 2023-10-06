@@ -35,7 +35,7 @@ const Inspector = (inspectorProps) => {
                     }}
                 </TabPanel>
 
-                <PanelBody title={__('Default Business Inbox', 'fluent-support')} initialOpen={ false }>
+                <PanelBody title={__('Default Business Inbox', 'fluent-support')}>
                     <select value={attributes.businessBoxId}
                             onChange={(v) => setAttributes({ businessBoxId: v.target.value })}
                     >
