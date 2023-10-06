@@ -81,7 +81,11 @@ export const getViewTicketCloseButtonStyle = (attributes)  =>({
     background: attributes.closeTicketButtonBgColor,
     color: attributes.closeTicketButtonTextColor,
     border: attributes.closeTicketButtonBorderWidth + 'px solid ' + attributes.closeTicketButtonBgColor,
-    borderRadius: attributes.closeTicketButtonBorderRadius + 'px',
+    //borderRadius: attributes.closeTicketButtonBorderRadius + 'px',
+    borderTopLeftRadius: attributes.closeTicketButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.closeTicketButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.closeTicketButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.closeTicketButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getViewTicketPageBodyStyle = (attributes)  =>({

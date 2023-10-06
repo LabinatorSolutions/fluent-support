@@ -1,5 +1,7 @@
 const {__} = wp.i18n;
 const {PanelBody, RangeControl} = wp.components;
+import icons from "../../../utils/icons";
+import EnhanceMultiRangeControl from "../../../utils/EnhanceMultiRangeControl";
 export default function ButtonCloseTicketAdvanced({attributes, setAttributes}) {
     return (
         <PanelBody title={__('Close Ticket', 'fluent-support')}>
@@ -11,13 +13,24 @@ export default function ButtonCloseTicketAdvanced({attributes, setAttributes}) {
                 max={ 5 }
             />
 
-            <p><strong>{__('Border Radius', 'fluent-support')}</strong></p>
-            <RangeControl
-                value={ attributes.closeTicketButtonBorderRadius }
-                onChange={(v) => setAttributes({ closeTicketButtonBorderRadius: v })}
-                min={ 0 }
-                max={ 15 }
-            />
+            <EnhanceMultiRangeControl attributes={attributes} setAttributes={setAttributes} props={{
+                title: __('Border Radius', 'fluent-support'),
+                parentAttribute: 'closeTicketButtonBorderRadius',
+                TopAttribute: 'TopLeft',//closeTicketButtonBorderRadiusTopLeft
+                RightAttribute: 'TopRight',
+                BottomAttribute: 'BottomRight',
+                LeftAttribute: 'BottomLeft',
+                icons: {
+                    all: 'all',
+                    top: icons.TextAlignCenter,
+                    right: icons.TextAlignRight,
+                    bottom: icons.TextAlignCenter,
+                    left: icons.TextAlignLeft,
+                },
+                min: 0,
+                max: 15,
+                inc: 1
+            }}/>
         </PanelBody>
     )
 }
