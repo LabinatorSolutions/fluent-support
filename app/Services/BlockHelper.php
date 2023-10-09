@@ -95,19 +95,19 @@ class BlockHelper
             ],
             'filterButtonOpenBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonOpenBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonOpenBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonOpenBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonOpenBorderRadius' => [
                 'type' => 'number',
@@ -147,19 +147,19 @@ class BlockHelper
             ],
             'filterButtonClosedBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonClosedBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonClosedBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonClosedBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonClosedBorderWidth' => [
                 'type' => 'number',
@@ -207,19 +207,19 @@ class BlockHelper
             ],
             'allTicketsLogoutButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'allTicketsLogoutButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'allTicketsLogoutButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'allTicketsLogoutButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'buttonCreateTicketBgColor' => [
                 'type' => 'string',
@@ -263,19 +263,19 @@ class BlockHelper
             ],
             'allTicketsCreateTicketButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'allTicketsCreateTicketButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'allTicketsCreateTicketButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'allTicketsCreateTicketButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 1,
+                'default' => 4,
             ],
             'buttonCreateTicketBorderWidth' => [
                 'type' => 'number',
@@ -306,6 +306,10 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#314351',
             ],
+            'createTicketHeaderRadius' => [
+                'type' => 'number',
+                'default' => 10,
+            ],
             'createTicketHeaderRadiusTopLeft' => [
                 'type' => 'number',
                 'default' => 10,
@@ -316,13 +320,17 @@ class BlockHelper
             ],
             'createTicketHeaderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'createTicketHeaderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'createTicketViewAllButtonBgColor' => [
+                'type' => 'string',
+                'default' => '#909399',
+            ],
+            'createTicketViewAllButtonBorderColor' => [
                 'type' => 'string',
                 'default' => '#909399',
             ],
@@ -334,6 +342,38 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 4,
             ],
+            'createTicketViewAllButtonBorderWidthTop' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketViewAllButtonBorderWidthRight' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketViewAllButtonBorderWidthBottom' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketViewAllButtonBorderWidthLeft' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketViewAllButtonBorderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketViewAllButtonBorderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketViewAllButtonBorderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketViewAllButtonBorderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
             'createTicketViewAllButtonTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
@@ -341,6 +381,42 @@ class BlockHelper
             'createTicketCreateButtonBorderWidth' => [
                 'type' => 'number',
                 'default' => 0,
+            ],
+            'createTicketCreateButtonBorderColor' => [
+                'type' => 'string',
+                'default' => '#909399',
+            ],
+            'createTicketCreateButtonBorderWidthTop' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketCreateButtonBorderWidthRight' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketCreateButtonBorderWidthBottom' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketCreateButtonBorderWidthLeft' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketCreateButtonBorderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketCreateButtonBorderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketCreateButtonBorderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketCreateButtonBorderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 4,
             ],
             'createTicketCreateButtonBorderRadius' => [
                 'type' => 'number',
@@ -371,6 +447,42 @@ class BlockHelper
                 'default' => 0,
             ],
             'createTicketUploadButtonBorderRadius' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketUploadButtonBorderColor' => [
+                'type' => 'string',
+                'default' => '#409eff',
+            ],
+            'createTicketUploadButtonBorderWidthTop' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketUploadButtonBorderWidthRight' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketUploadButtonBorderWidthBottom' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketUploadButtonBorderWidthLeft' => [
+                'type' => 'number',
+                'default' => 1,
+            ],
+            'createTicketUploadButtonBorderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketUploadButtonBorderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketUploadButtonBorderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'createTicketUploadButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
                 'default' => 4,
             ],
