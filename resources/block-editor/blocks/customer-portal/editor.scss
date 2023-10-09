@@ -147,7 +147,10 @@
 
         }
     }
-
+    .fst-hover-for-select:hover{
+        border: 2px dashed rgb(7, 58, 110) !important;
+        cursor: pointer;
+    }
     .show-ticket-header:hover,
     .show-ticket-body:hover {
         border: 1px solid rgb(64, 158, 255) !important;
@@ -392,11 +395,13 @@
     .all-tickets-header-left {
         width: 50%;
         float: left;
-        margin-top: -10px;
-        margin-left: -25px;
         .all-tickets-button-groups{
             align-items: center;
-            padding: 15px 0 0 20px;
+            padding: 5px 0;
+        }
+        .all-tickets-button-groups:hover{
+            border: 1px solid rgb(64, 158, 255);
+            cursor: pointer;
         }
         .all-tickets-button-groups-btn{
             display: inline-block;

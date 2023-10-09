@@ -29,7 +29,7 @@ export default function ViewTicket(props) {
     };
     return (
         <div className={"customer-portal-block-wrapper"}>
-            <div className={"show-ticket-header" + getActiveClass('viewTicketHeaderStyle')} style={getViewTicketHeaderStyle(attributes)}
+            <div className={"show-ticket-header fst-hover-for-select" + getActiveClass('viewTicketHeaderStyle')} style={getViewTicketHeaderStyle(attributes)}
                  onClick={() => toggleInspector('viewTicketHeaderStyle')}>
                 <div className={"show-th-header"}>
                     <hgroup>
@@ -44,7 +44,7 @@ export default function ViewTicket(props) {
                             </div>
                         </div>
                         <div className={"show-tk-actions"}>
-                            <div className={"show-ticket-button-groups-btn" + getActiveClass('buttonRefreshStyle')}
+                            <div className={"show-ticket-button-groups-btn fst-hover-for-select" + getActiveClass('buttonRefreshStyle')}
                                  onClick={handleInspectorClick('buttonRefreshStyle')}>
                                 <button className={"show-refresh-button"}
                                         style={getViewTicketRefreshButtonStyle(attributes)}>
@@ -52,7 +52,7 @@ export default function ViewTicket(props) {
                                 </button>
                             </div>
 
-                            <div className={"show-ticket-button-groups-btn" + getActiveClass('viewTicketButtonAllStyle')}
+                            <div className={"show-ticket-button-groups-btn fst-hover-for-select" + getActiveClass('viewTicketButtonAllStyle')}
                                  onClick={handleInspectorClick('viewTicketButtonAllStyle')}>
                                 <a
                                     onClick={showTicketsList}
@@ -62,7 +62,7 @@ export default function ViewTicket(props) {
                                 </a>
                             </div>
 
-                            <div className={"show-ticket-button-groups-btn" + getActiveClass('buttonCloseTicketStyle')}
+                            <div className={"show-ticket-button-groups-btn fst-hover-for-select" + getActiveClass('buttonCloseTicketStyle')}
                                  onClick={handleInspectorClick('buttonCloseTicketStyle')}>
                                 <button
                                     className={"show-close-button"}
@@ -76,7 +76,7 @@ export default function ViewTicket(props) {
                     </hgroup>
                 </div>
             </div>
-            <div className={'show-ticket-body' + getActiveClass('viewTicketBodyStyle')} style={getViewTicketPageBodyStyle(attributes)}
+            <div className={'show-ticket-body fst-hover-for-select' + getActiveClass('viewTicketBodyStyle')} style={getViewTicketPageBodyStyle(attributes)}
                  onClick={() => toggleInspector('viewTicketBodyStyle')}>
                 <div className={'show-reply-box'}>
                         <textarea className="show-reply-text"
@@ -86,7 +86,7 @@ export default function ViewTicket(props) {
                 <div className="show-threads-container" style={getViewTicketPageBodyStyle(attributes)}>
                     <article className="show-thread fs_cc_customer fs_conv_type_response" style={getViewTicketThreadFollowerTailStyle(attributes)}
                     >
-                        <div className={"fs_thread_follower_style" + getActiveClass('ribbonThreadFollowerStyle')} onClick={handleInspectorClick('ribbonThreadFollowerStyle')}>
+                        <div className={"fs_thread_follower_style fst-hover-for-select" + getActiveClass('ribbonThreadFollowerStyle')} onClick={handleInspectorClick('ribbonThreadFollowerStyle')}>
                             <span className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketThreadFollowerStyle(attributes)}>
                                 Thread Follower
                             </span>
@@ -114,7 +114,7 @@ export default function ViewTicket(props) {
                     </article>
                     <article className="show-thread fs_customer fs_conv_type_response" style={getViewTicketThreadStarterTailStyle(attributes)}
                     >
-                        <div className={"fs_thread_starter_style" + getActiveClass('ribbonThreadStarterStyle')}  onClick={handleInspectorClick('ribbonThreadStarterStyle')}>
+                        <div className={"fs_thread_starter_style fst-hover-for-select" + getActiveClass('ribbonThreadStarterStyle')}  onClick={handleInspectorClick('ribbonThreadStarterStyle')}>
                             <span className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketThreadStarterStyle(attributes)}>
                                 Thread Starter
                             </span>
@@ -141,7 +141,7 @@ export default function ViewTicket(props) {
                         </div>
                     </article>
                     <article className={"show-thread fs_agent fs_conv_type_response"} style={getViewTicketAgentThreadRibbonTailStyle(attributes)}>
-                        <div className={"fs_thread_ribbon_agent_style" + getActiveClass('ribbonSupportStaffStyle')} onClick={handleInspectorClick('ribbonSupportStaffStyle')}>
+                        <div className={"fs_thread_ribbon_agent_style fst-hover-for-select" + getActiveClass('ribbonSupportStaffStyle')} onClick={handleInspectorClick('ribbonSupportStaffStyle')}>
                             <span className={"fs_thread_ribbon fs_thread_ribbon_agent"} style={getViewTicketAgentThreadRibbonHeaderStyle(attributes)}>Support Staff</span>
                         </div>
                         <div className="show-thread-content">

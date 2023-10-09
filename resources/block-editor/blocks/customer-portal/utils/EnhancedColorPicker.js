@@ -4,7 +4,7 @@ const { Dropdown, ColorPicker, Button } = wp.components;
 import { getColor, colors } from './Helper';
 
 export default function EnhancedColorPicker({attributes, setAttributes, props}) {
-    const { title, attributeName } = props;console.log("Make color Plate for " + attributeName);
+    const { title, attributeName } = props;
     // Function to handle color change
     const handleColorChange = (value) => {
         // Check if the color has an alpha of 1 (fully opaque)
