@@ -20,6 +20,14 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'filterButtonActiveBgColor' => [
+                'type' => 'string',
+                'default' => '#409eff',
+            ],
+            'filterButtonActiveTextColor' => [
+                'type' => 'string',
+                'default' => '#ffffff',
+            ],
             'filterButtonAllBorderColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
@@ -860,10 +868,10 @@ class BlockHelper
             #fluent_support_client_app {
             /*Tickets List style*/
                 .fs_button_groups > .fs_btn_active {
-                    background-color: #409eff;
                     border-color: #409eff;
                     box-shadow: -1px 0 0 0 #409eff;
-                    color: #fff;
+                    background-color: <?php echo esc_attr($attributes['filterButtonActiveBgColor'] ?? '#409eff'); ?>;
+                    color: <?php echo esc_attr($attributes['filterButtonActiveTextColor'] ?? '#ffffff'); ?>;
                 }
                 .fst_tickets .fs_all_tickets .fs_tk_header {
                     background-color: <?php echo esc_attr($attributes['allTicketsHeaderBgColor'] ?? '#ebeef4'); ?>;
@@ -888,7 +896,6 @@ class BlockHelper
                     <?php echo self::getBorderStyle('filterButtonClosedBorder', $attributes)?>
                     <?php echo self::getBorderRadiusStyle('filterButtonClosedBorder', $attributes)?>
                 }
-
                 .fs_btn_logout {
                     background-color: <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
                     color: <?php echo esc_attr($attributes['allTicketsLogoutButtonTextColor']); ?>;

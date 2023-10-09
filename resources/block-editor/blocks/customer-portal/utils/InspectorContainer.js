@@ -1,3 +1,4 @@
+import FilterButtonGroupStyle from "../inspectors/AllTickets/Style/FilterButtonGroupStyle";
 import ButtonAllStyle from "../inspectors/AllTickets/Style/ButtonAllStyle";
 import ButtonOpenStyle from "../inspectors/AllTickets/Style/ButtonOpenStyle";
 import ButtonClosedStyle from "../inspectors/AllTickets/Style/ButtonClosedStyle";
@@ -45,6 +46,7 @@ import ButtonClickToUploadAdvanced from "../inspectors/CreateTicket/Advanced/But
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
         //View All tickets
+        filterButtonActiveStyle: FilterButtonGroupStyle({attributes, setAttributes}),
         buttonAllStyle: ButtonAllStyle({attributes, setAttributes}),
         buttonAllAdvanced: ButtonAllAdvanced({attributes, setAttributes}),
         buttonOpenStyle: ButtonOpenStyle({attributes, setAttributes}),
