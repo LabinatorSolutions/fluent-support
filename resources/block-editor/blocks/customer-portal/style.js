@@ -73,7 +73,6 @@ export const getAllTicketsLogoutButtonStyle = (attributes) => ({
 export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
     color: attributes.buttonCreateTicketTextColor,
     background: attributes.buttonCreateTicketBgColor,
-    border: attributes.buttonCreateTicketBorderWidth + 'px solid ' + attributes.buttonCreateTicketBgColor,
     borderTop: attributes.allTicketsCreateTicketButtonBorderWidthTop + 'px solid ' + attributes.allTicketsCreateTicketButtonBorderColor,
     borderRight: attributes.allTicketsCreateTicketButtonBorderWidthRight + 'px solid ' + attributes.allTicketsCreateTicketButtonBorderColor,
     borderBottom: attributes.allTicketsCreateTicketButtonBorderWidthBottom + 'px solid ' + attributes.allTicketsCreateTicketButtonBorderColor,
