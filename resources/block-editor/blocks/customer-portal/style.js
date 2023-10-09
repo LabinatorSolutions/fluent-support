@@ -210,7 +210,14 @@ export const getCreateTicketViewAllButtonStyle = (attributes)  =>({
     background: attributes.createTicketViewAllButtonBgColor,
     color: attributes.createTicketViewAllButtonTextColor,
     border: attributes.createTicketViewAllButtonBorderWidth + 'px solid ' + attributes.createTicketViewAllButtonBgColor,
-    borderRadius: attributes.createTicketViewAllButtonBorderRadius + 'px',
+    borderTop: attributes.createTicketViewAllButtonBorderWidthTop + 'px solid ' + attributes.createTicketViewAllButtonBorderColor,
+    borderRight: attributes.createTicketViewAllButtonBorderWidthRight + 'px solid ' + attributes.createTicketViewAllButtonBorderColor,
+    borderBottom: attributes.createTicketViewAllButtonBorderWidthBottom + 'px solid ' + attributes.createTicketViewAllButtonBorderColor,
+    borderLeft: attributes.createTicketViewAllButtonBorderWidthLeft + 'px solid ' + attributes.createTicketViewAllButtonBorderColor,
+    borderTopLeftRadius: attributes.createTicketViewAllButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.createTicketViewAllButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.createTicketViewAllButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.createTicketViewAllButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getCreateTicketBodyStyle = (attributes)  =>({
@@ -230,14 +237,27 @@ export const getCreateTicketUploadButtonStyle = (attributes) =>({
     color: attributes.createTicketUploadButtonTextColor,
     background: attributes.createTicketUploadButtonBgColor,
     border: attributes.createTicketUploadButtonBorderWidth + 'px solid ' + attributes.createTicketUploadButtonBgColor,
-    borderRadius: attributes.createTicketUploadButtonBorderRadius + 'px',
+    borderTop: attributes.createTicketUploadButtonBorderWidthTop + 'px solid ' + attributes.createTicketUploadButtonBorderColor,
+    borderRight: attributes.createTicketUploadButtonBorderWidthRight + 'px solid ' + attributes.createTicketUploadButtonBorderColor,
+    borderBottom: attributes.createTicketUploadButtonBorderWidthBottom + 'px solid ' + attributes.createTicketUploadButtonBorderColor,
+    borderLeft: attributes.createTicketUploadButtonBorderWidthLeft + 'px solid ' + attributes.createTicketUploadButtonBorderColor,
+    borderTopLeftRadius: attributes.createTicketUploadButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.createTicketUploadButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.createTicketUploadButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.createTicketUploadButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getCreateTicketCreateButtonStyle = (attributes) =>({
     color: attributes.createTicketCreateButtonTextColor,
     background: attributes.createTicketCreateButtonBgColor,
-    border: attributes.createTicketCreateButtonBorderWidth + 'px solid ' + attributes.createTicketCreateButtonBgColor,
-    borderRadius: attributes.createTicketCreateButtonBorderRadius + 'px',
+    borderTop: attributes.createTicketCreateButtonBorderWidthTop + 'px solid ' + attributes.createTicketCreateButtonBorderColor,
+    borderRight: attributes.createTicketCreateButtonBorderWidthRight + 'px solid ' + attributes.createTicketCreateButtonBorderColor,
+    borderBottom: attributes.createTicketCreateButtonBorderWidthBottom + 'px solid ' + attributes.createTicketCreateButtonBorderColor,
+    borderLeft: attributes.createTicketCreateButtonBorderWidthLeft + 'px solid ' + attributes.createTicketCreateButtonBorderColor,
+    borderTopLeftRadius: attributes.createTicketCreateButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.createTicketCreateButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.createTicketCreateButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.createTicketCreateButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getAllTicketsTableHeaderStyle = (attributes) =>({
