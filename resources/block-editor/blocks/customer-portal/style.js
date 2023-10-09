@@ -11,35 +11,77 @@ export const getAllTicketsAllButtonStyle = (attributes) => ({
     color: attributes.filterButtonAllTextColor,
     background: attributes.filterButtonAllBgColor,
     border: attributes.filterButtonAllBorderWidth + 'px solid ' + attributes.filterButtonAllBgColor,
-    borderRadius: attributes.filterButtonAllBorderRadius + 'px'
+    // borderColor: attributes.filterButtonAllBorderColor,
+    // borderRadius: attributes.filterButtonAllBorderRadius + 'px',
+
+    borderTop: attributes.filterButtonAllBorderWidthTop + 'px solid ' + attributes.filterButtonAllBorderColor,
+    borderRight: attributes.filterButtonAllBorderWidthRight + 'px solid ' + attributes.filterButtonAllBorderColor,
+    borderBottom: attributes.filterButtonAllBorderWidthBottom + 'px solid ' + attributes.filterButtonAllBorderColor,
+    borderLeft: attributes.filterButtonAllBorderWidthLeft + 'px solid ' + attributes.filterButtonAllBorderColor,
+    borderTopLeftRadius: attributes.filterButtonAllBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.filterButtonAllBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.filterButtonAllBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.filterButtonAllBorderRadiusBottomLeft + 'px',
 });
 
 export const getAllTicketsOpenButtonStyle = (attributes) => ({
     color: attributes.filterButtonOpenTextColor,
     background: attributes.filterButtonOpenBgColor,
     border: attributes.filterButtonOpenBorderWidth + 'px solid ' + attributes.filterButtonOpenBgColor,
-    borderRadius: attributes.filterButtonOpenBorderRadius + 'px',
+    // borderRadius: attributes.filterButtonOpenBorderRadius + 'px',
+
+    borderTop: attributes.filterButtonOpenBorderWidthTop + 'px solid ' + attributes.filterButtonOpenBorderColor,
+    borderRight: attributes.filterButtonOpenBorderWidthRight + 'px solid ' + attributes.filterButtonOpenBorderColor,
+    borderBottom: attributes.filterButtonOpenBorderWidthBottom + 'px solid ' + attributes.filterButtonOpenBorderColor,
+    borderLeft: attributes.filterButtonOpenBorderWidthLeft + 'px solid ' + attributes.filterButtonOpenBorderColor,
+    borderTopLeftRadius: attributes.filterButtonOpenBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.filterButtonOpenBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.filterButtonOpenBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.filterButtonOpenBorderRadiusBottomLeft + 'px',
 });
 
 export const getAllTicketsClosedButtonStyle = (attributes) => ({
     color: attributes.filterButtonClosedTextColor,
     background: attributes.filterButtonClosedBgColor,
     border: attributes.filterButtonClosedBorderWidth + 'px solid ' + attributes.filterButtonClosedBgColor,
-    borderRadius: attributes.filterButtonClosedBorderRadius + 'px',
+    // borderRadius: attributes.filterButtonClosedBorderRadius + 'px',
+
+    borderTop: attributes.filterButtonClosedBorderWidthTop + 'px solid ' + attributes.filterButtonClosedBorderColor,
+    borderRight: attributes.filterButtonClosedBorderWidthRight + 'px solid ' + attributes.filterButtonClosedBorderColor,
+    borderBottom: attributes.filterButtonClosedBorderWidthBottom + 'px solid ' + attributes.filterButtonClosedBorderColor,
+    borderLeft: attributes.filterButtonClosedBorderWidthLeft + 'px solid ' + attributes.filterButtonClosedBorderColor,
+    borderTopLeftRadius: attributes.filterButtonClosedBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.filterButtonClosedBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.filterButtonClosedBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.filterButtonClosedBorderRadiusBottomLeft + 'px',
 });
 
 export const getAllTicketsLogoutButtonStyle = (attributes) => ({
     color: attributes.allTicketsLogoutButtonTextColor,
     background: attributes.allTicketsLogoutButtonBgColor,
     border: attributes.allTicketsLogoutButtonBorderWidth + 'px solid ' + attributes.allTicketsLogoutButtonBgColor,
-    borderRadius: attributes.allTicketsLogoutButtonBorderRadius + 'px',
+    borderTop: attributes.allTicketsLogoutButtonBorderWidthTop + 'px solid ' + attributes.allTicketsLogoutButtonBorderColor,
+    borderRight: attributes.allTicketsLogoutButtonBorderWidthRight + 'px solid ' + attributes.allTicketsLogoutButtonBorderColor,
+    borderBottom: attributes.allTicketsLogoutButtonBorderWidthBottom + 'px solid ' + attributes.allTicketsLogoutButtonBorderColor,
+    borderLeft: attributes.allTicketsLogoutButtonBorderWidthLeft + 'px solid ' + attributes.allTicketsLogoutButtonBorderColor,
+    borderTopLeftRadius: attributes.allTicketsLogoutButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.allTicketsLogoutButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.allTicketsLogoutButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.allTicketsLogoutButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getAllTicketsCreateTicketButtonStyle = (attributes) => ({
     color: attributes.buttonCreateTicketTextColor,
     background: attributes.buttonCreateTicketBgColor,
     border: attributes.buttonCreateTicketBorderWidth + 'px solid ' + attributes.buttonCreateTicketBgColor,
-    borderRadius: attributes.buttonCreateTicketBorderRadius + 'px',
+    borderTop: attributes.allTicketsCreateTicketButtonBorderWidthTop + 'px solid ' + attributes.allTicketsCreateTicketButtonBorderColor,
+    borderRight: attributes.allTicketsCreateTicketButtonBorderWidthRight + 'px solid ' + attributes.allTicketsCreateTicketButtonBorderColor,
+    borderBottom: attributes.allTicketsCreateTicketButtonBorderWidthBottom + 'px solid ' + attributes.allTicketsCreateTicketButtonBorderColor,
+    borderLeft: attributes.allTicketsCreateTicketButtonBorderWidthLeft + 'px solid ' + attributes.allTicketsCreateTicketButtonBorderColor,
+    borderTopLeftRadius: attributes.allTicketsCreateTicketButtonBorderRadiusTopLeft + 'px',
+    borderTopRightRadius: attributes.allTicketsCreateTicketButtonBorderRadiusTopRight + 'px',
+    borderBottomRightRadius: attributes.allTicketsCreateTicketButtonBorderRadiusBottomRight + 'px',
+    borderBottomLeftRadius: attributes.allTicketsCreateTicketButtonBorderRadiusBottomLeft + 'px',
 });
 
 export const getAllTicketsFooterStyle = (attributes)  =>({
