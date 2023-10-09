@@ -25,7 +25,7 @@ export default function FilterButtonGroupStyle({ attributes, setAttributes}) {
                 setAttributes={setAttributes}
                 props={{
                     title: __('Border Color', 'fluent-support'),
-                    attributeName: 'filterButtonAllBorderColor',
+                    attributeName: 'filterButtonActiveBorderColor',
                 }}
             />
         </PanelBody>

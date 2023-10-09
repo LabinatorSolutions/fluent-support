@@ -24,6 +24,10 @@ class BlockHelper
                 'type' => 'string',
                 'default' => '#409eff',
             ],
+            'filterButtonActiveBorderColor' => [
+                'type' => 'string',
+                'default' => '#dcdfe6',
+            ],
             'filterButtonActiveTextColor' => [
                 'type' => 'string',
                 'default' => '#ffffff',
@@ -83,6 +87,10 @@ class BlockHelper
             'filterButtonOpenBorderWidth' => [
                 'type' => 'number',
                 'default' => 0,
+            ],
+            'filterButtonOpenBorderColor' => [
+                'type' => 'string',
+                'default' => '#fff',
             ],
             'filterButtonOpenBorderWidthTop' => [
                 'type' => 'number',
@@ -868,8 +876,8 @@ class BlockHelper
             #fluent_support_client_app {
             /*Tickets List style*/
                 .fs_button_groups > .fs_btn_active {
-                    border-color: #409eff;
-                    box-shadow: -1px 0 0 0 #409eff;
+                    border-color: <?php echo esc_attr($attributes['filterButtonActiveBorderColor'] ?? '#409eff'); ?>;
+                    box-shadow: -1px 0 0 0 <?php echo esc_attr($attributes['filterButtonActiveBorderColor'] ?? '#409eff'); ?>;
                     background-color: <?php echo esc_attr($attributes['filterButtonActiveBgColor'] ?? '#409eff'); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonActiveTextColor'] ?? '#ffffff'); ?>;
                 }
