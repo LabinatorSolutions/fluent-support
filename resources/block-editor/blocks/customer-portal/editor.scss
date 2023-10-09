@@ -395,14 +395,13 @@
         margin-top: -10px;
         margin-left: -25px;
         .all-tickets-button-groups{
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 5px 5px 0 5px;
+            padding: 10px 0 0 20px;
         }
         .all-tickets-button-groups-btn{
-            padding: 6px;
-            position: relative;
+            display: inline-block;
+            line-height: 1;
+            vertical-align: middle;
         }
         .all-tickets-button-groups-btn:hover {
             border: 1px solid rgb(64, 158, 255);
@@ -415,7 +414,7 @@
         float: right;
 
         .all-tickets-action-button-group{
-            padding: 6px;
+            padding: 0 6px;
             position: relative;
         }
         .all-tickets-action-button-group:hover {
