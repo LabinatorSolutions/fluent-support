@@ -46,19 +46,19 @@ class BlockHelper
             ],
             'filterButtonAllBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonAllBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonAllBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonAllBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 4,
             ],
             'filterButtonAllBorderWidth' => [
                 'type' => 'number',
