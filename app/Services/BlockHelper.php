@@ -233,6 +233,10 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 4,
             ],
+            'allTicketsCreateTicketButtonBorderColor' => [
+                'type' => 'string',
+                'default' => '#67c23a',
+            ],
             'allTicketsCreateTicketButtonBorderWidth' => [
                 'type' => 'number',
                 'default' => 0,
@@ -252,6 +256,10 @@ class BlockHelper
             'allTicketsCreateTicketButtonBorderWidthLeft' => [
                 'type' => 'number',
                 'default' => 1,
+            ],
+            'allTicketsCreateTicketButtonBorderRadius' => [
+                'type' => 'number',
+                'default' => 4,
             ],
             'allTicketsCreateTicketButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
@@ -779,8 +787,14 @@ class BlockHelper
                 .fs_btn_create_ticket {
                     background-color:<?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
                     color:<?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
-                    border: <?php echo esc_attr($attributes['buttonCreateTicketBorderWidth']); ?>px solid <?php echo esc_attr($attributes['buttonCreateTicketBgColor'] ?? '#ffffff'); ?>;
-                    border-radius: <?php echo esc_attr($attributes['buttonCreateTicketBorderRadius']); ?>px;
+                    border-top: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
+                    border-right: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
+                    border-bottom: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
+                    border-left: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
+                    border-top-right-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusTopLeft']); ?>px;
+                    border-top-left-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusTopLeft']); ?>px;
+                    border-bottom-right-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusBottomRight']); ?>px;
+                    border-bottom-left-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusBottomLeft']); ?>px;
                 }
 
                 .fs_table thead{
