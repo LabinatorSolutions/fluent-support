@@ -3,7 +3,6 @@
 namespace FluentSupport\App\Services;
 
 //use function GuzzleHttp\default_ca_bundle;
-
 class BlockHelper
 {
     public static function CustomerPortalBlockAttributes()
@@ -866,47 +865,41 @@ class BlockHelper
                     box-shadow: -1px 0 0 0 #409eff;
                     color: #fff;
                 }
-            .fst_tickets .fs_all_tickets .fs_tk_header {
+                .fst_tickets .fs_all_tickets .fs_tk_header {
                     background-color: <?php echo esc_attr($attributes['allTicketsHeaderBgColor'] ?? '#ebeef4'); ?>;
-                    border-radius: <?php echo esc_attr($attributes['allTicketsHeaderRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['allTicketsHeaderRadiusTopRight']); ?>px <?php echo esc_attr($attributes['allTicketsHeaderRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['allTicketsHeaderRadiusBottomLeft']); ?>px;
+                    <?php echo self::getBorderRadiusStyle('allTicketsHeader', $attributes)?>
                 }
                 .fs_btn_all {
                     background-color: <?php echo esc_attr($attributes['filterButtonAllBgColor'] ?? '#409eff'); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonAllTextColor'] ?? '#ffffff'); ?>;
                     box-shadow: 1px 0 0 0 <?php echo esc_attr($attributes['filterButtonAllBgColor'] ?? '#409eff'); ?>;
-                    border: <?php echo esc_attr($attributes['filterButtonAllBorderWidth']); ?>px solid <?php echo esc_attr($attributes['filterButtonAllBgColor'] ?? '#ffffff'); ?>;
-                    border-radius: <?php echo esc_attr($attributes['filterButtonAllBorderRadius']); ?>px;
+                    <?php echo self::getBorderStyle('filterButtonAllBorder', $attributes)?>
+                    <?php echo self::getBorderRadiusStyle('filterButtonAllBorder', $attributes)?>
                 }
                 .fs_btn_open {
                     background-color: <?php echo esc_attr($attributes['filterButtonOpenBgColor'] ?? '#ffffff'); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonOpenTextColor'] ?? '#606266'); ?>;
-                    border: <?php echo esc_attr($attributes['filterButtonOpenBorderWidth']); ?>px solid <?php echo esc_attr($attributes['filterButtonOpenBgColor'] ?? '#ffffff'); ?>;
-                    border-radius: <?php echo esc_attr($attributes['filterButtonOpenBorderRadius']); ?>px;
+                    <?php echo self::getBorderStyle('filterButtonOpenBorder', $attributes)?>
+                    <?php echo self::getBorderRadiusStyle('filterButtonOpenBorder', $attributes)?>
                 }
                 .fs_btn_closed {
                     background-color: <?php echo esc_attr($attributes['filterButtonClosedBgColor']); ?>;
                     color: <?php echo esc_attr($attributes['filterButtonClosedTextColor']); ?>;
-                    border: <?php echo esc_attr($attributes['filterButtonClosedBorderWidth']); ?>px solid <?php echo esc_attr($attributes['filterButtonClosedBgColor'] ?? '#ffffff'); ?>;
-                    border-radius: <?php echo esc_attr($attributes['filterButtonClosedBorderRadius']); ?>px;
+                    <?php echo self::getBorderStyle('filterButtonClosedBorder', $attributes)?>
+                    <?php echo self::getBorderRadiusStyle('filterButtonClosedBorder', $attributes)?>
                 }
 
                 .fs_btn_logout {
                     background-color: <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
                     color: <?php echo esc_attr($attributes['allTicketsLogoutButtonTextColor']); ?>;
-                    border: <?php echo esc_attr($attributes['allTicketsLogoutButtonBorderWidth']); ?>px solid <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor'] ?? '#ffffff'); ?>;
-                    border-radius: <?php echo esc_attr($attributes['allTicketsLogoutButtonBorderRadius']); ?>px;
+                    <?php echo self::getBorderStyle('allTicketsLogoutButtonBorder', $attributes)?>
+                    <?php echo self::getBorderRadiusStyle('allTicketsLogoutButtonBorder', $attributes)?>
                 }
                 .fs_btn_create_ticket {
                     background-color:<?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
                     color:<?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
-                    border-top: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
-                    border-right: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
-                    border-bottom: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
-                    border-left: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderColor'] ?? '#ffffff'); ?>;
-                    border-top-right-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusTopLeft']); ?>px;
-                    border-top-left-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusTopLeft']); ?>px;
-                    border-bottom-right-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusBottomRight']); ?>px;
-                    border-bottom-left-radius: <?php echo esc_attr($attributes['allTicketsCreateTicketButtonBorderRadiusBottomLeft']); ?>px;
+                    <?php echo self::getBorderStyle('allTicketsCreateTicketButtonBorder', $attributes)?>
+                    <?php echo self::getBorderRadiusStyle('allTicketsCreateTicketButtonBorder', $attributes)?>
                 }
 
                 .fs_table thead{
@@ -927,14 +920,10 @@ class BlockHelper
                 }
 
             /*View Ticket style*/
-
             .fst_client_portal .fs_ticket .fs_tk_header {
                 background-color: <?php echo esc_attr($attributes['viewTicketHeaderStyleBgColor']); ?>;
-                border-top: <?php echo esc_attr($attributes['viewTicketHeaderBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['viewTicketHeaderBorderColor'] ?? '#ebeef4'); ?>;
-                border-right: <?php echo esc_attr($attributes['viewTicketHeaderBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['viewTicketHeaderBorderColor'] ?? '#ebeef4'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['viewTicketHeaderBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['viewTicketHeaderBorderColor'] ?? '#ebeef4'); ?>;
-                border-left: <?php echo esc_attr($attributes['viewTicketHeaderBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['viewTicketHeaderBorderColor'] ?? '#ebeef4'); ?>;
-                border-radius: <?php echo esc_attr($attributes['viewTicketHeaderRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusTopRight']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['viewTicketHeaderRadiusBottomLeft']); ?>px;
+                <?php echo self::getBorderStyle('viewTicketHeaderBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('viewTicketHeaderBorder', $attributes)?>
             }
 
             .fst_client_portal .fs_th_header .fs_tk_subject h2 {
@@ -948,40 +937,22 @@ class BlockHelper
             .fs_refresh_button {
                 background-color: <?php echo esc_attr($attributes['refreshButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['refreshButtonTextColor']); ?>;
-                border-top: <?php echo esc_attr($attributes['refreshButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['refreshButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-right: <?php echo esc_attr($attributes['refreshButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['refreshButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['refreshButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['refreshButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-left: <?php echo esc_attr($attributes['refreshButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['refreshButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-top-left-radius: <?php echo esc_attr($attributes['refreshButtonBorderRadiusTopLeft']); ?>px;
-                border-top-right-radius: <?php echo esc_attr($attributes['refreshButtonBorderRadiusTopRight']); ?>px;
-                border-bottom-right-radius: <?php echo esc_attr($attributes['refreshButtonBorderRadiusBottomRight']); ?>px;
-                border-bottom-left-radius: <?php echo esc_attr($attributes['refreshButtonBorderRadiusBottomLeft']); ?>px;
+                <?php echo self::getBorderStyle('refreshButtonBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('refreshButtonBorder', $attributes)?>
             }
 
             .fs_all_button {
                 background-color: <?php echo esc_attr($attributes['allButtonBgColor'] ?? '#ffffff'); ?>;
                 color: <?php echo esc_attr($attributes['allButtonTextColor']); ?>;
-                border-top: <?php echo esc_attr($attributes['allButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['allButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-right: <?php echo esc_attr($attributes['allButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['allButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['allButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['allButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-left: <?php echo esc_attr($attributes['allButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['allButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-top-left-radius: <?php echo esc_attr($attributes['allButtonBorderRadiusTopLeft']); ?>px;
-                border-top-right-radius: <?php echo esc_attr($attributes['allButtonBorderRadiusTopRight']); ?>px;
-                border-bottom-right-radius: <?php echo esc_attr($attributes['allButtonBorderRadiusBottomRight']); ?>px;
-                border-bottom-left-radius: <?php echo esc_attr($attributes['allButtonBorderRadiusBottomLeft']); ?>px;
+                <?php echo self::getBorderStyle('allButtonBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('allButtonBorder', $attributes)?>
             }
 
             .fs_close_button {
                 background-color: <?php echo esc_attr($attributes['closeTicketButtonBgColor'] ?? '#f56c6c'); ?>;
                 color: <?php echo esc_attr($attributes['closeTicketButtonTextColor']); ?>;
-                border-top: <?php echo esc_attr($attributes['closeTicketButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['closeTicketButtonBorderColor'] ?? '#f56c6c'); ?>;
-                border-right: <?php echo esc_attr($attributes['closeTicketButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['closeTicketButtonBorderColor'] ?? '#f56c6c'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['closeTicketButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['closeTicketButtonBorderColor'] ?? '#f56c6c'); ?>;
-                border-left: <?php echo esc_attr($attributes['closeTicketButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['closeTicketButtonBorderColor'] ?? '#f56c6c'); ?>;
-                border-top-left-radius: <?php echo esc_attr($attributes['closeTicketButtonBorderRadiusTopLeft']); ?>px;
-                border-top-right-radius: <?php echo esc_attr($attributes['closeTicketButtonBorderRadiusTopRight']); ?>px;
-                border-bottom-right-radius: <?php echo esc_attr($attributes['closeTicketButtonBorderRadiusBottomRight']); ?>px;
-                border-bottom-left-radius: <?php echo esc_attr($attributes['closeTicketButtonBorderRadiusBottomLeft']); ?>px;
+                <?php echo self::getBorderStyle('closeTicketButtonBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('closeTicketButtonBorder', $attributes)?>
             }
 
             .fst_reply_box, .fs_threads_container {
@@ -1022,11 +993,8 @@ class BlockHelper
             /*Create Ticket style*/
             .fs_tk_create_head {
                 background-color:  <?php echo esc_attr($attributes['createTicketHeaderBgColor']); ?>;
-                border-radius: <?php echo esc_attr($attributes['createTicketHeaderRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['createTicketHeaderRadiusTopRight']); ?>px <?php echo esc_attr($attributes['createTicketHeaderRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['createTicketHeaderRadiusBottomLeft']); ?>px;
-                border-top: <?php echo esc_attr($attributes['createTicketHeaderBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['createTicketHeaderBgColor'] ?? '#ebeef4'); ?>;
-                border-right: <?php echo esc_attr($attributes['createTicketHeaderBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['createTicketHeaderBgColor'] ?? '#ebeef4'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['createTicketHeaderBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['createTicketHeaderBgColor'] ?? '#ebeef4'); ?>;
-                border-left: <?php echo esc_attr($attributes['createTicketHeaderBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['createTicketHeaderBgColor'] ?? '#ebeef4'); ?>;
+                <?php echo self::getBorderStyle('createTicketHeaderBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('createTicketHeader', $attributes)?>
             }
 
             .fs_tk_left h3 {
@@ -1036,14 +1004,8 @@ class BlockHelper
             .fs_tk_right .fs_view_all_button {
                 background-color:  <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketViewAllButtonTextColor']); ?>;
-                border-top: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['createTicketViewAllButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-right: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['createTicketViewAllButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['createTicketViewAllButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-left: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['createTicketViewAllButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-top-left-radius: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderRadiusTopLeft']); ?>px;
-                border-top-right-radius: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderRadiusTopRight']); ?>px;
-                border-bottom-right-radius: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderRadiusBottomRight']); ?>px;
-                border-bottom-left-radius: <?php echo esc_attr($attributes['createTicketViewAllButtonBorderRadiusBottomLeft']); ?>px;
+                <?php echo self::getBorderStyle('createTicketViewAllButtonBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('createTicketViewAllButtonBorder', $attributes)?>
             }
 
             .fs_tk_body {
@@ -1061,30 +1023,35 @@ class BlockHelper
             .fs_attachment_button {
                 background-color:  <?php echo esc_attr($attributes['createTicketUploadButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketUploadButtonTextColor']); ?>;
-                border-top: <?php echo esc_attr($attributes['createTicketUploadButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['createTicketUploadButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-right: <?php echo esc_attr($attributes['createTicketUploadButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['createTicketUploadButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['createTicketUploadButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['createTicketUploadButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-left: <?php echo esc_attr($attributes['createTicketUploadButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['createTicketUploadButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-top-left-radius: <?php echo esc_attr($attributes['createTicketUploadButtonBorderRadiusTopLeft']); ?>px;
-                border-top-right-radius: <?php echo esc_attr($attributes['createTicketUploadButtonBorderRadiusTopRight']); ?>px;
-                border-bottom-right-radius: <?php echo esc_attr($attributes['createTicketUploadButtonBorderRadiusBottomRight']); ?>px;
-                border-bottom-left-radius: <?php echo esc_attr($attributes['createTicketUploadButtonBorderRadiusBottomLeft']); ?>px;
+                <?php echo self::getBorderStyle('createTicketUploadButtonBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('createTicketUploadButtonBorder', $attributes)?>
             }
 
             .fs_create_button {
                 background-color:  <?php echo esc_attr($attributes['createTicketCreateButtonBgColor']); ?>;
                 color: <?php echo esc_attr($attributes['createTicketCreateButtonTextColor']); ?>;
-                border-top: <?php echo esc_attr($attributes['createTicketCreateButtonBorderWidthTop']); ?>px solid <?php echo esc_attr($attributes['createTicketCreateButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-right: <?php echo esc_attr($attributes['createTicketCreateButtonBorderWidthRight']); ?>px solid <?php echo esc_attr($attributes['createTicketCreateButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-bottom: <?php echo esc_attr($attributes['createTicketCreateButtonBorderWidthBottom']); ?>px solid <?php echo esc_attr($attributes['createTicketCreateButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-left: <?php echo esc_attr($attributes['createTicketCreateButtonBorderWidthLeft']); ?>px solid <?php echo esc_attr($attributes['createTicketCreateButtonBorderColor'] ?? '#ffffff'); ?>;
-                border-top-left-radius: <?php echo esc_attr($attributes['createTicketCreateButtonBorderRadiusTopLeft']); ?>px;
-                border-top-right-radius: <?php echo esc_attr($attributes['createTicketCreateButtonBorderRadiusTopRight']); ?>px;
-                border-bottom-right-radius: <?php echo esc_attr($attributes['createTicketCreateButtonBorderRadiusBottomRight']); ?>px;
-                border-bottom-left-radius: <?php echo esc_attr($attributes['createTicketCreateButtonBorderRadiusBottomLeft']); ?>px;
-            }
-
-            }
+                <?php echo self::getBorderStyle('createTicketCreateButtonBorder', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('createTicketCreateButtonBorder', $attributes)?>
+            } }
         </style>
     <?php }
+
+    public static function getBorderStyle($parentName, $attributes)
+    {
+        $borderStyle = '';
+        $borderStyle .= 'border-top: ' . $attributes[$parentName . 'WidthTop'] . 'px solid ' . $attributes[$parentName . 'Color'] . ';';
+        $borderStyle .= 'border-right: ' . $attributes[$parentName . 'WidthRight'] . 'px solid ' . $attributes[$parentName . 'Color'] . ';';
+        $borderStyle .= 'border-bottom: ' . $attributes[$parentName . 'WidthBottom'] . 'px solid ' . $attributes[$parentName . 'Color'] . ';';
+        $borderStyle .= 'border-left: ' . $attributes[$parentName . 'WidthLeft'] . 'px solid ' . $attributes[$parentName . 'Color'] . ';';
+        return $borderStyle;
+    }
+
+    public static function getBorderRadiusStyle($parentName, $attributes){
+        $borderRadius = '';
+        $borderRadius .= 'border-top-left-radius: ' . $attributes[$parentName . 'RadiusTopLeft'] . 'px;';
+        $borderRadius .= 'border-top-right-radius: ' . $attributes[$parentName . 'RadiusTopRight'] . 'px;';
+        $borderRadius .= 'border-bottom-right-radius: ' . $attributes[$parentName . 'RadiusBottomRight'] . 'px;';
+        $borderRadius .= 'border-bottom-left-radius: ' . $attributes[$parentName . 'RadiusBottomLeft'] . 'px;';
+        return $borderRadius;
+    }
 }
