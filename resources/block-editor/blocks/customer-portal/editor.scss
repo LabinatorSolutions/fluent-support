@@ -147,13 +147,9 @@
 
         }
     }
-    .fst-hover-for-select:hover{
-        border: 2px dashed rgb(7, 58, 110) !important;
-        cursor: pointer;
-    }
     .show-ticket-header:hover,
     .show-ticket-body:hover {
-        border: 1px solid rgb(64, 158, 255) !important;
+        border: 2px dashed rgb(66, 111, 202) !important;
         cursor: pointer;
     }
 
@@ -161,7 +157,7 @@
     .fs_thread_starter_style:hover,
     .fs_thread_follower_style:hover{
         padding: 0 6px 0 0;
-        border: 1px solid rgb(64, 158, 255) !important;
+        border: 2px dashed rgb(66, 111, 202) !important;
         cursor: pointer;
         display: inline-block;
     }
@@ -180,7 +176,7 @@
     }
 
     .show-ticket-button-groups-btn:hover {
-        border: 1px solid rgb(64, 158, 255);
+        border: 2px dashed rgb(66, 111, 202) !important;
         cursor: pointer;
     }
 
@@ -400,7 +396,7 @@
             padding: 5px 0;
         }
         .all-tickets-button-groups:hover{
-            border: 1px solid rgb(64, 158, 255);
+            border: 2px dashed rgb(66, 111, 202) !important;
             cursor: pointer;
         }
         .all-tickets-button-groups-btn{
@@ -409,7 +405,7 @@
             vertical-align: middle;
         }
         .all-tickets-button-groups-btn:hover {
-            border: 1px solid rgb(64, 158, 255);
+            border: 2px dashed rgb(66, 111, 202) !important;
             cursor: pointer;
         }
     }
@@ -423,7 +419,7 @@
             position: relative;
         }
         .all-tickets-action-button-group:hover {
-            border: 1px solid rgb(64, 158, 255);
+            border: 2px dashed rgb(66, 111, 202) !important;
             cursor: pointer;
         }
     }
@@ -436,16 +432,14 @@
     .all-tickets-header:hover,
     .all-tickets-table-header:hover,
     .all-tickets-footer:hover {
-        border: 1px solid rgb(64, 158, 255) !important;
+        border: 2px dashed rgb(66, 111, 202) !important;
         cursor: pointer;
     }
 
     .fst-block-active-components {
-        border: 1px dotted rgb(110 32 223) !important;
+        border: 2px solid rgb(66, 111, 202) !important;
         cursor: pointer;
     }
-
-
 }
 
 .customer-portal-block-wrapper {
@@ -504,7 +498,7 @@
     }
 
     .create-ticket-button-groups-btn:hover {
-        border: 1px solid rgb(64, 158, 255);
+        border: 2px dashed rgb(66, 111, 202) !important;
         cursor: pointer;
     }
 
@@ -598,7 +592,7 @@
     .create-ticket-header:hover,
     .create-ticket-body:hover,
     .create-ticket-form-style:hover{
-        border: 1px solid rgb(64, 158, 255) !important;
+        border: 2px dashed rgb(66, 111, 202) !important;
         cursor: pointer;
     }
 }
@@ -657,7 +651,7 @@
 
     .alignment-button:hover {
         color: #FFFFFF;
-        border: 2px solid #047AE7;
+        border: 2px solid rgb(66, 111, 202) !important;
     }
 }
 
@@ -752,7 +746,7 @@
         height: 40px;
 
         &:hover {
-            border: 2px solid #047AE7;
+            border: 2px solid rgb(66, 111, 202) !important;
         }
     }
 
