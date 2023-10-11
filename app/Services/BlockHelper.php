@@ -507,11 +507,11 @@ class BlockHelper
             ],
             'refreshButtonTextColor' => [
                 'type' => 'string',
-                'default' => '#000000',
+                'default' => '#606266',
             ],
             'refreshButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'refreshButtonBorderWidth' => [
                 'type' => 'number',
@@ -547,7 +547,7 @@ class BlockHelper
             ],
             'refreshButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 6,
+                'default' => 4,
             ],
             'refreshButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
@@ -563,7 +563,7 @@ class BlockHelper
             ],
             'allButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'allButtonBorderWidth' => [
                 'type' => 'number',
@@ -587,7 +587,7 @@ class BlockHelper
             ],
             'allButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 0,
             ],
             'allButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
@@ -599,7 +599,7 @@ class BlockHelper
             ],
             'allButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 6,
+                'default' => 4,
             ],
             'allButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
@@ -639,11 +639,11 @@ class BlockHelper
             ],
             'closeTicketButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 0,
             ],
             'closeTicketButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 3,
+                'default' => 4,
             ],
             'closeTicketButtonBorderRadiusTopRight' => [
                 'type' => 'number',
@@ -651,11 +651,11 @@ class BlockHelper
             ],
             'closeTicketButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 6,
+                'default' => 4,
             ],
             'closeTicketButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 7,
+                'default' => 4,
             ],
             'createTicketCreateButtonBgColor' => [
                 'type' => 'number',
@@ -716,11 +716,11 @@ class BlockHelper
             ],
             'viewTicketHeaderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 5,
             ],
             'viewTicketHeaderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 5,
             ],
             'viewTicketHeaderRadiusBottomLeft' => [
                 'type' => 'number',
@@ -792,7 +792,7 @@ class BlockHelper
             ],
             'ribbonSupportStaffTailWidth' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 4,
             ],
             'ribbonSupportStaffPadding' => [
                 'type' => 'number',
@@ -824,7 +824,7 @@ class BlockHelper
             ],
             'viewTicketThreadStarterTailWidth' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 4,
             ],
             'viewTicketThreadStarterPadding' => [
                 'type' => 'number',
@@ -856,7 +856,7 @@ class BlockHelper
             ],
             'viewTicketThreadFollowerTailWidth' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 4,
             ],
             'viewTicketThreadFollowerPadding' => [
                 'type' => 'number',
@@ -957,8 +957,8 @@ class BlockHelper
             /*View Ticket style*/
             .fst_client_portal .fs_ticket .fs_tk_header {
                 background-color: <?php echo esc_attr($attributes['viewTicketHeaderStyleBgColor']); ?>;
-                <?php echo self::getBorderStyle('viewTicketHeaderBorder', $attributes)?>
-                <?php echo self::getBorderRadiusStyle('viewTicketHeaderBorder', $attributes)?>
+                <?php echo self::getBorderStyle('viewTicketHeader', $attributes)?>
+                <?php echo self::getBorderRadiusStyle('viewTicketHeader', $attributes)?>
             }
 
             .fst_client_portal .fs_th_header .fs_tk_subject h2 {
