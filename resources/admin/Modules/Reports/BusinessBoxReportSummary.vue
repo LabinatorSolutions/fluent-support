@@ -164,7 +164,7 @@ export default {
             valueFormat: "YYYY-MM-DD",
             open_setting: false,
             include_or_exclude_agents: [],
-            include_or_exclude: "include", // Define if we are including or excluding agents, default is include
+            include_or_exclude: "include",
             open_export_options: false,
             repost_export_options: appVars.repost_export_options,
             selected_options: [],
@@ -176,16 +176,6 @@ export default {
             let reports = state.reports;
 
             const settings = getData("agents_summary_setting");
-
-            if (props.url != "my-reports/my-summary" && settings) {
-                let reportsToInclude = [];
-                each(reports, (report) => {
-                    if (settings.agents.includes(report.id)) {
-                        reportsToInclude.push(report);
-                    }
-                });
-                reports = reportsToInclude;
-            }
 
             if (state.sort_type == "ascending") {
                 return reports.sort((a, b) =>
