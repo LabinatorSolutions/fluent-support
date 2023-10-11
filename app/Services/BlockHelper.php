@@ -589,6 +589,22 @@ class BlockHelper
                 'type' => 'number',
                 'default' => 5,
             ],
+            'allButtonBorderRadiusTopLeft' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'allButtonBorderRadiusTopRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
+            'allButtonBorderRadiusBottomLeft' => [
+                'type' => 'number',
+                'default' => 6,
+            ],
+            'allButtonBorderRadiusBottomRight' => [
+                'type' => 'number',
+                'default' => 4,
+            ],
             'closeTicketButtonBgColor' => [
                 'type' => 'string',
                 'default' => '#f56c6c',
