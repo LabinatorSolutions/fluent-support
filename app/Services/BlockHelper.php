@@ -34,7 +34,7 @@ class BlockHelper
             ],
             'filterButtonAllBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'filterButtonAllBorderRadius' => [
                 'type' => 'number',
@@ -62,7 +62,7 @@ class BlockHelper
             ],
             'filterButtonAllBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonAllBorderRadiusBottomLeft' => [
                 'type' => 'number',
@@ -70,7 +70,7 @@ class BlockHelper
             ],
             'filterButtonAllBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonAllBorderWidth' => [
                 'type' => 'number',
@@ -90,7 +90,7 @@ class BlockHelper
             ],
             'filterButtonOpenBorderColor' => [
                 'type' => 'string',
-                'default' => '#fff',
+                'default' => '#dcdfe6',
             ],
             'filterButtonOpenBorderWidthTop' => [
                 'type' => 'number',
@@ -110,23 +110,23 @@ class BlockHelper
             ],
             'filterButtonOpenBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadius' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonClosedBgColor' => [
                 'type' => 'string',
@@ -138,7 +138,7 @@ class BlockHelper
             ],
             'filterButtonClosedBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'filterButtonClosedBorderRadius' => [
                 'type' => 'number',
@@ -162,7 +162,7 @@ class BlockHelper
             ],
             'filterButtonClosedBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonClosedBorderRadiusTopRight' => [
                 'type' => 'number',
@@ -170,7 +170,7 @@ class BlockHelper
             ],
             'filterButtonClosedBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonClosedBorderRadiusBottomRight' => [
                 'type' => 'number',
@@ -194,7 +194,7 @@ class BlockHelper
             ],
             'allTicketsLogoutButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#f56c6c',
+                'default' => '#dcdfe6',
             ],
             'allTicketsLogoutButtonBorderRadius' => [
                 'type' => 'number',
@@ -222,19 +222,19 @@ class BlockHelper
             ],
             'allTicketsLogoutButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsLogoutButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsLogoutButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsLogoutButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'buttonCreateTicketBgColor' => [
                 'type' => 'string',
@@ -250,7 +250,7 @@ class BlockHelper
             ],
             'allTicketsCreateTicketButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#67c23a',
+                'default' => '#dcdfe6',
             ],
             'allTicketsCreateTicketButtonBorderWidth' => [
                 'type' => 'number',
@@ -274,23 +274,23 @@ class BlockHelper
             ],
             'allTicketsCreateTicketButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'buttonCreateTicketBorderWidth' => [
                 'type' => 'number',
@@ -306,7 +306,7 @@ class BlockHelper
             ],
             'allTicketsTableHeaderTextAlign' => [
                 'type' => 'string',
-                'default' => 'center',
+                'default' => 'left',
             ],
             'allTicketsFooterBgColor' => [
                 'type' => 'string',
@@ -327,19 +327,19 @@ class BlockHelper
             ],
             'createTicketHeaderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'createTicketHeaderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'createTicketHeaderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'createTicketHeaderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'createTicketViewAllButtonBgColor' => [
                 'type' => 'string',
@@ -736,11 +736,11 @@ class BlockHelper
             ],
             'allTicketsHeaderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'allTicketsHeaderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'allTicketsHeaderRadiusBottomLeft' => [
                 'type' => 'number',
@@ -900,6 +900,10 @@ class BlockHelper
                 .fst_tickets .fs_all_tickets .fs_tk_header {
                     background-color: <?php echo esc_attr($attributes['allTicketsHeaderBgColor'] ?? '#ebeef4'); ?>;
                     <?php echo self::getBorderRadiusStyle('allTicketsHeader', $attributes)?>
+                }
+                .fst_tickets .fs_all_tickets .fs_tk_body {
+                    border-bottom-left-radius: <?php echo esc_attr($attributes['allTicketsFooterRadiusBottomLeft']);  ?>px;
+                    border-bottom-right-radius: <?php echo esc_attr($attributes['allTicketsFooterRadiusBottomRight']); ?>px;
                 }
                 .fs_btn_all {
                     background-color: <?php echo esc_attr($attributes['filterButtonAllBgColor'] ?? '#409eff'); ?>;
