@@ -399,7 +399,7 @@ class BlockHelper
             ],
             'createTicketCreateButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#909399',
+                'default' => '#67c23a',
             ],
             'createTicketCreateButtonBorderWidthTop' => [
                 'type' => 'number',
@@ -439,7 +439,7 @@ class BlockHelper
             ],
             'createTicketBodyBgColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#ebeef3',
             ],
             'createTicketInputLabelTextColor' => [
                 'type' => 'string',
