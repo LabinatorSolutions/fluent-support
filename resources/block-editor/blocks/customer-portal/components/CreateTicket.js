@@ -10,14 +10,21 @@ import {
     getCreateTicketCreateButtonStyle
 } from '../style';
 export default function CreateTicket(props) {
-    const {attributes, showTicketsList,toggleInspector, selectedInspector} = props;
-    const getActiveClass = (ind) => {
-        if (selectedInspector === ind) {
-            return ' fst-block-active-components';
-        }
-        return '';
-    }
+    const { attributes, showSection, toggleInspector, selectedInspector } = props;
+    /**
+     * Get the CSS class for an inspector based on whether it's active.
+     * @param {string} inspectorName - The name of the inspector.
+     * @returns {string} - The CSS class.
+     */
+    const getActiveClass = (inspectorName) => {
+        return selectedInspector === inspectorName ? ' fst-block-active-components' : '';
+    };
 
+    /**
+     * Handle clicking on an inspector element.
+     * @param {string} inspector - The inspector name to toggle.
+     * @returns {Function} - Event handler function.
+     */
     const handleInspectorClick = (inspector) => (e) => {
         e.stopPropagation();
         toggleInspector(inspector);
@@ -35,7 +42,7 @@ export default function CreateTicket(props) {
                          onClick={handleInspectorClick('buttonViewAllStyle')}
                     >
                         <button className={'create-ticket-view-all'} style={getCreateTicketViewAllButtonStyle(attributes)}
-                                onClick={() => showTicketsList()}>View All
+                                onClick={() =>  showSection('allTickets') }>View All
                         </button>
                     </div>
 
