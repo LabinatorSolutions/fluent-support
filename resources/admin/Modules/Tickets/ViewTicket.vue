@@ -538,8 +538,8 @@
                         "
                         class="fs_ticket_not_found_svg"
                     />
-                    <h1>Ticket Not Found</h1>
-                    <p>Go back to <a @click="$router.push({ name: 'tickets' })">All Tickets</a> or contact support for assistance.</p>
+                    <h1>{{ TicketNotFound }}</h1>
+                    <p>Go back to <a @click="$router.push({ name: 'tickets' })" style="cursor: pointer;">All Tickets</a> or contact support for assistance.</p>
                 </div>
             </div>
         </template>
@@ -702,8 +702,10 @@ export default {
                 }
             }).catch(error => {
                 state.loading = false;
-                state.TicketNotFound = error.responseJSON.data.error;
-                handleError(error);
+
+                if (error.responseJSON && error.responseJSON.data && error.responseJSON.data.message) {
+                    state.TicketNotFound = error.responseJSON.data.message;
+                }
             })
                 .always(() => {
                     state.loading = false;
