@@ -6,7 +6,7 @@ use FluentSupport\App\App;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
-use FluentSupport\App\Services\BlockHelper;
+use FluentSupport\App\Services\Blocks\BlockHelper;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 

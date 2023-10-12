@@ -3,7 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
-use FluentSupport\App\Services\BlockHelper;
+use FluentSupport\App\Services\Blocks\BlockAttributes;
 
 class BlockEditorHandler
 {
@@ -25,7 +25,7 @@ class BlockEditorHandler
         register_block_type( 'fluent-support/customer-portal' , array(
             'editor_script' => 'fluent-support/customer-portal',
             'render_callback' => array($this, 'fst_render_block'),
-            'attributes' => BlockHelper::CustomerPortalBlockAttributes(),
+            'attributes' => BlockAttributes::CustomerPortalAttributes(),
         ));
     }
 
