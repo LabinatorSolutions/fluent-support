@@ -1,23 +1,22 @@
 const {Fragment, useState, useEffect} = wp.element;
 const {useBlockProps} = wp.blockEditor;
 const { apiFetch } = wp;
-const restInfo = window.fluent_support_vars.rest;
-const basePath = restInfo.namespace+'/'+restInfo.version+'/';
-
 import AllTickets from './components/AllTickets';
 import CreateTicket from './components/CreateTicket';
 import ViewTicket from './components/ViewTicket';
-//Import Inspector controls
 import Inspector from './inspectors/Inspector';
-//Import editor styles
 import './editor.scss';
-import InspectorContainer from "./utils/InspectorContainer";
+import InspectorContainer from './utils/InspectorContainer';
 
 export default function Edit({attributes, setAttributes}) {
-    const [showTickets, setShowTickets] = useState(false);
-    const [showForm, setShowForm] = useState(false);
-    const [showTicket, setShowTicket] = useState(false);
+    const restInfo = window.fluent_support_vars.rest;
+    const basePath = restInfo.namespace+'/'+restInfo.version+'/';
+    // State variables to manage UI state
+    const [showSection, setShowSection] = useState('allTickets');
     const [mailboxes, setMailboxes] = useState([]);
+    const [selectedInspector, setSelectedInspector] = useState('allTicketsStyle');
+
+    // Fetch mailboxes data from the REST API on component mount
     useEffect(() => {
         apiFetch({
             path: basePath + 'mailboxes',
@@ -26,27 +25,6 @@ export default function Edit({attributes, setAttributes}) {
         });
     }, []);
 
-    useEffect(() => {
-        setShowTickets(true);
-    }, true);
-    const showCreateTicket = () => {
-        setShowForm(true);
-        setShowTickets(false);
-        setShowTicket(false);
-    }
-    const showTicketsList = () => {
-        setShowForm(false);
-        setShowTickets(true);
-        setShowTicket(false);
-    }
-
-    const viewTicket = () => {
-        setShowForm(false);
-        setShowTickets(false);
-        setShowTicket(true);
-    }
-
-    const [selectedInspector, setSelectedInspector] = useState('allTicketsStyle');
     const toggleInspector = (ind) => {
         const inspectorsList = InspectorContainer({attributes, setAttributes});
         if (inspectorsList[ind] === undefined) {
@@ -54,9 +32,9 @@ export default function Edit({attributes, setAttributes}) {
         }
         setSelectedInspector(ind);
     }
-
     return (
         <Fragment>
+            {/* Inspector component for customization */}
             <Inspector
                 attributes={attributes}
                 setAttributes={setAttributes}
@@ -64,29 +42,31 @@ export default function Edit({attributes, setAttributes}) {
                 selectedInspector={selectedInspector}
             />
             <div {...useBlockProps()}>
-            {showTickets === true ?
-                <AllTickets
-                    attributes={attributes}
-                    showCreateTicket={showCreateTicket}
-                    viewTicket={viewTicket}
-                    toggleInspector={toggleInspector}
-                    selectedInspector={selectedInspector}
-                />
-                : showForm === true ?
-                    <CreateTicket
+                {/* Render different components based on the showSection state */}
+                {showSection === 'allTickets' && (
+                    <AllTickets
                         attributes={attributes}
-                        showTicketsList={showTicketsList}
+                        showSection={setShowSection}
                         toggleInspector={toggleInspector}
                         selectedInspector={selectedInspector}
                     />
-                    : showTicket === true ?
-                        <ViewTicket
-                            attributes={attributes}
-                            showTicketsList={showTicketsList}
-                            toggleInspector={toggleInspector}
-                            selectedInspector={selectedInspector}
-                        />
-                        : null}
+                )}
+                {showSection === 'createTicket' && (
+                    <CreateTicket
+                        attributes={attributes}
+                        showSection={setShowSection}
+                        toggleInspector={toggleInspector}
+                        selectedInspector={selectedInspector}
+                    />
+                )}
+                {showSection === 'viewTicket' && (
+                    <ViewTicket
+                        attributes={attributes}
+                        showSection={setShowSection}
+                        toggleInspector={toggleInspector}
+                        selectedInspector={selectedInspector}
+                    />
+                )}
             </div>
         </Fragment>
     );
