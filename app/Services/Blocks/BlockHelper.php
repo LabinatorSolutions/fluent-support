@@ -52,73 +52,73 @@ class BlockHelper
                 <?php echo self::getBorderRadiusStyle('filterButtonClosedBorder', $attributes)?>
                 }
                 .fs_btn_logout {
-                    background-color: <?php echo esc_attr($attributes['allTicketsLogoutButtonBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['allTicketsLogoutButtonTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('allTicketsLogoutButtonBgColor', '#f56c6c'); ?>;
+                    color: <?php echo self::getPrintableColor('allTicketsLogoutButtonTextColor', '#ffffff'); ?>;
                 <?php echo self::getBorderStyle('allTicketsLogoutButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('allTicketsLogoutButtonBorder', $attributes)?>
                 }
                 .fs_btn_create_ticket {
-                    background-color:<?php echo esc_attr($attributes['buttonCreateTicketBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['buttonCreateTicketTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('buttonCreateTicketBgColor', '#67c23a'); ?>;
+                    color: <?php echo self::getPrintableColor('buttonCreateTicketTextColor', '#ffffff'); ?>;
                 <?php echo self::getBorderStyle('allTicketsCreateTicketButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('allTicketsCreateTicketButtonBorder', $attributes)?>
                 }
 
                 .fs_table thead{
-                    background-color:<?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('allTicketsTableHeaderBgColor', '#f8f8f8'); ?>;
+                    color: <?php echo self::getPrintableColor('allTicketsTableHeaderTextColor', '#646568'); ?>;
                     text-align:<?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
                 }
 
                 .fs_table thead th{
-                    background-color:<?php echo esc_attr($attributes['allTicketsTableHeaderBgColor']); ?>;
-                    color:<?php echo esc_attr($attributes['allTicketsTableHeaderTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('allTicketsTableHeaderBgColor', '#f8f8f8'); ?>;
+                    color: <?php echo self::getPrintableColor('allTicketsTableHeaderTextColor', '#646568'); ?>;
                     text-align:<?php echo esc_attr($attributes['allTicketsTableHeaderTextAlign']); ?>;
                 }
                 .fst_pagi_wrapper{
-                    background-color:<?php echo esc_attr($attributes['allTicketsFooterBgColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('allTicketsFooterBgColor', '#ebeef4'); ?>;
                     margin: 0 auto;
-                    border-radius: <?php echo esc_attr($attributes['allTicketsFooterRadiusTopLeft']); ?>px <?php echo esc_attr($attributes['allTicketsFooterRadiusTopRight']); ?>px <?php echo esc_attr($attributes['allTicketsFooterRadiusBottomRight']); ?>px <?php echo esc_attr($attributes['allTicketsFooterRadiusBottomLeft']); ?>px;
+                <?php echo self::getBorderRadiusStyle('allTicketsFooter')?>
                 }
 
                 /*View Ticket style*/
                 .fst_client_portal .fs_ticket .fs_tk_header {
-                    background-color: <?php echo esc_attr($attributes['viewTicketHeaderStyleBgColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('viewTicketHeaderStyleBgColor', '#ebeef4'); ?>;
                 <?php echo self::getBorderStyle('viewTicketHeader')?>
                 <?php echo self::getBorderRadiusStyle('viewTicketHeader')?>
                 }
 
                 .fst_client_portal .fs_th_header .fs_tk_subject h2 {
-                    color: <?php echo esc_attr($attributes['viewTicketHeaderStyleTextColor']); ?>;
+                    color: <?php echo self::getPrintableColor('viewTicketHeaderStyleTextColor', '#314351'); ?>;
                 }
 
                 .fs_ticket_id {
-                    color: <?php echo esc_attr($attributes['viewTicketHeaderIdTextColor']); ?>;
+                    color: <?php echo self::getPrintableColor('viewTicketHeaderIdTextColor', '#93a1b0'); ?>;
                 }
 
                 .fs_refresh_button {
-                    background-color: <?php echo esc_attr($attributes['refreshButtonBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['refreshButtonTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('refreshButtonBgColor', '#ffffff'); ?>;
+                    color: <?php echo self::getPrintableColor('refreshButtonTextColor', '#000000'); ?>;
                 <?php echo self::getBorderStyle('refreshButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('refreshButtonBorder', $attributes)?>
                 }
 
                 .fs_all_button {
-                    background-color: <?php echo esc_attr($attributes['allButtonBgColor'] ?? '#ffffff'); ?>;
-                    color: <?php echo esc_attr($attributes['allButtonTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('allButtonBgColor', '#ffffff'); ?>;
+                    color: <?php echo self::getPrintableColor('allButtonTextColor', '#606266'); ?>;
                 <?php echo self::getBorderStyle('allButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('allButtonBorder', $attributes)?>
                 }
 
                 .fs_close_button {
-                    background-color: <?php echo esc_attr($attributes['closeTicketButtonBgColor'] ?? '#f56c6c'); ?>;
-                    color: <?php echo esc_attr($attributes['closeTicketButtonTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('closeTicketButtonBgColor', '#f56c6c'); ?>;
+                    color: <?php echo self::getPrintableColor('closeTicketButtonTextColor', '#ffffff'); ?>;
                 <?php echo self::getBorderStyle('closeTicketButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('closeTicketButtonBorder', $attributes)?>
                 }
 
                 .fst_reply_box, .fs_threads_container {
-                    background-color: <?php echo esc_attr($attributes['viewTicketPageBodyBgColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('viewTicketPageBodyBgColor', '#ffffff'); ?>;
                 }
 
                 .fs_agent {
@@ -126,8 +126,8 @@ class BlockHelper
                 }
 
                 .fs_conv_type_response .fs_thread_ribbon_agent{
-                    background-color:  <?php echo esc_attr($attributes['ribbonSupportStaffBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['ribbonSupportStaffTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('ribbonSupportStaffBgColor', '#1785EB'); ?>;
+                    color: <?php echo self::getPrintableColor('ribbonSupportStaffTextColor', '#ffffff'); ?>;
                     padding: <?php echo esc_attr($attributes['ribbonSupportStaffPaddingTop']); ?>px <?php echo esc_attr($attributes['ribbonSupportStaffPaddingRight']); ?>px <?php echo esc_attr($attributes['ribbonSupportStaffPaddingBottom']); ?>px <?php echo esc_attr($attributes['ribbonSupportStaffPaddingLeft']); ?>px;
                 }
 
@@ -136,62 +136,62 @@ class BlockHelper
                 }
 
                 .fs_conv_type_response .fs_thread_ribbon_customer{
-                    background-color:  <?php echo esc_attr($attributes['viewTicketThreadStarterBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['viewTicketThreadStarterTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('viewTicketThreadStarterBgColor', '#15BE7C'); ?>;
+                    color: <?php echo self::getPrintableColor('viewTicketThreadStarterTextColor', '#ffffff'); ?>;
                     padding: <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingTop']); ?>px <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingRight']); ?>px <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingBottom']); ?>px <?php echo esc_attr($attributes['viewTicketThreadStarterPaddingLeft']); ?>px;
                 }
 
                 .fs_cc_customer {
-                    background-color:  <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['viewTicketThreadFollowerTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('viewTicketThreadFollowerBgColor', '#ff00ff'); ?>;
+                    color: <?php echo self::getPrintableColor('viewTicketThreadFollowerTextColor', '#ffffff'); ?>;
                     border-left: <?php echo esc_attr($attributes['viewTicketThreadFollowerTailWidth']); ?>px solid <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;;
                 }
 
                 .fs_thread_ribbon_customer_cc {
-                    background-color:  <?php echo esc_attr($attributes['viewTicketThreadFollowerBgColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('viewTicketThreadFollowerBgColor', '#ff00ff'); ?>;
                     padding: <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingTop']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingRight']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingBottom']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingLeft']); ?>px;
                 }
 
                 /*Create Ticket style*/
                 .fs_tk_create_head {
-                    background-color:  <?php echo esc_attr($attributes['createTicketHeaderBgColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('createTicketHeaderBgColor', '#ebeef4'); ?>;
                 <?php echo self::getBorderStyle('createTicketHeaderBorder')?>
                 <?php echo self::getBorderRadiusStyle('createTicketHeader', $attributes)?>
                 }
 
                 .fs_tk_left h3 {
-                    color: <?php echo esc_attr($attributes['createTicketHeaderTextColor']); ?>;
+                    color: <?php echo self::getPrintableColor('createTicketHeaderTextColor', '#314351'); ?>;
                 }
 
                 .fs_tk_right .fs_view_all_button {
-                    background-color:  <?php echo esc_attr($attributes['createTicketViewAllButtonBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['createTicketViewAllButtonTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('createTicketViewAllButtonBgColor', '#909399'); ?>;
+                    color: <?php echo self::getPrintableColor('createTicketViewAllButtonTextColor', '#ffffff'); ?>;
                 <?php echo self::getBorderStyle('createTicketViewAllButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('createTicketViewAllButtonBorder', $attributes)?>
                 }
 
                 .fs_tk_body {
-                    background-color:  <?php echo esc_attr($attributes['createTicketBodyBgColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('createTicketBodyBgColor', '#ffffff'); ?>;
                 }
 
                 .fs_input_label, .fs_input_label label {
-                    color: <?php echo esc_attr($attributes['createTicketInputLabelTextColor']); ?>;
+                    color: <?php echo self::getPrintableColor('createTicketInputLabelTextColor', '#606266'); ?>;
                 }
 
                 .fs_tk_help,.fs_tk_upload_help {
-                    color: <?php echo esc_attr($attributes['createTicketHintMessageTextColor']); ?>;
+                    color: <?php echo self::getPrintableColor('createTicketHintMessageTextColor', '#76777b'); ?>;
                 }
 
                 .fs_attachment_button {
-                    background-color:  <?php echo esc_attr($attributes['createTicketUploadButtonBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['createTicketUploadButtonTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('createTicketUploadButtonBgColor', '#409eff'); ?>;
+                    color: <?php echo self::getPrintableColor('createTicketUploadButtonTextColor', '#ffffff'); ?>;
                 <?php echo self::getBorderStyle('createTicketUploadButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('createTicketUploadButtonBorder', $attributes)?>
                 }
 
                 .fs_create_button {
-                    background-color:  <?php echo esc_attr($attributes['createTicketCreateButtonBgColor']); ?>;
-                    color: <?php echo esc_attr($attributes['createTicketCreateButtonTextColor']); ?>;
+                    background-color: <?php echo self::getPrintableColor('createTicketCreateButtonBgColor', '#67c23a'); ?>;
+                    color: <?php echo self::getPrintableColor('createTicketCreateButtonTextColor', '#ffffff'); ?>;
                 <?php echo self::getBorderStyle('createTicketCreateButtonBorder')?>
                 <?php echo self::getBorderRadiusStyle('createTicketCreateButtonBorder', $attributes)?>
                 } }
