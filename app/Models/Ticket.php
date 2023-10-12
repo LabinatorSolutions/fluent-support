@@ -1054,9 +1054,9 @@ class Ticket extends Model
         try {
             $ticket = $this->with($ticketWith)->findOrFail($ticketId);
         } catch (Exception $e) {
-            wp_send_json_error( [
-                'error' => __('Ticket not found', 'fluent-support')
-            ], 404  );
+            wp_send_json_error([
+                'message' =>  __('Ticket Not Found', 'fluent-support')
+            ],404);
         }
 
         $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl($ticket->customer); //Get and set customer profile url
