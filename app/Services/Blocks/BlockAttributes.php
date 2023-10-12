@@ -14,6 +14,14 @@ class BlockAttributes
                 'type' => 'string',
                 'default' => '#ebeef4',
             ],
+            'filterButtonAllBgColor' => [
+                'type' => 'string',
+                'default' => '#409eff',
+            ],
+            'filterButtonAllTextColor' => [
+                'type' => 'string',
+                'default' => '#ffffff',
+            ],
             'filterButtonActiveBgColor' => [
                 'type' => 'string',
                 'default' => '#409eff',
@@ -26,17 +34,9 @@ class BlockAttributes
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
-            'filterButtonAllBgColor' => [
-                'type' => 'string',
-                'default' => '#409eff',
-            ],
-            'filterButtonAllTextColor' => [
-                'type' => 'string',
-                'default' => '#ffffff',
-            ],
             'filterButtonAllBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'filterButtonAllBorderRadius' => [
                 'type' => 'number',
@@ -64,7 +64,7 @@ class BlockAttributes
             ],
             'filterButtonAllBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonAllBorderRadiusBottomLeft' => [
                 'type' => 'number',
@@ -72,7 +72,7 @@ class BlockAttributes
             ],
             'filterButtonAllBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonAllBorderWidth' => [
                 'type' => 'number',
@@ -92,7 +92,7 @@ class BlockAttributes
             ],
             'filterButtonOpenBorderColor' => [
                 'type' => 'string',
-                'default' => '#fff',
+                'default' => '#dcdfe6',
             ],
             'filterButtonOpenBorderWidthTop' => [
                 'type' => 'number',
@@ -112,23 +112,23 @@ class BlockAttributes
             ],
             'filterButtonOpenBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonOpenBorderRadius' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonClosedBgColor' => [
                 'type' => 'string',
@@ -140,7 +140,7 @@ class BlockAttributes
             ],
             'filterButtonClosedBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'filterButtonClosedBorderRadius' => [
                 'type' => 'number',
@@ -164,7 +164,7 @@ class BlockAttributes
             ],
             'filterButtonClosedBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonClosedBorderRadiusTopRight' => [
                 'type' => 'number',
@@ -172,7 +172,7 @@ class BlockAttributes
             ],
             'filterButtonClosedBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'filterButtonClosedBorderRadiusBottomRight' => [
                 'type' => 'number',
@@ -196,7 +196,7 @@ class BlockAttributes
             ],
             'allTicketsLogoutButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#f56c6c',
+                'default' => '#dcdfe6',
             ],
             'allTicketsLogoutButtonBorderRadius' => [
                 'type' => 'number',
@@ -224,19 +224,19 @@ class BlockAttributes
             ],
             'allTicketsLogoutButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsLogoutButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsLogoutButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsLogoutButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'buttonCreateTicketBgColor' => [
                 'type' => 'string',
@@ -252,7 +252,7 @@ class BlockAttributes
             ],
             'allTicketsCreateTicketButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#67c23a',
+                'default' => '#dcdfe6',
             ],
             'allTicketsCreateTicketButtonBorderWidth' => [
                 'type' => 'number',
@@ -276,23 +276,23 @@ class BlockAttributes
             ],
             'allTicketsCreateTicketButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allTicketsCreateTicketButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'buttonCreateTicketBorderWidth' => [
                 'type' => 'number',
@@ -308,7 +308,7 @@ class BlockAttributes
             ],
             'allTicketsTableHeaderTextAlign' => [
                 'type' => 'string',
-                'default' => 'center',
+                'default' => 'left',
             ],
             'allTicketsFooterBgColor' => [
                 'type' => 'string',
@@ -329,19 +329,19 @@ class BlockAttributes
             ],
             'createTicketHeaderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'createTicketHeaderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'createTicketHeaderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'createTicketHeaderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 0,
             ],
             'createTicketViewAllButtonBgColor' => [
                 'type' => 'string',
@@ -377,19 +377,19 @@ class BlockAttributes
             ],
             'createTicketViewAllButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'createTicketViewAllButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'createTicketViewAllButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'createTicketViewAllButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'createTicketViewAllButtonTextColor' => [
                 'type' => 'string',
@@ -401,7 +401,7 @@ class BlockAttributes
             ],
             'createTicketCreateButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#909399',
+                'default' => '#67c23a',
             ],
             'createTicketCreateButtonBorderWidthTop' => [
                 'type' => 'number',
@@ -441,7 +441,7 @@ class BlockAttributes
             ],
             'createTicketBodyBgColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#ebeef3',
             ],
             'createTicketInputLabelTextColor' => [
                 'type' => 'string',
@@ -509,11 +509,11 @@ class BlockAttributes
             ],
             'refreshButtonTextColor' => [
                 'type' => 'string',
-                'default' => '#000000',
+                'default' => '#606266',
             ],
             'refreshButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'refreshButtonBorderWidth' => [
                 'type' => 'number',
@@ -541,19 +541,19 @@ class BlockAttributes
             ],
             'refreshButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'refreshButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'refreshButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 6,
+                'default' => 3,
             ],
             'refreshButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allButtonBgColor' => [
                 'type' => 'string',
@@ -565,7 +565,7 @@ class BlockAttributes
             ],
             'allButtonBorderColor' => [
                 'type' => 'string',
-                'default' => '#ffffff',
+                'default' => '#dcdfe6',
             ],
             'allButtonBorderWidth' => [
                 'type' => 'number',
@@ -589,23 +589,23 @@ class BlockAttributes
             ],
             'allButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 0,
             ],
             'allButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'allButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 6,
+                'default' => 3,
             ],
             'allButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'closeTicketButtonBgColor' => [
                 'type' => 'string',
@@ -641,7 +641,7 @@ class BlockAttributes
             ],
             'closeTicketButtonBorderRadius' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 0,
             ],
             'closeTicketButtonBorderRadiusTopLeft' => [
                 'type' => 'number',
@@ -649,15 +649,15 @@ class BlockAttributes
             ],
             'closeTicketButtonBorderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 4,
+                'default' => 3,
             ],
             'closeTicketButtonBorderRadiusBottomLeft' => [
                 'type' => 'number',
-                'default' => 6,
+                'default' => 3,
             ],
             'closeTicketButtonBorderRadiusBottomRight' => [
                 'type' => 'number',
-                'default' => 7,
+                'default' => 3,
             ],
             'createTicketCreateButtonBgColor' => [
                 'type' => 'number',
@@ -718,11 +718,11 @@ class BlockAttributes
             ],
             'viewTicketHeaderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 5,
             ],
             'viewTicketHeaderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 0,
+                'default' => 5,
             ],
             'viewTicketHeaderRadiusBottomLeft' => [
                 'type' => 'number',
@@ -738,11 +738,11 @@ class BlockAttributes
             ],
             'allTicketsHeaderRadiusTopLeft' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'allTicketsHeaderRadiusTopRight' => [
                 'type' => 'number',
-                'default' => 10,
+                'default' => 5,
             ],
             'allTicketsHeaderRadiusBottomLeft' => [
                 'type' => 'number',
@@ -794,7 +794,7 @@ class BlockAttributes
             ],
             'ribbonSupportStaffTailWidth' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 4,
             ],
             'ribbonSupportStaffPadding' => [
                 'type' => 'number',
@@ -826,7 +826,7 @@ class BlockAttributes
             ],
             'viewTicketThreadStarterTailWidth' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 4,
             ],
             'viewTicketThreadStarterPadding' => [
                 'type' => 'number',
@@ -858,7 +858,7 @@ class BlockAttributes
             ],
             'viewTicketThreadFollowerTailWidth' => [
                 'type' => 'number',
-                'default' => 5,
+                'default' => 4,
             ],
             'viewTicketThreadFollowerPadding' => [
                 'type' => 'number',
