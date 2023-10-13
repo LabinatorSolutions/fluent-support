@@ -8,6 +8,16 @@ import {
     getCreateTicketUploadButtonStyle,
     getCreateTicketCreateButtonStyle
 } from '../style';
+/**
+ * A component for showing create ticket page block.
+ * @param {Object} props - The component's props.
+ * @param {Object} props.attributes - Component attributes.
+ * @param {function} props.showSection - Function to show a specific section.
+ * @param {string} props.activeClass - CSS class for active elements.
+ * @param {function} props.selectedInspector - Function to select an inspector.
+ * @param {function} props.preventParentPropagation - Function to prevent parent event propagation and set selected inspector.
+ * @returns {JSX.Element} The CreateTicket component.
+ */
 export default function CreateTicket(props) {
     const { attributes, showSection, activeClass, selectedInspector, preventParentPropagation} = props;
 
