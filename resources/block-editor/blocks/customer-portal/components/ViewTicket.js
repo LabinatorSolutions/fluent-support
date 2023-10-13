@@ -16,7 +16,7 @@ import {
 } from '../style';
 import ThreadItem from './ThreadItem';
 /**
- * The ViewTicket component displays ticket details and related threads.
+ * The ViewTicket component displays ticket details and related threads for block.
  * @param {Object} props - Component props.
  * @param {Object} props.attributes - Component attributes.
  * @param {Function} props.showSection - Function to show a specific section.
