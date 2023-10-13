@@ -14,6 +14,7 @@ import {
     getViewTicketThreadFollowerTailStyle,
     getViewTicketThreadFollowerStyle,
 } from '../style';
+import ThreadItem from './ThreadItem';
 /**
  * The ViewTicket component displays ticket details and related threads.
  * @param {Object} props - Component props.
@@ -69,113 +70,85 @@ export default function ViewTicket(props) {
                 {/* Display thread items*/}
                 <div className="show-threads-container" style={getViewTicketPageBodyStyle(attributes)}>
                     {/* Display thread items Thread Follower*/}
-                    <article className="show-thread fs_cc_customer fs_conv_type_response" style={getViewTicketThreadFollowerTailStyle(attributes)}
-                    >
-                        <div className={"fs_thread_follower_style" + activeClass('ribbonThreadFollowerStyle')} onClick={(e)=> preventParentPropagation('ribbonThreadFollowerStyle', e)}>
-                            <span className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketThreadFollowerStyle(attributes)}>
-                                Thread Follower
-                            </span>
-                        </div>
-                        <div className="show-thread-content">
-                            <section className="show-avatar"><img
-                                src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
-                                alt="auth test"/>
-                            </section>
-                            <section className="show-thread-wrap">
-                                <section className="show-thread-message">
-                                    <div className="show-thread-head">
-                                        <div className="show-thread-title">
-                                            <strong>You</strong> replied
-                                        </div>
-                                        <div className="show-thread-actions"
-                                        >2023-09-07T10:32:49+00:00
-                                        </div>
-                                    </div>
-                                    <div className="show-thread-body"><p>new reply</p>
-                                    </div>
-                                </section>
-                            </section>
-                        </div>
-                    </article>
+                    <ThreadItem
+                        threadArticleStyleClass={'fs_cc_customer fs_conv_type_response'}
+                        getThreadTailStyle={getViewTicketThreadFollowerTailStyle(attributes)}
+                        threadStyleClass={'fs_thread_follower_style'}
+                        activeClass={activeClass('ribbonThreadFollowerStyle')}
+                        ribbonTypeStyleClass={'fs_thread_ribbon fs_thread_ribbon_customer'}
+                        getRibbonHeaderStyle={getViewTicketThreadFollowerStyle(attributes)}
+                        preventParentPropagation={preventParentPropagation}
+                        ribbonStyle={'ribbonThreadFollowerStyle'}
+                        threadContent={{
+                            type: 'Thread Follower',
+                            person: 'John Doe',
+                            avatar: 'https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g',
+                            alterAvatar: 'John Doe',
+                            title: 'replied',
+                            date: '2023-09-07T10:32:49+00:00',
+                            body: 'I think I can add some more details like the following'
+                        }}
+                    />
                     {/* Display thread items Thread Starter*/}
-                    <article className="show-thread fs_customer fs_conv_type_response" style={getViewTicketThreadStarterTailStyle(attributes)}
-                    >
-                        <div className={"fs_thread_starter_style" + activeClass('ribbonThreadStarterStyle')}  onClick={(e) =>preventParentPropagation('ribbonThreadStarterStyle', e)}>
-                            <span className="fs_thread_ribbon fs_thread_ribbon_customer" style={getViewTicketThreadStarterStyle(attributes)}>
-                                Thread Starter
-                            </span>
-                        </div>
-                        <div className="show-thread-content">
-                            <section className="show-avatar"><img
-                                src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
-                                alt="auth test"/>
-                            </section>
-                            <section className="show-thread-wrap">
-                                <section className="show-thread-message">
-                                    <div className="show-thread-head">
-                                        <div className="show-thread-title">
-                                            <strong>You</strong> replied
-                                        </div>
-                                        <div className="show-thread-actions"
-                                        >2023-09-07T10:32:49+00:00
-                                        </div>
-                                    </div>
-                                    <div className="show-thread-body"><p>new reply</p>
-                                    </div>
-                                </section>
-                            </section>
-                        </div>
-                    </article>
+                    <ThreadItem
+                        threadArticleStyleClass={'fs_customer fs_conv_type_response'}
+                        getThreadTailStyle={getViewTicketThreadStarterTailStyle(attributes)}
+                        threadStyleClass={'fs_thread_starter_style'}
+                        activeClass={activeClass('ribbonThreadStarterStyle')}
+                        ribbonTypeStyleClass={'fs_thread_ribbon fs_thread_ribbon_customer'}
+                        getRibbonHeaderStyle={getViewTicketThreadStarterStyle(attributes)}
+                        preventParentPropagation={preventParentPropagation}
+                        ribbonStyle={'ribbonThreadStarterStyle'}
+                        threadContent={{
+                            type: 'Thread Starter',
+                            person: 'You',
+                            avatar: 'https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g',
+                            alterAvatar: 'Auth Test',
+                            title: 'replied',
+                            date: '2023-09-07T10:32:49+00:00',
+                            body: 'The details description was missing in the previous mail. Please find the details description below.'
+                        }}
+                    />
                     {/* Display thread items Support Agent*/}
-                    <article className={"show-thread fs_agent fs_conv_type_response"} style={getViewTicketAgentThreadRibbonTailStyle(attributes)}>
-                        <div className={"fs_thread_ribbon_agent_style" + activeClass('ribbonSupportStaffStyle')} onClick={(e)=> preventParentPropagation('ribbonSupportStaffStyle', e)}>
-                            <span className={"fs_thread_ribbon fs_thread_ribbon_agent"} style={getViewTicketAgentThreadRibbonHeaderStyle(attributes)}>Support Staff</span>
-                        </div>
-                        <div className="show-thread-content">
-                            <section className="show-avatar"><img
-                                src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
-                                alt="auth test"/>
-                            </section>
-                            <section className="show-thread-wrap">
-                                <section className="show-thread-message">
-                                    <div className="show-thread-head">
-                                        <div className="show-thread-title">
-                                            <strong>Bijit Deb</strong> replied
-                                        </div>
-                                        <div className="show-thread-actions"
-                                        >2023-09-07T10:32:49+00:00
-                                        </div>
-                                    </div>
-                                    <div className="show-thread-body"><p>check workflow</p>
-                                    </div>
-                                </section>
-                            </section>
-                        </div>
-                    </article>
+                    <ThreadItem
+                        threadArticleStyleClass={'fs_agent fs_conv_type_response'}
+                        getThreadTailStyle={getViewTicketAgentThreadRibbonTailStyle(attributes)}
+                        threadStyleClass={'fs_thread_ribbon_agent_style'}
+                        activeClass={activeClass('ribbonSupportStaffStyle')}
+                        ribbonTypeStyleClass={'fs_thread_ribbon fs_thread_ribbon_agent'}
+                        getRibbonHeaderStyle={getViewTicketAgentThreadRibbonHeaderStyle(attributes)}
+                        preventParentPropagation={preventParentPropagation}
+                        ribbonStyle={'ribbonSupportStaffStyle'}
+                        threadContent={{
+                            type: 'Support Staff',
+                            person: 'Russel Deb',
+                            avatar: 'https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g',
+                            alterAvatar: 'Russel Deb',
+                            title: 'replied',
+                            date: '2023-09-07T10:32:49+00:00',
+                            body: 'check workflow'
+                        }}
+                    />
                     {/* Display thread items conversation starter*/}
-                    <article className="show-thread conversion-starter">
-                        <div className="show-thread-content">
-                            <section className="show-avatar">
-                                <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
-                                     alt="auth test"/>
-                            </section>
-                            <section className="show-thread-wrap">
-                                <section className="show-thread-message">
-                                    <div className="show-thread-head">
-                                        <div className="show-thread-title">
-                                            <strong>You</strong> started the conversation
-                                        </div>
-                                        <div className="show-thread-actions"
-                                        >2023-08-30T09:32:16+00:00
-                                        </div>
-                                    </div>
-                                    <div className="show-thread-body">
-                                        <p>Check htttp</p>
-                                    </div>
-                                </section>
-                            </section>
-                        </div>
-                    </article>
+                    <ThreadItem
+                        threadArticleStyleClass={'conversion-starter'}
+                        getThreadTailStyle={{}}
+                        threadStyleClass={'show-thread-content'}
+                        activeClass={''}
+                        ribbonTypeStyleClass={''}
+                        getRibbonHeaderStyle={{}}
+                        preventParentPropagation={''}
+                        ribbonStyle={''}
+                        threadContent={{
+                            type: 'starter',
+                            person: 'You',
+                            avatar: 'https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g',
+                            alterAvatar: 'Auth Test',
+                            title: 'started the conversation',
+                            date: '2023-08-30T09:32:16+00:00',
+                            body: 'I was trying to install the plugin and it is not working. Please check the following details.'
+                        }}
+                    />
                 </div>
             </div>
         </div>
