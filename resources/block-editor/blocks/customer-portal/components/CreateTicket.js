@@ -4,52 +4,33 @@ import {
     getCreateTicketHeaderTextStyle,
     getCreateTicketViewAllButtonStyle,
     getCreateTicketBodyStyle,
-    getCreateTicketFormStyle,
     getCreateTicketHintMessageStyle,
     getCreateTicketUploadButtonStyle,
     getCreateTicketCreateButtonStyle
 } from '../style';
 export default function CreateTicket(props) {
-    const { attributes, showSection, toggleInspector, selectedInspector } = props;
-    /**
-     * Get the CSS class for an inspector based on whether it's active.
-     * @param {string} inspectorName - The name of the inspector.
-     * @returns {string} - The CSS class.
-     */
-    const getActiveClass = (inspectorName) => {
-        return selectedInspector === inspectorName ? ' fst-block-active-components' : '';
-    };
-
-    /**
-     * Handle clicking on an inspector element.
-     * @param {string} inspector - The inspector name to toggle.
-     * @returns {Function} - Event handler function.
-     */
-    const handleInspectorClick = (inspector) => (e) => {
-        e.stopPropagation();
-        toggleInspector(inspector);
-    };
+    const { attributes, showSection, activeClass, selectedInspector, preventParentPropagation} = props;
 
     return (
-        <div className={'customer-portal-block-wrapper'}>
-            <div className={'create-ticket-header' + getActiveClass('createTicketsHeaderStyle')} style={getCreateTicketHeaderStyle(attributes)}
-                 onClick={() => toggleInspector('createTicketHeaderStyle')}>
-                <div className={'create-ticket-header-left'}>
+        <div className={"customer-portal-block-wrapper"}>
+            <div className={"create-ticket-header" + activeClass("createTicketsHeaderStyle")} style={getCreateTicketHeaderStyle(attributes)}
+                 onClick={() => selectedInspector("createTicketHeaderStyle")}>
+                <div className={"create-ticket-header-left"}>
                     <h3 style={getCreateTicketHeaderTextStyle(attributes)}>Submit a Support Ticket</h3>
                 </div>
-                <div className={'create-ticket-header-right'}>
-                    <div className={'create-ticket-button-groups-btn' +  getActiveClass('buttonViewAllStyle')}
-                         onClick={handleInspectorClick('buttonViewAllStyle')}
+                <div className={"create-ticket-header-right"}>
+                    <div className={"create-ticket-button-groups-btn" +  activeClass("buttonViewAllStyle")}
+                         onClick={(e)=> preventParentPropagation("buttonViewAllStyle", e)}
                     >
-                        <button className={'create-ticket-view-all'} style={getCreateTicketViewAllButtonStyle(attributes)}
-                                onClick={() =>  showSection('allTickets') }>View All
+                        <button className={"create-ticket-view-all"} style={getCreateTicketViewAllButtonStyle(attributes)}
+                                onClick={() =>  showSection("allTickets") }>View All
                         </button>
                     </div>
 
                 </div>
             </div>
-            <div className={"create-ticket-body" +  getActiveClass("createTicketsBodyStyle")} style={getCreateTicketBodyStyle(attributes)}
-                 onClick={() => toggleInspector("createTicketsBodyStyle")}>
+            <div className={"create-ticket-body" +  activeClass("createTicketsBodyStyle")} style={getCreateTicketBodyStyle(attributes)}
+                 onClick={() => selectedInspector("createTicketsBodyStyle")}>
                 <form className={"create-ticket-form"} >
                         <div className="create-ticket-form-item">
                             <label htmlFor="subject" className="create-ticket-label">
@@ -79,8 +60,8 @@ export default function CreateTicket(props) {
                         <div className="create-ticket-attachments">
 
                             <div className={"create-ticket-upload"}>
-                                <div className={"create-ticket-button-groups-btn" + getActiveClass('buttonClickToUploadStyle')}
-                                    onClick={handleInspectorClick('buttonClickToUploadStyle')}>
+                                <div className={"create-ticket-button-groups-btn" + activeClass("buttonClickToUploadStyle")}
+                                    onClick={(e) =>preventParentPropagation("buttonClickToUploadStyle", e)}>
                                     <button className="create-ticket-upload-button"
                                             style={getCreateTicketUploadButtonStyle(attributes)} type="button">
                                         Click to upload
@@ -96,8 +77,8 @@ export default function CreateTicket(props) {
                         <div className="create-ticket-custom-fields"></div>
                         <div className="create-ticket-form-item">
                             <div className="create-ticket-button">
-                                <div className={"create-ticket-button-groups-btn" + getActiveClass('buttonCreateStyle')}
-                                     onClick={handleInspectorClick('buttonCreateStyle')}>
+                                <div className={"create-ticket-button-groups-btn" + activeClass("buttonCreateStyle")}
+                                     onClick={(e) => preventParentPropagation("buttonCreateStyle", e)}>
                                     <button className="create-ticket-button-inner"
                                             style={getCreateTicketCreateButtonStyle(attributes)} type="button">
                                         Create

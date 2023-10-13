@@ -25,13 +25,25 @@ export default function Edit({attributes, setAttributes}) {
         });
     }, []);
 
-    const toggleInspector = (ind) => {
-        const inspectorsList = InspectorContainer({attributes, setAttributes});
-        if (inspectorsList[ind] === undefined) {
-            return;
-        }
-        setSelectedInspector(ind);
+    /**
+     * Get the CSS class for an inspector based on whether it's active.
+     * @param {string} inspectorName - The name of the inspector.
+     * @returns {string} - The CSS class.
+     */
+    function getActiveClass(inspectorName) {
+        return selectedInspector === inspectorName ? " fst-block-active-components" : "";
     }
+    /**
+     * Handle clicking on an inspector element.
+     * @param {string} inspectorName - The inspector name to toggle.
+     * @param {Object} e - The event object.
+     * @returns {Function} - Event handler function.
+     */
+    const preventParentPropagation = (inspectorName, e) => {
+        e.stopPropagation();
+        setSelectedInspector(inspectorName);
+    };
+
     return (
         <Fragment>
             {/* Inspector component for customization */}
@@ -47,24 +59,27 @@ export default function Edit({attributes, setAttributes}) {
                     <AllTickets
                         attributes={attributes}
                         showSection={setShowSection}
-                        toggleInspector={toggleInspector}
-                        selectedInspector={selectedInspector}
+                        activeClass={getActiveClass}
+                        selectedInspector={setSelectedInspector}
+                        preventParentPropagation={preventParentPropagation}
                     />
                 )}
                 {showSection === 'createTicket' && (
                     <CreateTicket
                         attributes={attributes}
                         showSection={setShowSection}
-                        toggleInspector={toggleInspector}
-                        selectedInspector={selectedInspector}
+                        activeClass={getActiveClass}
+                        selectedInspector={setSelectedInspector}
+                        preventParentPropagation={preventParentPropagation}
                     />
                 )}
                 {showSection === 'viewTicket' && (
                     <ViewTicket
                         attributes={attributes}
                         showSection={setShowSection}
-                        toggleInspector={toggleInspector}
-                        selectedInspector={selectedInspector}
+                        activeClass={getActiveClass}
+                        selectedInspector={setSelectedInspector}
+                        preventParentPropagation={preventParentPropagation}
                     />
                 )}
             </div>
