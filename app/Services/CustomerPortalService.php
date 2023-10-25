@@ -297,7 +297,7 @@ class CustomerPortalService
             }
         ])
             ->where('customer_id', $customer->id)
-            ->latest('id');
+            ->latest('updated_at');
 
         $ticketsQuery->where('customer_id', $customer->id);
 
