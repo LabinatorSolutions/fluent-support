@@ -188,14 +188,16 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
-= 1.7.4 (Date: August 30, 2023) =
+= 1.7.4 (Date: October 30, 2023) =
 * Added - Gutenberg block editor support for customer portal
 * Added - Option to set additional fields in register form
 * Added - Implemented 404 page for invalid ticket id
+* Added - Agent assigns permission for support staff
 * Fixed - Added a few missing translations
 * Fixed - "not contain" condition does not work in the workflow
 * Fixed - Ticket delete button is only shown in the Pro version
 * Fixed - Freshdesk migrator issue fixing
+* Improved - Ticket ordering in the customer portal
 
 = 1.7.3 (Date: August 10, 2023) =
 * Added - Option to delete ticket from inside view ticket
