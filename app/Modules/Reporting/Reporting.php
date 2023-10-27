@@ -338,7 +338,8 @@ class Reporting
                               $groupByField,
                           ])
                           ->groupBy($groupByField)
-                          ->whereBetween('created_at', [$from, $to])
+                          ->whereBetween('last_agent_response', [$from, $to])
+                          ->orWhereBetween('last_customer_response', [$from, $to])
                           ->get();
 
         $reports = $this->pushReportData('responses', $responses, $reports, $groupByField);
