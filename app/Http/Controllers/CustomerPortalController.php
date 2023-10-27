@@ -118,7 +118,7 @@ class CustomerPortalController extends Controller
         } catch (\Exception $e) {
 
             return $this->sendError([
-                'message'    => __($e->getMessage(), 'fluent-support'),
+                'message'    => $e->getMessage(),
                 'error_type' => $e->getCode()
             ]);
         }

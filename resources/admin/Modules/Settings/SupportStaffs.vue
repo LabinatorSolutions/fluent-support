@@ -64,7 +64,7 @@
                                             <el-dropdown-item>
                                                 <el-upload
                                                     class="fs-avatar-uploader"
-                                                    :action="upload_url + scope.row.id +'/avatar'"
+                                                    :action="upload_url + 'avatar/' + scope.row.id"
                                                     :on-success="handleAvatarSuccess"
                                                     :on-error="handleAvatarError"
                                                     :headers="requestHeaders"

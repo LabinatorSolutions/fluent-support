@@ -111,7 +111,7 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->post('/', 'AgentController@addAgent');
     $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
     $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
-    $router->post('/{agent_id}/avatar', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
+    $router->post('/avatar/{agent_id}', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
     $router->post('/{agent_id}/reset_avatar', 'AgentController@resetAvatar')->int('agent_id');
 });
 

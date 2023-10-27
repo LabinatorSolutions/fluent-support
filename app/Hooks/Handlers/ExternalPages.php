@@ -19,7 +19,7 @@ class ExternalPages
             'ticket' => 'handleTicketView'
         ];
 
-        if(isset($methodMaps[$route])) {
+        if (isset($methodMaps[$route])) {
             $this->{$methodMaps[$route]}();
         }
 
@@ -28,14 +28,13 @@ class ExternalPages
     public function handleTicketView()
     {
 
-
-        if(!Helper::isPublicSignedTicketEnabled()) {
+        if (!Helper::isPublicSignedTicketEnabled()) {
             $ticketId = absint(Arr::get($_REQUEST, 'ticket_id'));
             $ticket = Ticket::where('id', $ticketId)->first();
 
-            if(!$ticket) {
+            if (!$ticket) {
                 // Sorry no ticket found;
-                echo '<h3 style="text-align: center; margin: 50px 0;">'.__('Invalid Support Portal URL', 'fluent-support').'</h3>';
+                echo '<h3 style="text-align: center; margin: 50px 0;">' . __('Invalid Support Portal URL', 'fluent-support') . '</h3>';
                 die();
             }
 
@@ -48,13 +47,13 @@ class ExternalPages
         $ticketId = absint(Arr::get($_REQUEST, 'ticket_id'));
         $ticket = Ticket::where('hash', $ticketHash)->where('id', $ticketId)->first();
 
-        if(!$ticket) {
+        if (!$ticket) {
             // Sorry no ticket found;
-            echo '<h3 style="text-align: center; margin: 50px 0;">'.__('Invalid Support Portal URL', 'fluent-support').'</h3>';
+            echo '<h3 style="text-align: center; margin: 50px 0;">' . __('Invalid Support Portal URL', 'fluent-support') . '</h3>';
             die();
         }
 
-        if(get_current_user_id()) {
+        if (get_current_user_id()) {
             // We have to re-route the URL
             $redirectUrl = Helper::getTicketViewUrl($ticket);
             wp_redirect($redirectUrl, 307);
@@ -83,43 +82,30 @@ class ExternalPages
 
             $attachment = Attachment::where('file_hash', $attachmentHash)->first();
 
-            if('local' !== $attachment->driver) {
-                wp_redirect($attachment->full_url, 307);
-            }
-
-            /**
-             * Return a 404 page if the attachment ID
-             * does not match any attachment in the database.
-             */
-            if (empty($attachment)) {
-
-                /**
-                 * @var WP_Query $wp_query WordPress main query
-                 */
-                global $wp_query;
-
-                $wp_query->set_404();
-
-                status_header(404);
-                include(get_query_template('404'));
-
-                die();
+            if (!$attachment) {
+                die('Invalid Attachment Hash');
             }
 
             // check signature hash
             $sign = md5($attachment->id . date('YmdH'));
-            if($sign != $_REQUEST['secure_sign']) {
+            if ($sign != $_REQUEST['secure_sign']) {
                 $dieMessage = __('Sorry, Your secure sign is invalid, Please reload the previous page and get new signed url', 'fluent-support');
                 die($dieMessage);
             }
 
-            ob_get_clean();
+            if ('local' !== $attachment->driver) {
+                wp_redirect($attachment->full_url, 307);
+            }
 
+            if (!file_exists($attachment->file_path)) {
+                die('File could not be found');
+            }
+
+            ob_get_clean();
             ini_set('user_agent', 'Fluent Support/' . FLUENT_SUPPORT_VERSION . '; ' . get_bloginfo('url'));
             header("Content-Type: $attachment->file_type");
             header("Content-Disposition: inline; filename=\"$attachment->title\"");
-
-            echo readfile( $attachment->file_path );
+            echo readfile($attachment->file_path);
             die();
         }
 
