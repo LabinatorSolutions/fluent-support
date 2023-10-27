@@ -776,6 +776,26 @@ class BlockAttributes
                 'type' => 'string',
                 'default' => '#ffffff',
             ],
+            'viewTicketPageBodyTextColor' => [
+                'type' => 'string',
+                'default' => '#253642',
+            ],
+            'threadItemPersonColor' => [
+                'type' => 'string',
+                'default' => '#253642',
+            ],
+            'threadItemActionColor' => [
+                'type' => 'string',
+                'default' => '#8494a5',
+            ],
+            'threadItemDateColor' => [
+                'type' => 'string',
+                'default' => '#a5b2bd',
+            ],
+            'threadItemContentColor' => [
+                'type' => 'string',
+                'default' => '#253642',
+            ],
             'CustomerThreadRibbonColor' => [
                 'type' => 'string',
                 'default' => '#15BE7C',

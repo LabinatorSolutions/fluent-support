@@ -31,6 +31,7 @@ export default function Edit({attributes, setAttributes}) {
      * @returns {string} - The CSS class.
      */
     function getActiveClass(inspectorName) {
+        console.log(selectedInspector, inspectorName);
         return selectedInspector === inspectorName ? " fst-block-active-components" : "";
     }
     /**

@@ -12,6 +12,15 @@ export default function ViewTicketBodyStyle({attributes, setAttributes}) {
                     attributeName: 'viewTicketPageBodyBgColor',
                 }}
             />
+
+            <EnhancedColorPicker
+                attributes={attributes}
+                setAttributes={setAttributes}
+                props={{
+                    title: __('Text Color', 'fluent-support'),
+                    attributeName: 'viewTicketPageBodyTextColor',
+                }}
+            />
         </PanelBody>
     )
 }

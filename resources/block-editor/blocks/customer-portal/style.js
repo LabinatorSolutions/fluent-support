@@ -142,6 +142,23 @@ export const getViewTicketCloseButtonStyle = (attributes)  =>({
 
 export const getViewTicketPageBodyStyle = (attributes)  =>({
     background: attributes.viewTicketPageBodyBgColor,
+    color: attributes.viewTicketPageBodyTextColor,
+});
+
+export const GetThreadItemPersonTextColor = (attributes)  =>({
+    color: attributes.threadItemPersonColor,
+});
+
+export const GetThreadItemActionTextColor = (attributes)  =>({
+    color: attributes.threadItemActionColor,
+});
+
+export const GetThreadItemDateTextColor = (attributes)  =>({
+    color: attributes.threadItemDateColor,
+});
+
+export const GetThreadItemContentColor = (attributes)  =>({
+    color: attributes.threadItemContentColor,
 });
 
 export const getViewTicketThreadStarterTailStyle = (attributes)  =>({

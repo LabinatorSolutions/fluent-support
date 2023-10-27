@@ -7,12 +7,15 @@ import {
     getViewTicketAllButtonStyle,
     getViewTicketCloseButtonStyle,
     getViewTicketPageBodyStyle,
+    GetThreadItemPersonTextColor,
     getViewTicketAgentThreadRibbonTailStyle,
     getViewTicketAgentThreadRibbonHeaderStyle,
     getViewTicketThreadStarterStyle,
     getViewTicketThreadStarterTailStyle,
     getViewTicketThreadFollowerTailStyle,
     getViewTicketThreadFollowerStyle,
+    GetThreadItemActionTextColor,
+    GetThreadItemContentColor, GetThreadItemDateTextColor,
 } from '../style';
 import ThreadItem from './ThreadItem';
 /**
@@ -74,7 +77,8 @@ export default function ViewTicket(props) {
                         threadArticleStyleClass={'fs_cc_customer fs_conv_type_response'}
                         getThreadTailStyle={getViewTicketThreadFollowerTailStyle(attributes)}
                         threadStyleClass={'fs_thread_follower_style'}
-                        activeClass={activeClass('ribbonThreadFollowerStyle')}
+                        activeClassName={'ribbonThreadFollowerStyle'}
+                        activeClass={activeClass}
                         ribbonTypeStyleClass={'fs_thread_ribbon fs_thread_ribbon_customer'}
                         getRibbonHeaderStyle={getViewTicketThreadFollowerStyle(attributes)}
                         preventParentPropagation={preventParentPropagation}
@@ -88,13 +92,20 @@ export default function ViewTicket(props) {
                             date: '2023-09-07T10:32:49+00:00',
                             body: 'I think I can add some more details like the following'
                         }}
+                        pageBodyStyle={{
+                            nameColor: GetThreadItemPersonTextColor(attributes),
+                            actionColor: GetThreadItemActionTextColor(attributes),
+                            contentColor: GetThreadItemContentColor(attributes),
+                            dateColor: GetThreadItemDateTextColor(attributes),
+                        }}
                     />
                     {/* Display thread items Thread Starter*/}
                     <ThreadItem
                         threadArticleStyleClass={'fs_customer fs_conv_type_response'}
                         getThreadTailStyle={getViewTicketThreadStarterTailStyle(attributes)}
                         threadStyleClass={'fs_thread_starter_style'}
-                        activeClass={activeClass('ribbonThreadStarterStyle')}
+                        activeClassName={'ribbonThreadStarterStyle'}
+                        activeClass={activeClass}
                         ribbonTypeStyleClass={'fs_thread_ribbon fs_thread_ribbon_customer'}
                         getRibbonHeaderStyle={getViewTicketThreadStarterStyle(attributes)}
                         preventParentPropagation={preventParentPropagation}
@@ -108,13 +119,20 @@ export default function ViewTicket(props) {
                             date: '2023-09-07T10:32:49+00:00',
                             body: 'The details description was missing in the previous mail. Please find the details description below.'
                         }}
+                        pageBodyStyle={{
+                            nameColor: GetThreadItemPersonTextColor(attributes),
+                            actionColor: GetThreadItemActionTextColor(attributes),
+                            contentColor: GetThreadItemContentColor(attributes),
+                            dateColor: GetThreadItemDateTextColor(attributes),
+                        }}
                     />
                     {/* Display thread items Support Agent*/}
                     <ThreadItem
                         threadArticleStyleClass={'fs_agent fs_conv_type_response'}
                         getThreadTailStyle={getViewTicketAgentThreadRibbonTailStyle(attributes)}
                         threadStyleClass={'fs_thread_ribbon_agent_style'}
-                        activeClass={activeClass('ribbonSupportStaffStyle')}
+                        activeClassName={'ribbonSupportStaffStyle'}
+                        activeClass={activeClass}
                         ribbonTypeStyleClass={'fs_thread_ribbon fs_thread_ribbon_agent'}
                         getRibbonHeaderStyle={getViewTicketAgentThreadRibbonHeaderStyle(attributes)}
                         preventParentPropagation={preventParentPropagation}
@@ -128,13 +146,20 @@ export default function ViewTicket(props) {
                             date: '2023-09-07T10:32:49+00:00',
                             body: 'check workflow'
                         }}
+                        pageBodyStyle={{
+                            nameColor: GetThreadItemPersonTextColor(attributes),
+                            actionColor: GetThreadItemActionTextColor(attributes),
+                            contentColor: GetThreadItemContentColor(attributes),
+                            dateColor: GetThreadItemDateTextColor(attributes),
+                        }}
                     />
                     {/* Display thread items conversation starter*/}
                     <ThreadItem
                         threadArticleStyleClass={'conversion-starter'}
                         getThreadTailStyle={{}}
                         threadStyleClass={'show-thread-content'}
-                        activeClass={''}
+                        activeClassName={''}
+                        activeClass={activeClass}
                         ribbonTypeStyleClass={''}
                         getRibbonHeaderStyle={{}}
                         preventParentPropagation={''}
@@ -147,6 +172,12 @@ export default function ViewTicket(props) {
                             title: 'started the conversation',
                             date: '2023-08-30T09:32:16+00:00',
                             body: 'I was trying to install the plugin and it is not working. Please check the following details.'
+                        }}
+                        pageBodyStyle={{
+                            nameColor: GetThreadItemPersonTextColor(attributes),
+                            actionColor: GetThreadItemActionTextColor(attributes),
+                            contentColor: GetThreadItemContentColor(attributes),
+                            dateColor: GetThreadItemDateTextColor(attributes),
                         }}
                     />
                 </div>

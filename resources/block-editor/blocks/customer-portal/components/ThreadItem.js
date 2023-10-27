@@ -17,18 +17,22 @@ export default function ThreadItem(props) {
         threadArticleStyleClass,
         getThreadTailStyle,
         threadStyleClass,
+        activeClassName,
         activeClass,
         ribbonTypeStyleClass,
         getRibbonHeaderStyle,
         preventParentPropagation,
         ribbonStyle,
-        threadContent
+        dateTimeColorPicker,
+        contentColorPicker,
+        threadContent,
+        pageBodyStyle
     } = props;
 
     return (
         <article className={`show-thread ${threadArticleStyleClass}`} style={getThreadTailStyle}>
             {threadContent.type !== 'starter' && (
-                <div className={`${threadStyleClass} ${activeClass}`} onClick={(e) => preventParentPropagation(ribbonStyle, e)}>
+                <div className={`${threadStyleClass} ${activeClass(activeClassName)}`} onClick={(e) => preventParentPropagation(ribbonStyle, e)}>
                     <span className={`${ribbonTypeStyleClass}`} style={getRibbonHeaderStyle}>
                         {threadContent.type}
                     </span>
@@ -41,14 +45,20 @@ export default function ThreadItem(props) {
                 <section className="show-thread-wrap">
                     <section className="show-thread-message">
                         <div className="show-thread-head">
-                            <div className="show-thread-title">
-                                <strong>{threadContent.person}</strong> {threadContent.title}
+                            <div className="show-thread-title" style={pageBodyStyle.actionColor}>
+                                <p>
+                                    <span className={`show-thread-title-person ${activeClass('personColorPickerStyle')}`} onClick={(e) => preventParentPropagation('personColorPickerStyle', e)}>
+                                        <strong style={pageBodyStyle.nameColor}>{threadContent.person}</strong>
+                                    </span>&nbsp;
+                                    <span className={`show-thread-title-action ${activeClass('actionColorPickerStyle')}`} onClick={(e) => preventParentPropagation('actionColorPickerStyle', e)}>
+                                        {threadContent.title}</span>
+                                </p>
                             </div>
-                            <div className="show-thread-actions">
+                            <div className={`show-thread-action-datetime ${activeClass('dateTimeColorPickerStyle')}`} style={pageBodyStyle.dateColor} onClick={(e) => preventParentPropagation('dateTimeColorPickerStyle', e)}>
                                 {threadContent.date}
                             </div>
                         </div>
-                        <div className="show-thread-body">
+                        <div className={`show-thread-body ${activeClass('contentColorPickerStyle')}`} style={pageBodyStyle.contentColor}  onClick={(e) => preventParentPropagation('contentColorPickerStyle', e)}>
                             <p>{threadContent.body}</p>
                         </div>
                     </section>

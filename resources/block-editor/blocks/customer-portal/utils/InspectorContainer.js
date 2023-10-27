@@ -42,6 +42,10 @@ import CreateTicketHeaderAdvanced from "../inspectors/CreateTicket/Advanced/Crea
 import CreateTicketHeaderStyle from "../inspectors/CreateTicket/Style/CreateTicketHeaderStyle";
 import ButtonCreateAdvanced from "../inspectors/CreateTicket/Advanced/ButtonCreateAdvanced";
 import ButtonClickToUploadAdvanced from "../inspectors/CreateTicket/Advanced/ButtonClickToUploadAdvanced";
+import ThreadPersonColorPickerStyle from "../inspectors/ViewTicket/Style/ThreadPersonColorPickerStyle";
+import ThreadActionColorPickerStyle from "../inspectors/ViewTicket/Style/ThreadActionColorPickerStyle";
+import ThreadDateColorPickerStyle from "../inspectors/ViewTicket/Style/ThreadDateColorPickerStyle";
+import ThreadContentColorPickerStyle from "../inspectors/ViewTicket/Style/ThreadContentColorPickerStyle";
 
 export default function InspectorContainer({attributes, setAttributes}) {
     return {
@@ -91,5 +95,9 @@ export default function InspectorContainer({attributes, setAttributes}) {
         ribbonThreadStarterAdvanced: RibbonThreadStarterAdvanced({attributes, setAttributes}),
         ribbonThreadFollowerStyle: RibbonThreadFollowerStyle({attributes, setAttributes}),
         ribbonThreadFollowerAdvanced: RibbonThreadFollowerAdvanced({attributes, setAttributes}),
+        personColorPickerStyle: ThreadPersonColorPickerStyle({attributes, setAttributes}),
+        actionColorPickerStyle: ThreadActionColorPickerStyle({attributes, setAttributes}),
+        dateTimeColorPickerStyle: ThreadDateColorPickerStyle({attributes, setAttributes}),
+        contentColorPickerStyle: ThreadContentColorPickerStyle({attributes, setAttributes})
     };
 }
