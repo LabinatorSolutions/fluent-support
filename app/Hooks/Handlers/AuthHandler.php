@@ -281,20 +281,30 @@ class AuthHandler
         return '<div class="fs_input_wrap"><input ' . $atts . ' /></div>';
     }
 
+    /**
+     * Render a select input field based on the provided field configuration.
+     *
+     * @param string $fieldName The name of the select input field.
+     * @param array $field The field configuration containing options and attributes.
+     *
+     * @return string The rendered select input field HTML.
+     */
     private function renderSelectInput($fieldName, $field)
     {
-        $options = '';
         $choices = Arr::get($field, 'options', []);
+        $placeholder = Arr::get($field, 'placeholder', '');
 
-        foreach ($choices as $value => $label) {
-            $options .= '<option value="' . esc_attr($value) . '">' . esc_html($label) . '</option>';
+        $options = '<option value="" disabled selected>' . esc_attr($placeholder) . '</option>';
+
+        foreach ($choices as $value => $optionData) {
+            $options .= '<option value="' . esc_attr($value) . '">' . esc_attr($optionData) . '</option>';
         }
 
-        $selectAtts = array_filter([
-            'id'       => esc_attr(Arr::get($field, 'id')),
-            'name'     => esc_attr($fieldName),
+        $selectAtts = [
+            'id' => esc_attr(Arr::get($field, 'id')),
+            'name' => esc_attr($fieldName),
             'required' => Arr::get($field, 'required') ? 'required' : '',
-        ]);
+        ];
 
         $select = '<div class="fs_input_wrap"><select ' . $this->renderAttributes($selectAtts) . '>' . $options . '</select></div>';
 
@@ -380,45 +390,45 @@ class AuthHandler
             'address_line_1' => [
                 'required'    => false,
                 'type'        => 'text',
-                'label'       => __('Address Line 1', 'your-text-domain'),
+                'label'       => __('Address Line 1', 'fluent-support'),
                 'id'          => 'fst_address_line_1',
-                'placeholder' => __('Address Line 1', 'your-text-domain'),
+                'placeholder' => __('Address Line 1', 'fluent-support'),
             ],
             'address_line_2' => [
                 'required'    => false,
                 'type'        => 'text',
-                'label'       => __('Address Line 2', 'your-text-domain'),
+                'label'       => __('Address Line 2', 'fluent-support'),
                 'id'          => 'fst_address_line_2',
-                'placeholder' => __('Address Line 2', 'your-text-domain'),
+                'placeholder' => __('Address Line 2', 'fluent-support'),
             ],
             'city'      => [
                 'required'    => false,
                 'type'        => 'text',
-                'label'       => __('City', 'your-text-domain'),
+                'label'       => __('City', 'fluent-support'),
                 'id'          => 'fst_city',
-                'placeholder' => __('City', 'your-text-domain'),
+                'placeholder' => __('City', 'fluent-support'),
             ],
             'zip'   => [
                 'required'    => false,
                 'type'        => 'text',
-                'label'       => __('Zip', 'your-text-domain'),
+                'label'       => __('Zip', 'fluent-support'),
                 'id'          => 'fst_zip',
-                'placeholder' => __('Zip', 'your-text-domain'),
+                'placeholder' => __('Zip', 'fluent-support'),
             ],
             'state'   => [
                 'required'    => false,
                 'type'        => 'text',
-                'label'       => __('State', 'your-text-domain'),
+                'label'       => __('State', 'fluent-support'),
                 'id'          => 'fst_state',
-                'placeholder' => __('State', 'your-text-domain'),
+                'placeholder' => __('State', 'fluent-support'),
             ],
             'country' => [
-                'required' => false,
-                'type' => 'select',
-                'label' => __('Country', 'your-text-domain'),
-                'id' => 'fst_country',
-                'placeholder' => __('Select a Country', 'your-text-domain'),
-                'options' => $countryList,
+                'required'   => false,
+                'type'       => 'select',
+                'label'      => __('Country', 'fluent-support'),
+                'id'         => 'fst_country',
+                'placeholder' => __('Select a Country', 'fluent-support'),
+                'options'    =>  $countryList,
             ],
         ];
     }
