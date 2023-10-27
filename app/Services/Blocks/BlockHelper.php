@@ -152,6 +152,19 @@ class BlockHelper
                     padding: <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingTop']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingRight']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingBottom']); ?>px <?php echo esc_attr($attributes['viewTicketThreadFollowerPaddingLeft']); ?>px;
                 }
 
+                .fs_thread_title{
+                    color: <?php echo self::getPrintableColor('threadItemActionColor', '#8494a5'); ?>;
+                }
+                .fs_thread_title strong{
+                    color: <?php echo self::getPrintableColor('threadItemPersonColor', '#253642'); ?>;
+                }
+                .fs_thread_actions {
+                    color: <?php echo self::getPrintableColor('threadItemDateColor', '#a5b2bd'); ?>;
+                }
+                .fs_thread_body{
+                    color: <?php echo self::getPrintableColor('threadItemContentColor', '#253642'); ?>;
+                }
+
                 /*Create Ticket style*/
                 .fs_tk_create_head {
                     background-color: <?php echo self::getPrintableColor('createTicketHeaderBgColor', '#ebeef4'); ?>;
