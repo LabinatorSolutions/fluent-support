@@ -173,7 +173,7 @@ class CustomerPortalHandler
             'fallback_image'             => $assets . 'images/icons/file.svg',
             'has_file_upload'            => !!Helper::ticketAcceptedFileMiles(),
             'has_rich_text_editor'       => true,
-            'customer_status'            => static::customerStatus()->status,
+            'customer_status'            => static::customerStatus()->status ?? static::customerStatus(),
             'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
         ];
 
@@ -214,6 +214,11 @@ class CustomerPortalHandler
     protected static function customerStatus()
     {
         $user = get_current_user_id();
+
+        if(!$user && isset($_REQUEST['support_hash']) && isset($_REQUEST['ticket_id']) && isset($_REQUEST['fs_view']) && $_REQUEST['fs_view'] == 'ticket'){
+            return true;
+        }
+
         return Customer::where('user_id', $user)->select(['status'])->first();
     }
 

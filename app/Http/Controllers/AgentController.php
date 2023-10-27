@@ -44,7 +44,7 @@ class AgentController extends Controller
 
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -69,7 +69,7 @@ class AgentController extends Controller
                 ];
             } catch (\Exception $e) {
                 return $this->sendError([
-                    'message' => __($e->getMessage(), 'fluent-support')
+                    'message' => $e->getMessage()
                 ]);
             }
         }
@@ -95,7 +95,7 @@ class AgentController extends Controller
 
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ]);
         }
 
@@ -122,7 +122,7 @@ class AgentController extends Controller
             return $response;
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -157,7 +157,7 @@ class AgentController extends Controller
             return $avatarUploder->addOrUpdateProfileImage( $request->files(), $request->getSafe('agent_id', 'intval'), 'agent');
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -178,7 +178,7 @@ class AgentController extends Controller
             ];
         } catch (\Exception $e) {
             return [
-                'message'  => __($e->getMessage(), 'fluent-support')
+                'message'  => $e->getMessage()
             ];
         }
     }

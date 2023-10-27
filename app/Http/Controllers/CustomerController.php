@@ -35,12 +35,12 @@ class CustomerController extends Controller
      * This function will also get information about extra widgets, tickets and Fluent CRM
      * @param Request $request
      * @param Customer $customer
-     * @param $customer_id
+     * @param $customerId
      * @return array
      */
-    public function getCustomer(Request $request, Customer $customer, $customer_id)
+    public function getCustomer(Request $request, Customer $customer, $customerId)
     {
-        return $customer->getCustomer($customer_id, $request->getSafe('with'));
+        return $customer->getCustomer($customerId, $request->getSafe('with'));
     }
 
     /**
@@ -66,11 +66,11 @@ class CustomerController extends Controller
      * update method will update existing customer by customer id
      * @param Request $request
      * @param Customer $customer
-     * @param $customer_id
+     * @param $customerId
      * @return array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
-    public function update(Request $request, Customer $customer, $customer_id)
+    public function update(Request $request, Customer $customer, $customerId)
     {
         $data = $this->validate($request->getSafe(), [
             'email'      => 'required|email',
@@ -80,7 +80,7 @@ class CustomerController extends Controller
         try {
             return [
                 'message'  => __('Customer has been updated', 'fluent-support'),
-                'customer' => $customer->updateCustomer($customer_id, $data)
+                'customer' => $customer->updateCustomer($customerId, $data)
             ];
         } catch (\Exception $e) {
             return $this->sendError([
@@ -98,12 +98,12 @@ class CustomerController extends Controller
      * delete method will delete a customer and all tickets by that customer
      * @param Request $request
      * @param Customer $customer
-     * @param int $customer_id
+     * @param int $customerId
      * @return array
      */
-    public function delete(Request $request, Customer $customer, $customer_id)
+    public function delete(Request $request, Customer $customer, $customerId)
     {
-        return $customer->deleteCustomer($customer_id);
+        return $customer->deleteCustomer($customerId);
     }
 
     /**
@@ -117,12 +117,11 @@ class CustomerController extends Controller
         try {
             return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id'), 'customer');
         } catch (\Exception $e) {
-            return $this->sendError(
-                [
-                    'message' => __($e->getMessage(), 'fluent-support'),
-                ],
-                $e->getCode()
-            );
+            return $this->sendError([
+                'message' => __($e->getMessage(), 'fluent-support'),
+            ],
+            $e->getCode()
+        );
         }
     }
 
@@ -191,7 +190,7 @@ class CustomerController extends Controller
             } else {
 
                 $contacts = \FluentCrm\App\Models\Subscriber::searchBy($search)
-                    ->select(['first_name', 'last_name', 'email', 'id', 'user_id'])
+                     ->select(['first_name', 'last_name', 'email', 'id', 'user_id'])
                     ->limit(10)
                     ->get();
             }
@@ -238,5 +237,6 @@ class CustomerController extends Controller
             'data'     => [],
             'is_email' => $isEmail
         ];
+
     }
 }

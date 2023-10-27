@@ -110,7 +110,7 @@ class TicketController extends Controller
 
             return $ticket->getTicket($ticketWith, $withCrmData, $ticket_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -130,7 +130,7 @@ class TicketController extends Controller
         try {
             return $ticket->createResponse($data, $ticket_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -150,7 +150,7 @@ class TicketController extends Controller
         try {
             return $ticket->addOrUpdatDraft($data, $ticket_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -159,7 +159,7 @@ class TicketController extends Controller
         try {
             return $ticket->fetchDraft($ticket_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -170,7 +170,7 @@ class TicketController extends Controller
         try {
             return $ticket->removeDraft($draft_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -185,7 +185,7 @@ class TicketController extends Controller
         try {
             return $ticket->getTicketWidgets($ticket_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -204,7 +204,7 @@ class TicketController extends Controller
         try {
             return $ticket->updateTicketProperty($propName, $propValue, $ticket_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -219,7 +219,7 @@ class TicketController extends Controller
         try {
             return $ticket->closeTicket($ticket_id, $this->request->getSafe('close_ticket_silently'));
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -234,7 +234,7 @@ class TicketController extends Controller
         try {
             return $ticket->reOpenTicket($ticket_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -255,7 +255,7 @@ class TicketController extends Controller
         try {
             return $ticket->handleBulkActions($action, $sanitizedTicketIds);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
     /**
@@ -270,7 +270,7 @@ class TicketController extends Controller
         try {
             return $ticketService->delete($ticket);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -293,7 +293,7 @@ class TicketController extends Controller
         try {
             return $conversation->doBulkReplies($data);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -310,7 +310,7 @@ class TicketController extends Controller
         try {
             return $conversation->deleteResponse($ticket_id, $response_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -330,7 +330,7 @@ class TicketController extends Controller
         try {
             return $conversation->updateResponse($data, $ticket_id, $response_id);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -452,7 +452,7 @@ class TicketController extends Controller
         try {
             return $fluentCRMServices->syncCrmTags($data);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 
@@ -470,7 +470,7 @@ class TicketController extends Controller
         try {
             return $fluentCRMServices->syncCrmLists($data);
         } catch (\Exception $e) {
-            return $this->sendError(__($e->getMessage(), 'fluent-support'));
+            return $this->sendError($e->getMessage());
         }
     }
 }

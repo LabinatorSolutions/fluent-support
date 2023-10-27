@@ -40,7 +40,7 @@ class SlackController extends Controller
         if(!$settings || is_wp_error($settings)) {
             $errorMessage = (is_wp_error($settings)) ? $settings->get_error_message() : __('Settings failed to save', 'fluent-support');
             return $this->sendError([
-                'message' => __($errorMessage, 'fluent-support')
+                'message' => $errorMessage
             ]);
         }
 

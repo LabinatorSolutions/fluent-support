@@ -54,7 +54,7 @@ class ChatMessageParserController extends Controller
             ]);
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support'),
+                'message' => $e->getMessage(),
                 'status'  => false
             ]);
         }

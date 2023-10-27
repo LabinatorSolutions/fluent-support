@@ -25,7 +25,7 @@ class ActivityLoggerController extends Controller
             return $activity->getActivities( $request->getSafe() );
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -40,7 +40,7 @@ class ActivityLoggerController extends Controller
             return $activity->updateSettings($request->getSafe('activity_settings'));
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ]);
         }
     }
@@ -55,7 +55,7 @@ class ActivityLoggerController extends Controller
             return $activity->getSettings();
         } catch (\Exception $e) {
             return $this->sendError([
-                'message' => __($e->getMessage(), 'fluent-support')
+                'message' => $e->getMessage()
             ]);
         }
     }

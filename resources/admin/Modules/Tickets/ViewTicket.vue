@@ -153,6 +153,11 @@
                                         </el-icon>
                                         {{ translate('Delete') }}
                                     </el-dropdown-item>
+
+                                    <el-dropdown-item @click="deleteTicket()" v-loading="deleting">
+                                        {{ translate('Delete') }}
+                                    </el-dropdown-item>
+
                                 </el-dropdown-menu>
                             </template>
                         </el-dropdown>
@@ -864,9 +869,7 @@ export default {
                             type: "success",
                             position: "bottom-right",
                         });
-                        if (window.history.state.back) {
-                            router.push({name: 'tickets'});
-                        }
+                        router.push({name: 'tickets'});
                     })
             });
         }
