@@ -122,11 +122,25 @@ class Person extends Model
          * @param string $url  link to the profile picture
          * @pram string $email user gravatar email address
          */
-        return apply_filters(
+        /*return apply_filters(
             'fluent_support/get_avatar',
             "https://www.gravatar.com/avatar/${hash}?s=128",
             $email
-        );
+        );*/
+        $defaultAvatar = get_option('avatar_default');
+        if('gravatar_default' === $defaultAvatar){
+            return apply_filters(
+                'fluent_support/get_avatar',
+                "https://www.gravatar.com/avatar/${hash}?s=128",
+                $email
+            );
+        }else{
+            return apply_filters(
+                'fluent_support/get_avatar',
+                get_avatar_url('', array('default' => $defaultAvatar)),
+                $email
+            );
+        }
     }
 
     /**

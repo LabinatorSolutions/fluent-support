@@ -55,12 +55,6 @@
                                 {{ scope.row.stats.closed }}
                             </template>
                         </el-table-column>
-
-<!--                        <el-table-column min-width="150px" prop="tickets" :label="translate('Interactions')">-->
-<!--                            <template #default="scope">-->
-<!--                                {{ scope.row.stats.interactions }}-->
-<!--                            </template>-->
-<!--                        </el-table-column>-->
                     </el-table>
                 </div>
             </div>
@@ -170,7 +164,7 @@ export default {
             valueFormat: "YYYY-MM-DD",
             open_setting: false,
             include_or_exclude_agents: [],
-            include_or_exclude: "include", // Define if we are including or excluding agents, default is include
+            include_or_exclude: "include",
             open_export_options: false,
             repost_export_options: appVars.repost_export_options,
             selected_options: [],
@@ -180,6 +174,8 @@ export default {
 
         const sortedReports = computed(() => {
             let reports = state.reports;
+
+            const settings = getData("agents_summary_setting");
 
             if (state.sort_type == "ascending") {
                 return reports.sort((a, b) =>

@@ -105,6 +105,14 @@ class Settings
             $formattedMimeGroups[$mimeGroup] = $mime['title'];
         }
 
+        $customRegistrationFormOptions = array(
+            'address_line_1' => 'Address Line 1',
+            'address_line_2' => 'Address Line 2',
+            'city' => 'City',
+            'zip' => 'Zip Code',
+            'state' => 'State',
+            'country' => 'Country',
+        );
 
         $fields = [
             'portal_page_id'        => [
@@ -165,6 +173,12 @@ class Settings
                 'false-label'    => 'no',
                 'checkbox_label' => __('Enable Draft Mode', 'fluent-support'),
                 'inline_help'    => __('If you enable this setting, then if an agent close a ticket accidentally then the written response will be saved as draft.', 'fluent-support')
+            ],
+            'custom_registration_form_field'   => [
+                'wrapper_class' => 'inline-checkbox',
+                'type'    => 'checkbox-group',
+                'label'   => __('Custom Registration Form Field', 'fluent-support'),
+                'options' => $customRegistrationFormOptions
             ],
         ];
 

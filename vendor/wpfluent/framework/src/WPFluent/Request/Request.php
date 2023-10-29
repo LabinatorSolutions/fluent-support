@@ -3,6 +3,7 @@
 namespace FluentSupport\Framework\Request;
 
 use FluentSupport\Framework\Support\Arr;
+use FluentSupport\Framework\Support\Helper;
 use FluentSupport\Framework\Foundation\Application;
 use FluentSupport\Framework\Validator\ValidationException;
 
@@ -82,6 +83,38 @@ class Request
         return $value;
     }
 
+    public function json($key = null, $default = null)
+    {
+        if (!isset($this->json)) {
+            $this->json = (array) json_decode($this->getContent(), true);
+        }
+
+        if (is_null($key)) {
+            return $this->json;
+        }
+
+        return Helper::dataGet($this->json, $key, $default);
+    }
+
+    public function server($key = null, $default = null)
+    {
+        return $key ? Arr::get($this->server, $key, $default) : $this->server;
+    }
+
+    public function header($key = null, $default = null)
+    {
+        if (!$this->headers) {
+            $this->headers = $this->setHeaders();
+        }
+
+        return $key ? Arr::get($this->headers, $key, $default) : $this->headers;
+    }
+
+    public function cookie($key = null, $default = null)
+    {
+        return $key ? Arr::get($this->cookie, $key, $default) : $this->cookie;
+    }
+
     /**
      * Get the files from the request.
      *
@@ -120,16 +153,40 @@ class Request
     }
 
     /**
+     * Returns the request body content.
+     *
+     * @param bool $asResource If true, a resource will be returned
+     *
+     * @return string|resource
+     */
+    public function getContent()
+    {
+        if (null === $this->content || false === $this->content) {
+            $this->content = file_get_contents('php://input');
+        }
+
+        return $this->content;
+    }
+
+    public function mergeInputsFromRestRequest($wpRestRequest)
+    {
+        $this->request = array_merge(
+            $this->request, $wpRestRequest->get_params()
+        );
+
+        $this->wpRestRequest = true;
+    }
+
+    /**
      * Get all inputs
      * @return array $this->request
      */
     protected function inputs()
     {
-        if (!$this->wpRestRequest && $this->app->bound('wprestrequest')) {
-            $this->wpRestRequest = true;
-            $this->request = array_merge(
-                $this->request, $this->app->wprestrequest->get_params()
-            );
+        if (!$this->wpRestRequest) {
+            if ($this->app->bound('wprestrequest')) {
+                $this->mergeInputsFromRestRequest($this->app->wprestrequest);
+            }
         }
 
         return $this->request;
@@ -150,25 +207,6 @@ class Request
         }
 
         return $ip;
-    }
-
-    public function server($key = null, $default = null)
-    {
-        return $key ? Arr::get($this->server, $key, $default) : $this->server;
-    }
-
-    public function header($key = null, $default = null)
-    {
-        if (!$this->headers) {
-            $this->headers = $this->setHeaders();
-        }
-
-        return $key ? Arr::get($this->headers, $key, $default) : $this->headers;
-    }
-
-    public function cookie($key = null, $default = null)
-    {
-        return $key ? Arr::get($this->cookie, $key, $default) : $this->cookie;
     }
 
     /**

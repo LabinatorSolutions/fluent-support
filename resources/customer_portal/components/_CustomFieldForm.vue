@@ -3,7 +3,7 @@
         <div v-if="appReady" class="fs_custom_fields fs_tk_row">
             <template v-for="(field, fieldName) in computedFields" :key="fieldName">
                 <div v-if="field.is_renderable" class="fs_tk_col">
-                    <el-form-item :label="field.label" :required="field.required=='yes'">
+                    <el-form-item class="fs_input_label" :label="field.label" :required="field.required=='yes'">
                         <el-input
                             v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
                             :type="field.type"

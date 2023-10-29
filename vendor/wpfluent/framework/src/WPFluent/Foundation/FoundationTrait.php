@@ -14,7 +14,7 @@ trait FoundationTrait
         return $prefix . $hook;
     }
 
-    public function parseRestHandler($handler)
+    public function parseRestHandler($handler, $ns = '')
     {
         if ($handler instanceof \Closure) {
             return $handler;
@@ -31,6 +31,8 @@ trait FoundationTrait
             }
         }
 
+        $handler = $ns ? $ns . '\\' . $handler : $handler;
+
         return $this->getControllerNamespace($handler) . '\\' . $handler;
     }
 
@@ -41,7 +43,7 @@ trait FoundationTrait
         if (is_string($handler)) {
             $handler = $this->getPolicyNamespace($handler) . '\\' . $handler;
 
-            if ($this->isCallableWithAtSign($handler)) {
+            if (is_string($handler) && strpos($handler, '@') !== false) {
                 list($class, $method) = explode('@', $handler);
                 if (!method_exists($class, $method)) {
                     $method = 'verifyRequest';
@@ -171,7 +173,7 @@ trait FoundationTrait
             return false;
         };
         
-        $parts = explode('\\', $handler);
+        $parts = array_filter(explode('\\', $handler));
         
         return count($parts) > 1;
     }

@@ -96,6 +96,7 @@ class AuthController extends Controller
         do_action('fluent_support/after_creating_user');
 
         $this->maybeUpdateUser($userId, $formData);
+        $this->addUserMetaData($userId, $formData);
         $this->assignRole($userId);
         $this->login($userId);
 
@@ -570,6 +571,21 @@ class AuthController extends Controller
              * @param array $data
              */
             do_action('fluent_support/after_updating_user', $data);
+        }
+    }
+
+    public function addUserMetaData($userId, $formData) {
+        $customFields =  Helper::getBusinessSettings('custom_registration_form_field');
+
+        if (empty($customFields)) {
+            return;
+        }
+
+        foreach ($customFields as $field) {
+            if (isset($formData[$field])) {
+                $fieldValue = $formData[$field];
+                update_user_meta($userId, $field, $fieldValue);
+            }
         }
     }
 
