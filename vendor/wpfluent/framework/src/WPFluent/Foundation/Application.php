@@ -4,7 +4,7 @@ namespace FluentSupport\Framework\Foundation;
 
 use InvalidArgumentException;
 use FluentSupport\Framework\Foundation\Config;
-use FluentSupport\Framework\Foundation\Container;
+use FluentSupport\Framework\Container\Container;
 use FluentSupport\Framework\Foundation\ComponentBinder;
 use FluentSupport\Framework\Foundation\FoundationTrait;
 use FluentSupport\Framework\Foundation\AsyncRequestTrait;
@@ -173,6 +173,10 @@ class Application extends Container
 
     protected function requireRouteFile($router)
     {
+        if (file_exists($file = $this['path.http'] . 'Routes/routes.php')) {
+            return require_once $file;
+        }
+
         require_once $this['path.http'] . 'Routes/api.php';
     }
 }

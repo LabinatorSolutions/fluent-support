@@ -15,10 +15,10 @@
                             </div>
                         </div>
                         <div class="fs_tk_actions">
-                            <el-button v-loading="fetching" @click="fetchTicket()" icon="Refresh"
+                            <el-button class="fs_refresh_button" v-loading="fetching" @click="fetchTicket()" icon="Refresh"
                                        size="small"></el-button>
-                            <a class="el-button el-button--default el-button--small" :href="appVars.view_tickets_url">{{$t('All')}}</a>
-                            <el-button v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
+                            <a class="el-button el-button--default el-button--small fs_all_button" :href="appVars.view_tickets_url">{{$t('All')}}</a>
+                            <el-button class="fs_close_button" v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating"
                                        @click="closeTicket()" size="small"
                                        type="danger">{{$t('Close Ticket')}}
                             </el-button>

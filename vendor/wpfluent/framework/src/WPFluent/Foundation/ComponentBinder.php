@@ -6,14 +6,19 @@ use FluentSupport\Framework\View\View;
 use FluentSupport\Framework\Http\Router;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Response\Response;
+use FluentSupport\Framework\Events\Dispatcher;
 use FluentSupport\Framework\Database\Orm\Model;
 use FluentSupport\Framework\Validator\Validator;
-use FluentSupport\Framework\Foundation\Dispatcher;
 use FluentSupport\Framework\Foundation\RequestGuard;
 use FluentSupport\Framework\Pagination\AbstractPaginator;
 use FluentSupport\Framework\Database\ConnectionResolver;
 use FluentSupport\Framework\Database\Query\WPDBConnection;
 use FluentSupport\Framework\Foundation\UnAuthorizedException;
+
+use FluentSupport\Framework\Support\Str;
+use FluentSupport\Framework\Support\Helper;
+use FluentSupport\Framework\Encryption\Encrypter;
+use FluentSupport\Framework\Encryption\MissingAppKeyException;
 
 class ComponentBinder
 {
@@ -27,7 +32,8 @@ class ComponentBinder
         'Events',
         'DataBase',
         'Router',
-        'Paginator'
+        'Paginator',
+        'encrypter'
     ];
 
     public function __construct($app)
@@ -108,7 +114,7 @@ class ComponentBinder
 
     protected function bindDataBase()
     {
-        $this->app->bindShared('db', function($app) {
+        $this->app->singleton('db', function($app) {
             return new WPDBConnection(
                 $GLOBALS['wpdb'], $app->config->get('database')
             );
@@ -141,6 +147,15 @@ class ComponentBinder
 
             return 1;
         });
+    }
+
+    protected function bindEncrypter()
+    {
+        $this->app->singleton(Encrypter::class, function ($app) {
+            return new Encrypter($app);
+        });
+
+        $this->app->alias(Encrypter::class, 'encrypter');    
     }
 
     protected function extendBindings($app)

@@ -1,28 +1,42 @@
 <?php
 
+/*
+ * WPDB Connection
+ */
+
 namespace FluentSupport\Framework\Database\Query;
 
 use Closure;
-use DateTime;
 use Exception;
-use FluentSupport\Framework\Support\Arr;
-use FluentSupport\Framework\Database\Query\Builder;
-use FluentSupport\Framework\Database\Query\Grammar;
-use FluentSupport\Framework\Database\Query\Processor;
+use DateTimeInterface;
 use FluentSupport\Framework\Database\QueryException;
+use FluentSupport\Framework\Database\Query\Processor;
 use FluentSupport\Framework\Database\Query\Expression;
 use FluentSupport\Framework\Database\ConnectionInterface;
+use FluentSupport\Framework\Database\Query\Builder as QueryBuilder;
+use FluentSupport\Framework\Database\Query\Grammar as QueryGrammar;
 
 class WPDBConnection implements ConnectionInterface
-{
-    protected $wpdb = null;
+{ 
+    /**
+     * $wpdb Global $wpdb instance
+     * @var Object
+     */
+    protected $wpdb;
 
     /**
-     * Count of active transactions
+     * The name of the connected database.
      *
-     * @var int
+     * @var string
      */
-    protected $transactionCount = 0;
+    protected $database;
+
+    /**
+     * The table prefix for the connection.
+     *
+     * @var string
+     */
+    protected $tablePrefix = '';
 
     /**
      * The database connection configuration options.
@@ -32,66 +46,139 @@ class WPDBConnection implements ConnectionInterface
     protected $config = [];
 
     /**
-     * Construct the Connection object
+     * The query grammar implementation.
+     *
+     * @var \FluentSupport\Framework\Database\Query\Grammars\Grammar
      */
-    public function __construct($wpdb, $config)
-    {
-        $this->wpdb = $wpdb;
-        $this->config = $config;
-        $this->wpdb->show_errors(false);
-    }
+    protected $queryGrammar;
 
-    public function getWPDB()
+    /**
+     * The query post processor implementation.
+     *
+     * @var \FluentSupport\Framework\Database\Query\Processor
+     */
+    protected $postProcessor;
+
+    /**
+     * The number of active transactions.
+     *
+     * @var int
+     */
+    protected $transactions = 0;
+
+    /**
+     * Create a new database connection instance.
+     *
+     * @param  $wpdb $pdo
+     * @param  string  $database
+     * @param  string  $tablePrefix
+     * @param  array  $config
+     * @return void
+     */
+    public function __construct($pdo, $database = '', $tablePrefix = '', array $config = [])
     {
-        return $this->wpdb;
+        $this->setupWpdbInstance($pdo);
+
+        // First we will setup the default properties. We keep track of the DB
+        // name we are connected to since it is needed when some reflective
+        // type commands are run such as checking whether a table exists.
+        $this->database = $database;
+
+        $this->tablePrefix = $tablePrefix;
+
+        $this->config = $config;
+
+        // We need to initialize a query grammar and the query post processors
+        // which are both very important parts of the database abstractions
+        // so we initialize these to their default values while starting.
+        $this->useDefaultQueryGrammar();
+
+        $this->useDefaultPostProcessor();
     }
 
     /**
-     * Get the database connection name.
-     *
-     * @return string|null
+     * Populate $wpdb instance & turn off db errors
+     * 
+     * @param  $wpdb Global $wpdb instance
+     * @return Null
      */
-    public function getName()
+    protected function setupWpdbInstance($wpdb)
     {
-        return $this->getConfig('name');
+        $this->wpdb = $wpdb;
+
+        $this->wpdb->show_errors(false);
+    }
+
+    /**
+     * Set the query grammar to the default implementation.
+     *
+     * @return void
+     */
+    public function useDefaultQueryGrammar()
+    {
+        $this->queryGrammar = $this->getDefaultQueryGrammar();
+    }
+
+    /**
+     * Get the default query grammar instance.
+     *
+     * @return \FluentSupport\Framework\Database\Query\Grammar
+     */
+    protected function getDefaultQueryGrammar()
+    {
+        return new QueryGrammar;
+    }
+
+    /**
+     * Set the query post processor to the default implementation.
+     *
+     * @return void
+     */
+    public function useDefaultPostProcessor()
+    {
+        $this->postProcessor = $this->getDefaultPostProcessor();
+    }
+
+    /**
+     * Get the default post processor instance.
+     *
+     * @return \FluentSupport\Framework\Database\Query\Processor
+     */
+    protected function getDefaultPostProcessor()
+    {
+        return new Processor;
     }
 
     /**
      * Begin a fluent query against a database table.
      *
-     * @param  string $table
-     *
-     * @return FluentSupport\Framework\Database\Query\Builder
+     * @param  \Closure|\FluentSupport\Framework\Database\Query\Builder|string  $table
+     * @param  string|null  $as
+     * @return \FluentSupport\Framework\Database\Query\Builder
      */
-    public function table($table)
+    public function table($table, $as = null)
     {
-        $processor = $this->getPostProcessor();
-
-        $query = new Builder($this, $this->getQueryGrammar(), $processor);
-
-        return $query->from($table);
+        return $this->query()->from($table, $as);
     }
 
     /**
-     * Get a new raw query expression.
+     * Get a new query builder instance.
      *
-     * @param  mixed $value
-     *
-     * @return FluentSupport\Framework\Database\Query\Expression
+     * @return \FluentSupport\Framework\Database\Query\Builder
      */
-    public function raw($value)
+    public function query()
     {
-        return new Expression($value);
+        return new QueryBuilder(
+            $this, $this->getQueryGrammar(), $this->getPostProcessor()
+        );
     }
 
     /**
      * Run a select statement and return a single result.
      *
-     * @param  string $query
-     * @param  array $bindings
-     * @param  bool $useReadPdo
-     * @throws QueryException
-     *
+     * @param  string  $query
+     * @param  array  $bindings
+     * @param  bool  $useReadPdo
      * @return mixed
      */
     public function selectOne($query, $bindings = [], $useReadPdo = true)
@@ -110,11 +197,9 @@ class WPDBConnection implements ConnectionInterface
     /**
      * Run a select statement against the database.
      *
-     * @param  string $query
-     * @param  array $bindings
-     * @param  bool $useReadPdo
-     * @throws QueryException
-     *
+     * @param  string  $query
+     * @param  array  $bindings
+     * @param  bool  $useReadPdo
      * @return array
      */
     public function select($query, $bindings = [], $useReadPdo = true)
@@ -168,14 +253,37 @@ class WPDBConnection implements ConnectionInterface
     }
 
     /**
+     * Run a select statement against the database and returns a generator.
+     *
+     * @param  string  $query
+     * @param  array  $bindings
+     * @param  bool  $useReadPdo
+     * @return \Generator
+     */
+    public function cursor($query, $bindings = [], $useReadPdo = true)
+    {
+        return $this->select($query, $bindings);
+        
+        // $index = 0;
+
+        // $query = $this->bindParams($query, $bindings);
+
+        // while ($row = $this->wpdb->get_row($query, $index)) {
+            
+        //     ++$index;
+            
+        //     yield $row;
+        // }
+    }
+
+    /**
      * Run an insert statement against the database.
      *
-     * @param  string $query
-     * @param  array $bindings
-     *
+     * @param  string  $query
+     * @param  array  $bindings
      * @return bool
      */
-    public function insert($query, $bindings = array())
+    public function insert($query, $bindings = [])
     {
         return $this->statement($query, $bindings);
     }
@@ -183,12 +291,11 @@ class WPDBConnection implements ConnectionInterface
     /**
      * Run an update statement against the database.
      *
-     * @param  string $query
-     * @param  array $bindings
-     *
+     * @param  string  $query
+     * @param  array  $bindings
      * @return int
      */
-    public function update($query, $bindings = array())
+    public function update($query, $bindings = [])
     {
         return $this->affectingStatement($query, $bindings);
     }
@@ -196,12 +303,11 @@ class WPDBConnection implements ConnectionInterface
     /**
      * Run a delete statement against the database.
      *
-     * @param  string $query
-     * @param  array $bindings
-     *
+     * @param  string  $query
+     * @param  array  $bindings
      * @return int
      */
-    public function delete($query, $bindings = array())
+    public function delete($query, $bindings = [])
     {
         return $this->affectingStatement($query, $bindings);
     }
@@ -209,12 +315,11 @@ class WPDBConnection implements ConnectionInterface
     /**
      * Execute an SQL statement and return the boolean result.
      *
-     * @param  string $query
-     * @param  array $bindings
-     *
-     * @return mixed
+     * @param  string  $query
+     * @param  array  $bindings
+     * @return bool
      */
-    public function statement($query, $bindings = array())
+    public function statement($query, $bindings = [])
     {
         $newQuery = $this->bindParams($query, $bindings, true);
 
@@ -230,12 +335,11 @@ class WPDBConnection implements ConnectionInterface
     /**
      * Run an SQL statement and get the number of rows affected.
      *
-     * @param  string $query
-     * @param  array $bindings
-     *
+     * @param  string  $query
+     * @param  array  $bindings
      * @return int
      */
-    public function affectingStatement($query, $bindings = array())
+    public function affectingStatement($query, $bindings = [])
     {
         $newQuery = $this->bindParams($query, $bindings, true);
 
@@ -251,8 +355,7 @@ class WPDBConnection implements ConnectionInterface
     /**
      * Run a raw, unprepared query against the PDO connection.
      *
-     * @param  string $query
-     *
+     * @param  string  $query
      * @return bool
      */
     public function unprepared($query)
@@ -261,10 +364,20 @@ class WPDBConnection implements ConnectionInterface
     }
 
     /**
+     * Execute the given callback in "dry run" mode.
+     *
+     * @param  \Closure  $callback
+     * @return array
+     */
+    public function pretend(Closure $callback)
+    {
+        // ...
+    }
+
+    /**
      * Prepare the query bindings for execution.
      *
-     * @param  array $bindings
-     *
+     * @param  array  $bindings
      * @return array
      */
     public function prepareBindings(array $bindings)
@@ -272,21 +385,128 @@ class WPDBConnection implements ConnectionInterface
         $grammar = $this->getQueryGrammar();
 
         foreach ($bindings as $key => $value) {
-
-            // Micro-optimization: check for scalar values before instances
-            if (is_bool($value)) {
-                $bindings[$key] = intval($value);
-            } elseif (is_scalar($value)) {
-                continue;
-            } elseif ($value instanceof DateTime) {
-                // We need to transform all instances of the DateTime class into an actual
-                // date string. Each query grammar maintains its own date string format
-                // so we'll just ask the grammar for the format to get from the date.
+            // We need to transform all instances of DateTimeInterface into the actual
+            // date string. Each query grammar maintains its own date string format
+            // so we'll just ask the grammar for the format to get from the date.
+            if ($value instanceof DateTimeInterface) {
                 $bindings[$key] = $value->format($grammar->getDateFormat());
+            } elseif (is_bool($value)) {
+                $bindings[$key] = (int) $value;
             }
         }
 
         return $bindings;
+    }
+
+    /**
+     * Get a new raw query expression.
+     *
+     * @param  mixed  $value
+     * @return \FluentSupport\Framework\Database\Query\Expression
+     */
+    public function raw($value)
+    {
+        return new Expression($value);
+    }
+
+    /**
+     * Get the query grammar used by the connection.
+     *
+     * @return \FluentSupport\Framework\Database\Query\Grammar
+     */
+    public function getQueryGrammar()
+    {
+        $this->queryGrammar->setTablePrefix($this->wpdb->prefix);
+
+        return $this->queryGrammar;
+    }
+
+    /**
+     * Set the query grammar used by the connection.
+     *
+     * @param  \FluentSupport\Framework\Database\Query\Grammar  $grammar
+     * @return $this
+     */
+    public function setQueryGrammar(Grammar $grammar)
+    {
+        $this->queryGrammar = $grammar;
+
+        return $this;
+    }
+
+    /**
+     * Get the query post processor used by the connection.
+     *
+     * @return \FluentSupport\Framework\Database\Query\Processor
+     */
+    public function getPostProcessor()
+    {
+        return $this->postProcessor;
+    }
+
+    /**
+     * Set the query post processor used by the connection.
+     *
+     * @param  \FluentSupport\Framework\Database\Query\Processor  $processor
+     * @return $this
+     */
+    public function setPostProcessor(Processor $processor)
+    {
+        $this->postProcessor = $processor;
+
+        return $this;
+    }
+
+    /**
+     * Return the last insert id
+     *
+     * @param  string $args
+     *
+     * @return int
+     */
+    public function lastInsertId($args)
+    {
+        return $this->wpdb->insert_id;
+    }
+
+    /**
+     * Return self as PDO, the Processor instance uses it.
+     *
+     * @return FluentSupport\Framework\Database\Query\WPDBConnection
+     */
+    public function getPdo()
+    {
+        return $this;
+    }
+
+    /**
+     * Returns the $wpdb object.
+     * 
+     * @return Object $wpdb
+     */
+    public function getWPDB()
+    {
+        return $this->wpdb;
+    }
+
+    /**
+     * Get the database connection name.
+     *
+     * @return string|null
+     */
+    public function getName()
+    {
+        return 'mysql';
+    }
+
+    /**
+     * Get the name of the connected database.
+     *
+     * @return string
+     */
+    public function getDatabaseName()
+    {
+        return $this->wpdb->dbname;
     }
 
     /**
@@ -373,61 +593,13 @@ class WPDBConnection implements ConnectionInterface
     }
 
     /**
-     * Execute the given callback in "dry run" mode.
+     * Get the column listing for a given table.
      *
-     * @param  Closure $callback
-     *
+     * @param  string  $table
      * @return array
      */
-    public function pretend(Closure $callback)
+    public function getColumnListing($table)
     {
-        // ...
-    }
-
-    public function getPostProcessor()
-    {
-        return new Processor;
-    }
-
-    public function getQueryGrammar()
-    {
-        $grammar = new MySqlGrammar;
-
-        $grammar->setTablePrefix($this->wpdb->prefix);
-
-        return $grammar;
-    }
-
-    /**
-     * Return self as PDO
-     *
-     * @return FluentSupport\Framework\Database\Database
-     */
-    public function getPdo()
-    {
-        return $this;
-    }
-
-    /**
-     * Return the last insert id
-     *
-     * @param  string $args
-     *
-     * @return int
-     */
-    public function lastInsertId($args)
-    {
-        return $this->wpdb->insert_id;
-    }
-
-    /**
-     * Get an option from the configuration options.
-     *
-     * @param  string|null  $option
-     * @return mixed
-     */
-    public function getConfig($option)
-    {
-        return Arr::get($this->config, $option);
+        return $this->wpdb->get_col($table, 0);
     }
 }

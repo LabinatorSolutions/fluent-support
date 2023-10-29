@@ -6,12 +6,13 @@ use FluentSupport\App\App;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Modules\PermissionManager;
+use FluentSupport\App\Services\Blocks\BlockHelper;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 
 class CustomerPortalHandler
 {
-    public function renderPortal()
+    public function renderPortal($args = [])
     {
         /**
          * This hook filter customer portal access permission error message.
@@ -38,9 +39,10 @@ class CustomerPortalHandler
              * @param string $agentPermissionErrMessage
              * @return string
              */
+            $msg = __('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support');
             $agentPermissionErrMessage = apply_filters(
                 'fluent_support/customer_portal_agent_permission_error_message',
-                esc_html__('Customer Portal is only accessible by Customers. Looks like you are a support staff', 'fluent-support')
+                $msg
             );
             return '<div style="text-align: center;"><h3>' . $agentPermissionErrMessage . '</h3><a href="' . $adminPortalUrl . '">' . esc_html__('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
@@ -66,8 +68,11 @@ class CustomerPortalHandler
                 $this->maybeCreateCustomer();
             }
 
-            $this->enqueueScripts();
+            if( isset($args['attributes']) && !empty($args['attributes']) ) {
+                BlockHelper::processAttributesAndPrepareStyle($args['attributes']);
+            }
 
+            $this->enqueueScripts();
             return '<div id="fluent_support_client_app"><h3 class="fs_loading_text">' . __('Loading Customer Portal. Please wait...', 'fluent-support') . '</h3></div>';
         } else {
 
@@ -109,6 +114,9 @@ class CustomerPortalHandler
             'Open'                        => __('Open', 'fluent-support'),
             'open'                        => __('open', 'fluent-support'),
             'Closed'                      => __('Closed', 'fluent-support'),
+            'new'                         => __('new', 'fluent-support'),
+            'active'                      => __('active', 'fluent-support'),
+            'on-hold'                     => __('on-hold', 'fluent-support'),
             'closed'                      => __('closed', 'fluent-support'),
             'Date'                        => __('Date', 'fluent-support'),
             'Status'                      => __('Status', 'fluent-support'),
@@ -151,7 +159,6 @@ class CustomerPortalHandler
             'Unknown error. Please reload this page' => __('Unknown error. Please reload this page', 'fluent-support'),
             'View Your Tickets' => __('View Your Tickets', 'fluent-support'),
             'View All' => __('View All', 'fluent-support'),
-            'active' => __('active', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
@@ -246,6 +253,30 @@ class CustomerPortalHandler
             'last_ip_address' => $request->getIp()
         ];
 
+        $customFields = Helper::getBusinessSettings('custom_registration_form_field');
+
+        if (!empty($customFields)) {
+            $onBehalf = $this->processCustomFields($customFields, $onBehalf);
+        }
+
         return Customer::maybeCreateCustomer($onBehalf);
+    }
+
+    private function processCustomFields($customFields, $onBehalf)
+    {
+        $userMeta = get_user_meta(get_current_user_id());
+        $customData = [];
+
+        foreach ($customFields as $field) {
+            if (isset($userMeta[$field])) {
+                $customData[$field] = is_array($userMeta[$field]) ? $userMeta[$field][0] : $userMeta[$field];
+            }
+        }
+
+        if ($customData) {
+            $onBehalf = array_merge($onBehalf, $customData);
+        }
+
+        return $onBehalf;
     }
 }

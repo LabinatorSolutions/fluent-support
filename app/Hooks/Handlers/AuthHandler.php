@@ -5,6 +5,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 use FluentSupport\App\App;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\CountryNames;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Models\Meta;
 
@@ -117,6 +118,14 @@ class AuthHandler
 
         if ($this->authProvider() == 'fluent_auth') {
             return (new \FluentAuth\App\Hooks\Handlers\CustomAuthHandler())->registrationForm($attributes);
+        }
+
+        $customFieldsKey =  Helper::getBusinessSettings('custom_registration_form_field');
+
+        if (!empty($customFieldsKey)) {
+            add_filter('fluent_support/registration_form_fields', function($fields) use ($customFieldsKey) {
+                return $this->addCustomFieldsToRegistrationForm($fields,$customFieldsKey);
+            });
         }
 
         $registrationFields = static::getSignupFields();
@@ -233,38 +242,84 @@ class AuthHandler
         $isRequired = Arr::get($field, 'required');
         $isRequired = $isRequired ? 'is-required' : '';
 
-        $textTypes = ['text', 'email', 'password'];
-
         $html = '<div class="fst_field_group fst_field_' . $fieldName . '">';
+
         if ($label = Arr::get($field, 'label')) {
             $html .= '<div class="fst_field_label ' . $isRequired . '"><label for="' . Arr::get($field, 'id') . '">' . $label . '</label></div>';
         }
 
+        $textTypes = ['text', 'email', 'password'];
+        $selectTypes = ['select']; // Add 'select' type for dropdowns
+
         if (in_array($fieldType, $textTypes)) {
-
-            $inputAtts = array_filter([
-                'type'        => esc_attr($fieldType),
-                'id'          => esc_attr(Arr::get($field, 'id')),
-                'placeholder' => esc_attr(Arr::get($field, 'placeholder')),
-                'name'        => esc_attr($fieldName)
-            ]);
-
-            $atts = '';
-
-            foreach ($inputAtts as $attKey => $att) {
-                $atts .= $attKey . '="' . $att . '" ';
-            }
-
-            if (Arr::get($field, 'required')) {
-                $atts .= 'required';
-            }
-
-            $html .= '<div class="fs_input_wrap"><input ' . $atts . '/></div>';
+            $html .= $this->renderTextInput($fieldName, $field);
+        } elseif (in_array($fieldType, $selectTypes)) {
+            $html .= $this->renderSelectInput($fieldName, $field);
         } else {
             return '';
         }
 
         return $html . '</div>';
+    }
+
+    private function renderTextInput($fieldName, $field)
+    {
+        $inputAtts = array_filter([
+            'type'        => esc_attr(Arr::get($field, 'type')),
+            'id'          => esc_attr(Arr::get($field, 'id')),
+            'placeholder' => esc_attr(Arr::get($field, 'placeholder')),
+            'name'        => esc_attr($fieldName),
+            'required'    => Arr::get($field, 'required') ? 'required' : '',
+        ]);
+
+        $atts = '';
+
+        foreach ($inputAtts as $attKey => $att) {
+            $atts .= $attKey . '="' . $att . '" ';
+        }
+
+        return '<div class="fs_input_wrap"><input ' . $atts . ' /></div>';
+    }
+
+    /**
+     * Render a select input field based on the provided field configuration.
+     *
+     * @param string $fieldName The name of the select input field.
+     * @param array $field The field configuration containing options and attributes.
+     *
+     * @return string The rendered select input field HTML.
+     */
+    private function renderSelectInput($fieldName, $field)
+    {
+        $choices = Arr::get($field, 'options', []);
+        $placeholder = Arr::get($field, 'placeholder', '');
+
+        $options = '<option value="" disabled selected>' . esc_attr($placeholder) . '</option>';
+
+        foreach ($choices as $value => $optionData) {
+            $options .= '<option value="' . esc_attr($value) . '">' . esc_attr($optionData) . '</option>';
+        }
+
+        $selectAtts = [
+            'id' => esc_attr(Arr::get($field, 'id')),
+            'name' => esc_attr($fieldName),
+            'required' => Arr::get($field, 'required') ? 'required' : '',
+        ];
+
+        $select = '<div class="fs_input_wrap"><select ' . $this->renderAttributes($selectAtts) . '>' . $options . '</select></div>';
+
+        return $select;
+    }
+
+    private function renderAttributes($attributes)
+    {
+        $atts = '';
+
+        foreach ($attributes as $attKey => $att) {
+            $atts .= $attKey . '="' . $att . '" ';
+        }
+
+        return $atts;
     }
 
     /**
@@ -316,6 +371,66 @@ class AuthHandler
                 'placeholder' => __('Password', 'fluent-support')
             ]
         ]);
+    }
+
+    private function addCustomFieldsToRegistrationForm($fields, $customFieldsKey) {
+        $customFields = $this->allCustomFields();
+
+        foreach ($customFieldsKey as $key) {
+            $fields[$key] = $customFields[$key];
+        }
+
+        return $fields;
+    }
+
+    public static function allCustomFields(): array {
+        $countryList = CountryNames::get();
+
+        return [
+            'address_line_1' => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('Address Line 1', 'fluent-support'),
+                'id'          => 'fst_address_line_1',
+                'placeholder' => __('Address Line 1', 'fluent-support'),
+            ],
+            'address_line_2' => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('Address Line 2', 'fluent-support'),
+                'id'          => 'fst_address_line_2',
+                'placeholder' => __('Address Line 2', 'fluent-support'),
+            ],
+            'city'      => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('City', 'fluent-support'),
+                'id'          => 'fst_city',
+                'placeholder' => __('City', 'fluent-support'),
+            ],
+            'zip'   => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('Zip', 'fluent-support'),
+                'id'          => 'fst_zip',
+                'placeholder' => __('Zip', 'fluent-support'),
+            ],
+            'state'   => [
+                'required'    => false,
+                'type'        => 'text',
+                'label'       => __('State', 'fluent-support'),
+                'id'          => 'fst_state',
+                'placeholder' => __('State', 'fluent-support'),
+            ],
+            'country' => [
+                'required'   => false,
+                'type'       => 'select',
+                'label'      => __('Country', 'fluent-support'),
+                'id'         => 'fst_country',
+                'placeholder' => __('Select a Country', 'fluent-support'),
+                'options'    =>  $countryList,
+            ],
+        ];
     }
 
     public static function resetPasswordFields()

@@ -2,15 +2,13 @@
 
 namespace FluentSupport\Framework\Http;
 
-use FluentSupport\Framework\Support\Arr;
-
 class Router
 {
     protected $app = null;
     
-    protected $name = [];
-    
     protected $prefix = [];
+    
+    protected $namespace = [];
 
     protected $routes = [];
 
@@ -25,29 +23,11 @@ class Router
         $this->app = $app;
     }
 
-    public function prefix($prefix)
-    {
-        $this->prefix[] = $prefix;
-
-        return $this;
-    }
-
-    public function name($name)
-    {
-        $this->name[] = $name;
-
-        return $this;
-    }
-
     public function group($attributes = [], \Closure $callback = null)
     {
         if ($attributes instanceof \Closure) {
             $callback = $attributes;
             $attributes = [];
-        }
-
-        if (isset($attributes['name'])) {
-            $this->name($attributes['name']);
         }
 
         if (isset($attributes['prefix'])) {
@@ -58,9 +38,18 @@ class Router
             $this->withPolicy($attributes['policy']);
         }
 
-        call_user_func($callback, $this);
-        array_pop($this->prefix);
-        array_pop($this->name);
+        if (isset($attributes['namespace'])) {
+            $this->namespace($attributes['namespace']);
+        }
+
+        return $this->executeGroupCallback($callback);
+    }
+
+    public function prefix($prefix)
+    {
+        $this->prefix[] = $prefix;
+
+        return $this;
     }
 
     public function withPolicy($handler)
@@ -68,6 +57,25 @@ class Router
         $this->policyHandler = $handler;
 
         return $this;
+    }
+
+    public function namespace($ns)
+    {
+        $this->namespace[] = $ns;
+
+        return $this;
+    }
+
+    public function getNamespace()
+    {
+        return $this->namespace;
+    }
+
+    protected function executeGroupCallback($callback)
+    {
+        $callback($this);
+        array_pop($this->prefix);
+        array_pop($this->namespace);
     }
 
     public function get($uri, $handler)
@@ -131,12 +139,15 @@ class Router
             $this->getRestNamespace(),
             $this->buildUriWithPrefix($uri),
             $handler,
-            $method,
-            implode('', $this->name)
+            $method
         );
 
         if ($this->policyHandler) {
             $route->withPolicy($this->policyHandler);
+        }
+
+        if ($this->namespace) {
+            $route->withNamespace($this->namespace);
         }
 
         return $route;

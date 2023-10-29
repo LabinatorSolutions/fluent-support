@@ -5,12 +5,12 @@
                 <h3>{{$t('submit_heading')}}</h3>
             </div>
             <div class="fs_tk_right">
-                <el-button @click="$router.push({ name: 'dashboard' })" size="small" type="info">{{$t('View All')}}</el-button>
+                <el-button class="fs_view_all_button" @click="$router.push({ name: 'dashboard' })" size="small" type="info">{{$t('View All')}}</el-button>
             </div>
         </div>
-        <div style="background: white; padding: 20px;" class="fs_tk_body">
+        <div style=" padding: 20px;" class="fs_tk_body">
             <el-form :data="ticket" label-position="top">
-                <el-form-item :label="$t('subject')">
+                <el-form-item class="fs_input_form fs_input_label" :label="$t('subject')">
                     <el-input :placeholder="$t('subject_placeholder')" type="text" v-model="ticket.title"></el-input>
                     <error :error="errors.get('title')"/>
                 </el-form-item>
@@ -31,7 +31,10 @@
                     </template>
                 </div>
 
-                <el-form-item :label="$t('ticket_details')">
+                <el-form-item class="fs_tk_suggestions" >
+                    <template #label>
+                        <label class="fs_input_label"> {{$t('ticket_details')}}</label>
+                    </template>
                     <wp-editor :height="150" :media-buttons="false" v-model="ticket.content"/>
                     <p class="fs_tk_help">{{$t('details_help')}}</p>
                     <error :error="errors.get('content')"/>
@@ -41,7 +44,7 @@
 
                 <div v-if="products.length || Object.keys(priorities).length" class="fs_tk_row">
                     <div v-if="products.length" class="fs_tk_col">
-                        <el-form-item class="fs_ticket_product" :label="$t('product_services')">
+                        <el-form-item class="fs_ticket_product fs_input_label" :label="$t('product_services')">
                             <el-select clearable v-model="ticket.product_id" :placeholder="$t('service_placeholder')">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
                             </el-select>
@@ -49,7 +52,7 @@
                         <error :error="errors.get('product_id')"/>
                     </div>
                     <div v-if="Object.keys(priorities).length" class="fs_tk_col">
-                        <el-form-item class="fs_ticket_priority" :label="$t('priority')">
+                        <el-form-item class="fs_ticket_priority fs_input_label" :label="$t('priority')">
                             <el-select clearable v-model="ticket.client_priority" :placeholder="$t('priority_placeholder')">
                                 <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey" :value="priorityKey" :label="priority"></el-option>
                             </el-select>
@@ -61,7 +64,7 @@
                 <custom-fields-form :ticket="ticket" :custom_data="custom_data" :exceptions="exceptions" />
 
                 <el-form-item>
-                    <el-button @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('btn_text')}}</el-button>
+                    <el-button class="fs_create_button" @click="create()" :disabled="creating" v-loading="creating" type="success">{{$t('btn_text')}}</el-button>
                 </el-form-item>
 
             </el-form>
