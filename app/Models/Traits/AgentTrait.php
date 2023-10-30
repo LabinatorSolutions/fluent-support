@@ -108,7 +108,11 @@ trait AgentTrait
 
         PermissionManager::attachPermissions($agent->user_id, []);
 
-        $newAgent = static::findOrFail($fallBackAgentId);
+        try {
+            $newAgent = static::findOrFail($fallBackAgentId);
+        } catch (\Exception $e) {
+            throw new \Exception('Fallback agent could not be found');
+        }
 
         $this->assignDataToFallbackAgent($agent->id, $newAgent);
 
