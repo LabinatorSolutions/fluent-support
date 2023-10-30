@@ -28,4 +28,10 @@ class Activity extends Model
             $class, 'person_id', 'id'
         );
     }
+
+    // accessor
+    public function getCreatedAtAttribute($date)
+    {
+        return date('Y-m-d H:i:s', strtotime($date));
+    }
 }

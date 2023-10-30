@@ -1570,5 +1570,11 @@ class Ticket extends Model
         return $this;
 
     }
+
+    // accessor
+    public function getCreatedAtAttribute($date)
+    {
+        return date('Y-m-d H:i:s', strtotime($date));
+    }
 }
 
