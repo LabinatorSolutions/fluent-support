@@ -25,51 +25,81 @@ class UploaderController extends Controller
      */
     public function uploadTicketFiles(Request $request)
     {
-        //get settings  from settings table
         $settings = (new Settings())->globalBusinessSettings();
         $maxFileSize = floatval($settings['max_file_size']);
         $mimeHeadings = Helper::getAcceptedMimeHeadings();
-
         $maxSizeBytes = $maxFileSize * 1024;
-        //Validate the file type and size
-        $files = $this->validate($this->request->files(), [
-            'file' => 'max:' . $maxSizeBytes . '|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles())
-        ], [
-            'file.mimetypes' => sprintf(__('Only %s files are allowed.', 'fluent-support'), implode(', ', $mimeHeadings)),
-            'file.max'       => sprintf(__('The file can not be more than %.01fMB. Please upload somewhere like dropbox/google drive and paste the link in the response', 'fluent-support'), $maxFileSize)
-        ]);
 
+        $this->validateUploadedFiles($request->files(), $maxSizeBytes, $mimeHeadings, $maxFileSize);
+        $ticketId = $this->resolveTicketId($request);
+        $person = $this->resolvePerson($ticketId, $request);
+        $this->checkPermissionToUploadFile($person);
 
-
-        //get ticket by ticket id
-        $ticketId = $request->getSafe('ticket_id', 'intval');
-
-        if ($ticketId == 'undefined') {
-            $ticketId = NULL;
+        try {
+            $uploadedFiles = UploadService::handleFileUpload($request->files(), $ticketId);
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => $e->getMessage(),
+            ]);
         }
 
-        //Get customer or agent
+        return [
+            'attachments' => $this->createAttachmentRecords($uploadedFiles, $ticketId, $person),
+        ];
+    }
+
+    private function validateUploadedFiles($files, $maxSizeBytes, $mimeHeadings, $maxFileSize)
+    {
+        $validationRules = [
+            'file' => 'max:' . $maxSizeBytes . '|mimetypes:' . implode(',', Helper::ticketAcceptedFileMiles()),
+        ];
+
+        $validationMessages = [
+            'file.mimetypes' => sprintf(__('Only %s files are allowed.', 'fluent-support'), implode(', ', $mimeHeadings)),
+            'file.max'       => sprintf(__('The file cannot be more than %.01fMB. Please upload somewhere like Dropbox/Google Drive and paste the link in the response', 'fluent-support'), $maxFileSize),
+        ];
+
+        $this->validate($files, $validationRules, $validationMessages);
+    }
+
+    private function resolveTicketId($request)
+    {
+        $ticketId = $request->getSafe('ticket_id', 'intval');
+        return $ticketId == 'undefined' ? null : $ticketId;
+    }
+
+    private function resolvePerson($ticketId, $request)
+    {
         if ($ticketId && $request->getSafe('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
-            $person = $ticket->customer;
-        } else {
-            $person = Helper::getCurrentPerson();
+            return $ticket->customer;
         }
 
-        //Check if customer has permission to upload file
-        if ($person->person_type == 'customer') {
+        return Helper::getCurrentPerson();
+    }
+
+    private function checkPermissionToUploadFile($person)
+    {
+        if (!$person) {
+            return $this->sendError([
+                'message' => __('You do not have permission to upload a file', 'fluent-support'),
+            ]);
+        }
+
+        if ($person->person_type === 'customer') {
             $disabledFields = apply_filters('fluent_support/disabled_ticket_fields', []);
             if (in_array('file_upload', $disabledFields)) {
                 return $this->sendError([
-                    'message' => __('You do not have permission to upload a file', 'fluent-support')
+                    'message' => __('You do not have permission to upload a file', 'fluent-support'),
                 ]);
             }
         }
-        //Move file into the directory
-        $uploadedFiles = UploadService::handleFileUpload($files, $ticketId);
+    }
 
+    private function createAttachmentRecords($uploadedFiles, $ticketId, $person)
+    {
         $attachments = [];
-        //Create records in attachment table
+
         foreach ($uploadedFiles as $file) {
             $fileData = [
                 'ticket_id' => intval($ticketId) ?: NULL,
@@ -82,13 +112,14 @@ class UploaderController extends Controller
                 'status'    => 'in-active'
             ];
 
-            $attachment = Attachment::create($fileData);
-            $attachments[] = $attachment->file_hash;
+            try {
+                $attachment = Attachment::create($fileData);
+                $attachments[] = $attachment->file_hash;
+            } catch (\Exception $e) {
+                continue;
+            }
         }
 
-        return [
-            'attachments' => $attachments
-        ];
-
+        return $attachments;
     }
 }
