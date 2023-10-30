@@ -147,14 +147,10 @@
                                             {{ translate('Close Ticket Silently') }}
                                         </el-dropdown-item>
                                     </div>
-                                    <el-dropdown-item @click='deleteTicket()'>
+                                    <el-dropdown-item @click="deleteTicket()" v-loading="deleting">
                                         <el-icon>
                                             <Delete />
                                         </el-icon>
-                                        {{ translate('Delete') }}
-                                    </el-dropdown-item>
-
-                                    <el-dropdown-item @click="deleteTicket()" v-loading="deleting">
                                         {{ translate('Delete') }}
                                     </el-dropdown-item>
 
