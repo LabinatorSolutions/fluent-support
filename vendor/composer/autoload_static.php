@@ -14,20 +14,20 @@ class ComposerStaticInitcef8a62a26e2e43e6d3efc5a3d6e4d83
     );
 
     public static $prefixLengthsPsr4 = array (
-        'W' =>
+        'W' => 
         array (
             'WPFluent\\' => 9,
         ),
-        'P' =>
+        'P' => 
         array (
             'PhpParser\\' => 10,
         ),
-        'F' =>
+        'F' => 
         array (
             'FluentSupport\\Framework\\' => 24,
             'FluentSupport\\App\\' => 18,
         ),
-        'D' =>
+        'D' => 
         array (
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
@@ -35,27 +35,27 @@ class ComposerStaticInitcef8a62a26e2e43e6d3efc5a3d6e4d83
     );
 
     public static $prefixDirsPsr4 = array (
-        'WPFluent\\' =>
+        'WPFluent\\' => 
         array (
             0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',
         ),
-        'PhpParser\\' =>
+        'PhpParser\\' => 
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
-        'FluentSupport\\Framework\\' =>
+        'FluentSupport\\Framework\\' => 
         array (
             0 => __DIR__ . '/..' . '/wpfluent/framework/src/WPFluent',
         ),
-        'FluentSupport\\App\\' =>
+        'FluentSupport\\App\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
-        'Doctrine\\Instantiator\\' =>
+        'Doctrine\\Instantiator\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
         ),
-        'DeepCopy\\' =>
+        'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
