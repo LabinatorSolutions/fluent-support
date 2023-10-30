@@ -3,10 +3,8 @@ namespace FluentSupport\App\Services\Includes;
 
 use FluentSupport\App\Models\Meta;
 
-
 class UploadService
 {
-
     protected $uploadedFiles;
     private $isLocalUploadDisable;
     private $integratedDrivers;
