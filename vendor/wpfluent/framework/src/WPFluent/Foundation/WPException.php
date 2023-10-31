@@ -24,17 +24,7 @@ class WPException extends Exception {
 			$this->code = $this->errorData['status'];
 		}
 
-		parent::__construct($message, $code);
-	}
-
-	public function getCode()
-	{
-		return $this->code;
-	}
-
-	public function getMessage()
-	{
-		return $this->message;
+		parent::__construct($this->message, $this->code);
 	}
 
 	public function errors()
