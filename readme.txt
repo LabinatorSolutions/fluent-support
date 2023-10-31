@@ -16,7 +16,7 @@ The Fastest & Most Feature Rich Support and Customer Ticketing System for WordPr
 Fluent Support is the most versatile and feature-rich help desk and support plugin for WordPress. Provide awesome support and manage customer queries right from your WordPress dashboard.
 Fluent Support is the perfect helpdesk & support ticketing plugin that can match the premium features of SAAS solutions like Zendesk or Helpscout or FreshDesk.
 
-[youtube https://www.youtube.com/watch?v=gOqWrWeXeWM]
+[youtube https://www.youtube.com/watch?v=ZI7Rlp-uuZI&t=5s]
 
 👉 Official Website Link: [Official Website](https://fluentsupport.com/)
 👉 Join Our FB Community: [FluentSupport Facebook Group](https://facebook.com/groups/fluentsupport)
