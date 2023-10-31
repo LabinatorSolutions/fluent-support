@@ -332,15 +332,15 @@ class Reporting
 
         $reports = $this->pushReportData('opens', $openTickets, $reports, $groupByField);
 
-        $responses = $this->db()->table('fs_tickets')
-                          ->select([
-                              $this->db()->raw('SUM(response_count) AS count'),
-                              $groupByField,
-                          ])
-                          ->groupBy($groupByField)
-                          ->whereBetween('last_agent_response', [$from, $to])
-                          ->orWhereBetween('last_customer_response', [$from, $to])
-                          ->get();
+        $responses = $this->db()->table('fs_conversations')
+            ->join('fs_tickets', 'fs_tickets.id', '=', 'fs_conversations.ticket_id')
+            ->select([
+                $this->db()->raw('COUNT(wp_fs_conversations.id) AS count'),
+                'fs_tickets.' . $groupByField,
+            ])
+            ->groupBy('fs_tickets.' . $groupByField)
+            ->whereBetween('fs_conversations.created_at', [$from, $to])
+            ->get();
 
         $reports = $this->pushReportData('responses', $responses, $reports, $groupByField);
 
