@@ -112,7 +112,7 @@ $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($
     $router->put('/{agent_id}', 'AgentController@updateAgent')->int('agent_id');
     $router->delete('/{agent_id}', 'AgentController@deleteAgent')->int('agent_id');
     $router->post('/avatar/{agent_id}', 'AgentController@addOrUpdateProfileImage')->int('agent_id');
-    $router->post('/{agent_id}/reset_avatar', 'AgentController@resetAvatar')->int('agent_id');
+    $router->post('/reset_avatar/{agent_id}', 'AgentController@resetAvatar')->int('agent_id');
 });
 
 $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router) {

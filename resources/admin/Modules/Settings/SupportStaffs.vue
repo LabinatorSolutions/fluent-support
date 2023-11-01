@@ -478,7 +478,7 @@ export default {
 
         const confirmResetProfile = async (row) => {
             state.loading = !state.loading;
-            await post("agents/" + row.id + "/reset_avatar")
+            await post("agents/reset_avatar/" + row.id)
                 .then((response) => {
                     notify({
                         type: 'success',
