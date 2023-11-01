@@ -4,7 +4,6 @@
     "/assets/admin/js/global_admin.js": "/assets/admin/js/global_admin.js",
     "/assets/admin/js/global_summary.js": "/assets/admin/js/global_summary.js",
     "/assets/portal/js/login_helper.js": "/assets/portal/js/login_helper.js",
-    "/assets/block-editor/js/fst_block.js": "/assets/block-editor/js/fst_block.js",
     "/assets/admin/css/alpha-admin.css": "/assets/admin/css/alpha-admin.css",
     "/assets/portal/css/app.css": "/assets/portal/css/app.css",
     "/assets/admin/css/all_public.css": "/assets/admin/css/all_public.css",
@@ -24,7 +23,6 @@
     "/assets/images/index.php": "/assets/images/index.php",
     "/assets/images/logo.svg": "/assets/images/logo.svg",
     "/assets/images/sidebar-icon.svg": "/assets/images/sidebar-icon.svg",
-    "/assets/images/ticketNotFound.svg": "/assets/images/ticketNotFound.svg",
     "/assets/libs/index.php": "/assets/libs/index.php",
     "/assets/libs/purify/purify.js": "/assets/libs/purify/purify.js",
     "/assets/libs/purify/purify.min.js": "/assets/libs/purify/purify.min.js"
