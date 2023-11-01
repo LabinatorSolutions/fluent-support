@@ -188,6 +188,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+= 1.7.4 (Date: November 01, 2023) =
+* Fixed - Update customer profile issue
+* Fixed - Delete customer issue
+* Fixed - Ticket id not included in outgoing webhook
+
 = 1.7.4 (Date: October 31, 2023) =
 * Added - Gutenberg block editor support for customer portal
 * Added - Option to set additional fields in register form
@@ -201,7 +206,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Improved - Implemented 404 page for invalid ticket id
 
 
-= 1.7.3 (Date: August 10, 2023) =
+= 1.7.3 (Date: August 23, 2023) =
 * Added - Option to delete ticket from inside view ticket
 * Added - Re-design permission page
 * Added - Report by Product(Pro)
