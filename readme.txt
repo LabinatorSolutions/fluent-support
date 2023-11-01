@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.3
-Stable tag: 1.7.4
+Stable tag: 1.7.5
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,10 +188,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
-= 1.7.4 (Date: November 01, 2023) =
-* Fixed - Update customer profile issue
-* Fixed - Delete customer issue
+= 1.7.5 (Date: November 01, 2023) =
+* Fixed - Update and delete customer profile issue
+* Fixed - Reset avatar issue for customer and agent
 * Fixed - Ticket id not included in outgoing webhook
+* Fixed - Update and delete issue in saved reply
 
 = 1.7.4 (Date: October 31, 2023) =
 * Added - Gutenberg block editor support for customer portal
