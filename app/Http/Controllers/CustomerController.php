@@ -132,10 +132,10 @@ class CustomerController extends Controller
      * @param $id
      * @return array
      */
-    public function resetAvatar(Customer $customer, $id)
+    public function resetAvatar(Customer $customer, $customer_id)
     {
         try {
-            $customer->restoreAvatar($customer, $id);
+            $customer->restoreAvatar($customer, $customer_id);
 
             return [
                 'message' => __('Customer avatar reset to gravatar default', 'fluent-support'),
