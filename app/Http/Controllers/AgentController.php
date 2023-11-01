@@ -169,9 +169,9 @@ class AgentController extends Controller
      * @param $id
      * @return array
      */
-    public function resetAvatar(Agent $agent, $id){
+    public function resetAvatar(Agent $agent, $agent_id){
         try {
-            $agent->restoreAvatar($agent, $id);
+            $agent->restoreAvatar($agent, $agent_id);
 
             return [
                 'message'  => __('Support Staff avatar reset to gravatar default', 'fluent-support')
