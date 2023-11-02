@@ -35,10 +35,38 @@ class UploadService
 
         foreach ($enabledDrivers as $driver) {
             $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($driver['key']);
-            $results[] = $driverClass->upload($files, $ticketId);
+            try {
+                $results[] = $driverClass->upload($files, $ticketId);
+            } catch (\Exception $e) {
+                $results[] = [
+                    'file_path' => '',
+                    'url' => '',
+                    'name' => '',
+                    'type' => '',
+                    'size' => '',
+                    'driver' => $driver['key'],
+                ];
+                $uploadInfo = $this->handleUploadToLocal($ticketId, $files);
+                $results[] = array_pop($uploadInfo);
+            }
         }
 
         return $results;
+    }
+
+    private function handleUploadToLocal($ticketId, $file){
+        $uploadInfo = FileSystem::setSubDir('ticket_' . $ticketId)->put($file);
+        if(!empty($uploadInfo) && is_array($uploadInfo)){
+            return $uploadInfo;
+        }else {
+            return [
+                'file_path' => '',
+                'url' => '',
+                'name' => '',
+                'type' => '',
+                'size' => '',
+            ];
+        }
     }
 
     /**
@@ -53,10 +81,10 @@ class UploadService
         if (defined('FLUENTSUPPORTPRO') && $this->isLocalUploadDisable && $this->integratedDrivers) {
             $this->uploadedFiles = $this->_uploadToCloud($file, $ticketId);
         } elseif (defined('FLUENTSUPPORTPRO') && !$this->isLocalUploadDisable && $this->integratedDrivers) {
-            $this->uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($file);
+            $this->uploadedFiles = $this->handleUploadToLocal($ticketId, $file);
             $this->_uploadToCloud($file, $ticketId);
         } else {
-            $this->uploadedFiles = FileSystem::setSubDir('ticket_' . $ticketId)->put($file);
+            $this->uploadedFiles = $this->handleUploadToLocal($ticketId, $file);
         }
 
         return $this->uploadedFiles;

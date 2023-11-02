@@ -3,10 +3,10 @@
 namespace FluentSupport\App\Services;
 
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Modules\PermissionManager;
 
 class TicketHelper
@@ -217,5 +217,69 @@ class TicketHelper
     public static function countActiveTickets()
     {
         return Ticket::where('status', 'active')->count();
+    }
+
+    public static function addNoteToTicket($data)
+    {
+        $attachments = $data['attachments'];
+        $ticket_id = $data['ticket_id'];
+        $person_id = $data['person_id'];
+
+        if($attachments->isEmpty()){
+            return;
+        }
+
+        $error = [
+            'google_drive_settings' => false,
+            'dropbox_settings' => false,
+            'local_upload' => false,
+        ];
+
+        foreach ($attachments as $attachment) {
+            isset($error[$attachment->driver]) && ($error[$attachment->driver] = true);
+            $attachment->delete();
+        }
+
+        $internalNote = self::getFileUploadErrorNoteMessage($error);
+
+        Conversation::create([
+            'ticket_id'         => $ticket_id,
+            'person_id'         => $person_id,
+            'conversation_type' => 'internal_error',
+            'content'           => $internalNote
+        ]);
+    }
+
+    public static function getFileUploadErrorNoteMessage($error){
+        $errorMessages = [
+            'google_drive_settings' => 'Google Drive',
+            'dropbox_settings' => 'Dropbox',
+            'local_upload' => 'local',
+        ];
+
+        $noteMessage = 'File Upload failed';
+
+        $failedServices = [];
+
+        foreach ($errorMessages as $key => $service) {
+            if ($error[$key]) {
+                $failedServices[] = $service;
+            }
+        }
+
+        if (!empty($failedServices)) {
+            $noteMessage .= ' to ' . implode(' and ', $failedServices) . ', Please check your';
+
+            if (in_array('local', $failedServices)) {
+                $noteMessage .= ' folder permission';
+            } else {
+                $noteMessage .= ' ' . $failedServices[0] . ' settings and folder permission in your server';
+            }
+        } else {
+            $noteMessage .= ' to 3rd party, Please check your settings';
+        }
+
+        return $noteMessage;
+
     }
 }

@@ -191,7 +191,7 @@ class TicketService
 
             Attachment::whereNull('ticket_id')
                 ->whereIn('file_hash', $attachments)
-                ->whereNull('ticket_id')
+                ->where('status', 'in-active')
                 ->update([
                     'ticket_id' => $ticket->id,
                     'person_id' => $customer->id,
@@ -199,6 +199,20 @@ class TicketService
                 ]);
 
             $ticket->load('attachments');
+
+            $isUploadFailed = Attachment::whereNull('ticket_id')
+                ->whereIn('file_hash', $attachments)
+                ->where('status', 'failed')->get();
+
+            if($isUploadFailed->count() > 0){
+                $failedData = [
+                    'attachments' => $isUploadFailed,
+                    'ticket_id' => $ticket->id,
+                    'person_id' => $customer->id
+                ];
+
+                do_action('fluent_support/file_upload_failed', $failedData);
+            }
         }
 
         return $ticket;

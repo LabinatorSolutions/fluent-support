@@ -69,6 +69,7 @@ class ResponseService
         if ($attachments = Arr::get($data, 'attachments', [])) {
             Attachment::where('ticket_id', $ticket->id)
                 ->whereIn('file_hash', $attachments)
+                ->where('status', 'in-active')
                 ->update([
                     'conversation_id' => $createdResponse->id,
                     'status'          => 'active'
@@ -137,6 +138,20 @@ class ResponseService
         }
 
         $ticket->save();
+
+        if ($attachments = Arr::get($data, 'attachments', [])) {
+            $isUploadFailed = Attachment::where('ticket_id', $ticket->id)
+                ->whereIn('file_hash', $attachments)
+                ->where('status', 'failed')->get();
+
+            $failedData = [
+                'attachments' => $isUploadFailed,
+                'ticket_id' => $ticket->id,
+                'person_id' => $person->id
+            ];
+
+            do_action('fluent_support/file_upload_failed', $failedData);
+        }
 
         if ($silently) {
             return [
