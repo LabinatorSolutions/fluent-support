@@ -109,7 +109,7 @@ class UploaderController extends Controller
                 'full_url'  => esc_url($file['url']),
                 'title'     => sanitize_file_name($file['name']),
                 'driver'    => isset($file['driver']) ? $file['driver'] : 'local',
-                'status'    => 'in-active'
+                'status'    => !empty($file['file_path']) ? 'in-active' : 'failed',
             ];
 
             try {
