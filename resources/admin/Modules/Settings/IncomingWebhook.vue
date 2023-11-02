@@ -177,6 +177,11 @@ export default {
                     field_key: "custom_fields[custom_field_slug]",
                     type: "Text",
                 },
+                {
+                    field: "Mailbox ID",
+                    field_key: "mailbox_id",
+                    type: "Number",
+                },
             ],
         });
 
@@ -187,7 +192,6 @@ export default {
                     state.webhook = response.webhook;
                     state.mailboxes = response.mailboxes;
                     state.mailbox = response.mailbox;
-                    console.log(state.mailbox);
                 })
                 .catch((errors) => {
                     handleError(errors);
