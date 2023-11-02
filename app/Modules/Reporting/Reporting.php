@@ -335,7 +335,7 @@ class Reporting
         $responses = $this->db()->table('fs_conversations')
             ->join('fs_tickets', 'fs_tickets.id', '=', 'fs_conversations.ticket_id')
             ->select([
-                $this->db()->raw('COUNT(wp_fs_conversations.id) AS count'),
+                $this->db()->raw('COUNT(' . $this->tablePrefix() . 'fs_conversations.id) AS count'),
                 'fs_tickets.' . $groupByField,
             ])
             ->groupBy('fs_tickets.' . $groupByField)
@@ -513,5 +513,12 @@ class Reporting
             'max_waiting' => (intval($waitStat->max_waiting)) ? human_time_diff(intval($waitStat->max_waiting), time()) : 0,
             'waiting_tickets' => $waitStat->total_tickets
         ];
+    }
+
+    public function tablePrefix()
+    {
+        global $wpdb;
+
+        return $wpdb->prefix;
     }
 }
