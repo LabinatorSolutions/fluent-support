@@ -1,6 +1,6 @@
 <template>
     <div class="fs_narrow_promo" v-if="!has_pro">
-        <h3>{{ current_integration.promo_heading }}</h3>
+        <h3>{{ current_integration.promo_heading }} hhjgjkhghjg</h3>
         <p>{{translate('pro_promo')}}</p>
         <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{translate('Upgrade To Pro')}}</a>
     </div>
@@ -8,9 +8,6 @@
         <div v-if="!loading" class="fs_box_wrapper">
             <div v-if="fields">
                 <form-builder :fields="fields.fields" :formData="settings"/>
-                <el-button size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
-                    {{fields.button_text}}
-                </el-button>
             </div>
             <div  v-else>
                 <h3>{{translate('Settings could not be found')}}!</h3>
