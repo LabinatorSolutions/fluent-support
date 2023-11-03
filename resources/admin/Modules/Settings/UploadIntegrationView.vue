@@ -14,7 +14,7 @@
         </div>
         <div v-if="!loading" class="fs_box_wrapper fs_padded_20">
             <div v-if="current_integration">
-                <h3>{{ current_integration.title }} {{translate('Integration Settings')}}</h3>
+                <h3>{{ current_integration.title }}</h3>
                 <p v-html="current_integration.description"></p>
                 <hr/>
                 <div v-if="fields">
