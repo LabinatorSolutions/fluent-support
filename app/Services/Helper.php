@@ -643,4 +643,38 @@ class Helper
 
         return 'fluent_support';
     }
+
+    public static function getEnabledDriver()
+    {
+        $enabledDriver = 'local_upload';
+        if ( defined('FLUENTSUPPORTPRO') ) {
+            $driversKey = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriversKey();
+
+            if( empty($driversKey) ) {
+                return $enabledDriver;
+            }
+        }
+        else {
+            return $enabledDriver;
+        }
+
+        $rows = Meta::where('object_type', 'integration_settings')
+            ->whereIn('key', $driversKey)
+            ->get()
+            ->toArray();
+
+        if( !$rows ) {
+            return $enabledDriver;
+        }
+
+        foreach ($rows as $row) {
+            $rowValue = maybe_unserialize($row['value']);
+            if( $rowValue['status'] == 'yes' ) {
+                $enabledDriver =  $row['key'];
+                break;
+            }
+        }
+
+        return $enabledDriver;
+    }
 }
