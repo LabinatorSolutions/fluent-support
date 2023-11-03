@@ -7,7 +7,7 @@
     <div class="fs_integration" v-else-if="has_pro">
         <div v-if="!loading" class="fs_box_wrapper">
             <div v-if="fields">
-                <form-builder :fields="fields.fields" :formData="settings"/>
+                <form-builder :fields="fields.fields" :formData="settings" @change="saveSettings"/>
             </div>
             <div  v-else>
                 <h3>{{translate('Settings could not be found')}}!</h3>
