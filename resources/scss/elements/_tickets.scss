@@ -203,6 +203,35 @@
 
             }
 
+            &.fs_conv_type_internal_error {
+                background: rgba(250, 224, 224, 0.5);
+                border-left: 0;
+                border-bottom: 10px solid #ff2222a6;
+
+                .fs_avatar,
+                .fs_thread_ribbon_agent,
+                .fs_thread_head,
+                .fs_thread_title {
+                    display: none;
+                }
+
+                .fs_thread_wrap {
+                    margin: 0;
+                    padding: 10px 95px;
+
+                    .fs_thread_body {
+                        p {
+                            color: #e83131;
+                            font-weight: 500;
+                        }
+                    }
+                }
+
+                &:after {
+                    background: #e6a23c;
+                }
+            }
+
             &.fs_conv_type_internal_info {
                 background: #fbfaf9;
 
