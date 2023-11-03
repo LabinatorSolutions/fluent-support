@@ -2,89 +2,43 @@
 namespace FluentSupport\App\Services\Includes;
 
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Services\Helper;
 
 class UploadService
 {
     protected $uploadedFiles;
-    private $isLocalUploadDisable;
-    private $integratedDrivers;
-
+    private $enabledDriver;
 
     public function __construct()
     {
-        $this->isLocalUploadDisable = static::isLocalUploadDisable() ?: false;
-        $this->integratedDrivers = static::isIntegratedDriversEnable() ?: false;
-
+        $this->enabledDriver = Helper::getEnabledDriver();
     }
 
     /**
-     * Upload files to integrated cloud storage
-     * @param $file
-     * @param $ticketId
-     * @return array
-     */
-    public function _uploadToCloud($files, $ticketId)
-    {
-        $enabledDrivers = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::enabledDrivers();
-
-        if (!is_array($enabledDrivers)) {
-            $enabledDrivers = [$enabledDrivers];
-        }
-
-        $results = [];
-
-        foreach ($enabledDrivers as $driver) {
-            $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($driver['key']);
-            try {
-                $results[] = $driverClass->upload($files, $ticketId);
-            } catch (\Exception $e) {
-                $results[] = [
-                    'file_path' => '',
-                    'url' => '',
-                    'name' => '',
-                    'type' => '',
-                    'size' => '',
-                    'driver' => $driver['key'],
-                ];
-                $uploadInfo = $this->handleUploadToLocal($ticketId, $files);
-                $results[] = array_pop($uploadInfo);
-            }
-        }
-
-        return $results;
-    }
-
-    private function handleUploadToLocal($ticketId, $file){
-        $uploadInfo = FileSystem::setSubDir('ticket_' . $ticketId)->put($file);
-        if(!empty($uploadInfo) && is_array($uploadInfo)){
-            return $uploadInfo;
-        }else {
-            return [
-                'file_path' => '',
-                'url' => '',
-                'name' => '',
-                'type' => '',
-                'size' => '',
-            ];
-        }
-    }
-
-    /**
-     *
-     *
+     * Handle file upload
      * @param array $file file data from request
      * @param int $ticketId ticket id
      * @return array $uploadedFiles uploaded file data
      */
     public function _handleFileUpload($file, $ticketId)
     {
-        if (defined('FLUENTSUPPORTPRO') && $this->isLocalUploadDisable && $this->integratedDrivers) {
-            $this->uploadedFiles = $this->_uploadToCloud($file, $ticketId);
-        } elseif (defined('FLUENTSUPPORTPRO') && !$this->isLocalUploadDisable && $this->integratedDrivers) {
+        try {
+            //Upload file to local
             $this->uploadedFiles = $this->handleUploadToLocal($ticketId, $file);
-            $this->_uploadToCloud($file, $ticketId);
-        } else {
-            $this->uploadedFiles = $this->handleUploadToLocal($ticketId, $file);
+        }catch (\Exception $e){
+            throw new \Exception($e->getMessage());
+        }
+
+        //If cloud integration is enabled then upload file to cloud
+        if (defined('FLUENTSUPPORTPRO') && $this->enabledDriver != 'local_upload'){
+            $cloudFile = $this->_uploadToCloud($file, $ticketId);
+            if(!empty($cloudFile['file_path'])){
+                $localFile = array_pop($this->uploadedFiles);
+                $cloudFile['file_path'] = $localFile['file_path'];
+                $this->uploadedFiles[] = $cloudFile;
+            }else {
+                $this->uploadedFiles[] = $cloudFile;
+            }
         }
 
         return $this->uploadedFiles;
@@ -110,21 +64,64 @@ class UploadService
             'from' => 'email'
         ];
 
-        if($this->isLocalUploadDisable && $this->integratedDrivers) {
-            $uplodedToCloud = $this->_uploadToCloud($fileData, $ticketId);
-            $this->uploadedFiles = $uplodedToCloud[0];
-        } elseif(!$this->isLocalUploadDisable && $this->integratedDrivers) {
-            $this->uploadedFiles = $uploadToLocalDriver;
-            $this->_uploadToCloud($fileData, $ticketId);
-        } else {
-            $this->uploadedFiles = $uploadToLocalDriver;
+        try {
+            //Upload file to local
+            $this->uploadedFiles = $this->handleUploadToLocal($ticketId, $fileData);
+        }catch (\Exception $e){
+            throw new \Exception($e->getMessage());
         }
 
-        if($this->isLocalUploadDisable) {
-            wp_delete_file($uploadToLocalDriver['file']);
+        //If cloud integration is enabled then upload file to cloud
+        if($this->enabledDriver != 'local_upload'){
+            $cloudFile = $this->_uploadToCloud($file, $ticketId);
+            if(!empty($cloudFile['file_path'])){
+                $cloudFile['file_path'] = $this->uploadedFiles['file_path'];
+                $this->uploadedFiles = $cloudFile;
+            }else {
+                $this->uploadedFiles[] = $cloudFile;
+            }
         }
 
         return $this->uploadedFiles;
+    }
+
+    /**
+     * Handle file upload to local
+     * @param int $ticketId ticket id
+     * @param array $file file data from request
+     */
+    private function handleUploadToLocal($ticketId, $file){
+        $uploadInfo = FileSystem::setSubDir('ticket_' . $ticketId)->put($file);
+        if(!empty($uploadInfo) && is_array($uploadInfo)){
+            return $uploadInfo;
+        }else {
+            throw new \Exception('File upload failed');
+        }
+    }
+
+    /**
+     * Upload files to integrated cloud storage
+     * @param $file
+     * @param $ticketId
+     * @return array
+     */
+    public function _uploadToCloud($files, $ticketId)
+    {
+        $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
+
+        try {
+            $results = $driverClass->upload($files, $ticketId);
+        } catch (\Exception $e) {
+            return [
+                'file_path' => '',
+                'url' => '',
+                'name' => '',
+                'type' => '',
+                'size' => '',
+            ];
+        }
+
+        return $results;
     }
 
     /**
@@ -159,23 +156,39 @@ class UploadService
         return $responseBody;
     }
 
-
-    // Verify if local upload is enable or not
-    public static function isLocalUploadDisable()
+    private static function getEnabledDriver()
     {
-        return Meta::where('key', 'disable_local_upload')
-            ->where('object_type', 'enabled_upload_drivers')
-            ->exists();
-    }
+        $enabledDriver = 'local_upload';
+        if ( defined('FLUENTSUPPORTPRO') ) {
+            $driversKey = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriversKey();
 
-    // Verify if there's any integrated drivers enable
-    public static function isIntegratedDriversEnable()
-    {
-        return Meta::where('key', '!=' ,'disable_local_upload')
-        ->where('object_type', 'enabled_upload_drivers')
-        ->exists();
-    }
+            if( empty($driversKey) ) {
+                return $enabledDriver;
+            }
+        }
+        else {
+            return $enabledDriver;
+        }
 
+        $rows = Meta::where('object_type', 'integration_settings')
+            ->whereIn('key', $driversKey)
+            ->get()
+            ->toArray();
+
+        if( !$rows ) {
+            return $enabledDriver;
+        }
+
+        foreach ($rows as $row) {
+            $rowValue = maybe_unserialize($row['value']);
+            if( $rowValue['status'] == 'yes' ) {
+                $enabledDriver =  $row['key'];
+                break;
+            }
+        }
+
+        return $enabledDriver;
+    }
 
     public static function __callStatic($method, $params)
     {
