@@ -139,18 +139,22 @@ class ResponseService
 
         $ticket->save();
 
+        //If file upload failed to local during create response
         if ($attachments = Arr::get($data, 'attachments', [])) {
             $isUploadFailed = Attachment::where('ticket_id', $ticket->id)
                 ->whereIn('file_hash', $attachments)
                 ->where('status', 'failed')->get();
 
-            $failedData = [
-                'attachments' => $isUploadFailed,
-                'ticket_id' => $ticket->id,
-                'person_id' => $person->id
-            ];
+            if($isUploadFailed->count() > 0) {
+                $failedData = (object) [
+                    'attachments' => $isUploadFailed,
+                    'ticket_id' => $ticket->id,
+                    'person_id' => $person->id,
+                    'type' => 'response'
+                ];
 
-            do_action('fluent_support/file_upload_failed', $failedData);
+                do_action('fluent_support/file_upload_failed_before_store', $failedData);
+            }
         }
 
         if ($silently) {

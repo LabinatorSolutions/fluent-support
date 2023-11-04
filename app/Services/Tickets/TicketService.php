@@ -205,13 +205,14 @@ class TicketService
                 ->where('status', 'failed')->get();
 
             if($isUploadFailed->count() > 0){
-                $failedData = [
+                $failedData = (object) [
                     'attachments' => $isUploadFailed,
                     'ticket_id' => $ticket->id,
-                    'person_id' => $customer->id
+                    'person_id' => $customer->id,
+                    'type' => 'create'
                 ];
 
-                do_action('fluent_support/file_upload_failed', $failedData);
+                do_action('fluent_support/file_upload_failed_before_store', $failedData);
             }
         }
 

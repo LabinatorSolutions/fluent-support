@@ -83,7 +83,5 @@ if(defined('LSCWP_V')){
 
 $app->addAction('init', 'BlockEditorHandler@init');
 
-$app->addAction('fluent_support/file_upload_failed', 'FluentSupport\App\Services\TicketHelper::addNoteToTicket', 10, 2);
-
 // File upload failed note
 (new \FluentSupport\App\Hooks\Handlers\FileUploadHandler())->init();
