@@ -3,10 +3,10 @@ namespace FluentSupport\App\Services\Includes;
 
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Request\File;
 
 class UploadService
 {
-    protected $uploadedFiles;
     private $enabledDriver;
 
     public function __construct()
@@ -20,28 +20,8 @@ class UploadService
      * @param int $ticketId ticket id
      * @return array $uploadedFiles uploaded file data
      */
-    public function _handleFileUpload($file, $ticketId)
-    {
-        try {
-            //Upload file to local
-            $this->uploadedFiles = $this->handleUploadToLocal($ticketId, $file);
-        }catch (\Exception $e){
-            throw new \Exception($e->getMessage());
-        }
-
-        //If cloud integration is enabled then upload file to cloud
-        if (defined('FLUENTSUPPORTPRO') && $this->enabledDriver != 'local_upload'){
-            $cloudFile = $this->_uploadToCloud($file, $ticketId);
-            if(!empty($cloudFile['file_path'])){
-                $localFile = array_pop($this->uploadedFiles);
-                $cloudFile['file_path'] = $localFile['file_path'];
-                $this->uploadedFiles[] = $cloudFile;
-            }else {
-                $this->uploadedFiles[] = $cloudFile;
-            }
-        }
-
-        return $this->uploadedFiles;
+    public function _handleFileUpload($file){
+        return $this->uploadFileToTempLocation($file);
     }
 
     /**
@@ -51,77 +31,29 @@ class UploadService
      * @param array $acceptedMimes accepted mime types for file upload
      * @return array $uploadedFiles uploaded file data
      */
-    public function _handleEmailAttachments($file, $ticketId, $acceptedMimes=[])
-    {
+    public function _handleEmailAttachments($file, $ticketId, $acceptedMimes=[]){
         $fileContent =  $this->requestContent($file['url'], $acceptedMimes);
+        $_filter = true;
+        add_filter( 'upload_dir', function( $arr ) use( &$_filter ){
+            if ( $_filter ) {
+                $folder = '/' . FLUENT_SUPPORT_UPLOAD_DIR . DIRECTORY_SEPARATOR. '_temp';
+                $arr['path'] = $arr['basedir'] . $folder;
+                $arr['url'] = $arr['baseurl'] . $folder;
+                $arr['subdir'] = $folder;
+            }
+            return $arr;
+        } );
         $uploadToLocalDriver = wp_upload_bits($file['filename'], null, $fileContent);
+        remove_filter( 'upload_dir', $_filter );
 
         // this is the file data from email attachment and required for upload to cloud
-        $fileData = [
+        return [
+            'type' => $uploadToLocalDriver['type'],
             'name' => $file['filename'],
-            'type' =>   $uploadToLocalDriver['type'],
-            'tmp_name' => $uploadToLocalDriver['file'],
+            'file' => $uploadToLocalDriver['file'],
+            'url' => $uploadToLocalDriver['url'],
             'from' => 'email'
         ];
-
-        try {
-            //Upload file to local
-            $this->uploadedFiles = $this->handleUploadToLocal($ticketId, $fileData);
-        }catch (\Exception $e){
-            throw new \Exception($e->getMessage());
-        }
-
-        //If cloud integration is enabled then upload file to cloud
-        if($this->enabledDriver != 'local_upload'){
-            $cloudFile = $this->_uploadToCloud($file, $ticketId);
-            if(!empty($cloudFile['file_path'])){
-                $cloudFile['file_path'] = $this->uploadedFiles['file_path'];
-                $this->uploadedFiles = $cloudFile;
-            }else {
-                $this->uploadedFiles[] = $cloudFile;
-            }
-        }
-
-        return $this->uploadedFiles;
-    }
-
-    /**
-     * Handle file upload to local
-     * @param int $ticketId ticket id
-     * @param array $file file data from request
-     */
-    private function handleUploadToLocal($ticketId, $file){
-        $uploadInfo = FileSystem::setSubDir('ticket_' . $ticketId)->put($file);
-        if(!empty($uploadInfo) && is_array($uploadInfo)){
-            return $uploadInfo;
-        }else {
-            throw new \Exception('File upload failed');
-        }
-    }
-
-    /**
-     * Upload files to integrated cloud storage
-     * @param $file
-     * @param $ticketId
-     * @return array
-     */
-    public function _uploadToCloud($files, $ticketId)
-    {
-        $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
-
-        try {
-            $results = $driverClass->upload($files, $ticketId);
-        } catch (\Exception $e) {
-            return [
-                'file_path' => '',
-                'url' => '',
-                'name' => '',
-                'type' => '',
-                'size' => '',
-            ];
-        }
-
-        return $results;
     }
 
     /**
@@ -154,6 +86,56 @@ class UploadService
         $responseBody = wp_remote_retrieve_body($response);
 
         return $responseBody;
+    }
+
+    /**
+     * Handle file upload to local
+     * @param int $ticketId ticket id
+     * @param array $file file data from request
+     */
+    private function uploadFileToTempLocation( $file )
+    {
+        $uploadInfo = FileSystem::setSubDir('_temp')->put($file);
+        if(!empty($uploadInfo)){
+            return $uploadInfo;
+        }else {
+            return $this->getEmptyFileData();
+        }
+    }
+
+    private function getEmptyFileData($drive = 'temp')
+    {
+        return [[
+                    'file_path' => '',
+                    'url' => '',
+                    'name' => '',
+                    'type' => '',
+                    'size' => '',
+                    'driver' => $drive
+                ]];
+    }
+
+    /**
+     * Upload files to integrated cloud storage
+     * @param $file
+     * @param $ticketId
+     * @return array | boolean
+     */
+    public function _copyFromTempToOriginal($tempSource, $ticketId)
+    {
+        if (defined('FLUENTSUPPORTPRO') && $this->enabledDriver != 'local_upload'){
+            //Move to cloud
+            try {
+                $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
+                return $driverClass->copyFromTempToOriginal($tempSource, $ticketId);
+            } catch (\Exception $e) {
+                //Move to local
+                return FileSystem::copy($tempSource, $ticketId);
+            }
+        }else {
+            //Move to local
+            return FileSystem::copy($tempSource, $ticketId);
+        }
     }
 
     private static function getEnabledDriver()

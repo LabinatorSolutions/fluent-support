@@ -37,7 +37,7 @@ class FileSystem
     {
         $uploadDir = wp_upload_dir();
 
-        return $uploadDir['basedir'] . FLUENT_SUPPORT_UPLOAD_DIR;
+        return $uploadDir['basedir']. DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR;
     }
 
     /**
@@ -81,6 +81,48 @@ class FileSystem
         }
 
         return $uploadedFiles;
+    }
+
+    /**
+     * Copy a file from custom upload directory of this application
+     * @param string $source file path
+     * @param int $ticketId
+     * @return array | boolean
+     */
+    public function _copy($source, $ticketId)
+    {
+        $destDir = $this->_getCustomTicketDir($ticketId);
+
+        $fileName = basename($source);
+        $destFile = $destDir . DIRECTORY_SEPARATOR . $fileName;
+
+        if (@copy($source, $destFile)) {
+            return $this->_updateUploadDirForCopy($fileName, $ticketId);
+        }
+
+        return false;
+    }
+
+    private function _getCustomTicketDir($ticketId)
+    {
+        $destDir = $this->_getDir() . DIRECTORY_SEPARATOR . 'ticket_' . $ticketId;
+        if (!is_dir($destDir)) {
+            @mkdir($destDir, 0755);
+        }
+
+        return $destDir;
+    }
+
+    private function _updateUploadDirForCopy( $fileName, $ticketId)
+    {
+        $uploadDir = wp_upload_dir();
+        $destDir = $this->_getDir() . DIRECTORY_SEPARATOR . 'ticket_' . $ticketId;
+        $uploadDir['path'] = $destDir . DIRECTORY_SEPARATOR . $fileName;
+        $uploadDir['basedir'] = $destDir;
+        $uploadDir['url'] = $uploadDir['baseurl'] . '/' . FLUENT_SUPPORT_UPLOAD_DIR . '/ticket_' . $ticketId . '/' . $fileName;
+        $uploadDir['baseurl'] = $uploadDir['baseurl'] . '/' . FLUENT_SUPPORT_UPLOAD_DIR . '/ticket_' . $ticketId;
+
+        return $uploadDir;
     }
 
     /**
