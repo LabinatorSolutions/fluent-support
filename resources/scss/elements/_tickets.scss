@@ -204,9 +204,13 @@
             }
 
             &.fs_conv_type_internal_error {
-                background: rgba(250, 224, 224, 0.5);
-                border-left: 0;
-                border-bottom: 10px solid #ff2222a6;
+                display: flex;
+                align-items: flex-start;
+                width: auto;
+                gap: 8px;
+                align-self: stretch;
+                border-left: 5px solid var(--destructive-destructive-400, #F56C6C);
+                background: var(--destructive-50, #FEF2F2);
 
                 .fs_avatar,
                 .fs_thread_ribbon_agent,
@@ -217,12 +221,15 @@
 
                 .fs_thread_wrap {
                     margin: 0;
-                    padding: 10px 95px;
-
+                    padding: 10px 25px;
                     .fs_thread_body {
                         p {
-                            color: #e83131;
+                            color: var(--destructive-800, #991B1B);
+                            font-feature-settings: 'salt' on;
+                            font-size: 14px;
+                            font-style: normal;
                             font-weight: 500;
+                            line-height: 20px;
                         }
                     }
                 }
