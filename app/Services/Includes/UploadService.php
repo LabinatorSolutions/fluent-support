@@ -119,23 +119,56 @@ class UploadService
      * Upload files to integrated cloud storage
      * @param $file
      * @param $ticketId
-     * @return array | boolean
+     * @return Object
      */
-    public function _copyFromTempToOriginal($tempSource, $ticketId)
+    public function _copyFromTempToOriginal($files, $ticketId)
     {
+        $hasError = false;
         if (defined('FLUENTSUPPORTPRO') && $this->enabledDriver != 'local_upload'){
             //Move to cloud
-            try {
-                $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
-                return $driverClass->copyFromTempToOriginal($tempSource, $ticketId);
-            } catch (\Exception $e) {
-                //Move to local
-                return FileSystem::copy($tempSource, $ticketId);
+            foreach ($files as $file) {
+                if( !$hasError )
+                {
+                    try {
+                        $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
+                        $uploadInfo = $driverClass->copyFromTempToOriginal($file->file_path, $ticketId);
+                    } catch (\Exception $e) {
+                        //Move to local
+                        $hasError = true;
+                        $uploadInfo = FileSystem::copy($file->file_path, $ticketId);
+                    }
+                }else {
+                    //Move to local
+                    $uploadInfo = FileSystem::copy($file->file_path, $ticketId);
+                }
+                $file->full_url = $uploadInfo['url'];
+                $file->file_path = $uploadInfo['file_path'];
+                $file->driver = $this->enabledDriver;
+                $file->status = 'active';
+                $file->save();
             }
         }else {
             //Move to local
-            return FileSystem::copy($tempSource, $ticketId);
+            foreach ($files as $file) {
+                $uploadInfo = FileSystem::copy($file->file_path, $ticketId);
+                $file->full_url = $uploadInfo['url'];
+                $file->file_path = $uploadInfo['file_path'];
+                $file->driver = $this->enabledDriver;
+                $file->status = 'active';
+                $file->save();
+            }
         }
+
+        return (Object) [
+            'ticket_id' => $ticketId,
+            'hasError' => $hasError,
+            'driver' => $this->enabledDriver
+        ];
+    }
+
+    public function _copyFileToOriginal()
+    {
+
     }
 
     private static function getEnabledDriver()
