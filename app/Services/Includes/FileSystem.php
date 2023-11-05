@@ -95,6 +95,7 @@ class FileSystem
         }
 
         [$destDir, $folderName] = $this->_getCustomDir();
+
         $fileName = basename($source);
         $destFile = $destDir . DIRECTORY_SEPARATOR . $fileName;
 
@@ -118,10 +119,7 @@ class FileSystem
             }
         }
 
-        return [
-            'directory' => $directory,
-            'folderName' => $folderName
-        ];
+        return [ $directory, $folderName];
     }
 
     private function _updateUploadDirForCopy( $fileName, $folderName)
