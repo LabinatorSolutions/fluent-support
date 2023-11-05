@@ -128,7 +128,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .fs_integration_settings {
     flex-direction: column;
     align-items: flex-start;
