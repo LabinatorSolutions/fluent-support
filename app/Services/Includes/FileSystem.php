@@ -89,38 +89,50 @@ class FileSystem
      * @param int $ticketId
      * @return array | boolean
      */
-    public function _copy($source, $ticketId)
-    {
-        $destDir = $this->_getCustomTicketDir($ticketId);
+    public function _copy($source){
+        if(!file_exists($source)){
+            return false;
+        }
 
+        [$destDir, $folderName] = $this->_getCustomDir();
         $fileName = basename($source);
         $destFile = $destDir . DIRECTORY_SEPARATOR . $fileName;
 
         if (@copy($source, $destFile)) {
-            return $this->_updateUploadDirForCopy($fileName, $ticketId);
+            return $this->_updateUploadDirForCopy($fileName, $folderName);
         }
 
         return false;
     }
 
-    private function _getCustomTicketDir($ticketId)
+    private function _getCustomDir()
     {
-        $destDir = $this->_getDir() . DIRECTORY_SEPARATOR . 'ticket_' . $ticketId;
-        if (!is_dir($destDir)) {
-            @mkdir($destDir, 0755);
+        $folderName = '';
+        $directory = $this->_getDir();
+
+        if($this->subDir) {
+            $folderName .= DIRECTORY_SEPARATOR.$this->subDir;
+            $directory .= $folderName;
+            if(!is_dir($directory)) {
+                @mkdir($directory, 0755);
+            }
         }
 
-        return $destDir;
+        return [
+            'directory' => $directory,
+            'folderName' => $folderName
+        ];
     }
 
-    private function _updateUploadDirForCopy( $fileName, $ticketId)
+    private function _updateUploadDirForCopy( $fileName, $folderName)
     {
         $uploadDir = wp_upload_dir();
-        $destDir = $this->_getDir() . DIRECTORY_SEPARATOR . 'ticket_' . $ticketId;
-        $uploadDir['path'] = $destDir . DIRECTORY_SEPARATOR . $fileName;
+        $destDir = $this->_getDir() . $folderName;
+        $uploadDir['file_path'] = $destDir . DIRECTORY_SEPARATOR . $fileName;
         $uploadDir['basedir'] = $destDir;
-        $uploadDir['url'] = $uploadDir['baseurl'] . '/' . FLUENT_SUPPORT_UPLOAD_DIR . '/ticket_' . $ticketId . '/' . $fileName;
-        $uploadDir['baseurl'] = $uploadDir['baseurl'] . '/' . FLUENT_SUPPORT_UPLOAD_DIR . '/ticket_' . $ticketId;
+        $uploadDir['subdir'] = $folderName;
+        $uploadDir['url'] = $uploadDir['baseurl'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR. $folderName. DIRECTORY_SEPARATOR . $fileName;
+        $uploadDir['baseurl'] = $uploadDir['baseurl'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR . $folderName;
 
         return $uploadDir;
     }
