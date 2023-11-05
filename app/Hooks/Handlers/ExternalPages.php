@@ -64,7 +64,7 @@ class ExternalPages
         }
 
         //If external file
-        if ('local' !== $attachment->driver) {
+        if ('local' !== $attachment->driver && 'local_upload' !== $attachment->driver) {
             if(!empty($attachment->full_url)){
                 $this->redirectToExternalAttachment($attachment->full_url);
             }else{
