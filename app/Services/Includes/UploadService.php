@@ -96,14 +96,6 @@ class UploadService
     {
         $uploadInfo = FileSystem::setSubDir('_temp')->put($file);
         if(!empty($uploadInfo)){
-            //$uploadInfo = FileSystem::setSubDir('ticket_5454')->copy($uploadInfo[0]['file_path']);
-            /*$driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
-            $fileData = (object)[
-                'title' => $uploadInfo[0]['name'],
-                'file_type' => $uploadInfo[0]['type'],
-                'file_path' => $uploadInfo[0]['file_path'],
-            ];
-            $uploadInfo = $driverClass->copyFromTempToOriginal($fileData, 6767);*/
             return $uploadInfo;
         }else {
             return $this->getEmptyFileData();
@@ -149,8 +141,10 @@ class UploadService
                     $uploadInfo = FileSystem::setSubDir('ticket_'.$ticketId)->copy($file->file_path);
                 }
 
-                $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'];
-                $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'];
+                $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
+                $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
+                $file->title = $uploadInfo['name'] ?? $file->title;
+
                 $file->driver = $hasError ? 'local' : $this->enabledDriver;
                 $file->status = 'active';
                 $file->save();
@@ -159,8 +153,9 @@ class UploadService
             //Move to local
             foreach ($files as $file) {
                 $uploadInfo = FileSystem::copy($file->file_path, $ticketId);
-                $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'];
-                $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'];
+                $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
+                $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
+
                 $file->driver = $this->enabledDriver;
                 $file->status = 'active';
                 $file->save();
