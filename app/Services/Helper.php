@@ -633,7 +633,6 @@ class Helper
 
     public static function getAuthProvider()
     {
-
         if (defined('FLUENT_AUTH_PLUGIN_PATH')) {
             $settings = \FluentAuth\App\Helpers\Helper::getAuthFormsSettings();
             if ($settings['enabled'] == 'yes') {
@@ -642,5 +641,54 @@ class Helper
         }
 
         return 'fluent_support';
+    }
+
+    public static function getUploadDriverKey()
+    {
+        if (!defined('FLUENTSUPPORTPRO')) {
+            return 'local';
+        }
+
+        $driver = self::getOption('file_upload_driver');
+
+        if ($driver) {
+            return $driver;
+        }
+
+        // Now guess the driver and save it
+
+        // check if dropbox is enabled
+        $dropboxSettings = self::getIntegrationOption('dropbox_settings', null);
+        if ($dropboxSettings) {
+            $dropBoxEnabled = Meta::where('object_type', 'enabled_upload_drivers')
+                ->where('key', 'dropbox_settings')
+                ->where('value', 'yes')
+                ->first();
+
+            if ($dropBoxEnabled) {
+                $driver = 'dropbox';
+                self::updateOption('file_upload_driver', $driver);
+                return $driver;
+            }
+        }
+
+        // check if google drive is enabled
+        $googleDriveSettings = self::getIntegrationOption('google_drive_settings', null);
+
+        if ($googleDriveSettings) {
+            $googleDriveEnabled = Meta::where('object_type', 'enabled_upload_drivers')
+                ->where('key', 'google_drive_settings')
+                ->where('value', 'yes')
+                ->first();
+
+            if ($googleDriveEnabled) {
+                $driver = 'google_drive';
+                self::updateOption('file_upload_driver', $driver);
+                return $driver;
+            }
+        }
+
+        self::updateOption('file_upload_driver', 'local');
+        return 'local';
     }
 }

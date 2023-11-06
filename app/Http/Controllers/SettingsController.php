@@ -233,7 +233,6 @@ class SettingsController extends Controller
 
     }
 
-
     public function setupInstallation(Request $request)
     {
         $installFluentForm = $request->get('install_fluentform', 'no');
@@ -247,7 +246,7 @@ class SettingsController extends Controller
             $this->shareEmail($optinEmail);
         }
 
-        $shareEssential = $request->getSafe('share_essentials','sanitize_text_field','no');
+        $shareEssential = $request->getSafe('share_essentials', 'sanitize_text_field', 'no');
         if ($shareEssential == 'yes') {
             Helper::updateOption('_share_essential', $shareEssential);
         }
@@ -263,7 +262,7 @@ class SettingsController extends Controller
         $data = $request->get('reCaptcha');
 
         if ('clear-reCaptcha-settings' == $data) {
-            if(Meta::where('object_type', '_fs_recaptcha_settings')->delete()){
+            if (Meta::where('object_type', '_fs_recaptcha_settings')->delete()) {
                 return $this->sendSuccess([
                     'message' => __('Your reCAPTCHA settings deleted successfully.', 'fluent-support'),
                 ]);
@@ -275,16 +274,16 @@ class SettingsController extends Controller
         }
 
         $reCaptchaData = [
-            'reCaptcha_version' => sanitize_text_field($data['reCaptchaVersion']),
-            'siteKey'     => sanitize_text_field($data['siteKey']),
-            'secretKey'   => sanitize_text_field($data['secretKey']),
-            'formContainingReCaptcha' => array_map( 'sanitize_text_field', $data['formContainingReCaptcha']),
-            'is_enabled'  => sanitize_text_field($data['reCaptchaEnabled'], 'no'),
+            'reCaptcha_version'       => sanitize_text_field($data['reCaptchaVersion']),
+            'siteKey'                 => sanitize_text_field($data['siteKey']),
+            'secretKey'               => sanitize_text_field($data['secretKey']),
+            'formContainingReCaptcha' => array_map('sanitize_text_field', $data['formContainingReCaptcha']),
+            'is_enabled'              => sanitize_text_field($data['reCaptchaEnabled'], 'no'),
         ];
 
         $previousValue = Meta::where('object_type', '_fs_recaptcha_settings')->first();
 
-        if($previousValue ===  $reCaptchaData) {
+        if ($previousValue === $reCaptchaData) {
             return $this->sendError([
                 'message' => __('Your recaptcha details are already saved.', 'fluent-support'),
             ]);
@@ -292,20 +291,20 @@ class SettingsController extends Controller
 
         $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($data['captchaResponse'], $data['secretKey'], $data['reCaptchaVersion']);
 
-        if(!$verifyReCaptcha){
+        if (!$verifyReCaptcha) {
             return $this->sendError([
                 'message' => __('Your reCAPTCHA settings are not valid.', 'fluent-support'),
             ]);
         }
 
-        if($previousValue){
+        if ($previousValue) {
             Meta::where('object_type', '_fs_recaptcha_settings')->update([
                 'value' => maybe_serialize($reCaptchaData)
             ]);
             return $this->sendSuccess([
                 'message' => __('Your reCAPTCHA settings updated successfully.', 'fluent-support'),
             ]);
-        }else {
+        } else {
             Meta::insert([
                 'object_type' => '_fs_recaptcha_settings',
                 'key'         => '_fs_recaptcha_data',
@@ -321,7 +320,7 @@ class SettingsController extends Controller
     public function getReCaptchaSettings()
     {
         $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
-        if($reCaptchaSettingsData){
+        if ($reCaptchaSettingsData) {
             $settings = maybe_unserialize($reCaptchaSettingsData->value);
             return $this->sendSuccess($settings);
         }
@@ -562,4 +561,62 @@ class SettingsController extends Controller
         return $plugins;
     }
 
+    public function getRemoteUploadSettings(Request $request)
+    {
+        $dropBoxConfigured = false;
+        $googleDriveConfigured = false;
+
+        if (defined('FLUENTSUPPORTPRO')) {
+            $dropBoxSettings = Helper::getIntegrationOption('dropbox_settings');
+            $dropBoxConfigured = $dropBoxSettings && !empty($dropBoxSettings['access_token']);
+
+            $googleDriveSettings = Helper::getIntegrationOption('google_drive_settings');
+            $googleDriveConfigured = $googleDriveSettings && !empty($googleDriveSettings['access_token']);
+        }
+
+        $drivers = [
+            'local'        => [
+                'title'         => 'Default WordPress Storage',
+                'is_disabled'   => false,
+                'is_configured' => true,
+                'icon'          => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/folder.svg',
+                'description'   => __('Upload and store the files to your WordPress File System Storage.', 'fluent-support')
+            ],
+            'dropbox'      => [
+                'meta_key'      => 'dropbox_settings',
+                'title'         => 'Dropbox',
+                'has_config'    => true,
+                'is_configured' => $dropBoxConfigured,
+                'require_pro'   => !defined('FLUENTSUPPORTPRO'),
+                'icon'          => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/dbox.svg',
+                'description'   => __('Upload and store the files to your Dropbox Storage.', 'fluent-support')
+            ],
+            'google_drive' => [
+                'meta_key'      => 'google_drive_settings',
+                'title'         => 'Google Drive',
+                'has_config'    => true,
+                'is_configured' => $googleDriveConfigured,
+                'require_pro'   => !defined('FLUENTSUPPORTPRO'),
+                'upgrade_url'   => 'https://fluentsupport.com/pricing',
+                'description'   => __('Upload and store the files to your Google Drive Storage.', 'fluent-support'),
+                'icon'          => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/drive.svg',
+            ]
+        ];
+
+        return [
+            'drivers'        => $drivers,
+            'enabled_driver' => Helper::getUploadDriverKey()
+        ];
+    }
+
+    public function updateRemoteUploadDriver(Request $request)
+    {
+        $driver = $request->getSafe('driver', 'sanitize_text_field');
+        Helper::updateOption('file_upload_driver', $driver);
+
+        return [
+            'message' => 'Upload driver has been updated successfully',
+            'driver'  => $driver
+        ];
+    }
 }
