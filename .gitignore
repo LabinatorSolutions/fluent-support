@@ -1,5 +1,4 @@
 .idea
-vendor/composer
 node_modules
 svn/*
 dist/
@@ -11,12 +10,3 @@ svn.php
 svn
 .phpunit.result.cache
 mix-manifest.json
-vendor/doctrine
-vendor/phpunit
-vendor/yoast
-vendor/myclabs
-vendor/nikic
-vendor/phar-io
-vendor/theseer
-vendor/bin
-vendor/sebastian
