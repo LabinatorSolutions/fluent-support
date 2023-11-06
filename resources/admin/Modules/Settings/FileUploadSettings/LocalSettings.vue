@@ -7,10 +7,7 @@
     <div class="fs_integration" v-else-if="has_pro">
         <div v-if="!loading" class="fs_box_wrapper">
             <div v-if="fields">
-                <form-builder :fields="fields.fields" :formData="settings"/>
-                <el-button size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
-                    {{fields.button_text}}
-                </el-button>
+                <form-builder :fields="fields.fields" :formData="settings" @change="saveSettings"/>
             </div>
             <div  v-else>
                 <h3>{{translate('Settings could not be found')}}!</h3>
@@ -101,6 +98,7 @@ export default {
                     });
                 })
                 .catch((errors) => {
+                    fetchSettings();
                     handleError(errors);
                 })
                 .always(() => {
@@ -131,6 +129,12 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+.fs_integration_settings {
+    flex-direction: column;
+    align-items: flex-start;
+}
+.fs_integration_settings .el-radio {
+    height: 50px;
+}
 </style>

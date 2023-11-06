@@ -3,7 +3,7 @@ import EnhanceMultiRangeControl from "../../../utils/EnhanceMultiRangeControl";
 import icons from "../../../utils/icons";
 
 const {__} = wp.i18n;
-const {PanelBody, RangeControl} = wp.components;
+const {PanelBody, CheckboxControl} = wp.components;
 export default function ButtonLogoutAdvanced({attributes, setAttributes}) {
     return (
         <PanelBody title={__('Logout', 'fluent-support')}>
@@ -53,6 +53,13 @@ export default function ButtonLogoutAdvanced({attributes, setAttributes}) {
                 max: 50,
                 inc: 1
             }}/>
+
+            <CheckboxControl
+                label="Show Logout Button"
+                help="If you uncheck, logout button will not show"
+                checked={ attributes.allTicketsLogoutButtonVisibility }
+                onChange={(v) => setAttributes({ allTicketsLogoutButtonVisibility: v })}
+            />
         </PanelBody>
     );
 }

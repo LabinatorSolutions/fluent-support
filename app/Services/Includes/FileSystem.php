@@ -37,7 +37,7 @@ class FileSystem
     {
         $uploadDir = wp_upload_dir();
 
-        return $uploadDir['basedir'] . FLUENT_SUPPORT_UPLOAD_DIR;
+        return $uploadDir['basedir']. DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR;
     }
 
     /**
@@ -81,6 +81,58 @@ class FileSystem
         }
 
         return $uploadedFiles;
+    }
+
+    /**
+     * Copy a file from custom upload directory of this application
+     * @param string $source file path
+     * @param int $ticketId
+     * @return array | boolean
+     */
+    public function _copy($source){
+        if(!file_exists($source)){
+            return false;
+        }
+
+        [$destDir, $folderName] = $this->_getCustomDir();
+
+        $fileName = basename($source);
+        $destFile = $destDir . DIRECTORY_SEPARATOR . $fileName;
+
+        if (@copy($source, $destFile)) {
+            return $this->_updateUploadDirForCopy($fileName, $folderName);
+        }
+
+        return false;
+    }
+
+    private function _getCustomDir()
+    {
+        $folderName = '';
+        $directory = $this->_getDir();
+
+        if($this->subDir) {
+            $folderName .= DIRECTORY_SEPARATOR.$this->subDir;
+            $directory .= $folderName;
+            if(!is_dir($directory)) {
+                @mkdir($directory, 0755);
+            }
+        }
+
+        return [ $directory, $folderName];
+    }
+
+    private function _updateUploadDirForCopy( $fileName, $folderName)
+    {
+        $uploadDir = wp_upload_dir();
+        $destDir = $this->_getDir() . $folderName;
+        $uploadDir['file_path'] = $destDir . DIRECTORY_SEPARATOR . $fileName;
+        $uploadDir['basedir'] = $destDir;
+        $uploadDir['subdir'] = $folderName;
+        $uploadDir['url'] = $uploadDir['baseurl'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR. $folderName. DIRECTORY_SEPARATOR . $fileName;
+        $uploadDir['baseurl'] = $uploadDir['baseurl'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR . $folderName;
+
+        return $uploadDir;
     }
 
     /**
