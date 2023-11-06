@@ -1,6 +1,6 @@
 <template>
     <div class="fs_narrow_promo" v-if="!has_pro">
-        <h3>{{ current_integration.promo_heading }} hhjgjkhghjg</h3>
+        <h3>{{ current_integration.promo_heading }}</h3>
         <p>{{translate('pro_promo')}}</p>
         <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{translate('Upgrade To Pro')}}</a>
     </div>
@@ -98,6 +98,7 @@ export default {
                     });
                 })
                 .catch((errors) => {
+                    fetchSettings();
                     handleError(errors);
                 })
                 .always(() => {
