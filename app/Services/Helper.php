@@ -643,6 +643,15 @@ class Helper
         return 'fluent_support';
     }
 
+    public static function getDriversKey(){
+        return [
+            'dropbox_settings',
+            'google_drive_settings',
+            'local'
+        ];
+    }
+
+
     public static function getUploadDriverKey()
     {
         if (!defined('FLUENTSUPPORTPRO')) {

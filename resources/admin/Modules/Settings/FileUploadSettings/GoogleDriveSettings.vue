@@ -20,7 +20,7 @@
                 <el-button v-if="settings.access_token && settings.refresh_token" v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
                     {{fields.button_text}}
                 </el-button>
-                <el-button v-if="settings && !settings.refresh_token" v-loading="deleting" type="danger" @click="deleteSettings()">
+                <el-button v-if="hasSettingsMeta && !settings.refresh_token" v-loading="deleting" type="danger" @click="deleteSettings()">
                     {{ translate('Delete Settings') }}
                 </el-button>
             </div>
@@ -61,6 +61,7 @@ export default {
             integration_key: router.currentRoute.value.query.integration_key,
             loading: false,
             settings: false,
+            hasSettingsMeta: false,
             fields: false,
             saving: false,
             deleting: false,
@@ -83,6 +84,9 @@ export default {
                 integration_key: state.integration_key
             })
                 .then(response => {
+                    if( response.settings.client_id && response.settings.client_secret) {
+                        state.hasSettingsMeta = true;
+                    }
                     state.settings = response.settings;
                     state.fields = response.fields;
                     state.component = response.fields.component;
@@ -127,6 +131,7 @@ export default {
                 integration_key: state.integration_key,
             })
                 .then(response => {
+                    state.hasSettingsMeta = false;
                     notify({
                         message: response.message,
                         type: 'success',
