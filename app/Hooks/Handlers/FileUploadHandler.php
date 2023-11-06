@@ -14,12 +14,7 @@ class FileUploadHandler
                 $hasError = false;
                 foreach ($files as $file){
                     $uploadInfo = UploadService::copyFromTempToOriginal($file, $ticket->id);
-                    $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
-                    $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
-                    $file->title = $uploadInfo['name'] ?? $file->title;
-                    $file->driver = $uploadInfo['driver'] ?? 'local';
-                    $file->status = 'active';
-                    $file->save();
+                    $this->updateFileInfo($file, $uploadInfo);
                     $hasError = $uploadInfo['hasError'] ?? false;
                 }
 
@@ -56,12 +51,7 @@ class FileUploadHandler
                 $hasError = false;
                 foreach ($files as $file){
                     $uploadInfo = UploadService::copyFromTempToOriginal($file, $ticket->id);
-                    $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
-                    $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
-                    $file->title = $uploadInfo['name'] ?? $file->title;
-                    $file->driver = $uploadInfo['driver'] ?? 'local';
-                    $file->status = 'active';
-                    $file->save();
+                    $this->updateFileInfo($file, $uploadInfo);
                     $hasError = $uploadInfo['hasError'] ?? false;
                 }
 
@@ -82,12 +72,7 @@ class FileUploadHandler
                 $hasError = false;
                 foreach ($files as $file){
                     $uploadInfo = UploadService::copyFromTempToOriginal($file, $ticket->id);
-                    $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
-                    $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
-                    $file->title = $uploadInfo['name'] ?? $file->title;
-                    $file->driver = $uploadInfo['driver'] ?? 'local';
-                    $file->status = 'active';
-                    $file->save();
+                    $this->updateFileInfo($file, $uploadInfo);
                     $hasError = $uploadInfo['hasError'] ?? false;
                 }
 
@@ -112,6 +97,18 @@ class FileUploadHandler
             ]);
 
         }, 20, 2);
+    }
+
+    private function updateFileInfo($file, $uploadInfo)
+    {
+        $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
+        $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
+        $file->title = $uploadInfo['name'] ?? $file->title;
+        $file->driver = $uploadInfo['driver'] ?? 'local';
+        $file->status = 'active';
+        $file->save();
+
+        return true;
     }
 
     public static function getFileUploadErrorNoteMessage($driver = 'local', $type = 'response'){
