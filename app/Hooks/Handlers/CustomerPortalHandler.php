@@ -159,6 +159,10 @@ class CustomerPortalHandler
             'Unknown error. Please reload this page' => __('Unknown error. Please reload this page', 'fluent-support'),
             'View Your Tickets' => __('View Your Tickets', 'fluent-support'),
             'View All' => __('View All', 'fluent-support'),
+            'Support Staff' => __('Support Staff', 'fluent-support'),
+            'Support Staff' => __('Support Staff', 'fluent-support'),
+            'Thread Starter' => __('Thread Starter', 'fluent-support'),
+            'Thread Follower' => __('Thread Follower', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
