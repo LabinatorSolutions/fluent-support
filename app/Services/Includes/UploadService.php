@@ -131,7 +131,7 @@ class UploadService
     public function _copyFromTempToOriginal($files, $ticketId)
     {
         $hasError = false;
-        if (defined('FLUENTSUPPORTPRO') && $this->enabledDriver != 'local_upload'){
+        if (defined('FLUENTSUPPORTPRO') && $this->enabledDriver != 'local'){
             //Move to cloud
             foreach ($files as $file) {
                 if( !$hasError )
@@ -151,7 +151,7 @@ class UploadService
 
                 $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'];
                 $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'];
-                $file->driver = $hasError ? 'local_upload' : $this->enabledDriver;
+                $file->driver = $hasError ? 'local' : $this->enabledDriver;
                 $file->status = 'active';
                 $file->save();
             }
@@ -172,41 +172,6 @@ class UploadService
             'hasError' => $hasError,
             'driver' => $this->enabledDriver
         ];
-    }
-
-
-    private static function getEnabledDriver()
-    {
-        $enabledDriver = 'local_upload';
-        if ( defined('FLUENTSUPPORTPRO') ) {
-            $driversKey = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriversKey();
-
-            if( empty($driversKey) ) {
-                return $enabledDriver;
-            }
-        }
-        else {
-            return $enabledDriver;
-        }
-
-        $rows = Meta::where('object_type', 'integration_settings')
-            ->whereIn('key', $driversKey)
-            ->get()
-            ->toArray();
-
-        if( !$rows ) {
-            return $enabledDriver;
-        }
-
-        foreach ($rows as $row) {
-            $rowValue = maybe_unserialize($row['value']);
-            if( $rowValue['status'] == 'yes' ) {
-                $enabledDriver =  $row['key'];
-                break;
-            }
-        }
-
-        return $enabledDriver;
     }
 
     public static function __callStatic($method, $params)

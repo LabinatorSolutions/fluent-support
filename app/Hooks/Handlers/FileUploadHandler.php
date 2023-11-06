@@ -69,11 +69,11 @@ class FileUploadHandler
         }, 20, 2);
     }
 
-    public static function getFileUploadErrorNoteMessage($driver = 'local_upload', $type = 'response'){
+    public static function getFileUploadErrorNoteMessage($driver = 'local', $type = 'response'){
         $errorMessages = [
             'google_drive_settings' => 'Google Drive',
             'dropbox_settings' => 'Dropbox',
-            'local_upload' => 'Local Server',
+            'local' => 'Local Server',
         ];
 
         if( 'response' == $type ) {
@@ -82,7 +82,7 @@ class FileUploadHandler
             $noteMessage = 'Attached file during creation this ticket is failed to upload to ' . $errorMessages[$driver]. ', Please check your';
         }
 
-        if ('local_upload' == $driver) {
+        if ('local' == $driver) {
             $noteMessage .= ' folder permission';
         } else {
             $noteMessage .= ' ' . $errorMessages[$driver]. ' settings';
