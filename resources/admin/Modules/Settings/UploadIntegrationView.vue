@@ -116,6 +116,7 @@ export default {
             this.dialogVisible = true;
         },
         closeDialog() {
+            this.fetchUploadSettings();
             this.dialogVisible = false;
         },
     },

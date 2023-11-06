@@ -1,23 +1,33 @@
 <template>
-    <div>
-        <div class="fs_dropbox_redirect_url">
-            <strong>oAuth2 Redirect URL</strong>: <code>{{dropbox_redirect_uri}}</code>
+    <div class="fs_integration">
+        <div v-if="!loading" class="fs_box_wrapper">
+            <div v-if="fields">
+                <div class="fs_dropbox_redirect_url">
+                    <strong>oAuth2 Redirect URL</strong>: <code>{{dropbox_redirect_uri}}</code>
+                </div>
+
+                <form-builder :fields="fields.fields" :formData="settings"/>
+
+                <el-button v-if="!settings.refresh_token && !access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="authorize()">
+                    {{ translate('Get Authorization Code') }}
+                </el-button>
+                <el-button v-if="!settings.refresh_token && access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
+                    {{ translate('Authorize App') }}
+                </el-button>
+                <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings">
+                    {{ translate('Update') }}
+                </el-button>
+                <el-button v-if="hasSettingsMeta" size="default" v-loading="saving" :disabled="saving" type="danger" @click="deleteSettings">
+                    {{ translate('Delete Settings') }}
+                </el-button>
+            </div>
+            <div  v-else>
+                <h3>{{translate('Settings could not be found')}}!</h3>
+            </div>
         </div>
-
-        <form-builder :fields="fields.fields" :formData="settings"/>
-
-        <el-button v-if="!settings.refresh_token && !access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="authorize()">
-            {{ translate('Get Authorization Code') }}
-        </el-button>
-        <el-button v-if="!settings.refresh_token && access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
-            {{ translate('Authorize App') }}
-        </el-button>
-        <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings">
-            {{ translate('Update') }}
-        </el-button>
-        <el-button v-if="hasSettingsMeta" size="default" v-loading="saving" :disabled="saving" type="danger" @click="deleteSettings">
-            {{ translate('Delete Settings') }}
-        </el-button>
+        <div  v-else>
+            <h3>{{translate('Settings could not be found')}}!</h3>
+        </div>
     </div>
 </template>
 <script type="text/babel">
@@ -89,6 +99,7 @@ export default {
                         type: 'success',
                         position: 'bottom-right'
                     });
+                    router.push({name: 'upload_integration'})
                     fetchSettings();
                 })
                 .catch((errors) => {
@@ -117,6 +128,9 @@ export default {
                         type: 'success',
                         position: 'bottom-right'
                     });
+                    state.settings = false;
+                    state.fields = false;
+                    state.component = false;
                     fetchSettings();
                 })
                 .catch((errors) => {
@@ -143,19 +157,12 @@ export default {
                     state.settings.refresh_token = data.refresh_token;
                     state.authorization = false;
                     saveSettings();
+                    router.push({name: 'upload_integration'})
                 })
                 .catch(error => {
                     console.error('Error exchanging code for access token:', error);
                 });
         }
-
-        watch(() => props.visible, (value) => {
-            if (!value) {
-                state.settings = false;
-                state.fields = false;
-                state.component = false;
-            }
-        }, {immediate: true, deep: true});
 
         onMounted(() => {
             fetchSettings();

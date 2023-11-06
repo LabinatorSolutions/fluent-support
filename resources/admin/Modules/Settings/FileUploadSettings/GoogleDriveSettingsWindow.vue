@@ -14,7 +14,7 @@
                     {{ translate('Reconnect') }}
                 </el-button>
 
-                <el-button v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
+                <el-button v-else-if="!settings.access_token && !settings.refresh_token" v-loading="saving" :disabled="saving" type="success" @click="saveSettings()">
                     {{fields.button_text}}
                 </el-button>
                 <el-button v-if="hasSettingsMeta" v-loading="deleting" type="danger" @click="deleteSettings()">
@@ -24,6 +24,9 @@
             <div  v-else>
                 <h3>{{translate('Settings could not be found')}}!</h3>
             </div>
+        </div>
+        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+            <el-skeleton :rows="5" animated/>
         </div>
         <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
             <el-skeleton :rows="5" animated/>
@@ -38,7 +41,6 @@ import {
     useFluentHelper,
     useNotify,
 } from "@/admin/Composable/FluentFrameworkHelper";
-import { useRouter } from 'vue-router';
 
 export default {
     name: 'GoogleDriveSettingsWindow',
@@ -53,7 +55,6 @@ export default {
             useFluentHelper();
 
         const {notify} = useNotify();
-        const router = useRouter();
 
         const state = reactive({
             integration_key: props.driver.meta_key,
@@ -151,14 +152,6 @@ export default {
             window.open(access_token_url + '?' + body.toString(), '_blank');
 
         }
-
-        watch(() => props.visible, (value) => {
-            if (!value) {
-                state.settings = false;
-                state.fields = false;
-                state.component = false;
-            }
-        }, {immediate: true, deep: true});
 
         onMounted(() => {
             fetchSettings();
