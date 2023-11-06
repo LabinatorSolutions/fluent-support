@@ -12,16 +12,16 @@
                 </div>
                 <form-builder :fields="fields.fields" :formData="settings"/>
                 <el-button v-if="!settings.refresh_token && !access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="authorize()">
-                    Get Authorization Code
+                    {{ translate('Get Authorization Code') }}
                 </el-button>
                 <el-button v-if="!settings.refresh_token && access_code" size="default" v-loading="saving" :disabled="saving" type="success" @click="handleAuthorizationResponse()">
-                    Authorize App
+                    {{ translate('Authorize App') }}
                 </el-button>
                 <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="saveSettings">
-                    Update
+                    {{ translate('Update') }}
                 </el-button>
-                <el-button v-if="settings.refresh_token && settings.access_token" size="default" v-loading="saving" :disabled="saving" type="success" @click="resetSettings">
-                    Reset
+                <el-button v-if="hasSettingsMeta" size="default" v-loading="saving" :disabled="saving" type="danger" @click="deleteSettings">
+                    {{ translate('Delete Settings') }}
                 </el-button>
             </div>
             <div  v-else>
@@ -67,6 +67,7 @@ export default {
             drivers: appVars.upload_drivers,
             access_code: router.currentRoute.value.query.code,
             authorization: false,
+            hasSettingsMeta: false,
             dropbox_redirect_uri: appVars.rest.url + '/public/dropbox_auth',
         });
 
@@ -88,6 +89,9 @@ export default {
                     state.settings = response.settings;
                     state.fields = response.fields;
                     state.component = response.fields.component;
+                    if( response.settings.client_id && response.settings.client_secret) {
+                        state.hasSettingsMeta = true;
+                    }
                     if (response.fields) {
                         setTitle(response.fields.title);
                     }
@@ -123,7 +127,7 @@ export default {
                 });
         };
 
-        const resetSettings = () => {
+        const deleteSettings = () => {
             state.saving = true;
             del('settings/upload_integration', {
                 integration_key: state.integration_key,
@@ -197,7 +201,7 @@ export default {
             translate,
             fetchSettings,
             saveSettings,
-            resetSettings,
+            deleteSettings,
             switchIntegration,
             current_integration,
             authorize,
