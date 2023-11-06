@@ -33,6 +33,7 @@ class UploaderController extends Controller
         $this->validateUploadedFiles($request->files(), $maxSizeBytes, $mimeHeadings, $maxFileSize);
         $ticketId = $this->resolveTicketId($request);
         $person = $this->resolvePerson($ticketId, $request);
+
         $this->checkPermissionToUploadFile($person);
 
         try {
@@ -76,11 +77,19 @@ class UploaderController extends Controller
         return $ticketId == 'undefined' ? null : $ticketId;
     }
 
-    private function resolvePerson($ticketId, $request)
+    private function resolvePerson($ticketId, Request $request)
     {
-        if ($ticketId && $request->getSafe('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
-            $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
-            return $ticket->customer;
+        if ($ticketId && Helper::isPublicSignedTicketEnabled()) {
+            $intendedTicketHash = $request->getSafe('intended_ticket_hash', 'sanitize_text_field');
+            if ($intendedTicketHash && $intendedTicketHash != 'undefined') {
+                $ticket = Ticket::with(['customer'])
+                    ->where('hash', $intendedTicketHash)
+                    ->find($ticketId);
+
+                if ($ticket && $ticket->customer) {
+                    return $ticket->customer;
+                }
+            }
         }
 
         return Helper::getCurrentPerson();
