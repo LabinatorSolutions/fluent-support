@@ -2,6 +2,11 @@
     <div class="fs_integration">
         <div v-if="!loading" class="fs_box_wrapper">
             <div v-if="fields">
+                <div class="drive_setup_help_doc">
+                    <span>{{translate('google_drive_help_text')}} <a href="https://fluentsupport.com/docs/google-drive-integration/" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> {{ translate('Click here') }}
+                    </a></span>
+                </div>
                 <div class="fs_g_drive_redirect_url">
                     <strong>{{ translate('oAuth2 Authorised redirect URI') }}</strong>: <code>{{redirect_uri}}</code>
                 </div>
@@ -175,4 +180,11 @@ export default {
     background: #f2f2f2;
     margin: 10px 0;
 }
+.drive_setup_help_doc{
+     padding: 10px;
+     background: #f0f8ff;
+     margin: 10px 0;
+     font-size: 14px;
+     color: #666;
+ }
 </style>
