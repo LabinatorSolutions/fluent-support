@@ -120,53 +120,29 @@ class UploadService
      * @param $ticketId
      * @return Object
      */
-    public function _copyFromTempToOriginal($files, $ticketId)
+    public function _copyFromTempToOriginal($file, $ticketId)
     {
-        $hasError = false;
         if (defined('FLUENTSUPPORTPRO') && $this->enabledDriver != 'local'){
-            //Move to cloud
-            foreach ($files as $file) {
-                if( !$hasError )
-                {
-                    try {
-                        $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
-                        $uploadInfo = $driverClass->copyFromTempToOriginal($file, $ticketId);
-                    } catch (\Exception $e) {
-                        //Move to local
-                        $hasError = true;
-                        $uploadInfo = FileSystem::setSubDir('ticket_'.$ticketId)->copy($file->file_path);
-                    }
-                }else {
-                    //Move to local
-                    $uploadInfo = FileSystem::setSubDir('ticket_'.$ticketId)->copy($file->file_path);
-                }
-
-                $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
-                $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
-                $file->title = $uploadInfo['name'] ?? $file->title;
-
-                $file->driver = $hasError ? 'local' : $this->enabledDriver;
-                $file->status = 'active';
-                $file->save();
+            try {
+                $driverClass = \FluentSupportPro\App\Services\FileUploadIntegration\Drivers::getDriverInstance($this->enabledDriver);
+                $uploadInfo = $driverClass->copyFromTempToOriginal($file, $ticketId);
+                $uploadInfo['driver'] = $this->enabledDriver;
+                $uploadInfo['hasError'] = false;
+            } catch (\Exception $e) {
+                //Failed to Cloud, Copy to local
+                $uploadInfo = FileSystem::setSubDir('ticket_'.$ticketId)->copy($file->file_path);
+                $uploadInfo['driver'] = 'local';
+                $uploadInfo['error_driver'] = $this->enabledDriver;
+                $uploadInfo['hasError'] = true;
             }
         }else {
-            //Move to local
-            foreach ($files as $file) {
-                $uploadInfo = FileSystem::copy($file->file_path, $ticketId);
-                $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
-                $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
-
-                $file->driver = $this->enabledDriver;
-                $file->status = 'active';
-                $file->save();
-            }
+            //Not a pro user or Cloud not enabled,  Copy to local
+            $uploadInfo = FileSystem::setSubDir('ticket_'.$ticketId)->copy($file->file_path);
+            $uploadInfo['driver'] = 'local';
+            $uploadInfo['hasError'] = false;
         }
 
-        return (Object) [
-            'ticket_id' => $ticketId,
-            'hasError' => $hasError,
-            'driver' => $this->enabledDriver
-        ];
+        return $uploadInfo;
     }
 
     public static function __callStatic($method, $params)

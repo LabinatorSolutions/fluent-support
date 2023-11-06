@@ -11,10 +11,25 @@ class FileUploadHandler
         add_action('fluent_support/ticket_created', function ($ticket, $customer) {
             if ( $ticket->attachments->count() > 0 ) {
                 $files = $ticket->attachments;
-                $uploadInfo = UploadService::copyFromTempToOriginal($files, $ticket->id);
+                $hasError = false;
+                foreach ($files as $file){
+                    $uploadInfo = UploadService::copyFromTempToOriginal($file, $ticket->id);
+                    $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
+                    $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
+                    $file->title = $uploadInfo['name'] ?? $file->title;
+                    $file->driver = $uploadInfo['driver'] ?? 'local';
+                    $file->status = 'active';
+                    $file->save();
+                    $hasError = $uploadInfo['hasError'] ?? false;
+                }
 
-                if( $uploadInfo->hasError ){
-                    do_action('fluent_support/file_upload_failed', $uploadInfo, $customer);
+                if( $hasError ){
+                    $data = (object)[
+                        'driver' => $uploadInfo['error_driver'],
+                        'ticket_id' => $ticket->id,
+                        'person_id' => $customer->id,
+                    ];
+                    do_action('fluent_support/file_upload_failed', $data, $customer);
                 }
             }
         }, 20, 2);
@@ -38,10 +53,25 @@ class FileUploadHandler
         add_action('fluent_support/response_added_by_customer', function ($response, $ticket, $person) {
             if ( $response->attachments->count() > 0 ) {
                 $files = $response->attachments;
-                $uploadInfo = UploadService::copyFromTempToOriginal($files, $ticket->id);
+                $hasError = false;
+                foreach ($files as $file){
+                    $uploadInfo = UploadService::copyFromTempToOriginal($file, $ticket->id);
+                    $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
+                    $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
+                    $file->title = $uploadInfo['name'] ?? $file->title;
+                    $file->driver = $uploadInfo['driver'] ?? 'local';
+                    $file->status = 'active';
+                    $file->save();
+                    $hasError = $uploadInfo['hasError'] ?? false;
+                }
 
-                if( $uploadInfo->hasError ){
-                    do_action('fluent_support/file_upload_failed', $uploadInfo, $person);
+                if( $hasError ){
+                    $data = (object)[
+                        'driver' => $uploadInfo['error_driver'],
+                        'ticket_id' => $ticket->id,
+                        'person_id' => $person->id,
+                    ];
+                    do_action('fluent_support/file_upload_failed', $data, $person);
                 }
             }
         }, 20, 3);
@@ -49,10 +79,25 @@ class FileUploadHandler
         add_action('fluent_support/response_added_by_agent', function ($response, $ticket, $person) {
             if ( $response->attachments->count() > 0 ) {
                 $files = $response->attachments;
-                $uploadInfo = UploadService::copyFromTempToOriginal($files, $ticket->id);
+                $hasError = false;
+                foreach ($files as $file){
+                    $uploadInfo = UploadService::copyFromTempToOriginal($file, $ticket->id);
+                    $file->file_path = $uploadInfo['file_path'] ?? $uploadInfo['path'] ?? null;
+                    $file->full_url = $uploadInfo['url'] ?? $uploadInfo['full_url'] ?? null;
+                    $file->title = $uploadInfo['name'] ?? $file->title;
+                    $file->driver = $uploadInfo['driver'] ?? 'local';
+                    $file->status = 'active';
+                    $file->save();
+                    $hasError = $uploadInfo['hasError'] ?? false;
+                }
 
-                if( $uploadInfo->hasError ){
-                    do_action('fluent_support/file_upload_failed', $uploadInfo, $person);
+                if( $hasError ){
+                    $data = (object)[
+                        'driver' => $uploadInfo['error_driver'] ?? 'local',
+                        'ticket_id' => $ticket->id,
+                        'person_id' => $person->id,
+                    ];
+                    do_action('fluent_support/file_upload_failed', $data, $person);
                 }
             }
         }, 20, 3);
@@ -83,7 +128,7 @@ class FileUploadHandler
         }
 
         if ('local' == $driver) {
-            $noteMessage .= ' folder permission';
+            $noteMessage .= ' upload folder permission is writeable or not';
         } else {
             $noteMessage .= ' ' . $errorMessages[$driver]. ' settings';
         }
