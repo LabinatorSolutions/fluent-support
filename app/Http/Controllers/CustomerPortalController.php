@@ -108,6 +108,7 @@ class CustomerPortalController extends Controller
             if ($customer && $messageId = Helper::generateMessageID($customer->email)) {
                 $data['message_id'] = $messageId;
             }
+
             $defaultMailbox = Helper::getDefaultMailBox();
             $ticket = $customerPortalService->createTicket($customer, $data, $request->getSafe('mailbox_id', 'intval', $defaultMailbox->id));
 

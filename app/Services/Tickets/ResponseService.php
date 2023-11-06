@@ -5,6 +5,7 @@ namespace FluentSupport\App\Services\Tickets;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\UploadService;
 use FluentSupport\Framework\Support\Arr;
 
 class ResponseService
@@ -54,7 +55,7 @@ class ResponseService
 
         $createdResponse = \FluentSupport\App\Models\Conversation::create($response);
 
-        if(!empty($cc_emails)) {
+        if (!empty($cc_emails)) {
             //Store cc emails in meta settings for the response
             $createdResponse->updateSettingsValue('cc_email', $cc_emails);
 
@@ -65,17 +66,6 @@ class ResponseService
         }
 
         $createdResponse->load('person');
-
-        if ($attachments = Arr::get($data, 'attachments', [])) {
-            Attachment::where('ticket_id', $ticket->id)
-                ->whereIn('file_hash', $attachments)
-                ->where('status', 'in-active')
-                ->update([
-                    'conversation_id' => $createdResponse->id,
-                    'status'          => 'active'
-                ]);
-            $createdResponse->load('attachments');
-        }
 
         if ($person->person_type == 'agent' && $ticket->status == 'new' && $convoType == 'response') {
             $ticket->status = 'active';
@@ -99,7 +89,7 @@ class ResponseService
             }
 
             if ($convoType == 'response') {
-                if($resetWaitingSince){
+                if ($resetWaitingSince) {
                     $ticket->last_agent_response = current_time('mysql');
                     $ticket->waiting_since = current_time('mysql');
                 }
@@ -127,7 +117,7 @@ class ResponseService
 
             $internalNote = apply_filters('fluent_support/ticket_close_internal_note', $internalNote, $ticket);
 
-            if($internalNote) {
+            if ($internalNote) {
                 Conversation::create([
                     'ticket_id'         => $ticket->id,
                     'person_id'         => $person->id,
@@ -140,20 +130,35 @@ class ResponseService
         $ticket->save();
 
         //If file upload failed to local during create response
-        if ($attachments = Arr::get($data, 'attachments', [])) {
-            $isUploadFailed = Attachment::where('ticket_id', $ticket->id)
-                ->whereIn('file_hash', $attachments)
-                ->where('status', 'failed')->get();
+        if ($attachmentHashes = Arr::get($data, 'attachments', [])) {
+            $attachments = Attachment::where('ticket_id', $ticket->id)
+                ->whereIn('file_hash', $attachmentHashes)
+                ->where('status', 'in-active')
+                ->where('person_id', $createdResponse->person_id)
+                ->get();
 
-            if($isUploadFailed->count() > 0) {
-                $failedData = (object) [
-                    'attachments' => $isUploadFailed,
-                    'ticket_id' => $ticket->id,
-                    'person_id' => $person->id,
-                    'type' => 'response'
-                ];
+            if (!$attachments->isEmpty()) {
+                $storageDriver = Helper::getUploadDriverKey();
+                foreach ($attachments as $attachment) {
+                    if ($storageDriver != 'local') {
+                        do_action_ref_array('fluent_support/finalize_file_upload_' . $storageDriver, [&$attachment, $ticket->id]);
+                    }
 
-                do_action('fluent_support/file_upload_failed_before_store', $failedData);
+                    if ($attachment->driver == 'local') {
+                        $newFileInfo = UploadService::copyFileTicketFolder($attachment->file_path, $ticket->id);
+                        if ($newFileInfo && !empty($newFileInfo['file_path'])) {
+                            $attachment->file_path = $newFileInfo['file_path'];
+                            $attachment->full_url = $newFileInfo['url'];
+                        }
+                    }
+
+                    $attachment->ticket_id = $ticket->id;
+                    $attachment->person_id = $createdResponse->person_id;
+                    $attachment->conversation_id = $createdResponse->id;
+                    $attachment->status = 'active';
+                    $attachment->save();
+                }
+                $createdResponse->load('attachments');
             }
         }
 
