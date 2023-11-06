@@ -40,15 +40,22 @@ class EmailNotificationHandler
             $headers = $mailbox->getMailerHeader();
 
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'cc_email' => $ticket->getSettingsValue('cc_email', []),
-                'hook_type'   => 'ticket_created_email_to_customer'
+                'cc_email'  => $ticket->getSettingsValue('cc_email', []),
+                'hook_type' => 'ticket_created_email_to_customer'
             ]);
 
             $attachments = [];
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
                 foreach ($files as $file) {
-                    $attachments[] = $file->file_path;
+                    if ($file->driver == 'local') {
+                        $filePath = $file->file_path;
+                    } else {
+                        $filePath = Arr::get($file->settings, 'local_temp_path');
+                    }
+                    if (file_exists($filePath)) {
+                        $attachments[] = $filePath;
+                    }
                 }
             }
 
@@ -84,7 +91,16 @@ class EmailNotificationHandler
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
                 foreach ($files as $file) {
-                    $attachments[] = $file->file_path;
+
+                    if ($file->driver == 'local') {
+                        $filePath = $file->file_path;
+                    } else {
+                        $filePath = Arr::get($file->settings, 'local_temp_path');
+                    }
+                    if (file_exists($filePath)) {
+                        $attachments[] = $filePath;
+                    }
+
                 }
             }
 
@@ -134,14 +150,21 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'cc_email' => $response->getSettingsValue('cc_email', []),
-                'hook_type'   => 'ticket_replied_by_agent_email_to_customer'
+                'cc_email'  => $response->getSettingsValue('cc_email', []),
+                'hook_type' => 'ticket_replied_by_agent_email_to_customer'
             ]);
             $attachments = [];
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
                 foreach ($files as $file) {
-                    $attachments[] = $file->file_path;
+                    if ($file->driver == 'local') {
+                        $filePath = $file->file_path;
+                    } else {
+                        $filePath = Arr::get($file->settings, 'local_temp_path');
+                    }
+                    if (file_exists($filePath)) {
+                        $attachments[] = $filePath;
+                    }
                 }
             }
 
@@ -185,8 +208,8 @@ class EmailNotificationHandler
 
             $headers = $mailbox->getMailerHeader();
             $headers = apply_filters('fluent_support/mail_to_customer_header', $headers, [
-                'cc_email' => $ticket->getSettingsValue('cc_email', []),
-                'hook_type'   => 'ticket_closed_by_agent_email_to_customer'
+                'cc_email'  => $ticket->getSettingsValue('cc_email', []),
+                'hook_type' => 'ticket_closed_by_agent_email_to_customer'
             ]);
             Mailer::send($customer->email, $subject, $emailBody, $headers);
         }
@@ -237,7 +260,14 @@ class EmailNotificationHandler
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $response->attachments)) {
                 foreach ($files as $file) {
-                    $attachments[] = $file->file_path;
+                    if ($file->driver == 'local') {
+                        $filePath = $file->file_path;
+                    } else {
+                        $filePath = Arr::get($file->settings, 'local_temp_path');
+                    }
+                    if (file_exists($filePath)) {
+                        $attachments[] = $filePath;
+                    }
                 }
             }
 
@@ -325,7 +355,14 @@ class EmailNotificationHandler
 
             if ($emailSettings['send_attachments'] == 'yes' && ($files = $ticket->attachments)) {
                 foreach ($files as $file) {
-                    $attachments[] = $file->file_path;
+                    if ($file->driver == 'local') {
+                        $filePath = $file->file_path;
+                    } else {
+                        $filePath = Arr::get($file->settings, 'local_temp_path');
+                    }
+                    if (file_exists($filePath)) {
+                        $attachments[] = $filePath;
+                    }
                 }
             }
 
@@ -368,9 +405,10 @@ class EmailNotificationHandler
         return $emogrifier->emogrify();
     }
 
-    public function getMailerHeaderWithCc($headers, $info){
-        if(isset($info['cc_email'])){
-            $CcHeaders =  !empty($info['cc_email']) && is_array($info['cc_email']) ? implode(', ', $info['cc_email']) : '';
+    public function getMailerHeaderWithCc($headers, $info)
+    {
+        if (isset($info['cc_email'])) {
+            $CcHeaders = !empty($info['cc_email']) && is_array($info['cc_email']) ? implode(', ', $info['cc_email']) : '';
             $headers[] = $CcHeaders ? "Cc: $CcHeaders" : '';
         }
 

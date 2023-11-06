@@ -3,9 +3,19 @@
 namespace FluentSupport\App\Services\Includes;
 
 use FluentSupport\App\Models\Meta;
+use FluentSupport\Framework\Support\Arr;
 
 class UploadService
 {
+
+    public static function copyFileTicketFolder($tempPath, $ticketId)
+    {
+        if (!file_exists($tempPath)) {
+            return false;
+        }
+
+        return FileSystem::setSubDir('ticket_' . $ticketId)->copy($tempPath);
+    }
 
     public static function handleTempFileUpload($file)
     {
