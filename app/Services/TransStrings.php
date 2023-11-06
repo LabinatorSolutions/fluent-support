@@ -670,7 +670,7 @@ class TransStrings
             'Reconnect' => __('Reconnect', 'fluent-support'),
             'Connect' => __('Connect', 'fluent-support'),
             'oAuth2 Authorised redirect URI' => __('oAuth2 Authorised redirect URI', 'fluent-support'),
-            'dropbox_help_text' => __('If you need help or support with Dropbox integration', 'fluent-support'),
+            'dropbox_help_text' => __('Please read the documentation first to get ClientID and Client Secret', 'fluent-support'),
             'google_drive_help_text' => __('If you need help or support with Google Drive integration', 'fluent-support'),
         ];
     }

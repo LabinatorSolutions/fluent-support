@@ -17,7 +17,9 @@
                     </div>
                     <div class="fs_integration_card_right">
                         <template v-if="enabled_driver == driverName">
-                            <el-button :disabled="saving" v-loading="saving" :readonly="true" plain text type="success">Currently Enabled</el-button>
+                            <el-button :disabled="saving" v-loading="saving" :readonly="true" plain text type="success">
+                                Currently Enabled
+                            </el-button>
                         </template>
                         <template v-else-if="driver.is_configured">
                             <el-button @click="updateDriver(driverName)" plain type="primary">Enable</el-button>
@@ -25,12 +27,13 @@
 
                         <a class="el-button el-button--primary" target="_blank" rel="noopener" v-if="driver.require_pro"
                            :href="driver.upgrade_url">Upgrade to Pro</a>
-                        <el-button v-else-if="driver.has_config" @click="ShowConfigDialog(driver, driverName)">
+                        <el-button v-else-if="driver.has_config" @click="showConfigDialog(driver, driverName)">
                             Configure
                         </el-button>
                     </div>
                 </div>
             </div>
+            <pre>{{ selectedDriver }}</pre>
             <pre>{{ availableDrivers }}</pre>
             <pre>{{ enabled_driver }}</pre>
         </div>
@@ -40,27 +43,21 @@
             v-model="dialogVisible"
             @close="closeDialog"
         >
-            <template v-if="selectedDriverName === 'dropbox'">
-                <DropboxSettingsWindow
-                    :driver="selectedDriver"
-                    :visible = "dialogVisible"
-                    @showDialog="ShowConfigDialog"/>
-            </template>
-            <template v-else-if="selectedDriverName === 'google_drive'">
-                <GoogleDriveSettingsWindow :driver="selectedDriver" :visible = "dialogVisible"/>
-            </template>
+            <div v-if="selectedDriver && dialogVisible">
+                <o-auth2-settings :driver_name="selectedDriverName"
+                                  :driver="selectedDriver"></o-auth2-settings>
+            </div>
         </el-dialog>
     </div>
 </template>
 
 <script type="text/babel">
-import DropboxSettingsWindow from './FileUploadSettings/DropboxSettingsWindow';
-import GoogleDriveSettingsWindow from './FileUploadSettings/GoogleDriveSettingsWindow';
+import OAuth2Settings from './FileUploadSettings/OAuth2Settings.vue';
+
 export default {
     name: 'UploadIntegrationView',
     components: {
-        DropboxSettingsWindow,
-        GoogleDriveSettingsWindow
+        OAuth2Settings
     },
     data() {
         return {
@@ -71,7 +68,7 @@ export default {
             saving: false,
             dialogVisible: false,
             hasCode: false,
-            selectedDriver: {},
+            selectedDriver: null,
             selectedDriverName: '',
         }
     },
@@ -82,10 +79,6 @@ export default {
                 .then(resonse => {
                     this.availableDrivers = resonse.drivers;
                     this.enabled_driver = resonse.enabled_driver;
-
-                    if( this.hasCode ){
-                        this.ShowConfigDialog(this.availableDrivers.dropbox);
-                    }
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -96,7 +89,6 @@ export default {
         },
         updateDriver(driverName) {
             this.saving = false;
-
             this.$post('settings/update-remote-upload-driver', {
                 driver: driverName
             })
@@ -111,20 +103,22 @@ export default {
                     this.saving = false;
                 });
         },
-        ShowConfigDialog(driver, driverName) {
+        showConfigDialog(driver, driverName) {
             this.selectedDriverName = driverName;
             this.selectedDriver = driver;
-            this.title = 'Configure ' +this.selectedDriver.title + ' Settings';
+            this.title = 'Configure ' + this.selectedDriver.title + ' Settings';
             this.dialogVisible = true;
         },
         closeDialog() {
             this.fetchUploadSettings();
             this.dialogVisible = false;
+            this.selectedDriver = null;
+            this.selectedDriverName = '';
         },
     },
     mounted() {
         this.fetchUploadSettings();
-        if(this.$route.query.code){
+        if (this.$route.query.code) {
             this.hasCode = true;
         }
     },

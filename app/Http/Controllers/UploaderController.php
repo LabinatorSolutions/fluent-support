@@ -33,6 +33,7 @@ class UploaderController extends Controller
         $this->validateUploadedFiles($request->files(), $maxSizeBytes, $mimeHeadings, $maxFileSize);
         $ticketId = $this->resolveTicketId($request);
         $person = $this->resolvePerson($ticketId, $request);
+
         $this->checkPermissionToUploadFile($person);
 
         try {
@@ -49,9 +50,10 @@ class UploaderController extends Controller
             ]);
         }
 
+        $attachmentHashes = $this->createAttachmentRecords($uploadedFiles, $ticketId, $person);
+
         return [
-            'files'       => $uploadedFiles,
-            'attachments' => $this->createAttachmentRecords($uploadedFiles, $ticketId, $person),
+            'attachments' => $attachmentHashes,
         ];
     }
 
@@ -75,11 +77,19 @@ class UploaderController extends Controller
         return $ticketId == 'undefined' ? null : $ticketId;
     }
 
-    private function resolvePerson($ticketId, $request)
+    private function resolvePerson($ticketId, Request $request)
     {
-        if ($ticketId && $request->getSafe('intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
-            $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
-            return $ticket->customer;
+        if ($ticketId && Helper::isPublicSignedTicketEnabled()) {
+            $intendedTicketHash = $request->getSafe('intended_ticket_hash', 'sanitize_text_field');
+            if ($intendedTicketHash && $intendedTicketHash != 'undefined') {
+                $ticket = Ticket::with(['customer'])
+                    ->where('hash', $intendedTicketHash)
+                    ->find($ticketId);
+
+                if ($ticket && $ticket->customer) {
+                    return $ticket->customer;
+                }
+            }
         }
 
         return Helper::getCurrentPerson();
@@ -128,6 +138,9 @@ class UploaderController extends Controller
                 $attachment = Attachment::create($fileData);
                 $attachments[] = $attachment->file_hash;
                 do_action('fluent_support/attachment_uploaded_as_temp', $attachment, $ticketId);
+                $driver = Helper::getUploadDriverKey();
+
+                do_action_ref_array('fluent_support/attachment_uploaded_as_temp_' . $driver, [&$attachment, $ticketId]);
             } catch (\Exception $exception) {
                 continue;
             }
