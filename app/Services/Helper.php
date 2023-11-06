@@ -502,8 +502,11 @@ class Helper
         // This `get_current_user_id` function is WP function and
         // it returns user id if user is logged in.
         if (get_current_user_id()) {
-            return Person::where('user_id', get_current_user_id())->first();
+            return Person::where('user_id', get_current_user_id())
+                ->orderBy('id', 'ASC')
+                ->first();
         }
+        return null;
     }
 
     public static function getCustomerByID($customerid)
