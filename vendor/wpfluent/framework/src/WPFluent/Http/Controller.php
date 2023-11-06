@@ -53,12 +53,12 @@ abstract class Controller
         return $this->response->send($data, $code);
     }
 
-    public function sendSuccess($data = null, $code = null)
+    public function sendSuccess($data = null, $code = 200)
     {
         return $this->response->sendSuccess($data, $code);
     }
 
-    public function sendError($data = null, $code = null)
+    public function sendError($data = null, $code = 422)
     {
         return $this->response->sendError($data, $code);
     }

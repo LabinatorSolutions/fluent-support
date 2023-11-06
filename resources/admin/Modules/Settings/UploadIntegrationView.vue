@@ -1,129 +1,88 @@
 <template>
-    <div class="fs_narrow_promo" v-if="!has_pro">
-        <h3>3rd party file upload integration is available on Pro Version</h3>
-        <p>{{translate('pro_promo')}}</p>
-        <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{translate('Upgrade To Pro')}}</a>
-    </div>
-    <div class="fs_integration" v-else>
-        <div class="fs_settings_sub_menu">
-            <ul>
-                <li v-for="driver in drivers" :key="driver.key" @click="switchIntegration(driver.key)"
-                    :class="{fs_sub_active: driver.key == integration_key}">{{ driver.title }}
-                </li>
-            </ul>
+    <div class="fs_box_wrapper">
+        <div class="fs_box_header">
+            <div class="fs_box_head">
+                <h3>File Storgae Settings</h3>
+            </div>
         </div>
-        <div v-if="!loading" class="fs_box_wrapper fs_padded_20">
-            <div v-if="current_integration">
-                <h3>{{ current_integration.title }} {{translate('Integration Settings')}}</h3>
-                <p v-html="current_integration.description"></p>
-                <hr/>
-                <div v-if="fields">
-                    <component :is="fields.component" :settings="settings" :fields="fields"/>
+        <div v-if="!loading" class="fs_box_body">
+            <div class="fs_integration_cards">
+                <div v-for="(driver, driverName) in availableDrivers" class="fs_integration_card">
+                    <div class="fs_integration_card_left">
+                        <img :src="driver.icon"/>
+                        <div class="fs_integration_card_title">
+                            <h3>{{ driver.title }}</h3>
+                            <p>{{ driver.description }}</p>
+                        </div>
+                    </div>
+                    <div class="fs_integration_card_right">
+                        <template v-if="enabled_driver == driverName">
+                            <el-button :disabled="saving" v-loading="saving" :readonly="true" plain text type="success">Currently Enabled</el-button>
+                        </template>
+                        <template v-else-if="driver.is_configured">
+                            <el-button @click="updateDriver(driverName)" plain type="primary">Enable</el-button>
+                        </template>
+
+                        <a class="el-button el-button--primary" target="_blank" rel="noopener" v-if="driver.require_pro"
+                           :href="driver.upgrade_url">Upgrade to Pro</a>
+                        <el-button v-else-if="driver.has_config">
+                            Configure
+                        </el-button>
+                    </div>
                 </div>
             </div>
-            <div class="fs_box_body" v-else>
-                <h3>{{translate('Settings could not be found')}}!</h3>
-            </div>
-        </div>
-        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
-            <el-skeleton :rows="5" animated/>
+            <pre>{{ availableDrivers }}</pre>
+            <pre>{{ enabled_driver }}</pre>
         </div>
     </div>
 </template>
 
 <script type="text/babel">
-import { onMounted,computed, reactive, toRefs } from "vue";
-import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
-import DropboxSettings from "@/admin/Modules/Settings/FileUploadSettings/DropboxSettings";
-import GoogleDriveSettings from "@/admin/Modules/Settings/FileUploadSettings/GoogleDriveSettings";
-import LocalSettings from "@/admin/Modules/Settings/FileUploadSettings/LocalSettings";
-import {
-    useFluentHelper,
-    useNotify,
-} from "@/admin/Composable/FluentFrameworkHelper";
-import { useRouter } from 'vue-router';
-
 export default {
     name: 'UploadIntegrationView',
-    components: {
-        FormBuilder,
-        DropboxSettings,
-        GoogleDriveSettings,
-        LocalSettings
-    },
-
-    setup() {
-
-        const { get, post, translate, handleError, setTitle, appVars, has_pro } =
-            useFluentHelper();
-
-        const { notify } = useNotify();
-        const router = useRouter();
-
-        const state  = reactive ({
-            integration_key: router.currentRoute.value.query.integration_key,
+    data() {
+        return {
+            availableDrivers: {},
+            enabled_driver: 'local',
             loading: false,
-            settings: false,
-            fields: false,
-            saving: false,
-            drivers: appVars.upload_drivers
-        });
-
-        const current_integration = computed(() => {
-            return state.drivers.find((driver) => {
-                return driver.key == state.integration_key;
-            })
-        });
-
-        const fetchSettings = async () => {
-            if (!current_integration) {
-                return;
-            }
-            state.loading = true;
-            await get('settings/upload_integration', {
-                integration_key: state.integration_key
-            })
-                .then(response => {
-                    state.settings = response.settings;
-                    state.fields = response.fields;
-                    state.component = response.fields.component;
-                    if (response.fields) {
-                        setTitle(response.fields.title);
-                    }
+            saving: false
+        }
+    },
+    methods: {
+        fetchUploadSettings() {
+            this.loading = true;
+            this.$get('settings/remote-upload-settings')
+                .then(resonse => {
+                    this.availableDrivers = resonse.drivers;
+                    this.enabled_driver = resonse.enabled_driver;
                 })
                 .catch((errors) => {
-                    handleError(errors)
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.loading = false;
+                    this.loading = false;
                 });
-        };
+        },
+        updateDriver(driverName) {
+            this.saving = false;
 
-
-        const switchIntegration = (integrationKey) => {
-            router.push({name: 'upload_integration', query: {integration_key: integrationKey}});
-            state.integration_key = integrationKey;
-            fetchSettings();
-        };
-
-        onMounted(() => {
-            if (state.integration_key) {
-                fetchSettings();
-            } else if (state.drivers && state.drivers.length) {
-                state.integration_key = state.drivers[0].key;
-                router.push({name: 'upload_integration', query: {integration_key: state.drivers[0].key}});
-                fetchSettings();
-            }
-        });
-
-        return {
-            ...toRefs(state),
-            translate,
-            fetchSettings,
-            switchIntegration,
-            current_integration,
-            has_pro
-        };
+            this.$post('settings/update-remote-upload-driver', {
+                driver: driverName
+            })
+                .then(response => {
+                    this.$notify.success(response.message);
+                    this.enabled_driver = driverName;
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.saving = false;
+                });
+        }
+    },
+    mounted() {
+        this.fetchUploadSettings();
     }
 }
 </script>

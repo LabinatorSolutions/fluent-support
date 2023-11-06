@@ -364,3 +364,31 @@ ul.fs_saved_replies {
         }
     }
 }
+
+.fs_integration_card {
+    display: flex;
+    align-items: center;
+    column-gap: 15px;
+    justify-content: space-between;
+    width: 100%;
+    background: white;
+    border: 1px solid #dfdfe1;
+    padding: 10px 20px;
+    .fs_integration_card_left {
+        display: flex;
+        align-items: flex-start;
+        column-gap: 15px;
+        img {
+            width: 64px;
+            height: 64px;
+        }
+        h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        p {
+            margin: 5px 0;
+        }
+    }
+}
+

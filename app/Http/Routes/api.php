@@ -104,6 +104,11 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
 
     $router->get('/fluentcrm-settings', 'SettingsController@getFluentCRMSettings');
     $router->post('/intsall-fluentcrm', 'SettingsController@installFluentCRM');
+
+    // Upload Settings
+    $router->get('/remote-upload-settings', 'SettingsController@getRemoteUploadSettings');
+    $router->post('/update-remote-upload-driver', 'SettingsController@updateRemoteUploadDriver');
+
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
@@ -170,14 +175,14 @@ $router->prefix('customer-portal')->withPolicy('PortalPolicy')->group(function (
     $router->post('/tickets/{ticket_id}/close', 'CustomerPortalController@closeTicket')->int('ticket_id');
     $router->post('/tickets/{ticket_id}/re-open', 'CustomerPortalController@reOpenTicket')->int('ticket_id');
 
-    $router->post('ticket_file_upload','UploaderController@uploadTicketFiles');
+    $router->post('ticket_file_upload', 'UploaderController@uploadTicketFiles');
 
     $router->get('me', 'TicketController@me');
 
     $router->post('logout', 'CustomerPortalController@logout');
 });
 
-$router->prefix('public')->withPolicy('PublicPolicy')->group(function($router) {
+$router->prefix('public')->withPolicy('PublicPolicy')->group(function ($router) {
     $router->post('telegram_bot_response/{token}', 'ChatMessageParserController@handleTelegramWebhook')->alphaNumDash('token');
     $router->post('slack_response/{token}', 'ChatMessageParserController@handleSlackEvent')->alphaNumDash('token');
 });
@@ -194,8 +199,8 @@ $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy')
 
 $router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');
 
-$router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group( function ( $router ) {
+$router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
     $router->get('/', 'TicketImportController@getStats');
     $router->post('/import', 'TicketImportController@importTickets');
     $router->delete('/delete', 'TicketImportController@deleteTickets');
-} );
+});

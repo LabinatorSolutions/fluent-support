@@ -25,15 +25,26 @@ class Attachment extends Model
         'title',
         'driver',
         'file_size',
-        'status'
+        'status',
+        'settings'
     ];
 
     public static function boot()
     {
         static::creating(function ($model) {
             $uid = wp_generate_uuid4();
-            $model->file_hash = md5($uid.mt_rand(0,1000));
+            $model->file_hash = md5($uid . mt_rand(0, 1000));
         });
+    }
+
+    public function setSettingsAttribute($settings)
+    {
+        $this->attributes['settings'] = \maybe_serialize($settings);
+    }
+
+    public function getSettingsAttribute($settings)
+    {
+        return \maybe_unserialize($settings);
     }
 
     /**
@@ -43,7 +54,7 @@ class Attachment extends Model
     public function getSecureUrlAttribute()
     {
         return add_query_arg([
-            'fst_file' => $this->file_hash,
+            'fst_file'    => $this->file_hash,
             'secure_sign' => md5($this->id . date('YmdH'))
         ], site_url('/index.php'));
     }

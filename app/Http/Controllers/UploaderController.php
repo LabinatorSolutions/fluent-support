@@ -36,14 +36,21 @@ class UploaderController extends Controller
         $this->checkPermissionToUploadFile($person);
 
         try {
-            $uploadedFiles = UploadService::handleFileUpload($request->files(), $ticketId);
+            $uploadedFiles = UploadService::handleTempFileUpload($request->files());
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage(),
             ]);
         }
 
+        if (is_wp_error($uploadedFiles)) {
+            return $this->sendError([
+                'message' => $uploadedFiles->get_error_message(),
+            ]);
+        }
+
         return [
+            'files'       => $uploadedFiles,
             'attachments' => $this->createAttachmentRecords($uploadedFiles, $ticketId, $person),
         ];
     }
@@ -101,6 +108,8 @@ class UploaderController extends Controller
         $attachments = [];
 
         foreach ($uploadedFiles as $file) {
+            if (empty($file['file_path'])) continue;
+
             $fileData = [
                 'ticket_id' => intval($ticketId) ?: NULL,
                 'person_id' => intval($person->id),
@@ -108,14 +117,18 @@ class UploaderController extends Controller
                 'file_path' => $file['file_path'],
                 'full_url'  => esc_url($file['url']),
                 'title'     => sanitize_file_name($file['name']),
-                'driver'    => isset($file['driver']) ? $file['driver'] : 'local',
-                'status'    => !empty($file['file_path']) ? 'in-active' : 'failed',
+                'driver'    => 'local',
+                'status'    => 'in-active',
+                'settings'  => [
+                    'local_temp_path' => $file['file_path'],
+                ]
             ];
 
             try {
                 $attachment = Attachment::create($fileData);
                 $attachments[] = $attachment->file_hash;
-            } catch (\Exception $e) {
+                do_action('fluent_support/attachment_uploaded_as_temp', $attachment, $ticketId);
+            } catch (\Exception $exception) {
                 continue;
             }
         }
