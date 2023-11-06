@@ -134,5 +134,7 @@ export default {
     flex-direction: column;
     align-items: flex-start;
 }
-
+.fs_integration_settings .el-radio {
+    height: 50px;
+}
 </style>
