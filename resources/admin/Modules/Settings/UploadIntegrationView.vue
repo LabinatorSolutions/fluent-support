@@ -25,7 +25,7 @@
 
                         <a class="el-button el-button--primary" target="_blank" rel="noopener" v-if="driver.require_pro"
                            :href="driver.upgrade_url">Upgrade to Pro</a>
-                        <el-button v-else-if="driver.has_config" @click="ShowConfigDialog(driver)">
+                        <el-button v-else-if="driver.has_config" @click="ShowConfigDialog(driver, driverName)">
                             Configure
                         </el-button>
                     </div>
@@ -40,13 +40,13 @@
             v-model="dialogVisible"
             @close="closeDialog"
         >
-            <template v-if="selectedDriver.meta_key === 'dropbox_settings'">
+            <template v-if="selectedDriverName === 'dropbox'">
                 <DropboxSettingsWindow
                     :driver="selectedDriver"
                     :visible = "dialogVisible"
                     @showDialog="ShowConfigDialog"/>
             </template>
-            <template v-else-if="selectedDriver.meta_key === 'google_drive_settings'">
+            <template v-else-if="selectedDriverName === 'google_drive'">
                 <GoogleDriveSettingsWindow :driver="selectedDriver" :visible = "dialogVisible"/>
             </template>
         </el-dialog>
@@ -71,7 +71,8 @@ export default {
             saving: false,
             dialogVisible: false,
             hasCode: false,
-            selectedDriver: {}
+            selectedDriver: {},
+            selectedDriverName: '',
         }
     },
     methods: {
@@ -110,7 +111,8 @@ export default {
                     this.saving = false;
                 });
         },
-        ShowConfigDialog(driver) {
+        ShowConfigDialog(driver, driverName) {
+            this.selectedDriverName = driverName;
             this.selectedDriver = driver;
             this.title = 'Configure ' +this.selectedDriver.title + ' Settings';
             this.dialogVisible = true;
