@@ -6,6 +6,7 @@ use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\App\Services\Includes\UploadService;
 use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\App\Services\TicketQueryService;
 use FluentSupport\Framework\Support\Arr;
@@ -132,7 +133,7 @@ class TicketService
             'with'        => [],
             'filter_type' => $filterType,
             'sort_by'     => Arr::get($data, 'order_by', 'id'),
-            'sort_type'   => Arr::get($data,'order_type', 'DESC'),
+            'sort_type'   => Arr::get($data, 'order_type', 'DESC'),
         ];
 
         if ($filterType == 'advanced') {
@@ -176,44 +177,52 @@ class TicketService
 
         return $ticketsModel->paginate();
     }
+
     /**
      * This `addTicketAttachments` method is responsible for adding attachments to ticket
      * @param array $data
      * @param array $disabledFields
-     * @param object $ticket
+     * @param \FluentSupport\App\Models\Ticket $ticket
      * @param object $customer
-     * @return \FluentSupport\App\Models\Ticket
+     * @return \FluentSupport\App\Models\Ticket $ticket
      * @since 1.5.7
      */
     public static function addTicketAttachments($data, $disabledFields, $ticket, $customer)
     {
-        if (($attachments = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
-
-            Attachment::whereNull('ticket_id')
-                ->whereIn('file_hash', $attachments)
+        if (($attachmentsHashes = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
+            $attachments = Attachment::whereIn('file_hash', $attachmentsHashes)
+                ->where('person_id', $customer->id)
                 ->where('status', 'in-active')
-                ->update([
-                    'ticket_id' => $ticket->id,
-                    'person_id' => $customer->id,
-                    'status'    => 'active'
-                ]);
+                ->get();
+
+            if ($attachments->isEmpty()) {
+                return $ticket;
+            }
+
+            $storageDriver = Helper::getUploadDriverKey();
+
+            if ($storageDriver != 'local') {
+                foreach ($attachments as $attachment) {
+                    do_action_ref_array('fluent_support/finalize_file_upload_' . $storageDriver, [&$attachment, $ticket->id]);
+                }
+            }
+
+            foreach ($attachments as $attachment) {
+                if ($attachment->driver == 'local') {
+                    $newFileInfo = UploadService::copyFileTicketFolder($attachment->file_path, $ticket->id);
+                    if ($newFileInfo) {
+                        $attachment->file_path = $newFileInfo['file_path'];
+                        $attachment->full_url = $newFileInfo['url'];
+                    }
+                }
+
+                $attachment->ticket_id = $ticket->id;
+                $attachment->person_id = $customer->id;
+                $attachment->status = 'active';
+                $attachment->save();
+            }
 
             $ticket->load('attachments');
-
-            $isUploadFailed = Attachment::whereNull('ticket_id')
-                ->whereIn('file_hash', $attachments)
-                ->where('status', 'failed')->get();
-
-            if($isUploadFailed->count() > 0){
-                $failedData = (object) [
-                    'attachments' => $isUploadFailed,
-                    'ticket_id' => $ticket->id,
-                    'person_id' => $customer->id,
-                    'type' => 'create'
-                ];
-
-                do_action('fluent_support/file_upload_failed_before_store', $failedData);
-            }
         }
 
         return $ticket;
@@ -232,7 +241,7 @@ class TicketService
             throw new \Exception(__('You are not allowed to delete this ticket', 'fluent-support'));
         }
         $ticketData = [
-            'id' => $ticket->id,
+            'id'    => $ticket->id,
             'title' => $ticket->title
         ];
         do_action('fluent_support/deleting_ticket', $ticket);
@@ -244,7 +253,8 @@ class TicketService
         ];
     }
 
-    public function deleteTickets($tickets)  {
+    public function deleteTickets($tickets)
+    {
         $tickets->each(function ($ticket) {
             $this->delete($ticket);
         });

@@ -49,9 +49,10 @@ class UploaderController extends Controller
             ]);
         }
 
+        $attachmentHashes = $this->createAttachmentRecords($uploadedFiles, $ticketId, $person);
+
         return [
-            'files'       => $uploadedFiles,
-            'attachments' => $this->createAttachmentRecords($uploadedFiles, $ticketId, $person),
+            'attachments' => $attachmentHashes,
         ];
     }
 
@@ -128,6 +129,9 @@ class UploaderController extends Controller
                 $attachment = Attachment::create($fileData);
                 $attachments[] = $attachment->file_hash;
                 do_action('fluent_support/attachment_uploaded_as_temp', $attachment, $ticketId);
+                $driver = Helper::getUploadDriverKey();
+
+                do_action_ref_array('fluent_support/attachment_uploaded_as_temp_' . $driver, [&$attachment, $ticketId]);
             } catch (\Exception $exception) {
                 continue;
             }

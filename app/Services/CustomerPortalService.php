@@ -201,6 +201,7 @@ class CustomerPortalService
 
         TicketService::addTicketAttachments($data, $disabledFields, $ticket, $customer);
         $this->addCustomData($data, $ticket);
+
         do_action('fluent_support/ticket_created', $ticket, $customer);
 
         return $ticket;
