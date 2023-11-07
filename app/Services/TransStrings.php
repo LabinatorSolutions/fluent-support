@@ -580,9 +580,7 @@ class TransStrings
             'And' => __('And', 'fluent-support'),
             'Continue' => __('Continue', 'fluent-support'),
             'Almost Done'   => __('Almost Done', 'fluent-support'),
-            'Thank you again for configuring your own Support System in WordPress. You may install companion
-            Form Plugin to create tickets from contact forms.'  => __('                        Thank you again for configuring your own Support System in WordPress. You may install companion
-            Form Plugin to create tickets from contact forms.', 'fluent-support'),
+            'Thank you again for configuring your own Support System in WordPress. You may install companion Form Plugin to create tickets from contact forms.'  => __('Thank you again for configuring your own Support System in WordPress. You may install companion Form Plugin to create tickets from contact forms.', 'fluent-support'),
             'Workflows' => __('Workflows', 'fluent-support'),
             'Update Workflow' => __('Update Workflow', 'fluent-support'),
             'Create'    => __('Create', 'fluent-support'),
