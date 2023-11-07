@@ -2,8 +2,8 @@
 Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
-Tested up to: 6.3
-Stable tag: 1.7.5
+Tested up to: 6.4
+Stable tag: 1.7.6
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,11 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.7.6 (Date: November 07, 2023) =
+* Improved File Upload
+* Improved UI
+
 = 1.7.5 (Date: November 01, 2023) =
 * Fixed - Update and delete customer profile issue
 * Fixed - Reset avatar issue for customer and agent
