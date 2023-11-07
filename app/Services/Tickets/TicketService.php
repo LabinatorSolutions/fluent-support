@@ -191,7 +191,6 @@ class TicketService
     {
         if (($attachmentsHashes = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
             $attachments = Attachment::whereIn('file_hash', $attachmentsHashes)
-                ->where('person_id', $customer->id)
                 ->where('status', 'in-active')
                 ->get();
 
