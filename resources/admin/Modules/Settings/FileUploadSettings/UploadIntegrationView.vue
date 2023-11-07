@@ -33,10 +33,8 @@
                     </div>
                 </div>
             </div>
-            <pre>{{ selectedDriver }}</pre>
-            <pre>{{ availableDrivers }}</pre>
-            <pre>{{ enabled_driver }}</pre>
         </div>
+        <el-skeleton v-else :animated="true" :rows="3" />
 
         <el-dialog
             :title="title"
@@ -52,7 +50,7 @@
 </template>
 
 <script type="text/babel">
-import OAuth2Settings from './FileUploadSettings/OAuth2Settings.vue';
+import OAuth2Settings from './OAuth2Settings.vue';
 
 export default {
     name: 'UploadIntegrationView',
