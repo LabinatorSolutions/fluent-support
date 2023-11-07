@@ -28,13 +28,14 @@
 <script type="text/babel">
 export default {
     name: 'AttachmentForm',
-    props: ['ticket', 'attachments'],
+    props: ['ticket', 'attachments', 'is_agent'],
     data() {
         return {
             upload_url: this.appVars.rest.url+'/ticket_file_upload',
             upload_data: {
                 ticket_id: this.ticket.id,
-                intended_ticket_hash: this.appVars.intended_ticket_hash
+                intended_ticket_hash: this.appVars.intended_ticket_hash,
+                is_agent: this.is_agent
             },
             file_lists: [],
             requestHeaders: {

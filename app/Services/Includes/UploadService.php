@@ -63,36 +63,40 @@ class UploadService
      * @param array $file file data from request
      * @param int $ticketId ticket id
      * @param array $acceptedMimes accepted mime types for file upload
-     * @return array $uploadedFiles uploaded file data
+     * @return array|null $uploadedFiles uploaded file data
      */
-    public function _handleEmailAttachments($file, $ticketId, $acceptedMimes = [])
+    public function _handleEmailAttachments($file, $ticketId = null, $acceptedMimes = [])
     {
         $fileContent = $this->requestContent($file['url'], $acceptedMimes);
-        $uploadToLocalDriver = wp_upload_bits($file['filename'], null, $fileContent);
+
+        if (!$fileContent) {
+            return null;
+        }
+
+        $targetFolder = 'temp_files';
+
+        if($ticketId) {
+            $targetFolder = 'ticket_' . $ticketId;
+        }
+
+        $fileData = FileSystem::setSubDir($targetFolder)->putAsContent($file['filename'], $fileContent);
+
+        if (!$fileData || empty($fileData['file'])) {
+            return null;
+        }
+
+        $contentType = $fileData['type'];
+        if (!$contentType) {
+            $contentType = $file['contentType'];
+        }
 
         // this is the file data from email attachment and required for upload to cloud
-        $fileData = [
-            'name'     => $file['filename'],
-            'type'     => $uploadToLocalDriver['type'],
-            'tmp_name' => $uploadToLocalDriver['file'],
-            'from'     => 'email'
+        return [
+            'name' => $file['filename'],
+            'type' => $contentType,
+            'file' => $fileData['file'],
+            'url'  => $fileData['url'],
         ];
-
-        if ($this->isLocalUploadDisable && $this->integratedDrivers) {
-            $uplodedToCloud = $this->_uploadToCloud($fileData, $ticketId);
-            $this->uploadedFiles = $uplodedToCloud[0];
-        } elseif (!$this->isLocalUploadDisable && $this->integratedDrivers) {
-            $this->uploadedFiles = $uploadToLocalDriver;
-            $this->_uploadToCloud($fileData, $ticketId);
-        } else {
-            $this->uploadedFiles = $uploadToLocalDriver;
-        }
-
-        if ($this->isLocalUploadDisable) {
-            wp_delete_file($uploadToLocalDriver['file']);
-        }
-
-        return $this->uploadedFiles;
     }
 
     /**
@@ -122,9 +126,7 @@ class UploadService
             return;
         }
 
-        $responseBody = wp_remote_retrieve_body($response);
-
-        return $responseBody;
+        return wp_remote_retrieve_body($response);
     }
 
 

@@ -40,7 +40,7 @@
                 </div>
             </div>
             <div class="fs_half">
-                <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments"/>
+                <attachment-form is_agent="yes" v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments"/>
             </div>
         </div>
     </div>

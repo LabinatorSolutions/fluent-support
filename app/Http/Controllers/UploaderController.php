@@ -79,6 +79,10 @@ class UploaderController extends Controller
 
     private function resolvePerson($ticketId, Request $request)
     {
+        if ($request->get('is_agent') == 'yes') {
+            return Helper::getCurrentAgent();
+        }
+
         if ($ticketId && Helper::isPublicSignedTicketEnabled()) {
             $intendedTicketHash = $request->getSafe('intended_ticket_hash', 'sanitize_text_field');
             if ($intendedTicketHash && $intendedTicketHash != 'undefined') {
