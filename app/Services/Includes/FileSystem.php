@@ -37,7 +37,7 @@ class FileSystem
     {
         $uploadDir = wp_upload_dir();
 
-        return $uploadDir['basedir']. DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR;
+        return $uploadDir['basedir'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR;
     }
 
     /**
@@ -83,14 +83,23 @@ class FileSystem
         return $uploadedFiles;
     }
 
+    public function _putAsContent($fileName, $fileContent)
+    {
+        add_filter('upload_dir', [$this, '_setCustomUploadDir']);
+        $item = wp_upload_bits($fileName, null, $fileContent);
+        remove_filter('upload_dir', [$this, '_setCustomUploadDir']);
+        return $item;
+    }
+
     /**
      * Copy a file from custom upload directory of this application
      * @param string $source file path
      * @param int $ticketId
      * @return array | boolean
      */
-    public function _copy($source){
-        if(!file_exists($source)){
+    public function _copy($source)
+    {
+        if (!file_exists($source)) {
             return false;
         }
 
@@ -111,25 +120,25 @@ class FileSystem
         $folderName = '';
         $directory = $this->_getDir();
 
-        if($this->subDir) {
-            $folderName .= DIRECTORY_SEPARATOR.$this->subDir;
+        if ($this->subDir) {
+            $folderName .= DIRECTORY_SEPARATOR . $this->subDir;
             $directory .= $folderName;
-            if(!is_dir($directory)) {
+            if (!is_dir($directory)) {
                 @mkdir($directory, 0755);
             }
         }
 
-        return [ $directory, $folderName];
+        return [$directory, $folderName];
     }
 
-    private function _updateUploadDirForCopy( $fileName, $folderName)
+    private function _updateUploadDirForCopy($fileName, $folderName)
     {
         $uploadDir = wp_upload_dir();
         $destDir = $this->_getDir() . $folderName;
         $uploadDir['file_path'] = $destDir . DIRECTORY_SEPARATOR . $fileName;
         $uploadDir['basedir'] = $destDir;
         $uploadDir['subdir'] = $folderName;
-        $uploadDir['url'] = $uploadDir['baseurl'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR. $folderName. DIRECTORY_SEPARATOR . $fileName;
+        $uploadDir['url'] = $uploadDir['baseurl'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR . $folderName . DIRECTORY_SEPARATOR . $fileName;
         $uploadDir['baseurl'] = $uploadDir['baseurl'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR . $folderName;
 
         return $uploadDir;
@@ -178,11 +187,11 @@ class FileSystem
      */
     public function _setCustomUploadDir($param)
     {
-        $folderName = '/'.FLUENT_SUPPORT_UPLOAD_DIR;
+        $folderName = '/' . FLUENT_SUPPORT_UPLOAD_DIR;
 
-        if($this->subDir) {
-            $folderName .= '/'.$this->subDir;
-            if(!is_dir($param['basedir'] . $folderName)) {
+        if ($this->subDir) {
+            $folderName .= '/' . $this->subDir;
+            if (!is_dir($param['basedir'] . $folderName)) {
                 @mkdir($param['basedir'] . $folderName, 0755);
             }
         }
