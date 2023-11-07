@@ -4,10 +4,6 @@
  * @var $app FluentSupport\Framework\Foundation\Application
  */
 
-use FluentSupport\App\App;
-
-require_once 'Handlers/AuthHandler.php';
-
 (new \FluentSupport\App\Hooks\Handlers\AuthHandler)->init();
 
 $app->addCustomAction('handle_exception', 'ExceptionHandler@handle');
@@ -83,5 +79,3 @@ if(defined('LSCWP_V')){
 
 $app->addAction('init', 'BlockEditorHandler@init');
 
-// File upload failed note
-(new \FluentSupport\App\Hooks\Handlers\FileUploadHandler())->init();
