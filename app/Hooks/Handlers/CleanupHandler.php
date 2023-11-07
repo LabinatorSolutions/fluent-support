@@ -15,6 +15,8 @@ class CleanupHandler
     public function initHourlyTasks()
     {
         $this->cleanLiveActivities();
+
+        $this->maybeDeleteOldTempFiles();
     }
 
     public function initDailyTasks()
@@ -69,9 +71,8 @@ class CleanupHandler
 
             foreach ($attachments as $attachment) {
                 if ($attachment->driver != 'local') {
-                    do_action('fluent_support/delete_non_local_attachment', $attachment, $ticket->id);
-                }
-                if (file_exists($attachment->file_path)) {
+                    do_action('fluent_support/delete_remote_attachment_' . $attachment->driver, $attachment, $ticket->id);
+                } else if (file_exists($attachment->file_path)) {
                     @unlink($attachment->file_path);
                 }
             }
@@ -87,6 +88,7 @@ class CleanupHandler
             require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
             require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php');
         }
+
         $fileSystemDirect = new \WP_Filesystem_Direct(false);
         $fileSystemDirect->rmdir($dir, true);
     }
@@ -94,5 +96,18 @@ class CleanupHandler
     public function maybeMaintanceTask()
     {
         (new Maintenance())->maybeProcessData();
+    }
+
+    private function maybeDeleteOldTempFiles()
+    {
+        $dir = FileSystem::getDir();
+
+        // loop through files in directory
+        foreach (glob($dir . '/temp_files/*') as $filename) {
+            // check if file was created before last 2 hours
+            if (time() - filectime($filename) >= 7200) { // 2 hours
+                @unlink($filename); // delete file
+            }
+        }
     }
 }
