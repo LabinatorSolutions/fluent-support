@@ -4,7 +4,12 @@
         <div v-if="fieldsConfig.description" v-html="fieldsConfig.description"></div>
         <form-builder :fields="fieldsConfig.fields" :formData="settings"/>
         <div class="fs_form_buttons">
-            <el-button type="primary" @click="saveSettings" :loading="saving">{{ fieldsConfig.button_text }}</el-button>
+            <el-button v-if="settings.status != 'yes'" type="primary" @click="saveSettings" :loading="saving">
+                {{ fieldsConfig.button_text }}
+            </el-button>
+            <el-button v-else type="primary" @click="reconnect()" :loading="saving">Reconnect</el-button>
+            <el-button v-if="settings.status == 'yes'" @click="disconnect()" style="float: right;" text type="danger" plain>Disconnect
+            </el-button>
         </div>
     </div>
     <div v-else>
@@ -70,6 +75,17 @@ export default {
                 .always(() => {
                     this.saving = false;
                 });
+        },
+        reconnect() {
+            this.settings.do_reconnect = 'yes';
+            this.saveSettings();
+        },
+        disconnect() {
+            this.settings.access_token = '';
+            this.settings.refresh_tokn = '';
+            this.settings.client_id = '';
+            this.settings.client_secret = '';
+            this.saveSettings();
         }
     },
     mounted() {

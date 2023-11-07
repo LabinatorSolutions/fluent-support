@@ -573,8 +573,8 @@ class SettingsController extends Controller
             $googleDriveSettings = Helper::getIntegrationOption('google_drive_settings');
             $googleDriveConfigured = $googleDriveSettings && !empty($googleDriveSettings['access_token']);
         }
-
-        $drivers = [
+        
+        $drivers = apply_filters('fluent_support/storage_drivers_info', [
             'local'        => [
                 'title'         => 'Default WordPress Storage',
                 'is_disabled'   => false,
@@ -601,7 +601,7 @@ class SettingsController extends Controller
                 'description'   => __('Upload and store the files to your Google Drive Storage.', 'fluent-support'),
                 'icon'          => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/drive.svg',
             ]
-        ];
+        ]);
 
         return [
             'drivers'        => $drivers,
