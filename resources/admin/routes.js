@@ -16,7 +16,8 @@ import CustomFields from "./Modules/Settings/CustomFields";
 import LicenseManagement from "./Modules/Settings/LicenseManagement";
 import FluentCRMIntegration from "./Modules/Settings/FluentCRMIntegration";
 import AutoCloseSettings from "./Modules/Settings/AutoCloseSettings";
-import UploadIntegrationView from './Modules/Settings/UploadIntegrationView';
+import UploadIntegrationView from './Modules/Settings/FileUploadSettings/UploadIntegrationView';
+import GoogleDriveOauth from './Modules/Settings/FileUploadSettings/GoogleDriveOauth.vue';
 
 import Customers from './Modules/Customers/Customers';
 import SavedReplies from './Modules/SavedReplies/Replies';
@@ -152,7 +153,12 @@ export default [
                 path: 'ticket_importer',
                 name: 'ticket_importer',
                 component: TicketImporter
-            }
+            },
+            {
+                path: 'upload_integration_google',
+                name: 'GoogleDriveOauth',
+                component: GoogleDriveOauth,
+            },
         ]
     },
     {
