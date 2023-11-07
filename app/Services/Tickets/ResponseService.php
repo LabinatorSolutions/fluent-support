@@ -134,7 +134,6 @@ class ResponseService
             $attachments = Attachment::where('ticket_id', $ticket->id)
                 ->whereIn('file_hash', $attachmentHashes)
                 ->where('status', 'in-active')
-                ->where('person_id', $createdResponse->person_id)
                 ->get();
 
             if (!$attachments->isEmpty()) {

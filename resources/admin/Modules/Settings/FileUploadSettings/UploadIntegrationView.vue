@@ -12,7 +12,7 @@
                         <img :src="driver.icon"/>
                         <div class="fs_integration_card_title">
                             <h3>{{ driver.title }}</h3>
-                            <p>{{ driver.description }}</p>
+                            <p v-html="driver.description"></p>
                         </div>
                     </div>
                     <div class="fs_integration_card_right">
@@ -42,7 +42,7 @@
             @close="closeDialog"
         >
             <div v-if="selectedDriver && dialogVisible">
-                <o-auth2-settings :driver_name="selectedDriverName"
+                <o-auth2-settings @driverRemoved="handleDriverRemoved(selectedDriverName)" :driver_name="selectedDriverName"
                                   :driver="selectedDriver"></o-auth2-settings>
             </div>
         </el-dialog>
@@ -113,6 +113,13 @@ export default {
             this.selectedDriver = null;
             this.selectedDriverName = '';
         },
+        handleDriverRemoved(driverName) {
+            if(driverName == this.enabled_driver) {
+                this.enabled_driver = 'local';
+                this.updateDriver('local');
+            }
+            this.closeDialog();
+        }
     },
     mounted() {
         this.fetchUploadSettings();
