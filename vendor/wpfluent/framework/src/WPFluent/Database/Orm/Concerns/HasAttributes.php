@@ -8,22 +8,21 @@ use ReflectionMethod;
 use DateTimeInterface;
 use ReflectionNamedType;
 use InvalidArgumentException;
+use FluentSupport\Framework\Foundation\App;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Support\Helper;
-use FluentSupport\Framework\Foundation\App;
-use FluentSupport\Framework\Database\Orm\DateTime;
+use FluentSupport\Framework\Support\DateTime;
 use FluentSupport\Framework\Support\ArrayableInterface;
 use FluentSupport\Framework\Database\Orm\Casts\Attribute;
-use FluentSupport\Framework\Contracts\Database\Orm\Castable;
+use FluentSupport\Framework\Database\Orm\Castable;
 use FluentSupport\Framework\Database\Orm\Casts\AsCollection;
 use FluentSupport\Framework\Database\Orm\Casts\AsArrayObject;
 use FluentSupport\Framework\Database\Orm\Relations\Relation;
 use FluentSupport\Framework\Database\Orm\InvalidCastException;
 use FluentSupport\Framework\Database\Orm\JsonEncodingException;
 use FluentSupport\Framework\Database\LazyLoadingViolationException;
-use FluentSupport\Framework\Contracts\Database\Orm\CastsInboundAttributes;
-
+use FluentSupport\Framework\Database\Orm\CastsInboundAttributes;
 use FluentSupport\Framework\Support\Collection as BaseCollection;
 
 trait HasAttributes
@@ -164,7 +163,7 @@ trait HasAttributes
     /**
      * The encrypter instance that is used to encrypt attributes.
      *
-     * @var \FluentSupport\Framework\Contracts\Encryption\Encrypter
+     * @var \FluentSupport\Framework\Encryption\Encrypter
      */
     public static $encrypter;
 
@@ -736,11 +735,6 @@ trait HasAttributes
             case 'datetime':
             case 'custom_datetime':
                 return $this->asDateTime($value);
-            case 'immutable_date':
-                return $this->asDate($value)->toImmutable();
-            case 'immutable_custom_datetime':
-            case 'immutable_datetime':
-                return $this->asDateTime($value)->toImmutable();
             case 'timestamp':
                 return $this->asTimestamp($value);
         }
@@ -1220,7 +1214,7 @@ trait HasAttributes
     /**
      * Set the encrypter instance that will be used to encrypt attributes.
      *
-     * @param  \FluentSupport\Framework\Contracts\Encryption\Encrypter  $encrypter
+     * @param  \FluentSupport\Framework\Encryption\Encrypter  $encrypter
      * @return void
      */
     public static function encryptUsing($encrypter)
@@ -1264,7 +1258,7 @@ trait HasAttributes
      * Return a timestamp as DateTime object with time set to 00:00:00.
      *
      * @param  mixed  $value
-     * @return \FluentSupport\Framework\Database\Orm\DateTime;
+     * @return \FluentSupport\Framework\Support\DateTime;
      */
     protected function asDate($value)
     {
@@ -1275,7 +1269,7 @@ trait HasAttributes
      * Return a timestamp as DateTime object.
      *
      * @param  mixed  $value
-     * @return \FluentSupport\Framework\Database\Orm\DateTime;
+     * @return \FluentSupport\Framework\Support\DateTime;
      */
     protected function asDateTime($value)
     {

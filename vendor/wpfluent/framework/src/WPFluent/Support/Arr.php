@@ -426,6 +426,28 @@ class Arr
     }
 
     /**
+     * Determines if the given key contains a boolean value.
+     *
+     * Returns true for true, 1, "1", "true", "on" and "yes"
+     * Returns false for false, "0", "false", "off", "no", and ""
+     * Returns for all non-boolean values.
+     *
+     * @param  array  $array
+     * @param  string $key
+     * 
+     * @return bool|null
+     * @see https://www.php.net/manual/en/filter.filters.validate.php
+     */
+    public static function isTrue($array, $key)
+    {
+        return filter_var(
+            static::get($array, $key),
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE
+        );
+    }
+
+    /**
      * Get a subset of the items from the given array.
      *
      * @param  array  $array
@@ -745,5 +767,21 @@ class Arr
         }
 
         return is_array($value) ? $value : [$value];
+    }
+
+    /**
+     * Maps a function to all non-iterable elements of an array or an object.
+     *
+     * This is similar to `array_walk_recursive()` but acts upon objects too.
+     *
+     * @param mixed    $value    The array, object, or scalar.
+     * @param callable $callback The function to map onto $value.
+     * @see https://developer.wordpress.org/reference/functions/map_deep/
+     * 
+     * @return mixed The value with the callback applied to all non-arrays and non-objects inside it.
+     */
+    public static function map($value, $callback)
+    {
+        return map_deep($value, $callback);
     }
 }

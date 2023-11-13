@@ -2,8 +2,8 @@
 
 namespace FluentSupport\Framework\Database\Orm\Casts;
 
-use FluentSupport\Framework\Contracts\Database\Orm\Castable;
-use FluentSupport\Framework\Contracts\Database\Orm\CastsAttributes;
+use FluentSupport\Framework\Database\Orm\Castable;
+use FluentSupport\Framework\Database\Orm\CastsAttributes;
 
 class AsArrayObject implements Castable
 {

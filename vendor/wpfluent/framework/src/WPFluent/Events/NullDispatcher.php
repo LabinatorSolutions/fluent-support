@@ -2,8 +2,8 @@
 
 namespace FluentSupport\Framework\Events;
 
+use FluentSupport\Framework\Support\ForwardsCalls;
 use FluentSupport\Framework\Events\DispatcherInterface;
-use FluentSupport\Framework\Support\Traits\ForwardsCalls;
 
 class NullDispatcher implements DispatcherInterface
 {

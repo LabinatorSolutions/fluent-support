@@ -5,7 +5,6 @@ namespace FluentSupport\Framework\Support;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionNamedType;
-use ReflectionUnionType;
 
 class Reflector
 {
@@ -83,7 +82,7 @@ class Reflector
     {
         $type = $parameter->getType();
 
-        if (! $type instanceof ReflectionUnionType) {
+        if (! $type instanceof \ReflectionUnionType) {
             return array_filter([static::getParameterClassName($parameter)]);
         }
 

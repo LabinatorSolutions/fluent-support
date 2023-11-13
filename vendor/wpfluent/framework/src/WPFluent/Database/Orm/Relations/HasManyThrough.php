@@ -2,7 +2,6 @@
 
 namespace FluentSupport\Framework\Database\Orm\Relations;
 
-use FluentSupport\Framework\Support\Helper;
 use FluentSupport\Framework\Database\Orm\Model;
 use FluentSupport\Framework\Database\Orm\Builder;
 use FluentSupport\Framework\Database\Orm\Collection;
@@ -135,7 +134,7 @@ class HasManyThrough extends Relation
      */
     public function throughParentSoftDeletes()
     {
-        return in_array(SoftDeletes::class, Helper::classUsesRecursive($this->throughParent));
+        return in_array(SoftDeletes::class, static::classUsesRecursive($this->throughParent));
     }
 
     /**
@@ -323,7 +322,7 @@ class HasManyThrough extends Relation
     /**
      * Find multiple related models by their primary keys.
      *
-     * @param  \FluentSupport\Framework\Contracts\Support\ArrayableInterface|array  $ids
+     * @param  \FluentSupport\Framework\Support\ArrayableInterface|array  $ids
      * @param  array  $columns
      * @return \FluentSupport\Framework\Database\Orm\Collection
      */
@@ -407,7 +406,7 @@ class HasManyThrough extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int  $page
-     * @return \FluentSupport\Framework\Contracts\Pagination\LengthAwarePaginator
+     * @return \FluentSupport\Framework\Pagination\LengthAwarePaginator
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -423,7 +422,7 @@ class HasManyThrough extends Relation
      * @param  array  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \FluentSupport\Framework\Contracts\Pagination\Paginator
+     * @return \FluentSupport\Framework\Pagination\Paginator
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null)
     {
@@ -439,7 +438,7 @@ class HasManyThrough extends Relation
      * @param  array  $columns
      * @param  string  $cursorName
      * @param  string|null  $cursor
-     * @return \FluentSupport\Framework\Contracts\Pagination\CursorPaginator
+     * @return \FluentSupport\Framework\Pagination\CursorPaginator
      */
     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null)
     {
