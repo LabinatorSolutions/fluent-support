@@ -31,7 +31,7 @@ class AgentController extends Controller
     /**
      * addAgent method will add new agent in person table
      * @param AgentCreateRequest $request
-     * @return array
+     * @return \WP_REST_Response | array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
     public function addAgent(AgentCreateRequest $request, Agent $agent)
@@ -54,18 +54,27 @@ class AgentController extends Controller
      * @param AgentCreateRequest $request
      * @param Agent $agent
      * @param $agent_id
-     * @return array
+     * @return \WP_REST_Response | array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
     public function updateAgent(AgentCreateRequest $request, Agent $agent, $agent_id)
     {
         $agent = $agent::findOrFail($agent_id);
+        $data = [
+            'first_name' => $request->getSafe('first_name'),
+            'last_name' => $request->getSafe('last_name'),
+            'title' => $request->getSafe('title'),
+            'permissions' => $request->getSafe('permissions', null, []),
+            'telegram_chat_id' => $request->getSafe('telegram_chat_id'),
+            'slack_user_id' => $request->getSafe('slack_user_id'),
+            'whatsapp_number' => $request->getSafe('whatsapp_number'),
+        ];
 
         if ($agent) {
             try {
                 return [
                     'message' => __('Support Staff has been updated', 'fluent-support'),
-                    'agent'   => $agent->updateAgent($request->getSafe(), $agent)
+                    'agent'   => $agent->updateAgent($data, $agent)
                 ];
             } catch (\Exception $e) {
                 return $this->sendError([
@@ -81,7 +90,7 @@ class AgentController extends Controller
      * @param Request $request
      * @param Agent $agent
      * @param $agent_id
-     * @return array
+     * @return \WP_REST_Response | array
      * @throws \FluentSupport\Framework\Validator\ValidationException
      */
     public function deleteAgent(Request $request, Agent $agent, $agent_id)
@@ -103,7 +112,7 @@ class AgentController extends Controller
 
     /**
      * @param Request $request
-     * @return array
+     * @return \WP_REST_Response | array
      */
     public function myStats(Request $request)
     {
@@ -149,7 +158,7 @@ class AgentController extends Controller
      * For a successful upload it's required to send file object, agent id and the user type(agent)
      * @param Request $request
      * @param AvatarUploder $avatarUploder
-     * @return array
+     * @return \WP_REST_Response | array
      */
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
@@ -165,8 +174,8 @@ class AgentController extends Controller
     /**
      * resetAvatar method will restore a Support Staff avatar
      * For a successful upload it's required to send file object, Support Staff id and the user type(Support Staff)
-     * @param Request $request
-     * @param $id
+     * @param Agent $agent
+     * @param $agent_id
      * @return array
      */
     public function resetAvatar(Agent $agent, $agent_id){
