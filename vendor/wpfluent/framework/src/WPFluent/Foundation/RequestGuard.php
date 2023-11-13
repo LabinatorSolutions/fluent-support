@@ -8,29 +8,53 @@ use FluentSupport\Framework\Validator\ValidationException;
 
 abstract class RequestGuard
 {
+    /**
+     * Retrive the validation rules
+     * @return array
+     */
     public function rules()
     {
         return [];
     }
 
+    /**
+     * Retrive the validation messages set by the developer
+     * @return array
+     */
     public function messages()
     {
         return [];
     }
 
+    /**
+     * Allow the developer tinker with data before the validation.
+     * @return array
+     */
     public function beforeValidation()
     {
         return [];
     }
 
+    /**
+     * Allow the developer tinker with data after the validation.
+     * @return array
+     */
     public function afterValidation()
     {
         return [];
     }
 
-    public function validate(Validator $validator)
+    /**
+     * Validate ther request
+     * @param  FluentSupport\Framework\Validator\Validator $validator
+     * @return array
+     * @throws FluentSupport\Framework\Validator\ValidationException
+     */
+    public function validate(Validator $validator = null)
     {
         try {
+
+            $validator = $validator ?: App::make(Validator::class);
 
             if (!($rules = (array) $this->rules())) return;
 
@@ -53,6 +77,25 @@ abstract class RequestGuard
     }
 
     /**
+     * Handles validation including before and after calls
+     *
+     * @throws FluentSupport\Framework\Validator\ValidationException
+     * @return null
+     */
+    public static function applyValidation()
+    {
+        $instance = new static;
+
+        $request = App::getInstance('request');
+
+        $request->merge($instance->beforeValidation());
+
+        $instance->validate(App::make(Validator::class));
+
+        $request->merge($instance->afterValidation());
+    }
+
+    /**
      * Get an input element from the request.
      *
      * @param  string $key
@@ -63,6 +106,12 @@ abstract class RequestGuard
         return $this->get($key);
     }
 
+    /**
+     * Handle the dynamic method calls
+     * @param  string $method
+     * @param  array $params
+     * @return mixed
+     */
     public function __call($method, $params)
     {
         return call_user_func_array(

@@ -3,20 +3,21 @@
 namespace FluentSupport\Framework\Pagination;
 
 use Closure;
+use FluentSupport\Framework\Foundation\App;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Support\Helper;
 use FluentSupport\Framework\Support\Tappable;
-use FluentSupport\Framework\Support\Htmlable;
 use FluentSupport\Framework\Support\Collection;
 use FluentSupport\Framework\Support\ForwardsCalls;
+use FluentSupport\Framework\Database\Orm\ResourceAbleTrait;
 
 /**
  * @mixin \FluentSupport\Framework\Support\Collection
  */
-abstract class AbstractPaginator implements Htmlable
+abstract class AbstractPaginator
 {
-    use ForwardsCalls, Tappable;
+    use ForwardsCalls, Tappable, ResourceAbleTrait;
 
     /**
      * All of the items being paginated.
@@ -101,13 +102,6 @@ abstract class AbstractPaginator implements Htmlable
      * @var \Closure
      */
     protected static $queryStringResolver;
-
-    /**
-     * The view factory resolver callback.
-     *
-     * @var \Closure
-     */
-    protected static $viewFactoryResolver;
 
     /**
      * The default pagination view.
@@ -550,27 +544,23 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
-     * Get an instance of the view factory from the resolver.
+     * Render the paginator using the given view.
      *
-     * @return \FluentSupport\Framework\Contracts\View\Factory
+     * @param  string|null  $view
+     * @param  array  $data
+     * @return \FluentSupport\Framework\View\View
      */
-    public static function viewFactory()
+    public function links($view = 'web.pagination.default', $data = [])
     {
-        return call_user_func(static::$viewFactoryResolver);
+        $elements = method_exists($this, 'elements') ? $this->elements() : null;
+        
+        return App::make('view')->make($view ?: static::$defaultView, array_merge($data, [
+            'paginator' => $this,
+            'elements' => $elements
+        ]));
     }
 
-    /**
-     * Set the view factory resolver callback.
-     *
-     * @param  \Closure  $resolver
-     * @return void
-     */
-    public static function viewFactoryResolver(Closure $resolver)
-    {
-        static::$viewFactoryResolver = $resolver;
-    }
-
-    /**
+    /**s
      * Set the default pagination view.
      *
      * @param  string  $view
@@ -590,39 +580,6 @@ abstract class AbstractPaginator implements Htmlable
     public static function defaultSimpleView($view)
     {
         static::$defaultSimpleView = $view;
-    }
-
-    /**
-     * Indicate that Tailwind styling should be used for generated links.
-     *
-     * @return void
-     */
-    public static function useTailwind()
-    {
-        static::defaultView('pagination::tailwind');
-        static::defaultSimpleView('pagination::simple-tailwind');
-    }
-
-    /**
-     * Indicate that Bootstrap 4 styling should be used for generated links.
-     *
-     * @return void
-     */
-    public static function useBootstrap()
-    {
-        static::defaultView('pagination::bootstrap-4');
-        static::defaultSimpleView('pagination::simple-bootstrap-4');
-    }
-
-    /**
-     * Indicate that Bootstrap 3 styling should be used for generated links.
-     *
-     * @return void
-     */
-    public static function useBootstrapThree()
-    {
-        static::defaultView('pagination::default');
-        static::defaultSimpleView('pagination::simple-default');
     }
 
     /**
@@ -750,16 +707,6 @@ abstract class AbstractPaginator implements Htmlable
     }
 
     /**
-     * Render the contents of the paginator to HTML.
-     *
-     * @return string
-     */
-    public function toHtml()
-    {
-        return (string) $this->render();
-    }
-
-    /**
      * Make dynamic calls into the collection.
      *
      * @param  string  $method
@@ -778,6 +725,6 @@ abstract class AbstractPaginator implements Htmlable
      */
     public function __toString()
     {
-        return (string) $this->render();
+        return (string) $this->toArray();
     }
 }

@@ -12,10 +12,14 @@ trait MessageBag
      * @var array
      */
     protected $bag = [
+        'array'       => 'The :attribute must be an array.',
         'alpha'       => 'The :attribute must contain only alphabetic characters.',
-        'alphanum'       => 'The :attribute must contain only alphanumeric characters.',
-        'alphadash'       => 'The :attribute must contain only alphanumeric and _- characters.',
+        'alphanum'    => 'The :attribute must contain only alphanumeric characters.',
+        'alphadash'   => 'The :attribute must contain only alphanumeric and _- characters.',
         'email'       => 'The :attribute must be a valid email address.',
+        'exists'      => 'The selected :attribute is invalid.',
+        'in'          => 'The selected :attribute is invalid.',
+        'not_in'          => 'The selected :attribute is invalid.',
         'max'         => [
             'numeric' => 'The :attribute may not be greater than :max.',
             'file'    => 'The :attribute may not be greater than :max kilobytes.',
@@ -30,6 +34,7 @@ trait MessageBag
             'string'  => 'The :attribute must be at least :min characters.',
             'array'   => 'The :attribute must have at least :min items.',
         ],
+        'string'     => 'The :attribute must be a string.',
         'numeric'     => 'The :attribute must be a number.',
         'required'    => 'The :attribute field is required.',
         'required_if' => 'The :attribute field is required when :other is :value.',
@@ -91,9 +96,26 @@ trait MessageBag
      */
     protected function makeBagKey($attribute, $rule)
     {
-        $type = $this->deduceType($this->getValue($attribute));
+        $type = $this->deduceType(
+            $this->getValue($attribute), $attribute
+        );
 
         return $rule.'.'.$type;
+    }
+
+    /**
+     * Replace all place-holders for the alpha rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceString($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.string', 'string');
+
+        return str_replace(':attribute', $attribute, $text);
     }
 
     /**
@@ -168,7 +190,13 @@ trait MessageBag
     {
         $text = $this->getReplacementText($attribute.'.required_if', 'required_if');
 
-        return str_replace([':attribute', ':other', ':value'], [$attribute, $parameters[0], $parameters[1]], $text);
+        $value = end($parameters);
+        
+        return str_replace([
+            ':attribute', ':other', ':value'],
+            [$attribute, $parameters[0], $value],
+            $text
+        );
     }
 
     /**
@@ -334,5 +362,65 @@ trait MessageBag
         $text = $this->getReplacementText($attribute.'.digits', 'digits');
 
         return str_replace([':attribute', ':digits'], [$attribute, $parameters[0]], $text);
+    }
+
+    /**
+     * Replace all place-holders for the array rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceArray($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.array', 'array');
+
+        return str_replace([':attribute', ':array'], [$attribute], $text);
+    }
+
+    /**
+     * Replace all place-holders for the in rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceIn($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.in', 'in');
+
+        return str_replace([':attribute', ':in'], [$attribute], $text);
+    }
+
+    /**
+     * Replace all place-holders for the not_in rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceNotIn($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.not_in', 'not_in');
+
+        return str_replace([':attribute', ':not_in'], [$attribute], $text);
+    }
+
+    /**
+     * Replace all place-holders for the exista rule.
+     *
+     * @param $attribute
+     * @param $parameters
+     *
+     * @return string
+     */
+    protected function replaceExists($attribute, $parameters)
+    {
+        $text = $this->getReplacementText($attribute.'.exists', 'exists');
+
+        return str_replace([':attribute', ':exists'], [$attribute], $text);
     }
 }

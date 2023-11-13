@@ -2,7 +2,6 @@
 
 namespace FluentSupport\Framework\Database\Orm\Relations\Concerns;
 
-use BackedEnum;
 use FluentSupport\Framework\Support\InvalidArgumentException;
 
 trait InteractsWithDictionary
@@ -13,7 +12,7 @@ trait InteractsWithDictionary
      * @param  mixed  $attribute
      * @return mixed
      *
-     * @throws FluentSupport\Framework\Support\InvalidArgumentException
+     * @throws FluentSupport\Framework\Support\InvalidArgumentException // @need_fix: Need Proper Namespace
      */
     protected function getDictionaryKey($attribute)
     {
@@ -22,9 +21,10 @@ trait InteractsWithDictionary
                 return $attribute->__toString();
             }
 
-            if (function_exists('enum_exists') &&
-                $attribute instanceof BackedEnum) {
-                return $attribute->value;
+            if (function_exists('enum_exists')) {
+                if ($attribute instanceof \BackedEnum) {
+                    return $attribute->value;
+                }
             }
 
             throw new InvalidArgumentException(

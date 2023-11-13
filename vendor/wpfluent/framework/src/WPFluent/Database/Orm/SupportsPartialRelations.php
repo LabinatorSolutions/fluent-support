@@ -10,7 +10,7 @@ interface SupportsPartialRelations
      * @param  string|null  $column
      * @param  string|\Closure|null  $aggregate
      * @param  string  $relation
-     * @return $this
+     * @return self
      */
     public function ofMany($column = 'id', $aggregate = 'MAX', $relation = null);
 

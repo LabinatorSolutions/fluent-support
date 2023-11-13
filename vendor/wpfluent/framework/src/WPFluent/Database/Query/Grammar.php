@@ -703,7 +703,8 @@ class Grammar extends BaseGrammar
         // clause into SQL based on the components that make it up from builder.
         if ($having['type'] === 'Raw') {
             return $having['boolean'].' '.$having['sql'];
-        } elseif ($having['type'] === 'between') {
+        }
+        if ($having['type'] === 'between') {
             return $this->compileHavingBetween($having);
         }
 
@@ -737,9 +738,9 @@ class Grammar extends BaseGrammar
 
         $column = $this->wrap($having['column']);
 
-        $min = $this->parameter(head($having['values']));
+        $min = $this->parameter(Helper::head($having['values'])); // @need_fix
 
-        $max = $this->parameter(last($having['values']));
+        $max = $this->parameter(Helper::last($having['values'])); // @need_fix
 
         return $having['boolean'].' '.$column.' '.$between.' '.$min.' and '.$max;
     }
@@ -1104,7 +1105,7 @@ class Grammar extends BaseGrammar
      */
     protected function compileDeleteWithJoins(Builder $query, $table, $where)
     {
-        $alias = last(explode(' as ', $table));
+        $alias = Helper::last(explode(' as ', $table)); // @need_fix
 
         $joins = $this->compileJoins($query, $query->joins);
 

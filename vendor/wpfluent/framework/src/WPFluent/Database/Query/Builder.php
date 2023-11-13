@@ -3,7 +3,6 @@
 namespace FluentSupport\Framework\Database\Query;
 
 use Closure;
-use BackedEnum;
 use LogicException;
 use RuntimeException;
 use DateTimeInterface;
@@ -3343,8 +3342,10 @@ class Builder
      */
     public function castBinding($value)
     {
-        if (function_exists('enum_exists') && $value instanceof BackedEnum) {
-            return $value->value;
+        if (function_exists('enum_exists')) {
+            if ($value instanceof \BackedEnum) {
+                return $value->value;
+            }
         }
 
         return $value;

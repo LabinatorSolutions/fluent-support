@@ -64,32 +64,6 @@ class CursorPaginator extends AbstractCursorPaginator implements ArrayableInterf
     }
 
     /**
-     * Render the paginator using the given view.
-     *
-     * @param  string|null  $view
-     * @param  array  $data
-     * @return \FluentSupport\Framework\Support\Htmlable
-     */
-    public function links($view = null, $data = [])
-    {
-        return $this->render($view, $data);
-    }
-
-    /**
-     * Render the paginator using the given view.
-     *
-     * @param  string|null  $view
-     * @param  array  $data
-     * @return \FluentSupport\Framework\Support\Htmlable
-     */
-    public function render($view = null, $data = [])
-    {
-        return static::viewFactory()->make($view ?: Paginator::$defaultSimpleView, array_merge($data, [
-            'paginator' => $this,
-        ]));
-    }
-
-    /**
      * Determine if there are more items in the data source.
      *
      * @return bool

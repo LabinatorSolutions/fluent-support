@@ -105,13 +105,4 @@ interface CursorPaginatorInterface
      * @return bool
      */
     public function isNotEmpty();
-
-    /**
-     * Render the paginator using a given view.
-     *
-     * @param  string|null  $view
-     * @param  array  $data
-     * @return string
-     */
-    public function render($view = null, $data = []);
 }

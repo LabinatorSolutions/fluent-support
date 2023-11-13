@@ -5,22 +5,22 @@ namespace FluentSupport\Framework\Database\Orm\Relations;
 use Closure;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Helper;
-use FluentSupport\Framework\Database\Orm\Model;
-use FluentSupport\Framework\Database\Orm\Builder;
 use FluentSupport\Framework\Support\ForwardsCalls;
 use FluentSupport\Framework\Support\MacroableTrait;
-use FluentSupport\Framework\Database\Orm\Collection;
-use FluentSupport\Framework\Database\Query\Expression;
-use FluentSupport\Framework\Database\Orm\ModelHelperTrait;
-use FluentSupport\Framework\Database\Orm\ModelNotFoundException;
+use FluentSupport\Framework\Support\HelperFunctionsTrait;
 use FluentSupport\Framework\Database\MultipleRecordsFoundException;
+use FluentSupport\Framework\Database\Orm\Model;
+use FluentSupport\Framework\Database\Orm\Builder;
+use FluentSupport\Framework\Database\Orm\Collection;
+use FluentSupport\Framework\Database\Orm\ModelNotFoundException;
+use FluentSupport\Framework\Database\Query\Expression;
 
 /**
  * @mixin \FluentSupport\Framework\Database\Orm\Builder
  */
 abstract class Relation
 {
-    use ModelHelperTrait;
+    use HelperFunctionsTrait;
     use ForwardsCalls, MacroableTrait {
         __call as macroCall;
     }

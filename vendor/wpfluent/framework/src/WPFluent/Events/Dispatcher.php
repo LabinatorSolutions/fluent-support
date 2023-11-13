@@ -67,11 +67,13 @@ class Dispatcher implements DispatcherInterface
      */
     public function listen($events, $listener = null)
     {
-        if ($events instanceof Closure) {
-            return Helper::collect($this->firstClosureParameterTypes($events))
-                ->each(function ($event) use ($events) {
-                    $this->listen($event, $events);
-                });
+        if (class_exists('ReflectionUnionType')) {
+            if ($events instanceof Closure) {
+                return Helper::collect($this->firstClosureParameterTypes($events))
+                    ->each(function ($event) use ($events) {
+                        $this->listen($event, $events);
+                    });
+            }
         }
 
         foreach ((array) $events as $event) {

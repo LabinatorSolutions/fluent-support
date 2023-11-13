@@ -7,7 +7,7 @@ use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Support\QueueableEntity;
 use FluentSupport\Framework\Support\QueueableCollection;
-use FluentSupport\Framework\Contracts\Support\ArrayableInterface;
+use FluentSupport\Framework\Support\ArrayableInterface;
 use FluentSupport\Framework\Support\Collection as BaseCollection;
 
 class Collection extends BaseCollection implements QueueableCollection

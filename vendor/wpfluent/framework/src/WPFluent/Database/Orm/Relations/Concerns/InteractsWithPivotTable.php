@@ -2,8 +2,8 @@
 
 namespace FluentSupport\Framework\Database\Orm\Relations\Concerns;
 
-use FluentSupport\Framework\Database\Orm\Model;
 use FluentSupport\Framework\Support\Helper;
+use FluentSupport\Framework\Database\Orm\Model;
 use FluentSupport\Framework\Database\Orm\Collection;
 use FluentSupport\Framework\Database\Orm\Relations\Pivot;
 use FluentSupport\Framework\Support\Collection as BaseCollection;
@@ -135,7 +135,7 @@ trait InteractsWithPivotTable
      */
     public function syncWithPivotValues($ids, array $values, bool $detaching = true)
     {
-        return $this->sync(collect($this->parseIds($ids))->mapWithKeys(function ($id) use ($values) {
+        return $this->sync(Helper::collect($this->parseIds($ids))->mapWithKeys(function ($id) use ($values) {
             return [$id => $values];
         }), $detaching);
     }
