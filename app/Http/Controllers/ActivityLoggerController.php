@@ -16,13 +16,19 @@ class ActivityLoggerController extends Controller
 {
     /**
      * getActivities method will get information regarding all activity with users(agent/customer) and activity settings
-     * @return array
+     * @return \WP_REST_Response | array
      */
 
     public function getActivities (Request $request, Activity $activity)
     {
         try {
-            return $activity->getActivities( $request->getSafe() );
+            return $activity->getActivities( [
+                'page' => $request->getSafe('page', 'intval', 1),
+                'per_page' => $request->getSafe('per_page', 'intval', 10),
+                'from' => $request->getSafe('from', 'sanitize_text_field', ''),
+                'to'   => $request->getSafe('to', 'sanitize_text_field', ''),
+                'filters' => $request->getSafe('filters', null, []),
+            ] );
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage()
@@ -32,7 +38,7 @@ class ActivityLoggerController extends Controller
 
     /**
      * updateSettings method will update existing activity settings
-     * @return array
+     * @return \WP_REST_Response | array
      */
     public function updateSettings (Request $request, Activity $activity)
     {
@@ -47,7 +53,7 @@ class ActivityLoggerController extends Controller
 
     /**
      * getSettings method will get the list of activity settings and return
-     * @return array
+     * @return \WP_REST_Response | array
      */
     public function getSettings(Activity $activity)
     {
