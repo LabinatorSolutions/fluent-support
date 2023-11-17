@@ -795,6 +795,7 @@ export default {
         }
 
         const updateTicketAttr = (propName) => {
+            console.log(state.ticket, propName, state.ticket[propName])
             put(`tickets/${state.ticket.id}/property`, {
                 prop_name: propName,
                 prop_value: state.ticket[propName]
@@ -1123,7 +1124,7 @@ export default {
             const status = {};
 
             for (let key in state.ticket_statuses) {
-                status[key] = state.ticket_statuses[key][0];
+                status[key] = state.ticket_statuses[key];
             }
 
             return status;
