@@ -8,7 +8,7 @@
                             <li :title="translate('Add Reply')"
                                 class="fs_add_reply"
                                 :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
-                                @click="show_response_box = 'response'">
+                                @click="ticketReplyPermission ? show_response_box = 'response' : show_response_box = 'draft_response'">
                                 <el-icon style="vertical-align: middle;">
                                     <chat-line-square/>
                                 </el-icon>
@@ -662,6 +662,7 @@ export default {
             close_ticket_silently: "no",
             app_ready: false,
             fetch_other_tickets: false,
+            ticketReplyPermission: false,
             draft: {},
             draftData: {},
             show_response_draft: false,
@@ -691,6 +692,7 @@ export default {
                 state.ticket = response.ticket;
                 setTitle(response.ticket.title);
                 state.conversations = response.responses;
+                state.ticketReplyPermission = appVars.me.permissions.includes('fst_reply_ticket');
                 if (appVars.fluentcrm_config) {
                     state.fluentcrm_profile = response.fluentcrm_profile;
                 }

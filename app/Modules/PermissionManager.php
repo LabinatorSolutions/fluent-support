@@ -35,6 +35,7 @@ class PermissionManager
             'fst_view_activity_logs',
             'fst_merge_tickets',
             'fst_split_ticket',
+            'fst_reply_ticket',
             'fst_agent_today_performance'
         ];
     }
@@ -213,6 +214,7 @@ class PermissionManager
                     'fst_delete_tickets'            => __('Delete Tickets', 'fluent-support'),
                     'fst_merge_tickets'             => __('Merge Tickets', 'fluent-support'),
                     'fst_split_ticket'              => __('Split Ticket', 'fluent-support'),
+                    'fst_reply_ticket'              => __('Reply Ticket', 'fluent-support'),
                 ]
             ],
             [
