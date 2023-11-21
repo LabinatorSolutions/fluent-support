@@ -273,8 +273,12 @@ class Conversation extends Model
         $ticket = Ticket::findOrFail($ticketId);
         $response = static::findOrFail($responseId);
 
+        $person = Helper::getAgentByUserId(get_current_user_id());
+
         $response->conversation_type = $conversationType;
         $response->save();
+
+        do_action('fluent_support/' . $conversationType . '_added_by_' . $person->person_type, $response, $ticket, $person);
 
         return [
             'message'  => __('Draft response has been successfully approved.', 'fluent-support'),
@@ -286,11 +290,18 @@ class Conversation extends Model
     {
         $ticket = Ticket::findOrFail($ticketId);
         $response = static::findOrFail($responseId);
+
         $agent = Helper::getAgentByUserId();
+        $canReplyTicket = PermissionManager::currentUserCan('fst_reply_ticket');
 
         $this->checkUserTaskPermission( $ticket->agent_id, $agent->id, 'update' );
 
         $response->content = wp_unslash(wp_kses_post($data['content']));
+
+        if ( $response->conversation_type == 'draft_response' && $canReplyTicket) {
+            $response->conversation_type = 'response';
+        }
+
         $response->save();
 
         return [
