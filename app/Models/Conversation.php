@@ -257,6 +257,31 @@ class Conversation extends Model
         ];
     }
 
+    /**
+     * Update the conversation type for a response.
+     *
+     * @param array $data
+     * @param int $ticketId
+     * @param int $responseId
+     * @param string $conversationType
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function publishDraftResponse ( $data, $ticketId, $responseId, $conversationType )
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $response = static::findOrFail($responseId);
+
+        $response->conversation_type = $conversationType;
+        $response->save();
+
+        return [
+            'message'  => __('Draft response has been successfully approved.', 'fluent-support'),
+            'response' => $response,
+        ];
+    }
+
     public function updateResponse ( $data, $ticketId, $responseId )
     {
         $ticket = Ticket::findOrFail($ticketId);

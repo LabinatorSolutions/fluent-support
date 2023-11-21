@@ -334,6 +334,17 @@ class TicketController extends Controller
         }
     }
 
+    public function activateDraftResponseAsResponse (TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id) {
+        $data = $request->get();
+        $conversationType = 'response';
+
+        try {
+            return $conversation->publishDraftResponse($data, $ticket_id, $response_id, $conversationType);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
     /**
      * getLiveActivity method will return the activity in a ticket by agents
      * @param Request $request

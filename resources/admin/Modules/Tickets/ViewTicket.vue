@@ -352,8 +352,12 @@
                                         </div>
                                         <div>
                                             <el-button-group>
-                                                <el-button size="small" @click="show_response_box = 'response'">{{translate('Edit')}}</el-button>
-                                                <el-button size="small" @click="discardDraft(draft.id)">{{translate('Discard')}}</el-button>
+                                                <el-button @click="show_response_box = ticketReplyPermission ? 'response' : 'draft_response'">
+                                                    {{ translate('Edit') }}
+                                                </el-button>
+                                                <el-button @click="discardDraft(draft.id)">
+                                                    {{ translate('Discard') }}
+                                                </el-button>
                                             </el-button-group>
                                         </div>
                                     </section>
@@ -441,6 +445,9 @@
                                                     }}</a>
                                             </li>
                                         </ul>
+                                    </div>
+                                    <div v-else-if="conversation.conversation_type == 'draft_response' && ticketReplyPermission" class="fs_draft_response_actions">
+                                        <el-button size="small" @click="approveDraftResponse(conversation)">{{translate('Approve')}}</el-button>
                                     </div>
                                 </section>
                             </section>
@@ -873,6 +880,24 @@ export default {
             });
         }
 
+        const approveDraftResponse = (conversation) => {
+
+            put(`tickets/${conversation.ticket_id}/approve_draft_response/${conversation.id}`, {
+                content: conversation.content
+            })
+                .then(response => {
+                    notify({
+                        message: response.message,
+                        type: 'success'
+                    });
+                    fetchTicket();
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+
+        }
+
         const reOpen = () => {
             state.updating = true;
             post(`tickets/${state.ticket.id}/re-open`)
@@ -1179,6 +1204,7 @@ export default {
             deleteTicket,
             getRibbonClass,
             getTextByPerson,
+            approveDraftResponse
         }
     }
 }
@@ -1225,6 +1251,10 @@ i.dashicons.dashicons-randomize {
 .fs_view_ticket .fs_ticket_body .fs_thread_wrap .fs_thread_title .carrier_info strong {
     font-size: 13px;
     color: #6f7b87;
+}
+
+.fs_conv_type_draft_response {
+    background: #ecefe4 ;
 }
 
 .fs_ticket_error_message {

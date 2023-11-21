@@ -137,7 +137,7 @@ export default {
                     removeDraft();
                 }
 
-                 if(props.type === 'response'){
+                 if(props.type === 'response' || props.type === 'draft_response' ){
                      saveResponseDraft();
                  }
             });
