@@ -413,7 +413,7 @@
                                                             :command="{ type: 'edit', conversation: conversation }"
                                                             icon="EditPen"> {{ translate('Edit') }}
                                                         </el-dropdown-item>
-                                                        <el-dropdown-item v-if="has_pro"
+                                                        <el-dropdown-item v-if="has_pro && conversation.conversation_type !== 'draft_response'"
                                                                           :command="{ type: 'split_ticket', conversation: conversation }"
                                                                           icon="TopLeft">
                                                             {{ translate('Split Ticket') }}
@@ -447,7 +447,7 @@
                                         </ul>
                                     </div>
                                     <div v-else-if="conversation.conversation_type == 'draft_response' && ticketReplyPermission" class="fs_draft_response_actions">
-                                        <el-button size="small" @click="approveDraftResponse(conversation)">{{translate('Approve')}}</el-button>
+                                        <el-button size="small" type="primary" @click="approveDraftResponse(conversation)">{{translate('Approve')}}</el-button>
                                     </div>
                                 </section>
                             </section>
@@ -732,8 +732,12 @@ export default {
         };
 
         const getTextByPerson = (conversation, ticket) => {
+            if (conversation?.conversation_type === 'draft_response') {
+                return translate('Draft Response');
+            }
+
             if (conversation?.person.person_type === 'agent') {
-                return conversation.person.title ? conversation.person.title : translate('Support Staff');
+                return (conversation.person.title ? conversation.person.title : translate('Support Staff'));
             }else{
                 if (ticket.customer_id == conversation.person_id) {
                     return translate('Thread Starter')
@@ -759,6 +763,11 @@ export default {
                     }
                 }
             }
+
+            if (conversation.conversation_type === 'draft_response') {
+                classes.push('fs_thread_ribbon_draft_response');
+            }
+
             return classes;
         }
 
@@ -1221,7 +1230,6 @@ export default {
     padding: 5px 10px;
     font-size: 11px;
 }
-
 .fs_agent {
     border-left: 4px solid #1785EB;
 }
@@ -1231,15 +1239,12 @@ export default {
 .fs_cc_customer {
     border-left: 4px solid #EC5c03;
 }
-
 .fs_conv_type_note {
     border-left: 0px solid #e6a23c;
 }
-
 i.dashicons.dashicons-randomize {
     transform: rotate(90deg);
 }
-
 .carrier_info {
     padding: 5px 0;
     font-size: 12px;
@@ -1247,28 +1252,26 @@ i.dashicons.dashicons-randomize {
     font-weight: 400;
     line-height: 1.4;
 }
-
 .fs_view_ticket .fs_ticket_body .fs_thread_wrap .fs_thread_title .carrier_info strong {
     font-size: 13px;
     color: #6f7b87;
 }
-
 .fs_conv_type_draft_response {
-    background: #ecefe4 ;
+    background: #fef4e6 ;
+    border-left: 4px solid #F58E07;
 }
-
+.fs_thread_ribbon_draft_response {
+    background: #F58E07 !important;
+}
 .fs_ticket_error_message {
     font-size: 13px;
     color: #6f7b87;
     width: 100%
 }
-
-
 .fs_saved_draft {
     border-top: 1px solid #e5e9ec;
     border-left: 4px solid #6e5d519e;
 }
-
 .draft_title {
     content: '';
     position: relative;
