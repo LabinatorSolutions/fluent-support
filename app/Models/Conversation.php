@@ -275,6 +275,12 @@ class Conversation extends Model
 
         $person = Helper::getAgentByUserId(get_current_user_id());
 
+        $approveDraftResponsePermission = PermissionManager::currentUserCan('fst_approve_draft_reply');
+
+        if ( !$approveDraftResponsePermission ) {
+            throw new \Exception("Sorry, You do not have permission to approve this draft response");
+        }
+
         $response->conversation_type = $conversationType;
         $response->save();
 
@@ -286,20 +292,19 @@ class Conversation extends Model
         ];
     }
 
-    public function updateResponse ( $data, $ticketId, $responseId )
+    public function updateResponse($data, $ticketId, $responseId)
     {
         $ticket = Ticket::findOrFail($ticketId);
         $response = static::findOrFail($responseId);
 
         $agent = Helper::getAgentByUserId();
-        $canReplyTicket = PermissionManager::currentUserCan('fst_reply_ticket');
 
-        $this->checkUserTaskPermission( $ticket->agent_id, $agent->id, 'update' );
+        $this->checkUserTaskPermission($ticket->agent_id, $agent->id, 'update');
 
         $response->content = wp_unslash(wp_kses_post($data['content']));
 
-        if ( $response->conversation_type == 'draft_response' && $canReplyTicket) {
-            $response->conversation_type = 'response';
+        if ( $response->conversation_type == 'draft_response' ) {
+            $this->updateDraftResponseData($response);
         }
 
         $response->save();
@@ -308,6 +313,27 @@ class Conversation extends Model
             'message'  => __('Selected response has been updated', 'fluent-support'),
             'response' => $response
         ];
+    }
+
+    public function updateDraftResponseData($response)
+    {
+        $agent = Helper::getAgentByUserId();
+        $approveDraftResponsePermission = PermissionManager::currentUserCan('fst_approve_draft_reply');
+
+        if ($response->person_id == $agent->id) {
+            return null;
+        }
+
+        if ($approveDraftResponsePermission) {
+            $response->conversation_type = 'response';
+            $response->save();
+            return [
+                'message'  => __('Selected draft response has been approved and updated', 'fluent-support'),
+                'response' => $response
+            ];
+        } else {
+            throw new \Exception("Sorry, You do not have permission to approve this draft response");
+        }
     }
 
     public function getSettingsValue($valueKey = false, $default = false)

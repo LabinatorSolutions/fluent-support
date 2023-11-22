@@ -8,7 +8,7 @@
                             <li :title="translate('Add Reply')"
                                 class="fs_add_reply"
                                 :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
-                                @click="ticketReplyPermission ? show_response_box = 'response' : show_response_box = 'draft_response'">
+                                @click="draftReplyPermission ? show_response_box = 'draft_response' : show_response_box = 'response'">
                                 <el-icon style="vertical-align: middle;">
                                     <chat-line-square/>
                                 </el-icon>
@@ -352,7 +352,7 @@
                                         </div>
                                         <div>
                                             <el-button-group>
-                                                <el-button @click="show_response_box = ticketReplyPermission ? 'response' : 'draft_response'">
+                                                <el-button @click="show_response_box = draftReplyPermission ? 'draft_response' : 'response'">
                                                     {{ translate('Edit') }}
                                                 </el-button>
                                                 <el-button @click="discardDraft(draft.id)">
@@ -410,6 +410,7 @@
                                                 <template #dropdown>
                                                     <el-dropdown-menu>
                                                         <el-dropdown-item
+                                                            v-if="!draftReplyPermission || conversation.conversation_type === 'draft_response'"
                                                             :command="{ type: 'edit', conversation: conversation }"
                                                             icon="EditPen"> {{ translate('Edit') }}
                                                         </el-dropdown-item>
@@ -446,7 +447,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <div v-else-if="conversation.conversation_type == 'draft_response' && ticketReplyPermission" class="fs_draft_response_actions">
+                                    <div v-else-if="conversation.conversation_type == 'draft_response' && draftReplyApprovePermission" class="fs_draft_response_actions">
                                         <el-button size="small" type="primary" @click="approveDraftResponse(conversation)">{{translate('Approve')}}</el-button>
                                     </div>
                                 </section>
@@ -669,7 +670,8 @@ export default {
             close_ticket_silently: "no",
             app_ready: false,
             fetch_other_tickets: false,
-            ticketReplyPermission: false,
+            draftReplyPermission: false,
+            draftReplyApprovePermission: false,
             draft: {},
             draftData: {},
             show_response_draft: false,
@@ -699,7 +701,9 @@ export default {
                 state.ticket = response.ticket;
                 setTitle(response.ticket.title);
                 state.conversations = response.responses;
-                state.ticketReplyPermission = appVars.me.permissions.includes('fst_reply_ticket');
+                state.draftReplyPermission = appVars.me.permissions.includes('fst_draft_reply');
+                state.draftReplyApprovePermission = appVars.me.permissions.includes('fst_approve_draft_reply');
+
                 if (appVars.fluentcrm_config) {
                     state.fluentcrm_profile = response.fluentcrm_profile;
                 }

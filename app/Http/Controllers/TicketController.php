@@ -325,7 +325,7 @@ class TicketController extends Controller
      */
     public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id)
     {
-        $data = $request->get();
+        $data = $request->getSafe(['content','ticket_id','response_id']);
 
         try {
             return $conversation->updateResponse($data, $ticket_id, $response_id);
@@ -334,8 +334,8 @@ class TicketController extends Controller
         }
     }
 
-    public function activateDraftResponseAsResponse (TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id) {
-        $data = $request->get();
+    public function approveDraftResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id) {
+        $data = $request->getSafe(['content','ticket_id','response_id']);
         $conversationType = 'response';
 
         try {
