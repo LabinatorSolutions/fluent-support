@@ -33,7 +33,7 @@
                         <span v-else-if="type === 'note'">{{ translate('Add Internal Note') }}</span>
                         <span v-else>{{ translate('Add Reply') }}</span>
                     </el-button>
-                    <el-button v-if="type != 'note'" :disabled="creating" @click="create('yes')" size="large"
+                    <el-button v-if="type != 'note' && type !== 'draft_response' " :disabled="creating" @click="create('yes')" size="large"
                                type="danger">
                         {{ translate('Reply and Close') }}
                     </el-button>

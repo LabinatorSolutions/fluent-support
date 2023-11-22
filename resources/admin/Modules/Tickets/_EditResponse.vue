@@ -3,7 +3,7 @@
         <wp-editor v-if="editor_ready"  v-model="response.content" />
         <hr />
         <el-button size="large" type="success" @click="editResponse()">
-            {{ ticketReplyPermission && response.conversation_type === 'draft_response' ? $t('Update And Approve Response') : $t('Update Response') }}
+            {{ draftReplyApprovePermission && response.conversation_type === 'draft_response' ? $t('Update And Approve Response') : $t('Update Response') }}
         </el-button>
     </div>
 </template>
@@ -37,10 +37,10 @@ export default {
             filteredAgents: appVars.support_agents,
             popup: false,
             editor_ready: true,
-            ticketReplyPermission: false
+            draftReplyApprovePermission: false,
         });
 
-        state.ticketReplyPermission = appVars.me.permissions.includes('fst_reply_ticket');
+        state.draftReplyApprovePermission = appVars.me.permissions.includes('fst_approve_draft_reply');
 
         const editResponse = () => {
             state.saving = true;
