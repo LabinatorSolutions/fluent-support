@@ -184,7 +184,7 @@ export default {
                     '{{agent.full_name}}': translate('Assigned Agent Full Name'),
                     '{{assigner.first_name}}': translate('Assigner First Name'),
                     '{{assigner.last_name}}': translate('Assigner Last Name'),
-                    '{{assigner.full_name}}': translate('Assigner Full Name')
+                    '{{assigner.full_name}}': translate('Assigner Full Name'),
                 }
             }
             else {
@@ -203,7 +203,8 @@ export default {
                     '{{agent.last_name}}': translate('Agent Last Name'),
                     '{{agent.full_name}}': translate('Agent Full Name'),
                     '{{response.title}}': translate('Response Title'),
-                    '{{response.content}}': translate('Response Content')
+                    '{{response.content}}': translate('Response Content'),
+                    '{{agent.title}}': translate('Agent Title'),
                 }
             }
         })
