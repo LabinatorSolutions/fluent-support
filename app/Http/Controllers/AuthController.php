@@ -575,16 +575,16 @@ class AuthController extends Controller
     }
 
     public function addUserMetaData($userId, $formData) {
-        $customFields =  Helper::getBusinessSettings('custom_registration_form_field');
+        $customFieldsKey = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
 
-        if (empty($customFields)) {
+        if (empty($customFieldsKey)) {
             return;
         }
 
-        foreach ($customFields as $field) {
-            if (isset($formData[$field])) {
-                $fieldValue = $formData[$field];
-                update_user_meta($userId, $field, $fieldValue);
+        foreach ($customFieldsKey as $key) {
+            if (isset($formData[$key])) {
+                $fieldValue = $formData[$key];
+                update_user_meta($userId, $key, $fieldValue);
             }
         }
     }

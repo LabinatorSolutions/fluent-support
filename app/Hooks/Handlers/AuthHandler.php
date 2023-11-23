@@ -120,7 +120,7 @@ class AuthHandler
             return (new \FluentAuth\App\Hooks\Handlers\CustomAuthHandler())->registrationForm($attributes);
         }
 
-        $customFieldsKey =  Helper::getBusinessSettings('custom_registration_form_field');
+        $customFieldsKey = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
 
         if (!empty($customFieldsKey)) {
             add_filter('fluent_support/registration_form_fields', function($fields) use ($customFieldsKey) {
@@ -386,7 +386,7 @@ class AuthHandler
     public static function allCustomFields(): array {
         $countryList = CountryNames::get();
 
-        return [
+        return apply_filters('fluent_support/custom_registration_form_fields', [
             'address_line_1' => [
                 'required'    => false,
                 'type'        => 'text',
@@ -430,7 +430,7 @@ class AuthHandler
                 'placeholder' => __('Select a Country', 'fluent-support'),
                 'options'    =>  $countryList,
             ],
-        ];
+        ]);
     }
 
     public static function resetPasswordFields()
