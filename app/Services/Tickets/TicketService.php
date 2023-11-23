@@ -87,8 +87,8 @@ class TicketService
             'person_id'         => $person->id,
             'conversation_type' => 'internal_info',
             'content'           => $ticket->agent->user_id !== $person->user_id ?
-                $person->full_name.' ' . __('assign').' ' . $ticket->agent->full_name.' ' . __('in this ticket', 'fluent-support') :
-                $person->full_name.' ' . __( 'assign this ticket to self', 'fluent-support')
+                $person->full_name . __(' assign ') . $ticket->agent->full_name . __(' in this ticket', 'fluent-support') :
+                $person->full_name .__( ' assign this ticket to self', 'fluent-support')
         ]);
 
         return $person;
