@@ -42,6 +42,10 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
         ->int('ticket_id')
         ->int('response_id');
 
+    $router->put('/{ticket_id}/approve_draft_response/{response_id}', 'TicketController@approveDraftResponse')
+        ->int('ticket_id')
+        ->int('response_id');
+
     $router->delete('/{ticket_id}/responses/{response_id}', 'TicketController@deleteResponse')
         ->int('ticket_id')
         ->int('response_id');
