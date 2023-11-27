@@ -29,6 +29,13 @@ class CustomerController extends Controller
         ];
     }
 
+    public function customerField (Customer $customer) {
+
+        return[
+            'customerField' => $customer->getCustomerField()
+        ];
+    }
+
 
     /**
      * getCustomer method will return individual customer information by customer id

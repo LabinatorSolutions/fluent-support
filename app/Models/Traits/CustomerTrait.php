@@ -44,6 +44,131 @@ trait CustomerTrait
         return $this->attachCustomersMetaData( $customers );
     }
 
+    public function getCustomerField()
+    {
+        $basicFields = [
+            'first_name' => [
+                'label' => __('First Name', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('First Name', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'last_name' => [
+                'label' => __('Last Name', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('Last Name', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'email' => [
+                'label' => __('Email', 'fluent-support'),
+                'data_type' => 'email',
+                'placeholder' => __('Email', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+//        'disabled' => !!$customer['id'],
+            ],
+            'title' => [
+                'label' => __('Job Title', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('Job Title', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'note' => [
+                'label' => __('Note', 'fluent-support'),
+                'data_type' => 'textarea',
+                'placeholder' => __('Note', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'status' => [
+                'label' => __('Status', 'fluent-support'),
+                'data_type' => 'text',
+                'type' => 'input-radio',
+                'options' => [
+                    'active' => ['id' => 'active', 'value' => 'active', 'label' => __('Active', 'fluent-support')],
+                    'inactive' => ['id' => 'inactive', 'value' => 'inactive', 'label' => __('Blocked', 'fluent-support')],
+                ],
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'status_html' => [
+                'dependency' => [
+                    'depends_on' => 'status',
+                    'operator' => '=',
+                    'value' => 'inactive',
+                ],
+                'type' => 'html-viewer',
+                'wrapper_class' => 'fs_warn',
+                'html' => __('block_instruction', 'fluent-support'),
+            ],
+        ];
+
+        $addressFields = [
+            'address_line_1' => [
+                'label' => __('Address Line 1', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('Address Line 1', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'address_line_2' => [
+                'label' => __('Address Line 2', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('Address Line 2', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'city' => [
+                'label' => __('City', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('City', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'state' => [
+                'label' => __('State', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('State', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'zip' => [
+                'label' => __('Zip Code', 'fluent-support'),
+                'data_type' => 'text',
+                'placeholder' => __('Zip Code', 'fluent-support'),
+                'type' => 'input-text',
+                'wrapper_class' => 'fs_half_field',
+            ],
+            'country' => [
+                'label' => __('Country', 'fluent-support'),
+                'placeholder' => __('Country', 'fluent-support'),
+                'type' => 'country-selector',
+                'wrapper_class' => 'fs_half_field',
+            ],
+        ];
+
+        $addressFields =  apply_filters('fluent_support/custom_registration_form_fields',$addressFields);
+
+            foreach ($addressFields as $key => $field) {
+                if (isset($field['type']) && $field['type'] === 'text') {
+                    $addressFields[$key]['type'] = 'input-text';
+                }
+            }
+
+        $loading = false;
+
+        $state = [
+            'basic_fields' => $basicFields,
+            'address_fields' => $addressFields,
+            'loading' => $loading,
+        ];
+
+        return $state;
+
+    }
+
     /**
      * This `findUserInWPAndMakeCustomer` method will find customer in WP Users and make it as a customer
      * @param string $search
@@ -105,7 +230,7 @@ trait CustomerTrait
         if (!$with) {
             return $data;
         }
-        
+
         return $this->getCustomerAdditionalData($with, $customer, $data);
     }
 
@@ -219,6 +344,18 @@ trait CustomerTrait
 
     private function getCustomerAdditionalData($with, $customer, $data)
     {
+        //new code
+        $customFieldKeys = apply_filters('fluent_support/custom_registration_form_fields_key', []);
+
+        $userMetaData = get_user_meta($customer['user_id']);
+
+        foreach ($customFieldKeys as $fieldKey) {
+            if (isset($userMetaData[$fieldKey][0])) {
+                $customer[$fieldKey] = $userMetaData[$fieldKey][0];
+            }
+        }
+        //new code
+
         if (in_array('widgets', $with)) {
             $data['widgets'] = ProfileInfoService::getProfileExtraWidgets($customer);
         }

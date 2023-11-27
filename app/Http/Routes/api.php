@@ -156,6 +156,8 @@ $router->prefix('mailbox-reports')->withPolicy('AdminSensitivePolicy')->group(fu
 $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
     $router->get('/', 'CustomerController@index');
     $router->post('/', 'CustomerController@create');
+    $router->get('/customerField', 'CustomerController@customerField');
+
 
     $router->get('/{customer_id}', 'CustomerController@getCustomer')->int('customer_id');
     $router->put('/{customer_id}', 'CustomerController@update')->int('customer_id');
