@@ -44,7 +44,7 @@ trait CustomerTrait
         return $this->attachCustomersMetaData( $customers );
     }
 
-    public function getCustomerField($customer_id)
+    public function getCustomerField($customer_id,$userID = null)
     {
         $basicFields = [
             'first_name' => [
@@ -149,13 +149,15 @@ trait CustomerTrait
             ],
         ];
 
-        $addressFields =  apply_filters('fluent_support/custom_registration_form_fields',$addressFields);
+        if ($userID) {
+            $addressFields =  apply_filters('fluent_support/custom_registration_form_fields',$addressFields);
 
             foreach ($addressFields as $key => $field) {
                 if (isset($field['type']) && $field['type'] === 'text') {
                     $addressFields[$key]['type'] = 'input-text';
                 }
             }
+        }
 
         $loading = false;
 

@@ -1059,6 +1059,16 @@ class Ticket extends Model
             ],404);
         }
 
+        $customFieldsKey = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
+        $ticket->customer->custom_field_keys = $customFieldsKey;
+
+        if ($ticket->customer->user_id) {
+            $customFieldKeysUsingHook = apply_filters('fluent_support/custom_registration_form_fields_key', []);
+            foreach ($customFieldKeysUsingHook as $key) {
+                $ticket->customer->$key = reset(get_user_meta($ticket->customer->user_id,$key));
+            }
+        }
+
         $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl($ticket->customer); //Get and set customer profile url
         $this->checkAgentPermission($ticket); // Check Agent Permission
         $this->checkIfClosedTicket($ticket);  // Check if ticket is closed, if closed then load ticket with closed data

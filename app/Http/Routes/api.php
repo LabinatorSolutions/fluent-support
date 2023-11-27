@@ -158,7 +158,6 @@ $router->prefix('customers')->withPolicy('AdminSensitivePolicy')->group(function
     $router->post('/', 'CustomerController@create');
     $router->get('/customerField/{customer_id}', 'CustomerController@customerField')->int('customer_id');
 
-
     $router->get('/{customer_id}', 'CustomerController@getCustomer')->int('customer_id');
     $router->put('/{customer_id}', 'CustomerController@update')->int('customer_id');
     $router->delete('/{customer_id}', 'CustomerController@delete')->int('customer_id');
