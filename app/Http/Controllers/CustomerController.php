@@ -59,13 +59,13 @@ class CustomerController extends Controller
      */
     public function create(Request $request, Customer $customer)
     {
-        $this->validate($request->getSafe(), [
+        $this->validate($request->get(), [
             'email' => 'required|email|unique:fs_persons'
         ]);
 
         return [
             'message'  => __('Customer has been added', 'fluent-support'),
-            'customer' => $customer->createCustomer($request->getSafe())
+            'customer' => $customer->createCustomer($request->get())
         ];
     }
 

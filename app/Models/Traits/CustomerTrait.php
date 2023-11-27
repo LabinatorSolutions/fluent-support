@@ -269,6 +269,9 @@ trait CustomerTrait
 
     public function updateCustomer($customerId, $data)
     {
+        $customFieldsKeys = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
+        $customFormValue = Arr::only($data, $customFieldsKeys);
+
         $data = $this->takeValidKeysForUpdate($data);
 
         $customer = static::findOrFail($customerId);
@@ -282,6 +285,14 @@ trait CustomerTrait
 
         if ($user) {
             $data['user_id'] = $user->ID;
+
+            //Update Custom field data for user
+            foreach ($customFieldsKeys as $key) {
+                if (isset($customFormValue[$key])) {
+                    $fieldValue = $customFormValue[$key];
+                    update_user_meta($user->ID, $key, $fieldValue);
+                }
+            }
         }
 
         static::where('id', $customer->id)->update($data);
@@ -344,17 +355,16 @@ trait CustomerTrait
 
     private function getCustomerAdditionalData($with, $customer, $data)
     {
-        //new code
         $customFieldKeys = apply_filters('fluent_support/custom_registration_form_fields_key', []);
 
         $userMetaData = get_user_meta($customer['user_id']);
 
+        //Custom field data from wp user_meta
         foreach ($customFieldKeys as $fieldKey) {
             if (isset($userMetaData[$fieldKey][0])) {
                 $customer[$fieldKey] = $userMetaData[$fieldKey][0];
             }
         }
-        //new code
 
         if (in_array('widgets', $with)) {
             $data['widgets'] = ProfileInfoService::getProfileExtraWidgets($customer);
