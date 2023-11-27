@@ -318,14 +318,15 @@ export default {
         }
 
         const getCustomerAddress = (customer) => {
-            let address = [
-                customer.address_line_1,
-                customer.address_line_2,
-                customer.city,
-                customer.state,
-                customer.zip,
-                customer.country
-            ];
+            let address = [];
+
+            customer.custom_field_keys.forEach((key) => {
+                const value = customer[key];
+
+                if (value) {
+                    address.push(value);
+                }
+            });
 
             address = address.filter((item) => {
                 return !!item;

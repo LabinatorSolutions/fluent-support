@@ -29,10 +29,11 @@ class CustomerController extends Controller
         ];
     }
 
-    public function customerField (Customer $customer, $customer_id) {
+    public function customerField (Request $request,Customer $customer, $customer_id) {
 
+        $userID = intval($request->get('user_id'));
         return[
-            'customerField' => $customer->getCustomerField($customer_id)
+            'customerField' => $customer->getCustomerField($customer_id,$userID)
         ];
     }
 
