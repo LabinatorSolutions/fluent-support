@@ -29,10 +29,10 @@ class CustomerController extends Controller
         ];
     }
 
-    public function customerField (Customer $customer) {
+    public function customerField (Customer $customer, $customer_id) {
 
         return[
-            'customerField' => $customer->getCustomerField()
+            'customerField' => $customer->getCustomerField($customer_id)
         ];
     }
 
@@ -79,7 +79,7 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer, $customer_id)
     {
-        $data = $this->validate($request->getSafe(), [
+        $data = $this->validate($request->get(), [
             'email'      => 'required|email',
             'first_name' => 'required'
         ]);
