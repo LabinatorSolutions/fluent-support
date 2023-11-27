@@ -65,7 +65,7 @@ export default {
         }
 
         const fetchCustomerField = async () => {
-            get('customers/customerField')
+            get('customers/customerField/'+(customer.id ? customer.id : 0))
                 .then(response => {
                     state.address_fields = response.customerField.address_fields;
                     state.basic_fields = response.customerField.basic_fields;

@@ -44,7 +44,7 @@ trait CustomerTrait
         return $this->attachCustomersMetaData( $customers );
     }
 
-    public function getCustomerField()
+    public function getCustomerField($customer_id)
     {
         $basicFields = [
             'first_name' => [
@@ -67,7 +67,7 @@ trait CustomerTrait
                 'placeholder' => __('Email', 'fluent-support'),
                 'type' => 'input-text',
                 'wrapper_class' => 'fs_half_field',
-//        'disabled' => !!$customer['id'],
+                'disabled' => !empty($customer_id),
             ],
             'title' => [
                 'label' => __('Job Title', 'fluent-support'),
