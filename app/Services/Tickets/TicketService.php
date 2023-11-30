@@ -132,8 +132,8 @@ class TicketService
         $queryArgs = [
             'with'        => [],
             'filter_type' => $filterType,
-            'sort_by'     => Arr::get($data, 'order_by', 'id'),
-            'sort_type'   => Arr::get($data, 'order_type', 'DESC'),
+            'sort_by'     => sanitize_sql_orderby(Arr::get($data, 'order_by', 'id')),
+            'sort_type'   => Helper::sanitizeOrderValue(Arr::get($data, 'order_type', 'DESC')),
         ];
 
         if ($filterType == 'advanced') {

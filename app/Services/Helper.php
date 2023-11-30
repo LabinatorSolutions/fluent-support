@@ -514,6 +514,15 @@ class Helper
         return Customer::where('id', $customerid)->first();
     }
 
+    public static function sanitizeOrderValue($orderType = '')
+    {
+        $orderBys = ['ASC', 'DESC'];
+
+        $orderType = trim(strtoupper($orderType));
+
+        return in_array($orderType, $orderBys) ? $orderType : 'DESC';
+    }
+
     public static function getFluentCRMTagConfig()
     {
         if (!defined('FLUENTCRM')) {
