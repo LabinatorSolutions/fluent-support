@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services;
 
 use Exception;
 use FluentSupport\App\Models\MailBox;
+use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Services\Tickets\ResponseService;
@@ -449,6 +450,15 @@ class CustomerPortalService
             ->get();
 
         foreach ($responses as $response) {
+            $agentFeedback = Meta::where('object_id', $response->id)
+                ->where('object_type', 'conversation_meta')
+                ->where('key', 'agent_feedback_ratings')
+                ->first();
+
+            if ($agentFeedback) {
+                $response->agent_feedback = $agentFeedback->value;
+            }
+
             $response->content = links_add_target(make_clickable($response->content));
             if ($response->person) {
                 $response->person->setHidden(['email']);
@@ -487,6 +497,22 @@ class CustomerPortalService
         }
 
         return $ticket;
+    }
+
+    public function addUserFeedback($approvalStatus, $conversationID)
+    {
+        $agentFeedback = Meta::updateOrCreate(
+            [
+                'object_id' => $conversationID,
+                'key' => 'agent_feedback_ratings',
+            ],
+            [
+                'object_type' => 'conversation_meta',
+                'value' => $approvalStatus,
+            ]
+        );
+
+        return $agentFeedback;
     }
 
 }

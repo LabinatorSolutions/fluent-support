@@ -1069,6 +1069,18 @@ class Ticket extends Model
             }
         }
 
+        foreach ($ticket->responses as $response) {
+            $agentFeedback = Meta::where('object_id', $response->id)
+                ->where('object_type', 'conversation_meta')
+                ->where('key', 'agent_feedback_ratings')
+                ->first();
+
+            if ($agentFeedback) {
+                $response->agent_feedback = $agentFeedback->value;
+            }
+            
+        }
+
         $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl($ticket->customer); //Get and set customer profile url
         $this->checkAgentPermission($ticket); // Check Agent Permission
         $this->checkIfClosedTicket($ticket);  // Check if ticket is closed, if closed then load ticket with closed data

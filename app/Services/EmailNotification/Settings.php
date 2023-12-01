@@ -74,6 +74,7 @@ class Settings
             'del_files_on_close'    => 'no',
             'enable_admin_bar_summary' => 'no',
             'enable_draft_mode' => 'no',
+            'agent_feedback_rating' => 'no'
         ];
 
         //Get default/existing settings from database using the key global_business_settings
@@ -179,6 +180,13 @@ class Settings
                 'type'    => 'checkbox-group',
                 'label'   => __('Custom Registration Form Field', 'fluent-support'),
                 'options' => $customRegistrationFormOptions
+            ],
+            'agent_feedback_rating' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Agent Feedback Rating', 'fluent-support'),
+                'inline_help'    => __('If you enable this setting, then if an agent close a ticket accidentally then the written response will be saved as draft.', 'fluent-support')
             ],
         ];
 

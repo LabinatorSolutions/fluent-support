@@ -181,6 +181,7 @@ class CustomerPortalHandler
             'has_rich_text_editor'       => true,
             'customer_status'            => static::customerStatus()->status ?? static::customerStatus(),
             'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
+            'agent_feedback_rating'      => Helper::getBusinessSettings('agent_feedback_rating', 'no'),
         ];
 
         if ($this->isSignedTicketView()) {

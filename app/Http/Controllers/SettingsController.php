@@ -573,7 +573,7 @@ class SettingsController extends Controller
             $googleDriveSettings = Helper::getIntegrationOption('google_drive_settings');
             $googleDriveConfigured = $googleDriveSettings && !empty($googleDriveSettings['access_token']);
         }
-        
+
         $drivers = apply_filters('fluent_support/storage_drivers_info', [
             'local'        => [
                 'title'         => 'Default WordPress Storage',
