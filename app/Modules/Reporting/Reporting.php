@@ -270,6 +270,45 @@ class Reporting
             $agentIds = array_map('intval', explode(',', $agent));
         }
 
+        // get agent feedback statistics
+        $agentConversations = Conversation::select([
+            $this->db()->raw('person_id as agent_id'),
+            $this->db()->raw('GROUP_CONCAT(id) as conversation_ids')
+        ])
+        ->whereIn('person_id', $agentIds)
+        ->whereHas('person', function ($q) {
+            $q->where('person_type', '=', 'agent');
+        })
+        ->where('conversation_type', 'response')
+        ->groupBy('agent_id')
+        ->get();
+
+        foreach ($agentConversations as $conversation) {
+            $conversationIds = array_map('intval', explode(',', $conversation->conversation_ids));
+
+            $feedbackMeta = Meta::whereIn('object_id', $conversationIds)
+                ->where('key', 'agent_feedback_ratings')
+                ->whereBetween('created_at', [$from, $to])
+                ->get();
+
+            $likeCount = 0;
+            $dislikeCount = 0;
+
+            foreach ($feedbackMeta as $feedback) {
+                $feedbackStatus = $feedback->value;
+
+                if ($feedbackStatus === 'like') {
+                    $likeCount++;
+                } elseif ($feedbackStatus === 'dislike') {
+                    $dislikeCount++;
+                }
+            }
+
+            $agentId = $conversation->agent_id;
+            $reports[$agentId]['likes'] = $likeCount;
+            $reports[$agentId]['dislikes'] = $dislikeCount;
+        }
+
         $agents = Agent::select(['id', 'first_name', 'last_name'])
             ->whereIn('id', $agentIds)
             ->get();
@@ -282,13 +321,14 @@ class Reporting
                     'responses' => 0,
                     'opens' => 0,
                     'closed' => 0,
-                    'waiting_tickets' => 0
+                    'waiting_tickets' => 0,
+                    'likes' => 0,
+                    'dislikes' => 0
                 ]);
             }
             $agent->stats = $report;
             $agent->active_stat = $this->getActiveStatByAgent($agent->id);
         }
-
         return $agents;
     }
 
