@@ -61,6 +61,18 @@
                             </template>
                         </el-table-column>
 
+                        <el-table-column sortable="custom" prop="likes" :label="translate('Likes')">
+                            <template #default="scope">
+                                {{ scope.row.stats?.likes }}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column sortable="custom" prop="dislikes" :label="translate('Dislikes')">
+                            <template #default="scope">
+                                {{ scope.row.stats?.dislikes }}
+                            </template>
+                        </el-table-column>
+
                         <el-table-column min-width="150px" :label="translate('Current Overall')">
                             <template #default="scope">
                                 <template v-if="scope.row.active_stat">
@@ -313,12 +325,16 @@ export default {
                 interactions: 0,
                 opens: 0,
                 closed: 0,
+                likes: 0,
+                dislikes: 0,
             };
             each(state.reports, (report) => {
                 summary.responses += parseInt(report.stats.responses);
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
+                summary.likes += parseInt(report.stats.likes);
+                summary.dislikes += parseInt(report.stats.dislikes);
             });
             return summary;
         });
