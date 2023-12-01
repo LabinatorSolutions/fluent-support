@@ -398,6 +398,20 @@
                                             </div>
                                         </div>
                                         <div class="fs_thread_actions">
+                                            <div v-if="conversation.agent_feedback">
+                                                <el-icon
+                                                 v-if="conversation.agent_feedback === 'like'"
+                                                 class="fs_agent_feedback_icon"
+                                                >
+                                                    <ArrowUp />
+                                                </el-icon>
+                                                <el-icon
+                                                 v-else
+                                                 class="fs_agent_feedback_icon"
+                                                >
+                                                    <ArrowDown />
+                                                </el-icon>
+                                            </div>
                                             <span v-if="conversation.source" :title="'Source: ' + conversation.source"
                                                   :class="'fc_source_icon fc_source_icon_'+conversation.source"><span>{{ conversation.source }}</span></span>
                                             <span :title="conversation.created_at">

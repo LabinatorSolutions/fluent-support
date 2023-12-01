@@ -9,7 +9,10 @@ import {
 
 import {
     Refresh,
-    Paperclip
+    Paperclip,
+    ArrowUpBold,
+    ArrowDownBold
+
 } from '@element-plus/icons-vue/dist';
 
 const app = createApp(Application);
@@ -22,7 +25,9 @@ const router = createRouter({
 const components = [
     // Icon component
     Refresh,
-    Paperclip
+    Paperclip,
+    ArrowUpBold,
+    ArrowDownBold
 ];
 
 components.forEach(component => {

@@ -6,6 +6,7 @@ use Exception;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
@@ -224,6 +225,21 @@ class CustomerPortalController extends Controller
         ];
         try {
             return $customerPortalService->reOpenTicket($customerAdditionalData, $ticket_id);
+        } catch (Exception $e) {
+            return $this->sendError([
+                'message'    => $e->getMessage(),
+                'error_type' => $e->getCode()
+            ]);
+        }
+    }
+
+    public function agentFeedbackRating(Request $request, CustomerPortalService $customerPortalService, $conversationID)
+    {
+
+        $approvalStatus = $request->getSafe('approvalStatus');
+
+        try {
+            return $customerPortalService->addUserFeedback($approvalStatus, $conversationID);
         } catch (Exception $e) {
             return $this->sendError([
                 'message'    => $e->getMessage(),

@@ -62,6 +62,22 @@
                                         <div class="fs_thread_actions">
                                             {{ conversation.created_at }}
                                         </div>
+                                        <div v-if = "conversation.person.person_type === 'agent' && appVars.agent_feedback_rating == 'yes'" class="fs_thread_actions">
+                                            <el-button
+                                                :disabled="conversation.agent_feedback === 'like'"
+                                                @click="submitAgentFeedback('like', conversation.id)"
+                                                icon="ArrowUpBold"
+                                                size="small"
+                                                class="fs_refresh_button"
+                                            ></el-button>
+                                            <el-button
+                                                :disabled="conversation.agent_feedback === 'dislike'"
+                                                @click="submitAgentFeedback('dislike', conversation.id)"
+                                                icon="ArrowDownBold"
+                                                size="small"
+                                                class="fs_refresh_button"
+                                            ></el-button>
+                                        </div>
                                     </div>
                                     <div v-html="purify(conversation.content)" class="fs_thread_body"></div>
 
@@ -213,6 +229,20 @@ export default {
 
             classes.push('fs_conv_type_' + conversation.conversation_type);
             return classes;
+        },
+        submitAgentFeedback(approvalStatus,conversationID){
+            this.$post(`tickets/${conversationID}/agent-feedback`, {
+                approvalStatus: approvalStatus,
+            })
+                .then(response => {
+                    this.fetchTicket();
+                })
+                .catch((errors) => {
+                    console.log(errors);
+                })
+                .always(() => {
+                    this.updating = false;
+                });
         },
         getHumanName(person) {
             if (this.signon_id == person.id) {
