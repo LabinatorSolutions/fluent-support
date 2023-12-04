@@ -29,9 +29,4 @@ class Activity extends Model
         );
     }
 
-    // accessor
-    public function getCreatedAtAttribute($date)
-    {
-        return date('Y-m-d H:i:s', strtotime($date));
-    }
 }
