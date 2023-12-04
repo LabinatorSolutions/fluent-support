@@ -17,6 +17,8 @@ class Ticket extends Model
 {
     protected $table = 'fs_tickets';
 
+    protected $dates = ['waiting_since'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -1602,9 +1604,9 @@ class Ticket extends Model
     }
 
     // accessor
-    public function getCreatedAtAttribute($date)
-    {
-        return date('Y-m-d H:i:s', strtotime($date));
-    }
+//    public function getCreatedAtAttribute($date)
+//    {
+//        return date('Y-m-d H:i:s', strtotime($date));
+//    }
 }
 
