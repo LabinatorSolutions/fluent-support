@@ -153,9 +153,9 @@ trait CustomerTrait
             $addressFields =  apply_filters('fluent_support/custom_registration_form_fields',$addressFields);
 
             foreach ($addressFields as $key => $field) {
-                if (isset($field['type']) && $field['type'] === 'text') {
-                    $addressFields[$key]['type'] = 'input-text';
-                }
+                //To create a custom field using _formBuilder.vue, the 'type' should be 'input-text', and the 'data_type' may vary, such as (text, number, date...).
+                $addressFields[$key]['data_type'] = $addressFields[$key]['type'];
+                $addressFields[$key]['type'] = 'input-text';
             }
         }
 

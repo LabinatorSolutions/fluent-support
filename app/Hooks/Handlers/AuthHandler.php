@@ -248,7 +248,7 @@ class AuthHandler
             $html .= '<div class="fst_field_label ' . $isRequired . '"><label for="' . Arr::get($field, 'id') . '">' . $label . '</label></div>';
         }
 
-        $textTypes = ['text', 'email', 'password'];
+        $textTypes = ['text', 'email', 'password', 'number', 'date'];
         $selectTypes = ['select']; // Add 'select' type for dropdowns
 
         if (in_array($fieldType, $textTypes)) {
