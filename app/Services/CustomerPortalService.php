@@ -501,18 +501,35 @@ class CustomerPortalService
 
     public function addUserFeedback($approvalStatus, $conversationID)
     {
-        $agentFeedback = Meta::updateOrCreate(
-            [
+        $existingAgentFeedback = Meta::where([
+            'object_id' => $conversationID,
+            'key' => 'agent_feedback_ratings',
+        ])->first();
+
+        if ($existingAgentFeedback) {
+            return $this->updateExistingFeedback($existingAgentFeedback, $approvalStatus);
+        } else {
+            $agentFeedback = Meta::create([
                 'object_id' => $conversationID,
                 'key' => 'agent_feedback_ratings',
-            ],
-            [
                 'object_type' => 'conversation_meta',
                 'value' => $approvalStatus,
-            ]
-        );
+            ]);
+            return $agentFeedback;
+        }
+    }
 
-        return $agentFeedback;
+    private function updateExistingFeedback($existingAgentFeedback, $approvalStatus)
+    {
+        if (($existingAgentFeedback->value === 'like' && $approvalStatus === 'like') ||
+            ($existingAgentFeedback->value === 'dislike' && $approvalStatus === 'dislike')) {
+             $existingAgentFeedback->delete();
+        } else {
+              $existingAgentFeedback->update([
+                'value' => $approvalStatus,
+            ]);
+        }
+        return $existingAgentFeedback;
     }
 
 }
