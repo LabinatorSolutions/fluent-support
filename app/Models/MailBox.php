@@ -77,6 +77,7 @@ class MailBox extends Model
 
         // Set Reply-To Header
         $headers[] = 'Reply-To: '. $fromString;
+        $headers[] = 'In-Reply-To: '. $fromString;
 
         return $headers;
     }
