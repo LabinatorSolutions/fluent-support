@@ -218,11 +218,31 @@
             }
         }
 
-        .fs_thread_actions {
-            float: right;
-            color: #a5b2bd;
+        .fs_actions_container {
             text-align: right;
+        }
+
+        .fs_thread_actions,
+        .fs_agent_feedback_actions {
+            display: inline-block;
+            color: #a5b2bd;
             font-size: 12px;
+        }
+
+        .fs_agent_feedback_actions {
+            margin-left: 10px;
+        }
+
+        @media (max-width: 720px) {
+            .fs_actions_container {
+                text-align: right;
+                margin-top: 10px;
+            }
+
+            .fs_agent_feedback_actions {
+                margin-left: 0;
+                display: block;
+            }
         }
 
         .fs_thread_body {
