@@ -398,19 +398,8 @@
                                             </div>
                                         </div>
                                         <div class="fs_thread_actions">
-                                            <div v-if="conversation.agent_feedback">
-                                                <el-icon
-                                                 v-if="conversation.agent_feedback === 'like'"
-                                                 class="fs_agent_feedback_icon"
-                                                >
-                                                    <ArrowUp />
-                                                </el-icon>
-                                                <el-icon
-                                                 v-else
-                                                 class="fs_agent_feedback_icon"
-                                                >
-                                                    <ArrowDown />
-                                                </el-icon>
+                                            <div class="fs_agent_feedback" v-if="conversation.agent_feedback" >
+                                                <img :src="`${appVars.asset_url}images/icons/${conversation.agent_feedback === 'like' ? 'likeButtonFill' : 'dislikeButtonFill'}.svg`" />
                                             </div>
                                             <span v-if="conversation.source" :title="'Source: ' + conversation.source"
                                                   :class="'fc_source_icon fc_source_icon_'+conversation.source"><span>{{ conversation.source }}</span></span>
