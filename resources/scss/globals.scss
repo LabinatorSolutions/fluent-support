@@ -553,3 +553,19 @@ ul.fs_contact_results {
         }
     }
 }
+.fs_agent_feedback {
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    float: inline-end;
+    margin-left: 12px;
+
+    img {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+}
