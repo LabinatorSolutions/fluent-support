@@ -220,6 +220,8 @@
 
         .fs_actions_container {
             text-align: right;
+            width: fit-content;
+            float: right;
         }
 
         .fs_thread_actions,
@@ -237,6 +239,8 @@
             .fs_actions_container {
                 text-align: right;
                 margin-top: 10px;
+                width: fit-content;
+                float: right;
             }
 
             .fs_agent_feedback_actions {
