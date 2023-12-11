@@ -61,7 +61,7 @@
                                         </div>
                                         <div class="fs_actions_container">
                                             <div class="fs_thread_actions">
-                                                {{ conversation.created_at }}
+                                                {{ conversation.human_date }}
                                             </div>
 
                                             <div v-if = "conversation.person.person_type === 'agent' && appVars.agent_feedback_rating == 'yes'" class="fs_agent_feedback_actions">
