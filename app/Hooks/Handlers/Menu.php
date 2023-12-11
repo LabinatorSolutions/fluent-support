@@ -365,6 +365,7 @@ class Menu
             'repost_export_options'      => Helper::getExportOptions(),
             'enable_draft_mode'          => Helper::getBusinessSettings('enable_draft_mode', 'no'),
             'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
+            'agent_feedback_rating'      => Helper::getBusinessSettings('agent_feedback_rating', 'no'),
             'ajaxurl'                    => admin_url('admin-ajax.php'),
             'auth_provider'              => Helper::getAuthProvider()
         ));

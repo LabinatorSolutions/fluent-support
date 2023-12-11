@@ -9,6 +9,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
 
 /**
@@ -271,42 +272,45 @@ class Reporting
         }
 
         // get agent feedback statistics
-        $agentConversations = Conversation::select([
-            $this->db()->raw('person_id as agent_id'),
-            $this->db()->raw('GROUP_CONCAT(id) as conversation_ids')
-        ])
-        ->whereIn('person_id', $agentIds)
-        ->whereHas('person', function ($q) {
-            $q->where('person_type', '=', 'agent');
-        })
-        ->where('conversation_type', 'response')
-        ->groupBy('agent_id')
-        ->get();
-
-        foreach ($agentConversations as $conversation) {
-            $conversationIds = array_map('intval', explode(',', $conversation->conversation_ids));
-
-            $feedbackMeta = Meta::whereIn('object_id', $conversationIds)
-                ->where('key', 'agent_feedback_ratings')
-                ->whereBetween('created_at', [$from, $to])
+        $agentFeedbackRatingEnabled = Helper::getBusinessSettings('agent_feedback_rating') === 'yes';
+        if ($agentFeedbackRatingEnabled){
+            $agentConversations = Conversation::select([
+                $this->db()->raw('person_id as agent_id'),
+                $this->db()->raw('GROUP_CONCAT(id) as conversation_ids')
+            ])
+                ->whereIn('person_id', $agentIds)
+                ->whereHas('person', function ($q) {
+                    $q->where('person_type', '=', 'agent');
+                })
+                ->where('conversation_type', 'response')
+                ->groupBy('agent_id')
                 ->get();
 
-            $likeCount = 0;
-            $dislikeCount = 0;
+            foreach ($agentConversations as $conversation) {
+                $conversationIds = array_map('intval', explode(',', $conversation->conversation_ids));
 
-            foreach ($feedbackMeta as $feedback) {
-                $feedbackStatus = $feedback->value;
+                $feedbackMeta = Meta::whereIn('object_id', $conversationIds)
+                    ->where('key', 'agent_feedback_ratings')
+                    ->whereBetween('created_at', [$from, $to])
+                    ->get();
 
-                if ($feedbackStatus === 'like') {
-                    $likeCount++;
-                } elseif ($feedbackStatus === 'dislike') {
-                    $dislikeCount++;
+                $likeCount = 0;
+                $dislikeCount = 0;
+
+                foreach ($feedbackMeta as $feedback) {
+                    $feedbackStatus = $feedback->value;
+
+                    if ($feedbackStatus === 'like') {
+                        $likeCount++;
+                    } elseif ($feedbackStatus === 'dislike') {
+                        $dislikeCount++;
+                    }
                 }
-            }
 
-            $agentId = $conversation->agent_id;
-            $reports[$agentId]['likes'] = $likeCount;
-            $reports[$agentId]['dislikes'] = $dislikeCount;
+                $agentId = $conversation->agent_id;
+                $reports[$agentId]['likes'] = $likeCount;
+                $reports[$agentId]['dislikes'] = $dislikeCount;
+            }
         }
 
         $agents = Agent::select(['id', 'first_name', 'last_name'])

@@ -186,7 +186,7 @@ class Settings
                 'true_label'     => 'yes',
                 'false-label'    => 'no',
                 'checkbox_label' => __('Agent Feedback Rating', 'fluent-support'),
-                'inline_help'    => __('If you enable this setting, then if an agent close a ticket accidentally then the written response will be saved as draft.', 'fluent-support')
+                'inline_help'    => __("If you enable this setting, users will have the option to provide feedback on an agent's response.", 'fluent-support')
             ],
         ];
 
