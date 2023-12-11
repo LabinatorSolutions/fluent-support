@@ -450,6 +450,7 @@ class CustomerPortalService
             ->get();
 
         foreach ($responses as $response) {
+            $response->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($response->created_at), current_time('timestamp')));
             $agentFeedback = Meta::where('object_id', $response->id)
                 ->where('object_type', 'conversation_meta')
                 ->where('key', 'agent_feedback_ratings')
