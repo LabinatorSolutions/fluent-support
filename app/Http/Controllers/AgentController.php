@@ -37,13 +37,11 @@ class AgentController extends Controller
     public function addAgent(AgentCreateRequest $request, Agent $agent)
     {
         $data = [
+            'email' => $request->getSafe('email'),
             'first_name' => $request->getSafe('first_name'),
             'last_name' => $request->getSafe('last_name'),
             'title' => $request->getSafe('title'),
             'permissions' => $request->getSafe('permissions', null, []),
-            'telegram_chat_id' => $request->getSafe('telegram_chat_id'),
-            'slack_user_id' => $request->getSafe('slack_user_id'),
-            'whatsapp_number' => $request->getSafe('whatsapp_number'),
         ];
 
         try {
