@@ -36,10 +36,20 @@ class AgentController extends Controller
      */
     public function addAgent(AgentCreateRequest $request, Agent $agent)
     {
+        $data = [
+            'first_name' => $request->getSafe('first_name'),
+            'last_name' => $request->getSafe('last_name'),
+            'title' => $request->getSafe('title'),
+            'permissions' => $request->getSafe('permissions', null, []),
+            'telegram_chat_id' => $request->getSafe('telegram_chat_id'),
+            'slack_user_id' => $request->getSafe('slack_user_id'),
+            'whatsapp_number' => $request->getSafe('whatsapp_number'),
+        ];
+
         try {
             return [
                 'message' => __('Support Staff has been added', 'fluent-support'),
-                'agent'   => $agent->createAgent($request->getSafe())
+                'agent'   => $agent->createAgent($data)
             ];
 
         } catch (\Exception $e) {
