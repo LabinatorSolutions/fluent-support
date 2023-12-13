@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.4
-Stable tag: 1.7.6
+Stable tag: 1.7.7
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,17 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.7.7 (Date: December 13, 2023) =
+* Added - Trigger Fluent CRM automation within workflow (Pro)
+* Added - Agent feedback in ticket response (Pro)
+* Added - Agent permission for save response as draft
+* Added - New shortcode for agent title signature in the inbox settings
+* Added - Custom registration field using hooks
+* Fixed - Agent can assign ticket without permission
+* Fixed - The time duration displayed for ticket creation and response creation is inconsistent
+* Fixed - Open a new thread in email for every response created
+* Fixed - Translation issue
 
 = 1.7.6 (Date: November 07, 2023) =
 * Improved File Upload
