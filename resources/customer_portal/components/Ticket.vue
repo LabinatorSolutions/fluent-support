@@ -127,7 +127,7 @@
                                             <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('conversation_started')}}
                                         </div>
                                         <div class="fs_thread_actions">
-                                            {{ ticket.created_at }}
+                                            {{ ticket.human_date }}
                                         </div>
                                     </div>
                                     <div v-html="purify(ticket.content)" class="fs_thread_body"></div>
