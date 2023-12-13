@@ -42,6 +42,7 @@ class CustomerPortalService
     public function getTicket($customerAdditionalData, $ticketId)
     {
         $ticket = $this->getTicketByID($ticketId);
+        $ticket->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($ticket->created_at), current_time('timestamp')));
 
         $customer = $this->getCustomer($customerAdditionalData, $ticket);
 
@@ -448,24 +449,25 @@ class CustomerPortalService
             ->filterByType(['response', 'ticket_merge_activity', 'ticket_split_activity'])
             ->latest('id')
             ->get();
-        if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && Helper::isAgentFeedbackEnabled()) {
-            foreach ($responses as $response) {
-                $response->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($response->created_at), current_time('timestamp')));
-                $agentFeedback = Meta::where('object_id', $response->id)
-                    ->where('object_type', 'conversation_meta')
-                    ->where('key', 'agent_feedback_ratings')
-                    ->first();
 
-                if ($agentFeedback) {
-                    $response->agent_feedback = $agentFeedback->value;
+            foreach ($responses as $response) {
+                if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && Helper::isAgentFeedbackEnabled()) {
+                    $agentFeedback = Meta::where('object_id', $response->id)
+                        ->where('object_type', 'conversation_meta')
+                        ->where('key', 'agent_feedback_ratings')
+                        ->first();
+
+                    if ($agentFeedback) {
+                        $response->agent_feedback = $agentFeedback->value;
+                    }
                 }
 
+                $response->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($response->created_at), current_time('timestamp')));
                 $response->content = links_add_target(make_clickable($response->content));
                 if ($response->person) {
                     $response->person->setHidden(['email']);
                 }
             }
-        }
 
         return $responses;
     }
