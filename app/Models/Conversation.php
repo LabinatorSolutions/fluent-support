@@ -273,6 +273,9 @@ class Conversation extends Model
         $ticket = Ticket::findOrFail($ticketId);
         $response = static::findOrFail($responseId);
 
+        $content = wp_unslash(wp_kses_post($data['content']));
+        $resetWaitingSince = apply_filters('fluent_support/reset_waiting_since', true, $content);
+
         $person = Helper::getAgentByUserId(get_current_user_id());
 
         $approveDraftResponsePermission = PermissionManager::currentUserCan('fst_approve_draft_reply');
@@ -282,7 +285,25 @@ class Conversation extends Model
         }
 
         $response->conversation_type = $conversationType;
+        $response->created_at = current_time('mysql');
         $response->save();
+
+        if ($person->person_type == 'agent' && $ticket->status == 'new') {
+            $ticket->status = 'active';
+            if ($ticket->created_at) {
+                $ticket->first_response_time = strtotime(current_time('mysql')) - strtotime($ticket->created_at);
+            } else {
+                $ticket->first_response_time = 300;
+            }
+        }
+
+        if ($resetWaitingSince) {
+            $ticket->last_agent_response = current_time('mysql');
+            $ticket->waiting_since = current_time('mysql');
+        }
+
+        $ticket->response_count += 1;
+        $ticket->save();
 
         do_action('fluent_support/' . $conversationType . '_added_by_' . $person->person_type, $response, $ticket, $person);
 

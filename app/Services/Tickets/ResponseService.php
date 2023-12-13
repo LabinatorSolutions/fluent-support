@@ -103,7 +103,9 @@ class ResponseService
             $ticket->last_customer_response = current_time('mysql');
         }
 
-        $ticket->response_count += 1;
+        if ($convoType == 'response') {
+            $ticket->response_count += 1;
+        }
 
         $closed = false;
         if (Arr::get($data, 'close_ticket') == 'yes' && $ticket->status != 'closed') {
