@@ -73,6 +73,12 @@ class Request
     protected $wpRestRequest = false;
 
     /**
+     * Validated data after validation has been passed
+     * @var array
+     */
+    protected $validated = [];
+
+    /**
      * Construct the request instance
      * @param \FluentSupport\Framework\Foundation\Application $app
      * @param array/$_GET $get
@@ -113,6 +119,67 @@ class Request
     }
 
     /**
+     * Any variable exists and has truthy value
+     * @param  string $key
+     * @return bool
+     */
+    public function hasAny($keys)
+    {
+        $keys = is_array($keys) ? $keys : func_get_args();
+
+        if ($data = $this->only($keys)) {
+            return (bool) count(array_filter($data));
+        }
+
+        return false;
+    }
+
+    /**
+     * Calls a callback if has value, otherwise
+     *  calls another/second callback if given.
+     * 
+     * @param  string $key
+     * @param  \Closure $has
+     * @param  \Closure|null $hasnot
+     * @return mixed
+     */
+    public function whenHas($key, \Closure $has, \Closure $hasnot = null)
+    {
+        if ($this->has($key)) {
+            return $has($key, $this->get($key));
+        }
+
+        return ($hasnot ? $hasnot($key) : null);
+    }
+
+    /**
+     * Checks if a key is missing in the request.
+     * 
+     * @param  string $key
+     * @return bool
+     */
+    public function missing($key)
+    {
+        return !$this->has($key);
+    }
+
+    /**
+     * Calls the given callback if the provided key is missing.
+     * 
+     * @param  string $key
+     * @param  \Closure $callback
+     * @return mixed
+     */
+    public function whenMissing($key, \Closure $callback)
+    {
+        if ($this->missing($key)) {
+            return $callback($key, $this);
+        }
+
+        return $this;
+    }
+
+    /**
      * Set an item into the request inputs
      * @param string $key
      * @param mixed
@@ -141,54 +208,7 @@ class Request
      */
     public function get($key = null, $default = null)
     {
-        return Arr::get($this->inputs(), $key, $default);
-    }
-
-    /**
-     * Get an item from the request filtering by the callback
-     * 
-     * @param  string|null $key
-     * @param  callable $callback
-     * @param  mixed $default
-     * @return mixed
-     */
-    public function getSafe($key, $callback = null, $default = null)
-    {
-        $array = $result = [];
-
-        $key = is_array($key) ? $key : [$key];
-
-        if ($callback) {
-            $callback = is_array($callback) ? $callback : [$callback];
-            foreach ($key as $k => $field) {
-                $array[$field] = $callback;
-            }
-        } else {
-            foreach ($key as $k => $v) {
-                
-                if (is_int($k)) {
-                    $k = $v;
-                    $v = function($v) { return $v; };
-                }
-
-                $array[$k] = is_array($v) ? $v : [$v];
-            }
-        }
-
-        foreach ($array as $field => $callbacks) {
-
-            $value = $this->get($field, $default);
-
-            if ($value !== null) {
-                while ($callback = array_shift($callbacks)) {
-                    $value = $callback($value);
-                }
-
-                $result[$field] = $value;
-            }
-        }
-
-        return count($result) > 1 ? $result : reset($result);
+        return Helper::dataGet($this->inputs(), $key, $default);
     }
 
     /**
@@ -212,7 +232,9 @@ class Request
         if (!$this->isJson()) return;
         
         if (!isset($this->json)) {
-            $this->json = (array) json_decode($this->getContent(), true);
+            $json = $this->get_json_params() ?: $this->getContent();
+            
+            $this->json = (array) json_decode($json, true);
         }
 
         if (is_null($key)) {
@@ -326,6 +348,20 @@ class Request
     }
 
     /**
+     * Merge array with the request inputs
+     * @param  array  $data
+     * @return self
+     */
+    public function mergeMissing(array $data = [])
+    {
+        $all = $this->inputs();
+
+        $this->merge(Arr::mergeMissing($data, $all));
+
+        return $this;
+    }
+
+    /**
      * Returns the request body content.
      *
      * @param bool $asResource If true, a resource will be returned
@@ -343,10 +379,6 @@ class Request
 
     public function mergeInputsFromRestRequest($wpRestRequest)
     {
-        $this->request = array_merge(
-            $this->request, $wpRestRequest->get_params()
-        );
-
         $this->post = array_merge(
             $this->post, $this->clean($wpRestRequest->get_body_params())
         );
@@ -517,13 +549,31 @@ class Request
     {
         $instance = $this->app->make('validator');
 
-        $validator = $instance->make($this->all(), $rules, $messages);
+        $validator = $instance->make($data = $this->all(), $rules, $messages);
 
         if ($validator->validate()->fails()) {
             throw new ValidationException(
                 'Unprocessable Entity!', 422, null, $validator->errors()
             );
         }
+
+        $this->validated = $validator->validated();
+
+        return $data;
+    }
+
+    /**
+     * Get the valid data after validation has been passed.
+     *
+     * @return array
+     */
+    public function validated()
+    {
+        if ($data) {
+            return $this->validated = $data;
+        }
+        
+        return (array) $this->validated;
     }
 
     /**
@@ -533,11 +583,17 @@ class Request
      * @param  string  $message
      * @return null
      */
-    public function abort($status = 403, $message = '')
+    public function abort($status = 403, $message = null)
     {
+        if (!$message && !is_numeric($status) && is_string($status)) {
+            $message = $status;
+        }
+
         $message = $message ?: 'Request has benn aborted.';
-        
-        $this->app->response->json(['message' => $message], $status);
+
+        $this->app->response->json(
+            is_array($message) ? $message : ['message' => (string) $message], $status
+        );
     }
 
     /**

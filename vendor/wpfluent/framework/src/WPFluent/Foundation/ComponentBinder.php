@@ -84,10 +84,12 @@ class ComponentBinder
     {
         $app->resolving(RequestGuard::class, function($request) use ($app) {
 
+            if (method_exists($request, 'authorize')) {
+                !$request->authorize() && $request->abort(401);
+            }
+
             $request->merge($request->beforeValidation());
-
-            $data = $request->validate($app->make('validator'));
-
+            $request->validate();
             $request->merge($request->afterValidation());
         });
     }

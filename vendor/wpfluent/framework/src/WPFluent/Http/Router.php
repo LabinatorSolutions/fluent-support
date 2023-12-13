@@ -30,21 +30,24 @@ class Router
     
     /**
      * Route policy handler to pass to the route
-     * @var string|null
+     * @var array
      */
-    protected $policyHandler = null;
+    protected $policyHandler = [];
 
     /**
      * Route middleware to pass to the route
      * @var array
      */
-    protected $middleware = [];
+    protected $middleware = [
+        'before' => [],
+        'after' => []
+    ];
 
     /**
      * Keep the track of number of group calls
      * @var integer
      */
-    protected $groupStack = 0;
+    protected $groupCount = 0;
 
     /**
      * Construct the routet instance
@@ -63,7 +66,7 @@ class Router
      */
     public function group($attributes = [], \Closure $callback = null)
     {
-        $this->maybeIncreaseGroupStack();
+        $this->groupCount += 1;
 
         if ($attributes instanceof \Closure) {
             $callback = $attributes;
@@ -74,35 +77,54 @@ class Router
             $this->prefix($attributes['prefix']);
         }
 
+        if (isset($attributes['namespace'])) {
+            $this->namespace($attributes['namespace']);
+        }
+
         if (isset($attributes['policy'])) {
             $this->withPolicy($attributes['policy']);
         }
 
         if (isset($attributes['middleware'])) {
-            $this->middleware($attributes['middleware']);
+            $middleware = $attributes['middleware'];
+            if (isset($middleware['before'])) {
+                $this->middleware('before', $middleware['before']);
+            } elseif ($middleware['after']) {
+                $this->middleware('after', $middleware['after']);
+            }
         }
 
-        if (isset($attributes['namespace'])) {
-            $this->namespace($attributes['namespace']);
+        // If the current group doesn't have a policy handler
+        // but the parent group has then bring it in this group.
+        if (!isset($this->policyHandler[$this->groupCount])) {
+            if (isset($this->policyHandler[$this->groupCount - 1])) {
+                if ($policyHandler = $this->policyHandler[$this->groupCount - 1]) {
+                    $this->policyHandler[] = $policyHandler;
+                }
+            }
+        }
+
+        // If the current group doesn't have a before middleware
+        // but the parent group has then bring it in this group.
+        if (!isset($this->middleware['before'][$this->groupCount])) {
+            if (isset($this->middleware['before'][$this->groupCount - 1])) {
+                if ($beforeMiddleware = $this->middleware['before'][$this->groupCount - 1]) {
+                    $this->middleware['before'][] = $beforeMiddleware;
+                }
+            }
+        }
+
+        // If the current group doesn't have a after middleware
+        // but the parent group has then bring it in this group.
+        if (!isset($this->middleware['after'][$this->groupCount])) {
+            if (isset($this->middleware['after'][$this->groupCount - 1])) {
+                if ($afterMiddleware = $this->middleware['after'][$this->groupCount - 1]) {
+                    $this->middleware['after'][] = $afterMiddleware;
+                }
+            }
         }
 
         $this->executeGroupCallback($callback);
-    }
-
-    /**
-     * Update the group stack count
-     * 
-     * @return null
-     */
-    protected function maybeIncreaseGroupStack()
-    {
-        $slices = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-
-        $lastSlice = end($slices);
-
-        if (basename($lastSlice['file']) != 'routes.php') {
-            $this->groupStack += 1;
-        }
     }
 
     /**
@@ -119,17 +141,14 @@ class Router
     }
 
     /**
-     * Set the route middleware
-     * @param  array|string $middleware
+     * Set the namespace for the action/controller
+     * 
+     * @param  string $namespace
      * @return self
      */
-    public function middleware(...$middleware)
+    public function namespace($ns)
     {
-        if (is_array($middleware[0])) {
-            $middleware = reset($middleware);
-        }
-
-        $this->middleware = array_merge($this->middleware, $middleware);
+        $this->namespace[] = $ns;
 
         return $this;
     }
@@ -137,25 +156,58 @@ class Router
     /**
      * Set the route policy
      * 
-     * @param  string $prefix
+     * @param  mixed $handler
+     * @param  string|null $method
      * @return self
      */
-    public function withPolicy($handler)
+    public function withPolicy($handler, $method = null)
     {
-        $this->policyHandler = $handler;
+        if (is_array($handler = $method ? func_get_args() : $handler)) {
+            $handler = implode('@', $handler);
+        }
+
+        $this->policyHandler[] = $handler;
 
         return $this;
     }
 
     /**
-     * Set the namespace for the action/controller
+     * Set the route before middleware
      * 
-     * @param  string $prefix
+     * @param  array|string $middleware
      * @return self
      */
-    public function namespace($ns)
+    public function before(...$middleware)
     {
-        $this->namespace[] = $ns;
+        return $this->middleware('before', ...$middleware);
+    }
+
+    /**
+     * Set the route after middleware
+     * 
+     * @param  array|string $middleware
+     * @return self
+     */
+    public function after(...$middleware)
+    {
+        return $this->middleware('after', ...$middleware);
+    }
+
+    /**
+     * Set the route middleware
+     * 
+     * @param  array|string $middleware
+     * @return self
+     */
+    public function middleware($type = 'before', ...$middleware)
+    {
+        if (is_array($middleware[0])) {
+            $middleware = reset($middleware);
+        }
+
+        $this->middleware[$type] = array_merge(
+            $this->middleware[$type], $middleware
+        );
 
         return $this;
     }
@@ -169,14 +221,12 @@ class Router
     protected function executeGroupCallback($callback)
     {
         $callback($this);
-        $this->groupStack -= 1;
+        $this->groupCount -= 1;
         array_pop($this->prefix);
         array_pop($this->namespace);
-        array_pop($this->middleware);
-        
-        if ($this->groupStack == 0) {
-            $this->policyHandler = null;
-        }
+        array_pop($this->middleware['before']);
+        array_pop($this->middleware['after']);
+        array_pop($this->policyHandler);
     }
 
     /**
@@ -286,16 +336,20 @@ class Router
             $method
         );
 
-        if ($this->policyHandler) {
-            $route->withPolicy($this->policyHandler);
-        }
-
-        if ($this->middleware) {
-            $route->middleware($this->middleware);
-        }
-
         if ($this->namespace) {
             $route->withNamespace($this->namespace);
+        }
+
+        if ($this->policyHandler) {
+            $route->withPolicy(end($this->policyHandler));
+        }
+
+        if ($this->middleware['before']) {
+            $route->before($this->middleware['before']);
+        }
+
+        if ($this->middleware['after']) {
+            $route->after($this->middleware['after']);
         }
 
         return $route;

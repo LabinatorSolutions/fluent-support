@@ -19,6 +19,13 @@ class Validator
     protected $data;
 
     /**
+     * The valid data after validation.
+     *
+     * @var array
+     */
+    protected $validated;
+
+    /**
      * The rules to be applied to the data.
      *
      * @var array
@@ -127,12 +134,30 @@ class Validator
         $this->rules = (new ValidationRuleParser($this->data))->explode($this->rules);
 
         foreach ($this->rules as $attribute => $rules) {
+            $rules = $this->filterExcludeables($attribute, $rules);
             foreach ($rules as $key => $rule) {
                 $this->validateAttribute($attribute, $rule, $key);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Remove the rules which should be excluded
+     * @param  string $attribute
+     * @param  array $rules
+     * @return array
+     */
+    protected function filterExcludeables($attribute, $rules)
+    {
+        if (array_search('nullable', $rules) !== false) {
+            if (!$this->getValue($attribute)) {
+                $rules = [];
+            }
+        }
+
+        return $rules;
     }
 
     /**
@@ -156,12 +181,21 @@ class Validator
         $value = $this->getValue($attribute);
 
         if ($rule instanceof Closure) {
-            if ($message = $rule($attribute, $value, $this->rules, $this->data)) {
+            
+            $params = [];
+
+            if ($key && strpos($key, ':') !== false) {
+                $params = explode(':', $key);
+                $params = array_filter(array_map('trim', explode(',', end($params))));
+            }
+
+            if ($message = $rule($attribute, $value, $this->rules, $this->data, ...$params)) {
                 is_string($message) && $this->messages[$attribute][$key] = str_replace(
                     ':attribute', $attribute, $message
                 );
             }
-            return;
+
+            return $this->setValidatedAttributeData($attribute, $value);
         }
 
         $ruleCamelCase = str_replace(' ', '', ucwords(str_replace(['-', '_'], ' ', $rule)));
@@ -173,6 +207,8 @@ class Validator
         if ($shouldValidate && !$this->$method($attribute, $value, $parameters)) {
             $this->addFailure($attribute, $rule, $parameters);
         }
+
+        $this->setValidatedAttributeData($attribute, $value);
     }
 
     /**
@@ -231,6 +267,29 @@ class Validator
     public function fails()
     {
         return (bool) count($this->messages);
+    }
+
+    /**
+     * Get the valid data after validation has been passed.
+     *
+     * @return array
+     */
+    public function validated()
+    {
+        return (array) $this->validated;
+    }
+
+    /**
+     * Set the valid data after validation has
+     * been passed for a specific attribute.
+     *
+     * @param string $attribute
+     * @param mixed $value
+     * @return null
+     */
+    public function setValidatedAttributeData($attribute, $value)
+    {
+        $this->validated[$attribute] = $value;
     }
 
     /**
