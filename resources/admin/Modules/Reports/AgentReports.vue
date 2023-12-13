@@ -4,7 +4,7 @@
             <div class="fs_box">
                 <div class="fs_box_header">
                     <div class="fs_box_head">
-                        {{ translate('Individual Performance') }}
+                        {{ url === "my-reports/my-summary" ? translate('Individual Performance') : translate('Agents Report Summary')  }}
                     </div>
                     <div class="fs_box_actions">
                         <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18" title="Filter Agent">
@@ -61,13 +61,13 @@
                             </template>
                         </el-table-column>
 
-                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'"  prop="likes" :label="translate('Likes')">
+                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="likes" :label="translate('Likes')">
                             <template #default="scope">
                                 {{ scope.row.stats?.likes }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'"  prop="dislikes" :label="translate('Dislikes')">
+                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="dislikes" :label="translate('Dislikes')">
                             <template #default="scope">
                                 {{ scope.row.stats?.dislikes }}
                             </template>
@@ -162,6 +162,7 @@ export default {
 
     setup(props) {
         const {
+            appVars,
             get,
             translate,
             handleError,
@@ -169,10 +170,6 @@ export default {
             getData,
             has_pro
         } = useFluentHelper();
-
-        const appVars = computed(()=> ({
-            ...window.fluentSupportAdmin
-        }))
 
         const state = reactive({
             reports: [],
@@ -331,7 +328,7 @@ export default {
                 closed: 0,
             };
 
-            if (appVars.agent_feedback_rating = "yes") {
+            if (appVars.agent_feedback_rating === "yes") {
                 summary = {
                     ...summary,
                     likes: 0,
@@ -343,7 +340,7 @@ export default {
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
-                if (appVars.agent_feedback_rating = "yes") {
+                if (appVars.agent_feedback_rating === "yes") {
                     summary.likes += parseInt(report.stats.likes);
                     summary.dislikes += parseInt(report.stats.dislikes);
                 }
@@ -435,8 +432,6 @@ export default {
                 handleError(translate('No agent found, Please select or make sure you have agents to export'));
                 return false;
             }
-
-            console.log(agents+"new"+state.selected_options);
 
             location.href = window.ajaxurl + '?' + jQuery.param({
                 action: 'fs_export_agent_report',
