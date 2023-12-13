@@ -273,7 +273,7 @@ class Reporting
 
         // get agent feedback statistics
         $agentFeedbackRatingEnabled = Helper::getBusinessSettings('agent_feedback_rating') === 'yes';
-        if ($agentFeedbackRatingEnabled){
+        if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && $agentFeedbackRatingEnabled) {
             $agentConversations = Conversation::select([
                 $this->db()->raw('person_id as agent_id'),
                 $this->db()->raw('GROUP_CONCAT(id) as conversation_ids')
@@ -328,7 +328,7 @@ class Reporting
                     'waiting_tickets' => 0,
                 ];
 
-                $additionalFields = $agentFeedbackRatingEnabled ? ['likes' => 0, 'dislikes' => 0] : [];
+                $additionalFields = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && $agentFeedbackRatingEnabled ? ['likes' => 0, 'dislikes' => 0] : [];
                 $reportFields = $reportFields + $additionalFields;
 
                 $report = wp_parse_args($reports[$agent->id], $reportFields);

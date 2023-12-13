@@ -398,7 +398,7 @@
                                             </div>
                                         </div>
                                         <div class="fs_thread_actions">
-                                            <div class="fs_agent_feedback" v-if="appVars.agent_feedback_rating === 'yes'&& conversation.agent_feedback" >
+                                            <div class="fs_agent_feedback" v-if="has_pro && appVars.agent_feedback_rating === 'yes' && conversation.agent_feedback" >
                                                 <img :src="`${appVars.asset_url}images/icons/${conversation.agent_feedback === 'like' ? 'likeButtonFill' : 'dislikeButtonFill'}.svg`" />
                                             </div>
                                             <span v-if="conversation.source" :title="'Source: ' + conversation.source"

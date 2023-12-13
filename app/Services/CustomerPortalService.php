@@ -448,7 +448,7 @@ class CustomerPortalService
             ->filterByType(['response', 'ticket_merge_activity', 'ticket_split_activity'])
             ->latest('id')
             ->get();
-        if (Helper::isAgentFeedbackEnabled()) {
+        if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && Helper::isAgentFeedbackEnabled()) {
             foreach ($responses as $response) {
                 $response->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($response->created_at), current_time('timestamp')));
                 $agentFeedback = Meta::where('object_id', $response->id)
