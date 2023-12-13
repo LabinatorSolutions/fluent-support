@@ -320,15 +320,18 @@ class Reporting
         foreach ($agents as $agent) {
             $report = NULL;
             if(isset($reports[$agent->id])) {
-                $report = wp_parse_args($reports[$agent->id], [
+                $reportFields = [
                     'interactions' => 0,
                     'responses' => 0,
                     'opens' => 0,
                     'closed' => 0,
                     'waiting_tickets' => 0,
-                    'likes' => 0,
-                    'dislikes' => 0
-                ]);
+                ];
+
+                $additionalFields = $agentFeedbackRatingEnabled ? ['likes' => 0, 'dislikes' => 0] : [];
+                $reportFields = $reportFields + $additionalFields;
+
+                $report = wp_parse_args($reports[$agent->id], $reportFields);
             }
             $agent->stats = $report;
             $agent->active_stat = $this->getActiveStatByAgent($agent->id);
