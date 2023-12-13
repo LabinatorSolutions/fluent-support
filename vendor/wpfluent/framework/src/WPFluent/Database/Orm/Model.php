@@ -292,10 +292,8 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
      */
     protected function initializeTraits()
     {
-        if(isset(static::$traitInitializers[static::class])) {
-            foreach (static::$traitInitializers[static::class] as $method) {
-                $this->{$method}();
-            }
+        foreach (static::$traitInitializers[static::class] as $method) {
+            $this->{$method}();
         }
     }
 

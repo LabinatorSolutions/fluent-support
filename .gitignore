@@ -3,7 +3,6 @@ node_modules
 svn/*
 dist/
 !assets/index.php
-package-lock.json
 .DS_Store
 assets
 svn.php
