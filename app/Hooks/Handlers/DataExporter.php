@@ -62,6 +62,11 @@ class DataExporter
             'Max Waiting' => 'max_waiting',
         ];
 
+        if (Helper::isAgentFeedbackEnabled()) {
+            $arr['Likes'] = 'likes';
+            $arr['Dislikes'] = 'dislikes';
+        }
+
         return array_filter($arr, function($column, $key) use ($columns){
              return in_array($key, $columns);
         }, ARRAY_FILTER_USE_BOTH);

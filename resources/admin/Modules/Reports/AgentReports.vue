@@ -61,13 +61,13 @@
                             </template>
                         </el-table-column>
 
-                        <el-table-column sortable="custom" prop="likes" :label="translate('Likes')">
+                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'"  prop="likes" :label="translate('Likes')">
                             <template #default="scope">
                                 {{ scope.row.stats?.likes }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column sortable="custom" prop="dislikes" :label="translate('Dislikes')">
+                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'"  prop="dislikes" :label="translate('Dislikes')">
                             <template #default="scope">
                                 {{ scope.row.stats?.dislikes }}
                             </template>
@@ -162,7 +162,6 @@ export default {
 
     setup(props) {
         const {
-            appVars,
             get,
             translate,
             handleError,
@@ -170,6 +169,10 @@ export default {
             getData,
             has_pro
         } = useFluentHelper();
+
+        const appVars = computed(()=> ({
+            ...window.fluentSupportAdmin
+        }))
 
         const state = reactive({
             reports: [],
@@ -320,21 +323,30 @@ export default {
         });
 
         const totals = computed(() => {
-            const summary = {
+
+            let summary = {
                 responses: 0,
                 interactions: 0,
                 opens: 0,
                 closed: 0,
-                likes: 0,
-                dislikes: 0,
             };
+
+            if (appVars.agent_feedback_rating = "yes") {
+                summary = {
+                    ...summary,
+                    likes: 0,
+                    dislikes: 0,
+                };
+            }
             each(state.reports, (report) => {
                 summary.responses += parseInt(report.stats.responses);
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
-                summary.likes += parseInt(report.stats.likes);
-                summary.dislikes += parseInt(report.stats.dislikes);
+                if (appVars.agent_feedback_rating = "yes") {
+                    summary.likes += parseInt(report.stats.likes);
+                    summary.dislikes += parseInt(report.stats.dislikes);
+                }
             });
             return summary;
         });
@@ -424,6 +436,8 @@ export default {
                 return false;
             }
 
+            console.log(agents+"new"+state.selected_options);
+
             location.href = window.ajaxurl + '?' + jQuery.param({
                 action: 'fs_export_agent_report',
                 columns: state.selected_options,
@@ -455,7 +469,8 @@ export default {
             onlyPastDates,
             getSummaries,
             exportReport,
-            has_pro
+            has_pro,
+            appVars
         }
     },
 };

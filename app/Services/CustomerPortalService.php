@@ -448,21 +448,22 @@ class CustomerPortalService
             ->filterByType(['response', 'ticket_merge_activity', 'ticket_split_activity'])
             ->latest('id')
             ->get();
+        if (Helper::isAgentFeedbackEnabled()) {
+            foreach ($responses as $response) {
+                $response->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($response->created_at), current_time('timestamp')));
+                $agentFeedback = Meta::where('object_id', $response->id)
+                    ->where('object_type', 'conversation_meta')
+                    ->where('key', 'agent_feedback_ratings')
+                    ->first();
 
-        foreach ($responses as $response) {
-            $response->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($response->created_at), current_time('timestamp')));
-            $agentFeedback = Meta::where('object_id', $response->id)
-                ->where('object_type', 'conversation_meta')
-                ->where('key', 'agent_feedback_ratings')
-                ->first();
+                if ($agentFeedback) {
+                    $response->agent_feedback = $agentFeedback->value;
+                }
 
-            if ($agentFeedback) {
-                $response->agent_feedback = $agentFeedback->value;
-            }
-
-            $response->content = links_add_target(make_clickable($response->content));
-            if ($response->person) {
-                $response->person->setHidden(['email']);
+                $response->content = links_add_target(make_clickable($response->content));
+                if ($response->person) {
+                    $response->person->setHidden(['email']);
+                }
             }
         }
 
