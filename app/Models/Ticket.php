@@ -1071,7 +1071,7 @@ class Ticket extends Model
             }
         }
 
-        if (Helper::isAgentFeedbackEnabled()) {
+        if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && Helper::isAgentFeedbackEnabled()) {
             foreach ($ticket->responses as $response) {
                 $agentFeedback = Meta::where('object_id', $response->id)
                     ->where('object_type', 'conversation_meta')

@@ -181,14 +181,17 @@ class Settings
                 'label'   => __('Custom Registration Form Field', 'fluent-support'),
                 'options' => $customRegistrationFormOptions
             ],
-            'agent_feedback_rating' => [
+        ];
+
+        if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION')) {
+            $fields['agent_feedback_rating'] = [
                 'type'           => 'inline-checkbox',
                 'true_label'     => 'yes',
                 'false-label'    => 'no',
                 'checkbox_label' => __('Agent Feedback Rating', 'fluent-support'),
                 'inline_help'    => __("If you enable this setting, users will have the option to provide feedback on an agent's response.", 'fluent-support')
-            ],
-        ];
+            ];
+        }
 
         return $fields;
     }

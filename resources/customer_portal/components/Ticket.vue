@@ -63,8 +63,7 @@
                                             <div class="fs_thread_actions">
                                                 {{ conversation.human_date }}
                                             </div>
-
-                                            <div v-if = "conversation.person.person_type === 'agent' && appVars.agent_feedback_rating == 'yes'" class="fs_agent_feedback_actions">
+                                            <div v-if = "appVars.has_pro && conversation.person.person_type === 'agent' && appVars.agent_feedback_rating == 'yes'" class="fs_agent_feedback_actions">
                                                 <el-button-group>
                                                     <el-button
                                                         @click="submitAgentFeedback('like', conversation.id)"

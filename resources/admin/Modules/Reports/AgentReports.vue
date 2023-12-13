@@ -61,13 +61,13 @@
                             </template>
                         </el-table-column>
 
-                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="likes" :label="translate('Likes')">
+                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="likes" :label="translate('Likes')">
                             <template #default="scope">
                                 {{ scope.row.stats?.likes }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column v-if="appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="dislikes" :label="translate('Dislikes')">
+                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="dislikes" :label="translate('Dislikes')">
                             <template #default="scope">
                                 {{ scope.row.stats?.dislikes }}
                             </template>
@@ -328,7 +328,7 @@ export default {
                 closed: 0,
             };
 
-            if (appVars.agent_feedback_rating === "yes") {
+            if (has_pro && appVars.agent_feedback_rating === "yes") {
                 summary = {
                     ...summary,
                     likes: 0,
@@ -340,7 +340,7 @@ export default {
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
-                if (appVars.agent_feedback_rating === "yes") {
+                if (has_pro && appVars.agent_feedback_rating === "yes") {
                     summary.likes += parseInt(report.stats.likes);
                     summary.dislikes += parseInt(report.stats.dislikes);
                 }
