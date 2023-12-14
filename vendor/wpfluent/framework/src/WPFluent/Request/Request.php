@@ -137,7 +137,7 @@ class Request
     /**
      * Calls a callback if has value, otherwise
      *  calls another/second callback if given.
-     * 
+     *
      * @param  string $key
      * @param  \Closure $has
      * @param  \Closure|null $hasnot
@@ -154,7 +154,7 @@ class Request
 
     /**
      * Checks if a key is missing in the request.
-     * 
+     *
      * @param  string $key
      * @return bool
      */
@@ -165,7 +165,7 @@ class Request
 
     /**
      * Calls the given callback if the provided key is missing.
-     * 
+     *
      * @param  string $key
      * @param  \Closure $callback
      * @return mixed
@@ -213,7 +213,7 @@ class Request
 
     /**
      * Check the content-type for JSON
-     * 
+     *
      * @return boolean
      */
     public function isJson()
@@ -230,10 +230,10 @@ class Request
     public function json($key = null, $default = null)
     {
         if (!$this->isJson()) return;
-        
+
         if (!isset($this->json)) {
             $json = $this->get_json_params() ?: $this->getContent();
-            
+
             $this->json = (array) json_decode($json, true);
         }
 
@@ -557,7 +557,7 @@ class Request
             );
         }
 
-        $this->validated = $validator->validated();
+        $this->validated = $validator->validated($data);
 
         return $data;
     }
@@ -567,18 +567,18 @@ class Request
      *
      * @return array
      */
-    public function validated()
+    public function validated($data = [])
     {
         if ($data) {
             return $this->validated = $data;
         }
-        
+
         return (array) $this->validated;
     }
 
     /**
      * Abort the request.
-     * 
+     *
      * @param  integer $status
      * @param  string  $message
      * @return null
@@ -616,16 +616,16 @@ class Request
     public function __call($method, $params)
     {
         if ($method == 'route') {
-                
+
             if ($params) {
                 return $this->app->route->{$params[0]};
             }
 
             return $this->app->route;
         }
-        
+
         if ($this->app->bound('wprestrequest')) {
-            
+
             if (!method_exists($this->app->wprestrequest, $method)) {
                 $method = strtolower(
                     preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1_$2', $method)

@@ -318,6 +318,9 @@ export default {
         }
 
         const getCustomerAddress = (customer) => {
+            if(!customer.custom_field_keys) {
+                return '';
+            }
             let address = [];
 
             customer.custom_field_keys.forEach((key) => {
