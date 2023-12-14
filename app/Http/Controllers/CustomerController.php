@@ -85,6 +85,8 @@ class CustomerController extends Controller
             'first_name' => 'required'
         ]);
 
+        dd($data);
+
         try {
             return [
                 'message'  => __('Customer has been updated', 'fluent-support'),
