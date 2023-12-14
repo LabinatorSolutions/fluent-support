@@ -32,6 +32,8 @@ class MailBox extends Model
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             $model->slug = static::slugify($model->name);
             $model->settings = $model->settings ?: [

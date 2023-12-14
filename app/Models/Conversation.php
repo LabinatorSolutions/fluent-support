@@ -31,6 +31,8 @@ class Conversation extends Model
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             if(empty($model->content_hash)) {
                 $model->content_hash = md5($model->content);

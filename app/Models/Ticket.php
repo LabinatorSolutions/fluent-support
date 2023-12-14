@@ -52,6 +52,8 @@ class Ticket extends Model
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             if (empty($model->slug)) {
                 $model->slug = static::slugify($model->title);

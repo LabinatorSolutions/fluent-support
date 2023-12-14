@@ -31,6 +31,8 @@ class Attachment extends Model
 
     public static function boot()
     {
+        parent::boot();
+        
         static::creating(function ($model) {
             $uid = wp_generate_uuid4();
             $model->file_hash = md5($uid . mt_rand(0, 1000));
