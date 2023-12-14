@@ -6,7 +6,6 @@ use Closure;
 use Exception;
 use WP_REST_Request;
 use WP_REST_Response;
-use BadMethodCallException;
 use InvalidArgumentException;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Pipeline;
@@ -106,10 +105,7 @@ class Route
      * Route Middleware
      * @var array
      */
-    protected $middleware = [
-        'before' => [],
-        'after' => []
-    ];
+    protected $middleware = [];
 
     /**
      * Predefined Regex foe where constraints
@@ -127,13 +123,6 @@ class Route
      * @var null|array
      */
     protected static $parameters = null;
-
-    /**
-     * Route substituted parameters
-     * 
-     * @var null|array
-     */
-    protected static $substitutedParameters = [];
 
     /**
      * Construct the route instance
@@ -313,58 +302,28 @@ class Route
     }
 
     /**
-     * Set the route before middleware
-     * 
-     * @param  array|string $middleware
-     * @return self
-     */
-    public function before(...$middleware)
-    {
-        return $this->middleware('before', ...$middleware);
-    }
-
-    /**
-     * Set the route after middleware
-     * 
-     * @param  array|string $middleware
-     * @return self
-     */
-    public function after(...$middleware)
-    {
-        return $this->middleware('after', ...$middleware);
-    }
-
-    /**
      * Set the route middleware
      * @param  array $middleware
      * @return self
      */
-    public function middleware($type = 'before', ...$middleware)
+    public function middleware(...$middleware)
     {
         if (is_array($middleware[0])) {
             $middleware = reset($middleware);
         }
 
-        $this->middleware[$type] = array_merge(
-            $this->middleware[$type], $middleware
-        );
+        $this->middleware = array_merge($this->middleware, $middleware);
 
         return $this;
     }
 
     /**
      * Set the route policy
-     * 
-     * @param  mixed $handler
-     * @param  string|null $method
-     * @return self
+     * @param  string $handler
+     * @return null
      */
-    public function withPolicy($handler, $method = null)
+    public function withPolicy($handler)
     {
-        if (is_array($handler = $method ? func_get_args() : $handler)) {
-            $handler = implode('@', $handler);
-        }
-
         $this->policyHandler = $handler;
 
         if (is_string($handler) && !$this->app->hasNamespace($handler)) {
@@ -372,8 +331,6 @@ class Route
                 debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 4)
             );
         }
-
-        return $this;
     }
 
     /**
@@ -508,9 +465,11 @@ class Route
     {
         try {
 
-            $response = $this->app->call(
-                $this->action, $this->getControllerParameters()
-            );
+            if ($routeParameters = $this->getParameter()) {
+                $routeParameters = $this->SubstituteParameters($routeParameters);
+            }
+
+            $response = $this->app->call($this->action, $routeParameters);
 
             if ($response instanceof WPFluentResponse) {
                 $response = $response->toArray();
@@ -523,16 +482,13 @@ class Route
                     $response = $this->app->response->sendSuccess($response);
                 }
             }
+
+            $response->header(
+                'Cache-Control',
+                'no-cache, must-revalidate, max-age=0, no-store, private'
+            );
             
-            return $this->app->make(Pipeline::class)
-                ->send($response)
-                ->through($this->collectMiddleWare('after'))
-                ->then(function($response) {
-                    if (!$response instanceof WP_REST_Response) {
-                        $response = new WP_REST_Response($response);
-                    }
-                    return $response;
-                });
+            return $response;
 
         } catch (ValidationException $e) {
             return $this->app->response->sendError(
@@ -569,170 +525,58 @@ class Route
 
         return $this->app->make(Pipeline::class)
             ->send($this->app->request)
-            ->through($this->collectMiddleWare('before'))
-            ->then(function($request) {
-                return $this->dispatchPermissionHandler();
+            ->through(
+                $this->collectMiddleWare()
+            )->then(function($request) {
+                if ($this->permissionHandler) {
+                    return $this->app->call(
+                        $this->permissionHandler,
+                        $this->app->request->get_url_params()
+                    );
+                } 
             });
     }
 
     /**
-     * Dispatches the permission handler
-     * 
-     * @return bool|null
-     */
-    protected function dispatchPermissionHandler()
-    {
-        if ($this->permissionHandler) {
-            return $this->app->call(
-                $this->permissionHandler,
-                $this->getControllerParameters()
-            );
-        }
-    }
-
-    /**
-     * Gether route params after substituted the params
-     * 
-     * @return array
-     */
-    protected function getControllerParameters()
-    {
-        $routeParameters = [];
-
-        if (!static::$substitutedParameters) {
-            if ($routeParameters = $this->getParameter()) {
-                $routeParameters = $this->SubstituteParameters($routeParameters);
-            }
-        } else {
-            $routeParameters = static::$substitutedParameters;
-        }
-
-        return $routeParameters;
-    }
-
-    /**
-     * Added the ability to add middleware so we can intercept
-     * the request without modifying the source code again
-     * and again. The middleware class will implement
-     * the handle method as given below:
+     * Added the ability to add middleware so we can
+     * intercept the request without modifying the source
+     * code again and again. The middleware class will
+     * implement the handle method as given below:
      * 
      * public function handle($request, $next)
      *
-     * And must return $next($request) to handle the request.
-     * Otherwise return nothing to abort the request.
-     * Optionally, you may call the abort method:
-     * return $request->abort(code, message);
+     * And must return $next($request) (or nothing to cancel);
      * 
-     * @param string $type
      * @return array
      */
-    protected function collectMiddleWare($type = 'before')
+    protected function collectMiddleWare()
     {
         $middleware = $this->app['config']->get('middleware', []);
 
-        $callableMiddleware = Arr::get($middleware, "global.{$type}", []);
+        $allMiddleware = Arr::get($middleware, 'global', []);
 
-        $routeArray = [];
+        foreach ($this->middleware as $routeMiddleware) {
 
-        if (isset($middleware['route'])) {
-            $routeArray = $middleware['route'];
-            if (isset($routeArray[$type])) {
-                $routeArray = $routeArray[$type];
-            }
-        }
+            $pieces = explode(':', $routeMiddleware);
 
-        if (!$routeArray) return [];
-
-        foreach ($this->middleware[$type] as $routeMiddleware) {
-
-            if (is_object($routeMiddleware)) {
-                $handler = $routeMiddleware;
-            } else {
-                $pieces = explode(':', $routeMiddleware);
-                $handler = Arr::get($routeArray, $key = reset($pieces));
+            if ($handler = Arr::get($middleware['route'], $key = reset($pieces))) {
 
                 if (isset($pieces[1])) {
-                    $handler = $this->resolveMiddleware($handler, $pieces);
+                    $handler = $handler . ':' . str_replace(' ', '', end($pieces));
                 }
-            }
 
-            if (isset($handler)) {
-                $this->addMiddlewareInTheStack($callableMiddleware, $handler);
+                $allMiddleware[] = $handler;
             } else {
-                if (isset($key)) {
-                    $mpath = 'config.middleware.route.' . $type;
-                    $msg = "No middleware is assigned for the key: {$key} in {$mpath} array.";
-                } else {
-                    $msg = "Could't resolve middleware.";
-                }
                 
-                throw new InvalidArgumentException($msg);
+                $middlewarePath = 'config.middleware.route';
+
+                throw new InvalidArgumentException(
+                    "No middleware is assigned for the key: {$key} in {$middlewarePath} array."
+                );
             }
         }
 
-        return $callableMiddleware;
-    }
-
-    /**
-     * Resolve the middleware
-     * 
-     * @param  mixed $handler
-     * @param  aray $pieces
-     * @return object
-     */
-    protected function resolveMiddleware($handler, $pieces)
-    {
-        if (is_object($handler)) {
-            $handler = $this->wrapMiddleware($handler, $pieces);
-        } elseif (is_string($handler)) {
-            $handler = $handler . ':' . str_replace(' ', '', end($pieces));
-        }
-        
-        return $handler;
-    }
-
-    /**
-     * Create a class to wrap the middleware
-     * 
-     * @param  mixed $handler
-     * @param  aray $pieces
-     * @return object
-     */
-    protected function wrapMiddleware($handler, $pieces)
-    {
-        $params = str_replace(' ', '', end($pieces));
-        
-        $params = explode(',', $params);
-
-        return new class ($handler, $params) {
-            protected $handler, $params = null;
-            public function __construct($handler, $params) {
-                $this->handler = $handler;
-                $this->params = $params;
-            }
-            public function handle($target, $next) {
-                if (is_callable($this->handler)) {
-                    return ($this->handler)($target, $next, ...$this->params);
-                } else {
-                    return $this->handler->handle(
-                        $target, $next, ...$this->params
-                    );
-                }
-            }
-        };
-    }
-
-    /**
-     * Add the middleware in the stack
-     * 
-     * @param array &$stack All callable middleware for the route
-     * @param null
-     */
-    protected function addMiddlewareInTheStack(&$stack, $middleware)
-    {
-        if (!in_array($middleware, $stack)) {
-            $stack[] = $middleware;
-        }
+        return $allMiddleware;
     }
 
     /**
@@ -809,7 +653,6 @@ class Route
      * 
      * @param  \WP_REST_Request $request
      * @return null
-     * @throws \BadMethodCallException
      */
     public function prepareCallbacks($request)
     {
@@ -827,42 +670,11 @@ class Route
             $controller = end($pieces);
         }
 
-        try {
-            $policyHandler = $this->app->parsePolicyHandler(
-                $this->getPolicyHandler($this->policyHandler)
-            );
-            
-            if ($policyHandler) {
-                $this->permissionHandler = $policyHandler;
+        $policyHandler = $this->app->parsePolicyHandler(
+            $this->getPolicyHandler($this->policyHandler)
+        );
 
-                // Adjust policy handler if the method was explicitly given
-                if (is_string($this->policyHandler)) {
-                    if (is_array($policyHandler) && isset($policyHandler[1])) {
-                        if ($pieces = explode('@', $this->policyHandler)) {
-                            if (isset($pieces[1])) {
-                                $this->permissionHandler[1] = $pieces[1];
-                            }
-                        }
-                    }
-                }
-
-                if (!is_callable($this->permissionHandler)) {
-                    throw new Exception;
-                }
-            }
-
-        } catch (Exception $e) {
-            $pHandler = $this->policyHandler;
-            if (is_array($this->permissionHandler) && $this->permissionHandler) {
-                $pHandler = is_object($this->permissionHandler[0]) ?
-                get_class($this->permissionHandler[0]) . ':' . $this->permissionHandler[1] :
-                $this->permissionHandler[0]  . ':' . $this->permissionHandler[1];
-            }
-
-            throw new BadMethodCallException(
-                "The permission callback {$pHandler} is invalid or not callable."
-            );
-        }
+        $this->permissionHandler = $policyHandler;
 
         if (is_array($policyHandler)) {
             $policyHandler[0] = get_class($policyHandler[0]);
@@ -880,16 +692,7 @@ class Route
         ];
 
 
-        $this->action = $handler;
-
-        if ($routeParameters = $this->getParameter()) {
-            static::$substitutedParameters = $this->SubstituteParameters(
-                $routeParameters
-            );
-        }
-
-
-        return $this->action;
+        return $this->action = $handler;
     }
 
     /**
