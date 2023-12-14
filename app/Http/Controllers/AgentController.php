@@ -23,7 +23,7 @@ class AgentController extends Controller
     public function index(Request $request, Agent $agent)
     {
         return [
-            'agents' => $agent->getAgents($request->getSafe('search')),
+            'agents' => $agent->getAgents($request->getSafe('search','sanitize_text_field')),
             'permissions' => PermissionManager::getReadablePermissionGroups()
         ];
     }
@@ -37,10 +37,10 @@ class AgentController extends Controller
     public function addAgent(AgentCreateRequest $request, Agent $agent)
     {
         $data = [
-            'email' => $request->getSafe('email'),
-            'first_name' => $request->getSafe('first_name'),
-            'last_name' => $request->getSafe('last_name'),
-            'title' => $request->getSafe('title'),
+            'email' => $request->getSafe('email', 'sanitize_email'),
+            'first_name' => $request->getSafe('first_name', 'sanitize_text_field'),
+            'last_name' => $request->getSafe('last_name', 'sanitize_text_field'),
+            'title' => $request->getSafe('title', 'sanitize_text_field'),
             'permissions' => $request->getSafe('permissions', null, []),
         ];
 
@@ -69,13 +69,13 @@ class AgentController extends Controller
     {
         $agent = $agent::findOrFail($agent_id);
         $data = [
-            'first_name' => $request->getSafe('first_name'),
-            'last_name' => $request->getSafe('last_name'),
-            'title' => $request->getSafe('title'),
+            'first_name' => $request->getSafe('first_name', 'sanitize_text_field'),
+            'last_name' => $request->getSafe('last_name', 'sanitize_text_field'),
+            'title' => $request->getSafe('title', 'sanitize_text_field'),
             'permissions' => $request->getSafe('permissions', null, []),
-            'telegram_chat_id' => $request->getSafe('telegram_chat_id'),
-            'slack_user_id' => $request->getSafe('slack_user_id'),
-            'whatsapp_number' => $request->getSafe('whatsapp_number'),
+            'telegram_chat_id' => $request->getSafe('telegram_chat_id', 'sanitize_text_field'),
+            'slack_user_id' => $request->getSafe('slack_user_id', 'sanitize_text_field'),
+            'whatsapp_number' => $request->getSafe('whatsapp_number', 'sanitize_text_field'),
         ];
 
         if ($agent) {
@@ -124,6 +124,7 @@ class AgentController extends Controller
      */
     public function myStats(Request $request)
     {
+
         $agent = Helper::getAgentByUserId();//Get logged in agent information
 
         try {

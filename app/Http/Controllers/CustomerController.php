@@ -25,7 +25,7 @@ class CustomerController extends Controller
     public function index(Request $request, Customer $customer)
     {
         return [
-            'customers' => $customer->getCustomers($request->getSafe('search'), $request->getSafe('status')),
+            'customers' => $customer->getCustomers($request->getSafe('search', 'sanitize_text_field'), $request->getSafe('status', 'sanitize_text_field')),
         ];
     }
 
@@ -48,7 +48,7 @@ class CustomerController extends Controller
      */
     public function getCustomer(Request $request, Customer $customer, $customer_id)
     {
-        return $customer->getCustomer($customer_id, $request->getSafe('with'));
+        return $customer->getCustomer($customer_id, $request->getSafe('with',null,[]));
     }
 
     /**
@@ -84,8 +84,6 @@ class CustomerController extends Controller
             'email'      => 'required|email',
             'first_name' => 'required'
         ]);
-
-        dd($data);
 
         try {
             return [
@@ -125,7 +123,7 @@ class CustomerController extends Controller
     public function addOrUpdateProfileImage(Request $request, AvatarUploder $avatarUploder)
     {
         try {
-            return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id'), 'customer');
+            return $avatarUploder->addOrUpdateProfileImage($request->files(), $request->getSafe('customer_id', 'intval'), 'customer');
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => __($e->getMessage(), 'fluent-support'),
@@ -159,7 +157,7 @@ class CustomerController extends Controller
 
     public function searchContact(Request $request)
     {
-        $search = $request->getSafe('search');
+        $search = $request->getSafe('search', 'sanitize_text_field');
         if (!$search) {
             return $this->sendError([
                 'message' => 'Please provide search string'

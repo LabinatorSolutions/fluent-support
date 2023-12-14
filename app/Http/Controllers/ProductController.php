@@ -16,7 +16,7 @@ class ProductController extends Controller
      */
     public function index ( Request $request, Product $product )
     {
-      return $product->getProducts( $request->getSafe('search') );
+      return $product->getProducts( $request->getSafe('search', 'sanitize_text_field') );
     }
 
     /**
