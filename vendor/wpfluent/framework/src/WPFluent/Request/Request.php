@@ -379,6 +379,10 @@ class Request
 
     public function mergeInputsFromRestRequest($wpRestRequest)
     {
+        $this->request = array_merge(
+            $this->request, $this->clean($wpRestRequest->get_params())
+        );
+        
         $this->post = array_merge(
             $this->post, $this->clean($wpRestRequest->get_body_params())
         );
@@ -567,12 +571,12 @@ class Request
      *
      * @return array
      */
-    public function validated()
+    public function validated($data = [])
     {
         if ($data) {
             return $this->validated = $data;
         }
-        
+
         return (array) $this->validated;
     }
 
