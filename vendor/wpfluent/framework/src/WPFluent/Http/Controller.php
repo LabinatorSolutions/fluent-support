@@ -28,12 +28,6 @@ abstract class Controller
     protected $response = null;
 
     /**
-     * Validated data after validation has been passed
-     * @var array
-     */
-    private $__validated = [];
-
-    /**
      * Construct the controller instance
      */
     public function __construct()
@@ -61,8 +55,6 @@ abstract class Controller
                 );
             }
 
-            $this->__validated = $this->request->validated($validator->validated());
-
             return $data;
 
         } catch (ValidationException $e) {
@@ -73,16 +65,6 @@ abstract class Controller
 
             $this->app->doCustomAction('handle_exception', $e);
         }
-    }
-
-    /**
-     * Get the valid data after validation has been passed.
-     *
-     * @return array
-     */
-    public function validated()
-    {
-        return (array) $this->__validated;
     }
 
     /**

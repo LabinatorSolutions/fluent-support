@@ -2,11 +2,7 @@
 
 namespace FluentSupport\Framework\Validator;
 
-use Closure;
-use LogicException;
-use ReflectionClass;
 use BadMethodCallException;
-use InvalidArgumentException;
 use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Foundation\App;
 use FluentSupport\Framework\Validator\Rules\In;
@@ -115,54 +111,9 @@ class Rule
      * @param string $rule
      * @param callable $callback
      * @return null
-     * @throws InvalidArgumentException|LogicException
      */
-    public static function add($rule, $callback = null)
+    public static function add($rule, $callback)
     {
-        if (is_null($callback)) {
-            
-            $callback = $rule;
-
-            $rule = $msg = null;
-
-            if (is_string($callback)) {
-                
-                $rule = explode('\\', $callback);
-
-                $rule = Str::snake(end($rule));
-
-            } elseif (is_object($callback)) {
-
-                if ($callback instanceof Closure) {
-                    $msg = 'A rule name is required for a closure based rule';
-                } elseif ((new ReflectionClass($callback))->isAnonymous()) {
-                    $msg = 'A rule name is required for an anonymous class based rule';
-                } else {
-                    $rule = get_class($callback);
-                }
-            }
-
-            ($msg && !$rule) && throw new InvalidArgumentException($msg, 500);
-        }
-        
-        $classExists = false;
-
-        if (is_string($callback)) {
-            $classExists = class_exists($callback);
-        }
-
-        $methodExists = $classExists && method_exists($callback, '__invoke');
-
-        if (!($classExists && $methodExists) && !is_callable($callback)) {
-            $m = 'The given callback is not callable';
-
-            if (is_object($callback) || ($classExists && !$methodExists)) {
-                $m .= ' and must implement the __invoke magic method.';
-            }
-
-            throw new LogicException($m, 500);
-        }
-
         App::make('validator')->extend($rule, $callback);
     }
 
@@ -176,7 +127,7 @@ class Rule
      */
     public static function __callStatic($method, $params)
     {
-        $method = Str::studly($method);
+        $method = ucwords($method);
 
         if ($customRules = App::make('validator')->getExtentions()) {
 
@@ -185,8 +136,6 @@ class Rule
             }
         }
 
-        throw new BadMethodCallException(
-            'Call to undefined method '. __CLASS__ . ':'. $method, 500
-        );
+        throw new BadMethodCallException('Call to undefined method '. __CLASS__ . ':'. $method);
     }
 }

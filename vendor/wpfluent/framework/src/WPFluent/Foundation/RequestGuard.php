@@ -45,20 +45,27 @@ abstract class RequestGuard
     }
 
     /**
-     * Validate the request.
-     * 
-     * @param  array $rules Optional
-     * @param  array $messages Optional
-     * @return array Request Data
+     * Validate ther request
+     * @param  FluentSupport\Framework\Validator\Validator $validator
+     * @return array
      * @throws FluentSupport\Framework\Validator\ValidationException
      */
-    public function validate($rules = [], $messages = [])
+    public function validate(Validator $validator = null)
     {
         try {
-            return App::make('request')->validate(
-                $rules ?: (array) $this->rules(),
-                $messages ?: (array) $this->messages()
-            );
+
+            $validator = $validator ?: App::make(Validator::class);
+
+            if (!($rules = (array) $this->rules())) return;
+
+            $validator = $validator->make($data = $this->all(), $rules, (array) $this->messages());
+
+            if ($validator->validate()->fails()) {
+                throw new ValidationException('Unprocessable Entity!', 422, null, $validator->errors());
+            }
+
+            return $data;
+
         } catch (ValidationException $e) {
 
             if (defined('REST_REQUEST') && REST_REQUEST) {
@@ -83,7 +90,7 @@ abstract class RequestGuard
 
         $request->merge($instance->beforeValidation());
 
-        $instance->validate();
+        $instance->validate(App::make(Validator::class));
 
         $request->merge($instance->afterValidation());
     }
@@ -108,7 +115,7 @@ abstract class RequestGuard
     public function __call($method, $params)
     {
         return call_user_func_array(
-            [App::make('request'), $method], $params
+            [App::getInstance('request'), $method], $params
         );
     }
 }
