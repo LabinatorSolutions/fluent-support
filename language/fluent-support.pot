@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-13 13:31+0000\n"
+"POT-Creation-Date: 2023-12-15 10:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid " assign this ticket to self"
 msgstr ""
 
-#: app/Models/Ticket.php:1357
+#: app/Models/Ticket.php:1354
 msgid " has been updated"
 msgstr ""
 
@@ -28,7 +28,7 @@ msgstr ""
 msgid " in this ticket"
 msgstr ""
 
-#: app/Models/Ticket.php:1484
+#: app/Models/Ticket.php:1481
 msgid " tickets has been assigned to"
 msgstr ""
 
@@ -43,7 +43,7 @@ msgid ""
 "Portal%2s [fluent_support_auth]"
 msgstr ""
 
-#: app/Models/Ticket.php:1450
+#: app/Models/Ticket.php:1447
 msgid "%d tickets have been closed"
 msgstr ""
 
@@ -1105,7 +1105,7 @@ msgstr ""
 msgid "Customer has been added"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:425
+#: app/Http/Controllers/TicketController.php:428
 #: app/Http/Controllers/CustomerController.php:90
 msgid "Customer has been updated"
 msgstr ""
@@ -1160,7 +1160,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:180
+#: app/Http/Controllers/SettingsController.php:179
 msgid "Default status for new contacts"
 msgstr ""
 
@@ -1217,7 +1217,7 @@ msgstr ""
 msgid "Discard"
 msgstr ""
 
-#: app/Models/Ticket.php:1255
+#: app/Models/Ticket.php:1252
 msgid "Discard draft successfully"
 msgstr ""
 
@@ -1239,11 +1239,11 @@ msgstr ""
 msgid "Don't have a license key?"
 msgstr ""
 
-#: app/Models/Ticket.php:1210
+#: app/Models/Ticket.php:1207
 msgid "Draft has been added"
 msgstr ""
 
-#: app/Models/Ticket.php:1222
+#: app/Models/Ticket.php:1219
 msgid "Draft has been updated"
 msgstr ""
 
@@ -1251,7 +1251,7 @@ msgstr ""
 msgid "Draft Reply"
 msgstr ""
 
-#: app/Models/Conversation.php:311
+#: app/Models/Conversation.php:313
 msgid "Draft response has been successfully approved."
 msgstr ""
 
@@ -1356,7 +1356,7 @@ msgstr ""
 msgid "Enable Fluent Summary In Admin Bar"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:176
+#: app/Http/Controllers/SettingsController.php:175
 msgid "Enable FluentCRM Integration"
 msgstr ""
 
@@ -1482,7 +1482,7 @@ msgstr ""
 msgid "First name"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:439
+#: app/Http/Controllers/SettingsController.php:438
 msgid "Fluent Forms could not be installed"
 msgstr ""
 
@@ -1492,8 +1492,8 @@ msgid ""
 "Support Plugin"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:412
-#: app/Http/Controllers/SettingsController.php:434
+#: app/Http/Controllers/SettingsController.php:411
+#: app/Http/Controllers/SettingsController.php:433
 msgid "Fluent Forms plugin has been installed and activated successfully"
 msgstr ""
 
@@ -1555,8 +1555,8 @@ msgstr ""
 msgid "FluentCRM Integration Settings"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:375
-#: app/Http/Controllers/SettingsController.php:397
+#: app/Http/Controllers/SettingsController.php:374
+#: app/Http/Controllers/SettingsController.php:396
 msgid "FluentCRM plugin has been installed and activated successfully"
 msgstr ""
 
@@ -1816,7 +1816,7 @@ msgstr ""
 msgid "Install & Activate FluentCRM (it's free)"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:255
+#: app/Http/Controllers/SettingsController.php:254
 msgid "Installation has been completed"
 msgstr ""
 
@@ -2320,7 +2320,7 @@ msgstr ""
 msgid "PDF/Docs"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:188
+#: app/Http/Controllers/SettingsController.php:187
 msgid "Pending"
 msgstr ""
 
@@ -2465,7 +2465,7 @@ msgstr ""
 msgid "Please select a mailbox"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:101
+#: app/Http/Controllers/SettingsController.php:100
 msgid "Please select a page or enable create page"
 msgstr ""
 
@@ -2717,11 +2717,11 @@ msgstr ""
 msgid "Response Count"
 msgstr ""
 
-#: app/Models/Ticket.php:1180
+#: app/Models/Ticket.php:1177
 msgid "Response has been added"
 msgstr ""
 
-#: app/Models/Conversation.php:178
+#: app/Models/Conversation.php:180
 msgid "Response has been added to the selected tickets"
 msgstr ""
 
@@ -2905,7 +2905,7 @@ msgstr ""
 msgid "Select the Business you would like to add your Support Ticket to."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:196
+#: app/Http/Controllers/SettingsController.php:195
 msgid ""
 "Select the default status for new contacts. If you select pending and it's a "
 "new contact then a double optin email will be sent"
@@ -2935,19 +2935,19 @@ msgstr ""
 msgid "Selected Contact Details"
 msgstr ""
 
-#: app/Models/Conversation.php:352
+#: app/Models/Conversation.php:354
 msgid "Selected draft response has been approved and updated"
 msgstr ""
 
-#: app/Models/Conversation.php:256
+#: app/Models/Conversation.php:258
 msgid "Selected response has been deleted"
 msgstr ""
 
-#: app/Models/Conversation.php:334
+#: app/Models/Conversation.php:336
 msgid "Selected response has been updated"
 msgstr ""
 
-#: app/Models/Ticket.php:1508
+#: app/Models/Ticket.php:1505
 msgid "Selected tags has been added to tickets"
 msgstr ""
 
@@ -2994,13 +2994,13 @@ msgstr ""
 msgid "Settings could not be loaded"
 msgstr ""
 
-#: app/Http/Controllers/SlackController.php:41
+#: app/Http/Controllers/SlackController.php:40
 #: app/Http/Controllers/IntegrationController.php:35
 msgid "Settings failed to save"
 msgstr ""
 
-#: app/Http/Controllers/SlackController.php:48
-#: app/Http/Controllers/SettingsController.php:65
+#: app/Http/Controllers/SlackController.php:47
+#: app/Http/Controllers/SettingsController.php:64
 #: app/Http/Controllers/IntegrationController.php:43
 #: app/Services/MailerInbox/MailBoxService.php:194
 msgid "Settings has been updated"
@@ -3054,7 +3054,7 @@ msgstr ""
 msgid "Slug (Optional)"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:176
+#: app/Http/Controllers/CustomerPortalController.php:177
 msgid "Sorry you can not create response"
 msgstr ""
 
@@ -3062,7 +3062,7 @@ msgstr ""
 msgid "Sorry you can not create ticket"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:401
+#: app/Http/Controllers/SettingsController.php:400
 msgid "Sorry! FluentCRM could not be installed. Please install manually"
 msgstr ""
 
@@ -3124,7 +3124,7 @@ msgstr ""
 msgid "Submit a Support Ticket"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:184
+#: app/Http/Controllers/SettingsController.php:183
 msgid "Subscribed"
 msgstr ""
 
@@ -3156,7 +3156,7 @@ msgstr ""
 msgid "Support From Email"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:112
+#: app/Http/Controllers/SettingsController.php:111
 msgid "Support Portal"
 msgstr ""
 
@@ -3169,7 +3169,7 @@ msgstr ""
 msgid "Support Staff"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:194
+#: app/Http/Controllers/AgentController.php:195
 msgid "Support Staff avatar reset to gravatar default"
 msgstr ""
 
@@ -3211,11 +3211,11 @@ msgstr ""
 msgid "Tag Description"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:392
+#: app/Http/Controllers/TicketController.php:395
 msgid "Tag has been added to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:409
+#: app/Http/Controllers/TicketController.php:412
 msgid "Tag has been removed from this ticket"
 msgstr ""
 
@@ -3467,10 +3467,6 @@ msgstr ""
 msgid "Ticket Mailbox"
 msgstr ""
 
-#: app/Models/Ticket.php:1060
-msgid "Ticket Not Found"
-msgstr ""
-
 #: app/Services/TransStrings.php:111 app/Hooks/Handlers/PrivacyHandler.php:99
 #: app/Services/Integrations/FluentForm/FeedIntegration.php:157
 #: app/Services/Integrations/FluentForm/FeedIntegration.php:158
@@ -3652,7 +3648,7 @@ msgstr ""
 msgid "Un-Assigned Tickets"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:272
+#: app/Http/Controllers/SettingsController.php:271
 msgid "Unable to delete reCAPTCHA settings, try again"
 msgstr ""
 
@@ -3718,15 +3714,15 @@ msgstr ""
 msgid "Upload a Custom Picture"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:592
+#: app/Http/Controllers/SettingsController.php:591
 msgid "Upload and store the files to your Dropbox Storage."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:601
+#: app/Http/Controllers/SettingsController.php:600
 msgid "Upload and store the files to your Google Drive Storage."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:583
+#: app/Http/Controllers/SettingsController.php:582
 msgid "Upload and store the files to your WordPress File System Storage."
 msgstr ""
 
@@ -3991,7 +3987,7 @@ msgstr ""
 msgid "You do not have permission"
 msgstr ""
 
-#: app/Models/Ticket.php:1373
+#: app/Models/Ticket.php:1370
 msgid "You do not have permission to assign agent"
 msgstr ""
 
@@ -4071,7 +4067,7 @@ msgstr ""
 msgid "Your Overview For Today"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:288
+#: app/Http/Controllers/SettingsController.php:287
 msgid "Your recaptcha details are already saved."
 msgstr ""
 
@@ -4080,19 +4076,19 @@ msgstr ""
 msgid "Your recaptcha is not verified"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:316
+#: app/Http/Controllers/SettingsController.php:315
 msgid "Your reCAPTCHA settings added successfully."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:296
+#: app/Http/Controllers/SettingsController.php:295
 msgid "Your reCAPTCHA settings are not valid."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:267
+#: app/Http/Controllers/SettingsController.php:266
 msgid "Your reCAPTCHA settings deleted successfully."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:305
+#: app/Http/Controllers/SettingsController.php:304
 msgid "Your reCAPTCHA settings updated successfully."
 msgstr ""
 

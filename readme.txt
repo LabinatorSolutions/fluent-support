@@ -199,6 +199,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 * Fixed - The time duration displayed for ticket creation and response creation is inconsistent
 * Fixed - Open a new thread in email for every response created
 * Fixed - Translation issue
+* MySQL orderby security issue fixed
 
 = 1.7.6 (Date: November 07, 2023) =
 * Improved File Upload
