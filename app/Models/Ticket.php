@@ -1055,13 +1055,7 @@ class Ticket extends Model
     {
         $agent = Helper::getAgentByUserId();
 
-        try {
-            $ticket = $this->with($ticketWith)->findOrFail($ticketId);
-        } catch (Exception $e) {
-            wp_send_json_error([
-                'message' =>  __('Ticket Not Found', 'fluent-support')
-            ],404);
-        }
+        $ticket = self::with($ticketWith)->findOrFail($ticketId);
 
         $customFieldsKey = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
         $ticket->customer->custom_field_keys = $customFieldsKey;
@@ -1070,9 +1064,9 @@ class Ticket extends Model
             $customFieldKeysUsingHook = apply_filters('fluent_support/custom_registration_form_fields_key', []);
 
             foreach ($customFieldKeysUsingHook as $key) {
-                $userMeta = get_user_meta($ticket->customer->user_id,$key);
+                $userMeta = get_user_meta($ticket->customer->user_id,$key, true);
                 if($userMeta) {
-                    $ticket->customer->$key = reset($userMeta);
+                    $ticket->customer->$key = $userMeta;
                 }
             }
         }
@@ -1087,7 +1081,6 @@ class Ticket extends Model
                 if ($agentFeedback) {
                     $response->agent_feedback = $agentFeedback->value;
                 }
-
             }
         }
 
@@ -1103,8 +1096,6 @@ class Ticket extends Model
     {
         if ($ticket->status == 'closed') {
             $ticket->load('closed_by_person');
-        } else {
-            return true;
         }
     }
 
@@ -1123,10 +1114,10 @@ class Ticket extends Model
                 $val = maybe_unserialize($response->ccinfo->value);
                 if(isset($val['cc_email']) && !empty($val['cc_email'])){
                     $response->cc_info = $val['cc_email'];
-                }else{
+                } else {
                     $response->cc_info = '';
                 }
-            }else {
+            } else {
                 $response->cc_info = '';
             }
         }
@@ -1520,8 +1511,6 @@ class Ticket extends Model
     {
         if (!PermissionManager::hasTicketPermission($ticket)) {
             throw new \Exception('Sorry, You do not have permission to this ticket');
-        } else {
-            return true;
         }
     }
 
