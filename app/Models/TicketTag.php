@@ -8,6 +8,8 @@ class TicketTag extends Tag
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             $model->tag_type = static::$type;
             if(empty($model->created_by) && $userId = get_current_user_id()) {

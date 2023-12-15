@@ -17,6 +17,8 @@ class Ticket extends Model
 {
     protected $table = 'fs_tickets';
 
+    protected $dates = ['waiting_since'];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -50,6 +52,8 @@ class Ticket extends Model
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             if (empty($model->slug)) {
                 $model->slug = static::slugify($model->title);
@@ -1051,12 +1055,33 @@ class Ticket extends Model
     {
         $agent = Helper::getAgentByUserId();
 
-        try {
-            $ticket = $this->with($ticketWith)->findOrFail($ticketId);
-        } catch (Exception $e) {
-            wp_send_json_error([
-                'message' =>  __('Ticket Not Found', 'fluent-support')
-            ],404);
+        $ticket = self::with($ticketWith)->findOrFail($ticketId);
+
+        $customFieldsKey = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
+        $ticket->customer->custom_field_keys = $customFieldsKey;
+
+        if ($ticket->customer->user_id) {
+            $customFieldKeysUsingHook = apply_filters('fluent_support/custom_registration_form_fields_key', []);
+
+            foreach ($customFieldKeysUsingHook as $key) {
+                $userMeta = get_user_meta($ticket->customer->user_id,$key, true);
+                if($userMeta) {
+                    $ticket->customer->$key = $userMeta;
+                }
+            }
+        }
+
+        if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && Helper::isAgentFeedbackEnabled()) {
+            foreach ($ticket->responses as $response) {
+                $agentFeedback = Meta::where('object_id', $response->id)
+                    ->where('object_type', 'conversation_meta')
+                    ->where('key', 'agent_feedback_ratings')
+                    ->first();
+
+                if ($agentFeedback) {
+                    $response->agent_feedback = $agentFeedback->value;
+                }
+            }
         }
 
         $ticket->customer->profile_edit_url = $this->getCustomerProfileUrl($ticket->customer); //Get and set customer profile url
@@ -1071,8 +1096,6 @@ class Ticket extends Model
     {
         if ($ticket->status == 'closed') {
             $ticket->load('closed_by_person');
-        } else {
-            return true;
         }
     }
 
@@ -1091,10 +1114,10 @@ class Ticket extends Model
                 $val = maybe_unserialize($response->ccinfo->value);
                 if(isset($val['cc_email']) && !empty($val['cc_email'])){
                     $response->cc_info = $val['cc_email'];
-                }else{
+                } else {
                     $response->cc_info = '';
                 }
-            }else {
+            } else {
                 $response->cc_info = '';
             }
         }
@@ -1337,29 +1360,37 @@ class Ticket extends Model
     private function handlePropertyUpdate($propName, $propValue, $ticket, $assigner)
     {
         $prevValue = $ticket->{$propName};
-        if ($propName && $propValue && $prevValue != $propValue) {
-            $ticket->{$propName} = $propValue;
-            $ticket->save();
-        }
 
         $updateData = [];
 
-        if ($propName == 'product_id') {
-            $ticket->load('product');
-            $updateData['product'] = $ticket->product;
-        } else if ($propName == 'agent_id') {
+        if ($propName == 'agent_id') {
+            // Check if the current user has the permission to assign agents
             if (!PermissionManager::currentUserCan('fst_assign_agents')) {
                 wp_send_json_error( [
                     'message' => __('You do not have permission to assign agent', 'fluent-support')
                 ], 400  );
             }
+
             $ticket->load('agent');
             $updateData['agent'] = $ticket->agent;
             $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
-            if ($prevValue != $ticket->{$propName}) {
+
+            if ($prevValue != $propValue) {
                 do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $assigner);
             }
         }
+
+        // Save the changes after checking conditions
+        if ($propName && $propValue && $prevValue != $propValue) {
+            $ticket->{$propName} = $propValue;
+            $ticket->save();
+        }
+
+        if ($propName == 'product_id') {
+            $ticket->load('product');
+            $updateData['product'] = $ticket->product;
+        }
+
         return $updateData;
     }
 
@@ -1480,8 +1511,6 @@ class Ticket extends Model
     {
         if (!PermissionManager::hasTicketPermission($ticket)) {
             throw new \Exception('Sorry, You do not have permission to this ticket');
-        } else {
-            return true;
         }
     }
 
@@ -1572,9 +1601,9 @@ class Ticket extends Model
     }
 
     // accessor
-    public function getCreatedAtAttribute($date)
-    {
-        return date('Y-m-d H:i:s', strtotime($date));
-    }
+//    public function getCreatedAtAttribute($date)
+//    {
+//        return date('Y-m-d H:i:s', strtotime($date));
+//    }
 }
 

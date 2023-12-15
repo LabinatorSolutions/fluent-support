@@ -85,32 +85,6 @@ class Paginator extends AbstractPaginator implements ArrayableInterface, ArrayAc
     }
 
     /**
-     * Render the paginator using the given view.
-     *
-     * @param  string|null  $view
-     * @param  array  $data
-     * @return string
-     */
-    public function links($view = null, $data = [])
-    {
-        return $this->render($view, $data);
-    }
-
-    /**
-     * Render the paginator using the given view.
-     *
-     * @param  string|null  $view
-     * @param  array  $data
-     * @return \FluentSupport\Framework\Support\Htmlable
-     */
-    public function render($view = null, $data = [])
-    {
-        return static::viewFactory()->make($view ?: static::$defaultSimpleView, array_merge($data, [
-            'paginator' => $this,
-        ]));
-    }
-
-    /**
      * Manually indicate that the paginator does have more pages.
      *
      * @param  bool  $hasMore

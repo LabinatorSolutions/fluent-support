@@ -4,11 +4,14 @@ namespace FluentSupport\Framework\Validator;
 
 use Countable;
 use InvalidArgumentException;
+use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Validator\Contracts\File;
 
 trait ValidatesAttributes
 {
+    use ValidateDatabaseRulesTrait;
+
     /**
      * Require a certain number of parameters to be present.
      *
@@ -23,7 +26,9 @@ trait ValidatesAttributes
     protected function requireParameterCount($count, $parameters, $rule)
     {
         if (count($parameters) < $count) {
-            throw new InvalidArgumentException("Validation rule $rule requires at least $count parameters.");
+            throw new InvalidArgumentException(
+                "Validation rule $rule requires at least $count parameters."
+            );
         }
     }
 
@@ -41,7 +46,7 @@ trait ValidatesAttributes
         // return the proper size accordingly. If it is a number, then number itself
         // is the size. If it is a file, we take kilobytes, and for a string the
         // entire length of the string will be considered the attribute size.
-        $type = $this->deduceType($value);
+        $type = $this->deduceType($value, $attribute);
 
         switch ($type) {
             case 'numeric':
@@ -62,10 +67,10 @@ trait ValidatesAttributes
      *
      * @return string
      */
-    protected function deduceType($value)
+    protected function deduceType($value, $attribute = null)
     {
         if (is_numeric($value)) {
-            return 'numeric';
+            return $this->guessType($value, $attribute);
         } elseif (is_array($value)) {
             return 'array';
         } elseif ($value instanceof File) {
@@ -73,6 +78,22 @@ trait ValidatesAttributes
         }
 
         return 'string';
+    }
+
+    /**
+     * Guess the real type by examining rules.
+     * 
+     * @param  mixed $value
+     * @param  string|null $attribute
+     * @return string
+     */
+    protected function guessType($value, $attribute)
+    {
+        if ($attribute && in_array('string', $this->rules[$attribute])) {
+            return 'string';
+        }
+
+        return 'numeric';
     }
 
     /**
@@ -235,7 +256,19 @@ trait ValidatesAttributes
      */
     protected function validateUrl($attribute, $value)
     {
-        return (bool) wp_http_validate_url($value);
+        return (bool) Str::isUrl($value);
+    }
+
+    /**
+     * Validate that an attribute is a string.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function validateString($attribute, $value)
+    {
+        return is_string($value);
     }
 
     /**
@@ -318,7 +351,7 @@ trait ValidatesAttributes
         }
 
         /**
-         * @var $value \FluentValidator\Contracts\File
+         * @var $value \PackageDev\Framework\Validator\Contracts\File
          */
         return $value->getPath() != '' && in_array($value->guessExtension(), $parameters);
     }
@@ -375,7 +408,7 @@ trait ValidatesAttributes
         }
 
         /**
-         * @var $value \FluentValidator\Contracts\File
+         * @var $value \PackageDev\Framework\Validator\Contracts\File
          */
         return strtolower($value->getClientOriginalExtension()) === 'php';
     }
@@ -394,66 +427,6 @@ trait ValidatesAttributes
     }
 
     /**
-     * Validate that an attribute is unique in a given table
-     *
-     * @param string $attribute
-     * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
-     */
-    protected function validateUnique($attribute, $value, $parameters)
-    {
-        global $wpdb;
-        
-        if ($parameters && !$parameters[0]) {
-            unset($parameters[0]);
-        }
-
-        $this->requireParameterCount(1, $parameters, 'unique');
-
-        if (!empty($parameters[1]) && strtolower($parameters[1]) != 'null') {
-            $attribute = $parameters[1];
-        }
-
-        $bindings = [$value];
-
-        $query = "SELECT * FROM {$wpdb->prefix}{$parameters[0]} WHERE {$attribute} = %s";
-        
-        if (count($parameters) > 2) {
-            $ignorekey = 'id';
-
-            if (!empty($parameters[3]) && strtolower($parameters[3]) != 'null') {
-                $ignorekey = $parameters[3];
-            }
-
-            if ($parameters[2] && strtolower($parameters[2]) != 'null') {
-                $query .= " and {$ignorekey} != %d";
-                $bindings[] = $parameters[2];
-            }
-        }
-
-        if (count($parameters) > 3) {
-            if(count(array_slice($parameters, 0, 4)) == 4) {
-                $extraWhereClauses = array_slice($parameters, 4);
-                foreach (array_chunk($extraWhereClauses, 2) as $where) {
-                    if (count($where) == 2) {
-                        if (is_numeric($where[1])) {
-                            $placeHolder = strpos($where[1], ".") === true ? '%f' : '%d';
-                        } else {
-                            $placeHolder = '%s';
-                        }
-                        $query .= " and {$where[0]} = {$placeHolder}";
-                        $bindings[] = $where[1];
-                    }
-                }
-            }
-        }
-        
-        return is_null($wpdb->get_row($wpdb->prepare($query, $bindings)));
-    }
-
-    /**
      * Validate that an attribute has a given number of digits.
      *
      * @param string $attribute
@@ -468,5 +441,62 @@ trait ValidatesAttributes
 
         return $this->validateNumeric($attribute, $value) 
                     && strlen((string) $value) == $parameters[0];
+    }
+
+    /**
+     * Validate that an attribute is an array.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @param  array  $parameters
+     * @return bool
+     */
+    public function validateArray($attribute, $value, $parameters = [])
+    {
+        if (! is_array($value)) {
+            return false;
+        }
+
+        if (empty($parameters)) {
+            return true;
+        }
+
+        return empty(array_diff_key($value, array_fill_keys($parameters, '')));
+    }
+
+    /**
+     * Validate an attribute is contained within a list of values.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @param  array  $parameters
+     * @return bool
+     */
+    public function validateIn($attribute, $value, $parameters)
+    {
+        if (is_array($value) && $this->hasRule($attribute, 'Array')) {
+            foreach ($value as $element) {
+                if (is_array($element)) {
+                    return false;
+                }
+            }
+
+            return count(array_diff($value, $parameters)) === 0;
+        }
+
+        return !is_array($value) && in_array((string) $value, $parameters);
+    }
+
+    /**
+     * Validate an attribute is not contained within a list of values.
+     *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @param  array  $parameters
+     * @return bool
+     */
+    public function validateNotIn($attribute, $value, $parameters)
+    {
+        return !$this->validateIn($attribute, $value, $parameters);
     }
 }

@@ -175,7 +175,7 @@ class BelongsToMany extends Relation
             return $table;
         }
 
-        if (in_array(AsPivot::class, Helper::classUsesRecursive($model))) {
+        if (in_array(AsPivot::class, static::classUsesRecursive($model))) {
             $this->using($table);
         }
 

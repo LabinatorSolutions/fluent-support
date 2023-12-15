@@ -398,7 +398,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
 
         if (is_null($callback)) {
             if (! $iterator->valid()) {
-                return value($default);
+                return Helper::value($default);
             }
 
             return $iterator->current();
@@ -410,7 +410,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
             }
         }
 
-        return value($default);
+        return Helper::value($default);
     }
 
     /**
@@ -469,7 +469,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
             }
         }
 
-        return value($default);
+        return Helper::value($default);
     }
 
     /**
@@ -643,7 +643,7 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
             }
         }
 
-        return $needle === $placeholder ? value($default) : $needle;
+        return $needle === $placeholder ? Helper::value($default) : $needle; 
     }
 
     /**
@@ -659,12 +659,12 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
             [$value, $key] = $this->explodePluckParameters($value, $key);
 
             foreach ($this as $item) {
-                $itemValue = data_get($item, $value);
+                $itemValue = Helper::dataGet($item, $value);
 
                 if (is_null($key)) {
                     yield $itemValue;
                 } else {
-                    $itemKey = data_get($item, $key);
+                    $itemKey = Helper::dataGet($item, $key);
 
                     if (is_object($itemKey) && method_exists($itemKey, '__toString')) {
                         $itemKey = (string) $itemKey;

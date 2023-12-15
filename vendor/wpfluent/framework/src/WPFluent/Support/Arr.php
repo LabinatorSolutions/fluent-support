@@ -426,6 +426,28 @@ class Arr
     }
 
     /**
+     * Determines if the given key contains a boolean value.
+     *
+     * Returns true for true, 1, "1", "true", "on" and "yes"
+     * Returns false for false, "0", "false", "off", "no", and ""
+     * Returns for all non-boolean values.
+     *
+     * @param  array  $array
+     * @param  string $key
+     * 
+     * @return bool|null
+     * @see https://www.php.net/manual/en/filter.filters.validate.php
+     */
+    public static function isTrue($array, $key)
+    {
+        return filter_var(
+            static::get($array, $key),
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE
+        );
+    }
+
+    /**
      * Get a subset of the items from the given array.
      *
      * @param  array  $array
@@ -745,5 +767,97 @@ class Arr
         }
 
         return is_array($value) ? $value : [$value];
+    }
+
+    /**
+     * Maps a function to all non-iterable elements of an array or an object.
+     *
+     * This is similar to `array_walk_recursive()` but acts upon objects too.
+     *
+     * @param mixed    $value    The array, object, or scalar.
+     * @param callable $callback The function to map onto $value.
+     * @see https://developer.wordpress.org/reference/functions/map_deep/
+     * 
+     * @return mixed The value with the callback applied to all non-arrays and non-objects inside it.
+     */
+    public static function map($value, $callback)
+    {
+        return map_deep($value, $callback);
+    }
+
+    /**
+     * Compare two nested arrays side by side
+     * @param  array $array1
+     * @param  array $array2
+     * @param  array $path
+     * @return array
+     */
+    public static function compare($array1, $array2, $path = [])
+    {
+        $differences = [];
+
+        foreach ($array1 as $key => $value1) {
+            // Check if the key exists in the second array
+            if (!array_key_exists($key, $array2)) {
+                $differences[implode('.', array_merge($path, [$key]))] = [
+                    'array_1' => $value1,
+                    'array_2' => null,
+                ];
+            } else {
+                // If the value is an array, recursively compare
+                if (is_array($value1) && is_array($array2[$key])) {
+                    $differences = array_merge($differences, static::compare(
+                        $value1, $array2[$key], array_merge($path, [$key])
+                    ));
+                } else {
+                    // Compare values
+                    if ($value1 !== $array2[$key]) {
+                        $differences[implode('.', array_merge($path, [$key]))] = [
+                            'array_1' => $value1,
+                            'array_2' => $array2[$key],
+                        ];
+                    }
+                }
+            }
+        }
+
+        // Check for keys in the second array that are not in the first array
+        foreach ($array2 as $key => $value2) {
+            if (!array_key_exists($key, $array1)) {
+                $differences[implode('.', array_merge($path, [$key]))] = [
+                    'array_1' => null,
+                    'array_2' => $value2,
+                ];
+            }
+        }
+
+        return $differences;
+    }
+
+    /**
+     * Merge the items from the first array into the
+     * second array if the second array is missing it.
+     * 
+     * @param  array &$array1
+     * @param  array &$array2
+     * @return array         
+     */
+    public static function mergeMissing(&$array1, &$array2)
+    {
+        foreach ($array1 as $key => $value1) {
+            // If the key exists in the second array
+            if (array_key_exists($key, $array2)) {
+                // If the value is an array, recursively add missing items
+                if (is_array($value1) && is_array($array2[$key])) {
+                    static::mergeMissing($value1, $array2[$key]);
+                }
+            } else {
+                // If the key doesn't exist in the second array,
+                // then add it with the corresponding value
+                $array2[$key] = $value1;
+            }
+        }
+
+        return $array2;
     }
 }

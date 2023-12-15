@@ -14,11 +14,11 @@ class DataExporter
         $this->verifyRequest();
         $csvWriter = new CsvWriter();
         $request = Helper::FluentSupport('request');
-        $from_date = $request->getSafe('from_date');
-        $to_date = $request->getSafe('to_date');
+        $from_date = $request->getSafe('from_date', 'sanitize_text_field');
+        $to_date = $request->getSafe('to_date', 'sanitize_text_field');
         $columns = $request->get('columns', []);
         $agents = $request->get('agents', []);
-        if(empty($columns)) {
+        if (empty($columns)) {
             $columns = Helper::getExportOptions();
         }
         $columns = $this->defineColumns($columns);
@@ -32,11 +32,11 @@ class DataExporter
         foreach ($data as $summary) {
             $row = [];
             foreach ($columns as $key => $column) {
-                if(isset($summary[$column])){
+                if (isset($summary[$column])) {
                     $row[$key] = $summary[$column];
-                } else if(isset($summary['stats'][$column])) {
+                } else if (isset($summary['stats'][$column])) {
                     $row[$key] = $summary['stats'][$column];
-                }else if(isset($summary['active_stat'][$column])) {
+                } else if (isset($summary['active_stat'][$column])) {
                     $row[$key] = $summary['active_stat'][$column];
                 }
             }
@@ -48,22 +48,28 @@ class DataExporter
         die();
     }
 
-    private function defineColumns($columns){
+    private function defineColumns($columns)
+    {
         $arr = [
             'Agent First Name' => 'first_name',
-            'Agent Last Name' => 'last_name',
-            'Agent Full Name' => 'full_name',
-            'Responses' => 'responses',
-            'Interactions' => 'interactions',
-            'Open Tickets' => 'opens',
-            'Closed' => 'closed',
-            'Waiting Tickets' => 'waiting_tickets',
-            'Average Waiting' => 'average_waiting',
-            'Max Waiting' => 'max_waiting',
+            'Agent Last Name'  => 'last_name',
+            'Agent Full Name'  => 'full_name',
+            'Responses'        => 'responses',
+            'Interactions'     => 'interactions',
+            'Open Tickets'     => 'opens',
+            'Closed'           => 'closed',
+            'Waiting Tickets'  => 'waiting_tickets',
+            'Average Waiting'  => 'average_waiting',
+            'Max Waiting'      => 'max_waiting',
         ];
 
-        return array_filter($arr, function($column, $key) use ($columns){
-             return in_array($key, $columns);
+        if (Helper::isAgentFeedbackEnabled()) {
+            $arr['Likes'] = 'likes';
+            $arr['Dislikes'] = 'dislikes';
+        }
+
+        return array_filter($arr, function ($column, $key) use ($columns) {
+            return in_array($key, $columns);
         }, ARRAY_FILTER_USE_BOTH);
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace FluentSupport\Framework\Contracts\Database\Orm;
+namespace FluentSupport\Framework\Database\Orm;
 
 interface CastsAttributes
 {

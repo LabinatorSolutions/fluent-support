@@ -20,7 +20,7 @@ class SlackController extends Controller
      */
     public function getSettings(Request $request)
     {
-        $settingsKey = $request->getSafe('integration_key');
+        $settingsKey = $request->getSafe('integration_key', 'sanitize_text_field');
 
         return IntegrationSettingsModule::getSettings($settingsKey, true);
     }
@@ -32,9 +32,8 @@ class SlackController extends Controller
      */
     public function saveSettings(Request $request)
     {
-        $settingsKey = $request->getSafe('integration_key');
+        $settingsKey = $request->getSafe('integration_key' , 'sanitize_text_field');
         $settings = wp_unslash($request->getSafe('settings'));
-
         $settings = IntegrationSettingsModule::saveSettings($settingsKey, $settings);
 
         if(!$settings || is_wp_error($settings)) {

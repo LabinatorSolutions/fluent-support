@@ -4,6 +4,7 @@ namespace FluentSupport\App\Services;
 
 use Exception;
 use FluentSupport\App\Models\MailBox;
+use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Services\Tickets\ResponseService;
@@ -41,6 +42,7 @@ class CustomerPortalService
     public function getTicket($customerAdditionalData, $ticketId)
     {
         $ticket = $this->getTicketByID($ticketId);
+        $ticket->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($ticket->created_at), current_time('timestamp')));
 
         $customer = $this->getCustomer($customerAdditionalData, $ticket);
 
@@ -448,12 +450,24 @@ class CustomerPortalService
             ->latest('id')
             ->get();
 
-        foreach ($responses as $response) {
-            $response->content = links_add_target(make_clickable($response->content));
-            if ($response->person) {
-                $response->person->setHidden(['email']);
+            foreach ($responses as $response) {
+                if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION') && Helper::isAgentFeedbackEnabled()) {
+                    $agentFeedback = Meta::where('object_id', $response->id)
+                        ->where('object_type', 'conversation_meta')
+                        ->where('key', 'agent_feedback_ratings')
+                        ->first();
+
+                    if ($agentFeedback) {
+                        $response->agent_feedback = $agentFeedback->value;
+                    }
+                }
+
+                $response->human_date = sprintf(__('%s ago', 'fluent-support'), human_time_diff(strtotime($response->created_at), current_time('timestamp')));
+                $response->content = links_add_target(make_clickable($response->content));
+                if ($response->person) {
+                    $response->person->setHidden(['email']);
+                }
             }
-        }
 
         return $responses;
     }
@@ -487,6 +501,39 @@ class CustomerPortalService
         }
 
         return $ticket;
+    }
+
+    public function addUserFeedback($approvalStatus, $conversationID)
+    {
+        $existingAgentFeedback = Meta::where([
+            'object_id' => $conversationID,
+            'key' => 'agent_feedback_ratings',
+        ])->first();
+
+        if ($existingAgentFeedback) {
+            return $this->updateExistingFeedback($existingAgentFeedback, $approvalStatus);
+        } else {
+            $agentFeedback = Meta::create([
+                'object_id' => $conversationID,
+                'key' => 'agent_feedback_ratings',
+                'object_type' => 'conversation_meta',
+                'value' => $approvalStatus,
+            ]);
+            return $agentFeedback;
+        }
+    }
+
+    private function updateExistingFeedback($existingAgentFeedback, $approvalStatus)
+    {
+        if (($existingAgentFeedback->value === 'like' && $approvalStatus === 'like') ||
+            ($existingAgentFeedback->value === 'dislike' && $approvalStatus === 'dislike')) {
+             $existingAgentFeedback->delete();
+        } else {
+              $existingAgentFeedback->update([
+                'value' => $approvalStatus,
+            ]);
+        }
+        return $existingAgentFeedback;
     }
 
 }

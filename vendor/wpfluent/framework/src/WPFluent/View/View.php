@@ -6,14 +6,35 @@ use Exception;
 
 class View
 {
+	/**
+     * Application Instance
+     * @var FluentSupport\Framework\Foundation\Application
+     */
 	protected $app;
 
+	/**
+	 * View file path
+	 * 
+	 * @var string
+	 */
 	protected $path;
 
+	/**
+	 * View data
+	 * @var array
+	 */
 	protected $data = [];
 	
+	/**
+	 * Shared data inall the views
+	 * @var array
+	 */
 	protected static $sharedData = [];
 
+	/**
+	 * Construct the view instamce
+	 * @param [type] $app [description]
+	 */
 	public function __construct($app)
 	{
 		$this->app = $app;
@@ -118,6 +139,15 @@ class View
 		}
 		
 		return $this;
+	}
+
+	/**
+	 * Set view path (used for micro)
+	 * @param [type] $path [description]
+	 */
+	public function setViewPath($path)
+	{
+		$this->app['path.views'] = $path;
 	}
 
 	/**

@@ -7,20 +7,19 @@ use Exception;
 use ArrayAccess;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
-use FluentSupport\Framework\Support\Htmlable;
 use FluentSupport\Framework\Support\Tappable;
 use FluentSupport\Framework\Database\Orm\Model;
 use FluentSupport\Framework\Support\Collection;
 use FluentSupport\Framework\Support\ForwardsCalls;
 use FluentSupport\Framework\Database\Orm\Relations\Pivot;
-// use FluentSupport\Framework\Http\Resources\Json\JsonResource;
+use FluentSupport\Framework\Database\Orm\ResourceAbleTrait;
 
 /**
  * @mixin \FluentSupport\Framework\Support\Collection
  */
-abstract class AbstractCursorPaginator implements Htmlable
+abstract class AbstractCursorPaginator
 {
-    use ForwardsCalls, Tappable;
+    use ForwardsCalls, Tappable, ResourceAbleTrait;
 
     /**
      * All of the items being paginated.
@@ -206,18 +205,16 @@ abstract class AbstractCursorPaginator implements Htmlable
         return Collection::make($this->parameters)
             ->flip()
             ->map(function ($_, $parameterName) use ($item) {
-                // if ($item instanceof JsonResource) {
-                //     $item = $item->resource;
-                // }
-
                 if ($item instanceof Model &&
                     ! is_null($parameter = $this->getPivotParameterForItem($item, $parameterName))) {
                     return $parameter;
-                } elseif ($item instanceof ArrayAccess || is_array($item)) {
+                }
+                if ($item instanceof ArrayAccess || is_array($item)) {
                     return $this->ensureParameterIsPrimitive(
                         $item[$parameterName] ?? $item[Str::afterLast($parameterName, '.')]
                     );
-                } elseif (is_object($item)) {
+                }
+                if (is_object($item)) {
                     return $this->ensureParameterIsPrimitive(
                         $item->{$parameterName} ?? $item->{Str::afterLast($parameterName, '.')}
                     );
@@ -509,16 +506,6 @@ abstract class AbstractCursorPaginator implements Htmlable
     }
 
     /**
-     * Get an instance of the view factory from the resolver.
-     *
-     * @return \FluentSupport\Framework\Contracts\View\Factory
-     */
-    public static function viewFactory()
-    {
-        return Paginator::viewFactory();
-    }
-
-    /**
      * Get an iterator for the items.
      *
      * @return \ArrayIterator
@@ -643,16 +630,6 @@ abstract class AbstractCursorPaginator implements Htmlable
     }
 
     /**
-     * Render the contents of the paginator to HTML.
-     *
-     * @return string
-     */
-    public function toHtml()
-    {
-        return (string) $this->render();
-    }
-
-    /**
      * Make dynamic calls into the collection.
      *
      * @param  string  $method
@@ -671,6 +648,6 @@ abstract class AbstractCursorPaginator implements Htmlable
      */
     public function __toString()
     {
-        return (string) $this->render();
+        return (string) $this->toArray();
     }
 }

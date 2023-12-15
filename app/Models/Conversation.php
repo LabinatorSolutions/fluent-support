@@ -31,6 +31,8 @@ class Conversation extends Model
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             if(empty($model->content_hash)) {
                 $model->content_hash = md5($model->content);
@@ -257,21 +259,104 @@ class Conversation extends Model
         ];
     }
 
-    public function updateResponse ( $data, $ticketId, $responseId )
+    /**
+     * Update the conversation type for a response.
+     *
+     * @param array $data
+     * @param int $ticketId
+     * @param int $responseId
+     * @param string $conversationType
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function publishDraftResponse ( $data, $ticketId, $responseId, $conversationType )
     {
         $ticket = Ticket::findOrFail($ticketId);
         $response = static::findOrFail($responseId);
+
+        $content = wp_unslash(wp_kses_post($data['content']));
+        $resetWaitingSince = apply_filters('fluent_support/reset_waiting_since', true, $content);
+
+        $person = Helper::getAgentByUserId(get_current_user_id());
+
+        $approveDraftResponsePermission = PermissionManager::currentUserCan('fst_approve_draft_reply');
+
+        if ( !$approveDraftResponsePermission ) {
+            throw new \Exception("Sorry, You do not have permission to approve this draft response");
+        }
+
+        $response->conversation_type = $conversationType;
+        $response->created_at = current_time('mysql');
+        $response->save();
+
+        if ($person->person_type == 'agent' && $ticket->status == 'new') {
+            $ticket->status = 'active';
+            if ($ticket->created_at) {
+                $ticket->first_response_time = strtotime(current_time('mysql')) - strtotime($ticket->created_at);
+            } else {
+                $ticket->first_response_time = 300;
+            }
+        }
+
+        if ($resetWaitingSince) {
+            $ticket->last_agent_response = current_time('mysql');
+            $ticket->waiting_since = current_time('mysql');
+        }
+
+        $ticket->response_count += 1;
+        $ticket->save();
+
+        do_action('fluent_support/' . $conversationType . '_added_by_' . $person->person_type, $response, $ticket, $person);
+
+        return [
+            'message'  => __('Draft response has been successfully approved.', 'fluent-support'),
+            'response' => $response,
+        ];
+    }
+
+    public function updateResponse($data, $ticketId, $responseId)
+    {
+        $ticket = Ticket::findOrFail($ticketId);
+        $response = static::findOrFail($responseId);
+
         $agent = Helper::getAgentByUserId();
 
-        $this->checkUserTaskPermission( $ticket->agent_id, $agent->id, 'update' );
+        $this->checkUserTaskPermission($ticket->agent_id, $agent->id, 'update');
 
         $response->content = wp_unslash(wp_kses_post($data['content']));
+
+        if ( $response->conversation_type == 'draft_response' ) {
+            $this->updateDraftResponseData($response);
+        }
+
         $response->save();
 
         return [
             'message'  => __('Selected response has been updated', 'fluent-support'),
             'response' => $response
         ];
+    }
+
+    public function updateDraftResponseData($response)
+    {
+        $agent = Helper::getAgentByUserId();
+        $approveDraftResponsePermission = PermissionManager::currentUserCan('fst_approve_draft_reply');
+
+        if ($response->person_id == $agent->id) {
+            return null;
+        }
+
+        if ($approveDraftResponsePermission) {
+            $response->conversation_type = 'response';
+            $response->save();
+            return [
+                'message'  => __('Selected draft response has been approved and updated', 'fluent-support'),
+                'response' => $response
+            ];
+        } else {
+            throw new \Exception("Sorry, You do not have permission to approve this draft response");
+        }
     }
 
     public function getSettingsValue($valueKey = false, $default = false)

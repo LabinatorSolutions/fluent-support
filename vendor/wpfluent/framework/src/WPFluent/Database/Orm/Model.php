@@ -12,6 +12,7 @@ use FluentSupport\Framework\Support\ForwardsCalls;
 use FluentSupport\Framework\Support\UrlRoutable;
 use FluentSupport\Framework\Support\JsonableInterface;
 use FluentSupport\Framework\Support\ArrayableInterface;
+use FluentSupport\Framework\Support\HelperFunctionsTrait;
 use FluentSupport\Framework\Support\CanBeEscapedWhenCastToString;
 use FluentSupport\Framework\Support\Collection as BaseCollection;
 use FluentSupport\Framework\Database\Orm\Relations\Pivot;
@@ -23,7 +24,7 @@ use FluentSupport\Framework\Database\ConnectionResolverInterface as Resolver;
 
 abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhenCastToString, JsonableInterface, JsonSerializable, UrlRoutable
 {
-    use ModelHelperTrait;
+    use HelperFunctionsTrait, ResourceAbleTrait;
 
     use Concerns\HasAttributes,
         Concerns\HasEvents,
@@ -128,7 +129,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
     /**
      * The event dispatcher instance.
      *
-     * @var \FluentSupport\Framework\Contracts\Events\Dispatcher
+     * @var \FluentSupport\Framework\Events\Dispatcher
      */
     protected static $dispatcher;
 
@@ -291,10 +292,8 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
      */
     protected function initializeTraits()
     {
-        if (isset(static::$traitInitializers[static::class])) {
-            foreach (static::$traitInitializers[static::class] as $method) {
-                $this->{$method}();
-            }
+        foreach (static::$traitInitializers[static::class] as $method) {
+            $this->{$method}();
         }
     }
 
@@ -1551,7 +1550,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
 
         $this->load(Helper::collect($this->relations)->reject(function ($relation) {
             return $relation instanceof Pivot
-                || (is_object($relation) && in_array(AsPivot::class, class_uses_recursive($relation), true));
+                || (is_object($relation) && in_array(AsPivot::class, static::classUsesRecursive($relation), true));
         })->keys()->all());
 
         $this->syncOriginal();
@@ -1614,7 +1613,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
     /**
      * Get the database connection for the model.
      *
-     * @return \FluentSupport\Framework\Database\Connection
+     * @return \FluentSupport\Framework\Database\Query\WPDBConnection
      */
     public function getConnection()
     {
@@ -1648,7 +1647,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
      * Resolve a connection instance.
      *
      * @param  string|null  $connection
-     * @return \FluentSupport\Framework\Database\Connection
+     * @return \FluentSupport\Framework\Database\Query\WPDBConnection
      */
     public static function resolveConnection($connection = null)
     {
@@ -1935,7 +1934,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
     /**
      * Retrieve the model for a bound value.
      *
-     * @param  \FluentSupport\Framework\Database\Orm\Model|FluentSupport\Framework\Database\Orm\Relations\Relation  $query
+     * @param  \FluentSupport\Framework\Database\Orm\Model|\FluentSupport\Framework\Database\Orm\Relations\Relation  $query
      * @param  mixed  $value
      * @param  string|null  $field
      * @return \FluentSupport\Framework\Database\Orm\Relations\Relation
@@ -2122,7 +2121,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
     public function __toString()
     {
         return $this->escapeWhenCastingToString
-                    ? e($this->toJson())
+                    ? esc_html($this->toJson())
                     : $this->toJson();
     }
 
@@ -2130,7 +2129,7 @@ abstract class Model implements ArrayableInterface, ArrayAccess, CanBeEscapedWhe
      * Indicate that the object's string representation should be escaped when __toString is invoked.
      *
      * @param  bool  $escape
-     * @return $this
+     * @return self
      */
     public function escapeWhenCastingToString($escape = true)
     {

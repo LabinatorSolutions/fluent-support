@@ -35,7 +35,9 @@ class PermissionManager
             'fst_view_activity_logs',
             'fst_merge_tickets',
             'fst_split_ticket',
-            'fst_agent_today_performance'
+            'fst_agent_today_performance',
+            'fst_draft_reply',
+            'fst_approve_draft_reply'
         ];
     }
 
@@ -92,6 +94,7 @@ class PermissionManager
 
         if ($user->has_cap('manage_options')) {
             $pluginPermission[] = 'administrator';
+            $pluginPermission = array_values(array_diff($pluginPermission, ['fst_draft_reply'])); //Remove draft reply permission from here
             return $pluginPermission;
         }
 
@@ -213,6 +216,8 @@ class PermissionManager
                     'fst_delete_tickets'            => __('Delete Tickets', 'fluent-support'),
                     'fst_merge_tickets'             => __('Merge Tickets', 'fluent-support'),
                     'fst_split_ticket'              => __('Split Ticket', 'fluent-support'),
+                    'fst_draft_reply'               => __('Draft Reply', 'fluent-support'),
+                    'fst_approve_draft_reply'       => __('Approve Draft Reply', 'fluent-support'),
                 ]
             ],
             [

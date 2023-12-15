@@ -30,4 +30,4 @@ if(window.fluentSupportAdmin.is_frontend) {
 
 setInterval(() => {
     window.fluentSupportAppp.$get('tickets/ping');
-}, 10000);
+}, 30000);

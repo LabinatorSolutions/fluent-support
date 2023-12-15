@@ -10,10 +10,34 @@ use WP_Error;
  */
 class WPException extends Exception {
 
+	/**
+	 * Http code
+	 * @var integer
+	 */
 	protected $code = 400;
+
+	/**
+	 * Exception message.
+	 * @var string
+	 */
 	protected $message = '';
+
+	/**
+	 * Error messages
+	 * @var array
+	 */
 	protected $errorData = [];
 
+	/**
+	 * WPError object
+	 * @var \WP_Error
+	 */
+	protected $wpError = null;
+
+	/**
+	 * Construct the WPException instance
+	 * @param WP_Error $wpError
+	 */
 	public function __construct(WP_Error $wpError)
 	{
 		$this->wpError = $wpError;
@@ -27,11 +51,19 @@ class WPException extends Exception {
 		parent::__construct($this->message, $this->code);
 	}
 
+	/**
+	 * Get the error messages
+	 * @return array
+	 */
 	public function errors()
 	{
 		return $this->toArray();
 	}
 
+	/**
+	 * Retrive the full formatted error messages.
+	 * @return [type] [description]
+	 */
 	protected function toArray()
 	{
 		$errors = [];

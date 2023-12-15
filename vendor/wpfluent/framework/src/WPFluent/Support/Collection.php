@@ -8,11 +8,12 @@ use ArrayIterator;
 use FluentSupport\Framework\Support\Helper;
 use FluentSupport\Framework\Support\MacroableTrait;
 use FluentSupport\Framework\Support\EnumeratesValues;
+use FluentSupport\Framework\Database\Orm\ResourceAbleTrait;
 use FluentSupport\Framework\Support\CanBeEscapedWhenCastToString;
 
 class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
 {
-    use EnumeratesValues, MacroableTrait;
+    use EnumeratesValues, MacroableTrait, ResourceAbleTrait;
 
     /**
      * The items contained in the collection.
@@ -423,7 +424,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
             return $this->items[$key];
         }
 
-        return value($default);
+        return Helper::value($default); // @need_fix
     }
 
     /**
@@ -439,7 +440,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
             return $this->items[$key];
         }
 
-        $this->offsetSet($key, $value = value($value));
+        $this->offsetSet($key, $value = Helper::value($value)); // @need_fix
 
         return $value;
     }

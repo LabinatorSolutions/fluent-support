@@ -45,7 +45,7 @@ class ReportingController extends Controller
      */
     public function getTicketsChart(Request $request, Reporting $reporting)
     {
-        list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
 
         $filter = [
             'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
@@ -68,8 +68,8 @@ class ReportingController extends Controller
      */
     public static function getResolveChart(Request $request, Reporting $reporting): array
     {
-        $type = $request->getSafe('type');
-        list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
+        $type = $request->getSafe('type', 'sanitize_text_field');
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
 
         $filter = [
             'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
@@ -92,7 +92,7 @@ class ReportingController extends Controller
      */
     public function getResponseChart(Request $request, Reporting $reporting)
     {
-        list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
         $filter = [];
         $stats = $reporting->getResponseGrowth($from, $to);
 
@@ -143,8 +143,8 @@ class ReportingController extends Controller
      */
     public static function getResponseGrowthChart(Request $request,Reporting $reporting): array
     {
-        $type = $request->getSafe('type');
-        list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
+        $type = $request->getSafe('type', 'sanitize_text_field');
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
 
         $filter = [
             'product_id' => $request->getSafe('product_id', 'intval') ?: null,
@@ -168,7 +168,7 @@ class ReportingController extends Controller
     public static function getProductsSummary(Request $request,Reporting $reporting): array
     {
         return [
-            'summary' =>  $reporting->getSummary('product',$request->getSafe('from'), $request->getSafe('to'))
+            'summary' =>  $reporting->getSummary('product',$request->getSafe('from', 'sanitize_text_field'), $request->getSafe('to', 'sanitize_text_field'))
         ];
 
     }
@@ -197,7 +197,7 @@ class ReportingController extends Controller
     {
         //Get logged in agent information
         $agent =  Helper::getAgentByUserId(get_current_user_id());
-        list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
 
         return [
             'stats' => $reporting->getTicketResolveGrowth($from, $to, ['agent_id' => $agent->id])
@@ -213,7 +213,7 @@ class ReportingController extends Controller
     public function getAgentResponseChart(Request $request, Reporting $reporting)
     {
         $agent =  Helper::getAgentByUserId(get_current_user_id());
-        list($from, $to) = $request->getSafe('date_range') ?: ['', ''];
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
 
         return [
             'stats' => $reporting->getResponseGrowth($from, $to, ['person_id' => $agent->id])
@@ -232,7 +232,7 @@ class ReportingController extends Controller
         $agent =  Helper::getAgentByUserId(get_current_user_id());
 
         return [
-            'summary' =>  $reporting->agentSummary($request->getSafe('from'), $request->getSafe('to'), $agent->id)
+            'summary' =>  $reporting->agentSummary($request->getSafe('from', 'sanitize_text_field'), $request->getSafe('to', 'sanitize_text_field'), $agent->id)
         ];
     }
 }

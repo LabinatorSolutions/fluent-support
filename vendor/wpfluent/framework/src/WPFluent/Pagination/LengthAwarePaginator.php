@@ -69,33 +69,6 @@ class LengthAwarePaginator extends AbstractPaginator implements ArrayableInterfa
     }
 
     /**
-     * Render the paginator using the given view.
-     *
-     * @param  string|null  $view
-     * @param  array  $data
-     * @return \FluentSupport\Framework\Support\Htmlable
-     */
-    public function links($view = null, $data = [])
-    {
-        return $this->render($view, $data);
-    }
-
-    /**
-     * Render the paginator using the given view.
-     *
-     * @param  string|null  $view
-     * @param  array  $data
-     * @return \FluentSupport\Framework\Support\Htmlable
-     */
-    public function render($view = null, $data = [])
-    {
-        return static::viewFactory()->make($view ?: static::$defaultView, array_merge($data, [
-            'paginator' => $this,
-            'elements' => $this->elements(),
-        ]));
-    }
-
-    /**
      * Get the paginator links as a collection (for JSON responses).
      *
      * @return \FluentSupport\Framework\Support\Collection

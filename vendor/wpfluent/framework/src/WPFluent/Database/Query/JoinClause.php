@@ -86,7 +86,7 @@ class JoinClause extends Builder
      * @param  string|null  $operator
      * @param  \FluentSupport\Framework\Database\Query\Expression|string|null  $second
      * @param  string  $boolean
-     * @return $this
+     * @return self
      *
      * @throws \InvalidArgumentException
      */

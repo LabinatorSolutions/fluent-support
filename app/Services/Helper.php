@@ -407,6 +407,11 @@ class Helper
         return $settings;
     }
 
+    public static function isAgentFeedbackEnabled()
+    {
+        return self::getBusinessSettings('agent_feedback_rating', 'no') == 'yes';
+    }
+
     public static function getTicketMeta($ticketId, $key, $default = '')
     {
         $data = Meta::where('object_type', 'ticket_meta')
@@ -629,7 +634,7 @@ class Helper
 
     public static function getExportOptions()
     {
-        return [
+        $data = [
             'Agent First Name' => __('Agent First Name', 'fluent-support'),
             'Agent Last Name'  => __('Agent Last Name', 'fluent-support'),
             'Agent Full Name'  => __('Agent Full Name', 'fluent-support'),
@@ -641,6 +646,13 @@ class Helper
             'Average Waiting'  => __('Average Waiting', 'fluent-support'),
             'Max Waiting'      => __('Max Waiting', 'fluent-support'),
         ];
+
+        if (Helper::isAgentFeedbackEnabled()) {
+            $data['Likes'] = __('Likes', 'fluent-support');
+            $data['Dislikes'] = __('Dislikes', 'fluent-support');
+        }
+
+        return $data;
     }
 
     public static function getAuthProvider()

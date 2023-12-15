@@ -4,27 +4,70 @@ namespace FluentSupport\Framework\Http;
 
 class Router
 {
+    /**
+     * Application Instance
+     * @var \FluentSupport\Framework\Foundation\Application
+     */
     protected $app = null;
     
+    /**
+     * Prefix for the route
+     * @var array
+     */
     protected $prefix = [];
     
+    /**
+     * Controller/Handler namespace
+     * @var array
+     */
     protected $namespace = [];
 
+    /**
+     * Registered routes collection
+     * @var array
+     */
     protected $routes = [];
-
-    protected $routeGroups = [];
     
-    protected $groupStack = [];
-    
-    protected $policyHandler = null;
+    /**
+     * Route policy handler to pass to the route
+     * @var array
+     */
+    protected $policyHandler = [];
 
+    /**
+     * Route middleware to pass to the route
+     * @var array
+     */
+    protected $middleware = [
+        'before' => [],
+        'after' => []
+    ];
+
+    /**
+     * Keep the track of number of group calls
+     * @var integer
+     */
+    protected $groupCount = 0;
+
+    /**
+     * Construct the routet instance
+     * @param \FluentSupport\Framework\Foundation\Application $app
+     */
     public function __construct($app)
     {
         $this->app = $app;
     }
 
+    /**
+     * Create a route group
+     * @param  array $attributes
+     * @param  \Closure|null $callback
+     * @return null
+     */
     public function group($attributes = [], \Closure $callback = null)
     {
+        $this->groupCount += 1;
+
         if ($attributes instanceof \Closure) {
             $callback = $attributes;
             $attributes = [];
@@ -34,17 +77,62 @@ class Router
             $this->prefix($attributes['prefix']);
         }
 
-        if (isset($attributes['policy'])) {
-            $this->withPolicy($attributes['policy']);
-        }
-
         if (isset($attributes['namespace'])) {
             $this->namespace($attributes['namespace']);
         }
 
-        return $this->executeGroupCallback($callback);
+        if (isset($attributes['policy'])) {
+            $this->withPolicy($attributes['policy']);
+        }
+
+        if (isset($attributes['middleware'])) {
+            $middleware = $attributes['middleware'];
+            if (isset($middleware['before'])) {
+                $this->middleware('before', $middleware['before']);
+            } elseif ($middleware['after']) {
+                $this->middleware('after', $middleware['after']);
+            }
+        }
+
+        // If the current group doesn't have a policy handler
+        // but the parent group has then bring it in this group.
+        if (!isset($this->policyHandler[$this->groupCount])) {
+            if (isset($this->policyHandler[$this->groupCount - 1])) {
+                if ($policyHandler = $this->policyHandler[$this->groupCount - 1]) {
+                    $this->policyHandler[] = $policyHandler;
+                }
+            }
+        }
+
+        // If the current group doesn't have a before middleware
+        // but the parent group has then bring it in this group.
+        if (!isset($this->middleware['before'][$this->groupCount])) {
+            if (isset($this->middleware['before'][$this->groupCount - 1])) {
+                if ($beforeMiddleware = $this->middleware['before'][$this->groupCount - 1]) {
+                    $this->middleware['before'][] = $beforeMiddleware;
+                }
+            }
+        }
+
+        // If the current group doesn't have a after middleware
+        // but the parent group has then bring it in this group.
+        if (!isset($this->middleware['after'][$this->groupCount])) {
+            if (isset($this->middleware['after'][$this->groupCount - 1])) {
+                if ($afterMiddleware = $this->middleware['after'][$this->groupCount - 1]) {
+                    $this->middleware['after'][] = $afterMiddleware;
+                }
+            }
+        }
+
+        return new Group($this, $callback);
     }
 
+    /**
+     * Set the route prefix
+     * 
+     * @param  string $prefix
+     * @return self
+     */
     public function prefix($prefix)
     {
         $this->prefix[] = $prefix;
@@ -52,13 +140,12 @@ class Router
         return $this;
     }
 
-    public function withPolicy($handler)
-    {
-        $this->policyHandler = $handler;
-
-        return $this;
-    }
-
+    /**
+     * Set the namespace for the action/controller
+     * 
+     * @param  string $namespace
+     * @return self
+     */
     public function namespace($ns)
     {
         $this->namespace[] = $ns;
@@ -66,18 +153,88 @@ class Router
         return $this;
     }
 
-    public function getNamespace()
+    /**
+     * Set the route policy
+     * 
+     * @param  mixed $handler
+     * @param  string|null $method
+     * @return self
+     */
+    public function withPolicy($handler, $method = null)
     {
-        return $this->namespace;
+        if (is_array($handler = $method ? func_get_args() : $handler)) {
+            $handler = implode('@', $handler);
+        }
+
+        $this->policyHandler[] = $handler;
+
+        return $this;
     }
 
-    protected function executeGroupCallback($callback)
+    /**
+     * Set the route before middleware
+     * 
+     * @param  array|string $middleware
+     * @return self
+     */
+    public function before(...$middleware)
+    {
+        return $this->middleware('before', ...$middleware);
+    }
+
+    /**
+     * Set the route after middleware
+     * 
+     * @param  array|string $middleware
+     * @return self
+     */
+    public function after(...$middleware)
+    {
+        return $this->middleware('after', ...$middleware);
+    }
+
+    /**
+     * Set the route middleware
+     * 
+     * @param  array|string $middleware
+     * @return self
+     */
+    public function middleware($type = 'before', ...$middleware)
+    {
+        if (is_array($middleware[0])) {
+            $middleware = reset($middleware);
+        }
+
+        $this->middleware[$type] = array_merge(
+            $this->middleware[$type], $middleware
+        );
+
+        return $this;
+    }
+
+    /**
+     * Execute the route group callback
+     * 
+     * @param  Closure $callback
+     * @return null
+     */
+    public function executeGroupCallback($callback)
     {
         $callback($this);
+        $this->groupCount -= 1;
         array_pop($this->prefix);
         array_pop($this->namespace);
+        array_pop($this->middleware['before']);
+        array_pop($this->middleware['after']);
+        array_pop($this->policyHandler);
     }
 
+    /**
+     * Declare a GET route endpoint
+     * @param  string $uri
+     * @param  string|Closure $handler
+     * @return \FluentSupport\Framework\Http\Route
+     */
     public function get($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
@@ -87,6 +244,12 @@ class Router
         return $route;
     }
 
+    /**
+     * Declare a POST route endpoint
+     * @param  string $uri
+     * @param  string|Closure $handler
+     * @return \FluentSupport\Framework\Http\Route
+     */
     public function post($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
@@ -96,6 +259,12 @@ class Router
         return $route;
     }
 
+    /**
+     * Declare a PUT route endpoint
+     * @param  string $uri
+     * @param  string|Closure $handler
+     * @return \FluentSupport\Framework\Http\Route
+     */
     public function put($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
@@ -105,6 +274,12 @@ class Router
         return $route;
     }
 
+    /**
+     * Declare a PATCH route endpoint
+     * @param  string $uri
+     * @param  string|Closure $handler
+     * @return \FluentSupport\Framework\Http\Route
+     */
     public function patch($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
@@ -114,6 +289,12 @@ class Router
         return $route;
     }
 
+    /**
+     * Declare a DELETE route endpoint
+     * @param  string $uri
+     * @param  string|Closure $handler
+     * @return \FluentSupport\Framework\Http\Route
+     */
     public function delete($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
@@ -123,6 +304,12 @@ class Router
         return $route;
     }
 
+    /**
+     * Declare a route endpoint that matches any HTTP Verb/Method
+     * @param  string $uri
+     * @param  string|Closure $handler
+     * @return \FluentSupport\Framework\Http\Route
+     */
     public function any($uri, $handler)
     {
         $this->routes[] = $route = $this->newRoute(
@@ -132,6 +319,13 @@ class Router
         return $route;
     }
 
+    /**
+     * Create a new route instance
+     * @param  string $uri
+     * @param  string|Closure $handler
+     * @param  string $method HTTP Method
+     * @return \FluentSupport\Framework\Http\Route
+     */
     protected function newRoute($uri, $handler, $method)
     {
         $route = Route::create(
@@ -142,17 +336,30 @@ class Router
             $method
         );
 
-        if ($this->policyHandler) {
-            $route->withPolicy($this->policyHandler);
-        }
-
         if ($this->namespace) {
             $route->withNamespace($this->namespace);
+        }
+
+        if ($this->policyHandler) {
+            $route->withPolicy(end($this->policyHandler));
+        }
+
+        if ($this->middleware['before']) {
+            $route->before($this->middleware['before']);
+        }
+
+        if ($this->middleware['after']) {
+            $route->after($this->middleware['after']);
         }
 
         return $route;
     }
 
+    /**
+     * Resolve the rest namespace for the plugin
+     * 
+     * @return string
+     */
     protected function getRestNamespace()
     {
         $version = $this->app->config->get('app.rest_version');
@@ -162,6 +369,12 @@ class Router
         return "{$namespace}/{$version}";
     }
 
+    /**
+     * Build the URI with the prefix
+     * 
+     * @param  string $uri
+     * @return string The URI
+     */
     protected function buildUriWithPrefix($uri)
     {
         $uri = trim($uri, '/');
@@ -175,11 +388,20 @@ class Router
         return trim($prefix, '/') . '/' . trim($uri, '/');
     }
 
+    /**
+     * Register all the routse in WordPress Rest Engine
+     * 
+     * @return null
+     */
     public function registerRoutes()
     {
         foreach ($this->routes as $route) $route->register();
     }
 
+    /**
+     * Get all ther registered routes
+     * @return array
+     */
     public function getRoutes()
     {
         return $this->routes;
