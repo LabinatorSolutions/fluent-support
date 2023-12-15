@@ -137,7 +137,7 @@ class Request
     /**
      * Calls a callback if has value, otherwise
      *  calls another/second callback if given.
-     * 
+     *
      * @param  string $key
      * @param  \Closure $has
      * @param  \Closure|null $hasnot
@@ -154,7 +154,7 @@ class Request
 
     /**
      * Checks if a key is missing in the request.
-     * 
+     *
      * @param  string $key
      * @return bool
      */
@@ -165,7 +165,7 @@ class Request
 
     /**
      * Calls the given callback if the provided key is missing.
-     * 
+     *
      * @param  string $key
      * @param  \Closure $callback
      * @return mixed
@@ -213,7 +213,7 @@ class Request
 
     /**
      * Check the content-type for JSON
-     * 
+     *
      * @return boolean
      */
     public function isJson()
@@ -230,10 +230,10 @@ class Request
     public function json($key = null, $default = null)
     {
         if (!$this->isJson()) return;
-        
+
         if (!isset($this->json)) {
             $json = $this->get_json_params() ?: $this->getContent();
-            
+
             $this->json = (array) json_decode($json, true);
         }
 
@@ -379,16 +379,17 @@ class Request
 
     public function mergeInputsFromRestRequest($wpRestRequest)
     {
+
         $this->request = array_merge(
-            $this->request, $this->clean($wpRestRequest->get_params())
+            $this->request, $wpRestRequest->get_params()
         );
-        
+
         $this->post = array_merge(
-            $this->post, $this->clean($wpRestRequest->get_body_params())
+            $this->post, $wpRestRequest->get_body_params()
         );
 
         $this->get = array_merge(
-            $this->get, $this->clean($wpRestRequest->get_query_params())
+            $this->get, $wpRestRequest->get_query_params()
         );
 
         $this->wpRestRequest = true;
@@ -582,7 +583,7 @@ class Request
 
     /**
      * Abort the request.
-     * 
+     *
      * @param  integer $status
      * @param  string  $message
      * @return null
@@ -620,16 +621,16 @@ class Request
     public function __call($method, $params)
     {
         if ($method == 'route') {
-                
+
             if ($params) {
                 return $this->app->route->{$params[0]};
             }
 
             return $this->app->route;
         }
-        
+
         if ($this->app->bound('wprestrequest')) {
-            
+
             if (!method_exists($this->app->wprestrequest, $method)) {
                 $method = strtolower(
                     preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1_$2', $method)
