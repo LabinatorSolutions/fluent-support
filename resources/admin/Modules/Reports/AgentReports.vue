@@ -4,7 +4,7 @@
             <div class="fs_box">
                 <div class="fs_box_header">
                     <div class="fs_box_head">
-                        {{ translate('Individual Performance') }}
+                        {{ url === "my-reports/my-summary" ? translate('Individual Performance') : translate('Agents Report Summary')  }}
                     </div>
                     <div class="fs_box_actions">
                         <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18" title="Filter Agent">
@@ -58,6 +58,18 @@
                         <el-table-column sortable="custom" prop="closed" :label="translate('Closed')">
                             <template #default="scope">
                                 {{ scope.row.stats?.closed }}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="likes" :label="translate('Likes')">
+                            <template #default="scope">
+                                {{ scope.row.stats?.likes }}
+                            </template>
+                        </el-table-column>
+
+                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="dislikes" :label="translate('Dislikes')">
+                            <template #default="scope">
+                                {{ scope.row.stats?.dislikes }}
                             </template>
                         </el-table-column>
 
@@ -308,17 +320,30 @@ export default {
         });
 
         const totals = computed(() => {
-            const summary = {
+
+            let summary = {
                 responses: 0,
                 interactions: 0,
                 opens: 0,
                 closed: 0,
             };
+
+            if (has_pro && appVars.agent_feedback_rating === "yes") {
+                summary = {
+                    ...summary,
+                    likes: 0,
+                    dislikes: 0,
+                };
+            }
             each(state.reports, (report) => {
                 summary.responses += parseInt(report.stats.responses);
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
+                if (has_pro && appVars.agent_feedback_rating === "yes") {
+                    summary.likes += parseInt(report.stats.likes);
+                    summary.dislikes += parseInt(report.stats.dislikes);
+                }
             });
             return summary;
         });
@@ -439,7 +464,8 @@ export default {
             onlyPastDates,
             getSummaries,
             exportReport,
-            has_pro
+            has_pro,
+            appVars
         }
     },
 };

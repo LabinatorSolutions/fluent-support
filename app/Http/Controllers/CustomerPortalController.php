@@ -6,6 +6,7 @@ use Exception;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Services\CustomerPortalService;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
@@ -28,13 +29,13 @@ class CustomerPortalController extends Controller
      */
     public function getTickets(Request $request, CustomerPortalService $customerPortalService)
     {
-        $onBehalf = $request->getSafe('on_behalf');
+        $onBehalf = $request->getSafe('on_behalf', 'sanitize_text_field');
         $userIP = $request->getIp();
 
         try {
             $customer = $customerPortalService->resolveCustomer($onBehalf, $userIP);
             return [
-                'tickets' => $customerPortalService->getTickets($customer, $request->getSafe('filter_type'))
+                'tickets' => $customerPortalService->getTickets($customer, $request->getSafe('filter_type', 'sanitize_text_field'))
             ];
         } catch (Exception $e) {
             return $this->sendError([
@@ -87,7 +88,7 @@ class CustomerPortalController extends Controller
         $data['title'] = sanitize_text_field($data['title']);
         $data['content'] = wp_kses_post($data['content']);
 
-        $onBehalf = $request->getSafe('on_behalf');
+        $onBehalf = $request->getSafe('on_behalf', 'sanitize_text_field');
         $userIP = $request->getIp();
 
         try {
@@ -135,7 +136,7 @@ class CustomerPortalController extends Controller
     {
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'sanitize_text_field'),
             'user_ip'              => $request->getIp()
         ];
 
@@ -158,9 +159,10 @@ class CustomerPortalController extends Controller
      */
     public function createResponse(TicketResponseRequest $request, CustomerPortalService $customerPortalService, $ticket_id)
     {
+
         $customerAdditionalData = [
-            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf'),
+            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', 'sanitize_text_field'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'sanitize_text_field'),
             'user_ip'              => $request->getIp()
         ];
 
@@ -195,8 +197,8 @@ class CustomerPortalController extends Controller
     public function closeTicket(Request $request, CustomerPortalService $customerPortalService, $ticket_id)
     {
         $customerAdditionalData = [
-            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf'),
+            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', 'sanitize_text_field'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'sanitize_text_field'),
             'user_ip'              => $request->getIp()
         ];
         try {
@@ -218,12 +220,26 @@ class CustomerPortalController extends Controller
     public function reOpenTicket(Request $request, CustomerPortalService $customerPortalService, $ticket_id)
     {
         $customerAdditionalData = [
-            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash'),
-            'on_behalf'            => $request->getSafe('on_behalf'),
+            'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', 'sanitize_text_field'),
+            'on_behalf'            => $request->getSafe('on_behalf', 'sanitize_text_field'),
             'user_ip'              => $request->getIp()
         ];
         try {
             return $customerPortalService->reOpenTicket($customerAdditionalData, $ticket_id);
+        } catch (Exception $e) {
+            return $this->sendError([
+                'message'    => $e->getMessage(),
+                'error_type' => $e->getCode()
+            ]);
+        }
+    }
+
+    public function agentFeedbackRating(Request $request, CustomerPortalService $customerPortalService, $conversationID)
+    {
+        $approvalStatus = $request->getSafe('approvalStatus', 'sanitize_text_field');
+
+        try {
+            return $customerPortalService->addUserFeedback($approvalStatus, $conversationID);
         } catch (Exception $e) {
             return $this->sendError([
                 'message'    => $e->getMessage(),

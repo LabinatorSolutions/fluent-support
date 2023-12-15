@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-11-07 13:17+0000\n"
+"POT-Creation-Date: 2023-12-15 10:13+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid " assign this ticket to self"
 msgstr ""
 
-#: app/Models/Ticket.php:1331
+#: app/Models/Ticket.php:1354
 msgid " has been updated"
 msgstr ""
 
@@ -28,7 +28,7 @@ msgstr ""
 msgid " in this ticket"
 msgstr ""
 
-#: app/Models/Ticket.php:1450
+#: app/Models/Ticket.php:1481
 msgid " tickets has been assigned to"
 msgstr ""
 
@@ -43,11 +43,13 @@ msgid ""
 "Portal%2s [fluent_support_auth]"
 msgstr ""
 
-#: app/Models/Ticket.php:1416
+#: app/Models/Ticket.php:1447
 msgid "%d tickets have been closed"
 msgstr ""
 
-#: app/Services/CustomerPortalService.php:312
+#: app/Services/CustomerPortalService.php:45
+#: app/Services/CustomerPortalService.php:314
+#: app/Services/CustomerPortalService.php:465
 #, php-format
 msgid "%s ago"
 msgstr ""
@@ -115,11 +117,11 @@ msgstr ""
 msgid "A"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:141
+#: app/Services/EmailNotification/Settings.php:142
 msgid "Accepted File Types"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:230
+#: app/Modules/PermissionManager.php:235
 msgid "Access Private Data (Customers, Agents)"
 msgstr ""
 
@@ -140,6 +142,7 @@ msgid "Actions"
 msgstr ""
 
 #: app/Services/TransStrings.php:273 app/Services/Helper.php:117
+#: app/Models/Traits/CustomerTrait.php:91
 msgid "Active"
 msgstr ""
 
@@ -294,12 +297,16 @@ msgid "Address Info"
 msgstr ""
 
 #: app/Models/Customer.php:52 app/Services/TransStrings.php:416
+#: app/Models/Traits/CustomerTrait.php:110
+#: app/Models/Traits/CustomerTrait.php:112
 #: app/Hooks/Handlers/AuthHandler.php:393
 #: app/Hooks/Handlers/AuthHandler.php:395
 msgid "Address Line 1"
 msgstr ""
 
 #: app/Models/Customer.php:53 app/Services/TransStrings.php:417
+#: app/Models/Traits/CustomerTrait.php:117
+#: app/Models/Traits/CustomerTrait.php:119
 #: app/Hooks/Handlers/AuthHandler.php:400
 #: app/Hooks/Handlers/AuthHandler.php:402
 msgid "Address Line 2"
@@ -345,11 +352,15 @@ msgstr ""
 msgid "Agent Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:114 app/Services/Helper.php:624
+#: app/Services/EmailNotification/Settings.php:191
+msgid "Agent Feedback Rating"
+msgstr ""
+
+#: app/Services/TransStrings.php:114 app/Services/Helper.php:629
 msgid "Agent First Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:116 app/Services/Helper.php:626
+#: app/Services/TransStrings.php:116 app/Services/Helper.php:631
 msgid "Agent Full Name"
 msgstr ""
 
@@ -357,7 +368,7 @@ msgstr ""
 msgid "Agent Job Title( ex: Developer, Support Staff )"
 msgstr ""
 
-#: app/Services/TransStrings.php:115 app/Services/Helper.php:625
+#: app/Services/TransStrings.php:115 app/Services/Helper.php:630
 msgid "Agent Last Name"
 msgstr ""
 
@@ -489,6 +500,10 @@ msgstr ""
 msgid "Apply / Remove Tags on FluentCRM Profile"
 msgstr ""
 
+#: app/Modules/PermissionManager.php:220
+msgid "Approve Draft Reply"
+msgstr ""
+
 #: app/Services/TransStrings.php:448
 msgid ""
 "are always on, running on selected ticket events. Based on what's\n"
@@ -584,7 +599,7 @@ msgstr ""
 msgid "Assign Agent"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:212
+#: app/Modules/PermissionManager.php:215
 msgid "Assign Agents"
 msgstr ""
 
@@ -641,7 +656,7 @@ msgstr ""
 msgid "average"
 msgstr ""
 
-#: app/Services/TransStrings.php:164 app/Services/Helper.php:632
+#: app/Services/TransStrings.php:164 app/Services/Helper.php:637
 msgid "Average Waiting"
 msgstr ""
 
@@ -665,7 +680,11 @@ msgstr ""
 msgid "Billing details"
 msgstr ""
 
-#: app/Services/TransStrings.php:433
+#: app/Models/Traits/CustomerTrait.php:104
+msgid "block_instruction"
+msgstr ""
+
+#: app/Services/TransStrings.php:433 app/Models/Traits/CustomerTrait.php:92
 msgid "Blocked"
 msgstr ""
 
@@ -726,7 +745,9 @@ msgstr ""
 msgid "Choose Mailbox"
 msgstr ""
 
-#: app/Models/Customer.php:54 app/Hooks/Handlers/AuthHandler.php:407
+#: app/Models/Customer.php:54 app/Models/Traits/CustomerTrait.php:124
+#: app/Models/Traits/CustomerTrait.php:126
+#: app/Hooks/Handlers/AuthHandler.php:407
 #: app/Hooks/Handlers/AuthHandler.php:409
 #: app/Hooks/Handlers/PrivacyHandler.php:240
 msgid "City"
@@ -799,7 +820,7 @@ msgid "Close Tickets"
 msgstr ""
 
 #: app/Services/TransStrings.php:160 app/Services/Helper.php:118
-#: app/Services/Helper.php:630 app/Hooks/Handlers/CustomerPortalHandler.php:116
+#: app/Services/Helper.php:635 app/Hooks/Handlers/CustomerPortalHandler.php:116
 msgid "Closed"
 msgstr ""
 
@@ -872,7 +893,7 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:62
+#: app/Http/Controllers/CustomerPortalController.php:63
 msgid "Content is required"
 msgstr ""
 
@@ -909,6 +930,8 @@ msgid "Count"
 msgstr ""
 
 #: app/Models/Customer.php:57 app/Services/TransStrings.php:420
+#: app/Models/Traits/CustomerTrait.php:145
+#: app/Models/Traits/CustomerTrait.php:146
 #: app/Hooks/Handlers/AuthHandler.php:428
 #: app/Hooks/Handlers/PrivacyHandler.php:252
 msgid "Country"
@@ -1042,7 +1065,7 @@ msgstr ""
 msgid "Custom Fields"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:180
+#: app/Services/EmailNotification/Settings.php:181
 msgid "Custom Registration Form Field"
 msgstr ""
 
@@ -1050,7 +1073,7 @@ msgstr ""
 msgid "Custom Ticket Fields"
 msgstr ""
 
-#: app/Http/Controllers/CustomerController.php:141
+#: app/Http/Controllers/CustomerController.php:149
 msgid "Customer avatar reset to gravatar default"
 msgstr ""
 
@@ -1058,7 +1081,7 @@ msgstr ""
 msgid "Customer Data"
 msgstr ""
 
-#: app/Models/Traits/CustomerTrait.php:187
+#: app/Models/Traits/CustomerTrait.php:325
 msgid "Customer Deleted Successfully"
 msgstr ""
 
@@ -1078,12 +1101,12 @@ msgstr ""
 msgid "Customer Full Name"
 msgstr ""
 
-#: app/Http/Controllers/CustomerController.php:60
+#: app/Http/Controllers/CustomerController.php:68
 msgid "Customer has been added"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:414
-#: app/Http/Controllers/CustomerController.php:82
+#: app/Http/Controllers/TicketController.php:428
+#: app/Http/Controllers/CustomerController.php:90
 msgid "Customer has been updated"
 msgstr ""
 
@@ -1137,7 +1160,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:180
+#: app/Http/Controllers/SettingsController.php:179
 msgid "Default status for new contacts"
 msgstr ""
 
@@ -1145,7 +1168,7 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:160
+#: app/Services/EmailNotification/Settings.php:161
 msgid "Delete all attachments on ticket close"
 msgstr ""
 
@@ -1169,7 +1192,7 @@ msgstr ""
 msgid "Delete Ticket"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:213
+#: app/Modules/PermissionManager.php:216
 msgid "Delete Tickets"
 msgstr ""
 
@@ -1186,7 +1209,7 @@ msgstr ""
 msgid "Disable Activity Logs"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:135
+#: app/Services/EmailNotification/Settings.php:136
 msgid "Disable Public Ticket interaction"
 msgstr ""
 
@@ -1194,8 +1217,12 @@ msgstr ""
 msgid "Discard"
 msgstr ""
 
-#: app/Models/Ticket.php:1229
+#: app/Models/Ticket.php:1252
 msgid "Discard draft successfully"
+msgstr ""
+
+#: app/Services/Helper.php:643
+msgid "Dislikes"
 msgstr ""
 
 #: app/Services/TransStrings.php:207
@@ -1212,12 +1239,20 @@ msgstr ""
 msgid "Don't have a license key?"
 msgstr ""
 
-#: app/Models/Ticket.php:1184
+#: app/Models/Ticket.php:1207
 msgid "Draft has been added"
 msgstr ""
 
-#: app/Models/Ticket.php:1196
+#: app/Models/Ticket.php:1219
 msgid "Draft has been updated"
+msgstr ""
+
+#: app/Modules/PermissionManager.php:219
+msgid "Draft Reply"
+msgstr ""
+
+#: app/Models/Conversation.php:313
+msgid "Draft response has been successfully approved."
 msgstr ""
 
 #: app/Services/TransStrings.php:566
@@ -1248,7 +1283,9 @@ msgstr ""
 msgid "eg: Awesome Business Inc"
 msgstr ""
 
-#: app/Services/TransStrings.php:61 app/Hooks/Handlers/PrivacyHandler.php:216
+#: app/Services/TransStrings.php:61 app/Models/Traits/CustomerTrait.php:65
+#: app/Models/Traits/CustomerTrait.php:67
+#: app/Hooks/Handlers/PrivacyHandler.php:216
 msgid "Email"
 msgstr ""
 
@@ -1258,7 +1295,7 @@ msgstr ""
 msgid "Email Address"
 msgstr ""
 
-#: app/Http/Controllers/CustomerController.php:90
+#: app/Http/Controllers/CustomerController.php:98
 msgid "Email address has been assigned to other customer"
 msgstr ""
 
@@ -1307,7 +1344,7 @@ msgstr ""
 msgid "Enable Conditional Logics"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:174
+#: app/Services/EmailNotification/Settings.php:175
 msgid "Enable Draft Mode"
 msgstr ""
 
@@ -1315,11 +1352,11 @@ msgstr ""
 msgid "Enable Dynamic Product Selection"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:167
+#: app/Services/EmailNotification/Settings.php:168
 msgid "Enable Fluent Summary In Admin Bar"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:176
+#: app/Http/Controllers/SettingsController.php:175
 msgid "Enable FluentCRM Integration"
 msgstr ""
 
@@ -1433,7 +1470,9 @@ msgstr ""
 msgid "Filter By Ticket Type"
 msgstr ""
 
-#: app/Services/TransStrings.php:52 app/Hooks/Handlers/PrivacyHandler.php:208
+#: app/Services/TransStrings.php:52 app/Models/Traits/CustomerTrait.php:51
+#: app/Models/Traits/CustomerTrait.php:53
+#: app/Hooks/Handlers/PrivacyHandler.php:208
 #: app/Services/Integrations/FluentForm/FeedIntegration.php:184
 msgid "First Name"
 msgstr ""
@@ -1443,7 +1482,7 @@ msgstr ""
 msgid "First name"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:439
+#: app/Http/Controllers/SettingsController.php:438
 msgid "Fluent Forms could not be installed"
 msgstr ""
 
@@ -1453,8 +1492,8 @@ msgid ""
 "Support Plugin"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:412
-#: app/Http/Controllers/SettingsController.php:434
+#: app/Http/Controllers/SettingsController.php:411
+#: app/Http/Controllers/SettingsController.php:433
 msgid "Fluent Forms plugin has been installed and activated successfully"
 msgstr ""
 
@@ -1516,8 +1555,8 @@ msgstr ""
 msgid "FluentCRM Integration Settings"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:375
-#: app/Http/Controllers/SettingsController.php:397
+#: app/Http/Controllers/SettingsController.php:374
+#: app/Http/Controllers/SettingsController.php:396
 msgid "FluentCRM plugin has been installed and activated successfully"
 msgstr ""
 
@@ -1649,25 +1688,31 @@ msgstr ""
 msgid "If you don't select any column, by default system will take all."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:175
+#: app/Services/EmailNotification/Settings.php:176
 msgid ""
 "If you enable this setting, then if an agent close a ticket accidentally "
 "then the written response will be saved as draft."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:136
+#: app/Services/EmailNotification/Settings.php:192
+msgid ""
+"If you enable this setting, users will have the option to provide feedback "
+"on an agent's response."
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:137
 msgid ""
 "If you enable this then only logged in user can reply the tickets. Otherwise,"
 " url will be signed and intended user can reply without logging in"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:161
+#: app/Services/EmailNotification/Settings.php:162
 msgid ""
 "If you enable this then when a ticket get closed it will delete all the "
 "attachments associated with the particular ticket."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:168
+#: app/Services/EmailNotification/Settings.php:169
 msgid ""
 "If you enable this, logged in user can see the ticket summary from top nav "
 "bar."
@@ -1771,7 +1816,7 @@ msgstr ""
 msgid "Install & Activate FluentCRM (it's free)"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:255
+#: app/Http/Controllers/SettingsController.php:254
 msgid "Installation has been completed"
 msgstr ""
 
@@ -1790,11 +1835,11 @@ msgid "Integration Settings"
 msgstr ""
 
 #: app/Modules/StatModule.php:85 app/Services/TransStrings.php:158
-#: app/Services/Helper.php:628
+#: app/Services/Helper.php:633
 msgid "Interactions"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:80
+#: app/Http/Controllers/CustomerPortalController.php:81
 msgid "Invalid form data submitted"
 msgstr ""
 
@@ -1845,7 +1890,8 @@ msgid ""
 "suggestion, bug report etc"
 msgstr ""
 
-#: app/Services/TransStrings.php:414
+#: app/Services/TransStrings.php:414 app/Models/Traits/CustomerTrait.php:73
+#: app/Models/Traits/CustomerTrait.php:75
 msgid "Job Title"
 msgstr ""
 
@@ -1893,7 +1939,9 @@ msgstr ""
 msgid "Last Month"
 msgstr ""
 
-#: app/Services/TransStrings.php:53 app/Hooks/Handlers/AuthHandler.php:348
+#: app/Services/TransStrings.php:53 app/Models/Traits/CustomerTrait.php:58
+#: app/Models/Traits/CustomerTrait.php:60
+#: app/Hooks/Handlers/AuthHandler.php:348
 #: app/Hooks/Handlers/PrivacyHandler.php:212
 #: app/Services/Integrations/FluentForm/FeedIntegration.php:188
 msgid "Last Name"
@@ -1913,6 +1961,10 @@ msgstr ""
 
 #: app/Services/TransStrings.php:400
 msgid "License Management"
+msgstr ""
+
+#: app/Services/Helper.php:642
+msgid "Likes"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:76
@@ -1963,19 +2015,19 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:211
+#: app/Modules/PermissionManager.php:214
 msgid "Manage Others Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:229
+#: app/Modules/PermissionManager.php:234
 msgid "Manage Overall Settings"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:209
+#: app/Modules/PermissionManager.php:212
 msgid "Manage Own Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:223
+#: app/Modules/PermissionManager.php:228
 msgid "Manage Saved Replies"
 msgstr ""
 
@@ -1983,11 +2035,11 @@ msgstr ""
 msgid "Manage Support Staff"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:210
+#: app/Modules/PermissionManager.php:213
 msgid "Manage Unassigned Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:221
+#: app/Modules/PermissionManager.php:226
 msgid "Manage Workflows"
 msgstr ""
 
@@ -2031,7 +2083,7 @@ msgstr ""
 msgid "Match Value"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:148
+#: app/Services/EmailNotification/Settings.php:149
 msgid "Max File Size (in MegaByte)"
 msgstr ""
 
@@ -2039,11 +2091,11 @@ msgstr ""
 msgid "max wait time"
 msgstr ""
 
-#: app/Services/TransStrings.php:165 app/Services/Helper.php:633
+#: app/Services/TransStrings.php:165 app/Services/Helper.php:638
 msgid "Max Waiting"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:154
+#: app/Services/EmailNotification/Settings.php:155
 msgid "Maximum File Upload"
 msgstr ""
 
@@ -2067,11 +2119,11 @@ msgstr ""
 msgid "Merge"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:214 app/Services/TransStrings.php:607
+#: app/Modules/PermissionManager.php:217 app/Services/TransStrings.php:607
 msgid "Merge Tickets"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:128
+#: app/Services/EmailNotification/Settings.php:129
 msgid "Message for non logged in users"
 msgstr ""
 
@@ -2170,7 +2222,8 @@ msgstr ""
 msgid "Not registered?"
 msgstr ""
 
-#: app/Services/TransStrings.php:415
+#: app/Services/TransStrings.php:415 app/Models/Traits/CustomerTrait.php:80
+#: app/Models/Traits/CustomerTrait.php:82
 msgid "Note"
 msgstr ""
 
@@ -2214,7 +2267,7 @@ msgstr ""
 msgid "Open Ticket in New Tab"
 msgstr ""
 
-#: app/Services/TransStrings.php:159 app/Services/Helper.php:629
+#: app/Services/TransStrings.php:159 app/Services/Helper.php:634
 msgid "Open Tickets"
 msgstr ""
 
@@ -2267,7 +2320,7 @@ msgstr ""
 msgid "PDF/Docs"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:188
+#: app/Http/Controllers/SettingsController.php:187
 msgid "Pending"
 msgstr ""
 
@@ -2379,7 +2432,7 @@ msgstr ""
 msgid "Please provide fallback box"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:129
+#: app/Services/EmailNotification/Settings.php:130
 msgid ""
 "Please provide message for not logged in users. You can place login "
 "shortcode too Use shortcode <code>[fluent_support_login]</code> to show "
@@ -2394,7 +2447,7 @@ msgid ""
 "email settings"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:124
+#: app/Services/EmailNotification/Settings.php:125
 msgid ""
 "Please provide the page id where you want to show the tickets for your "
 "customers. Use shortcode <code>[fluent_support_portal]</code> in that page"
@@ -2412,7 +2465,7 @@ msgstr ""
 msgid "Please select a mailbox"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:101
+#: app/Http/Controllers/SettingsController.php:100
 msgid "Please select a page or enable create page"
 msgstr ""
 
@@ -2430,7 +2483,7 @@ msgstr ""
 msgid "Please setup your support portal first"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:120
+#: app/Services/EmailNotification/Settings.php:121
 msgid "Portal Page"
 msgstr ""
 
@@ -2572,7 +2625,7 @@ msgstr ""
 msgid "Replied By Agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:223
+#: app/Services/EmailNotification/Settings.php:234
 msgid "Replied by Agent (To Customer)"
 msgstr ""
 
@@ -2580,7 +2633,7 @@ msgstr ""
 msgid "Replied By Customer"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:247
+#: app/Services/EmailNotification/Settings.php:258
 msgid "Replied by Customer (To Agent/Admin)"
 msgstr ""
 
@@ -2601,7 +2654,7 @@ msgstr ""
 msgid "Reply and Close"
 msgstr ""
 
-#: app/Services/CustomerPortalService.php:103
+#: app/Services/CustomerPortalService.php:105
 msgid "Reply has been added"
 msgstr ""
 
@@ -2613,7 +2666,7 @@ msgstr ""
 msgid "Reply To Selected Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:234
+#: app/Modules/PermissionManager.php:239
 msgid "Reporting"
 msgstr ""
 
@@ -2664,11 +2717,11 @@ msgstr ""
 msgid "Response Count"
 msgstr ""
 
-#: app/Models/Ticket.php:1154
+#: app/Models/Ticket.php:1177
 msgid "Response has been added"
 msgstr ""
 
-#: app/Models/Conversation.php:178
+#: app/Models/Conversation.php:180
 msgid "Response has been added to the selected tickets"
 msgstr ""
 
@@ -2682,7 +2735,7 @@ msgstr ""
 
 #: app/Modules/StatModule.php:81 app/Modules/StatModule.php:124
 #: app/Modules/StatModule.php:164 app/Services/TransStrings.php:157
-#: app/Services/Helper.php:627
+#: app/Services/Helper.php:632
 msgid "Responses"
 msgstr ""
 
@@ -2694,7 +2747,7 @@ msgstr ""
 msgid "Run Workflow"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:222
+#: app/Modules/PermissionManager.php:227
 msgid "Run workflows"
 msgstr ""
 
@@ -2826,7 +2879,7 @@ msgstr ""
 msgid "Select Option"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:122
+#: app/Services/EmailNotification/Settings.php:123
 msgid "Select Portal Page"
 msgstr ""
 
@@ -2852,7 +2905,7 @@ msgstr ""
 msgid "Select the Business you would like to add your Support Ticket to."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:196
+#: app/Http/Controllers/SettingsController.php:195
 msgid ""
 "Select the default status for new contacts. If you select pending and it's a "
 "new contact then a double optin email will be sent"
@@ -2882,15 +2935,19 @@ msgstr ""
 msgid "Selected Contact Details"
 msgstr ""
 
-#: app/Models/Conversation.php:256
+#: app/Models/Conversation.php:354
+msgid "Selected draft response has been approved and updated"
+msgstr ""
+
+#: app/Models/Conversation.php:258
 msgid "Selected response has been deleted"
 msgstr ""
 
-#: app/Models/Conversation.php:272
+#: app/Models/Conversation.php:336
 msgid "Selected response has been updated"
 msgstr ""
 
-#: app/Models/Ticket.php:1474
+#: app/Models/Ticket.php:1505
 msgid "Selected tags has been added to tickets"
 msgstr ""
 
@@ -2924,7 +2981,7 @@ msgstr ""
 msgid "Set Your Trigger & Conditions"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:227 app/Services/TransStrings.php:140
+#: app/Modules/PermissionManager.php:232 app/Services/TransStrings.php:140
 #: app/Hooks/Handlers/Menu.php:93 app/Hooks/Handlers/Menu.php:94
 msgid "Settings"
 msgstr ""
@@ -2937,13 +2994,13 @@ msgstr ""
 msgid "Settings could not be loaded"
 msgstr ""
 
-#: app/Http/Controllers/SlackController.php:41
+#: app/Http/Controllers/SlackController.php:40
 #: app/Http/Controllers/IntegrationController.php:35
 msgid "Settings failed to save"
 msgstr ""
 
-#: app/Http/Controllers/SlackController.php:48
-#: app/Http/Controllers/SettingsController.php:65
+#: app/Http/Controllers/SlackController.php:47
+#: app/Http/Controllers/SettingsController.php:64
 #: app/Http/Controllers/IntegrationController.php:43
 #: app/Services/MailerInbox/MailBoxService.php:194
 msgid "Settings has been updated"
@@ -2997,15 +3054,15 @@ msgstr ""
 msgid "Slug (Optional)"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:175
+#: app/Http/Controllers/CustomerPortalController.php:177
 msgid "Sorry you can not create response"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:101
+#: app/Http/Controllers/CustomerPortalController.php:102
 msgid "Sorry you can not create ticket"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:401
+#: app/Http/Controllers/SettingsController.php:400
 msgid "Sorry! FluentCRM could not be installed. Please install manually"
 msgstr ""
 
@@ -3025,7 +3082,7 @@ msgid ""
 "new signed url"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:215 app/Services/TransStrings.php:618
+#: app/Modules/PermissionManager.php:218 app/Services/TransStrings.php:618
 msgid "Split Ticket"
 msgstr ""
 
@@ -3039,6 +3096,8 @@ msgid "started the conversation"
 msgstr ""
 
 #: app/Models/Customer.php:55 app/Services/TransStrings.php:418
+#: app/Models/Traits/CustomerTrait.php:131
+#: app/Models/Traits/CustomerTrait.php:133
 #: app/Hooks/Handlers/AuthHandler.php:421
 #: app/Hooks/Handlers/AuthHandler.php:423
 #: app/Hooks/Handlers/PrivacyHandler.php:248
@@ -3049,7 +3108,7 @@ msgstr ""
 msgid "Stats"
 msgstr ""
 
-#: app/Services/TransStrings.php:75
+#: app/Services/TransStrings.php:75 app/Models/Traits/CustomerTrait.php:87
 #: app/Hooks/Handlers/CustomerPortalHandler.php:123
 #: app/Hooks/Handlers/PrivacyHandler.php:220
 msgid "Status"
@@ -3065,7 +3124,7 @@ msgstr ""
 msgid "Submit a Support Ticket"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:184
+#: app/Http/Controllers/SettingsController.php:183
 msgid "Subscribed"
 msgstr ""
 
@@ -3097,7 +3156,7 @@ msgstr ""
 msgid "Support From Email"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:112
+#: app/Http/Controllers/SettingsController.php:111
 msgid "Support Portal"
 msgstr ""
 
@@ -3110,19 +3169,19 @@ msgstr ""
 msgid "Support Staff"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:177
+#: app/Http/Controllers/AgentController.php:195
 msgid "Support Staff avatar reset to gravatar default"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:41
+#: app/Http/Controllers/AgentController.php:49
 msgid "Support Staff has been added"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:93
+#: app/Http/Controllers/AgentController.php:110
 msgid "Support Staff has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:67
+#: app/Http/Controllers/AgentController.php:84
 msgid "Support Staff has been updated"
 msgstr ""
 
@@ -3152,11 +3211,11 @@ msgstr ""
 msgid "Tag Description"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:381
+#: app/Http/Controllers/TicketController.php:395
 msgid "Tag has been added to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:398
+#: app/Http/Controllers/TicketController.php:412
 msgid "Tag has been removed from this ticket"
 msgstr ""
 
@@ -3209,33 +3268,33 @@ msgstr ""
 msgid "The Ultimate Support Plugin For Your WordPress."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:248
+#: app/Services/EmailNotification/Settings.php:259
 msgid ""
 "This email will be sent to Assigned Agent or Admin when a customer reply to "
 "a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:256
+#: app/Services/EmailNotification/Settings.php:267
 msgid "This email will be sent to newly assigned agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:216
+#: app/Services/EmailNotification/Settings.php:227
 msgid "This email will be sent when a customer submit a support ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:232
+#: app/Services/EmailNotification/Settings.php:243
 msgid "This email will be sent when an agent close a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:264
+#: app/Services/EmailNotification/Settings.php:275
 msgid "This email will be sent when an agent create a ticket for a customer"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:224
+#: app/Services/EmailNotification/Settings.php:235
 msgid "This email will be sent when an agent reply to a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:240
+#: app/Services/EmailNotification/Settings.php:251
 msgid ""
 "This email will be sent when the business when a new ticket has been "
 "submitted"
@@ -3282,7 +3341,7 @@ msgstr ""
 msgid "Thread Starter"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:255
+#: app/Services/EmailNotification/Settings.php:266
 msgid "Ticket Agent Change (To Agent)"
 msgstr ""
 
@@ -3300,7 +3359,7 @@ msgstr ""
 msgid "Ticket Closed By Agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:231
+#: app/Services/EmailNotification/Settings.php:242
 msgid "Ticket Closed by Agent (To Customer)"
 msgstr ""
 
@@ -3310,11 +3369,11 @@ msgstr ""
 msgid "Ticket Content"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:239
+#: app/Services/EmailNotification/Settings.php:250
 msgid "Ticket Created (To Admin)"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:215
+#: app/Services/EmailNotification/Settings.php:226
 msgid "Ticket Created (To Customer)"
 msgstr ""
 
@@ -3330,7 +3389,7 @@ msgstr ""
 msgid "Ticket created at "
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:263
+#: app/Services/EmailNotification/Settings.php:274
 msgid "Ticket Created by Agent (To Customer)"
 msgstr ""
 
@@ -3369,13 +3428,13 @@ msgstr ""
 msgid "Ticket Form Settings"
 msgstr ""
 
-#: app/Services/CustomerPortalService.php:125
-#: app/Services/Tickets/ResponseService.php:116
+#: app/Services/CustomerPortalService.php:127
+#: app/Services/Tickets/ResponseService.php:118
 #: app/Services/Tickets/TicketService.php:40
 msgid "Ticket has been closed"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:116
+#: app/Http/Controllers/CustomerPortalController.php:117
 msgid "Ticket has been created successfully"
 msgstr ""
 
@@ -3383,7 +3442,7 @@ msgstr ""
 msgid "Ticket has been deleted successfully"
 msgstr ""
 
-#: app/Services/CustomerPortalService.php:145
+#: app/Services/CustomerPortalService.php:147
 msgid "Ticket has been opened again"
 msgstr ""
 
@@ -3406,10 +3465,6 @@ msgstr ""
 
 #: app/Services/TransStrings.php:113
 msgid "Ticket Mailbox"
-msgstr ""
-
-#: app/Models/Ticket.php:1058
-msgid "Ticket Not Found"
 msgstr ""
 
 #: app/Services/TransStrings.php:111 app/Hooks/Handlers/PrivacyHandler.php:99
@@ -3503,7 +3558,7 @@ msgstr ""
 msgid "Tickets Migration From Other Plugins"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:206
+#: app/Modules/PermissionManager.php:209
 msgid "Tickets Permissions"
 msgstr ""
 
@@ -3515,7 +3570,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:61
+#: app/Http/Controllers/CustomerPortalController.php:62
 msgid "Title is required"
 msgstr ""
 
@@ -3593,7 +3648,7 @@ msgstr ""
 msgid "Un-Assigned Tickets"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:272
+#: app/Http/Controllers/SettingsController.php:271
 msgid "Unable to delete reCAPTCHA settings, try again"
 msgstr ""
 
@@ -3659,15 +3714,15 @@ msgstr ""
 msgid "Upload a Custom Picture"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:592
+#: app/Http/Controllers/SettingsController.php:591
 msgid "Upload and store the files to your Dropbox Storage."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:601
+#: app/Http/Controllers/SettingsController.php:600
 msgid "Upload and store the files to your Google Drive Storage."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:583
+#: app/Http/Controllers/SettingsController.php:582
 msgid "Upload and store the files to your WordPress File System Storage."
 msgstr ""
 
@@ -3712,11 +3767,11 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:237
+#: app/Modules/PermissionManager.php:242
 msgid "View Activity Logs"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:238
+#: app/Modules/PermissionManager.php:243
 msgid "View Agent Today Performance"
 msgstr ""
 
@@ -3725,11 +3780,11 @@ msgstr ""
 msgid "View All"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:236
+#: app/Modules/PermissionManager.php:241
 msgid "View All Reports"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:208
+#: app/Modules/PermissionManager.php:211
 msgid "View Dashboard"
 msgstr ""
 
@@ -3758,7 +3813,7 @@ msgstr ""
 msgid "Waiting for Reply"
 msgstr ""
 
-#: app/Services/TransStrings.php:163 app/Services/Helper.php:631
+#: app/Services/TransStrings.php:163 app/Services/Helper.php:636
 msgid "Waiting Tickets"
 msgstr ""
 
@@ -3825,7 +3880,7 @@ msgstr ""
 msgid "Workflow Name"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:219
+#: app/Modules/PermissionManager.php:224
 msgid "Workflow Permissions"
 msgstr ""
 
@@ -3932,7 +3987,7 @@ msgstr ""
 msgid "You do not have permission"
 msgstr ""
 
-#: app/Models/Ticket.php:1353
+#: app/Models/Ticket.php:1370
 msgid "You do not have permission to assign agent"
 msgstr ""
 
@@ -3945,7 +4000,7 @@ msgstr ""
 msgid "You don't have permission to access customer support portal"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:276
+#: app/Http/Controllers/CustomerPortalController.php:292
 msgid "You have been logged out"
 msgstr ""
 
@@ -4012,7 +4067,7 @@ msgstr ""
 msgid "Your Overview For Today"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:288
+#: app/Http/Controllers/SettingsController.php:287
 msgid "Your recaptcha details are already saved."
 msgstr ""
 
@@ -4021,19 +4076,19 @@ msgstr ""
 msgid "Your recaptcha is not verified"
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:316
+#: app/Http/Controllers/SettingsController.php:315
 msgid "Your reCAPTCHA settings added successfully."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:296
+#: app/Http/Controllers/SettingsController.php:295
 msgid "Your reCAPTCHA settings are not valid."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:267
+#: app/Http/Controllers/SettingsController.php:266
 msgid "Your reCAPTCHA settings deleted successfully."
 msgstr ""
 
-#: app/Http/Controllers/SettingsController.php:305
+#: app/Http/Controllers/SettingsController.php:304
 msgid "Your reCAPTCHA settings updated successfully."
 msgstr ""
 
@@ -4052,5 +4107,7 @@ msgid "Zip"
 msgstr ""
 
 #: app/Models/Customer.php:56 app/Services/TransStrings.php:419
+#: app/Models/Traits/CustomerTrait.php:138
+#: app/Models/Traits/CustomerTrait.php:140
 msgid "Zip Code"
 msgstr ""

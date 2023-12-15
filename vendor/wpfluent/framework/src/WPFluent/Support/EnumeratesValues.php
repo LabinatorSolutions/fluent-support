@@ -3,7 +3,6 @@
 namespace FluentSupport\Framework\Support;
 
 use Closure;
-use UnitEnum;
 use Exception;
 use Traversable;
 use CachingIterator;
@@ -900,7 +899,7 @@ trait EnumeratesValues
     public function __toString()
     {
         return $this->escapeWhenCastingToString
-                    ? e($this->toJson())
+                    ? esc_html($this->toJson())
                     : $this->toJson();
     }
 
@@ -965,8 +964,10 @@ trait EnumeratesValues
             return (array) $items->jsonSerialize();
         } elseif ($items instanceof Traversable) {
             return iterator_to_array($items);
-        } elseif ($items instanceof UnitEnum) {
-            return [$items];
+        } elseif (function_exists('enum_exists')) {
+            if ($items instanceof \UnitEnum) {
+                return [$items];
+            }
         }
 
         return (array) $items;

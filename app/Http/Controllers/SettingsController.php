@@ -26,7 +26,7 @@ class SettingsController extends Controller
      */
     public function getSettings(Request $request)
     {
-        $settingsKey = $request->getSafe('settings_key');
+        $settingsKey = $request->getSafe('settings_key', 'sanitize_text_field');
 
         return (new Settings)->get($settingsKey);
     }
@@ -56,9 +56,8 @@ class SettingsController extends Controller
      */
     public function saveSettings(Request $request)
     {
-        $settingsKey = $request->getSafe('settings_key');
-        $settings = wp_unslash($request->getSafe('settings'));
-
+        $settingsKey = $request->getSafe('settings_key', 'sanitize_text_field');
+        $settings = wp_unslash($request->getSafe('settings', null, []));
         (new Settings)->save($settingsKey, $settings);
 
         return [
@@ -573,7 +572,7 @@ class SettingsController extends Controller
             $googleDriveSettings = Helper::getIntegrationOption('google_drive_settings');
             $googleDriveConfigured = $googleDriveSettings && !empty($googleDriveSettings['access_token']);
         }
-        
+
         $drivers = apply_filters('fluent_support/storage_drivers_info', [
             'local'        => [
                 'title'         => 'Default WordPress Storage',

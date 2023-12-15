@@ -146,7 +146,8 @@ class Pipeline
                         // will resolve the pipes out of the dependency container and call it with
                         // the appropriate method and arguments, returning the results back out.
                         return $pipe($passable, $stack);
-                    } elseif (! is_object($pipe)) {
+                    }
+                    if (! is_object($pipe)) {
                         [$name, $parameters] = $this->parsePipeString($pipe);
 
                         // If the pipe is a string we will parse the string and resolve the class out

@@ -26,13 +26,14 @@
 
         <div class="fs_row">
             <div class="fs_half">
-                <div style="text-align: left" class="fs_response_actions">
+                <div  style="text-align: left" class="fs_response_actions">
                     <el-button v-loading="creating" :disabled="creating" @click="create('no')" size="large"
                                type="success">
-                        <span v-if="type== 'note'">{{ translate('Add Internal Note') }}</span>
+                        <span v-if="type === 'draft_response'">{{ translate('Add Draft Reply') }}</span>
+                        <span v-else-if="type === 'note'">{{ translate('Add Internal Note') }}</span>
                         <span v-else>{{ translate('Add Reply') }}</span>
                     </el-button>
-                    <el-button v-if="type != 'note'" :disabled="creating" @click="create('yes')" size="large"
+                    <el-button v-if="type != 'note' && type !== 'draft_response' " :disabled="creating" @click="create('yes')" size="large"
                                type="danger">
                         {{ translate('Reply and Close') }}
                     </el-button>
@@ -136,7 +137,7 @@ export default {
                     removeDraft();
                 }
 
-                 if(props.type === 'response'){
+                 if(props.type === 'response' || props.type === 'draft_response' ){
                      saveResponseDraft();
                  }
             });

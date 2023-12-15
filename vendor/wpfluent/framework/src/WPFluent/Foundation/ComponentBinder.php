@@ -2,45 +2,65 @@
 
 namespace FluentSupport\Framework\Foundation;
 
+use FluentSupport\Framework\Support\Str;
 use FluentSupport\Framework\View\View;
+use FluentSupport\Framework\Http\URL;
 use FluentSupport\Framework\Http\Router;
+use FluentSupport\Framework\Support\Facade;
+use FluentSupport\Framework\Support\Pipeline;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\Framework\Response\Response;
 use FluentSupport\Framework\Events\Dispatcher;
 use FluentSupport\Framework\Database\Orm\Model;
 use FluentSupport\Framework\Validator\Validator;
 use FluentSupport\Framework\Foundation\RequestGuard;
-use FluentSupport\Framework\Pagination\AbstractPaginator;
 use FluentSupport\Framework\Database\ConnectionResolver;
 use FluentSupport\Framework\Database\Query\WPDBConnection;
-use FluentSupport\Framework\Foundation\UnAuthorizedException;
-
-use FluentSupport\Framework\Support\Str;
-use FluentSupport\Framework\Support\Helper;
-use FluentSupport\Framework\Encryption\Encrypter;
-use FluentSupport\Framework\Encryption\MissingAppKeyException;
+use FluentSupport\Framework\Pagination\AbstractCursorPaginator;
+use FluentSupport\Framework\Pagination\AbstractPaginator;
+use FluentSupport\Framework\Pagination\CursorPaginator;
+use FluentSupport\Framework\Pagination\Cursor;
 
 class ComponentBinder
 {
+    /**
+     * The application instance
+     * @var \FluentSupport\Framework\Foundation\Application
+     */
     protected $app = null;
 
+    /**
+     * List of bindings
+     * @var array
+     */
     protected $bindables = [
         'Request',
         'Response',
         'Validator',
         'View',
         'Events',
-        'DataBase',
+        'DB',
+        'URL',
         'Router',
         'Paginator',
-        'encrypter'
+        'Pipeline',
     ];
 
+    /**
+     * Construct the binder
+     * @param \FluentSupport\Framework\Foundation\Application $app
+     */
     public function __construct($app)
     {
-        $this->app = $app;
+        $this->registerFacadeResolver(
+            $this->app = $app
+        );
     }
 
+    /**
+     * Bind all the components in to the container.
+     * @return null
+     */
     public function bindComponents()
     {
         foreach ($this->bindables as $value) {
@@ -55,18 +75,94 @@ class ComponentBinder
         $this->registerResolvingEvent($this->app);
     }
 
+    /**
+     * Register resolving event into the container.
+     * @param  \FluentSupport\Framework\Foundation\Application $app
+     * @return null
+     */
     protected function registerResolvingEvent($app)
     {
         $app->resolving(RequestGuard::class, function($request) use ($app) {
 
+            if (method_exists($request, 'authorize')) {
+                !$request->authorize() && $request->abort(401);
+            }
+
             $request->merge($request->beforeValidation());
-
-            $data = $request->validate($app->make('validator'));
-
+            $request->validate();
             $request->merge($request->afterValidation());
         });
     }
 
+    /**
+     * Register the dynamic facade resolver.
+     * @param  \FluentSupport\Framework\Foundation\Application $app
+     * @return null
+     */
+    protected function registerFacadeResolver($app)
+    {
+        Facade::setFacadeApplication($app);
+ 
+        spl_autoload_register(function($class) use ($app) {
+
+            $ns = substr(($fqn = __NAMESPACE__), 0, strpos($fqn, '\\'));
+
+            if (Str::contains($class, ($facade = $ns.'\Facade'))) {
+
+                $this->createFacadeFor($facade, $class, $app);
+            }
+        });
+    }
+
+    /**
+     * Create a facade resolver class dynamically
+     * @param  string $facade
+     * @param  string $class
+     * @param  \FluentSupport\Framework\Foundation\Application $app
+     * @return null
+     */
+    protected function createFacadeFor($facade, $class, $app)
+    {
+        $facadeAccessor = $this->resolveFacadeAccessor($facade, $class, $app);
+
+        $anonymousClass = new class($facadeAccessor) extends Facade {
+
+            protected static $facadeAccessor;
+
+            public function __construct($facadeAccessor) {
+                static::$facadeAccessor = $facadeAccessor;
+            }
+
+            protected static function getFacadeAccessor() {
+                return static::$facadeAccessor;
+            }
+        };
+
+        class_alias(get_class($anonymousClass), $class, true);
+    }
+
+    /**
+     * Resolve the binding name.
+     * @param  string $facade
+     * @param  string $class
+     * @param  \FluentSupport\Framework\Foundation\Application $app
+     * @return string
+     */
+    protected function resolveFacadeAccessor($facade, $class,$app)
+    {
+        $name = strtolower(trim(str_replace($facade, '', $class), '\\'));
+        
+        if ($name == 'route') $name = 'router';
+
+        if ($app->bound($name)) {
+            return $name;
+        }
+    }
+
+    /**
+     * Bind the request instance into the container.
+     * @return null
+     */
     protected function bindRequest()
     {
         $this->app->singleton(Request::class, function ($app) {
@@ -76,6 +172,10 @@ class ComponentBinder
         $this->app->alias(Request::class, 'request');
     }
 
+    /**
+     * Bind the reesponse instance into the container.
+     * @return null
+     */
     protected function bindResponse()
     {
         $this->app->singleton(Response::class, function($app) {
@@ -85,6 +185,10 @@ class ComponentBinder
         $this->app->alias(Response::class, 'response');
     }
 
+    /**
+     * Bind the request validator into the container.
+     * @return null
+     */
     protected function bindValidator()
     {
         $this->app->bind(Validator::class, function($app) {
@@ -94,6 +198,10 @@ class ComponentBinder
         $this->app->alias(Validator::class, 'validator');
     }
 
+    /**
+     * Bind the view instance into the container.
+     * @return null
+     */
     protected function bindView()
     {
         $this->app->bind(View::class, function($app) {
@@ -103,6 +211,10 @@ class ComponentBinder
          $this->app->alias(View::class, 'view');
     }
 
+    /**
+     * Bind the event dispatcher instance into the container.
+     * @return null
+     */
     protected function bindEvents()
     {
         $this->app->singleton(Dispatcher::class, function($app) {
@@ -112,7 +224,11 @@ class ComponentBinder
         $this->app->alias(Dispatcher::class, 'events');
     }
 
-    protected function bindDataBase()
+    /**
+     * Bind the db (query builder) instance into the container.
+     * @return null
+     */
+    protected function bindDB()
     {
         $this->app->singleton('db', function($app) {
             return new WPDBConnection(
@@ -125,6 +241,21 @@ class ComponentBinder
         Model::setConnectionResolver(new ConnectionResolver);
     }
 
+    /**
+     * Bind the URL instance into the container.
+     * @return null
+     */
+    protected function bindURL()
+    {
+        $this->app->bind('url', function($app) {
+            return new URL;
+        });
+    }
+
+    /**
+     * Bind the router instance into the container.
+     * @return null
+     */
     protected function bindRouter()
     {
         $this->app->singleton('router', function($app) {
@@ -132,6 +263,10 @@ class ComponentBinder
         });
     }
 
+    /**
+     * Bind the paginator instance into the container.
+     * @return null
+     */
     protected function bindPaginator()
     {
         AbstractPaginator::currentPathResolver(function () {
@@ -147,17 +282,36 @@ class ComponentBinder
 
             return 1;
         });
-    }
 
-    protected function bindEncrypter()
-    {
-        $this->app->singleton(Encrypter::class, function ($app) {
-            return new Encrypter($app);
+        AbstractPaginator::queryStringResolver(function () {
+            return $this->app['request']->query();
         });
 
-        $this->app->alias(Encrypter::class, 'encrypter');    
+        AbstractCursorPaginator::currentCursorResolver(function ($cursorName = 'cursor') {
+            return Cursor::fromEncoded($this->app['request']->get($cursorName));
+        });
     }
 
+    /**
+     * Bind the pipeline instance into the container.
+     * @return null
+     */
+    protected function bindPipeline()
+    {
+        $this->app->bind(Pipeline::class, function ($app) {
+            return new Pipeline($app);
+        });
+
+        $this->app->alias(Pipeline::class, 'pipeline');    
+    }
+
+    /**
+     * Load other bindings the developers might
+     * have added in the application level.
+     * 
+     * @param  \FluentSupport\Framework\Foundation\Application $app
+     * @return null
+     */
     protected function extendBindings($app)
     {
         $bindings = $app['path'] . 'boot/bindings.php';
@@ -167,6 +321,11 @@ class ComponentBinder
         }
     }
 
+    /**
+     * Load the plugin's global functions
+     * @param  \FluentSupport\Framework\Foundation\Application $app
+     * @return null
+     */
     protected function loadGlobalFunctions($app)
     {
         $globals = $app['path'] . 'boot/globals.php';

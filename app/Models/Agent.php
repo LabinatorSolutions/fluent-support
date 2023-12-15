@@ -29,6 +29,8 @@ class Agent extends Person
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             $model->person_type = static::$type;
             $model->hash = md5(time().wp_generate_uuid4());

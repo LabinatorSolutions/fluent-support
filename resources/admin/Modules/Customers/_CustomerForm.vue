@@ -12,7 +12,7 @@
 </template>
 <script type="text/babel">
 import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
-import { reactive, toRefs} from "vue";
+import {onMounted, reactive, toRefs} from "vue";
 import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
@@ -29,114 +29,20 @@ export default {
             translate,
             post,
             put,
+            get,
             handleError
         } = useFluentHelper();
 
         const { notify } = useNotify();
 
         const state = reactive({
-            basic_fields: {
-                first_name: {
-                    label: translate('First Name'),
-                    data_type: 'text',
-                    placeholder: translate('First Name'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field',
-                },
-                last_name: {
-                    label: translate('Last Name'),
-                    data_type: 'text',
-                    placeholder: translate('Last Name'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field'
-                },
-                email: {
-                    label: translate('Email'),
-                    data_type: 'email',
-                    placeholder: translate('Email'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field',
-                    disabled: !!customer.id
-                },
-                title: {
-                    label: translate('Job Title'),
-                    data_type: 'text',
-                    placeholder: translate('Job Title'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field'
-                },
-                note: {
-                    label: translate('Note'),
-                    data_type: 'textarea',
-                    placeholder: translate('Note'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field'
-                },
-                status: {
-                    label: translate('Status'),
-                    data_type: 'text',
-                    type: 'input-radio',
-                    options: {
-                        'active': {'id': 'active', 'value': 'active', 'label': translate('Active')},
-                        'inactive': {'id': 'inactive', 'value': 'inactive', 'label': translate('Blocked')},
-                    },
-                    wrapper_class: 'fs_half_field'
-                },
-                status_html: {
-                    dependency: {
-                        depends_on: 'status',
-                        operator: '=',
-                        value: 'inactive'
-                    },
-                    type: 'html-viewer',
-                    wrapper_class: 'fs_warn',
-                    html: translate('block_instruction')
-                },
-            },
-            address_fields: {
-                address_line_1: {
-                    label: translate('Address Line 1'),
-                    data_type: 'text',
-                    placeholder: translate('Address Line 1'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field',
-                },
-                address_line_2: {
-                    label: translate('Address Line 2'),
-                    data_type: 'text',
-                    placeholder: translate('Address Line 2'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field',
-                },
-                city: {
-                    label: translate('City'),
-                    data_type: 'text',
-                    placeholder: translate('City'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field',
-                },
-                state: {
-                    label: translate('State'),
-                    data_type: 'text',
-                    placeholder: translate('State'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field',
-                },
-                zip: {
-                    label: translate('Zip Code'),
-                    data_type: 'text',
-                    placeholder: translate('Zip Code'),
-                    type: 'input-text',
-                    wrapper_class: 'fs_half_field',
-                },
-                country: {
-                    label: translate('Country'),
-                    placeholder: translate('Country'),
-                    type: 'country-selector',
-                    wrapper_class: 'fs_half_field',
-                }
-            },
+            basic_fields: {},
+            address_fields: {},
             loading: false,
+        });
+
+        const customerField = reactive({
+            data: {},
         });
 
         const createCustomer = async () => {
@@ -158,6 +64,23 @@ export default {
                 });
         }
 
+        const fetchCustomerField = async () => {
+            get('customers/customerField/'+(customer.id ? customer.id : 0),
+                { user_id: customer.user_id ? customer.user_id : 0 }
+            )
+                .then(response => {
+                    state.address_fields = response.customerField.address_fields;
+                    state.basic_fields = response.customerField.basic_fields;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {
+                    state.loading = false;
+                });
+
+        }
+
         const updateCustomer = async () => {
             state.loading = true;
             put(`customers/${customer.id}`, customer)
@@ -176,6 +99,9 @@ export default {
                     state.loading = false;
                 });
         }
+        onMounted(() => {
+            fetchCustomerField();
+        });
 
         return{
             translate,

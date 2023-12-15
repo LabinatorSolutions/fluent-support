@@ -356,7 +356,7 @@ class Menu
                 'go_back_after_reply' => 'yes'
             ],
             'notification_integrations'  => $integrationDrivers,
-            'server_time'                => current_time('mysql'),
+            'server_time'                => date('Y-m-d\TH:i:sP'),
             'has_email_parser'           => defined('FLUENTSUPPORTPRO_PLUGIN_VERSION'),
             'ticket_tags'                => $tags,
             'i18n'                       => $i18ns,
@@ -374,6 +374,9 @@ class Menu
         }
 
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
+        if ($appVars['has_pro']) {
+            $appVars['agent_feedback_rating'] = Helper::getBusinessSettings('agent_feedback_rating', 'no');
+        }
 
         wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', $appVars);
     }

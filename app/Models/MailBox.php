@@ -32,6 +32,8 @@ class MailBox extends Model
 
     public static function boot()
     {
+        parent::boot();
+
         static::creating(function ($model) {
             $model->slug = static::slugify($model->name);
             $model->settings = $model->settings ?: [
@@ -77,6 +79,7 @@ class MailBox extends Model
 
         // Set Reply-To Header
         $headers[] = 'Reply-To: '. $fromString;
+        $headers[] = 'In-Reply-To: '. $fromString;
 
         return $headers;
     }

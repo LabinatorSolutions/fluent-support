@@ -8,7 +8,7 @@
                             <li :title="translate('Add Reply')"
                                 class="fs_add_reply"
                                 :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
-                                @click="show_response_box = 'response'">
+                                @click="draftReplyPermission ? show_response_box = 'draft_response' : show_response_box = 'response'">
                                 <el-icon style="vertical-align: middle;">
                                     <chat-line-square/>
                                 </el-icon>
@@ -352,8 +352,12 @@
                                         </div>
                                         <div>
                                             <el-button-group>
-                                                <el-button size="small" @click="show_response_box = 'response'">{{translate('Edit')}}</el-button>
-                                                <el-button size="small" @click="discardDraft(draft.id)">{{translate('Discard')}}</el-button>
+                                                <el-button @click="show_response_box = draftReplyPermission ? 'draft_response' : 'response'">
+                                                    {{ translate('Edit') }}
+                                                </el-button>
+                                                <el-button @click="discardDraft(draft.id)">
+                                                    {{ translate('Discard') }}
+                                                </el-button>
                                             </el-button-group>
                                         </div>
                                     </section>
@@ -394,6 +398,9 @@
                                             </div>
                                         </div>
                                         <div class="fs_thread_actions">
+                                            <div class="fs_agent_feedback" v-if="has_pro && appVars.agent_feedback_rating === 'yes' && conversation.agent_feedback" >
+                                                <img :src="`${appVars.asset_url}images/icons/${conversation.agent_feedback === 'like' ? 'likeButtonFill' : 'dislikeButtonFill'}.svg`" />
+                                            </div>
                                             <span v-if="conversation.source" :title="'Source: ' + conversation.source"
                                                   :class="'fc_source_icon fc_source_icon_'+conversation.source"><span>{{ conversation.source }}</span></span>
                                             <span :title="conversation.created_at">
@@ -406,10 +413,11 @@
                                                 <template #dropdown>
                                                     <el-dropdown-menu>
                                                         <el-dropdown-item
+                                                            v-if="!draftReplyPermission || conversation.conversation_type === 'draft_response'"
                                                             :command="{ type: 'edit', conversation: conversation }"
                                                             icon="EditPen"> {{ translate('Edit') }}
                                                         </el-dropdown-item>
-                                                        <el-dropdown-item v-if="has_pro"
+                                                        <el-dropdown-item v-if="has_pro && conversation.conversation_type !== 'draft_response'"
                                                                           :command="{ type: 'split_ticket', conversation: conversation }"
                                                                           icon="TopLeft">
                                                             {{ translate('Split Ticket') }}
@@ -441,6 +449,9 @@
                                                     }}</a>
                                             </li>
                                         </ul>
+                                    </div>
+                                    <div v-else-if="conversation.conversation_type == 'draft_response' && draftReplyApprovePermission" class="fs_draft_response_actions">
+                                        <el-button size="small" type="primary" @click="approveDraftResponse(conversation)">{{translate('Approve')}}</el-button>
                                     </div>
                                 </section>
                             </section>
@@ -662,6 +673,8 @@ export default {
             close_ticket_silently: "no",
             app_ready: false,
             fetch_other_tickets: false,
+            draftReplyPermission: false,
+            draftReplyApprovePermission: false,
             draft: {},
             draftData: {},
             show_response_draft: false,
@@ -691,6 +704,9 @@ export default {
                 state.ticket = response.ticket;
                 setTitle(response.ticket.title);
                 state.conversations = response.responses;
+                state.draftReplyPermission = appVars.me.permissions.includes('fst_draft_reply');
+                state.draftReplyApprovePermission = appVars.me.permissions.includes('fst_approve_draft_reply');
+
                 if (appVars.fluentcrm_config) {
                     state.fluentcrm_profile = response.fluentcrm_profile;
                 }
@@ -723,8 +739,12 @@ export default {
         };
 
         const getTextByPerson = (conversation, ticket) => {
+            if (conversation?.conversation_type === 'draft_response') {
+                return translate('Draft Response');
+            }
+
             if (conversation?.person.person_type === 'agent') {
-                return conversation.person.title ? conversation.person.title : translate('Support Staff');
+                return (conversation.person.title ? conversation.person.title : translate('Support Staff'));
             }else{
                 if (ticket.customer_id == conversation.person_id) {
                     return translate('Thread Starter')
@@ -750,6 +770,11 @@ export default {
                     }
                 }
             }
+
+            if (conversation.conversation_type === 'draft_response') {
+                classes.push('fs_thread_ribbon_draft_response');
+            }
+
             return classes;
         }
 
@@ -795,6 +820,7 @@ export default {
         }
 
         const updateTicketAttr = (propName) => {
+            console.log(state.ticket, propName, state.ticket[propName])
             put(`tickets/${state.ticket.id}/property`, {
                 prop_name: propName,
                 prop_value: state.ticket[propName]
@@ -868,6 +894,24 @@ export default {
                         router.push({name: 'tickets'});
                     })
             });
+        }
+
+        const approveDraftResponse = (conversation) => {
+
+            put(`tickets/${conversation.ticket_id}/approve_draft_response/${conversation.id}`, {
+                content: conversation.content
+            })
+                .then(response => {
+                    notify({
+                        message: response.message,
+                        type: 'success'
+                    });
+                    fetchTicket();
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+
         }
 
         const reOpen = () => {
@@ -1123,7 +1167,7 @@ export default {
             const status = {};
 
             for (let key in state.ticket_statuses) {
-                status[key] = state.ticket_statuses[key][0];
+                status[key] = state.ticket_statuses[key];
             }
 
             return status;
@@ -1176,6 +1220,7 @@ export default {
             deleteTicket,
             getRibbonClass,
             getTextByPerson,
+            approveDraftResponse
         }
     }
 }
@@ -1192,7 +1237,6 @@ export default {
     padding: 5px 10px;
     font-size: 11px;
 }
-
 .fs_agent {
     border-left: 4px solid #1785EB;
 }
@@ -1202,15 +1246,12 @@ export default {
 .fs_cc_customer {
     border-left: 4px solid #EC5c03;
 }
-
 .fs_conv_type_note {
     border-left: 0px solid #e6a23c;
 }
-
 i.dashicons.dashicons-randomize {
     transform: rotate(90deg);
 }
-
 .carrier_info {
     padding: 5px 0;
     font-size: 12px;
@@ -1218,24 +1259,26 @@ i.dashicons.dashicons-randomize {
     font-weight: 400;
     line-height: 1.4;
 }
-
 .fs_view_ticket .fs_ticket_body .fs_thread_wrap .fs_thread_title .carrier_info strong {
     font-size: 13px;
     color: #6f7b87;
 }
-
+.fs_conv_type_draft_response {
+    background: #fef4e6 ;
+    border-left: 4px solid #F58E07;
+}
+.fs_thread_ribbon_draft_response {
+    background: #F58E07 !important;
+}
 .fs_ticket_error_message {
     font-size: 13px;
     color: #6f7b87;
     width: 100%
 }
-
-
 .fs_saved_draft {
     border-top: 1px solid #e5e9ec;
     border-left: 4px solid #6e5d519e;
 }
-
 .draft_title {
     content: '';
     position: relative;

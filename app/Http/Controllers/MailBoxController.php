@@ -135,7 +135,7 @@ class MailBoxController extends Controller
     public function getEmailSettings(Request $request, Settings $settings, $id)
     {
         $box = MailBox::findOrFail($id);
-        $emailType = $request->getSafe('email_type');
+        $emailType = $request->getSafe('email_type', 'sanitize_text_field');
 
         return [
             'email_settings' => $settings->getBoxEmailSettings($box, $emailType)
@@ -164,7 +164,7 @@ class MailBoxController extends Controller
     public function saveEmailSettings( Request $request, MailBoxService $mailBoxService, $id )
     {
         $data = wp_unslash($request->getSafe('email_settings'));
-        $emailType = $request->getSafe('email_type');
+        $emailType = $request->getSafe('email_type', 'sanitize_text_field');
 
         $this->validate($data, [
             'email_subject' => 'required',

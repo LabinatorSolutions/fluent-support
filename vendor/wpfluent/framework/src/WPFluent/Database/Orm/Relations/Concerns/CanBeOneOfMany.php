@@ -6,6 +6,7 @@ use Closure;
 use InvalidArgumentException;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Support\Str;
+use FluentSupport\Framework\Support\Helper;
 use FluentSupport\Framework\Database\Orm\Builder;
 use FluentSupport\Framework\Database\Query\JoinClause;
 
@@ -52,7 +53,7 @@ trait CanBeOneOfMany
     /**
      * Add join query constraints for one of many relationships.
      *
-     * @param  \FluentSupport\Framework\Database\Orm\JoinClause  $join
+     * @param  \FluentSupport\Framework\Database\Query\JoinClause  $join
      * @return void
      */
     abstract public function addOneOfManyJoinSubQueryConstraints(JoinClause $join);
@@ -143,7 +144,7 @@ trait CanBeOneOfMany
      */
     public function latestOfMany($column = 'id', $relation = null)
     {
-        return $this->ofMany(collect(Arr::wrap($column))->mapWithKeys(function ($column) {
+        return $this->ofMany(Helper::collect(Arr::wrap($column))->mapWithKeys(function ($column) { // @need_fix: collect undefined here
             return [$column => 'MAX'];
         })->all(), 'MAX', $relation);
     }
@@ -158,7 +159,7 @@ trait CanBeOneOfMany
      */
     public function oldestOfMany($column = 'id', $relation = null)
     {
-        return $this->ofMany(collect(Arr::wrap($column))->mapWithKeys(function ($column) {
+        return $this->ofMany(Helper::collect(Arr::wrap($column))->mapWithKeys(function ($column) { // @need_fix: collect undefined here
             return [$column => 'MIN'];
         })->all(), 'MIN', $relation);
     }
@@ -267,7 +268,7 @@ trait CanBeOneOfMany
      */
     public function qualifySubSelectColumn($column)
     {
-        return $this->getRelationName().'.'.last(explode('.', $column));
+        return $this->getRelationName().'.'.Helper::last(explode('.', $column));
     }
 
     /**

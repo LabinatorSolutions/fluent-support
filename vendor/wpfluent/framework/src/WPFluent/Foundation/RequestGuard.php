@@ -8,40 +8,57 @@ use FluentSupport\Framework\Validator\ValidationException;
 
 abstract class RequestGuard
 {
+    /**
+     * Retrive the validation rules
+     * @return array
+     */
     public function rules()
     {
         return [];
     }
 
+    /**
+     * Retrive the validation messages set by the developer
+     * @return array
+     */
     public function messages()
     {
         return [];
     }
 
+    /**
+     * Allow the developer tinker with data before the validation.
+     * @return array
+     */
     public function beforeValidation()
     {
         return [];
     }
 
+    /**
+     * Allow the developer tinker with data after the validation.
+     * @return array
+     */
     public function afterValidation()
     {
         return [];
     }
 
-    public function validate(Validator $validator)
+    /**
+     * Validate the request.
+     * 
+     * @param  array $rules Optional
+     * @param  array $messages Optional
+     * @return array Request Data
+     * @throws FluentSupport\Framework\Validator\ValidationException
+     */
+    public function validate($rules = [], $messages = [])
     {
         try {
-
-            if (!($rules = (array) $this->rules())) return;
-
-            $validator = $validator->make($data = $this->all(), $rules, (array) $this->messages());
-
-            if ($validator->validate()->fails()) {
-                throw new ValidationException('Unprocessable Entity!', 422, null, $validator->errors());
-            }
-
-            return $data;
-
+            return App::make('request')->validate(
+                $rules ?: (array) $this->rules(),
+                $messages ?: (array) $this->messages()
+            );
         } catch (ValidationException $e) {
 
             if (defined('REST_REQUEST') && REST_REQUEST) {
@@ -50,6 +67,25 @@ abstract class RequestGuard
                 App::getInstance()->doCustomAction('handle_exception', $e);
             }
         }
+    }
+
+    /**
+     * Handles validation including before and after calls
+     *
+     * @throws FluentSupport\Framework\Validator\ValidationException
+     * @return null
+     */
+    public static function applyValidation()
+    {
+        $instance = new static;
+
+        $request = App::getInstance('request');
+
+        $request->merge($instance->beforeValidation());
+
+        $instance->validate();
+
+        $request->merge($instance->afterValidation());
     }
 
     /**
@@ -63,10 +99,16 @@ abstract class RequestGuard
         return $this->get($key);
     }
 
+    /**
+     * Handle the dynamic method calls
+     * @param  string $method
+     * @param  array $params
+     * @return mixed
+     */
     public function __call($method, $params)
     {
         return call_user_func_array(
-            [App::getInstance('request'), $method], $params
+            [App::make('request'), $method], $params
         );
     }
 }

@@ -100,7 +100,7 @@ class TicketController extends Controller
     public function getTicket(Request $request, Ticket $ticket, $ticket_id)
     {
         try {
-            $ticketWith = $request->getSafe('with');
+            $ticketWith = $request->getSafe('with', 'sanitize_text_field');
             if (!$ticketWith) {
                 $ticketWith = ['customer', 'agent', 'product', 'mailbox', 'tags', 'attachments' => function ($q) {
                     $q->whereIn('status', ['active', 'inline']);
@@ -198,8 +198,8 @@ class TicketController extends Controller
      */
     public function updateTicketProperty(Request $request, Ticket $ticket, $ticket_id)
     {
-        $propName = $request->getSafe('prop_name');
-        $propValue = $request->getSafe('prop_value');
+        $propName = $request->getSafe('prop_name', 'sanitize_text_field');
+        $propValue = $request->getSafe('prop_value', 'sanitize_text_field' );
 
         try {
             return $ticket->updateTicketProperty($propName, $propValue, $ticket_id);
@@ -248,7 +248,7 @@ class TicketController extends Controller
      */
     public function doBulkActions(Request $request, Ticket $ticket)
     {
-        $action = $request->getSafe('bulk_action'); //get action
+        $action = $request->getSafe('bulk_action', 'sanitize_text_field'); //get action
         $ticket_ids = $request->get('ticket_ids', []);
         $sanitizedTicketIds = array_map('intval', $ticket_ids);
 
@@ -325,10 +325,24 @@ class TicketController extends Controller
      */
     public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id)
     {
-        $data = $request->get();
+        $data = $request->getSafe(['content','ticket_id','response_id']);
 
         try {
             return $conversation->updateResponse($data, $ticket_id, $response_id);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    public function approveDraftResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id)
+    {
+        $data = [
+            'content' => $request->getSafe('content', 'sanitize_text_field')
+        ];
+        $conversationType = 'response';
+
+        try {
+            return $conversation->publishDraftResponse($data, $ticket_id, $response_id, $conversationType);
         } catch (\Exception $e) {
             return $this->sendError($e->getMessage());
         }
@@ -409,7 +423,7 @@ class TicketController extends Controller
     public function changeTicketCustomer(Request $request)
     {
         $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', 'intval'))
-            ->update(['customer_id' => $request->getSafe('customer')]);
+            ->update(['customer_id' => $request->getSafe('customer', 'intval')]);
         return [
             'message'         => __('Customer has been updated', 'fluent-support'),
             'updatedCustomer' => $updateCustomer

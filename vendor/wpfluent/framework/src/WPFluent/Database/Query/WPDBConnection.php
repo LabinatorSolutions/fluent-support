@@ -48,7 +48,7 @@ class WPDBConnection implements ConnectionInterface
     /**
      * The query grammar implementation.
      *
-     * @var \FluentSupport\Framework\Database\Query\Grammars\Grammar
+     * @var \FluentSupport\Framework\Database\Query\Grammar
      */
     protected $queryGrammar;
 
@@ -65,6 +65,13 @@ class WPDBConnection implements ConnectionInterface
      * @var int
      */
     protected $transactions = 0;
+
+    /**
+     * The number of total transactions.
+     *
+     * @var int
+     */
+    protected $transactionCount = 0;
 
     /**
      * Create a new database connection instance.
@@ -253,6 +260,42 @@ class WPDBConnection implements ConnectionInterface
     }
 
     /**
+     * A hacky way to emulate bind parameters into SQL query for mysqli
+     * Only used to run a cursor query using the underlying mysqli instance.
+     *
+     * @param $query
+     * @param $bindings
+     *
+     * @return mixed
+     */
+    protected function bindParamsForSqli($query, $bindings, $update = false)
+    {
+        $query = str_replace('"', '`', $query);
+
+        $bindings = $this->prepareBindings($bindings);
+
+        if (!$bindings) {
+            return $query;
+        }
+
+        $bindings = array_map(function ($replace) {
+
+            if (is_string($replace)) {
+                $replace = "'" . esc_sql($replace) . "'";
+            } elseif ($replace === null) {
+                $replace = "null";
+            }
+
+            return $replace;
+
+        }, $bindings);
+
+        $query = vsprintf($query, $bindings);
+
+        return $query;
+    }
+
+    /**
      * Run a select statement against the database and returns a generator.
      *
      * @param  string  $query
@@ -262,18 +305,78 @@ class WPDBConnection implements ConnectionInterface
      */
     public function cursor($query, $bindings = [], $useReadPdo = true)
     {
-        return $this->select($query, $bindings);
-        
-        // $index = 0;
+        // When the underlying driver is not the mysqli.
+        // it's not a pure cursor just mimicked like one.
+        if (!$this->wpdb->dbh instanceof \mysqli) {
+            foreach ($this->select($query, $bindings) as $row) {
+                yield $row;
+            }
+            return;
+        }
 
-        // $query = $this->bindParams($query, $bindings);
+        // The underlying driver is the mysqli
+        $this->wpdb->flush();
+        $this->wpdb->insert_id = 0;
+        $this->wpdb->check_current_query = true;
 
-        // while ($row = $this->wpdb->get_row($query, $index)) {
-            
-        //     ++$index;
-            
-        //     yield $row;
-        // }
+        if (!$this->wpdb->check_connection()) {
+            throw new QueryException(
+                $query, $bindings, new Exception(
+                    $this->wpdb->last_error || 'Error reconnecting to the database.'
+                )
+            );
+        }
+
+        if (defined('SAVEQUERIES') && SAVEQUERIES) {
+            $this->wpdb->timer_start();
+        }
+
+        $statement = $this->wpdb->dbh->prepare(
+            $this->bindParamsForSqli($query, $bindings)
+        );
+
+        $bindings && $statement->bind_param(
+            str_repeat('s', count($bindings)),
+            ...$bindings
+        );
+
+        if ($statement->execute()) {
+
+            $result = $statement->get_result();
+
+            $this->wpdb->num_queries++;
+            $this->wpdb->last_query = $query;
+            $this->wpdb->num_rows = $result->num_rows;
+
+            if (defined('SAVEQUERIES') && SAVEQUERIES) {
+                $this->wpdb->log_query(
+                    $query,
+                    $this->wpdb->timer_stop(),
+                    $this->wpdb->get_caller(),
+                    $this->wpdb->time_start,
+                    []
+                );
+            }
+
+            $i = 0;
+            while ($row = $result->fetch_assoc()) {
+                $this->wpdb->last_result[$i] = $row;
+                $i++;
+                yield $row;
+            }
+
+            return;
+
+        }
+
+        if ($statement->error || $statement->errno) {
+            $this->wpdb->last_error = __($statement->error || 'Mysqli Error No: ' . $statement->errno);
+            throw new QueryException(
+                $query, $bindings, new Exception(
+                    $statement->error || 'Mysqli Error No: ' . $statement->errno
+                )
+            );
+        }
     }
 
     /**
@@ -472,7 +575,7 @@ class WPDBConnection implements ConnectionInterface
     /**
      * Return self as PDO, the Processor instance uses it.
      *
-     * @return FluentSupport\Framework\Database\Query\WPDBConnection
+     * @return \FluentSupport\Framework\Database\Query\WPDBConnection
      */
     public function getPdo()
     {
