@@ -1068,8 +1068,12 @@ class Ticket extends Model
 
         if ($ticket->customer->user_id) {
             $customFieldKeysUsingHook = apply_filters('fluent_support/custom_registration_form_fields_key', []);
+
             foreach ($customFieldKeysUsingHook as $key) {
-                $ticket->customer->$key = reset(get_user_meta($ticket->customer->user_id,$key));
+                $userMeta = get_user_meta($ticket->customer->user_id,$key);
+                if($userMeta) {
+                    $ticket->customer->$key = reset($userMeta);
+                }
             }
         }
 
