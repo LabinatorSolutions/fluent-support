@@ -1361,34 +1361,27 @@ class Ticket extends Model
     {
         $prevValue = $ticket->{$propName};
 
-        $updateData = [];
-
-        if ($propName == 'agent_id') {
-            // Check if the current user has the permission to assign agents
-            if (!PermissionManager::currentUserCan('fst_assign_agents')) {
-                wp_send_json_error( [
-                    'message' => __('You do not have permission to assign agent', 'fluent-support')
-                ], 400  );
-            }
-
-            $ticket->load('agent');
-            $updateData['agent'] = $ticket->agent;
-            $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
-
-            if ($prevValue != $propValue) {
-                do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $assigner);
-            }
+        if ($propName == 'agent_id' && !PermissionManager::currentUserCan('fst_assign_agents') ) {
+            throw new \Exception('You do not have permission to assign agent', 400);
         }
 
-        // Save the changes after checking conditions
         if ($propName && $propValue && $prevValue != $propValue) {
             $ticket->{$propName} = $propValue;
             $ticket->save();
         }
 
+        $updateData = [];
+
         if ($propName == 'product_id') {
             $ticket->load('product');
             $updateData['product'] = $ticket->product;
+        } else if ($propName == 'agent_id') {
+            $ticket->load('agent');
+            $updateData['agent'] = $ticket->agent;
+            $updateData['assigner'] = (new TicketService())->onAgentChange($ticket, $assigner);
+            if ($prevValue != $ticket->{$propName}) {
+                do_action('fluent_support/agent_assigned_to_ticket', $ticket->agent, $ticket, $assigner);
+            }
         }
 
         return $updateData;
