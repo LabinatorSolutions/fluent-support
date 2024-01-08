@@ -29,7 +29,7 @@ class ChatMessageParserController extends Controller
             return $this->sendSuccess([
                 'message' => __('Response has been successfully recorded', 'fluent-support'),
                 'status'  => true,
-                'data'    => $handler->handleEvent($request->getSafe(), $token)
+                'data'    => $handler->handleEvent($request->all(), $token)
             ]);
         } catch (\Exception $e) {
             return $this->sendError([
