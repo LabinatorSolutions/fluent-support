@@ -820,7 +820,6 @@ export default {
         }
 
         const updateTicketAttr = (propName) => {
-            console.log(state.ticket, propName, state.ticket[propName])
             put(`tickets/${state.ticket.id}/property`, {
                 prop_name: propName,
                 prop_value: state.ticket[propName]
@@ -1091,9 +1090,11 @@ export default {
             }
 
             const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-            content= content.replace(tagRegex, '');
+            const config = {
+                ADD_ATTR: ['target'],
+            };
 
-            return window.DOMPurify.sanitize(content);
+            return window.DOMPurify.sanitize(content, config);
         }
 
         const syncCustomData = (data) => {
