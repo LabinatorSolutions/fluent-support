@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.4
-Stable tag: 1.7.7
+Stable tag: 1.7.72
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,13 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.7.72 (Date: January 9, 2024) =
+* Fixed - Notification integration settings issue
+* Fixed - Displaying an incorrect assigned agent name
+* Fixed - Links open in same tab issue
+* Fixed - Telegram reply issue
+* Fixed - Required functionality is not working in the conditional field
 
 = 1.7.7 (Date: December 13, 2023) =
 * Added - Trigger Fluent CRM automation within workflow (Pro)
