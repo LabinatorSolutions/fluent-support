@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Fluent Support
  * Description: The Ultimate Support Plugin For Your WordPress.
- * Version: 1.7.8
+ * Version: 1.7.72
  * Author: WPManageNinja LLC
  * Author URI: https://wpmanageninja.com
  * Plugin URI: https://fluentsupport.com
