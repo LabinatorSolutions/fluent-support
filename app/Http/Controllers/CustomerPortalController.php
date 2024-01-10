@@ -69,6 +69,10 @@ class CustomerPortalController extends Controller
             'ticket_content' => $request->get('content')
         ];
 
+        if ($request->has('product_id')) {
+            $defaultData['ticket_product_id'] = $request->get('product_id');
+        }
+
         $dataRules = $this->app->applyCustomFilters('custom_field_required_by_conditions_before_ticket_create',[
             'required_fields' => $dataRules['required_fields'],
             'error_messages'  => $dataRules['error_messages'],

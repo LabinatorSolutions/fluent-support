@@ -290,7 +290,7 @@
                             >
                                 <template #reference>
                                     <span class="fs_badge" :class="'fs_badge_' + ticket.status">{{
-                                            translate(ticket.status)
+                                            translate(getStatusDisplayName(ticket.status))
                                         }}</span>
                                 </template>
 
@@ -305,7 +305,7 @@
 
                             </el-popover>
                             <span v-else class="fs_badge" :class="'fs_badge_' + ticket.status">{{
-                                    ticket.status
+                                    translate(getStatusDisplayName(ticket.status))
                                 }}</span>
                         </div>
                     </div>
@@ -820,7 +820,7 @@ export default {
         }
 
         const updateTicketAttr = (propName) => {
-            console.log(state.ticket, propName, state.ticket[propName])
+            console.log( state.ticket[propName]);
             put(`tickets/${state.ticket.id}/property`, {
                 prop_name: propName,
                 prop_value: state.ticket[propName]
@@ -1091,9 +1091,11 @@ export default {
             }
 
             const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-            content= content.replace(tagRegex, '');
+            const config = {
+                ADD_ATTR: ['target'],
+            };
 
-            return window.DOMPurify.sanitize(content);
+            return window.DOMPurify.sanitize(content, config);
         }
 
         const syncCustomData = (data) => {
@@ -1163,11 +1165,27 @@ export default {
             return arr.join(',');
         }
 
+        const getStatusDisplayName = (status) => {
+            if (isEmpty(state.ticket_statuses)) {
+                return status;
+            }
+
+            for (const key in state.ticket_statuses) {
+                if (state.ticket_statuses[key].includes(status)) {
+                    return key;
+                }
+            }
+
+            return status;
+        };
+
         const getTicketStatus = computed(() => {
             const status = {};
 
             for (let key in state.ticket_statuses) {
-                status[key] = state.ticket_statuses[key];
+                if(state.ticket_statuses[key].length){
+                    status[key] = state.ticket_statuses[key][0];
+                }
             }
 
             return status;
@@ -1220,7 +1238,8 @@ export default {
             deleteTicket,
             getRibbonClass,
             getTextByPerson,
-            approveDraftResponse
+            approveDraftResponse,
+            getStatusDisplayName
         }
     }
 }
