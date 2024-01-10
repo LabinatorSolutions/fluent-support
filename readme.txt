@@ -189,12 +189,13 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 
 == Changelog ==
 
-= 1.7.72 (Date: January 9, 2024) =
+= 1.7.72 (Date: January 10, 2024) =
 * Fixed - Notification integration settings issue
 * Fixed - Displaying an incorrect assigned agent name
 * Fixed - Links open in same tab issue
 * Fixed - Telegram reply issue
 * Fixed - Required functionality is not working in the conditional field
+* Fixed - Ticket status issue
 
 = 1.7.7 (Date: December 13, 2023) =
 * Added - Trigger Fluent CRM automation within workflow (Pro)
