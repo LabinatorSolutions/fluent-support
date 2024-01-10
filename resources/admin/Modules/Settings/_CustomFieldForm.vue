@@ -209,7 +209,7 @@ export default {
                     label: 'Selected Product or Service',
                     slug: 'ticket_product_id',
                     type: 'select-one',
-                    options: supportProducts.value
+                    options: supportProducts
                 }
             };
             each(props.fields, (field) => {

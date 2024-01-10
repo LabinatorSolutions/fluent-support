@@ -15,7 +15,6 @@ class IntegrationController extends Controller
     public function getSettings(Request $request)
     {
         $settingsKey = $request->getSafe('integration_key', 'sanitize_text_field');
-
         return IntegrationSettingsModule::getSettings($settingsKey, true);
     }
 
@@ -27,7 +26,14 @@ class IntegrationController extends Controller
     public function saveSettings(Request $request)
     {
         $settingsKey = $request->getSafe('integration_key', 'sanitize_text_field');
-        $settings = wp_unslash($request->getSafe('settings','sanitize_text_field', [] ));
+
+        $settings = $request->get('settings', []);
+
+        foreach ($settings as $key => $value) {
+            $settings[$key] = is_array($value) ? map_deep($value, 'sanitize_text_field') : sanitize_text_field($value);
+        }
+
+        $settings = wp_unslash($settings);
 
         $settings = IntegrationSettingsModule::saveSettings($settingsKey, $settings);
 

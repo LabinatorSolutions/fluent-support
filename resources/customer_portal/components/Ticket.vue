@@ -340,8 +340,11 @@ export default {
 
             const tagRegex = /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>|<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
             string = string.replace(tagRegex, '');
+            const config = {
+                ADD_ATTR: ['target'],
+            };
 
-            return window.DOMPurify.sanitize(string);
+            return window.DOMPurify.sanitize(string, config);
         }
     },
     mounted() {
