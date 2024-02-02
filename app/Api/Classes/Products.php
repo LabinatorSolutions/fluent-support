@@ -34,7 +34,7 @@ class Products
      */
     public function getProducts()
     {
-        Product::paginate();
+        return Product::paginate();
     }
 
     /**
@@ -47,7 +47,7 @@ class Products
             return;
         }
 
-        Product::findOrFail($id);
+        return Product::findOrFail($id);
     }
 
     /**
@@ -59,7 +59,7 @@ class Products
         if (empty($data['title'])) {
             return;
         }
-        Product::create(wp_unslash($data));
+        return Product::create(wp_unslash($data));
     }
 
     /**
@@ -72,7 +72,7 @@ class Products
         if (!$id || !$data) {
             return;
         }
-        Product::findOrFail($id)->update($data);
+        return Product::findOrFail($id)->update($data);
     }
 
     /**
@@ -84,7 +84,7 @@ class Products
         if (!$id) {
             return;
         }
-        Product::findOrFail($id)->delete();
+        return Product::findOrFail($id)->delete();
     }
 
     public function getInstance()
