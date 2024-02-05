@@ -35,7 +35,7 @@ class Tags
      */
     public function getTags()
     {
-        TicketTag::paginate();
+        return TicketTag::paginate();
     }
 
     /**
@@ -48,7 +48,7 @@ class Tags
             return;
         }
 
-        TicketTag::findOrFail($id);
+        return TicketTag::findOrFail($id);
     }
 
     /**
@@ -60,7 +60,7 @@ class Tags
         if (empty($data['title'])) {
             return;
         }
-        TicketTag::create(wp_unslash($data));
+        return TicketTag::create(wp_unslash($data));
     }
 
     /**
@@ -73,7 +73,7 @@ class Tags
         if (!$id || !$data) {
             return;
         }
-        TicketTag::findOrFail($id)->update($data);
+        return TicketTag::findOrFail($id)->update($data);
     }
 
     /**
@@ -85,7 +85,7 @@ class Tags
         if (!$id) {
             return;
         }
-        TicketTag::findOrFail($id)->delete();
+        return TicketTag::findOrFail($id)->delete();
     }
 
     public function getInstance()
