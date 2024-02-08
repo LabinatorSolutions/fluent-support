@@ -75,7 +75,7 @@ class UploadService
 
         $targetFolder = 'temp_files';
 
-        if($ticketId) {
+        if ($ticketId) {
             $targetFolder = 'ticket_' . $ticketId;
         }
 
@@ -109,7 +109,8 @@ class UploadService
     {
         $response = wp_remote_request($contentUrl, [
             'sslverify' => false,
-            'method'    => 'GET'
+            'method'    => 'GET',
+            'timeout'   => 30,
         ]);
 
         if (is_wp_error($response)) {
