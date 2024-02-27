@@ -67,12 +67,33 @@ class PermissionManager
         }
 
         $permissions = array_intersect($allPermissions, $permissions);
+        $checkPermissions = ['fst_manage_unassigned_tickets', 'fst_manage_other_tickets', 'fst_manage_own_tickets'];
+        $permissionsToRemove = ['fst_draft_reply'];
+        $permissions = self::removePermissions($permissions, $checkPermissions, $permissionsToRemove);
 
         foreach ($permissions as $permission) {
             $user->add_cap($permission);
         }
 
         return $user;
+    }
+
+    /**
+     * removePermissions method removes specified permissions
+     * if any of the elements in $checkPermissions is present in $permissions array.
+     *
+     * @param array $permissions
+     * @param array $checkPermissions
+     * @param array $permissionsToRemove
+     * @return array
+     */
+    public static function removePermissions($permissions, $checkPermissions, $permissionsToRemove)
+    {
+        if (count(array_intersect($checkPermissions, $permissions)) > 0) {
+            $permissions = array_diff($permissions, $permissionsToRemove);
+        }
+
+        return $permissions;
     }
 
     /**
