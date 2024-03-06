@@ -22,8 +22,7 @@
                 </button>
             </div>
 
-<!--             Ticket search option-->
-            <div class="fs_tk_filter">
+            <div class="fs_search_bar">
                 <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="small"
                           :placeholder="$t('Please input')" v-model="search">
                     <template #append>
@@ -31,7 +30,6 @@
                     </template>
                 </el-input>
             </div>
-
         </div>
 
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">

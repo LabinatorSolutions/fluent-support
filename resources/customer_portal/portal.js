@@ -9,6 +9,7 @@ import {
 
 import {
     Refresh,
+    Search,
     Paperclip,
     ArrowUpBold,
     ArrowDownBold
@@ -26,6 +27,7 @@ const components = [
     // Icon component
     Refresh,
     Paperclip,
+    Search,
     ArrowUpBold,
     ArrowDownBold
 ];
