@@ -23,13 +23,13 @@ class CustomerPortalService
      * @throws Exception
      * @since 1.5.7
      */
-    public function getTickets($customer, $requestedStatus)
+    public function getTickets($customer, $requestedStatus, $search)
     {
         $this->validateCustomer($customer);
 
         $statuses = $this->getTicketStatues($requestedStatus);
 
-        return $this->ticketsAdditionalData($customer, $statuses);
+        return $this->ticketsAdditionalData($customer, $statuses, $search);
     }
 
     /**
@@ -290,7 +290,7 @@ class CustomerPortalService
      * @return object $tickets
      * @since 1.5.7
      */
-    private function ticketsAdditionalData($customer, $statuses)
+    private function ticketsAdditionalData($customer, $statuses, $search)
     {
         $ticketsQuery = Ticket::with([
             'customer' => function ($query) {
@@ -306,6 +306,10 @@ class CustomerPortalService
 
         if ($statuses) {
             $ticketsQuery->whereIn('status', $statuses);
+        }
+
+        if ($search) {
+            $ticketsQuery->searchBy($search);
         }
 
         $tickets = $ticketsQuery->paginate();

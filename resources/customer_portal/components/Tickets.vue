@@ -14,13 +14,26 @@
                     </button>
                 </div>
             </div>
+
             <div class="fs_tk_right">
                 <button v-if="appVars.show_logout" @click="logout" class="fs_btn fs_btn_logout"> {{$t('Logout')}} </button>
                 <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success fs_btn_create_ticket">
                     {{ $t('create_ticket_cta') }}
                 </button>
             </div>
+
+<!--             Ticket search option-->
+            <div class="fs_tk_filter">
+                <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="small"
+                          :placeholder="$t('Please input')" v-model="search">
+                    <template #append>
+                        <el-button @click="fetchTickets()" icon="Search"></el-button>
+                    </template>
+                </el-input>
+            </div>
+
         </div>
+
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">
             <el-skeleton :rows="5" animated/>
         </div>
@@ -97,7 +110,8 @@ export default {
             },
             fetching: false,
             first_loading: true,
-            show_filters: true
+            show_filters: true,
+            search: '',
         }
     },
     computed: {
@@ -121,7 +135,8 @@ export default {
             this.$get('tickets', {
                 per_page: this.pagination.per_page,
                 page: this.pagination.current_page,
-                filter_type: this.filter_type
+                filter_type: this.filter_type,
+                search: this.search
             })
                 .then(response => {
                     if (response.tickets && response.tickets.data) {
