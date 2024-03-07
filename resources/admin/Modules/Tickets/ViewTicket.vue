@@ -450,7 +450,7 @@
                                             </li>
                                         </ul>
                                     </div>
-                                    <div v-else-if="conversation.conversation_type == 'draft_response' && draftReplyApprovePermission" class="fs_draft_response_actions">
+                                    <div v-if="conversation.conversation_type == 'draft_response' && draftReplyApprovePermission" class="fs_draft_response_actions">
                                         <el-button size="small" type="primary" @click="approveDraftResponse(conversation)">{{translate('Approve')}}</el-button>
                                     </div>
                                 </section>
