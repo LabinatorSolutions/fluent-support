@@ -67,9 +67,9 @@ class PermissionManager
         }
 
         $permissions = array_intersect($allPermissions, $permissions);
-        $checkPermissions = ['fst_manage_unassigned_tickets', 'fst_manage_other_tickets', 'fst_manage_own_tickets'];
-        $permissionsToRemove = ['fst_draft_reply'];
-        $permissions = self::removePermissions($permissions, $checkPermissions, $permissionsToRemove);
+
+        $permissions = self::removePermissions($permissions, ['fst_manage_unassigned_tickets', 'fst_manage_other_tickets', 'fst_manage_own_tickets'], ['fst_draft_reply']);
+        $permissions = self::removePermissions($permissions, ['fst_draft_reply'], ['fst_approve_draft_reply']);
 
         foreach ($permissions as $permission) {
             $user->add_cap($permission);
