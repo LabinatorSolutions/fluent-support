@@ -262,6 +262,16 @@
                     />
                 </el-form-item>
             </el-form>
+            <el-form :model="editing_agent" ref="form" label-width="120px">
+                <el-form-item label="Restrict Business Box">
+                    <el-checkbox v-model="restrictBusinessBox" @change="handleCheckboxChange(restrictBusinessBox)">Restrict</el-checkbox>
+                </el-form-item>
+                <el-form-item v-if="restrictBusinessBox" label="Select Business Box">
+                    <el-select v-model="editing_agent.restrictBusinessboxes" placeholder="Select" clearable multiple>
+                        <el-option v-for="box in businessBoxes" :key="box.name" :label="box.name" :value="box.id" ></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
 
             <template #footer>
                 <span class="dialog-footer">
@@ -326,7 +336,17 @@ export default {
                 "X-WP-Nonce": appVars.rest.nonce,
             },
             show_icon: false,
+            restrictBusinessBox: false,
+            selectedBusinessBoxes: [],
+            businessBoxes: [],
         });
+
+
+        const handleCheckboxChange = (restrictBusinessBox) => {
+            if (state.restrictBusinessBox) {
+                state.selectedBusinessBox = !restrictBusinessBox;
+            }
+        };
 
         const fetchAgents = async () => {
             state.loading = true;
@@ -336,9 +356,13 @@ export default {
                 search: state.search,
             })
                 .then((response) => {
+                    // console.log( JSON.parse(response.agents.data.restrictBusinessboxes), 'response',JSON.parse(response.restrict_businessbox_permission) );
                     state.agents = response.agents.data;
+                    console.log(state.agents);
+                   //state.editing_agent.restrictBusinessboxes = editing_agent.restrictBusinessboxes.slice(1, -1).split(',').map(Number);
                     state.pagination.total = response.agents.total;
                     state.permissions = response.permissions;
+                    state.businessBoxes = response.restrict_businessbox_permission;
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -366,6 +390,7 @@ export default {
                 last_name: "",
                 title: "",
                 permissions: [],
+                restrictBusinessboxes: [],
             };
             state.agent_modal = true;
         };
@@ -566,6 +591,7 @@ export default {
             treeData,
             handleCheckChange,
             resetAgentModal,
+            handleCheckboxChange
         };
     },
 };
