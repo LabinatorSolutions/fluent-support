@@ -1054,8 +1054,13 @@ class Ticket extends Model
     public function getTicket($ticketWith, $withCrmData, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
+        $restictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
 
         $ticket = self::with($ticketWith)->findOrFail($ticketId);
+
+        if (in_array($ticket->mailbox_id, $restictedBusinessBoxes)) {
+            throw new \Exception('Ticket cannot be fetched due to restricted mailbox');
+        }
 
         $customFieldsKey = apply_filters('fluent_support/custom_registration_form_fields_key', Helper::getBusinessSettings('custom_registration_form_field'));
         $ticket->customer->custom_field_keys = $customFieldsKey;

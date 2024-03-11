@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Modules;
 
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Services\Helper;
 
 /**
@@ -140,6 +141,12 @@ class PermissionManager
         return $permissions;
     }
 
+    public static function currentUserRestrictedBusinessBoxes()
+    {
+        $agent = Helper::getAgentByUserId();
+        return $agent->getMeta('restrictBusinessboxes');
+    }
+
     /**
      * currentUserCan method will return whether a user has the selected permission or not
      * @param $permission
@@ -265,5 +272,19 @@ class PermissionManager
                 ]
             ]
         ];
+    }
+
+    public static function restrictBusinessBoxPermission()
+    {
+        $mailboxes = MailBox::all()->map(function ($mailbox) {
+            return [
+                'id' => (string) $mailbox->id,
+                'name' => $mailbox->name
+            ];
+        });
+        return $mailboxes;
+//        dd($mailboxes);
+//        return MailBox::select(['id', 'name'])->get();
+
     }
 }
