@@ -262,13 +262,14 @@
                     />
                 </el-form-item>
             </el-form>
-            <el-form :model="editing_agent" ref="form" label-width="120px">
-                <el-form-item label="Restrict Business Box">
-                    <el-checkbox v-model="restrictBusinessBox" @change="handleCheckboxChange(restrictBusinessBox)">Restrict</el-checkbox>
+
+            <el-form :model="editing_agent" label-position="top" ref="form">
+                <el-form-item class="fs_restriction">
+                    <el-checkbox v-model="editing_agent.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">Restrict Business Box</el-checkbox>
                 </el-form-item>
-                <el-form-item v-if="restrictBusinessBox" label="Select Business Box">
-                    <el-select v-model="editing_agent.restrictBusinessboxes" placeholder="Select" clearable multiple>
-                        <el-option v-for="box in businessBoxes" :key="box.name" :label="box.name" :value="box.id" ></el-option>
+                <el-form-item v-if="editing_agent.businessBoxRestrictions"  >
+                    <el-select class="fs_select_restricted_business_boxes"  v-model="editing_agent.restrictedBusinessBoxes" placeholder="Select" clearable multiple>
+                        <el-option v-for="box in businessBoxes" :key="box.id"  :label="box.name" :value="box.id"></el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -341,10 +342,9 @@ export default {
             businessBoxes: [],
         });
 
-
-        const handleCheckboxChange = (restrictBusinessBox) => {
-            if (state.restrictBusinessBox) {
-                state.selectedBusinessBox = !restrictBusinessBox;
+        const manageBusinessBoxRestrictions = (restrictBusinessBox) => {
+            if (!restrictBusinessBox) {
+                state.editing_agent.restrictedBusinessBoxes = [];
             }
         };
 
@@ -356,13 +356,10 @@ export default {
                 search: state.search,
             })
                 .then((response) => {
-                    // console.log( JSON.parse(response.agents.data.restrictBusinessboxes), 'response',JSON.parse(response.restrict_businessbox_permission) );
                     state.agents = response.agents.data;
-                    console.log(state.agents);
-                   //state.editing_agent.restrictBusinessboxes = editing_agent.restrictBusinessboxes.slice(1, -1).split(',').map(Number);
                     state.pagination.total = response.agents.total;
                     state.permissions = response.permissions;
-                    state.businessBoxes = response.restrict_businessbox_permission;
+                    state.businessBoxes = response.businessBoxes;
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -390,7 +387,8 @@ export default {
                 last_name: "",
                 title: "",
                 permissions: [],
-                restrictBusinessboxes: [],
+                restrictedBusinessBoxes: [],
+                businessBoxRestrictions: false,
             };
             state.agent_modal = true;
         };
@@ -591,7 +589,7 @@ export default {
             treeData,
             handleCheckChange,
             resetAgentModal,
-            handleCheckboxChange
+            manageBusinessBoxRestrictions
         };
     },
 };
