@@ -274,17 +274,8 @@ class PermissionManager
         ];
     }
 
-    public static function restrictBusinessBoxPermission()
+    public static function getBusinessBoxesForRestriction()
     {
-        $mailboxes = MailBox::all()->map(function ($mailbox) {
-            return [
-                'id' => (string) $mailbox->id,
-                'name' => $mailbox->name
-            ];
-        });
-        return $mailboxes;
-//        dd($mailboxes);
-//        return MailBox::select(['id', 'name'])->get();
-
+        return MailBox::select(['id', 'name'])->get();
     }
 }

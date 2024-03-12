@@ -35,7 +35,8 @@ trait AgentTrait
             $agent->telegram_chat_id = $agent->getMeta('telegram_chat_id');
             $agent->slack_user_id = $agent->getMeta('slack_user_id');
             $agent->whatsapp_number = $agent->getMeta('whatsapp_number');
-            $agent->restrictBusinessboxes = $agent->getMeta('restrictBusinessboxes');
+            $agent->restrictedBusinessBoxes = $agent->getMeta('restrictedBusinessBoxes');
+            $agent->businessBoxRestrictions = filter_var($agent->getMeta('businessBoxRestrictions'), FILTER_VALIDATE_BOOLEAN);
         }
 
         return $agents;
@@ -258,10 +259,15 @@ trait AgentTrait
             $agent->whatsapp_number = $whatsappNumber;
         }
 
-        if (isset($data['restrictBusinessboxes'])) {
-            $restrictBusinessboxes = $data['restrictBusinessboxes'];
-            $agent->updateMeta('restrictBusinessboxes', $restrictBusinessboxes);
-            $agent->restrictBusinessboxes = $restrictBusinessboxes;
+        if (isset($data['restrictedBusinessBoxes'])) {
+            $restrictedBusinessBoxes = is_array($data['restrictedBusinessBoxes']) ? array_map('intval', $data['restrictedBusinessBoxes']) : [];
+            $agent->updateMeta('restrictedBusinessBoxes', $restrictedBusinessBoxes);
+            $agent->restrictedBusinessBoxes = $restrictedBusinessBoxes;
+        }
+
+        if (isset($data['businessBoxRestrictions'])) {
+            $agent->updateMeta('businessBoxRestrictions', $data['businessBoxRestrictions']);
+            $agent->businessBoxRestrictions = $data['businessBoxRestrictions'];
         }
 
         return $agent;

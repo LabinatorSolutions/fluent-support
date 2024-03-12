@@ -25,7 +25,7 @@ class AgentController extends Controller
         return [
             'agents' => $agent->getAgents($request->getSafe('search','sanitize_text_field')),
             'permissions' => PermissionManager::getReadablePermissionGroups(),
-            'restrict_businessbox_permission' => PermissionManager::restrictBusinessBoxPermission(),
+            'businessBoxes' => PermissionManager::getBusinessBoxesForRestriction(),
         ];
     }
 
@@ -43,6 +43,8 @@ class AgentController extends Controller
             'last_name' => $request->getSafe('last_name', 'sanitize_text_field'),
             'title' => $request->getSafe('title', 'sanitize_text_field'),
             'permissions' => $request->getSafe('permissions', null, []),
+            'restrictedBusinessBoxes' => $request->getSafe('restrictedBusinessBoxes', 'sanitize_text_field'),
+            'businessBoxRestrictions' => $request->getSafe('businessBoxRestrictions', 'sanitize_text_field'),
         ];
 
         try {
@@ -78,7 +80,8 @@ class AgentController extends Controller
             'telegram_chat_id' => $request->getSafe('telegram_chat_id', 'sanitize_text_field'),
             'slack_user_id' => $request->getSafe('slack_user_id', 'sanitize_text_field'),
             'whatsapp_number' => $request->getSafe('whatsapp_number', 'sanitize_text_field'),
-            'restrictBusinessboxes' => $request->getSafe('restrictBusinessboxes', 'sanitize_text_field'),
+            'restrictedBusinessBoxes' => $request->getSafe('restrictedBusinessBoxes', 'sanitize_text_field'),
+            'businessBoxRestrictions' => $request->getSafe('businessBoxRestrictions', 'sanitize_text_field'),
         ];
 
         if ($agent) {
