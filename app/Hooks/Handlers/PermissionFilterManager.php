@@ -32,9 +32,9 @@ class PermissionFilterManager
 
     public function filterAgentTicketsByMailboxes($ticketsQuery, $args = [] )
     {
-        $restictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
-        if (!empty($restictedBusinessBoxes)) {
-            $ticketsQuery->whereNotIn('mailbox_id', $restictedBusinessBoxes);
+        $restrictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
+        if (!empty($restrictedBusinessBoxes)) {
+            $ticketsQuery->whereNotIn('mailbox_id', $restrictedBusinessBoxes);
         }
     }
 }

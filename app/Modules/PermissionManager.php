@@ -141,10 +141,22 @@ class PermissionManager
         return $permissions;
     }
 
+    /**
+     * Retrieve the list of restricted business boxes for the current user.
+     *
+     * This method fetches the list of restricted business boxes from the metadata of the current user's agent profile.
+     * If business box restrictions are enabled for the user, it returns the list of restricted business boxes; otherwise,
+     * it returns an empty array.
+     *
+     * @return array The list of restricted business boxes for the current user.
+     */
     public static function currentUserRestrictedBusinessBoxes()
     {
         $agent = Helper::getAgentByUserId();
-        return $agent->getMeta('restrictBusinessboxes');
+        $restrictions = $agent->getMeta('restrictions');
+
+        return $restrictions['businessBoxRestrictions'] ? $restrictions['restrictedBusinessBoxes'] : [];
+
     }
 
     /**
