@@ -265,10 +265,10 @@
 
             <el-form :model="editing_agent" label-position="top" ref="form">
                 <el-form-item class="fs_restriction">
-                    <el-checkbox v-model="editing_agent.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">Restrict Business Box</el-checkbox>
+                    <el-checkbox v-model="editing_agent.restrictions.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">Restrict Business Box</el-checkbox>
                 </el-form-item>
-                <el-form-item v-if="editing_agent.businessBoxRestrictions"  >
-                    <el-select class="fs_select_restricted_business_boxes"  v-model="editing_agent.restrictedBusinessBoxes" placeholder="Select" clearable multiple>
+                <el-form-item v-if="editing_agent.restrictions.businessBoxRestrictions"  >
+                    <el-select class="fs_select_restricted_business_boxes"  v-model="editing_agent.restrictions.restrictedBusinessBoxes" placeholder="Select" clearable multiple>
                         <el-option v-for="box in businessBoxes" :key="box.id"  :label="box.name" :value="box.id"></el-option>
                     </el-select>
                 </el-form-item>
@@ -344,7 +344,7 @@ export default {
 
         const manageBusinessBoxRestrictions = (restrictBusinessBox) => {
             if (!restrictBusinessBox) {
-                state.editing_agent.restrictedBusinessBoxes = [];
+                state.editing_agent.restrictions.restrictedBusinessBoxes = [];
             }
         };
 
@@ -387,8 +387,7 @@ export default {
                 last_name: "",
                 title: "",
                 permissions: [],
-                restrictedBusinessBoxes: [],
-                businessBoxRestrictions: false,
+                restrictions: [],
             };
             state.agent_modal = true;
         };
