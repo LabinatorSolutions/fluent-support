@@ -264,7 +264,7 @@
             </el-form>
 
             <el-form :model="editing_agent" label-position="top" ref="form">
-                <el-form-item class="fs_restriction">
+                <el-form-item label="Restrictions" class="fs_restriction">
                     <el-checkbox v-model="editing_agent.restrictions.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">Restrict Business Box</el-checkbox>
                 </el-form-item>
                 <el-form-item v-if="editing_agent.restrictions.businessBoxRestrictions"  >
@@ -387,7 +387,10 @@ export default {
                 last_name: "",
                 title: "",
                 permissions: [],
-                restrictions: [],
+                restrictions: {
+                    businessBoxRestrictions: false,
+                    restrictedBusinessBoxes: []
+                },
             };
             state.agent_modal = true;
         };

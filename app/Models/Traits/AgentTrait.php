@@ -36,6 +36,12 @@ trait AgentTrait
             $agent->slack_user_id = $agent->getMeta('slack_user_id');
             $agent->whatsapp_number = $agent->getMeta('whatsapp_number');
             $agent->restrictions = $agent->getMeta('restrictions');
+            if (empty($agent->restrictions)) {
+                $agent->restrictions = [
+                    'restrictedBusinessBoxes' => [],
+                    'businessBoxRestrictions' => false
+                ];
+            }
         }
 
         return $agents;
