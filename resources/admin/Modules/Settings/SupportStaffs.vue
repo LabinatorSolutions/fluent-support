@@ -262,17 +262,21 @@
                     />
                 </el-form-item>
             </el-form>
-
-            <el-form :model="editing_agent" label-position="top" ref="form">
-                <el-form-item label="Restrictions" class="fs_restriction">
-                    <el-checkbox v-model="editing_agent.restrictions.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">Restrict Business Box</el-checkbox>
-                </el-form-item>
-                <el-form-item v-if="editing_agent.restrictions.businessBoxRestrictions"  >
-                    <el-select class="fs_select_restricted_business_boxes"  v-model="editing_agent.restrictions.restrictedBusinessBoxes" placeholder="Select" clearable multiple>
-                        <el-option v-for="box in businessBoxes" :key="box.id"  :label="box.name" :value="box.id"></el-option>
-                    </el-select>
-                </el-form-item>
-            </el-form>
+            <div class="fs_restriction_section">
+                <h4 class="fs_restriction_label">{{translate('Restrictions')}}</h4>
+                <div class="fs_restriction_content">
+                    <el-form :model="editing_agent" label-position="top" ref="form">
+                        <el-form-item>
+                            <el-checkbox v-model="editing_agent.restrictions.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">{{translate('Business Inbox Access Restriction')}}</el-checkbox>
+                        </el-form-item>
+                        <el-form-item v-if="editing_agent.restrictions.businessBoxRestrictions"  >
+                            <el-select class="fs_select_restricted_business_boxes"  v-model="editing_agent.restrictions.restrictedBusinessBoxes" placeholder="Select" clearable multiple>
+                                <el-option v-for="box in businessBoxes" :key="box.id"  :label="box.name" :value="box.id"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
 
             <template #footer>
                 <span class="dialog-footer">
