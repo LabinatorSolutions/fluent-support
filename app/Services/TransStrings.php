@@ -386,6 +386,8 @@ class TransStrings
             'Slack User ID'    => __('Slack User ID', 'fluent-support'),
             'WhatsApp Phone Number' => __('WhatsApp Phone Number', 'fluent-support'),
             'Ex: +123456789'    => __('Ex: +123456789', 'fluent-support'),
+            'Restrictions'  => __('Restrictions', 'fluent-support'),
+            'Business Inbox Access Restriction' => __('Business Inbox Access Restriction', 'fluent-support'),
             'Customer Management'    => __('Customer Management', 'fluent-support'),
             'Change Customer'    => __('Change Customer', 'fluent-support'),
             'Show Filters'  => __('Show Filters', 'fluent-support'),

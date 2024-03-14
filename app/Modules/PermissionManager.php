@@ -153,7 +153,7 @@ class PermissionManager
     public static function currentUserRestrictedBusinessBoxes()
     {
         $agent = Helper::getAgentByUserId();
-        $restrictions = $agent->getMeta('restrictions');
+        $restrictions = $agent->getMeta('agent_restrictions');
 
         return $restrictions['businessBoxRestrictions'] ? $restrictions['restrictedBusinessBoxes'] : [];
 
