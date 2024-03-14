@@ -157,7 +157,7 @@ export default {
 
         onMounted(() => {
             fetchSettings();
-            setTitle('Flue  ntCRM Integration Settings');
+            setTitle('FluentCRM Integration Settings');
         });
 
         return {
