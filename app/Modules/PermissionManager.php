@@ -69,8 +69,8 @@ class PermissionManager
 
         $permissions = array_intersect($allPermissions, $permissions);
 
-        $permissions = self::removePermissions($permissions, ['fst_manage_unassigned_tickets', 'fst_manage_other_tickets', 'fst_manage_own_tickets'], ['fst_draft_reply']);
-        $permissions = self::removePermissions($permissions, ['fst_draft_reply'], ['fst_approve_draft_reply']);
+        $filterPermissionConditions = self::filterPermissionConditions();
+        $permissions = self::filterPermissionsByConditions($permissions, $filterPermissionConditions);
 
         foreach ($permissions as $permission) {
             $user->add_cap($permission);
@@ -80,21 +80,35 @@ class PermissionManager
     }
 
     /**
-     * removePermissions method removes specified permissions
-     * if any of the elements in $checkPermissions is present in $permissions array.
+     * Filters permissions based on specified conditions.
      *
-     * @param array $permissions
-     * @param array $checkPermissions
-     * @param array $permissionsToRemove
-     * @return array
+     * @param array $permissions The array of permissions to filter.
+     * @param array $conditions  The conditions used for filtering.
+     * @return array The filtered array of permissions.
      */
-    public static function removePermissions($permissions, $checkPermissions, $permissionsToRemove)
+    public static function filterPermissionsByConditions($permissions, $conditions)
     {
-        if (count(array_intersect($checkPermissions, $permissions)) > 0) {
-            $permissions = array_diff($permissions, $permissionsToRemove);
+        foreach ($conditions as $requiredKey => $removeKey) {
+            if (in_array($requiredKey, $permissions) && in_array($removeKey, $permissions)) {
+                unset($permissions[array_search($removeKey, $permissions)]);
+            }
         }
-
         return $permissions;
+    }
+
+    /**
+     * Retrieves the permission filter conditions.
+     *
+     * @return array The array of permission filter conditions.
+     */
+    public static function filterPermissionConditions()
+    {
+        return [
+            'fst_manage_unassigned_tickets' => 'fst_draft_reply',
+            'fst_manage_other_tickets' => 'fst_draft_reply',
+            'fst_manage_own_tickets' => 'fst_draft_reply',
+            'fst_draft_reply' => 'fst_approve_draft_reply'
+        ];
     }
 
     /**
