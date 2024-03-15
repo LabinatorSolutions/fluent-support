@@ -131,7 +131,7 @@ class Person extends Model
         if('gravatar_default' === $defaultAvatar){
             return apply_filters(
                 'fluent_support/get_avatar',
-                "https://www.gravatar.com/avatar/${hash}?s=128",
+                "https://www.gravatar.com/avatar/$hash?s=128",
                 $email
             );
         }else{
