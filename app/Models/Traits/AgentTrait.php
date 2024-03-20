@@ -263,10 +263,14 @@ trait AgentTrait
         }
 
         if (isset($data['restrictions'])) {
+            $restrictedBusinessBoxes = $data['restrictions']['restrictedBusinessBoxes'] ?? [];
+            $businessBoxRestrictions = filter_var($data['restrictions']['businessBoxRestrictions'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
             $restrictions = [
-                'restrictedBusinessBoxes' => is_array($data['restrictions']['restrictedBusinessBoxes']) ? array_map('intval', $data['restrictions']['restrictedBusinessBoxes']) : [],
-                'businessBoxRestrictions' => filter_var($data['restrictions']['businessBoxRestrictions'], FILTER_VALIDATE_BOOLEAN)
+                'restrictedBusinessBoxes' => is_array($restrictedBusinessBoxes) ? array_map('intval', $restrictedBusinessBoxes) : [],
+                'businessBoxRestrictions' => $businessBoxRestrictions
             ];
+
             $agent->updateMeta('agent_restrictions', $restrictions);
             $agent->restrictions = $restrictions;
         }
