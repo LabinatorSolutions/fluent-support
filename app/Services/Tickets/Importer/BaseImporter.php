@@ -206,11 +206,11 @@ abstract class BaseImporter
             $ticketUpdateData['agent_id'] = $defualtAgentId;
         }
 
-        if ($firstResponseTimestamp) {
+        if ($firstResponseTimestamp && $createdTicket->crerated_at) {
             $ticketUpdateData['first_response_time'] = strtotime($firstResponseTimestamp) - strtotime($createdTicket->crerated_at);
         }
 
-        if ($createdTicket->status == 'closed' && $createdTicket->resolved_at) {
+        if ($createdTicket->status == 'closed' && $createdTicket->resolved_at && $createdTicket->crerated_at) {
             $ticketUpdateData['total_close_time'] = strtotime($createdTicket->resolved_at) - strtotime($createdTicket->crerated_at);
         }
 
@@ -358,7 +358,9 @@ abstract class BaseImporter
         }
 
         $ticketData['hash'] = substr(md5(time() . wp_generate_uuid4()), 0, 8) . mt_rand(1, 99);
-
+        if (empty($ticketData['content'])) {
+            $ticketData['content'] = '';
+        }
         $ticketData['content_hash'] = md5($ticketData['content']);
 
         if (empty($ticketData['last_customer_response'])) {
