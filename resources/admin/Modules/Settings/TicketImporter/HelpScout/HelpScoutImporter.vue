@@ -57,7 +57,7 @@
             </template>
             <template #footer>
             <span class="dialog-footer">
-                <el-checkbox v-if="Object.keys(previously_imported).length > 0" v-model="start_from_previous_migration" :label="`An incomplete migration exists. Would you like to resume from the previous one? (${previously_imported.completed}% completed)`" size="large" /><br>
+                <el-checkbox v-if="Object.keys(previously_imported).length > 0 && settings.mailbox_id == previously_imported.mailbox_id" v-model="start_from_previous_migration" :label="`An incomplete migration exists. Would you like to resume from the previous one? (${previously_imported.completed}% completed)`" size="large" /><br>
                 <el-button type="primary" @click="$emit('close')">{{ $t('Cancel') }}</el-button>
                 <el-button v-if="!start_from_previous_migration" type="success" @click="$emit('import')" :disabled="!settings.mailbox_id">
                     {{$t('Import Tickets')}}
