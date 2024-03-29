@@ -92,6 +92,10 @@ abstract class BaseImporter
 
         $data = array_filter(Arr::only($ticketData, $fillables));
 
+        if (!isset($data['content'])) {
+            $data['content'] = '';
+        }
+
         $data['customer_id'] = $ticketData['customer']->id;
 
         if (!empty($ticketData['agent'])) {
@@ -358,9 +362,7 @@ abstract class BaseImporter
         }
 
         $ticketData['hash'] = substr(md5(time() . wp_generate_uuid4()), 0, 8) . mt_rand(1, 99);
-        if (empty($ticketData['content'])) {
-            $ticketData['content'] = '';
-        }
+
         $ticketData['content_hash'] = md5($ticketData['content']);
 
         if (empty($ticketData['last_customer_response'])) {
