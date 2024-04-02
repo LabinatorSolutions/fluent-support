@@ -259,7 +259,39 @@
                         default-expand-all
                         :default-checked-keys="editing_agent.permissions"
                         @check-change="handleCheckChange"
-                    />
+                    >
+                        <template #default="{ node, data }">
+                            <span class="custom-tree-node">
+
+                              <span v-if="node.label === 'Draft Reply'">
+                                  <el-tooltip
+                                      width="200"
+                                      class="box-item"
+                                      popper-class="fs_tree_tooltip"
+                                      effect="dark"
+                                      placement="top-start"
+                                  >
+                                      <template #content>
+                                            If any of the following options are enabled:
+                                            <br />
+
+                                            1. Manage Own Tickets,
+                                            <br />
+                                            2. Manage Unassigned Tickets,
+                                            <br />
+                                            3. Manage Other Tickets ,
+                                            <br />
+                                            In that case, the draft replies permission will be disabled.
+                                        </template>
+
+                                      <span>{{ node.label }}</span>
+                                  </el-tooltip>
+
+                              </span>
+                                 <span v-else>{{ node.label }}</span>
+                            </span>
+                        </template>
+                    </el-tree>
                 </el-form-item>
             </el-form>
             <div class="fs_restriction_section">
@@ -298,7 +330,7 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import {  ElMessageBox } from 'element-plus'
-import {computed, onMounted, reactive, toRefs} from "vue";
+import {computed, onMounted, reactive, toRefs, watch} from "vue";
 import {
     useFluentHelper,
     useNotify,
@@ -561,6 +593,7 @@ export default {
                 }
             });
         };
+
 
         const handleCheckChange = (data, checked, _) => {
             if(checked && isNaN(data.id) && !state.editing_agent.permissions.includes(data.id) ) {
