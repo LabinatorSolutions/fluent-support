@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-12-15 10:13+0000\n"
+"POT-Creation-Date: 2024-04-03 07:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -20,7 +20,7 @@ msgstr ""
 msgid " assign this ticket to self"
 msgstr ""
 
-#: app/Models/Ticket.php:1354
+#: app/Models/Ticket.php:1359
 msgid " has been updated"
 msgstr ""
 
@@ -28,7 +28,7 @@ msgstr ""
 msgid " in this ticket"
 msgstr ""
 
-#: app/Models/Ticket.php:1481
+#: app/Models/Ticket.php:1479
 msgid " tickets has been assigned to"
 msgstr ""
 
@@ -43,13 +43,13 @@ msgid ""
 "Portal%2s [fluent_support_auth]"
 msgstr ""
 
-#: app/Models/Ticket.php:1447
+#: app/Models/Ticket.php:1445
 msgid "%d tickets have been closed"
 msgstr ""
 
 #: app/Services/CustomerPortalService.php:45
-#: app/Services/CustomerPortalService.php:314
-#: app/Services/CustomerPortalService.php:465
+#: app/Services/CustomerPortalService.php:318
+#: app/Services/CustomerPortalService.php:469
 #, php-format
 msgid "%s ago"
 msgstr ""
@@ -58,7 +58,7 @@ msgstr ""
 msgid ". Please copy this code and paste it in the"
 msgstr ""
 
-#: app/Services/TransStrings.php:592
+#: app/Services/TransStrings.php:596
 msgid ""
 ". You can set your actions and run the workflow actions from ticket page."
 msgstr ""
@@ -113,7 +113,7 @@ msgid ""
 "address."
 msgstr ""
 
-#: app/Services/TransStrings.php:446
+#: app/Services/TransStrings.php:450
 msgid "A"
 msgstr ""
 
@@ -121,7 +121,7 @@ msgstr ""
 msgid "Accepted File Types"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:235
+#: app/Modules/PermissionManager.php:289
 msgid "Access Private Data (Customers, Agents)"
 msgstr ""
 
@@ -133,15 +133,15 @@ msgstr ""
 msgid "Action"
 msgstr ""
 
-#: app/Services/TransStrings.php:572
+#: app/Services/TransStrings.php:576
 msgid "Action Title"
 msgstr ""
 
-#: app/Services/TransStrings.php:404
+#: app/Services/TransStrings.php:408
 msgid "Actions"
 msgstr ""
 
-#: app/Services/TransStrings.php:273 app/Services/Helper.php:117
+#: app/Services/TransStrings.php:273 app/Services/Helper.php:116
 #: app/Models/Traits/CustomerTrait.php:91
 msgid "Active"
 msgstr ""
@@ -161,11 +161,11 @@ msgstr ""
 msgid "Activities"
 msgstr ""
 
-#: app/Services/TransStrings.php:464
+#: app/Services/TransStrings.php:468
 msgid "Activity Log Settings"
 msgstr ""
 
-#: app/Services/TransStrings.php:463
+#: app/Services/TransStrings.php:467
 msgid "Activity Logs are currently disabled"
 msgstr ""
 
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Activity settings has been updated"
 msgstr ""
 
-#: app/Services/TransStrings.php:523
+#: app/Services/TransStrings.php:527
 msgid "Add"
 msgstr ""
 
@@ -181,7 +181,7 @@ msgstr ""
 msgid "Add a New Business Inbox"
 msgstr ""
 
-#: app/Services/TransStrings.php:437
+#: app/Services/TransStrings.php:441
 msgid "Add a New Workflow"
 msgstr ""
 
@@ -190,11 +190,11 @@ msgstr ""
 msgid "Add a support ticket for contact"
 msgstr ""
 
-#: app/Services/TransStrings.php:458
+#: app/Services/TransStrings.php:462
 msgid "Add Another Action"
 msgstr ""
 
-#: app/Services/TransStrings.php:612
+#: app/Services/TransStrings.php:616
 msgid "Add Bookmark"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgstr ""
 msgid "Add Business Inbox"
 msgstr ""
 
-#: app/Services/TransStrings.php:393
+#: app/Services/TransStrings.php:397
 msgid ""
 "Add custom fields to your tickets and collect extra data from ticket open "
 "form."
@@ -212,7 +212,7 @@ msgstr ""
 msgid "Add Customer"
 msgstr ""
 
-#: app/Services/TransStrings.php:616
+#: app/Services/TransStrings.php:620
 msgid "Add Customer From FluentCRM"
 msgstr ""
 
@@ -220,7 +220,7 @@ msgstr ""
 msgid "Add Internal Note"
 msgstr ""
 
-#: app/Services/TransStrings.php:597
+#: app/Services/TransStrings.php:601
 msgid "Add More"
 msgstr ""
 
@@ -232,7 +232,7 @@ msgstr ""
 msgid "Add New Business Inbox"
 msgstr ""
 
-#: app/Services/TransStrings.php:397
+#: app/Services/TransStrings.php:401
 msgid "Add New Custom Field"
 msgstr ""
 
@@ -240,11 +240,11 @@ msgstr ""
 msgid "Add new customer"
 msgstr ""
 
-#: app/Services/TransStrings.php:399
+#: app/Services/TransStrings.php:403
 msgid "Add New Field"
 msgstr ""
 
-#: app/Services/TransStrings.php:601
+#: app/Services/TransStrings.php:605
 msgid ""
 "Add new filter to narrow down your contacts based on different properties"
 msgstr ""
@@ -253,7 +253,7 @@ msgstr ""
 msgid "Add New Support Staff"
 msgstr ""
 
-#: app/Services/TransStrings.php:407
+#: app/Services/TransStrings.php:411
 msgid "Add New WorkFlow"
 msgstr ""
 
@@ -283,20 +283,20 @@ msgstr ""
 msgid "Added By Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:426
+#: app/Services/TransStrings.php:430
 msgid "Additional Data "
 msgstr ""
 
-#: app/Services/TransStrings.php:620
+#: app/Services/TransStrings.php:624
 #: app/Hooks/Handlers/CustomerPortalHandler.php:137
 msgid "Additional info"
 msgstr ""
 
-#: app/Services/TransStrings.php:466
+#: app/Services/TransStrings.php:470
 msgid "Address Info"
 msgstr ""
 
-#: app/Models/Customer.php:52 app/Services/TransStrings.php:416
+#: app/Models/Customer.php:52 app/Services/TransStrings.php:420
 #: app/Models/Traits/CustomerTrait.php:110
 #: app/Models/Traits/CustomerTrait.php:112
 #: app/Hooks/Handlers/AuthHandler.php:393
@@ -304,7 +304,7 @@ msgstr ""
 msgid "Address Line 1"
 msgstr ""
 
-#: app/Models/Customer.php:53 app/Services/TransStrings.php:417
+#: app/Models/Customer.php:53 app/Services/TransStrings.php:421
 #: app/Models/Traits/CustomerTrait.php:117
 #: app/Models/Traits/CustomerTrait.php:119
 #: app/Hooks/Handlers/AuthHandler.php:400
@@ -332,11 +332,11 @@ msgstr ""
 msgid "Admin Priority"
 msgstr ""
 
-#: app/Services/TransStrings.php:428
+#: app/Services/TransStrings.php:432
 msgid "Admin Priority:"
 msgstr ""
 
-#: app/Services/TransStrings.php:657
+#: app/Services/TransStrings.php:661
 msgid "Advanced Filter"
 msgstr ""
 
@@ -356,11 +356,11 @@ msgstr ""
 msgid "Agent Feedback Rating"
 msgstr ""
 
-#: app/Services/TransStrings.php:114 app/Services/Helper.php:629
+#: app/Services/TransStrings.php:114 app/Services/Helper.php:637
 msgid "Agent First Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:116 app/Services/Helper.php:631
+#: app/Services/TransStrings.php:116 app/Services/Helper.php:639
 msgid "Agent Full Name"
 msgstr ""
 
@@ -368,11 +368,11 @@ msgstr ""
 msgid "Agent Job Title( ex: Developer, Support Staff )"
 msgstr ""
 
-#: app/Services/TransStrings.php:115 app/Services/Helper.php:630
+#: app/Services/TransStrings.php:115 app/Services/Helper.php:638
 msgid "Agent Last Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:664
+#: app/Services/TransStrings.php:668
 msgid "Agent Performance (Today)"
 msgstr ""
 
@@ -393,7 +393,7 @@ msgstr ""
 msgid "All Customers"
 msgstr ""
 
-#: app/Services/TransStrings.php:424
+#: app/Services/TransStrings.php:428
 msgid "All Inbox"
 msgstr ""
 
@@ -421,7 +421,7 @@ msgstr ""
 msgid "All Support Staff"
 msgstr ""
 
-#: app/Services/TransStrings.php:494
+#: app/Services/TransStrings.php:498
 msgid ""
 "All the forwarded emails to this address will be synced with your tickets"
 msgstr ""
@@ -444,11 +444,11 @@ msgstr ""
 msgid "All tickets has been importer successfully"
 msgstr ""
 
-#: app/Services/TransStrings.php:406
+#: app/Services/TransStrings.php:410
 msgid "All Workflows"
 msgstr ""
 
-#: app/Services/TransStrings.php:582
+#: app/Services/TransStrings.php:586
 msgid "Almost Done"
 msgstr ""
 
@@ -456,23 +456,29 @@ msgstr ""
 msgid "Already have an account?"
 msgstr ""
 
-#: app/Services/TransStrings.php:571
+#: app/Services/TransStrings.php:392
+msgid ""
+"An incomplete migration exists. Would you like to resume from the previous "
+"one?"
+msgstr ""
+
+#: app/Services/TransStrings.php:575
 msgid "AND"
 msgstr ""
 
-#: app/Services/TransStrings.php:580
+#: app/Services/TransStrings.php:584
 msgid "And"
 msgstr ""
 
-#: app/Services/TransStrings.php:556
+#: app/Services/TransStrings.php:560
 msgid "and"
 msgstr ""
 
-#: app/Services/TransStrings.php:524
+#: app/Services/TransStrings.php:528
 msgid "any"
 msgstr ""
 
-#: app/Services/TransStrings.php:650
+#: app/Services/TransStrings.php:654
 msgid "API Key"
 msgstr ""
 
@@ -492,19 +498,19 @@ msgstr ""
 msgid "App Secret"
 msgstr ""
 
-#: app/Services/TransStrings.php:619
+#: app/Services/TransStrings.php:623
 msgid "Apply / Remove Lists on FluentCRM Profile"
 msgstr ""
 
-#: app/Services/TransStrings.php:431
+#: app/Services/TransStrings.php:435
 msgid "Apply / Remove Tags on FluentCRM Profile"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:220
+#: app/Modules/PermissionManager.php:274
 msgid "Approve Draft Reply"
 msgstr ""
 
-#: app/Services/TransStrings.php:448
+#: app/Services/TransStrings.php:452
 msgid ""
 "are always on, running on selected ticket events. Based on what's\n"
 "            happening to your tickets and conversations, It will run the "
@@ -523,29 +529,29 @@ msgstr ""
 msgid "Are you sure to delete the selected Tickets?"
 msgstr ""
 
-#: app/Services/TransStrings.php:568
+#: app/Services/TransStrings.php:572
 msgid "Are you sure to delete this Action?"
 msgstr ""
 
-#: app/Services/TransStrings.php:469
+#: app/Services/TransStrings.php:473
 msgid ""
 "Are you sure to delete this customer? It will delete all associated data "
 "with this customer"
 msgstr ""
 
-#: app/Services/TransStrings.php:522
+#: app/Services/TransStrings.php:526
 msgid "Are you sure to delete this field?"
 msgstr ""
 
-#: app/Services/TransStrings.php:549
+#: app/Services/TransStrings.php:553
 msgid "Are you sure to delete this product?"
 msgstr ""
 
-#: app/Services/TransStrings.php:552
+#: app/Services/TransStrings.php:556
 msgid "Are you sure to delete this tag?"
 msgstr ""
 
-#: app/Services/TransStrings.php:502
+#: app/Services/TransStrings.php:506
 msgid "Are you sure to delete this template?"
 msgstr ""
 
@@ -553,37 +559,37 @@ msgstr ""
 msgid "Are you sure to delete this Ticket?"
 msgstr ""
 
-#: app/Services/TransStrings.php:599
+#: app/Services/TransStrings.php:603
 msgid "Are you sure to delete this?"
 msgstr ""
 
-#: app/Services/TransStrings.php:443
+#: app/Services/TransStrings.php:447
 msgid "Are you sure to delete this? All associate data will be deleted"
 msgstr ""
 
-#: app/Services/TransStrings.php:533
+#: app/Services/TransStrings.php:537
 msgid ""
 "Are you sure to regenerate the webhook url? If you regenerate the url you "
 "have to change all your used webhook"
 msgstr ""
 
-#: app/Services/TransStrings.php:615
+#: app/Services/TransStrings.php:619
 msgid "Are you sure to remove this bookmark?"
 msgstr ""
 
-#: app/Services/TransStrings.php:655
+#: app/Services/TransStrings.php:659
 msgid "Are you sure want to set this business box for webhook?"
 msgstr ""
 
-#: app/Services/TransStrings.php:653
+#: app/Services/TransStrings.php:657
 msgid "Are you sure you want to set this as default?"
 msgstr ""
 
-#: app/Services/TransStrings.php:563
+#: app/Services/TransStrings.php:567
 msgid "Are you sure, you want to close selected tickets?"
 msgstr ""
 
-#: app/Services/TransStrings.php:564
+#: app/Services/TransStrings.php:568
 msgid "Are you sure, you want to delete selected tickets?"
 msgstr ""
 
@@ -595,11 +601,11 @@ msgstr ""
 msgid "Are You Sure? You can not undo this action."
 msgstr ""
 
-#: app/Services/TransStrings.php:562
+#: app/Services/TransStrings.php:566
 msgid "Assign Agent"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:215
+#: app/Modules/PermissionManager.php:269
 msgid "Assign Agents"
 msgstr ""
 
@@ -607,7 +613,7 @@ msgstr ""
 msgid "Assigned Agent "
 msgstr ""
 
-#: app/Services/TransStrings.php:459
+#: app/Services/TransStrings.php:463
 msgid "Assigned Permissions"
 msgstr ""
 
@@ -628,19 +634,19 @@ msgid ""
 "Auto Close tickets based on active days or based on tags or waiting time."
 msgstr ""
 
-#: app/Services/TransStrings.php:436
+#: app/Services/TransStrings.php:440
 msgid "Automate your tickets by applying manual or automated tasks"
 msgstr ""
 
-#: app/Services/TransStrings.php:456
+#: app/Services/TransStrings.php:460
 msgid "Automatic"
 msgstr ""
 
-#: app/Services/TransStrings.php:455
+#: app/Services/TransStrings.php:459
 msgid "automatic"
 msgstr ""
 
-#: app/Services/TransStrings.php:442
+#: app/Services/TransStrings.php:446
 msgid "Automatic workflows"
 msgstr ""
 
@@ -656,7 +662,7 @@ msgstr ""
 msgid "average"
 msgstr ""
 
-#: app/Services/TransStrings.php:164 app/Services/Helper.php:637
+#: app/Services/TransStrings.php:164 app/Services/Helper.php:645
 msgid "Average Waiting"
 msgstr ""
 
@@ -672,7 +678,7 @@ msgstr ""
 msgid "Awesome! Your support portal is ready to go!"
 msgstr ""
 
-#: app/Services/TransStrings.php:465
+#: app/Services/TransStrings.php:469
 msgid "Basic Info"
 msgstr ""
 
@@ -684,11 +690,11 @@ msgstr ""
 msgid "block_instruction"
 msgstr ""
 
-#: app/Services/TransStrings.php:433 app/Models/Traits/CustomerTrait.php:92
+#: app/Services/TransStrings.php:437 app/Models/Traits/CustomerTrait.php:92
 msgid "Blocked"
 msgstr ""
 
-#: app/Services/TransStrings.php:611
+#: app/Services/TransStrings.php:615
 msgid "Bookmarks"
 msgstr ""
 
@@ -706,6 +712,10 @@ msgstr ""
 
 #: app/Services/TransStrings.php:24
 msgid "Business Email"
+msgstr ""
+
+#: app/Services/TransStrings.php:390
+msgid "Business Inbox Access Restriction"
 msgstr ""
 
 #: app/Services/TransStrings.php:119 app/Hooks/Handlers/Menu.php:169
@@ -729,15 +739,15 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: app/Services/TransStrings.php:390
+#: app/Services/TransStrings.php:394
 msgid "Change Customer"
 msgstr ""
 
-#: app/Services/TransStrings.php:487
+#: app/Services/TransStrings.php:491
 msgid "Check all"
 msgstr ""
 
-#: app/Services/TransStrings.php:392
+#: app/Services/TransStrings.php:396
 msgid "Check overall activities"
 msgstr ""
 
@@ -757,15 +767,15 @@ msgstr ""
 msgid "Clear Filters"
 msgstr ""
 
-#: app/Services/TransStrings.php:647
+#: app/Services/TransStrings.php:651
 msgid "Clear Settings"
 msgstr ""
 
-#: app/Services/TransStrings.php:540
+#: app/Services/TransStrings.php:544
 msgid "Click here"
 msgstr ""
 
-#: app/Services/TransStrings.php:539
+#: app/Services/TransStrings.php:543
 msgid "Click Here to Renew your License"
 msgstr ""
 
@@ -794,7 +804,7 @@ msgstr ""
 msgid "Client Priority"
 msgstr ""
 
-#: app/Services/TransStrings.php:425
+#: app/Services/TransStrings.php:429
 msgid "Client Priority: "
 msgstr ""
 
@@ -811,7 +821,7 @@ msgstr ""
 msgid "Close Ticket"
 msgstr ""
 
-#: app/Services/TransStrings.php:628
+#: app/Services/TransStrings.php:632
 msgid "Close Ticket Silently"
 msgstr ""
 
@@ -819,8 +829,8 @@ msgstr ""
 msgid "Close Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:160 app/Services/Helper.php:118
-#: app/Services/Helper.php:635 app/Hooks/Handlers/CustomerPortalHandler.php:116
+#: app/Services/TransStrings.php:160 app/Services/Helper.php:117
+#: app/Services/Helper.php:643 app/Hooks/Handlers/CustomerPortalHandler.php:116
 msgid "Closed"
 msgstr ""
 
@@ -846,7 +856,7 @@ msgstr ""
 msgid "completed"
 msgstr ""
 
-#: app/Services/TransStrings.php:519
+#: app/Services/TransStrings.php:523
 msgid "Condition Match Type"
 msgstr ""
 
@@ -854,7 +864,7 @@ msgstr ""
 msgid "Condition Value"
 msgstr ""
 
-#: app/Services/TransStrings.php:570
+#: app/Services/TransStrings.php:574
 msgid "Conditions"
 msgstr ""
 
@@ -862,7 +872,7 @@ msgstr ""
 msgid "Configuration required!"
 msgstr ""
 
-#: app/Services/TransStrings.php:598
+#: app/Services/TransStrings.php:602
 msgid "confirm"
 msgstr ""
 
@@ -874,18 +884,18 @@ msgstr ""
 msgid "Confirm Delete This Business"
 msgstr ""
 
-#: app/Services/TransStrings.php:669
+#: app/Services/TransStrings.php:673
 msgid "Connect"
 msgstr ""
 
-#: app/Services/TransStrings.php:497
+#: app/Services/TransStrings.php:501
 msgid ""
 "Connect your email address with Fluent Support Email parser, so when your "
 "customers send an email or reply from email it will be synced with your "
 "support portal"
 msgstr ""
 
-#: app/Services/TransStrings.php:516
+#: app/Services/TransStrings.php:520
 msgid "Contains"
 msgstr ""
 
@@ -893,11 +903,11 @@ msgstr ""
 msgid "Content"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:63
+#: app/Http/Controllers/CustomerPortalController.php:64
 msgid "Content is required"
 msgstr ""
 
-#: app/Services/TransStrings.php:581
+#: app/Services/TransStrings.php:585
 msgid "Continue"
 msgstr ""
 
@@ -929,7 +939,7 @@ msgstr ""
 msgid "Count"
 msgstr ""
 
-#: app/Models/Customer.php:57 app/Services/TransStrings.php:420
+#: app/Models/Customer.php:57 app/Services/TransStrings.php:424
 #: app/Models/Traits/CustomerTrait.php:145
 #: app/Models/Traits/CustomerTrait.php:146
 #: app/Hooks/Handlers/AuthHandler.php:428
@@ -937,7 +947,7 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: app/Services/TransStrings.php:586
+#: app/Services/TransStrings.php:590
 msgid "Create"
 msgstr ""
 
@@ -971,7 +981,7 @@ msgstr ""
 msgid "Create New"
 msgstr ""
 
-#: app/Services/TransStrings.php:558
+#: app/Services/TransStrings.php:562
 msgid "Create New Customer"
 msgstr ""
 
@@ -991,7 +1001,7 @@ msgstr ""
 msgid "Create New Ticket Type"
 msgstr ""
 
-#: app/Services/TransStrings.php:561
+#: app/Services/TransStrings.php:565
 msgid "Create New User in WordPress"
 msgstr ""
 
@@ -1025,15 +1035,15 @@ msgstr ""
 msgid "Created On"
 msgstr ""
 
-#: app/Services/Helper.php:58 app/Services/Helper.php:72
+#: app/Services/Helper.php:57 app/Services/Helper.php:71
 msgid "Critical"
 msgstr ""
 
-#: app/Services/TransStrings.php:660
+#: app/Services/TransStrings.php:664
 msgid "critical"
 msgstr ""
 
-#: app/Services/Helper.php:189
+#: app/Services/Helper.php:188
 msgid "CSV"
 msgstr ""
 
@@ -1041,7 +1051,7 @@ msgstr ""
 msgid "Current Overall"
 msgstr ""
 
-#: app/Services/TransStrings.php:491
+#: app/Services/TransStrings.php:495
 msgid "Currently no migration is available for this site"
 msgstr ""
 
@@ -1061,7 +1071,7 @@ msgstr ""
 msgid "Custom Field Slug"
 msgstr ""
 
-#: app/Services/TransStrings.php:395
+#: app/Services/TransStrings.php:399
 msgid "Custom Fields"
 msgstr ""
 
@@ -1069,7 +1079,7 @@ msgstr ""
 msgid "Custom Registration Form Field"
 msgstr ""
 
-#: app/Services/TransStrings.php:394
+#: app/Services/TransStrings.php:398
 msgid "Custom Ticket Fields"
 msgstr ""
 
@@ -1093,7 +1103,7 @@ msgstr ""
 msgid "Customer First Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:408
+#: app/Services/TransStrings.php:412
 msgid "Customer First name"
 msgstr ""
 
@@ -1118,11 +1128,11 @@ msgstr ""
 msgid "Customer Last Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:409
+#: app/Services/TransStrings.php:413
 msgid "Customer Last name"
 msgstr ""
 
-#: app/Services/TransStrings.php:389
+#: app/Services/TransStrings.php:393
 msgid "Customer Management"
 msgstr ""
 
@@ -1140,7 +1150,7 @@ msgstr ""
 msgid "Customer Title"
 msgstr ""
 
-#: app/Services/TransStrings.php:467 app/Hooks/Handlers/Menu.php:141
+#: app/Services/TransStrings.php:471 app/Hooks/Handlers/Menu.php:141
 msgid "Customers"
 msgstr ""
 
@@ -1184,7 +1194,7 @@ msgstr ""
 msgid "Delete Selected Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:667
+#: app/Services/TransStrings.php:671
 msgid "Delete Settings"
 msgstr ""
 
@@ -1192,7 +1202,7 @@ msgstr ""
 msgid "Delete Ticket"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:216
+#: app/Modules/PermissionManager.php:270
 msgid "Delete Tickets"
 msgstr ""
 
@@ -1205,7 +1215,7 @@ msgstr ""
 msgid "Details about the issue"
 msgstr ""
 
-#: app/Services/TransStrings.php:461
+#: app/Services/TransStrings.php:465
 msgid "Disable Activity Logs"
 msgstr ""
 
@@ -1213,15 +1223,15 @@ msgstr ""
 msgid "Disable Public Ticket interaction"
 msgstr ""
 
-#: app/Services/TransStrings.php:573
+#: app/Services/TransStrings.php:577
 msgid "Discard"
 msgstr ""
 
-#: app/Models/Ticket.php:1252
+#: app/Models/Ticket.php:1257
 msgid "Discard draft successfully"
 msgstr ""
 
-#: app/Services/Helper.php:643
+#: app/Services/Helper.php:651
 msgid "Dislikes"
 msgstr ""
 
@@ -1229,25 +1239,25 @@ msgstr ""
 msgid "Do you want to delete all imported tickets and its data?"
 msgstr ""
 
-#: app/Services/TransStrings.php:453
+#: app/Services/TransStrings.php:457
 msgid ""
 "doesn't do anything until you tell it to. When you apply a manual\n"
 "            workflow from a ticket, Fluent Support performs all the actions."
 msgstr ""
 
-#: app/Services/TransStrings.php:546
+#: app/Services/TransStrings.php:550
 msgid "Don't have a license key?"
 msgstr ""
 
-#: app/Models/Ticket.php:1207
+#: app/Models/Ticket.php:1212
 msgid "Draft has been added"
 msgstr ""
 
-#: app/Models/Ticket.php:1219
+#: app/Models/Ticket.php:1224
 msgid "Draft has been updated"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:219
+#: app/Modules/PermissionManager.php:273
 msgid "Draft Reply"
 msgstr ""
 
@@ -1255,7 +1265,7 @@ msgstr ""
 msgid "Draft response has been successfully approved."
 msgstr ""
 
-#: app/Services/TransStrings.php:566
+#: app/Services/TransStrings.php:570
 msgid "Edit"
 msgstr ""
 
@@ -1289,7 +1299,7 @@ msgstr ""
 msgid "Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:652 app/Hooks/Handlers/AuthHandler.php:362
+#: app/Services/TransStrings.php:656 app/Hooks/Handlers/AuthHandler.php:362
 #: app/Hooks/Handlers/AuthHandler.php:449
 #: app/Services/Integrations/FluentForm/FeedIntegration.php:178
 msgid "Email Address"
@@ -1311,7 +1321,7 @@ msgstr ""
 msgid "Email Footer For Customers"
 msgstr ""
 
-#: app/Services/TransStrings.php:527
+#: app/Services/TransStrings.php:531
 msgid "Email Marketing Automation, Newsletter and CRM Plugin for WordPress"
 msgstr ""
 
@@ -1320,7 +1330,7 @@ msgstr ""
 msgid "Email or Password is not valid. Please try again"
 msgstr ""
 
-#: app/Services/TransStrings.php:484
+#: app/Services/TransStrings.php:488
 msgid "Email Piping"
 msgstr ""
 
@@ -1332,15 +1342,15 @@ msgstr ""
 msgid "Email Subject"
 msgstr ""
 
-#: app/Services/TransStrings.php:560
+#: app/Services/TransStrings.php:564
 msgid "Email:"
 msgstr ""
 
-#: app/Services/TransStrings.php:637
+#: app/Services/TransStrings.php:641
 msgid "Enable Auto Closing Inactive Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:507
+#: app/Services/TransStrings.php:511
 msgid "Enable Conditional Logics"
 msgstr ""
 
@@ -1368,7 +1378,7 @@ msgstr ""
 msgid "End"
 msgstr ""
 
-#: app/Services/TransStrings.php:512
+#: app/Services/TransStrings.php:516
 msgid "Equal"
 msgstr ""
 
@@ -1380,15 +1390,15 @@ msgstr ""
 msgid "Ex: +123456789"
 msgstr ""
 
-#: app/Services/TransStrings.php:457
+#: app/Services/TransStrings.php:461
 msgid "Example"
 msgstr ""
 
-#: app/Services/TransStrings.php:626
+#: app/Services/TransStrings.php:630
 msgid "Exclude"
 msgstr ""
 
-#: app/Services/TransStrings.php:631
+#: app/Services/TransStrings.php:635
 msgid "Export Agents Summary"
 msgstr ""
 
@@ -1408,11 +1418,11 @@ msgstr ""
 msgid "Feed Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:548
+#: app/Services/TransStrings.php:552
 msgid "Fetching License Information Please wait"
 msgstr ""
 
-#: app/Services/TransStrings.php:508
+#: app/Services/TransStrings.php:512
 msgid "Field"
 msgstr ""
 
@@ -1445,7 +1455,7 @@ msgid ""
 "Files with a size less than 2MB. Supported Types: images, text, pdf, zip"
 msgstr ""
 
-#: app/Services/TransStrings.php:536
+#: app/Services/TransStrings.php:540
 msgid "Fillable Fields"
 msgstr ""
 
@@ -1453,7 +1463,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-#: app/Services/TransStrings.php:605
+#: app/Services/TransStrings.php:609
 msgid ""
 "Filter and select specific ticket and move these to another mailbox easily"
 msgstr ""
@@ -1462,7 +1472,7 @@ msgstr ""
 msgid "Filter By Tags"
 msgstr ""
 
-#: app/Services/TransStrings.php:412
+#: app/Services/TransStrings.php:416
 msgid "Filter by ticket title"
 msgstr ""
 
@@ -1551,7 +1561,7 @@ msgstr ""
 msgid "FluentCRM contact tags has been updated"
 msgstr ""
 
-#: app/Services/TransStrings.php:526
+#: app/Services/TransStrings.php:530
 msgid "FluentCRM Integration Settings"
 msgstr ""
 
@@ -1566,7 +1576,7 @@ msgid ""
 "first"
 msgstr ""
 
-#: app/Services/TransStrings.php:482
+#: app/Services/TransStrings.php:486
 msgid ""
 "For the confirmation email from your email service provider, please check "
 "the latest ticket. A new ticket should be created with confirmation code."
@@ -1582,7 +1592,7 @@ msgstr ""
 msgid "Form Field"
 msgstr ""
 
-#: app/Services/TransStrings.php:578
+#: app/Services/TransStrings.php:582
 msgid "From"
 msgstr ""
 
@@ -1606,11 +1616,11 @@ msgstr ""
 msgid "Get Authorized"
 msgstr ""
 
-#: app/Services/TransStrings.php:501
+#: app/Services/TransStrings.php:505
 msgid "Get Overall reports of all the support agents and their performance"
 msgstr ""
 
-#: app/Services/TransStrings.php:472
+#: app/Services/TransStrings.php:476
 msgid "Get Piping Email Details"
 msgstr ""
 
@@ -1638,11 +1648,11 @@ msgstr ""
 msgid "Good Job"
 msgstr ""
 
-#: app/Services/TransStrings.php:639
+#: app/Services/TransStrings.php:643
 msgid "Google reCAPTCHA Settings"
 msgstr ""
 
-#: app/Services/TransStrings.php:515
+#: app/Services/TransStrings.php:519
 msgid "Greater Than"
 msgstr ""
 
@@ -1650,7 +1660,7 @@ msgstr ""
 msgid "Greeting Message"
 msgstr ""
 
-#: app/Services/TransStrings.php:541
+#: app/Services/TransStrings.php:545
 msgid "Have a new license Key?"
 msgstr ""
 
@@ -1666,11 +1676,11 @@ msgstr ""
 msgid "https://wpmanageninja.com"
 msgstr ""
 
-#: app/Services/TransStrings.php:474
+#: app/Services/TransStrings.php:478
 msgid "I agree with the Fluent Support email parsing"
 msgstr ""
 
-#: app/Services/TransStrings.php:479
+#: app/Services/TransStrings.php:483
 msgid "I have done it"
 msgstr ""
 
@@ -1678,13 +1688,13 @@ msgstr ""
 msgid "ID"
 msgstr ""
 
-#: app/Services/TransStrings.php:624
+#: app/Services/TransStrings.php:628
 msgid ""
 "If you don't select any agents then all the agents report will be displayed "
 "here otherwise it will show only selected agents report."
 msgstr ""
 
-#: app/Services/TransStrings.php:489
+#: app/Services/TransStrings.php:493
 msgid "If you don't select any column, by default system will take all."
 msgstr ""
 
@@ -1718,11 +1728,11 @@ msgid ""
 "bar."
 msgstr ""
 
-#: app/Services/TransStrings.php:672
+#: app/Services/TransStrings.php:676
 msgid "If you need help or support with Google Drive integration"
 msgstr ""
 
-#: app/Services/TransStrings.php:432
+#: app/Services/TransStrings.php:436
 msgid ""
 "If you select <b>Blocked</b> status then this customer can not submit a "
 "ticket or any response"
@@ -1732,7 +1742,7 @@ msgstr ""
 msgid "If you still have related issues. Please reopen this ticket and reply"
 msgstr ""
 
-#: app/Services/TransStrings.php:475
+#: app/Services/TransStrings.php:479
 msgid ""
 "If you want to connect with your own email parser please use this following "
 "URL to send payload data"
@@ -1742,7 +1752,7 @@ msgstr ""
 msgid "If you want to migrate tickets from other ticketing system like"
 msgstr ""
 
-#: app/Services/TransStrings.php:651
+#: app/Services/TransStrings.php:655
 msgid "Import"
 msgstr ""
 
@@ -1750,11 +1760,11 @@ msgstr ""
 msgid "Import from other Support Tickets Plugins"
 msgstr ""
 
-#: app/Services/TransStrings.php:629
+#: app/Services/TransStrings.php:633
 msgid "Import Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:632
+#: app/Services/TransStrings.php:636
 msgid "Import Tickets from Help Scout"
 msgstr ""
 
@@ -1772,11 +1782,11 @@ msgid ""
 "your app before start importing."
 msgstr ""
 
-#: app/Services/TransStrings.php:423
+#: app/Services/TransStrings.php:427
 msgid "Inbox"
 msgstr ""
 
-#: app/Services/TransStrings.php:617
+#: app/Services/TransStrings.php:621
 msgid "Inbox Color"
 msgstr ""
 
@@ -1788,23 +1798,23 @@ msgstr ""
 msgid "Inbox Settings"
 msgstr ""
 
-#: app/Services/TransStrings.php:625
+#: app/Services/TransStrings.php:629
 msgid "Include"
 msgstr ""
 
-#: app/Services/TransStrings.php:623
+#: app/Services/TransStrings.php:627
 msgid "Include Agents in Summary"
 msgstr ""
 
-#: app/Services/TransStrings.php:608
+#: app/Services/TransStrings.php:612
 msgid "Includes In"
 msgstr ""
 
-#: app/Services/TransStrings.php:531
+#: app/Services/TransStrings.php:535
 msgid "Incoming Webhook"
 msgstr ""
 
-#: app/Services/TransStrings.php:532
+#: app/Services/TransStrings.php:536
 msgid "Incoming Webhook URL"
 msgstr ""
 
@@ -1812,7 +1822,7 @@ msgstr ""
 msgid "Individual Performance"
 msgstr ""
 
-#: app/Services/TransStrings.php:530
+#: app/Services/TransStrings.php:534
 msgid "Install & Activate FluentCRM (it's free)"
 msgstr ""
 
@@ -1820,7 +1830,7 @@ msgstr ""
 msgid "Installation has been completed"
 msgstr ""
 
-#: app/Services/TransStrings.php:529
+#: app/Services/TransStrings.php:533
 msgid ""
 "Integrate your support customers with FluentCRM to segment, automate your "
 "email marketing."
@@ -1835,11 +1845,11 @@ msgid "Integration Settings"
 msgstr ""
 
 #: app/Modules/StatModule.php:85 app/Services/TransStrings.php:158
-#: app/Services/Helper.php:633
+#: app/Services/Helper.php:641
 msgid "Interactions"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:81
+#: app/Http/Controllers/CustomerPortalController.php:86
 msgid "Invalid form data submitted"
 msgstr ""
 
@@ -1864,7 +1874,7 @@ msgstr ""
 msgid "IP Address"
 msgstr ""
 
-#: app/Services/TransStrings.php:528
+#: app/Services/TransStrings.php:532
 msgid ""
 "is a Self Hosted Email Marketing Automation Plugin for WordPress. Manage "
 "your leads and customers, email campaigns, automated email sequencing, "
@@ -1872,15 +1882,15 @@ msgid ""
 "in one place; without ever having to leave your WordPress dashboard!"
 msgstr ""
 
-#: app/Services/TransStrings.php:575
+#: app/Services/TransStrings.php:579
 msgid "Is after"
 msgstr ""
 
-#: app/Services/TransStrings.php:574
+#: app/Services/TransStrings.php:578
 msgid "Is before"
 msgstr ""
 
-#: app/Services/TransStrings.php:576
+#: app/Services/TransStrings.php:580
 msgid "Is between"
 msgstr ""
 
@@ -1890,16 +1900,16 @@ msgid ""
 "suggestion, bug report etc"
 msgstr ""
 
-#: app/Services/TransStrings.php:414 app/Models/Traits/CustomerTrait.php:73
+#: app/Services/TransStrings.php:418 app/Models/Traits/CustomerTrait.php:73
 #: app/Models/Traits/CustomerTrait.php:75
 msgid "Job Title"
 msgstr ""
 
-#: app/Services/Helper.php:218
+#: app/Services/Helper.php:217
 msgid "JSON"
 msgstr ""
 
-#: app/Services/TransStrings.php:401
+#: app/Services/TransStrings.php:405
 msgid "Label"
 msgstr ""
 
@@ -1955,15 +1965,15 @@ msgstr ""
 msgid "Last Week"
 msgstr ""
 
-#: app/Services/TransStrings.php:514
+#: app/Services/TransStrings.php:518
 msgid "Less than"
 msgstr ""
 
-#: app/Services/TransStrings.php:400
+#: app/Services/TransStrings.php:404
 msgid "License Management"
 msgstr ""
 
-#: app/Services/Helper.php:642
+#: app/Services/Helper.php:650
 msgid "Likes"
 msgstr ""
 
@@ -1975,7 +1985,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: app/Services/TransStrings.php:644
+#: app/Services/TransStrings.php:648
 msgid "Login Form"
 msgstr ""
 
@@ -1995,7 +2005,7 @@ msgstr ""
 msgid "Looks like you have caught up everything for now."
 msgstr ""
 
-#: app/Services/TransStrings.php:538
+#: app/Services/TransStrings.php:542
 msgid "Looks like your license has been expired"
 msgstr ""
 
@@ -2015,19 +2025,19 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:214
+#: app/Modules/PermissionManager.php:268
 msgid "Manage Others Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:234
+#: app/Modules/PermissionManager.php:288
 msgid "Manage Overall Settings"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:212
+#: app/Modules/PermissionManager.php:266
 msgid "Manage Own Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:228
+#: app/Modules/PermissionManager.php:282
 msgid "Manage Saved Replies"
 msgstr ""
 
@@ -2035,11 +2045,11 @@ msgstr ""
 msgid "Manage Support Staff"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:213
+#: app/Modules/PermissionManager.php:267
 msgid "Manage Unassigned Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:226
+#: app/Modules/PermissionManager.php:280
 msgid "Manage Workflows"
 msgstr ""
 
@@ -2047,23 +2057,23 @@ msgstr ""
 msgid "Manager"
 msgstr ""
 
-#: app/Services/TransStrings.php:444
+#: app/Services/TransStrings.php:448
 msgid "Manual"
 msgstr ""
 
-#: app/Services/TransStrings.php:445
+#: app/Services/TransStrings.php:449
 msgid "manual"
 msgstr ""
 
-#: app/Services/TransStrings.php:589
+#: app/Services/TransStrings.php:593
 msgid "Manual Trigger"
 msgstr ""
 
-#: app/Services/TransStrings.php:451
+#: app/Services/TransStrings.php:455
 msgid "Manual workflow"
 msgstr ""
 
-#: app/Services/TransStrings.php:591
+#: app/Services/TransStrings.php:595
 msgid "manual workflow"
 msgstr ""
 
@@ -2071,15 +2081,15 @@ msgstr ""
 msgid "Mapped Email"
 msgstr ""
 
-#: app/Services/TransStrings.php:520
+#: app/Services/TransStrings.php:524
 msgid "Match all conditions"
 msgstr ""
 
-#: app/Services/TransStrings.php:521
+#: app/Services/TransStrings.php:525
 msgid "Match any conditions"
 msgstr ""
 
-#: app/Services/TransStrings.php:510
+#: app/Services/TransStrings.php:514
 msgid "Match Value"
 msgstr ""
 
@@ -2091,7 +2101,7 @@ msgstr ""
 msgid "max wait time"
 msgstr ""
 
-#: app/Services/TransStrings.php:165 app/Services/Helper.php:638
+#: app/Services/TransStrings.php:165 app/Services/Helper.php:646
 msgid "Max Waiting"
 msgstr ""
 
@@ -2099,15 +2109,15 @@ msgstr ""
 msgid "Maximum File Upload"
 msgstr ""
 
-#: app/Services/Helper.php:57 app/Services/Helper.php:71
+#: app/Services/Helper.php:56 app/Services/Helper.php:70
 msgid "Medium"
 msgstr ""
 
-#: app/Services/TransStrings.php:658
+#: app/Services/TransStrings.php:662
 msgid "medium"
 msgstr ""
 
-#: app/Services/TransStrings.php:610
+#: app/Services/TransStrings.php:614
 msgid "Mentioned"
 msgstr ""
 
@@ -2115,11 +2125,11 @@ msgstr ""
 msgid "Mentioned Ticket"
 msgstr ""
 
-#: app/Services/TransStrings.php:606
+#: app/Services/TransStrings.php:610
 msgid "Merge"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:217 app/Services/TransStrings.php:607
+#: app/Modules/PermissionManager.php:271 app/Services/TransStrings.php:611
 msgid "Merge Tickets"
 msgstr ""
 
@@ -2135,7 +2145,7 @@ msgstr ""
 msgid "morning"
 msgstr ""
 
-#: app/Services/TransStrings.php:621
+#: app/Services/TransStrings.php:625
 msgid "Move"
 msgstr ""
 
@@ -2147,11 +2157,11 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:559
+#: app/Services/TransStrings.php:563
 msgid "Name:"
 msgstr ""
 
-#: app/Services/TransStrings.php:275 app/Services/Helper.php:116
+#: app/Services/TransStrings.php:275 app/Services/Helper.php:115
 msgid "New"
 msgstr ""
 
@@ -2160,7 +2170,7 @@ msgstr ""
 msgid "new"
 msgstr ""
 
-#: app/Services/TransStrings.php:505
+#: app/Services/TransStrings.php:509
 msgid "New Option"
 msgstr ""
 
@@ -2169,7 +2179,7 @@ msgstr ""
 msgid "New Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:636
+#: app/Services/TransStrings.php:640
 #: app/Hooks/Handlers/CustomerPortalHandler.php:124
 msgid "Next"
 msgstr ""
@@ -2178,11 +2188,11 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: app/Services/TransStrings.php:613
+#: app/Services/TransStrings.php:617
 msgid "No activities found at this moment"
 msgstr ""
 
-#: app/Services/TransStrings.php:427
+#: app/Services/TransStrings.php:431
 msgid "No additional data found"
 msgstr ""
 
@@ -2190,7 +2200,7 @@ msgstr ""
 msgid "No available tags found"
 msgstr ""
 
-#: app/Services/TransStrings.php:396
+#: app/Services/TransStrings.php:400
 msgid "No Custom Fields Found"
 msgstr ""
 
@@ -2198,23 +2208,23 @@ msgstr ""
 msgid "No support tickets found for this filter"
 msgstr ""
 
-#: app/Services/Helper.php:56 app/Services/Helper.php:70
+#: app/Services/Helper.php:55 app/Services/Helper.php:69
 msgid "Normal"
 msgstr ""
 
-#: app/Services/TransStrings.php:659
+#: app/Services/TransStrings.php:663
 msgid "normal"
 msgstr ""
 
-#: app/Services/TransStrings.php:517
+#: app/Services/TransStrings.php:521
 msgid "Not Contains"
 msgstr ""
 
-#: app/Services/TransStrings.php:513
+#: app/Services/TransStrings.php:517
 msgid "Not Equal"
 msgstr ""
 
-#: app/Services/TransStrings.php:609
+#: app/Services/TransStrings.php:613
 msgid "Not Includes In"
 msgstr ""
 
@@ -2222,7 +2232,7 @@ msgstr ""
 msgid "Not registered?"
 msgstr ""
 
-#: app/Services/TransStrings.php:415 app/Models/Traits/CustomerTrait.php:80
+#: app/Services/TransStrings.php:419 app/Models/Traits/CustomerTrait.php:80
 #: app/Models/Traits/CustomerTrait.php:82
 msgid "Note"
 msgstr ""
@@ -2231,7 +2241,7 @@ msgstr ""
 msgid "Notification Integrations"
 msgstr ""
 
-#: app/Services/TransStrings.php:670
+#: app/Services/TransStrings.php:674
 msgid "oAuth2 Authorised redirect URI"
 msgstr ""
 
@@ -2239,7 +2249,7 @@ msgstr ""
 msgid "on-hold"
 msgstr ""
 
-#: app/Services/TransStrings.php:480
+#: app/Services/TransStrings.php:484
 msgid "Once you activate the auto-forward for"
 msgstr ""
 
@@ -2258,20 +2268,20 @@ msgstr ""
 msgid "Open"
 msgstr ""
 
-#: app/Services/TransStrings.php:661
+#: app/Services/TransStrings.php:665
 #: app/Hooks/Handlers/CustomerPortalHandler.php:115
 msgid "open"
 msgstr ""
 
-#: app/Services/TransStrings.php:656
+#: app/Services/TransStrings.php:660
 msgid "Open Ticket in New Tab"
 msgstr ""
 
-#: app/Services/TransStrings.php:159 app/Services/Helper.php:634
+#: app/Services/TransStrings.php:159 app/Services/Helper.php:642
 msgid "Open Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:509
+#: app/Services/TransStrings.php:513
 msgid "Operator"
 msgstr ""
 
@@ -2279,11 +2289,11 @@ msgstr ""
 msgid "Option Value"
 msgstr ""
 
-#: app/Services/TransStrings.php:579
+#: app/Services/TransStrings.php:583
 msgid "OR"
 msgstr ""
 
-#: app/Services/TransStrings.php:486
+#: app/Services/TransStrings.php:490
 msgid "or"
 msgstr ""
 
@@ -2291,7 +2301,7 @@ msgstr ""
 msgid "Order"
 msgstr ""
 
-#: app/Services/TransStrings.php:462
+#: app/Services/TransStrings.php:466
 msgid "Overall Activities"
 msgstr ""
 
@@ -2316,7 +2326,7 @@ msgstr ""
 msgid "Payment Via"
 msgstr ""
 
-#: app/Services/Helper.php:200
+#: app/Services/Helper.php:199
 msgid "PDF/Docs"
 msgstr ""
 
@@ -2336,11 +2346,11 @@ msgstr ""
 msgid "Phone"
 msgstr ""
 
-#: app/Services/Helper.php:177
+#: app/Services/Helper.php:176
 msgid "Photos"
 msgstr ""
 
-#: app/Services/TransStrings.php:577
+#: app/Services/TransStrings.php:581
 msgid "Pick a day"
 msgstr ""
 
@@ -2352,11 +2362,11 @@ msgstr ""
 msgid "Please check your email for the reset link"
 msgstr ""
 
-#: app/Services/TransStrings.php:499
+#: app/Services/TransStrings.php:503
 msgid "Please configure"
 msgstr ""
 
-#: app/Services/TransStrings.php:495
+#: app/Services/TransStrings.php:499
 msgid "Please contact with"
 msgstr ""
 
@@ -2369,7 +2379,7 @@ msgstr ""
 msgid "Please do not share any private information."
 msgstr ""
 
-#: app/Services/TransStrings.php:477
+#: app/Services/TransStrings.php:481
 msgid "Please enable auto-forwarding your emails from"
 msgstr ""
 
@@ -2413,7 +2423,7 @@ msgstr ""
 msgid "Please Map Your Ticket Custom Field Data for this form."
 msgstr ""
 
-#: app/Services/TransStrings.php:545
+#: app/Services/TransStrings.php:549
 msgid ""
 "Please Provide a license key of FluentSupport - Customer Support Plugin for "
 "WordPress"
@@ -2453,7 +2463,7 @@ msgid ""
 "customers. Use shortcode <code>[fluent_support_portal]</code> in that page"
 msgstr ""
 
-#: app/Services/TransStrings.php:671
+#: app/Services/TransStrings.php:675
 msgid "Please read the documentation first to get ClientID and Client Secret"
 msgstr ""
 
@@ -2566,7 +2576,7 @@ msgstr ""
 msgid "Public"
 msgstr ""
 
-#: app/Services/TransStrings.php:648
+#: app/Services/TransStrings.php:652
 msgid "Public Label"
 msgstr ""
 
@@ -2574,7 +2584,7 @@ msgstr ""
 msgid "Purchase Date"
 msgstr ""
 
-#: app/Services/TransStrings.php:547
+#: app/Services/TransStrings.php:551
 msgid "Purchase one here"
 msgstr ""
 
@@ -2590,7 +2600,7 @@ msgstr ""
 msgid "Quick Summary"
 msgstr ""
 
-#: app/Services/TransStrings.php:483
+#: app/Services/TransStrings.php:487
 msgid "Read the email piping documentation"
 msgstr ""
 
@@ -2598,11 +2608,11 @@ msgstr ""
 msgid "Recaptcha"
 msgstr ""
 
-#: app/Services/TransStrings.php:640
+#: app/Services/TransStrings.php:644
 msgid "Recaptcha Version"
 msgstr ""
 
-#: app/Services/TransStrings.php:668
+#: app/Services/TransStrings.php:672
 msgid "Reconnect"
 msgstr ""
 
@@ -2666,7 +2676,7 @@ msgstr ""
 msgid "Reply To Selected Tickets"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:239
+#: app/Modules/PermissionManager.php:293
 msgid "Reporting"
 msgstr ""
 
@@ -2679,7 +2689,7 @@ msgstr ""
 msgid "Request Token"
 msgstr ""
 
-#: app/Services/TransStrings.php:638
+#: app/Services/TransStrings.php:642
 msgid "Required"
 msgstr ""
 
@@ -2717,7 +2727,7 @@ msgstr ""
 msgid "Response Count"
 msgstr ""
 
-#: app/Models/Ticket.php:1177
+#: app/Models/Ticket.php:1182
 msgid "Response has been added"
 msgstr ""
 
@@ -2735,23 +2745,31 @@ msgstr ""
 
 #: app/Modules/StatModule.php:81 app/Modules/StatModule.php:124
 #: app/Modules/StatModule.php:164 app/Services/TransStrings.php:157
-#: app/Services/Helper.php:632
+#: app/Services/Helper.php:640
 msgid "Responses"
 msgstr ""
 
-#: app/Services/TransStrings.php:553
-msgid "Review your Workflow"
+#: app/Services/TransStrings.php:389
+msgid "Restrictions"
+msgstr ""
+
+#: app/Services/TransStrings.php:391
+msgid "Resume Previous Migration"
 msgstr ""
 
 #: app/Services/TransStrings.php:557
+msgid "Review your Workflow"
+msgstr ""
+
+#: app/Services/TransStrings.php:561
 msgid "Run Workflow"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:227
+#: app/Modules/PermissionManager.php:281
 msgid "Run workflows"
 msgstr ""
 
-#: app/Services/TransStrings.php:554
+#: app/Services/TransStrings.php:558
 msgid "Running the"
 msgstr ""
 
@@ -2787,11 +2805,11 @@ msgstr ""
 msgid "Search Customers"
 msgstr ""
 
-#: app/Services/TransStrings.php:633
+#: app/Services/TransStrings.php:637
 msgid "Search Existing contact or provide email address"
 msgstr ""
 
-#: app/Services/TransStrings.php:634
+#: app/Services/TransStrings.php:638
 msgid "Search or provide email address"
 msgstr ""
 
@@ -2816,7 +2834,7 @@ msgstr ""
 msgid "Security verification failed. Please try again"
 msgstr ""
 
-#: app/Services/TransStrings.php:627
+#: app/Services/TransStrings.php:631
 msgid ""
 "Seems like Awesome Support or Support Candy isn't activated in your site. To "
 "import tickets from any of these please activate it."
@@ -2826,7 +2844,7 @@ msgstr ""
 msgid "Select a Country"
 msgstr ""
 
-#: app/Services/TransStrings.php:460
+#: app/Services/TransStrings.php:464
 msgid "Select Action"
 msgstr ""
 
@@ -2843,11 +2861,11 @@ msgstr ""
 msgid "Select Business Inbox"
 msgstr ""
 
-#: app/Services/TransStrings.php:630
+#: app/Services/TransStrings.php:634
 msgid "Select columns that you want to export"
 msgstr ""
 
-#: app/Services/TransStrings.php:595
+#: app/Services/TransStrings.php:599
 msgid "Select Contact Property"
 msgstr ""
 
@@ -2855,7 +2873,7 @@ msgstr ""
 msgid "Select Customer"
 msgstr ""
 
-#: app/Services/TransStrings.php:511
+#: app/Services/TransStrings.php:515
 msgid "Select Field"
 msgstr ""
 
@@ -2863,11 +2881,11 @@ msgstr ""
 msgid "Select Field Type"
 msgstr ""
 
-#: app/Services/TransStrings.php:596
+#: app/Services/TransStrings.php:600
 msgid "Select Form Property"
 msgstr ""
 
-#: app/Services/TransStrings.php:569
+#: app/Services/TransStrings.php:573
 msgid "Select Integration Event"
 msgstr ""
 
@@ -2888,7 +2906,7 @@ msgstr ""
 msgid "Select Priority"
 msgstr ""
 
-#: app/Services/TransStrings.php:411
+#: app/Services/TransStrings.php:415
 msgid "Select Product"
 msgstr ""
 
@@ -2911,11 +2929,11 @@ msgid ""
 "new contact then a double optin email will be sent"
 msgstr ""
 
-#: app/Services/TransStrings.php:413
+#: app/Services/TransStrings.php:417
 msgid "Select ticket that you want to move"
 msgstr ""
 
-#: app/Services/TransStrings.php:594
+#: app/Services/TransStrings.php:598
 msgid "Select Value"
 msgstr ""
 
@@ -2931,7 +2949,7 @@ msgstr ""
 msgid "Selected Business has been set as default"
 msgstr ""
 
-#: app/Services/TransStrings.php:635
+#: app/Services/TransStrings.php:639
 msgid "Selected Contact Details"
 msgstr ""
 
@@ -2947,11 +2965,11 @@ msgstr ""
 msgid "Selected response has been updated"
 msgstr ""
 
-#: app/Models/Ticket.php:1505
+#: app/Models/Ticket.php:1503
 msgid "Selected tags has been added to tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:602
+#: app/Services/TransStrings.php:606
 msgid "Send Attachments(Not Recommended)"
 msgstr ""
 
@@ -2965,7 +2983,7 @@ msgstr ""
 msgid "Send ticket activity notifications to slack"
 msgstr ""
 
-#: app/Services/TransStrings.php:654
+#: app/Services/TransStrings.php:658
 msgid "Set as Default"
 msgstr ""
 
@@ -2977,11 +2995,11 @@ msgstr ""
 msgid "Set Product"
 msgstr ""
 
-#: app/Services/TransStrings.php:588
+#: app/Services/TransStrings.php:592
 msgid "Set Your Trigger & Conditions"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:232 app/Services/TransStrings.php:140
+#: app/Modules/PermissionManager.php:286 app/Services/TransStrings.php:140
 #: app/Hooks/Handlers/Menu.php:93 app/Hooks/Handlers/Menu.php:94
 msgid "Settings"
 msgstr ""
@@ -2990,18 +3008,18 @@ msgstr ""
 msgid "Settings could not be found"
 msgstr ""
 
-#: app/Services/TransStrings.php:496
+#: app/Services/TransStrings.php:500
 msgid "Settings could not be loaded"
 msgstr ""
 
 #: app/Http/Controllers/SlackController.php:40
-#: app/Http/Controllers/IntegrationController.php:35
+#: app/Http/Controllers/IntegrationController.php:41
 msgid "Settings failed to save"
 msgstr ""
 
 #: app/Http/Controllers/SlackController.php:47
 #: app/Http/Controllers/SettingsController.php:64
-#: app/Http/Controllers/IntegrationController.php:43
+#: app/Http/Controllers/IntegrationController.php:49
 #: app/Services/MailerInbox/MailBoxService.php:194
 msgid "Settings has been updated"
 msgstr ""
@@ -3018,11 +3036,11 @@ msgstr ""
 msgid "Shipping method"
 msgstr ""
 
-#: app/Services/TransStrings.php:604
+#: app/Services/TransStrings.php:608
 msgid "Shortcodes"
 msgstr ""
 
-#: app/Services/TransStrings.php:391
+#: app/Services/TransStrings.php:395
 msgid "Show Filters"
 msgstr ""
 
@@ -3030,7 +3048,7 @@ msgstr ""
 msgid "Signup"
 msgstr ""
 
-#: app/Services/TransStrings.php:645
+#: app/Services/TransStrings.php:649
 msgid "Signup Form"
 msgstr ""
 
@@ -3046,7 +3064,7 @@ msgstr ""
 msgid "Slack User ID"
 msgstr ""
 
-#: app/Services/TransStrings.php:402
+#: app/Services/TransStrings.php:406
 msgid "Slug"
 msgstr ""
 
@@ -3054,11 +3072,11 @@ msgstr ""
 msgid "Slug (Optional)"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:177
+#: app/Http/Controllers/CustomerPortalController.php:182
 msgid "Sorry you can not create response"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:102
+#: app/Http/Controllers/CustomerPortalController.php:107
 msgid "Sorry you can not create ticket"
 msgstr ""
 
@@ -3072,7 +3090,7 @@ msgstr ""
 msgid "Sorry, no tickets available for import."
 msgstr ""
 
-#: app/Services/TransStrings.php:614
+#: app/Services/TransStrings.php:618
 msgid "Sorry, this customer has one ticket only"
 msgstr ""
 
@@ -3082,7 +3100,7 @@ msgid ""
 "new signed url"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:218 app/Services/TransStrings.php:618
+#: app/Modules/PermissionManager.php:272 app/Services/TransStrings.php:622
 msgid "Split Ticket"
 msgstr ""
 
@@ -3095,7 +3113,7 @@ msgstr ""
 msgid "started the conversation"
 msgstr ""
 
-#: app/Models/Customer.php:55 app/Services/TransStrings.php:418
+#: app/Models/Customer.php:55 app/Services/TransStrings.php:422
 #: app/Models/Traits/CustomerTrait.php:131
 #: app/Models/Traits/CustomerTrait.php:133
 #: app/Hooks/Handlers/AuthHandler.php:421
@@ -3140,7 +3158,7 @@ msgstr ""
 msgid "Suggested Ticket"
 msgstr ""
 
-#: app/Services/TransStrings.php:490
+#: app/Services/TransStrings.php:494
 msgid "Support Candy"
 msgstr ""
 
@@ -3152,7 +3170,7 @@ msgstr ""
 msgid "Support Customer Field"
 msgstr ""
 
-#: app/Services/TransStrings.php:410
+#: app/Services/TransStrings.php:414
 msgid "Support From Email"
 msgstr ""
 
@@ -3169,19 +3187,19 @@ msgstr ""
 msgid "Support Staff"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:195
+#: app/Http/Controllers/AgentController.php:199
 msgid "Support Staff avatar reset to gravatar default"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:49
+#: app/Http/Controllers/AgentController.php:51
 msgid "Support Staff has been added"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:110
+#: app/Http/Controllers/AgentController.php:114
 msgid "Support Staff has been deleted"
 msgstr ""
 
-#: app/Http/Controllers/AgentController.php:84
+#: app/Http/Controllers/AgentController.php:88
 msgid "Support Staff has been updated"
 msgstr ""
 
@@ -3193,7 +3211,7 @@ msgstr ""
 msgid "Support ticket creation failed, because no valid customer email found"
 msgstr ""
 
-#: app/Services/TransStrings.php:421
+#: app/Services/TransStrings.php:425
 msgid "Support Tickets"
 msgstr ""
 
@@ -3202,7 +3220,7 @@ msgstr ""
 msgid "Support Type"
 msgstr ""
 
-#: app/Services/Helper.php:170
+#: app/Services/Helper.php:169
 #, php-format
 msgid "Supported Types: %s and max file size: %.01fMB"
 msgstr ""
@@ -3243,11 +3261,11 @@ msgstr ""
 msgid "Templates"
 msgstr ""
 
-#: app/Services/TransStrings.php:473
+#: app/Services/TransStrings.php:477
 msgid "terms and conditions"
 msgstr ""
 
-#: app/Services/TransStrings.php:583
+#: app/Services/TransStrings.php:587
 msgid ""
 "Thank you again for configuring your own Support System in WordPress. You "
 "may install companion Form Plugin to create tickets from contact forms."
@@ -3260,7 +3278,7 @@ msgid ""
 "Dropbox/Google Drive and paste the link in the response"
 msgstr ""
 
-#: app/Services/TransStrings.php:481
+#: app/Services/TransStrings.php:485
 msgid "the status will be active"
 msgstr ""
 
@@ -3300,7 +3318,7 @@ msgid ""
 "submitted"
 msgstr ""
 
-#: app/Services/TransStrings.php:590
+#: app/Services/TransStrings.php:594
 msgid "This is a"
 msgstr ""
 
@@ -3310,7 +3328,7 @@ msgid ""
 "feature"
 msgstr ""
 
-#: app/Services/TransStrings.php:506
+#: app/Services/TransStrings.php:510
 msgid "This is an agent only field"
 msgstr ""
 
@@ -3331,12 +3349,12 @@ msgstr ""
 msgid "This will permanently delete response. Continue?"
 msgstr ""
 
-#: app/Services/TransStrings.php:666
+#: app/Services/TransStrings.php:670
 #: app/Hooks/Handlers/CustomerPortalHandler.php:167
 msgid "Thread Follower"
 msgstr ""
 
-#: app/Services/TransStrings.php:665
+#: app/Services/TransStrings.php:669
 #: app/Hooks/Handlers/CustomerPortalHandler.php:166
 msgid "Thread Starter"
 msgstr ""
@@ -3385,7 +3403,7 @@ msgstr ""
 msgid "Ticket created at"
 msgstr ""
 
-#: app/Services/TransStrings.php:429
+#: app/Services/TransStrings.php:433
 msgid "Ticket created at "
 msgstr ""
 
@@ -3418,13 +3436,13 @@ msgstr ""
 msgid "Ticket Form Config"
 msgstr ""
 
-#: app/Services/TransStrings.php:551
+#: app/Services/TransStrings.php:555
 msgid ""
 "Ticket Form Customization including Knowledge base integration is available "
 "on Pro Version"
 msgstr ""
 
-#: app/Services/TransStrings.php:550
+#: app/Services/TransStrings.php:554
 msgid "Ticket Form Settings"
 msgstr ""
 
@@ -3434,7 +3452,7 @@ msgstr ""
 msgid "Ticket has been closed"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:117
+#: app/Http/Controllers/CustomerPortalController.php:122
 msgid "Ticket has been created successfully"
 msgstr ""
 
@@ -3455,11 +3473,11 @@ msgstr ""
 msgid "Ticket ID"
 msgstr ""
 
-#: app/Services/TransStrings.php:434
+#: app/Services/TransStrings.php:438
 msgid "Ticket Link(Agent)"
 msgstr ""
 
-#: app/Services/TransStrings.php:435
+#: app/Services/TransStrings.php:439
 msgid "Ticket Link(Customer)"
 msgstr ""
 
@@ -3550,7 +3568,7 @@ msgstr ""
 msgid "Tickets By Product"
 msgstr ""
 
-#: app/Services/TransStrings.php:470
+#: app/Services/TransStrings.php:474
 msgid "Tickets Counts"
 msgstr ""
 
@@ -3558,7 +3576,7 @@ msgstr ""
 msgid "Tickets Migration From Other Plugins"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:209
+#: app/Modules/PermissionManager.php:263
 msgid "Tickets Permissions"
 msgstr ""
 
@@ -3570,7 +3588,7 @@ msgstr ""
 msgid "Title"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:62
+#: app/Http/Controllers/CustomerPortalController.php:63
 msgid "Title is required"
 msgstr ""
 
@@ -3578,13 +3596,13 @@ msgstr ""
 msgid "To"
 msgstr ""
 
-#: app/Services/TransStrings.php:534
+#: app/Services/TransStrings.php:538
 msgid ""
 "To create tickets using webhooks please copy this webhook URL and paste to "
 "the site from where you want to create ticket in this site."
 msgstr ""
 
-#: app/Services/TransStrings.php:478
+#: app/Services/TransStrings.php:482
 msgid "to this following address"
 msgstr ""
 
@@ -3592,11 +3610,11 @@ msgstr ""
 msgid "Today"
 msgstr ""
 
-#: app/Services/TransStrings.php:603
+#: app/Services/TransStrings.php:607
 msgid "Today Stats"
 msgstr ""
 
-#: app/Services/TransStrings.php:622
+#: app/Services/TransStrings.php:626
 msgid "Today's Active Tickets By Products"
 msgstr ""
 
@@ -3624,19 +3642,19 @@ msgstr ""
 msgid "Trigger Type"
 msgstr ""
 
-#: app/Services/TransStrings.php:537
+#: app/Services/TransStrings.php:541
 msgid "Twilio Integration"
 msgstr ""
 
-#: app/Services/TransStrings.php:403
+#: app/Services/TransStrings.php:407
 msgid "Type"
 msgstr ""
 
-#: app/Services/TransStrings.php:504
+#: app/Services/TransStrings.php:508
 msgid "type and press enter"
 msgstr ""
 
-#: app/Services/TransStrings.php:518
+#: app/Services/TransStrings.php:522
 msgid "Type Compare Value"
 msgstr ""
 
@@ -3652,15 +3670,15 @@ msgstr ""
 msgid "Unable to delete reCAPTCHA settings, try again"
 msgstr ""
 
-#: app/Services/TransStrings.php:422
+#: app/Services/TransStrings.php:426
 msgid "Unassigned"
 msgstr ""
 
-#: app/Models/Traits/AgentTrait.php:153
+#: app/Models/Traits/AgentTrait.php:158
 msgid "Unassigned Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:488
+#: app/Services/TransStrings.php:492
 msgid "Uncheck all"
 msgstr ""
 
@@ -3673,7 +3691,7 @@ msgstr ""
 msgid "Update"
 msgstr ""
 
-#: app/Services/TransStrings.php:398
+#: app/Services/TransStrings.php:402
 msgid "Update Custom Field"
 msgstr ""
 
@@ -3682,7 +3700,7 @@ msgstr ""
 msgid "Update Customer"
 msgstr ""
 
-#: app/Services/TransStrings.php:525
+#: app/Services/TransStrings.php:529
 msgid "Update Field"
 msgstr ""
 
@@ -3690,7 +3708,7 @@ msgstr ""
 msgid "Update Response"
 msgstr ""
 
-#: app/Services/TransStrings.php:430
+#: app/Services/TransStrings.php:434
 msgid "Update Settings"
 msgstr ""
 
@@ -3698,7 +3716,7 @@ msgstr ""
 msgid "Update Type"
 msgstr ""
 
-#: app/Services/TransStrings.php:585
+#: app/Services/TransStrings.php:589
 msgid "Update Workflow"
 msgstr ""
 
@@ -3726,11 +3744,11 @@ msgstr ""
 msgid "Upload and store the files to your WordPress File System Storage."
 msgstr ""
 
-#: app/Services/TransStrings.php:535
+#: app/Services/TransStrings.php:539
 msgid "Use incoming webhook to create ticket from external sites."
 msgstr ""
 
-#: app/Services/TransStrings.php:643
+#: app/Services/TransStrings.php:647
 msgid "Use Recaptcha"
 msgstr ""
 
@@ -3743,23 +3761,23 @@ msgstr ""
 msgid "Username"
 msgstr ""
 
-#: app/Services/TransStrings.php:600
+#: app/Services/TransStrings.php:604
 msgid "Using advanced filtering you can get more specific tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:646
+#: app/Services/TransStrings.php:650
 msgid "Validate Captcha"
 msgstr ""
 
-#: app/Services/TransStrings.php:405
+#: app/Services/TransStrings.php:409
 msgid "Verify License"
 msgstr ""
 
-#: app/Services/TransStrings.php:641
+#: app/Services/TransStrings.php:645
 msgid "Version 2"
 msgstr ""
 
-#: app/Services/TransStrings.php:642
+#: app/Services/TransStrings.php:646
 msgid "Version 3"
 msgstr ""
 
@@ -3767,11 +3785,11 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:242
+#: app/Modules/PermissionManager.php:296
 msgid "View Activity Logs"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:243
+#: app/Modules/PermissionManager.php:297
 msgid "View Agent Today Performance"
 msgstr ""
 
@@ -3780,11 +3798,11 @@ msgstr ""
 msgid "View All"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:241
+#: app/Modules/PermissionManager.php:295
 msgid "View All Reports"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:211
+#: app/Modules/PermissionManager.php:265
 msgid "View Dashboard"
 msgstr ""
 
@@ -3801,11 +3819,11 @@ msgstr ""
 msgid "wait time"
 msgstr ""
 
-#: app/Services/TransStrings.php:662
+#: app/Services/TransStrings.php:666
 msgid "Waiting"
 msgstr ""
 
-#: app/Services/TransStrings.php:663
+#: app/Services/TransStrings.php:667
 msgid "waiting"
 msgstr ""
 
@@ -3813,7 +3831,7 @@ msgstr ""
 msgid "Waiting for Reply"
 msgstr ""
 
-#: app/Services/TransStrings.php:163 app/Services/Helper.php:636
+#: app/Services/TransStrings.php:163 app/Services/Helper.php:644
 msgid "Waiting Tickets"
 msgstr ""
 
@@ -3825,7 +3843,7 @@ msgstr ""
 msgid "Waiting Today"
 msgstr ""
 
-#: app/Services/TransStrings.php:544
+#: app/Services/TransStrings.php:548
 msgid "Want to deactivate this license?"
 msgstr ""
 
@@ -3854,45 +3872,45 @@ msgstr ""
 msgid "WhatsApp Phone Number"
 msgstr ""
 
-#: app/Services/TransStrings.php:441
+#: app/Services/TransStrings.php:445
 msgid ""
 "When a customer's ticket/response in with a specific question, you execute "
 "this workflow to send a reply, add a tag and assign it to someone on your "
 "team."
 msgstr ""
 
-#: app/Services/TransStrings.php:450
+#: app/Services/TransStrings.php:454
 msgid ""
 "When the subject line contains \"Bug Report\", you want Fluent Support to "
 "automatically add a tag, send an email to the customer and assign a support "
 "agent."
 msgstr ""
 
-#: app/Services/TransStrings.php:492
+#: app/Services/TransStrings.php:496
 msgid "WordPress plugin then you can migrate from this section."
 msgstr ""
 
-#: app/Services/TransStrings.php:593
+#: app/Services/TransStrings.php:597
 msgid "Workflow Actions (Tasks)"
 msgstr ""
 
-#: app/Services/TransStrings.php:439
+#: app/Services/TransStrings.php:443
 msgid "Workflow Name"
 msgstr ""
 
-#: app/Modules/PermissionManager.php:224
+#: app/Modules/PermissionManager.php:278
 msgid "Workflow Permissions"
 msgstr ""
 
-#: app/Services/TransStrings.php:587
+#: app/Services/TransStrings.php:591
 msgid "Workflow Title"
 msgstr ""
 
-#: app/Services/TransStrings.php:555
+#: app/Services/TransStrings.php:559
 msgid "workflow will perform the following actions:"
 msgstr ""
 
-#: app/Services/TransStrings.php:584 app/Hooks/Handlers/Menu.php:75
+#: app/Services/TransStrings.php:588 app/Hooks/Handlers/Menu.php:75
 #: app/Hooks/Handlers/Menu.php:76 app/Hooks/Handlers/Menu.php:177
 msgid "Workflows"
 msgstr ""
@@ -3910,19 +3928,19 @@ msgstr ""
 msgid "Yes"
 msgstr ""
 
-#: app/Services/TransStrings.php:565
+#: app/Services/TransStrings.php:569
 msgid "Yes, Delete Selected Tickets"
 msgstr ""
 
-#: app/Services/TransStrings.php:440
+#: app/Services/TransStrings.php:444
 msgid "Yes, Delete this"
 msgstr ""
 
-#: app/Services/TransStrings.php:567
+#: app/Services/TransStrings.php:571
 msgid "Yes, Delete this Action"
 msgstr ""
 
-#: app/Services/TransStrings.php:468
+#: app/Services/TransStrings.php:472
 msgid "Yes, Delete this Customer"
 msgstr ""
 
@@ -3965,7 +3983,7 @@ msgstr ""
 msgid "You are not allowed to signup using this form"
 msgstr ""
 
-#: app/Services/TransStrings.php:503
+#: app/Services/TransStrings.php:507
 msgid "You can not change the slug once save a custom field"
 msgstr ""
 
@@ -3987,10 +4005,6 @@ msgstr ""
 msgid "You do not have permission"
 msgstr ""
 
-#: app/Models/Ticket.php:1370
-msgid "You do not have permission to assign agent"
-msgstr ""
-
 #: app/Http/Controllers/UploaderController.php:106
 #: app/Http/Controllers/UploaderController.php:114
 msgid "You do not have permission to upload a file"
@@ -4000,15 +4014,15 @@ msgstr ""
 msgid "You don't have permission to access customer support portal"
 msgstr ""
 
-#: app/Http/Controllers/CustomerPortalController.php:292
+#: app/Http/Controllers/CustomerPortalController.php:297
 msgid "You have been logged out"
 msgstr ""
 
-#: app/Services/TransStrings.php:471
+#: app/Services/TransStrings.php:475
 msgid "You're Almost Done"
 msgstr ""
 
-#: app/Services/TransStrings.php:498
+#: app/Services/TransStrings.php:502
 msgid ""
 "Your Admin Email Address and Support From Email should not be same. Please "
 "use a different email address."
@@ -4027,7 +4041,7 @@ msgstr ""
 msgid "Your Email Address"
 msgstr ""
 
-#: app/Services/TransStrings.php:500
+#: app/Services/TransStrings.php:504
 msgid "your email piping settings first"
 msgstr ""
 
@@ -4039,23 +4053,23 @@ msgstr ""
 msgid "Your Help Scout authorization code is:"
 msgstr ""
 
-#: app/Services/TransStrings.php:542
+#: app/Services/TransStrings.php:546
 msgid "Your License Key"
 msgstr ""
 
-#: app/Services/TransStrings.php:543
+#: app/Services/TransStrings.php:547
 msgid "Your license key is valid and activated"
 msgstr ""
 
-#: app/Services/TransStrings.php:485
+#: app/Services/TransStrings.php:489
 msgid "Your MailBox is active"
 msgstr ""
 
-#: app/Services/TransStrings.php:493
+#: app/Services/TransStrings.php:497
 msgid "Your masked email address is"
 msgstr ""
 
-#: app/Services/TransStrings.php:476
+#: app/Services/TransStrings.php:480
 msgid "Your masked mailbox email has been issued"
 msgstr ""
 
@@ -4092,21 +4106,21 @@ msgstr ""
 msgid "Your reCAPTCHA settings updated successfully."
 msgstr ""
 
-#: app/Services/TransStrings.php:438
+#: app/Services/TransStrings.php:442
 msgid "Your Workflow Name"
 msgstr ""
 
-#: app/Services/TransStrings.php:649
+#: app/Services/TransStrings.php:653
 msgid "Zendesk Domain"
 msgstr ""
 
-#: app/Services/Helper.php:212 app/Hooks/Handlers/AuthHandler.php:414
+#: app/Services/Helper.php:211 app/Hooks/Handlers/AuthHandler.php:414
 #: app/Hooks/Handlers/AuthHandler.php:416
 #: app/Hooks/Handlers/PrivacyHandler.php:244
 msgid "Zip"
 msgstr ""
 
-#: app/Models/Customer.php:56 app/Services/TransStrings.php:419
+#: app/Models/Customer.php:56 app/Services/TransStrings.php:423
 #: app/Models/Traits/CustomerTrait.php:138
 #: app/Models/Traits/CustomerTrait.php:140
 msgid "Zip Code"
