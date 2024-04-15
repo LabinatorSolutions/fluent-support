@@ -110,7 +110,7 @@ class UploadService
         $response = wp_remote_request($contentUrl, [
             'sslverify' => false,
             'method'    => 'GET',
-            'timeout'   => 30,
+            'timeout' => 30
         ]);
 
         if (is_wp_error($response)) {

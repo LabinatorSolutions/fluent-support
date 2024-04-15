@@ -108,7 +108,10 @@ class Tickets
 
     public function createTicket(array $data)
     {
-        if (!$data['customer_id'] || !Customer::find($data['customer_id'])) {
+
+        $customerId = $data['customer_id'] ?? null;
+
+        if (!$customerId || !($customer = Customer::find($customerId))) {
             return false;
         }
 
@@ -129,7 +132,11 @@ class Tickets
             }
         }
 
+        do_action('fluent_support/before_ticket_create', $data, $customer);
+
         $createdTicket = Ticket::create($data);
+
+        do_action('fluent_support/ticket_created', $createdTicket, $customer);
 
         if (defined('FLUENTSUPPORTPRO') && !empty($data['custom_fields'])) {
             $createdTicket->syncCustomFields($data['custom_fields']);

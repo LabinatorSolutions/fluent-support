@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.4
-Stable tag: 1.7.72
+Stable tag: 1.7.80
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,23 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.7.80 (Date: April 3, 2024) =
+* Added - Restrict business boxes for specific agents
+* Added - Ticket search feature in customer portal
+* Added - MemberPress Integration
+* Added - Option to resume the migration process for the last incomplete ticket in Helpscout (Pro)
+* Added - Display the exact time of ticket or response creation upon hovering over it in the admin portal
+* Fixed - Attachment download issue in email piping
+* Fixed - BetterDocs integration issue
+* Fixed - Agent Only field isn't displaying into the ticket
+* Fixed - Draft Reply approve button issue with attachment
+* Fixed - There is an issue with exporting the agent report time
+* Fixed - The Gravatar image link is causing a PHP 8.2 deprecated issue
+* Fixed - The issue with the "Enable Reply from Telegram" button in Telegram
+* Fixed - The Auto Close Settings are not saving
+* Fixed - Helpscout ticket migration issue
+* Fixed - When responding to emails in German, create a new ticket instead of replying.
 
 = 1.7.72 (Date: January 10, 2024) =
 * Fixed - Notification integration settings issue

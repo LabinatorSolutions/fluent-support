@@ -66,7 +66,7 @@
                                           </span>
                                         </template>
                                     </el-dialog>
-                                    <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                                    <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" :previously_imported="previous_migration_data.helpscout.previously_imported" @restart_previous_migration="restartTicketMigration('helpscout')" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                     <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                     <zendesk-importer v-if="currently_importing=='zendesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                                 </div>
@@ -112,7 +112,8 @@ export default {
             config:{},
             sass_systems: ['helpscout', 'freshdesk','zendesk'],
             import_from_sass: false,
-            had_tickets: true
+            had_tickets: true,
+            previous_migration_data: []
         }
     },
 
@@ -121,6 +122,11 @@ export default {
             this.loading = true;
             this.$get('ticket_importer').then((response) => {
                 this.settings = response.stats;
+                this.settings.forEach((setting) => {
+                    const handler = setting.handler;
+                    this.previous_migration_data[handler] = setting;
+                });
+
             })
                 .catch((e) => {
                     this.$handleError(e);
@@ -128,6 +134,10 @@ export default {
                 .always(() => {
                     this.loading = false;
                 });
+        },
+        restartTicketMigration(handler) {
+            this.import_page = this.previous_migration_data[handler].previously_imported.next_page;
+            this.importTickets(handler);
         },
         importTickets(handler) {
             this.imporing = true;
@@ -190,9 +200,6 @@ export default {
                 .catch((error) => {
                     this.$handleError(error);
                 })
-                // .always(() => {
-                //     this.imporing = false;
-                // });
         },
         deleteOldTicketsWithData(handler) {
             this.deleting = true;
@@ -221,9 +228,6 @@ export default {
                 .catch(e => {
                     this.$handleError(e);
                 })
-                // .always(() => {
-                //     this.deleting = false;
-                // });
         }
     },
 

@@ -41,7 +41,6 @@ class Helper
         if (!$userId) {
             return false;
         }
-
         return Agent::where('user_id', $userId)->first();
     }
 

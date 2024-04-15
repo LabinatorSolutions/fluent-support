@@ -92,6 +92,10 @@ abstract class BaseImporter
 
         $data = array_filter(Arr::only($ticketData, $fillables));
 
+        if (!isset($data['content'])) {
+            $data['content'] = '';
+        }
+
         $data['customer_id'] = $ticketData['customer']->id;
 
         if (!empty($ticketData['agent'])) {
@@ -206,11 +210,11 @@ abstract class BaseImporter
             $ticketUpdateData['agent_id'] = $defualtAgentId;
         }
 
-        if ($firstResponseTimestamp) {
+        if ($firstResponseTimestamp && $createdTicket->crerated_at) {
             $ticketUpdateData['first_response_time'] = strtotime($firstResponseTimestamp) - strtotime($createdTicket->crerated_at);
         }
 
-        if ($createdTicket->status == 'closed' && $createdTicket->resolved_at) {
+        if ($createdTicket->status == 'closed' && $createdTicket->resolved_at && $createdTicket->crerated_at) {
             $ticketUpdateData['total_close_time'] = strtotime($createdTicket->resolved_at) - strtotime($createdTicket->crerated_at);
         }
 

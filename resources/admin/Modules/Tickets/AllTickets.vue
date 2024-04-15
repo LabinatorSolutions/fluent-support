@@ -177,7 +177,7 @@
                             <span style="opacity: 0.4;" :title="translate('Ticket created at ') + scope.row.created_at">
                                 <el-icon style="vertical-align: middle;"> <ChatLineSquare /> </el-icon> {{ $timeDiff(scope.row.created_at) }}
                             </span>
-                            <span style="display: block;" :title="translate('Waiting Time')">
+                            <span style="display: block;" :title="translate('Waiting Since: ') + scope.row.waiting_since ">
                                 <el-icon style="vertical-align: middle;"> <Stopwatch /> </el-icon> {{ $timeDiff(scope.row.waiting_since) }}
                             </span>
                         </template>
