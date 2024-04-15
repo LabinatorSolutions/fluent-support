@@ -449,7 +449,7 @@ class TicketController extends Controller
 
         return [
             'custom_data'     => (object)$ticket->customData(),
-            'rendered_fields' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields($ticket->customer)
+            'rendered_fields' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields($ticket->customer, 'admin')
         ];
     }
 

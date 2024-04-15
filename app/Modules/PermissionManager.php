@@ -2,6 +2,7 @@
 
 namespace FluentSupport\App\Modules;
 
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Services\Helper;
 
 /**
@@ -68,11 +69,46 @@ class PermissionManager
 
         $permissions = array_intersect($allPermissions, $permissions);
 
+        $filterPermissionConditions = self::filterPermissionConditions();
+        $permissions = self::filterPermissionsByConditions($permissions, $filterPermissionConditions);
+
         foreach ($permissions as $permission) {
             $user->add_cap($permission);
         }
 
         return $user;
+    }
+
+    /**
+     * Filters permissions based on specified conditions.
+     *
+     * @param array $permissions The array of permissions to filter.
+     * @param array $conditions  The conditions used for filtering.
+     * @return array The filtered array of permissions.
+     */
+    public static function filterPermissionsByConditions($permissions, $conditions)
+    {
+        foreach ($conditions as $requiredKey => $removeKey) {
+            if (in_array($requiredKey, $permissions) && in_array($removeKey, $permissions)) {
+                unset($permissions[array_search($removeKey, $permissions)]);
+            }
+        }
+        return $permissions;
+    }
+
+    /**
+     * Retrieves the permission filter conditions.
+     *
+     * @return array The array of permission filter conditions.
+     */
+    public static function filterPermissionConditions()
+    {
+        return [
+            'fst_manage_unassigned_tickets' => 'fst_draft_reply',
+            'fst_manage_other_tickets' => 'fst_draft_reply',
+            'fst_manage_own_tickets' => 'fst_draft_reply',
+            'fst_draft_reply' => 'fst_approve_draft_reply'
+        ];
     }
 
     /**
@@ -117,6 +153,24 @@ class PermissionManager
         $permissions = self::getUserPermissions(get_current_user_id());
 
         return $permissions;
+    }
+
+    /**
+     * Retrieve the list of restricted business boxes for the current user.
+     *
+     * This method fetches the list of restricted business boxes from the metadata of the current user's agent profile.
+     * If business box restrictions are enabled for the user, it returns the list of restricted business boxes; otherwise,
+     * it returns an empty array.
+     *
+     * @return array The list of restricted business boxes for the current user.
+     */
+    public static function currentUserRestrictedBusinessBoxes()
+    {
+        $agent = Helper::getAgentByUserId();
+        $restrictions = $agent->getMeta('agent_restrictions');
+
+        return isset($restrictions['businessBoxRestrictions']) ? $restrictions['restrictedBusinessBoxes'] : [];
+
     }
 
     /**
@@ -244,5 +298,10 @@ class PermissionManager
                 ]
             ]
         ];
+    }
+
+    public static function getBusinessBoxesForRestriction()
+    {
+        return MailBox::select(['id', 'name'])->get();
     }
 }

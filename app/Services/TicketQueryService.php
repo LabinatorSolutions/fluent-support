@@ -72,7 +72,6 @@ class TicketQueryService
         $ticketsQuery->orderBy($this->args['sort_by'], $this->args['sort_type']);
 
         do_action_ref_array('fluent_support\main_tickets_query', [&$ticketsQuery, $this->args]);
-        
         $this->model = $ticketsQuery;
     }
 

@@ -399,3 +399,42 @@ ul.fs_saved_replies {
     vertical-align: middle;
 }
 
+.fs_mepr_product_list {
+    line-height: 1;
+    display: inline-block;
+    margin: 0;
+
+    a {
+        color: #556575;
+        font-weight: 500;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.fs_memberpress_status-tag {
+    border-radius: 2px;
+    color: #fff;
+    display: inline-block;
+    font-size: 12.5px;
+    font-weight: 400;
+    padding: 3px 8px;
+    cursor: pointer;
+    line-height: 14px;
+    margin: 0 4px 0 0;
+}
+
+.fs_select_restricted_business_boxes {
+    width: 240px;
+}
+
+.fs_restriction_content {
+    margin-left: 10px;
+}
+
+.fs_restriction_label {
+    line-height: 5px;
+}

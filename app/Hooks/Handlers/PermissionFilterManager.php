@@ -10,6 +10,7 @@ class PermissionFilterManager
     public function init()
     {
         add_action('fluent_support/tickets_query_by_permission_ref', array($this, 'filterAgentTickets'), 10, 2);
+        add_action('fluent_support\main_tickets_query', array($this, 'filterAgentTicketsByMailboxes'), 10, 2);
     }
 
     public function filterAgentTickets($ticketsQuery, $userId = false)
@@ -25,6 +26,15 @@ class PermissionFilterManager
                     $q->orWhereNull('agent_id');
                 });
             }
+        }
+
+    }
+
+    public function filterAgentTicketsByMailboxes($ticketsQuery, $args = [] )
+    {
+        $restrictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
+        if (!empty($restrictedBusinessBoxes)) {
+            $ticketsQuery->whereNotIn('mailbox_id', $restrictedBusinessBoxes);
         }
     }
 }

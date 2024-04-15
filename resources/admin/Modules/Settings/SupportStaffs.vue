@@ -259,9 +259,56 @@
                         default-expand-all
                         :default-checked-keys="editing_agent.permissions"
                         @check-change="handleCheckChange"
-                    />
+                    >
+                        <template #default="{ node, data }">
+                            <span class="custom-tree-node">
+
+                              <span v-if="node.label === 'Draft Reply'">
+                                  <el-tooltip
+                                      width="200"
+                                      class="box-item"
+                                      popper-class="fs_tree_tooltip"
+                                      effect="dark"
+                                      placement="top-start"
+                                  >
+                                      <template #content>
+                                            If any of the following options are enabled:
+                                            <br />
+
+                                            1. Manage Own Tickets,
+                                            <br />
+                                            2. Manage Unassigned Tickets,
+                                            <br />
+                                            3. Manage Other Tickets ,
+                                            <br />
+                                            In that case, the draft replies permission will be disabled.
+                                        </template>
+
+                                      <span>{{ node.label }}</span>
+                                  </el-tooltip>
+
+                              </span>
+                                 <span v-else>{{ node.label }}</span>
+                            </span>
+                        </template>
+                    </el-tree>
                 </el-form-item>
             </el-form>
+            <div class="fs_restriction_section">
+                <h4 class="fs_restriction_label">{{translate('Restrictions')}}</h4>
+                <div class="fs_restriction_content">
+                    <el-form :model="editing_agent" label-position="top" ref="form">
+                        <el-form-item>
+                            <el-checkbox v-model="editing_agent.restrictions.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">{{translate('Business Inbox Access Restriction')}}</el-checkbox>
+                        </el-form-item>
+                        <el-form-item v-if="editing_agent.restrictions.businessBoxRestrictions"  >
+                            <el-select class="fs_select_restricted_business_boxes"  v-model="editing_agent.restrictions.restrictedBusinessBoxes" placeholder="Select" clearable multiple>
+                                <el-option v-for="box in businessBoxes" :key="box.id"  :label="box.name" :value="box.id"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-form>
+                </div>
+            </div>
 
             <template #footer>
                 <span class="dialog-footer">
@@ -283,7 +330,7 @@
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
 import {  ElMessageBox } from 'element-plus'
-import {computed, onMounted, reactive, toRefs} from "vue";
+import {computed, onMounted, reactive, toRefs, watch} from "vue";
 import {
     useFluentHelper,
     useNotify,
@@ -326,7 +373,16 @@ export default {
                 "X-WP-Nonce": appVars.rest.nonce,
             },
             show_icon: false,
+            restrictBusinessBox: false,
+            selectedBusinessBoxes: [],
+            businessBoxes: [],
         });
+
+        const manageBusinessBoxRestrictions = (restrictBusinessBox) => {
+            if (!restrictBusinessBox) {
+                state.editing_agent.restrictions.restrictedBusinessBoxes = [];
+            }
+        };
 
         const fetchAgents = async () => {
             state.loading = true;
@@ -339,6 +395,7 @@ export default {
                     state.agents = response.agents.data;
                     state.pagination.total = response.agents.total;
                     state.permissions = response.permissions;
+                    state.businessBoxes = response.businessBoxes;
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -366,6 +423,10 @@ export default {
                 last_name: "",
                 title: "",
                 permissions: [],
+                restrictions: {
+                    businessBoxRestrictions: false,
+                    restrictedBusinessBoxes: []
+                },
             };
             state.agent_modal = true;
         };
@@ -533,6 +594,7 @@ export default {
             });
         };
 
+
         const handleCheckChange = (data, checked, _) => {
             if(checked && isNaN(data.id) && !state.editing_agent.permissions.includes(data.id) ) {
                 state.editing_agent.permissions.push(data.id);
@@ -566,6 +628,7 @@ export default {
             treeData,
             handleCheckChange,
             resetAgentModal,
+            manageBusinessBoxRestrictions
         };
     },
 };

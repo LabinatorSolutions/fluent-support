@@ -24,7 +24,8 @@ class AgentController extends Controller
     {
         return [
             'agents' => $agent->getAgents($request->getSafe('search','sanitize_text_field')),
-            'permissions' => PermissionManager::getReadablePermissionGroups()
+            'permissions' => PermissionManager::getReadablePermissionGroups(),
+            'businessBoxes' => PermissionManager::getBusinessBoxesForRestriction(),
         ];
     }
 
@@ -42,6 +43,7 @@ class AgentController extends Controller
             'last_name' => $request->getSafe('last_name', 'sanitize_text_field'),
             'title' => $request->getSafe('title', 'sanitize_text_field'),
             'permissions' => $request->getSafe('permissions', null, []),
+            'restrictions' => $request->getSafe('restrictions', null, []),
         ];
 
         try {
@@ -68,6 +70,7 @@ class AgentController extends Controller
     public function updateAgent(AgentCreateRequest $request, Agent $agent, $agent_id)
     {
         $agent = $agent::findOrFail($agent_id);
+
         $data = [
             'first_name' => $request->getSafe('first_name', 'sanitize_text_field'),
             'last_name' => $request->getSafe('last_name', 'sanitize_text_field'),
@@ -76,6 +79,7 @@ class AgentController extends Controller
             'telegram_chat_id' => $request->getSafe('telegram_chat_id', 'sanitize_text_field'),
             'slack_user_id' => $request->getSafe('slack_user_id', 'sanitize_text_field'),
             'whatsapp_number' => $request->getSafe('whatsapp_number', 'sanitize_text_field'),
+            'restrictions' => $request->getSafe('restrictions', null, []),
         ];
 
         if ($agent) {
