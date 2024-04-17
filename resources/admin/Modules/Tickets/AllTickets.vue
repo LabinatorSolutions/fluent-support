@@ -688,13 +688,14 @@ export default {
 .fs_inbox_identifier{
     min-width: 45px;
     height: 19px;
-    padding: 9px;
+    padding: 6px 12px;
     color: #fff;
     border-radius: 3px;
     opacity: 0.8;
     display: inline-flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-evenly;
+    align-items: center;
     margin-right: 6px;
 }
 .fs_follow_up_identifier{
