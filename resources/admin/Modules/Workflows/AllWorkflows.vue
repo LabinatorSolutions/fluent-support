@@ -132,14 +132,8 @@
                 </el-form-item>
                 <el-form-item label="Workflow Type">
                     <el-radio-group v-model="new_workflow.trigger_type">
-                        <el-radio value="manual" :label="translate('manual')">{{
-                            translate("Manual")
-                        }}</el-radio>
-                        <el-radio
-                            value="automatic"
-                            :label="translate('automatic')"
-                            >{{ translate("Automatic") }}</el-radio
-                        >
+                        <el-radio label="manual">{{ translate("Manual") }}</el-radio>
+                        <el-radio label="automatic">{{ translate("Automatic") }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <div class="fs_workflow_type_info">
