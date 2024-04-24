@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_fluent_boards">
+    <div v-if="app_ready" class="fs_fluent_boards" >
 
         <div class="fs_fbs_input_container">
             <label for="ticket-title" class="fs_fbs_input_label">{{ translate("Task Title") }}</label>
@@ -41,6 +41,9 @@
         </div>
 
     </div>
+    <div v-else>
+        <el-skeleton :rows="5" animated/>
+    </div>
 </template>
 
 <script type="text/babel">
@@ -79,6 +82,7 @@ export default {
             fluentBoardStages: [],
             boardId: null,
             stageId: null,
+            app_ready: false
         });
 
         const task = reactive({ ...ticket });
@@ -91,6 +95,7 @@ export default {
             get('tickets/fluent-boards/boards')
                 .then(response => {
                     state.fluentBoardsData = response.boards;
+                    state.app_ready = true;
                 })
                 .catch((errors) => {
                     handleError(errors);
