@@ -33,11 +33,11 @@ class TicketController extends Controller
     {
         $user = wp_get_current_user();
         $settings = [
-            'user_id'     => $user->ID,
-            'email'       => $user->user_email,
-            'person'      => Helper::getAgentByUserId($user->ID),
+            'user_id' => $user->ID,
+            'email' => $user->user_email,
+            'person' => Helper::getAgentByUserId($user->ID),
             'permissions' => PermissionManager::currentUserPermissions(),
-            'request'     => $request->all()
+            'request' => $request->all()
         ];
 
         $withPortalSettings = $request->getSafe('with_portal_settings');
@@ -87,7 +87,7 @@ class TicketController extends Controller
 
         return [
             'message' => 'Ticket has been successfully created',
-            'ticket'  => $createdTicket
+            'ticket' => $createdTicket
         ];
     }
 
@@ -199,7 +199,7 @@ class TicketController extends Controller
     public function updateTicketProperty(Request $request, Ticket $ticket, $ticket_id)
     {
         $propName = $request->getSafe('prop_name', 'sanitize_text_field');
-        $propValue = $request->getSafe('prop_value', 'sanitize_text_field' );
+        $propValue = $request->getSafe('prop_value', 'sanitize_text_field');
 
         try {
             return $ticket->updateTicketProperty($propName, $propValue, $ticket_id);
@@ -258,6 +258,7 @@ class TicketController extends Controller
             return $this->sendError($e->getMessage());
         }
     }
+
     /**
      * deleteTicket method will delete a ticket
      * @param Request $request
@@ -286,7 +287,7 @@ class TicketController extends Controller
     {
         $data = $request->get();
         $this->validate($data, [
-            'content'    => 'required',
+            'content' => 'required',
             'ticket_ids' => 'required|array'
         ]);
 
@@ -325,7 +326,7 @@ class TicketController extends Controller
      */
     public function updateResponse(TicketResponseRequest $request, Conversation $conversation, $ticket_id, $response_id)
     {
-        $data = $request->getSafe(['content','ticket_id','response_id']);
+        $data = $request->getSafe(['content', 'ticket_id', 'response_id']);
 
         try {
             return $conversation->updateResponse($data, $ticket_id, $response_id);
@@ -374,7 +375,7 @@ class TicketController extends Controller
         $agent = Helper::getAgentByUserId();
 
         return [
-            'result'   => TicketHelper::removeFromActivities($ticket_id, $agent->id),
+            'result' => TicketHelper::removeFromActivities($ticket_id, $agent->id),
             'agent_id' => $agent->id
         ];
     }
@@ -393,7 +394,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Tag has been added to this ticket', 'fluent-support'),
-            'tags'    => $ticket->tags
+            'tags' => $ticket->tags
         ];
     }
 
@@ -410,7 +411,7 @@ class TicketController extends Controller
 
         return [
             'message' => __('Tag has been removed from this ticket', 'fluent-support'),
-            'tags'    => $ticket->tags
+            'tags' => $ticket->tags
         ];
     }
 
@@ -425,7 +426,7 @@ class TicketController extends Controller
         $updateCustomer = Ticket::where('id', $request->getSafe('ticket_id', 'intval'))
             ->update(['customer_id' => $request->getSafe('customer', 'intval')]);
         return [
-            'message'         => __('Customer has been updated', 'fluent-support'),
+            'message' => __('Customer has been updated', 'fluent-support'),
             'updatedCustomer' => $updateCustomer
         ];
     }
@@ -440,7 +441,7 @@ class TicketController extends Controller
     {
         if (!defined('FLUENTSUPPORTPRO')) {
             return [
-                'custom_data'     => [],
+                'custom_data' => [],
                 'rendered_fields' => []
             ];
         }
@@ -448,7 +449,7 @@ class TicketController extends Controller
         $ticket = Ticket::findOrFail($ticket_id);
 
         return [
-            'custom_data'     => (object)$ticket->customData(),
+            'custom_data' => (object)$ticket->customData(),
             'rendered_fields' => \FluentSupportPro\App\Services\CustomFieldsService::getRenderedPublicFields($ticket->customer, 'admin')
         ];
     }
@@ -487,4 +488,74 @@ class TicketController extends Controller
             return $this->sendError($e->getMessage());
         }
     }
+
+    /**
+     * Retrieve boards from Fluent Boards API.
+     *
+     * @return array Formatted array of boards.
+     */
+    public function getBoards()
+    {
+        $boards = FluentBoardsApi('boards')->getBoards();
+        $formattedBoards = [];
+
+        foreach ($boards as $board) {
+            $formattedBoard = [
+                'id' => $board->id,
+                'title' => $board->title,
+                'tasks' => [],
+            ];
+
+            $formattedBoards[] = $formattedBoard;
+        }
+
+        return ['boards' => $formattedBoards];
+    }
+
+    /**
+     * Retrieve stages for a specific board from Fluent Boards API.
+     *
+     * @param  Request  $request Request object containing 'board_id'.
+     * @return array Formatted array of stages.
+     */
+    public function getStages(Request $request)
+    {
+        $boardId = $request->input('board_id');
+        $boardStages = FluentBoardsApi('boards')->getStagesByBoard($boardId);
+
+        $formattedStages = [];
+        if (!empty($boardStages)) {
+            foreach ($boardStages[0]->stages as $stage) {
+                $formattedStages[] = [
+                    'id' => $stage->id,
+                    'title' => $stage->title,
+                ];
+            }
+        }
+
+        return ['stages' => $formattedStages];
+    }
+
+    /**
+     * Create a task using data provided in the request.
+     *
+     * @param  Request  $request Request object containing task data.
+     * @return array Response containing message and task data.
+     */
+    public function createTask(Request $request)
+    {
+        $taskData = $request->all();
+
+        try {
+            $task = FluentBoardsApi('tasks')->create($taskData);
+            return [
+                'message' => __('Task successfully added to Fluent Boards', 'fluent-support'),
+                'task' => $task
+            ];
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
 }
+
