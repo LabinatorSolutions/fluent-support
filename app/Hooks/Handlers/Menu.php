@@ -373,6 +373,10 @@ class Menu
             $appVars['fluentcrm_config'] = Helper::getFluentCRMTagConfig();
         }
 
+        if (defined('FLUENT_BOARDS')) {
+            $appVars['fluent_boards'] = true;
+        }
+
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
         if ($appVars['has_pro']) {
             $appVars['agent_feedback_rating'] = Helper::getBusinessSettings('agent_feedback_rating', 'no');

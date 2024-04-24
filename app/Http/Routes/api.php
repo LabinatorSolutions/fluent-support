@@ -70,6 +70,11 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->post('sync-fluentcrm-tags', 'TicketController@syncFluentCrmTags');
     $router->post('sync-fluentcrm-lists', 'TicketController@syncFluentCrmLists');
 
+    $router->get('fluent-boards/boards', 'TicketController@getBoards');
+    $router->get('fluent-boards/stages/{board_id}', 'TicketController@getStages')->int('board_id');
+    $router->post('fluent-boards/stages', 'TicketController@createTask');
+
+
     $router->get('search-contact', 'CustomerController@searchContact');
 
 

@@ -873,3 +873,32 @@ ul.fs_tk_actions {
     padding: .6em .6em;
     border-radius: .2em;
 }
+.fs_fbs_input_container {
+    margin-bottom: 20px;
+}
+
+.fs_fbs_input_label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.fs_fbs_select_container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.fs_fbs_select_label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.fs_fbs_select_wrapper {
+    margin-right: 20px;
+}
+
+.fs_fbs_button_container {
+    text-align: right;
+}
