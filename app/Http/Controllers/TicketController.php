@@ -545,13 +545,24 @@ class TicketController extends Controller
      */
     public function createTask(Request $request, FluentBoardsService $fluentBoardsService)
     {
-        $taskData = $request->all();
-
         try {
+            $taskData = [
+                'source_id' => $request->getSafe('source_id', 'intval'),
+                'board_id' => $request->getSafe('board_id', 'intval'),
+                'stage_id' => $request->getSafe('stage_id', 'intval'),
+                'crm_contact_id' => $request->getSafe('crm_contact_id', 'intval') ?: null,
+                'title' => $request->getSafe('title', 'sanitize_text_field'),
+                'description' => $request->getSafe('description', 'wp_kses_post'),
+                'source' => $request->getSafe('source', 'sanitize_text_field'),
+            ];
+
             $task = FluentBoardsApi('tasks')->create($taskData);
 
-            $fluentBoardsService->addInternalNote($task);
+            if (!$task) {
+                return $this->sendError(__('Failed to create task.', 'fluent-support'));
+            }
 
+            $fluentBoardsService->addInternalNote($task);
             $fluentBoardsService->addComment($task);
 
             return [
@@ -562,6 +573,7 @@ class TicketController extends Controller
             return $this->sendError($e->getMessage());
         }
     }
+
 
 }
 

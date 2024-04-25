@@ -128,9 +128,9 @@
                                             {{ translate('Merge Tickets') }}
                                         </el-dropdown-item>
 
-                                        <el-dropdown-item v-if="appVars.fluent_boards"  @click='show_fbs_add_task_modal=true'>
-                                            <img :src="appVars.asset_url + '/images/addTask.svg'"  class="fs_add_task_logo">
-                                            {{ translate('Add Task') }}
+                                        <el-dropdown-item v-if="appVars.fluent_boards" @click="show_fbs_add_task_modal = true">
+                                            <img :src="appVars.asset_url + '/images/addTask.svg'" class="fs_add_task_logo">
+                                            {{ translate('Add Task to Fluent Boards') }}
                                         </el-dropdown-item>
 
                                         <el-dropdown-item  @click='(show_watcher_modal=true)' v-if="!watchers.length">
