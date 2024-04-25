@@ -28,7 +28,7 @@
                             <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]"/>
                         </li>
 
-                        <li :title="translate('Assigned Agent ') + ticket.agent?.full_name">
+                        <li v-if="appVars.me.permissions.includes('fst_assign_agents')" :title="translate('Assigned Agent ') + ticket.agent?.full_name">
                             <el-popover
                                 placement="bottom"
                                 :width="400"
