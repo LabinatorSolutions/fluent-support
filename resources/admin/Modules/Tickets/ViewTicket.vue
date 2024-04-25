@@ -168,7 +168,7 @@
                             v-if="has_pro && show_fbs_add_task_modal"
                             :title="translate('Add Task to Fluent Boards')"
                         >
-                            <FluentBoardsIntegration @created="show_fbs_add_task_modal = false" :ticket=ticket :fluentcrm_profile="fluentcrm_profile"  />
+                            <FluentBoardsIntegration @created="afterCreatedTask" :ticket=ticket :fluentcrm_profile="fluentcrm_profile" />
                         </el-dialog>
 
                         <el-dialog
@@ -1008,6 +1008,11 @@ export default {
             }
         }
 
+        const afterCreatedTask = () => {
+            state.show_fbs_add_task_modal = false;
+            fetchTicket();
+        }
+
         const changeMailbox = (mailbox) => {
             state.loading = !state.loading;
             put(`mailboxes/${state.ticket.mailbox_id}/move_tickets`, {
@@ -1256,6 +1261,7 @@ export default {
             getTextByPerson,
             approveDraftResponse,
             getStatusDisplayName,
+            afterCreatedTask
         }
     }
 }
