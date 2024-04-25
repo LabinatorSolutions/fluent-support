@@ -199,7 +199,7 @@ class PermissionManager
             return 'all';
         }
 
-        if (in_array('fst_manage_unassigned_tickets', $permissions)) {
+        if (in_array('fst_draft_reply', $permissions) || in_array('fst_manage_unassigned_tickets', $permissions)) {
             return 'own_plus';
         }
 
@@ -223,7 +223,7 @@ class PermissionManager
             return 'all';
         }
 
-        if (in_array('fst_manage_unassigned_tickets', $permissions)) {
+        if (in_array('fst_draft_reply', $permissions) || in_array('fst_manage_unassigned_tickets', $permissions)) {
             return 'own_plus';
         }
 
