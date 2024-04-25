@@ -13,18 +13,13 @@ class FluentBoardsService
         $urlBase = admin_url('admin.php?page=fluent-boards#/');
         $boardsProfileUrl = $urlBase . 'boards/' . $task->board_id . '/tasks/' . $task->id;
 
-        $internalNote = sprintf(
-            __('A new task has been created for this ticket in Fluent Boards. You can view and manage it at the following link:', 'fluent-support')
-            . "\n"
-            . "[%s](%s)",
-            __('here', 'fluent-support'),
-            $boardsProfileUrl
-        );
+        $internalNote = 'A new task has been created for this ticket in Fluent Boards. You can view and manage it at the following link:<br><a href="' . $boardsProfileUrl . '">here</a>';
 
+        $agent = Helper::getAgentByUserId(get_current_user_id());
 
         Conversation::create([
             'ticket_id'         => $task->source_id,
-            'person_id'         => 1,
+            'person_id'         => $agent->id,
             'conversation_type' => 'internal_info',
             'content'           => $internalNote
         ]);
