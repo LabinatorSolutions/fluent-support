@@ -168,7 +168,7 @@
                             v-if="has_pro && show_fbs_add_task_modal"
                             :title="translate('Add Task to Fluent Boards')"
                         >
-                            <FluentBoardsIntegration @created="show_fbs_add_task_modal = false" :ticket=ticket  />
+                            <FluentBoardsIntegration @created="show_fbs_add_task_modal = false" :ticket=ticket :fluentcrm_profile="fluentcrm_profile"  />
                         </el-dialog>
 
                         <el-dialog

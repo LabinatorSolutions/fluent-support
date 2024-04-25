@@ -6,6 +6,7 @@ use FluentSupport\App\Http\Requests\TicketRequest;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Services\FluentBoardsService;
 use FluentSupport\App\Services\FluentCRMServices;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\ProfileInfoService;
@@ -542,12 +543,17 @@ class TicketController extends Controller
      * @param  Request  $request Request object containing task data.
      * @return array Response containing message and task data.
      */
-    public function createTask(Request $request)
+    public function createTask(Request $request, FluentBoardsService $fluentBoardsService)
     {
         $taskData = $request->all();
 
         try {
             $task = FluentBoardsApi('tasks')->create($taskData);
+
+            $fluentBoardsService->addInternalNote($task);
+
+            $fluentBoardsService->addComment($task);
+
             return [
                 'message' => __('Task successfully added to Fluent Boards', 'fluent-support'),
                 'task' => $task

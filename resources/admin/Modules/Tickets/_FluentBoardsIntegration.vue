@@ -1,6 +1,6 @@
 <template>
-    <div v-if="app_ready" class="fs_fluent_boards" >
 
+    <div v-if="app_ready" class="fs_fluent_boards" >
         <div class="fs_fbs_input_container">
             <label for="ticket-title" class="fs_fbs_input_label">{{ translate("Task Title") }}</label>
             <el-input id="ticket-title" v-model="task.title" />
@@ -57,12 +57,16 @@ export default {
         ticket: {
             type: Object,
             required: true
+        },
+        fluentcrm_profile: {
+            type: Object,
+            required: true
         }
     },
     components: {
         WpEditor
     },
-    setup({ ticket }, context) {
+    setup({ ticket, fluentcrm_profile }, context) {
         const emit = context.emit;
         const { notify } = useNotify();
         const { confirm } = useConfirm();
@@ -119,7 +123,8 @@ export default {
                 description: task.content,
                 board_id: state.boardId,
                 stage_id: state.stageId,
-                source: 'FluentSupport'
+                source: 'FluentSupport',
+                crm_contact_id: fluentcrm_profile.id || null
             })
                 .then(response => {
                     notify({
