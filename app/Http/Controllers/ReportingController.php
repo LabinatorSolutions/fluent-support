@@ -6,6 +6,7 @@ use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
+use FluentSupport\App\Models\Ticket;
 
 /**
  * ReportingController class for REST API
@@ -234,5 +235,55 @@ class ReportingController extends Controller
         return [
             'summary' =>  $reporting->agentSummary($request->getSafe('from', 'sanitize_text_field'), $request->getSafe('to', 'sanitize_text_field'), $agent->id)
         ];
+    }
+
+    public function dayTimeStats(Reporting $reporting, Request $request)
+    {
+        $lastDay = 0;
+        if (isset($_REQUEST['last_day'])) {
+            $lastDay = (int)$_REQUEST['last_day'];
+        }
+        if ($lastDay >6) {
+            $results = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+                ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$lastDay} days")))
+                ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+                ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+                ->get();
+        } else {
+            $results = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+                ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+                ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+                ->get();
+        }
+
+        $dataItems = $this->formatResults($results->toArray());
+
+        return $this->send([
+            'stats' => $dataItems
+        ]);
+
+    }
+
+    private function formatResults($results)
+    {
+        $dataItems = [
+            'Mon' => [], 'Tue' => [], 'Wed' => [], 'Thu' => [], 'Fri' => [], 'Sat' => [], 'Sun' => []
+        ];
+
+        $hours = array_map(function ($hour) {
+            return $hour . ":00";
+        }, range(0, 23));
+
+        foreach ($dataItems as $day => $data) {
+            $dataItems[$day] = array_fill_keys($hours, 0);
+        }
+
+        foreach ($results as $row) {
+            $day = substr($row['day_of_week'], 0, 3);
+            $hour = $row['hour_of_day'] . ":00";
+            $dataItems[$day][$hour] = (int) $row['count'];
+        }
+
+        return $dataItems;
     }
 }

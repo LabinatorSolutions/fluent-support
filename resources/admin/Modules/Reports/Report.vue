@@ -12,6 +12,9 @@
         <el-tab-pane v-if="me.permissions.indexOf('fst_sensitive_data') != -1" :label="translate('Business Boxes Reports')" name="mailbox-reports" :lazy="true">
             <business-box-reports :url="'mailbox-reports'"/>
         </el-tab-pane>
+        <el-tab-pane v-if="me.permissions.indexOf('fst_sensitive_data') != -1" :label="translate('Feedback')" name="feedback-by-time-of-day" :lazy="true">
+            <feedback-by-time-of-day :url="'feedback-by-time-of-day'"/>
+        </el-tab-pane>
     </el-tabs>
 </template>
 
@@ -20,6 +23,7 @@ import Reports from "./Reports";
 import PersonalReports from "./PersonalReports";
 import ProductReports from "./ProductReports";
 import BusinessBoxReports from "./BusinessBoxReports";
+import FeedbackByTimeOfDay from "./FeedbackByTimeOfDay";
 import {
     useFluentHelper,
 } from "@/admin/Composable/FluentFrameworkHelper";
@@ -31,7 +35,8 @@ export default {
         Reports,
         PersonalReports,
         ProductReports,
-        BusinessBoxReports
+        BusinessBoxReports,
+        FeedbackByTimeOfDay
     },
 
     setup(){
