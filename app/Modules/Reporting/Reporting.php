@@ -5,6 +5,7 @@ namespace FluentSupport\App\Modules\Reporting;
 use FluentSupport\App\Api\Classes\Tickets;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
@@ -563,5 +564,88 @@ class Reporting
             'max_waiting' => (intval($waitStat->max_waiting)) ? human_time_diff(intval($waitStat->max_waiting), time()) : 0,
             'waiting_tickets' => $waitStat->total_tickets
         ];
+    }
+
+    public function getQueryResults($lastDay, $reportType, $reportOf, $agentId = null)
+    {
+        switch ($reportType) {
+            case 'ticket':
+                return $this->getTicketStats($lastDay, $reportOf, $agentId);
+            case 'response':
+                return $this->getResponseStats($lastDay, $reportOf, $agentId);
+            default:
+                return collect(); // Return an empty collection if report type is not recognized
+        }
+    }
+
+    public function getTicketStats($lastDay, $reportOf, $agentId)
+    {
+        $query = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+            ->whereIn($reportOf . '_id', $this->getValidIds($reportOf, $agentId));
+
+        $this->applyDateFilter($query, $lastDay);
+
+        return $this->finalizeQuery($query);
+    }
+
+    public function getResponseStats($lastDay, $reportOf, $agentId = null)
+    {
+        $query = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+            ->whereIn('person_id', $this->getValidIds($reportOf, $agentId));
+
+        $this->applyDateFilter($query, $lastDay);
+
+        return $this->finalizeQuery($query);
+    }
+
+    public function getValidIds($type, $agentId)
+    {
+        if ($type === 'agent') {
+            if ($agentId) {
+                return Agent::where('id', $agentId)->pluck('id');
+            } else {
+                return Agent::whereNotNull('id')->pluck('id');
+            }
+        } else {
+            return  Customer::whereNotNull('id')->pluck('id');
+        }
+
+    }
+
+    public function applyDateFilter($query, $lastDay)
+    {
+        if ($lastDay > 6) {
+            $query->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$lastDay} days")));
+        }
+    }
+
+    public function finalizeQuery($query)
+    {
+        return $query->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+            ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+            ->get();
+    }
+
+    public function formatResults($results)
+    {
+        $dataItems = [
+            'Mon' => [], 'Tue' => [], 'Wed' => [], 'Thu' => [], 'Fri' => [], 'Sat' => [], 'Sun' => []
+        ];
+
+        $hours = array_map(function ($hour) {
+            return $hour . ":00";
+        }, range(0, 23));
+
+        foreach ($dataItems as $day => $data) {
+            $dataItems[$day] = array_fill_keys($hours, 0);
+        }
+
+        foreach ($results as $row) {
+            $day = substr($row['day_of_week'], 0, 3);
+            $hour = $row['hour_of_day'] . ":00";
+            $dataItems[$day][$hour] = (int) $row['count'];
+        }
+
+        return $dataItems;
     }
 }

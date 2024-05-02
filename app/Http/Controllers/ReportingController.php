@@ -2,11 +2,14 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Conversation;
 
 /**
  * ReportingController class for REST API
@@ -237,53 +240,97 @@ class ReportingController extends Controller
         ];
     }
 
+//    public function dayTimeStats(Reporting $reporting, Request $request)
+//    {
+//        $lastDay = 0;
+//        $reportType = 'ticket';
+//        if (isset($_REQUEST['last_day'])) {
+//            $lastDay = (int)$_REQUEST['last_day'];
+//        }
+//
+//        if (isset($_REQUEST['report_type'])) {
+//            $reportType = $_REQUEST['report_type'];
+//        }
+//
+//        if (isset($_REQUEST['report_of'])) {
+//            $reportOf = $_REQUEST['report_of'];
+//        }
+//
+//        if ($reportType == 'ticket') {
+//            if ($lastDay >6) {
+//                $results = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+//                    ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$lastDay} days")))
+//                    ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+//                    ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+//                    ->get();
+//            } else {
+//                $results = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+//                    ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+//                    ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+//                    ->get();
+//            }
+//        }
+//
+//        if ($reportType == 'response') {
+//            if ($reportOf == 'agent') {
+//                $allAgentIds = Agent::whereNotNull('id')->pluck('id')->toArray();
+//
+//                if ($lastDay > 6) {
+//                    $results = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+//                        ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$lastDay} days")))
+//                        ->whereIn('person_id', $allAgentIds)
+//                        ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+//                        ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+//                        ->get();
+//                } else {
+//                    $results = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+//                        ->whereIn('user_id', $allAgentIds)
+//                        ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+//                        ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+//                        ->get();
+//                }
+//            } else {
+//                $allCustomerIds = Customer::whereNotNull('id')->pluck('id')->toArray();
+//
+//                if ($lastDay > 6) {
+//                    $results = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+//                        ->whereIn('person_id', $allCustomerIds)
+//                        ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$lastDay} days")))
+//                        ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+//                        ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+//                        ->get();
+//                } else {
+//                    $results = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
+//                        ->whereIn('person_id', $allCustomerIds)
+//                        ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+//                        ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+//                        ->get();
+//                }
+//            }
+//        }
+//
+//        $dataItems = $this->formatResults($results->toArray());
+//
+//        return $this->send([
+//            'stats' => $dataItems
+//        ]);
+//
+//    }
+
     public function dayTimeStats(Reporting $reporting, Request $request)
     {
-        $lastDay = 0;
-        if (isset($_REQUEST['last_day'])) {
-            $lastDay = (int)$_REQUEST['last_day'];
-        }
-        if ($lastDay >6) {
-            $results = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
-                ->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$lastDay} days")))
-                ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
-                ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
-                ->get();
-        } else {
-            $results = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
-                ->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
-                ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
-                ->get();
-        }
+        $lastDay = $request->input('last_day', 0);
+        $reportType = $request->input('report_type', 'ticket');
+        $reportOf = $request->input('report_of');
+        $agentId = $request->input('agent_id');
 
-        $dataItems = $this->formatResults($results->toArray());
+        $results = $reporting->getQueryResults($lastDay, $reportType, $reportOf, $agentId);
+
+        $dataItems = $reporting->formatResults($results->toArray());
 
         return $this->send([
             'stats' => $dataItems
         ]);
-
     }
 
-    private function formatResults($results)
-    {
-        $dataItems = [
-            'Mon' => [], 'Tue' => [], 'Wed' => [], 'Thu' => [], 'Fri' => [], 'Sat' => [], 'Sun' => []
-        ];
-
-        $hours = array_map(function ($hour) {
-            return $hour . ":00";
-        }, range(0, 23));
-
-        foreach ($dataItems as $day => $data) {
-            $dataItems[$day] = array_fill_keys($hours, 0);
-        }
-
-        foreach ($results as $row) {
-            $day = substr($row['day_of_week'], 0, 3);
-            $hour = $row['hour_of_day'] . ":00";
-            $dataItems[$day][$hour] = (int) $row['count'];
-        }
-
-        return $dataItems;
-    }
 }
