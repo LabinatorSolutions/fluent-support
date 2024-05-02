@@ -1,13 +1,48 @@
 <template>
-    <div style="margin: 20px 0; background: white;" class="fs_wid_widget fs_wid_day_by_day">
+    <div style="margin: 20px 0; background: white; padding: 20px" class="fs_wid_widget fs_wid_day_by_day">
         <div class="fs_header fs_widget_header">
             <h3>{{ $t('Ticket created by time of day') }}</h3>
-            <div class="widget_actions fs_to_right">
-                <el-select @change="fetchStats" size="big" v-model="last_day">
-                    <el-option :value="7" :label="$t('Last 7 Days')"></el-option>
-                    <el-option :value="30" :label="$t('Last 30 Days')"></el-option>
-                    <el-option :value="0" :label="$t('All Time')"></el-option>
-                </el-select>
+            <div class="fs_select_options">
+                <div class="widget_actions fs_to_right">
+                    <el-select @change="fetchStats" size="small" placeholder="Select Report Of" v-model="reportOf">
+                        <el-option value="agent" :label="$t('Agent')"></el-option>
+                        <el-option value="customer" :label="$t('Customer')"></el-option>
+                    </el-select>
+                </div>
+
+                <div  v-if="reportOf == 'agent'" class="widget_actions fs_to_right">
+                    <el-select
+                        clearable
+                        filterable
+                        placeholder="All Agent"
+                        @change="fetchStats"
+                        v-model="agentId"
+                        class="fs_report_by_agent"
+                    >
+                        <el-option
+                            v-for="agent in appVars.support_agents"
+                            :key="agent.id"
+                            :value="agent.id"
+                            :label="agent.full_name"
+                        ></el-option>
+                    </el-select>
+                </div>
+
+                <div class="widget_actions fs_to_right">
+                    <el-select @change="fetchStats" size="small" v-model="reportType">
+                        <el-option v-if="reportOf == 'customer'" value="ticket" :label="$t('Ticket')"></el-option>
+                        <el-option value="response" :label="$t('Response')"></el-option>
+                    </el-select>
+                </div>
+
+                <div class="widget_actions fs_to_right">
+                    <el-select @change="fetchStats"  placeholder="Select Date" size="small" v-model="lastDay">
+
+                        <el-option :value="7" :label="$t('Last 7 Days')"></el-option>
+                        <el-option :value="30" :label="$t('Last 30 Days')"></el-option>
+                        <el-option :value="0" :label="$t('All Time')"></el-option>
+                    </el-select>
+                </div>
 
             </div>
         </div>
@@ -64,8 +99,13 @@ export default {
         } = useFluentHelper();
 
         const state = reactive({
-            last_day: 30,
+            lastDay: 30,
             appReady: false,
+            reportType: 'ticket',
+            reportOf: 'agent',
+            dateRange: ["", ""],
+            agentId: '',
+            customerId: '',
             dataItems: {
             },
             days:['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -116,7 +156,11 @@ export default {
         const fetchStats = () => {
             state.appReady = false;
             get('reports/day-time-stats', {
-                last_day: state.last_day
+                last_day: state.lastDay,
+                report_type: state.reportType,
+                report_of: state.reportOf,
+                agent_id: state.agentId,
+                date_range: state.dateRange
             })
                 .then(res => {
                     console.log(res.stats)
@@ -190,30 +234,36 @@ export default {
         }
     }
 
-
-    .fs_wid_level_5 {
-        background: #1c00a6;
-    }
-
-    .fs_wid_level_4 {
-        background: #2900f3;
-    }
-
-    .fs_wid_level_3 {
-        background: #6040ff;
-    }
-
-    .fs_wid_level_2 {
-        background: #a08dff;
-    }
-
-    .fs_wid_level_1 {
-        background: #dfd9ff;
-    }
-
+    /* Lighter Shade for Label 0 */
     .fs_wid_level_0 {
-        background: #f0f0f0;
+        background: #F0F0F0; /* Lighter shade of #24CC8F */
     }
+
+    /* Lighter Shade 1 */
+    .fs_wid_level_1 {
+        background: #9be9a8; /* Lighter shade of #24CC8F */
+    }
+
+    /* Darker Shade 2 */
+    .fs_wid_level_2 {
+        background: #40c463; /* Darker shade of #44f5b0 */
+    }
+
+    /* Darker Shade 3 */
+    .fs_wid_level_3 {
+        background: #30a14e; /* Darker shade of #3be0a2 */
+    }
+
+    /* Darker Shade 4 */
+    .fs_wid_level_4 {
+        background: #1aa274; /* Darker shade of #32cc95 */
+    }
+
+    /* Darker Shade 5 */
+    .fs_wid_level_5 {
+        background: #216e39 /* Darker shade of #29b888 */
+    }
+
 }
 
 .fcraft_time_widget {
@@ -262,7 +312,15 @@ export default {
 }
 
 .fs_to_right {
-    //width: 20%;
-    float: right;
+    width: 20%;
+    margin-right: 10px;
 }
+
+.fs_select_options {
+    width: 50%;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+
 </style>
