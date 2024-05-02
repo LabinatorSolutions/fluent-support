@@ -2,14 +2,11 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
-use FluentSupport\App\Models\Agent;
-use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Models\Ticket;
-use FluentSupport\App\Models\Conversation;
 
 /**
  * ReportingController class for REST API
