@@ -216,3 +216,6 @@ $router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group(fun
     $router->delete('/delete', 'TicketImportController@deleteTickets');
 });
 
+$router->post('ticket_image_upload', 'UploaderController@uploadImage')
+    ->withPolicy('AgentTicketPolicy');
+
