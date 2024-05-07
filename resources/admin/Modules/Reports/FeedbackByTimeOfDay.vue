@@ -8,15 +8,10 @@
                                 <div class="abc">
                                     <h3>{{ $t('Ticket created by time of day') }}</h3>
                                     <div class="fs_box_actions">
-                                        <el-switch
-                                            v-model="reportOf"
-                                            active-text="Customer"
-                                            inactive-text="Agent"
-                                            style="--el-switch-on-color: #409eff; --el-switch-off-color: #409eff"
-                                            active-value="customer"
-                                            inactive-value="agent"
-                                            @change="fetchStats"
-                                        />
+                                        <el-radio-group @change="fetchStats()" v-model="reportOf">
+                                            <el-radio-button label="agent">Agent</el-radio-button>
+                                            <el-radio-button label="customer">Customer</el-radio-button>
+                                        </el-radio-group>
                                     </div>
                                 </div>
 
@@ -102,13 +97,14 @@
 </template>
 
 <script>
-import {ref, reactive, computed, onMounted, toRefs} from 'vue';
+import {ref, reactive, computed, onMounted, toRefs, watch} from 'vue';
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 import SideBar from "@/admin/Modules/Reports/Parts/_SideBar.vue";
 
 export default {
     name: 'FeedbackByTimeOfDay',
     components: {SideBar},
+
     setup() {
         const {
             appVars,
@@ -136,7 +132,6 @@ export default {
             showing_charts: true,
             tipIndexes: ['1am', '4am', '7am', '10am', '1pm', '4pm', '7pm', '10pm'],
         });
-
 
         const maxValue = computed(() => {
             let max = 0;
@@ -390,6 +385,7 @@ export default {
     padding: 0px 30px;
     padding-bottom: 20px;
 }
+
 
 
 </style>
