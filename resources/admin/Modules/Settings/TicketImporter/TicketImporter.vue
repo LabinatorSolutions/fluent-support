@@ -66,14 +66,19 @@
                                           </span>
                                         </template>
                                     </el-dialog>
-                                    <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" :previously_imported="previous_migration_data.helpscout.previously_imported" @restart_previous_migration="restartTicketMigration('helpscout')" @import="importTickets(currently_importing)" @close="openSettings=false"/>
-                                    <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
-                                    <zendesk-importer v-if="currently_importing=='zendesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+
                                 </div>
                             </el-card>
                         </div>
                     </el-col>
                 </el-row>
+
+                <div class="fs_importer_modal">
+                    <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" :previously_imported="previous_migration_data.helpscout.previously_imported" @restart_previous_migration="restartTicketMigration('helpscout')" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                    <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                    <zendesk-importer v-if="currently_importing=='zendesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                </div>
+
                 <div class="fs_box_body" v-if="!loading && !settings.length">
                     <h2>{{$t('Import from other Support Tickets Plugins')}}</h2>
                     <p>{{$t('If you want to migrate tickets from other ticketing system like')}} <b>{{$t('Awesome Support')}}</b> {{$t('or')}} <b>{{$t('Support Candy')}}</b> {{$t('WordPress plugin then you can migrate from this section.')}}</p>
