@@ -74,11 +74,10 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->get('fluent-boards/stages/{board_id}', 'TicketController@getStages')->int('board_id');
     $router->post('fluent-boards/stages', 'TicketController@createTask');
 
-
     $router->get('search-contact', 'CustomerController@searchContact');
 
-
     $router->get('ping', 'AgentController@ping');
+    $router->get('ticket-essentials', 'TicketController@getTicketEssentials')->withPolicy('AdminSettingsPolicy');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
@@ -218,3 +217,7 @@ $router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group(fun
     $router->post('/import', 'TicketImportController@importTickets');
     $router->delete('/delete', 'TicketImportController@deleteTickets');
 });
+
+$router->post('ticket_image_upload', 'UploaderController@uploadImage')
+    ->withPolicy('AgentTicketPolicy');
+

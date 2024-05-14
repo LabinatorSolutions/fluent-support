@@ -152,4 +152,36 @@ class UploaderController extends Controller
 
         return $attachments;
     }
+
+    public function uploadImage(Request $request)
+    {
+        $images = $request->files();
+        $ticketId = $this->resolveTicketId($request);
+        $this->isValidImageType($images);
+
+        try {
+            $uploadedFiles = UploadService::handleUploadToLocal($ticketId, $images);
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => $e->getMessage(),
+            ]);
+        }
+
+        return [
+            'images' => $uploadedFiles,
+        ];
+
+    }
+
+    private function isValidImageType($image)
+    {
+        $imageType = $image['image']->getClientOriginalExtension();
+        $supportedTypes = ['gif', 'ief', 'jpeg', 'webp', 'pjpeg', 'ktx', 'png'];
+
+        if (! in_array($imageType, $supportedTypes)) {
+            return $this->sendError([
+                'message' => 'Invalid image file.',
+            ]);
+        }
+    }
 }
