@@ -62,7 +62,7 @@
           <el-popover
               placement="bottom"
               :width="400"
-              v-model:visible="add_watcher"
+              :visible="add_watcher"
               trigger="manual"
           >
             <template #reference>
