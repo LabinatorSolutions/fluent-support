@@ -4,9 +4,12 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Modules\PermissionManager;
 
 class TicketHelper
@@ -218,4 +221,28 @@ class TicketHelper
     {
         return Ticket::where('status', 'active')->count();
     }
+
+    public static function getTicketEssentials($type = '')
+    {
+        $agents = Agent::select(['id', 'first_name', 'last_name'])
+            ->where('person_type', 'agent')
+            ->get()->toArray();
+
+        $data = [
+            'client_priorities'          => Helper::customerTicketPriorities(),
+            'ticket_statuses_group'      => Helper::ticketStatusGroups(),
+            'agents'                     => $agents,
+            'changeable_ticket_statuses' => Helper::changeableTicketStatuses(),
+            'admin_priorities'           => Helper::adminTicketPriorities(),
+            'enable_draft_mode'          => Helper::getBusinessSettings('enable_draft_mode', 'no'),
+            'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
+            'support_products'           => Product::select(['id', 'title'])->get(),
+            'ticket_tags'                => TicketTag::select(['id', 'title'])->get()->toArray(),
+            'mailboxes'                  => MailBox::select(['id', 'name', 'settings'])->get(),
+            'ticket_statuses'            => Helper::ticketStatuses(),
+        ];
+
+        return $type ? $data[$type] : $data;
+    }
+
 }

@@ -574,6 +574,18 @@ class TicketController extends Controller
         }
     }
 
+    /**
+     * Get ticket essentials data based on the provided types.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return array The ticket essentials data.
+     */
+    public function getTicketEssentials(Request $request)
+    {
+        $type = $request->get('type');
+
+        return TicketHelper::getTicketEssentials($type);
+    }
 
 }
 
