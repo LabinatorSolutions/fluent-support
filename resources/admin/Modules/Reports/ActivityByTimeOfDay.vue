@@ -226,12 +226,6 @@ export default {
             }
         };
 
-        const reportFilter = () => {
-            state.agentId = '';
-            state.reportType = 'response';
-            fetchStats();
-        };
-
         const getTooltipContent = (day, keyItem) => {
             if (state.reportType === 'response') {
                 return state.dataItems[day][keyItem] + ' response created';
@@ -277,7 +271,6 @@ export default {
             handleError,
             saveData,
             getData,
-            reportFilter,
             getTooltipContent,
             onlyPastDates,
             has_pro
