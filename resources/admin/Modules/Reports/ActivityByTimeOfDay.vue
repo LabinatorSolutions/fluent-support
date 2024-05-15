@@ -6,45 +6,48 @@
                     <div class="fs_header fs_widget_header">
                         <div class="fs_header_actions">
                             <h3>{{ $t('Activity Trends by Time of Day') }}</h3>
-                            <div class="fs_box_actions">
-                                <el-radio-group @change="reportFilter()" v-model="reportOf">
-                                    <el-radio-button label="agent">Agent</el-radio-button>
-                                    <el-radio-button label="customer">Customer</el-radio-button>
-                                </el-radio-group>
-                            </div>
                         </div>
 
                         <div class="fs_feedback_filter_options">
-                            <div  v-if="reportOf == 'agent'" class="fs_filter_actions">
-                                <el-select
-                                    clearable
-                                    filterable
-                                    placeholder="All Agent"
+                            <div class="fs_filter_actions">
+                                    <el-select @change="fetchStats" v-model="reportType">
+                                        <el-option value="ticket" :label="$t('All Tickets')"></el-option>
+                                        <el-option value="agent_response" :label="$t('Agent Response')"></el-option>
+                                        <el-option value="customer_response" :label="$t('Customer Response')"></el-option>
+                                    </el-select>
+
+                                    <el-select
+                                        clearable
+                                        filterable
+                                        v-if="reportType == 'agent_response'"
+                                        placeholder="All Agent"
+                                        @change="fetchStats"
+                                        v-model="agentId"
+                                    >
+                                        <el-option
+                                            v-for="agent in appVars.support_agents"
+                                            :key="agent.id"
+                                            :value="agent.id"
+                                            :label="agent.full_name"
+                                        ></el-option>
+                                    </el-select>
+                            </div>
+
+
+                            <div class="fs_date_range_filter">
+                                <el-date-picker
+                                    v-model="dateRange"
+                                    type="daterange"
+                                    :range-separator="translate('To')"
+                                    :start-placeholder="translate('Start')"
+                                    :end-placeholder="translate('End')"
+                                    :disabledDate="onlyPastDates"
+                                    :shortcuts="dateShortcuts"
+                                    :unlink-panels="true"
                                     @change="fetchStats"
-                                    v-model="agentId"
+                                    value-format="YYYY-MM-DD"
                                 >
-                                    <el-option
-                                        v-for="agent in appVars.support_agents"
-                                        :key="agent.id"
-                                        :value="agent.id"
-                                        :label="agent.full_name"
-                                    ></el-option>
-                                </el-select>
-                            </div>
-
-                            <div class="fs_filter_actions">
-                                <el-select @change="fetchStats" v-model="reportType">
-                                    <el-option v-if="reportOf == 'customer'" value="ticket" :label="$t('Ticket')"></el-option>
-                                    <el-option value="response" :label="$t('Response')"></el-option>
-                                </el-select>
-                            </div>
-
-                            <div class="fs_filter_actions">
-                                <el-select @change="fetchStats" placeholder="Select Date" v-model="lastDay">
-                                    <el-option :value="0" :label="$t('All Time')"></el-option>
-                                    <el-option :value="7" :label="$t('Last 7 Days')"></el-option>
-                                    <el-option :value="30" :label="$t('Last 30 Days')"></el-option>
-                                </el-select>
+                                </el-date-picker>
                             </div>
                         </div>
                     </div>
@@ -114,12 +117,72 @@ export default {
         } = useFluentHelper();
 
         const state = reactive({
-            lastDay: 30,
             appReady: false,
-            reportType: 'response',
-            reportOf: 'agent',
+            reportType: 'ticket',
             dateRange: ["", ""],
-
+            dateShortcuts: [
+                {
+                    text: translate("Today"),
+                    value: (() => {
+                        const end = new Date();
+                        const start = new Date();
+                        return [start, end];
+                    })(),
+                },
+                {
+                    text: translate("Yesterday"),
+                    value: (() => {
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24);
+                        return [start, start];
+                    })(),
+                },
+                {
+                    text: translate("Last Week"),
+                    value: (() => {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+                        return [start, end];
+                    })(),
+                },
+                {
+                    text: translate("Last Month"),
+                    value: (() => {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+                        return [start, end];
+                    })(),
+                },
+                {
+                    text: translate("Last 3 Months"),
+                    value: (() => {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+                        return [start, end];
+                    })(),
+                },
+                {
+                    text: translate("Last 6 Months"),
+                    value: (() => {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 180);
+                        return [start, end];
+                    })(),
+                },
+                {
+                    text: translate("Last 1 Year"),
+                    value: (() => {
+                        const end = new Date();
+                        const start = new Date();
+                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
+                        return [start, end];
+                    })(),
+                },
+            ],
             agentId: '',
             customerId: '',
             dataItems: {
@@ -177,12 +240,14 @@ export default {
             }
         }
 
+        const onlyPastDates = (val) => {
+            return new Date() <= val;
+        };
+
         const fetchStats = () => {
             state.appReady = false;
             get('reports/day-time-stats', {
-                last_day: state.lastDay,
                 report_type: state.reportType,
-                report_of: state.reportOf,
                 agent_id: state.agentId,
                 date_range: state.dateRange
             })
@@ -214,6 +279,7 @@ export default {
             getData,
             reportFilter,
             getTooltipContent,
+            onlyPastDates,
             has_pro
         };
     }

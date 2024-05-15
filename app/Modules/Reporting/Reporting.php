@@ -566,56 +566,46 @@ class Reporting
         ];
     }
 
-    public function getQueryResults($lastDay, $reportType, $reportOf, $agentId = null)
+    public function getQueryResults($from, $to, $filter)
     {
-        switch ($reportType) {
+        switch ($filter['report_type']) {
             case 'ticket':
-                return $this->getTicketStats($lastDay, $reportOf, $agentId);
-            case 'response':
-                return $this->getResponseStats($lastDay, $reportOf, $agentId);
+                return $this->getTicketStats($from, $to);
+            case 'agent_response':
+                return $this->getResponseStats($from, $to, 'agent', $filter['agent_id'] ?? null);
+            case 'customer_response':
+                return $this->getResponseStats($from, $to, 'customer');
             default:
-                return collect(); // Return an empty collection if report type is not recognized
+                return [];
         }
     }
 
-    public function getTicketStats($lastDay, $reportOf, $agentId)
+    public function getTicketStats($from, $to)
     {
-        $query = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
-            ->whereIn($reportOf . '_id', $this->getValidIds($reportOf, $agentId));
+        $query = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count');
 
-        $this->applyDateFilter($query, $lastDay);
+        $this->applyDateFilter($query, $from, $to);
 
         return $this->finalizeQuery($query);
     }
 
-    public function getResponseStats($lastDay, $reportOf, $agentId = null)
+    public function getResponseStats($from, $to, $reportType, $agentId = null)
     {
-        $query = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count')
-            ->whereIn('person_id', $this->getValidIds($reportOf, $agentId));
+        $query = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count');
 
-        $this->applyDateFilter($query, $lastDay);
+        if ($reportType === 'agent' && $agentId) {
+            $query->where('person_id', $agentId);
+        }
+
+        $this->applyDateFilter($query, $from, $to);
 
         return $this->finalizeQuery($query);
     }
 
-    public function getValidIds($type, $agentId)
+    public function applyDateFilter($query, $from, $to)
     {
-        if ($type === 'agent') {
-            if ($agentId) {
-                return Agent::where('id', $agentId)->pluck('id');
-            } else {
-                return Agent::whereNotNull('id')->pluck('id');
-            }
-        } else {
-            return  Customer::whereNotNull('id')->pluck('id');
-        }
-
-    }
-
-    public function applyDateFilter($query, $lastDay)
-    {
-        if ($lastDay > 6) {
-            $query->where('created_at', '>=', date('Y-m-d H:i:s', strtotime("-{$lastDay} days")));
+        if ($from && $to) {
+            $query->whereBetween('created_at', [$from, $to]);
         }
     }
 

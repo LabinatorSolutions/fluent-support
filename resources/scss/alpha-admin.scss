@@ -534,8 +534,9 @@ ul.fs_saved_replies {
 }
 
 .fs_filter_actions {
-    width: 20%;
-    margin-right: 10px;
+    max-width: 40%;
+    display: flex;
+    gap: 5px;
 }
 
 .fs_select_options {
@@ -568,6 +569,7 @@ ul.fs_saved_replies {
     padding: 10px 30px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
 }
 
 .fs_header_actions {
