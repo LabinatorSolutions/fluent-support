@@ -51,7 +51,7 @@
                         />
                         <el-table-column
                             :label="translate('Actions')"
-                            width="120"
+                            width="135"
                         >
                             <template #default="scope">
                                 <router-link
@@ -86,10 +86,30 @@
                                         ></el-button>
                                     </template>
                                 </el-popconfirm>
+
+                                <el-popconfirm
+                                    confirm-button-type="success"
+                                    :confirm-button-text="translate('Yes, duplicate')"
+                                    :cancel-button-text="translate('No')"
+                                    icon="el-icon-info"
+                                    icon-color="red"
+                                    :title="translate('Are you sure you want to duplicate this workflow?')"
+                                    @confirm="duplicateWorkflow(scope.row.id)"
+                                >
+                                    <template #reference>
+                                            <el-button
+                                                v-loading="duplicating"
+                                                style="margin-left: 10px; color: blue;"
+                                                type="text"
+                                                size="small"
+                                                icon="DocumentCopy"
+                                            ></el-button>
+                                    </template>
+                                </el-popconfirm>
+
                             </template>
                         </el-table-column>
                     </el-table>
-
                     <div class="fframe_pagination_wrapper" v-if="workflows.length">
                         <pagination @fetch="fetch()" :pagination="pagination" />
                     </div>
@@ -230,6 +250,9 @@ export default {
             },
             creating: false,
             deleting: false,
+            duplicating: false,
+            workflowId: "",
+            workflowName: "",
         });
 
         const fetch = async () => {
@@ -283,6 +306,28 @@ export default {
                 });
         };
 
+        const duplicateWorkflow = async (workflowId) => {
+            state.duplicating = true;
+            await post("workflows/duplicate/" + workflowId)
+                .then((response) => {
+                    notify({
+                        type: "success",
+                        message: response.message,
+                        position: "bottom-right",
+                    });
+                    fetch();
+                    state.duplicating = false;
+                    renewOptions("workflows/options");
+                })
+                .catch((errors) => {
+                    state.duplicating = false;
+                    handleError(errors);
+                })
+                .always(() => {
+                    state.deleting = false;
+                });
+        };
+
         const deleteWorkflow = async (workflowId) => {
             state.deleting = true;
             await del("workflows/" + workflowId)
@@ -316,6 +361,7 @@ export default {
             fetch,
             createWorkflow,
             deleteWorkflow,
+            duplicateWorkflow,
             translate,
         };
     },
