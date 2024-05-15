@@ -239,12 +239,14 @@ class ReportingController extends Controller
 
     public function dayTimeStats(Reporting $reporting, Request $request)
     {
-        $lastDay = $request->input('last_day', 0);
-        $reportType = $request->input('report_type', 'ticket');
-        $reportOf = $request->input('report_of');
-        $agentId = $request->input('agent_id');
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
 
-        $results = $reporting->getQueryResults($lastDay, $reportType, $reportOf, $agentId);
+        $filter = [
+            'report_type' => $request->getSafe('report_type', 'sanitize_text_field') ?: null,
+            'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
+        ];
+
+        $results = $reporting->getQueryResults($from, $to, $filter);
 
         $dataItems = $reporting->formatResults($results->toArray());
 
