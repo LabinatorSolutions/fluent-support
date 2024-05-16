@@ -82,6 +82,10 @@ export default {
                     return operand1 === operand2
                 case '!=':
                     return operand1 !== operand2
+                case 'contains':
+                    return operand2.includes(operand1);
+                case 'not_contains':
+                    return !operand2.includes(operand1);
             }
         },
 
