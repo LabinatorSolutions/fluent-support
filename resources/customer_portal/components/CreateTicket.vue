@@ -48,8 +48,8 @@
                             <el-select clearable v-model="ticket.product_id" :placeholder="$t('service_placeholder')">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
                             </el-select>
+                            <error :error="errors.get('product_id')"/>
                         </el-form-item>
-                        <error :error="errors.get('product_id')"/>
                     </div>
                     <div v-if="Object.keys(priorities).length" class="fs_tk_col">
                         <el-form-item class="fs_ticket_priority fs_input_label" :label="$t('priority')">
