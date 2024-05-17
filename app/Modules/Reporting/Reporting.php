@@ -12,7 +12,6 @@ use FluentSupport\App\Models\Ticket;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
-use FluentSupport\Framework\Support\DateTime;
 
 /**
  * Reporting class is responsible for getting data related to report
@@ -606,10 +605,7 @@ class Reporting
     public function applyDateFilter($query, $from, $to)
     {
         if ($from && $to) {
-            $from = (new DateTime($from))->setTime(0, 0, 0)->format('Y-m-d H:i:s');
-            $to = (new DateTime($to))->setTime(23, 59, 59)->format('Y-m-d H:i:s');
-
-            $query->whereBetween('created_at', [$from, $to]);
+            $query->whereDate('created_at', [$from, $to]);
         }
     }
 
