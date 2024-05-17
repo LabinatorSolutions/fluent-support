@@ -19,7 +19,7 @@
                                     <el-select
                                         clearable
                                         filterable
-                                        v-if="reportType == 'agent_response'"
+                                        v-if="reportType === 'agent_response'"
                                         placeholder="All Agent"
                                         @change="fetchStats"
                                         v-model="agentId"
@@ -227,10 +227,10 @@ export default {
         };
 
         const getTooltipContent = (day, keyItem) => {
-            if (state.reportType === 'response') {
-                return state.dataItems[day][keyItem] + ' response created';
-            } else {
+            if (state.reportType === 'ticket') {
                 return state.dataItems[day][keyItem] + ' tickets created';
+            } else {
+                return state.dataItems[day][keyItem] + ' response created';
             }
         }
 
