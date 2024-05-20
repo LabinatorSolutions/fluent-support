@@ -122,22 +122,6 @@ export default {
             dateRange: ["", ""],
             dateShortcuts: [
                 {
-                    text: translate("Today"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Yesterday"),
-                    value: (() => {
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24);
-                        return [start, start];
-                    })(),
-                },
-                {
                     text: translate("Last Week"),
                     value: (() => {
                         const end = new Date();

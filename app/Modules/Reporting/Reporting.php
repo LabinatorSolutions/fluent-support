@@ -605,7 +605,10 @@ class Reporting
     public function applyDateFilter($query, $from, $to)
     {
         if ($from && $to) {
-            $query->whereDate('created_at', [$from, $to]);
+            $from .= ' 00:00:00';
+            $to .= ' 23:59:59';
+
+            $query->whereBetween('created_at', [$from, $to]);
         }
     }
 
