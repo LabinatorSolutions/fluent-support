@@ -1366,8 +1366,16 @@ class Ticket extends Model
     {
         $prevValue = $ticket->{$propName};
 
-        if ($propName == 'agent_id' && !PermissionManager::currentUserCan('fst_assign_agents') ) {
-            throw new \Exception('You do not have permission to assign agent', 400);
+        if ($propName === 'agent_id') {
+            if (!PermissionManager::currentUserCan('fst_assign_agents')) {
+                throw new \Exception('Permission denied to assign agent', 403);
+            }
+
+            $agent = Agent::findOrFail($propValue);
+            $restrictions = $agent->getMeta('agent_restrictions', []);
+            if (!empty($restrictions) && in_array($ticket->mailbox_id, $restrictions)) {
+                throw new \Exception('Agent is restricted for this mailbox ticket', 400);
+            }
         }
 
         if ($propName && $propValue && $prevValue != $propValue) {
