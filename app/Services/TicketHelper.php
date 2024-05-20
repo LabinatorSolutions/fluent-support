@@ -115,8 +115,11 @@ class TicketHelper
      */
     public static function getSuggestedTickets($agentId, $limit = 5)
     {
+        $restrictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
+
         //Get lis of tickets which are waiting for reply
         $tickets = Ticket::where('agent_id', $agentId)
+            ->whereNotIn('mailbox_id', $restrictedBusinessBoxes)
             ->where('status', '!=', 'closed')
             ->applyFilters([
                 'waiting_for_reply' => 'yes'
@@ -131,6 +134,7 @@ class TicketHelper
             //Get the ticket list which status is not closed and agent id is null or 0
             $tickets = Ticket::where('status', '!=', 'closed')
                 ->oldest('id')
+                ->whereNotIn('mailbox_id', $restrictedBusinessBoxes)
                 ->where(function ($q) {
                     $q->whereNull('agent_id');
                     $q->orWhere('agent_id', '0');
@@ -161,9 +165,11 @@ class TicketHelper
     public static function getTicketsToWatch()
     {
         $agent = Helper::getCurrentAgent();
+        $restrictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
 
         $tickets = Ticket::with('customer')
             ->limit(5)
+            ->whereNotIn('mailbox_id', $restrictedBusinessBoxes)
             ->join('fs_tag_pivot', 'fs_tag_pivot.source_id', '=', 'fs_tickets.id')
             ->where('fs_tag_pivot.source_type', '=', 'ticket_watcher')
             ->where('fs_tag_pivot.tag_id', '=', $agent->id)
