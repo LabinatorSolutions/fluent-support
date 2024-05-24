@@ -23,6 +23,7 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
 
     $router->get('my_stats', 'AgentController@myStats');
+    $router->get('agent_performance', 'AgentController@agentPerformance');
     $router->get('/', 'TicketController@index');
     $router->post('/', 'TicketController@createTicket');
 

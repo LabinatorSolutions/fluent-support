@@ -149,22 +149,21 @@ class AgentController extends Controller
         }
     }
 
-    // /**
-    //  * getAgentStat method will return ticket statistics by an agent id
-    //  *
-    //  * @param Request $request
-    //  * @param $agent_id
-    //  * @return array
-    //  */
-    // public function getAgentStat(Request $request, $agent_id)
-    // {
+    public function agentPerformance()
+    {
+        try {
+            if (PermissionManager::currentUserCan('fst_agent_today_performance')) {
+                $agentTodayStats = StatModule::getAgentTodayStats();
+                return ['agent_today_stats' => $agentTodayStats];
+            }
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => $e->getMessage()
+            ]);
+        }
 
-    //     $stats = StatModule::getAgentStat($agent_id); //Get ticket statistics
-
-    //     $with = $request->getSafe('with', []);
-
-    //     return (new Agent())->getAgentStat($stats, $with, $agent_id);
-    // }
+        return [];
+    }
 
     /**
      * addOrUpdateProfileImage method will upload profile picture for a given agent id
