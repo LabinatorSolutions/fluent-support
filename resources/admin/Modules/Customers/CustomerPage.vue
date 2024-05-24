@@ -93,10 +93,76 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div v-if="widgets" v-for="(widget,widget_key) in widgets" :key="widget_key"
                                  :class="'fs_tk_widget_' + widget_key" class="fs_tk_card fs_tk_extra_card">
-                                <div class="fs_tk_card_header">
+                                <template v-if="widget_key === 'woo_purchases'">
+                                    <div class="fs_tk_card_header">
+                                        <h3 v-html="widget.title"></h3>
+                                    </div>
+                                    <div class="fs_tk_card_body">
+                                        <ul>
+                                            <li v-for="(order,order_key) in widget.orders" :key="order_key">
+                                                <el-tooltip :content="`Purchase date: `+order.date+`, Amount: `+order.currency+order.total" placement="top" :raw-content="true">
+                                                    <a @click="getOrderDetails(order, widget.products)" class="fs_wc_order_link">#{{order.id}}</a>
+                                                </el-tooltip>
+                                                &nbsp; - <el-tag class="ml-2" :type="getType(order.status)">{{order.status}}</el-tag>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <el-drawer custom-class="fs_wc_order_details" v-model="drawer" size="50%" :with-header="false">
+                                        <el-card class="fs_wc_order_box-card">
+                                            <template #header>
+                                                <div class="fs_wc_card-header">
+                                                    <h3>{{$t('Order')}} #{{orders.orderInfo.id}}</h3>
+                                                    <el-tag class="ml-2" :type="getType(orders.orderInfo.status)">{{orders.orderInfo.status}}</el-tag>
+                                                </div>
+                                            </template>
+                                            <div class="fs_wc_card-body">
+                                                <el-row :gutter="20">
+                                                    <el-col :span="12">
+                                                        <div class="fs_wc-order-preview-address">
+                                                            <h2>{{$t('Billing details')}}</h2>
+                                                            <p v-html="orders.orderInfo.billing_address"></p>
+                                                            <p><strong>{{$t('Email')}}: </strong>{{orders.orderInfo.email}}</p>
+                                                            <p><strong>{{$t('Phone')}}: </strong>{{orders.orderInfo.phone}}</p>
+                                                            <p><strong>{{$t('Payment Via')}}: </strong>{{orders.orderInfo.payment_method}}</p>
+                                                            <p><strong>{{$t('Purchase Date')}}: </strong>{{orders.orderInfo.date}}</p>
+                                                        </div>
+                                                    </el-col>
+                                                    <el-col :span="12">
+                                                        <div class="fs_wc-order-preview-address">
+                                                            <h2>{{$t('Shipping details')}}</h2>
+                                                            <p v-html="orders.orderInfo.shipping_address"></p>
+                                                            <p><strong>{{$t('Shipping method')}} </strong> {{orders.orderInfo.shipping_method}}</p>
+                                                        </div>
+                                                    </el-col>
+                                                </el-row>
+
+                                                <el-row>
+                                                    <el-table
+                                                        :data="orders.products"
+                                                        style="width: 100%; margin-top:2%;">
+                                                        <el-table-column prop="post_title" :label="$t('Product')" width="60%"/>
+                                                        <el-table-column prop="product_qty" :label="$t('Quantity')" width="20%"  align="center"/>
+                                                        <el-table-column label="Total" width="20%" align="center">
+                                                            <template #default="scope">
+                                                                <span v-html="orders.orderInfo.currency"></span><span>{{scope.row.product_gross_revenue}}</span>
+                                                            </template>
+                                                        </el-table-column>
+                                                    </el-table>
+                                                </el-row>
+                                            </div>
+
+                                            <div class="fs_wc_card_footer">
+                                                <a :href="orders.orderInfo.order_link" target="_blank" class="el-button el-button--primary" type="primary" >{{$t('Edit')}}</a>
+                                                <el-button @click="drawer = false" type="danger">{{$t('Close')}}</el-button>
+                                            </div>
+                                        </el-card>
+                                    </el-drawer>
+
+                                </template>
+                                <div class="fs_tk_card_header" v-else>
                                     <h3 v-html="widget.header"></h3>
                                 </div>
                                 <div class="fs_tk_card_body">
@@ -170,6 +236,8 @@ export default {
             customer: {},
             tickets: [],
             widgets: {},
+            drawer: false,
+            orders: [],
             loading_sidebar: false,
             fluentcrm_profile: false,
             loading: false,
@@ -222,6 +290,27 @@ export default {
             state.canOpenProfileUploadPopup = true;
         };
 
+        const getOrderDetails = (current_order, products) => {
+            state.drawer = true;
+            state.orders = {
+                orderInfo: current_order,
+                products: products[current_order.id],
+            }
+        }
+
+        const getType = (status) => {
+            switch (status.toLocaleString()) {
+                case 'on-hold':
+                    return 'warning';
+                case 'processing':
+                    return 'primary';
+                case 'completed':
+                    return 'success';
+                default:
+                    return 'info';
+            }
+        }
+
         const showIcon = () => {
             document.querySelector('i.fs_customer_avatar_upload').style.display = 'inline-flex';
         };
@@ -271,6 +360,8 @@ export default {
             post,
             handleError,
             notify,
+            getOrderDetails,
+            getType,
             beforeAvatarUpload
         }
     },
