@@ -67,9 +67,12 @@ class CustomerPortalController extends Controller
 
         $settings = Helper::getOption('_ticket_form_settings', []);
 
-        if(isset($settings['product_required_field']) && $settings['product_required_field'] == 'yes'){
-            $dataRules['required_fields']['product_id'] = 'required';
-            $dataRules['error_messages']['product_id.required'] = __('Product is required', 'fluent-support');
+        if (!empty($settings['product_required_field']) && $settings['product_required_field'] === 'yes') {
+            $productCount = Product::count();
+            if ($productCount > 0) {
+                $dataRules['required_fields']['product_id'] = 'required';
+                $dataRules['error_messages']['product_id.required'] = __('Product is required', 'fluent-support');
+            }
         }
 
         $defaultData = [
