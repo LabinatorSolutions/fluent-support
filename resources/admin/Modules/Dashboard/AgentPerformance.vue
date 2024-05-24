@@ -1,7 +1,7 @@
 <template>
     <div class="fs_box_body">
         <el-table
-            :data="component_data"
+            :data="todayStats"
             style="width: 100%"
         >
             <el-table-column prop="agent_name" label="Agent" />
@@ -24,14 +24,49 @@
     </div>
 </template>
 
-<script>
+<script type="text/babel">
+import {onMounted, reactive, toRefs} from "vue";
+import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
+
 export default {
-    props: ['component_data'],
     name: 'AgentPerformance',
-    setup() {
-        return {};
-    },
-};
+    setup(){
+        const {
+            appVars,
+            translate,
+            get,
+        } = useFluentHelper();
+
+        const state = reactive({
+            fetching: false,
+            todayStats: [],
+        });
+
+        const fetchAgentPerformance = async () => {
+            state.fetching = true;
+            await get('tickets/agent_performance')
+                .then(response => {
+                    state.todayStats = response.agent_today_stats;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {
+
+                });
+        }
+
+        onMounted(() => {
+            fetchAgentPerformance();
+        });
+
+        return {
+            ...toRefs(state),
+            appVars,
+            translate,
+        }
+    }
+}
 </script>
 
 <style scoped>
