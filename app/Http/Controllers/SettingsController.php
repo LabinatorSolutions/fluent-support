@@ -618,4 +618,156 @@ class SettingsController extends Controller
             'driver'  => $driver
         ];
     }
+
+    /**
+     * getIntegrationLogs method will return the integration logs
+     * @return array
+     */
+    public function integrationLogs()
+    {
+        $connections = [
+            'woocommerce'     => [
+                'title'          => __('Woo Commerce', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/woocommerce.png',
+                'is_integrated'   => defined('WC_PLUGIN_FILE'),
+                'description'    => __('The most popular e-commerce platform for WordPress', 'fluent-support')
+            ],
+            'lifter-lms'     => [
+                'title'          => __('Lifter Lms', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/lifter-lms.png',
+                'is_integrated'   => defined('LLMS_PLUGIN_FILE'),
+                'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support')
+            ],
+            'slack' => [
+                'title'          => __('Slack', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/slack.png',
+                'is_integrated'   => Helper::getFSIntegrationStatus('slack_settings'),
+                'description'    => __('Business communication platform designed to scale', 'fluent-support')
+            ],
+            'pm-pro'  => [
+                'title'          => __('PMPro', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/pmpro.png',
+                'is_integrated'   => defined('PMPRO_VERSION'),
+                'description'    => __('The ultimate platform for any member-focused business', 'fluent-support')
+            ],
+            'tutor-lms'  => [
+                'title'          => __('Tutor LMS', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/tutor-lms.png',
+                'is_integrated'   => defined('TUTOR_VERSION'),
+                'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support')
+            ],
+            'telegram'  => [
+                'title'          => __('Telegram', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/telegram.jpeg',
+                'is_integrated'  => Helper::getFSIntegrationStatus('telegram_settings'),
+                'description'    => __('Business communication platform designed for security', 'fluent-support')
+            ],
+            'fluent-crm'  => [
+                'title'          => __('Fluent CRM', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-crm.png',
+                'is_integrated'   => defined('FLUENTCRM'),
+                'description'    => __('Self-hosted email and marketing automation for WordPress', 'fluent-support')
+            ],
+            'fluent-forms'  => [
+                'title'          => __('Fluent FORMS', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-forms.png',
+                'is_integrated'   => defined('FLUENTFORM'),
+                'description'    => __('A robust form plugin suitable for any business', 'fluent-support')
+            ],
+            'buddy-boss'  => [
+                'title'          => __('Buddy Boss', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/buddy-boss.png',
+                'is_integrated'   => defined('BP_PLUGIN_DIR'),
+                'description'    => __('Powerful platform for any member-focused business', 'fluent-support')
+            ],
+            'discord'  => [
+                'title'          => __('Discord', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/discord.png',
+                'is_integrated'   => Helper::getFSIntegrationStatus('discord_settings'),
+                'description'    => __('Business communication platform designed for tech', 'fluent-support')
+            ],
+            'wishlist-member'  => [
+                'title'          => __('Wishlist Member', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/wishlist-member.png',
+                'is_integrated'   => defined('WLM3_PLUGIN_VERSION'),
+                'description'    => __('Powerful platform for any member-focused business', 'fluent-support')
+            ],
+            'easy-digital-downloads'  => [
+                'title'          => __('Easy Digital Downloads', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/easy-digital-downloads.png',
+                'is_integrated'   => class_exists('\Easy_Digital_Downloads'),
+                'description'    => __('The ultimate WordPress platform for digital products', 'fluent-support')
+            ],
+            'restrict-content-pro'  => [
+                'title'          => __('Restrict Content pro', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/restrict-content-pro.png',
+                'is_integrated'   => class_exists('\Restrict_Content_Pro' ),
+                'description'    => __('Powerful platform for any member-focused business', 'fluent-support')
+            ],
+            'better-docs'  => [
+                'title'          => __('Better Docs', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/better-docs.png',
+                'is_integrated'   => false,
+                'description'    => __('The standard plugin for knowledge base and documentation', 'fluent-support')
+            ],
+            'whatsapp'  => [
+                'title'          => __('Whatsapp', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/whatsapp.jpeg',
+                'is_integrated'   => Helper::getFSIntegrationStatus('twilio_settings'),
+                'description'    => __('Business communication platform designed for privacy', 'fluent-support')
+            ],
+            'paymattic'  => [
+                'title'          => __('Paymattic', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/paymattic.png',
+                'is_integrated'   => defined('WPPAYFORM_VERSION'),
+                'description'    => __('All-in-one payment gateway designed for WordPress', 'fluent-support')
+            ],
+            'learn-dash'  => [
+                'title'          => __('LearnDash', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/learn-dash.png',
+                'is_integrated'   => defined('LEARNDASH_VERSION'),
+                'description'    => __('The leading course platform built for WordPress', 'fluent-support')
+            ],
+            'learn-press'  => [
+                'title'          => __('Learn Press', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/learn-press.png',
+                'is_integrated'   => defined('LP_PLUGIN_FILE'),
+                'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support')
+            ],
+            'google-drive'  => [
+                'title'          => __('Google Drive', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/google-drive.jpeg',
+                'is_integrated'   => Helper::getFSIntegrationStatus('google_drive_settings'),
+                'description'    => __('A cloud storage service by Google for storing, syncing, and sharing files.', 'fluent-support')
+            ],
+            'dropbox'  => [
+                'title'          => __('Dropbox', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/dropbox.png',
+                'is_integrated'   => Helper::getFSIntegrationStatus('dropbox_settings'),
+                'description'    => __('A cloud-based file storage and sharing service that allows users to store files online and sync them across devices.', 'fluent-support')
+            ],
+            'member-press'  => [
+                'title'          => __('Member Press', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/member-press.png',
+                'is_integrated'   => class_exists('MeprUtils'),
+                'description'    => __('A WordPress plugin that enables the creation and management of membership sites, including content access control and subscription billing.', 'fluent-support')
+            ],
+            'google-recaptcha'  => [
+                'title'          => __('Google reCAPTCHA', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/google-recaptcha.png',
+                'is_integrated'   => Helper::getFSIntegrationStatus('recaptcha_setting'),
+                'description'    => __('A security service by Google designed to protect websites from bots and abuse by using challenges to distinguish between human and automated access.', 'fluent-support')
+            ],
+            'fluent-boards'  => [
+                'title'          => __('Fluent Boards', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-boards.png',
+                'is_integrated'   =>  defined('FLUENT_BOARDS'),
+                'description'    => __('A project management tool designed to streamline workflows and collaboration through customizable, kanban-style boards.', 'fluent-support')
+            ],
+        ];
+
+        return [
+            'connections'  => $connections
+        ];
+    }
 }
