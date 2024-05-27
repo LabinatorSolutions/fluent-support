@@ -45,7 +45,7 @@
 
 <script type="text/babel">
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import { onMounted, reactive, toRefs } from "vue";
+import {onMounted, reactive, toRefs, watch} from "vue";
 import {
     useFluentHelper,
     useNotify,
@@ -86,6 +86,12 @@ export default {
                     state.fetching = false;
                 });
         };
+
+        watch(() => state.settings.disabled_fields, () => {
+            if (state.settings.disabled_fields.includes("product_services")) {
+                state.settings.product_required_field = 'no'
+            }
+        });
 
         const saveSettings = () => {
             state.saving = true;

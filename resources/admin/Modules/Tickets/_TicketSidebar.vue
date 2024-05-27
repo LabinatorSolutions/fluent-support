@@ -62,7 +62,7 @@
           <el-popover
               placement="bottom"
               :width="400"
-              v-model:visible="add_watcher"
+              :visible="add_watcher"
               trigger="manual"
           >
             <template #reference>
@@ -234,7 +234,7 @@ export default {
         RemoteSelector,
         FluentCrmProfile
     },
-    props: ['ticket_id', 'ticket', 'fluentcrm_profile', 'watchers', 'fetch_other_tickets'],
+    props: ['ticket_id', 'ticket', 'fluentcrm_profile', 'watchers', 'watcher_ids', 'fetch_other_tickets'],
     emits: ['refresh'],
     setup(props, context){
         const {
@@ -403,8 +403,17 @@ export default {
             }
         }
 
+        watch(() => props.watcher_ids, (newIds) => {
+            state.watcherIds = newIds;
+        });
+
+        watch(() => props.fetch_other_tickets, (newVal) => {
+            fetchWidgets();
+        });
+
         onMounted(() => {
             fetchWidgets();
+            state.watcherIds = props.watcher_ids;
             if (has_pro) {
                 state.watcherIds = props.ticket.watchers.map((watcher) => {
                     return watcher.tag_id.toString();
@@ -412,9 +421,6 @@ export default {
             }
         });
 
-        watch(() => props.fetch_other_tickets, (newVal) => {
-            fetchWidgets();
-        });
 
         return {
             appVars,

@@ -23,6 +23,7 @@ $router->prefix('mailboxes')->withPolicy('AdminSettingsPolicy')->group(function 
 $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($router) {
 
     $router->get('my_stats', 'AgentController@myStats');
+    $router->get('agent_performance', 'AgentController@agentPerformance');
     $router->get('/', 'TicketController@index');
     $router->post('/', 'TicketController@createTicket');
 
@@ -135,6 +136,8 @@ $router->prefix('reports')->withPolicy('ReportPolicy')->group(function ($router)
     $router->get('/tickets-resolve-growth', 'ReportingController@getResolveChart');
     $router->get('/response-growth', 'ReportingController@getResponseChart');
     $router->get('/agents-summary', 'ReportingController@getAgentsSummary');
+    $router->get('/day-time-stats', 'ReportingController@dayTimeStats');
+
 });
 
 $router->prefix('my-reports')->withPolicy('AgentTicketPolicy')->group(function ($router) {

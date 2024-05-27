@@ -6,6 +6,7 @@ use FluentSupport\App\Modules\Reporting\Reporting;
 use FluentSupport\App\Modules\StatModule;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
+use FluentSupport\App\Models\Ticket;
 
 /**
  * ReportingController class for REST API
@@ -235,4 +236,23 @@ class ReportingController extends Controller
             'summary' =>  $reporting->agentSummary($request->getSafe('from', 'sanitize_text_field'), $request->getSafe('to', 'sanitize_text_field'), $agent->id)
         ];
     }
+
+    public function dayTimeStats(Reporting $reporting, Request $request)
+    {
+        list($from, $to) = $request->getSafe('date_range', 'sanitize_text_field') ?: ['', ''];
+
+        $filter = [
+            'report_type' => $request->getSafe('report_type', 'sanitize_text_field') ?: null,
+            'agent_id' => $request->getSafe('agent_id', 'intval') ?: null,
+        ];
+
+        $results = $reporting->getQueryResults($from, $to, $filter);
+
+        $dataItems = $reporting->formatResults($results->toArray());
+
+        return $this->send([
+            'stats' => $dataItems
+        ]);
+    }
+
 }
