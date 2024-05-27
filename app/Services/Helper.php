@@ -723,4 +723,91 @@ class Helper
         self::updateOption('file_upload_driver', 'local');
         return 'local';
     }
+
+    public static function getFSIntegrationStatus($connection_name)
+    {
+        // check if slack is enabled
+        if($connection_name == 'slack_settings')
+        {
+            $slackSettings = self::getIntegrationOption('discord_settings', null);
+            if($slackSettings){
+                $status = Arr::get($slackSettings, 'status', false);
+                return $status ? true : false;
+            }
+            return false;
+        }
+
+        // check if discord is enabled
+        if($connection_name == 'discord_settings')
+        {
+            $discordSettings = self::getIntegrationOption('discord_settings', null);
+            if($discordSettings){
+                $status = Arr::get($discordSettings, 'status', false);
+                return $status ? true : false;
+            }
+            return false;
+        }
+
+        // check if twilio is enabled
+        if($connection_name == 'twilio_settings')
+        {
+            $twilioSettings = self::getIntegrationOption('twilio_settings', null);
+            if($twilioSettings){
+                $status = Arr::get($twilioSettings, 'status', false);
+                return $status ? true : false;
+            }
+            return false;
+        }
+
+        // check if telegram is enabled
+        if($connection_name == 'telegram_settings')
+        {
+            $telegramSettings = self::getIntegrationOption('telegram_settings', null);
+            if($telegramSettings){
+                $status = Arr::get($telegramSettings, 'status', false);
+                return $status ? true : false;
+            }
+            return false;
+        }
+
+        // check if google drive is enabled
+        if($connection_name == 'google_drive_settings')
+        {
+            $googleDriveSettings = self::getIntegrationOption('google_drive_settings', null);
+            if ($googleDriveSettings) {
+                $googleDriveEnabled = Meta::where('object_type', 'enabled_upload_drivers')
+                    ->where('key', 'google_drive_settings')
+                    ->where('value', 'yes')
+                    ->first();
+
+                return $googleDriveEnabled ? true : false;
+            }
+            return false;
+        }
+
+        // check if dropbox is enabled
+        if($connection_name == 'dropbox_settings')
+        {
+            $dropboxSettings = self::getIntegrationOption('dropbox_settings', null);
+            if ($dropboxSettings) {
+                $dropBoxEnabled = Meta::where('object_type', 'enabled_upload_drivers')
+                    ->where('key', 'dropbox_settings')
+                    ->where('value', 'yes')
+                    ->first();
+
+                return $dropBoxEnabled ? true : false;
+            }
+            return false;
+        }
+
+        if($connection_name == 'recaptcha_setting'){
+            $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+            if ($reCaptchaSettingsData) {
+                $settings = maybe_unserialize($reCaptchaSettingsData->value);
+                $status = Arr::get($settings, 'is_enabled', false);
+                return $status == 'true' ? true : false;
+            }
+            return false;
+        }
+    }
 }

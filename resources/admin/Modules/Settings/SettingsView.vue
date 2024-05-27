@@ -110,6 +110,11 @@ export default {
                     route_name: "reCaptcha",
                     icon: "Key",
                 },
+                {
+                    title: translate("Integration Logs"),
+                    route_name: "integration_logs",
+                    icon: "Connection",
+                },
             ],
         });
 

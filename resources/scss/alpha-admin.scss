@@ -438,3 +438,19 @@ ul.fs_saved_replies {
 .fs_restriction_label {
     line-height: 5px;
 }
+span.fs_integration_status {
+    padding: 2px 7px;
+    background: #7757e6;
+    color: white;
+    font-size: 14px;
+    border-radius: 4px;
+    &.fs_integration_disabled {
+        background: #6d6a6a;
+        color: #f2ecec;
+    }
+}
+.fs_integration_title_inside{
+    display: flex;
+    gap: 5px;
+}
+
