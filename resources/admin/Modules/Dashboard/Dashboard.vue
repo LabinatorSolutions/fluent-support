@@ -419,7 +419,6 @@ export default {
                         response.individual_stat;
                     state.total_data.TicketsByProduct =
                         response.tickets_by_product;
-                    state.total_data.AgentPerformance = response.agent_today_stats;
 
                     state.app_ready = true;
                 })

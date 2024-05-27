@@ -5,6 +5,7 @@ namespace FluentSupport\App\Modules\Reporting;
 use FluentSupport\App\Api\Classes\Tickets;
 use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Conversation;
+use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
 use FluentSupport\App\Models\Ticket;
@@ -563,5 +564,81 @@ class Reporting
             'max_waiting' => (intval($waitStat->max_waiting)) ? human_time_diff(intval($waitStat->max_waiting), time()) : 0,
             'waiting_tickets' => $waitStat->total_tickets
         ];
+    }
+
+    public function getQueryResults($from, $to, $filter)
+    {
+        switch ($filter['report_type']) {
+            case 'ticket':
+                return $this->getTicketStats($from, $to);
+            case 'agent_response':
+                return $this->getResponseStats($from, $to, 'agent', $filter['agent_id'] ?? null);
+            case 'customer_response':
+                return $this->getResponseStats($from, $to, 'customer');
+            default:
+                return [];
+        }
+    }
+
+    public function getTicketStats($from, $to)
+    {
+        $query = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count');
+
+        $this->applyDateFilter($query, $from, $to);
+
+        return $this->finalizeQuery($query);
+    }
+
+    public function getResponseStats($from, $to, $reportType, $agentId = null)
+    {
+        $query = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count');
+
+        if ($reportType === 'agent' && $agentId) {
+            $query->where('person_id', $agentId);
+        }
+
+        $this->applyDateFilter($query, $from, $to);
+
+        return $this->finalizeQuery($query);
+    }
+
+    public function applyDateFilter($query, $from, $to)
+    {
+        if ($from && $to) {
+            $from .= ' 00:00:00';
+            $to .= ' 23:59:59';
+
+            $query->whereBetween('created_at', [$from, $to]);
+        }
+    }
+
+    public function finalizeQuery($query)
+    {
+        return $query->groupByRaw('DAYNAME(created_at), HOUR(created_at)')
+            ->orderByRaw("FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)")
+            ->get();
+    }
+
+    public function formatResults($results)
+    {
+        $dataItems = [
+            'Mon' => [], 'Tue' => [], 'Wed' => [], 'Thu' => [], 'Fri' => [], 'Sat' => [], 'Sun' => []
+        ];
+
+        $hours = array_map(function ($hour) {
+            return $hour . ":00";
+        }, range(0, 23));
+
+        foreach ($dataItems as $day => $data) {
+            $dataItems[$day] = array_fill_keys($hours, 0);
+        }
+
+        foreach ($results as $row) {
+            $day = substr($row['day_of_week'], 0, 3);
+            $hour = $row['hour_of_day'] . ":00";
+            $dataItems[$day][$hour] = (int) $row['count'];
+        }
+
+        return $dataItems;
     }
 }

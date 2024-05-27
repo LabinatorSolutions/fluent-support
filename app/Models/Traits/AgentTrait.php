@@ -203,12 +203,6 @@ trait AgentTrait
             $data['tickets_by_product'] = StatModule::getActiveTicketsByProductStats();
         }
 
-        if(PermissionManager::currentUserCan('fst_agent_today_performance') && in_array('agent_today_stats', $with)) {
-            //Get a list of agents with their today's stats
-            $data['agent_today_stats'] = StatModule::getAgentTodayStats();
-        }
-
-
         return $data;
     }
 

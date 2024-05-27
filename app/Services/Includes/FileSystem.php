@@ -72,15 +72,36 @@ class FileSystem
         $this->overrideUploadDir();
 
         $uploadOverrides = ['test_form' => false];
+        $uploadedFiles = [];
+
+        $truncate_files = apply_filters('fluent_support/truncate_uploaded_file_names', false);
 
         foreach ((array)$files as $file) {
             $filesArray = $file->toArray();
+
+            if ($truncate_files) {
+                $filesArray['name'] = $this->truncateFileName($filesArray['name']);
+            }
+
             $extraData = Arr::only($filesArray, ['name', 'size']);
             $uploadsData = \wp_handle_upload($filesArray, $uploadOverrides);
             $uploadedFiles[] = array_merge($extraData, $uploadsData);
         }
 
         return $uploadedFiles;
+    }
+
+    private function truncateFileName($fileName)
+    {
+        $file_extension = pathinfo($fileName, PATHINFO_EXTENSION);
+        $file_base_name = pathinfo($fileName, PATHINFO_FILENAME);
+
+        $max_base_length = 50 - strlen($file_extension) - 1;
+        if (strlen($file_base_name) > $max_base_length) {
+            $file_base_name = substr($file_base_name, 0, $max_base_length);
+        }
+
+        return $file_base_name . '.' . $file_extension;
     }
 
     public function _putAsContent($fileName, $fileContent)

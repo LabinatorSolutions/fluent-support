@@ -9,6 +9,7 @@ import {
 import {
     Notebook,
     ChatLineSquare,
+    DocumentCopy,
     User,
     Lightning,
     Refresh,
@@ -78,6 +79,7 @@ const icons = [
     Paperclip,
     Stopwatch,
     Tickets,
+    DocumentCopy,
     View,
     Plus,
     Flag,

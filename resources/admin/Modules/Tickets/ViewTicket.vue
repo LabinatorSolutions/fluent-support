@@ -211,7 +211,7 @@
                             :title="translate('Add Bookmark')"
                         >
                             <div class="fs_box_body">
-                                <el-select :multiple="true" v-model="watchers">
+                                <el-select :multiple="true" v-model="watcherIds">
                                     <el-option
                                         v-for="(agent,agent_key) in agents"
                                         :key="agent_key" :value="agent.id"
@@ -550,7 +550,7 @@
             </div>
             <div class="fs_ticket_sidebar">
                 <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket"
-                                :watchers="watchers" @refresh="fetchTicket" :fetch_other_tickets="fetch_other_tickets"/>
+                                :watchers="watchers" :watcher_ids="watcherIds" @refresh="fetchTicket" :fetch_other_tickets="fetch_other_tickets"/>
             </div>
         </template>
         <template v-else-if="TicketNotFound.length">
@@ -697,6 +697,7 @@ export default {
             filteredMergeSelectedTickets:[],
             TicketNotFound: [],
             show_fbs_add_task_modal: false,
+            watcherIds: [],
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -1127,7 +1128,7 @@ export default {
         const addWatchers = () => {
             state.saving = true;
             post(`tickets/${state.ticket.id}/add_watchers`, {
-                watchers: state.watchers
+                watchers: state.watcherIds
             })
                 .then(response => {
                     notify({
