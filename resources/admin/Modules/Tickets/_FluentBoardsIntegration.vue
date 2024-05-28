@@ -11,9 +11,9 @@
                         :label="board.title"></el-option>
                 </el-select>
             </div>
-            <div v-if="boardId" class="fs_fbs_select_wrapper">
+            <div class="fs_fbs_select_wrapper">
                 <label for="select-task" class="fs_fbs_select_label">{{ translate("Select Stage") }}</label>
-                <el-select id="select-task"  v-model="stageId">
+                <el-select id="select-task"  v-model="stageId" :disabled="!boardId">
                     <el-option
                         v-for="stage in  fluentBoardStages"
                         :key="stage.id"
@@ -25,19 +25,26 @@
 
         <div>
             <div class="fs_fbs_date_range">
-                <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Due Date") }}</label>
-                <el-date-picker
-                    v-model="dateRange"
-                    class="fs_fbs_date_range_picker"
-                    type="daterange"
-                    :range-separator="translate('To')"
-                    :start-placeholder="translate('Start')"
-                    :end-placeholder="translate('End')"
-                    :unlink-panels="true"
-                    value-format="YYYY-MM-DD"
-                    format="YYYY-MM-DD"
-                >
-                </el-date-picker>
+                <div class="fs_start_date_picker">
+                    <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Start date ") }}</label>
+                    <el-date-picker
+                        v-model="startDate"
+                        class="fs_date_picker"
+                        type="date"
+                        placeholder="Pick a day"
+                        value-format="YYYY-MM-DD"
+                    />
+                </div>
+                <div class="fs_start_date_picker">
+                    <label for="ticket-content" class="fs_fbs_input_label">{{ translate("End date ") }}</label>
+                    <el-date-picker
+                        v-model="endDate"
+                        type="date"
+                        class="fs_date_picker"
+                        placeholder="Pick a day"
+                        value-format="YYYY-MM-DD"
+                    />
+                </div>
             </div>
 
             <div class="fs_fbs_input_container">
@@ -105,7 +112,8 @@ export default {
             boardId: null,
             stageId: null,
             app_ready: false,
-            dateRange:[]
+            startDate: '',
+            endDate:''
         });
 
         const task = reactive({ ...ticket });
@@ -142,8 +150,8 @@ export default {
                 description: task.content,
                 board_id: state.boardId,
                 stage_id: state.stageId,
-                started_at: state.dateRange[0],
-                due_at: state.dateRange[1],
+                started_at: state.startDate,
+                due_at: state.endDate,
                 source: 'FluentSupport',
                 crm_contact_id: fluentcrm_profile.id || null
             })
@@ -186,3 +194,20 @@ export default {
     }
 }
 </script>
+
+<style lang="scss">
+.fs_fbs_date_range {
+    display: flex;
+    justify-content: space-between;
+    width: 95%;
+    gap: 10px;
+    .fs_start_date_picker {
+        width: 54% !important;
+        margin-right: 35px;
+
+        .fs_date_picker {
+            width: 100% !important;
+        }
+    }
+}
+</style>
