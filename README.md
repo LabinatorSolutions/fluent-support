@@ -23,3 +23,7 @@ details on `phpunit` type `phpunit --help` on your terminal. You can test
 both free and pro version at the same time. All test file names should start
 with `test-`. Make sure you have all your test file in the `tests` folder.
 You can include or exclude your files in `phpunit.xml.dist` file.
+
+
+### Build for release
+`sh ./build.sh --node-build --with-pro`
