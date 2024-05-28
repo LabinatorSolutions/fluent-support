@@ -448,22 +448,6 @@ ul.fs_saved_replies {
 .fs_restriction_label {
     line-height: 5px;
 }
-span.fs_integration_status {
-    padding: 2px 7px;
-    background: #15be7b;
-    color: white;
-    font-size: 14px;
-    border-radius: 4px;
-    &.fs_integration_disabled {
-        background: #6d6a6a;
-        color: #f2ecec;
-    }
-}
-.fs_integration_title_inside{
-    display: flex;
-    gap: 5px;
-}
-
 
 .fs_wid_day_by_day {
     max-width: 100%;
@@ -615,5 +599,61 @@ span.fs_integration_status {
 .fs_content {
     padding: 0 30px 20px;
     margin-top: 20px;
+}
+
+.fs_integration_logs_card {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #dfdfe1;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    background: white;
+    .fs_integration_logs_card_left {
+        display: flex;
+        align-items: flex-start;
+        column-gap: 15px;
+        h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+        p {
+            margin: 5px 0;
+        }
+    }
+    &.fs_integration_logs_log {
+        .fs_integration_logs_card_left {
+            .fs_integrations_logs_logo {
+                padding: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+                border: 1px solid #dfdfe1;
+            }
+            .fs_integration_logs_card_title {
+                width: 80%;
+            }
+            img {
+                object-fit: contain;
+                width: 30px;
+                height: 30px;
+            }
+        }
+    }
+}
+
+.fs_integration_logs_status {
+    color: #699952 !important;
+    background: #eeffe9 !important;
+    &.fs_integration_disabled {
+        background: #6d6a6a;
+        color: #f2ecec;
+    }
+}
+
+.fs_integration_logs_title_inside{
+    display: flex;
+    gap: 10px;
 }
 
