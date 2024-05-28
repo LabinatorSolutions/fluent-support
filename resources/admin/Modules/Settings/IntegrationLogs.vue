@@ -6,22 +6,21 @@
             </div>
         </div>
         <div v-if="!loading" class="fs_box_body">
-            <div class="fs_integration_cards">
-                <div v-for="(item, index) in connections" class="fs_integration_card fs_integration_log">
-                    <div class="fs_integration_card_left">
-                        <div class="fs-integrations-logo">
+            <div class="fs_integration_logs_cards">
+                <div v-for="(item, index) in connections" class="fs_integration_logs_card fs_integration_logs_log">
+                    <div class="fs_integration_logs_card_left">
+                        <div class="fs_integrations_logs_logo">
                             <img :src="item.logo"/>
                         </div>
-                        <div class="fs_integration_card_title">
-                            <div class="fs_integration_title_inside">
+                        <div class="fs_integration_logs_card_title">
+                            <div class="fs_integration_logs_title_inside">
                                 <h3>{{ item.title }}</h3>
-                                <span v-if="item.is_integrated" class="fs_integration_status">{{$t('Connected')}}</span>
+                                <el-tag v-if="item.is_integrated" class="fs_integration_logs_status" type="success" effect="plain">{{$t('Connected')}}</el-tag>
                             </div>
                             <p v-html="item.description"></p>
                         </div>
                     </div>
-                    <div class="fs_integration_card_right">
-                        <!-- <el-link  href="https://element-plus.org" target="_blank">default</el-link> -->
+                    <div class="fs_integration_logs_card_right">
                         <el-button @click="redirectToDocs(item.doc_url)">
                             Learn More
                         </el-button>
@@ -82,7 +81,7 @@ export default {
         onMounted(() => {
 
                 fetchSettings();
-           
+
         });
 
         return {
