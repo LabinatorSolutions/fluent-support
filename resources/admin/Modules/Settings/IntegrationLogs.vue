@@ -7,7 +7,7 @@
         </div>
         <div v-if="!loading" class="fs_box_body">
             <div class="fs_integration_cards">
-                <div v-for="(item, index) in connections" class="fs_integration_card">
+                <div v-for="(item, index) in connections" class="fs_integration_card fs_integration_log">
                     <div class="fs_integration_card_left">
                         <div class="fs-integrations-logo">
                             <img :src="item.logo"/>
@@ -15,10 +15,16 @@
                         <div class="fs_integration_card_title">
                             <div class="fs_integration_title_inside">
                                 <h3>{{ item.title }}</h3>
-                                <span v-if="item.is_integrated" class="fs_integration_status">{{$t('Integrated')}}</span>
+                                <span v-if="item.is_integrated" class="fs_integration_status">{{$t('Connected')}}</span>
                             </div>
                             <p v-html="item.description"></p>
                         </div>
+                    </div>
+                    <div class="fs_integration_card_right">
+                        <!-- <el-link  href="https://element-plus.org" target="_blank">default</el-link> -->
+                        <el-button @click="redirectToDocs(item.doc_url)">
+                            Learn More
+                        </el-button>
                     </div>
                 </div>
             </div>
@@ -66,6 +72,13 @@ export default {
                 });
         };
 
+
+
+        const redirectToDocs = (links) => {
+            window.open(links);
+        }
+
+
         onMounted(() => {
 
                 fetchSettings();
@@ -76,6 +89,7 @@ export default {
             ...toRefs(state),
             translate,
             fetchSettings,
+            redirectToDocs
         };
     },
 };

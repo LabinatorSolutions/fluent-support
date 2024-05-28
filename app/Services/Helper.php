@@ -724,90 +724,232 @@ class Helper
         return 'local';
     }
 
+    public static function getIntegrationLogs()
+    {
+        $connections = [
+            'woocommerce'     => [
+                'title'          => __('Woo Commerce', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/woocommerce.png',
+                'is_integrated'   => defined('WC_PLUGIN_FILE'),
+                'description'    => __('The most popular e-commerce platform for WordPress', 'fluent-support'),
+                'doc_url'  => 'https://fluentsupport.com/docs/woocommerce-integration/', 
+            ],
+            'lifter-lms'     => [
+                'title'          => __('Lifter Lms', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/lifter-lms.png',
+                'is_integrated'   => defined('LLMS_PLUGIN_FILE'),
+                'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
+                'doc_url'  => 'https://fluentsupport.com/docs/lifterlms-integration/', 
+            ],
+            'slack' => [
+                'title'          => __('Slack', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/slack.png',
+                'is_integrated'   => self::getFSIntegrationStatus('slack_settings'),
+                'description'    => __('Business communication platform designed to scale', 'fluent-support'),
+                'doc_url'  => 'https://fluentsupport.com/docs/managing-tickets-using-slack/', 
+            ],
+            'pm-pro'  => [
+                'title'          => __('Paid Membership MPro', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/pmpro.png',
+                'is_integrated'   => defined('PMPRO_VERSION'),
+                'description'    => __('The ultimate platform for any member-focused business', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/paid-membership-pro-integration/',
+            ],
+            'tutor-lms'  => [
+                'title'          => __('Tutor LMS', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/tutor-lms.png',
+                'is_integrated'   => defined('TUTOR_VERSION'),
+                'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/tutorlms-integration/',
+            ],
+            'telegram'  => [
+                'title'          => __('Telegram', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/telegram.jpeg',
+                'is_integrated'  => self::getFSIntegrationStatus('telegram_settings'),
+                'description'    => __('Business communication platform designed for security', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/managing-tickets-using-telegram/',
+            ],
+            'fluent-crm'  => [
+                'title'          => __('Fluent CRM', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-crm.png',
+                'is_integrated'   => defined('FLUENTCRM'),
+                'description'    => __('Self-hosted email and marketing automation for WordPress', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/fluentcrm-integration/',
+            ],
+            'fluent-forms'  => [
+                'title'          => __('Fluent FORMS', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-forms.png',
+                'is_integrated'   => defined('FLUENTFORM'),
+                'description'    => __('A robust form plugin suitable for any business', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/fluent-form-integration/',
+            ],
+            'buddy-boss'  => [
+                'title'          => __('Buddy Boss', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/buddy-boss.png',
+                'is_integrated'   => defined('BP_PLUGIN_DIR'),
+                'description'    => __('Powerful platform for any member-focused business', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/buddyboss-integration/'
+            ],
+            'discord'  => [
+                'title'          => __('Discord', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/discord.png',
+                'is_integrated'   => self::getFSIntegrationStatus('discord_settings'),
+                'description'    => __('Business communication platform designed for tech', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/managing-tickets-using-discord/',
+            ],
+            'wishlist-member'  => [
+                'title'          => __('Wishlist Member', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/wishlist-member.png',
+                'is_integrated'   => defined('WLM3_PLUGIN_VERSION'),
+                'description'    => __('Powerful platform for any member-focused business', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/wishlist-member-integration/',
+            ],
+            'easy-digital-downloads'  => [
+                'title'          => __('Easy Digital Downloads', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/easy-digital-downloads.png',
+                'is_integrated'   => class_exists('\Easy_Digital_Downloads'),
+                'description'    => __('The ultimate WordPress platform for digital products', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/edd-integration/',
+            ],
+            'restrict-content-pro'  => [
+                'title'          => __('Restrict Content pro', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/restrict-content-pro.png',
+                'is_integrated'   => class_exists('\Restrict_Content_Pro' ),
+                'description'    => __('Powerful platform for any member-focused business', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/restrict-content-pro-integration/',
+            ],
+            'better-docs'  => [
+                'title'          => __('Better Docs', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/better-docs.png',
+                'is_integrated'   => false,
+                'description'    => __('The standard plugin for knowledge base and documentation', 'fluent-support'),
+                'doc_url'        => 'https://fluentsupport.com/docs/betterdocs-integration/',
+            ],
+            'whatsapp'  => [
+                'title'          => __('Whatsapp', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/whatsapp.jpeg',
+                'is_integrated'   => self::getFSIntegrationStatus('twilio_settings'),
+                'description'    => __('Business communication platform designed for privacy', 'fluent-support'),
+                'doc_url'      => 'https://fluentsupport.com/docs/whatsapp-integration-via-twilio/',
+            ],
+            'paymattic'  => [
+                'title'          => __('Paymattic', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/paymattic.png',
+                'is_integrated'   => defined('WPPAYFORM_VERSION'),
+                'description'    => __('All-in-one payment gateway designed for WordPress', 'fluent-support'),
+                'doc_url'       => 'https://paymattic.com/docs/how-to-integrate-fluent-support-with-paymattic-in-wordpress/',
+            ],
+            'learn-dash'  => [
+                'title'          => __('LearnDash', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/learn-dash.png',
+                'is_integrated'   => defined('LEARNDASH_VERSION'),
+                'description'    => __('The leading course platform built for WordPress', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/learndash-integration/',
+            ],
+            'learn-press'  => [
+                'title'          => __('Learn Press', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/learn-press.png',
+                'is_integrated'   => defined('LP_PLUGIN_FILE'),
+                'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/learnpress-integration/',
+            ],
+            'google-drive'  => [
+                'title'          => __('Google Drive', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/google-drive.jpeg',
+                'is_integrated'   => self::getFSIntegrationStatus('google_drive_settings'),
+                'description'    => __('A cloud storage service by Google for storing, syncing, and sharing files.', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/google-drive-integration/'
+            ],
+            'dropbox'  => [
+                'title'          => __('Dropbox', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/dropbox.png',
+                'is_integrated'   => self::getFSIntegrationStatus('dropbox_settings'),
+                'description'    => __('A cloud-based file storage and sharing service that allows users to store files online and sync them across devices.', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/dropbox-integration/',
+            ],
+            'member-press'  => [
+                'title'          => __('Member Press', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/member-press.png',
+                'is_integrated'   => class_exists('MeprUtils'),
+                'description'    => __('A WordPress plugin that enables the creation and management of membership sites, including content access control and subscription billing.', 'fluent-support'),
+                'doc_url'       => ''
+            ],
+            'google-recaptcha'  => [
+                'title'          => __('Google reCAPTCHA', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/google-recaptcha.png',
+                'is_integrated'   => self::getFSIntegrationStatus('recaptcha_setting'),
+                'description'    => __('A security service by Google designed to protect websites from bots and abuse by using challenges to distinguish between human and automated access.', 'fluent-support'),
+                'doc_url'       => 'https://fluentsupport.com/docs/google-recaptcha-integration/',
+            ],
+            'fluent-boards'  => [
+                'title'          => __('Fluent Boards', 'fluent-support'),
+                'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-boards.png',
+                'is_integrated'   =>  defined('FLUENT_BOARDS'),
+                'description'    => __('A project management tool designed to streamline workflows and collaboration through customizable, kanban-style boards.', 'fluent-support'),
+                'doc_url'       => '',
+            ],
+        ];
+
+        return $connections;
+    }
+
     public static function getFSIntegrationStatus($connection_name)
     {
-        // check if slack is enabled
-        if($connection_name == 'slack_settings')
-        {
-            $slackSettings = self::getIntegrationOption('discord_settings', null);
-            if($slackSettings){
-                $status = Arr::get($slackSettings, 'status', false);
-                return $status ? true : false;
+        $integrationMap = [
+            'slack_settings' => 'slack_settings',
+            'discord_settings' => 'discord_settings',
+            'twilio_settings' => 'twilio_settings',
+            'telegram_settings' => 'telegram_settings',
+            'google_drive_settings' => 'google_drive_settings',
+            'dropbox_settings' => 'dropbox_settings',
+            'recaptcha_setting' => '_fs_recaptcha_settings'
+        ];
+
+        if (array_key_exists($connection_name, $integrationMap)) {
+            if ($connection_name == 'google_drive_settings' || $connection_name == 'dropbox_settings') {
+                return self::checkUploadDriverStatus($connection_name);
+            } elseif ($connection_name == 'recaptcha_setting') {
+                return self::checkRecaptchaStatus();
+            } else {
+                return self::checkNotificationIntegrationStatus($integrationMap[$connection_name]);
             }
-            return false;
         }
 
-        // check if discord is enabled
-        if($connection_name == 'discord_settings')
-        {
-            $discordSettings = self::getIntegrationOption('discord_settings', null);
-            if($discordSettings){
-                $status = Arr::get($discordSettings, 'status', false);
-                return $status ? true : false;
-            }
-            return false;
+        return false;
+    }
+
+    private static function checkNotificationIntegrationStatus($settingName)
+    {
+        $settings = self::getIntegrationOption($settingName, null);
+        if ($settings) {
+            $status = Arr::get($settings, 'status', false);
+            return $status ? true : false;
         }
+        return false;
+    }
 
-        // check if twilio is enabled
-        if($connection_name == 'twilio_settings')
-        {
-            $twilioSettings = self::getIntegrationOption('twilio_settings', null);
-            if($twilioSettings){
-                $status = Arr::get($twilioSettings, 'status', false);
-                return $status ? true : false;
-            }
-            return false;
+    private static function checkUploadDriverStatus($settingName)
+    {
+        $settings = self::getIntegrationOption($settingName, null);
+        if ($settings) {
+            $enabled = Meta::where('object_type', 'enabled_upload_drivers')
+                ->where('key', $settingName)
+                ->where('value', 'yes')
+                ->first();
+            return $enabled ? true : false;
         }
+        return false;
+    }
 
-        // check if telegram is enabled
-        if($connection_name == 'telegram_settings')
-        {
-            $telegramSettings = self::getIntegrationOption('telegram_settings', null);
-            if($telegramSettings){
-                $status = Arr::get($telegramSettings, 'status', false);
-                return $status ? true : false;
-            }
-            return false;
+    private static function checkRecaptchaStatus()
+    {
+        $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
+
+        if ($reCaptchaSettingsData) {
+            $settings = maybe_unserialize($reCaptchaSettingsData->value);
+            $status = Arr::get($settings, 'is_enabled', false);
+            return $status == 'true' ? true : false;
         }
-
-        // check if google drive is enabled
-        if($connection_name == 'google_drive_settings')
-        {
-            $googleDriveSettings = self::getIntegrationOption('google_drive_settings', null);
-            if ($googleDriveSettings) {
-                $googleDriveEnabled = Meta::where('object_type', 'enabled_upload_drivers')
-                    ->where('key', 'google_drive_settings')
-                    ->where('value', 'yes')
-                    ->first();
-
-                return $googleDriveEnabled ? true : false;
-            }
-            return false;
-        }
-
-        // check if dropbox is enabled
-        if($connection_name == 'dropbox_settings')
-        {
-            $dropboxSettings = self::getIntegrationOption('dropbox_settings', null);
-            if ($dropboxSettings) {
-                $dropBoxEnabled = Meta::where('object_type', 'enabled_upload_drivers')
-                    ->where('key', 'dropbox_settings')
-                    ->where('value', 'yes')
-                    ->first();
-
-                return $dropBoxEnabled ? true : false;
-            }
-            return false;
-        }
-
-        if($connection_name == 'recaptcha_setting'){
-            $reCaptchaSettingsData = Meta::where('object_type', '_fs_recaptcha_settings')->first();
-            if ($reCaptchaSettingsData) {
-                $settings = maybe_unserialize($reCaptchaSettingsData->value);
-                $status = Arr::get($settings, 'is_enabled', false);
-                return $status == 'true' ? true : false;
-            }
-            return false;
-        }
+        return false;
     }
 }

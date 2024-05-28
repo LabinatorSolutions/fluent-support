@@ -390,6 +390,16 @@ ul.fs_saved_replies {
             margin: 5px 0;
         }
     }
+    &.fs_integration_log {
+        .fs_integration_card_left {
+            .fs-integrations-logo {
+                padding: 0 4px;
+            }
+            img {
+                object-fit: contain;
+            }
+        }
+    }
 }
 
 .fs_agent_feedback_icon {
@@ -440,7 +450,7 @@ ul.fs_saved_replies {
 }
 span.fs_integration_status {
     padding: 2px 7px;
-    background: #7757e6;
+    background: #15be7b;
     color: white;
     font-size: 14px;
     border-radius: 4px;
