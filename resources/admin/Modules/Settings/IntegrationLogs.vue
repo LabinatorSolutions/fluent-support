@@ -2,7 +2,7 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>Integration Logs</h3>
+                <h3>{{$t('Integration Logs')}}</h3>
             </div>
         </div>
         <div v-if="!loading" class="fs_box_body">

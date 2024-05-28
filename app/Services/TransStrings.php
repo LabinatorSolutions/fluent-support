@@ -341,6 +341,7 @@ class TransStrings
             'bottom'    => __('bottom'),
             'added a note'    => __('added a note', 'fluent-support'),
             'No' => __('No', 'fluent-support'),
+            'Integration Logs' => __('Integration Logs', 'fluent-support'),
             'replied'    => __('replied', 'fluent-support'),
             'Added By Email'    => __('Added By Email', 'fluent-support'),
             'Edit Response'    => __('Edit Response', 'fluent-support'),
