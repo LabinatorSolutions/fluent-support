@@ -1,16 +1,5 @@
 <template>
-
     <div v-if="app_ready" class="fs_fluent_boards" >
-        <div class="fs_fbs_input_container">
-            <label for="ticket-title" class="fs_fbs_input_label">{{ translate("Task Title") }}</label>
-            <el-input id="ticket-title" v-model="task.title" />
-        </div>
-
-        <div class="fs_fbs_input_container">
-            <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Task Description") }}</label>
-            <wp-editor id="ticket-content" v-model="task.content" />
-        </div>
-
         <div class="fs_fbs_select_container">
             <div class="fs_fbs_select_wrapper">
                 <label for="select-board" class="fs_fbs_select_label">{{ translate("Select Board") }}</label>
@@ -32,13 +21,41 @@
                         :label="stage.title"></el-option>
                 </el-select>
             </div>
+            <div class="fs_fbs_date_range">
+                <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Due Date") }}</label>
+                <el-date-picker
+                    v-model="dateRange"
+                    class="fs_fbs_date_range_picker"
+                    type="daterange"
+                    :range-separator="translate('To')"
+                    :start-placeholder="translate('Start')"
+                    :end-placeholder="translate('End')"
+                    :unlink-panels="true"
+                    value-format="YYYY-MM-DD"
+                    format="YYYY-MM-DD"
+                >
+                </el-date-picker>
+            </div>
         </div>
 
-        <div class="fs_fbs_button_container">
-            <el-button :disabled="!isAddButtonEnabled" @click="createTask" type="success">
-                {{ translate('Create Task') }}
-            </el-button>
-        </div>
+        <div>
+            <div class="fs_fbs_input_container">
+                <label for="ticket-title" class="fs_fbs_input_label">{{ translate("Task Title") }}</label>
+                <el-input id="ticket-title" v-model="task.title" />
+            </div>
+
+            <div class="fs_fbs_input_container">
+                <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Task Description") }}</label>
+                <wp-editor id="ticket-content" v-model="task.content" />
+            </div>
+
+
+            <div class="fs_fbs_button_container">
+                <el-button :disabled="!isAddButtonEnabled" @click="createTask" type="success">
+                    {{ translate('Create Task') }}
+                </el-button>
+            </div>
+            </div>
 
     </div>
     <div v-else>
@@ -86,7 +103,8 @@ export default {
             fluentBoardStages: [],
             boardId: null,
             stageId: null,
-            app_ready: false
+            app_ready: false,
+            dateRange:[]
         });
 
         const task = reactive({ ...ticket });
@@ -123,6 +141,8 @@ export default {
                 description: task.content,
                 board_id: state.boardId,
                 stage_id: state.stageId,
+                started_at: state.dateRange[0],
+                due_at: state.dateRange[1],
                 source: 'FluentSupport',
                 crm_contact_id: fluentcrm_profile.id || null
             })
