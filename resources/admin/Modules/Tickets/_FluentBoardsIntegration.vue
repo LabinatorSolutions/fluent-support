@@ -21,6 +21,9 @@
                         :label="stage.title"></el-option>
                 </el-select>
             </div>
+        </div>
+
+        <div>
             <div class="fs_fbs_date_range">
                 <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Due Date") }}</label>
                 <el-date-picker
@@ -36,9 +39,7 @@
                 >
                 </el-date-picker>
             </div>
-        </div>
 
-        <div>
             <div class="fs_fbs_input_container">
                 <label for="ticket-title" class="fs_fbs_input_label">{{ translate("Task Title") }}</label>
                 <el-input id="ticket-title" v-model="task.title" />
