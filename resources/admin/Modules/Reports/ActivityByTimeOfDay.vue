@@ -94,6 +94,18 @@
             </el-col>
         </el-row>
     </div>
+
+    <div class="fs_narrow_promo" style="background: white" v-else>
+        <h3>{{ translate("get_overall_reports") }}</h3>
+        <p>{{ translate("pro_promo") }}</p>
+        <a
+            target="_blank"
+            rel="noopener"
+            href="https://fluentsupport.com"
+            class="el-button el-button--success"
+        >{{ translate("Upgrade To Pro") }}</a
+        >
+    </div>
 </template>
 
 <script>
