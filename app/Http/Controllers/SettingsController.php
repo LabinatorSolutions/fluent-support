@@ -623,10 +623,10 @@ class SettingsController extends Controller
      * getIntegrationLogs method will return the integration logs
      * @return array
      */
-    public function integrationLogs()
+    public function integrationStatuses()
     {
         return [
-            'connections'  => Helper::getIntegrationLogs()
+            'connections'  => Helper::getIntegrationStatuses()
         ];
     }
 }

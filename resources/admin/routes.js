@@ -39,7 +39,7 @@ import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
 import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
 import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
 import HelpScoutAuthorization from "./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization";
-import IntegrationLogs from './Modules/Settings/IntegrationLogs';
+import IntegrationStatuses from './Modules/Settings/IntegrationStatuses';
 
 export default [
     {
@@ -161,9 +161,9 @@ export default [
                 component: GoogleDriveOauth,
             },
             {
-                path: '/integration_logs',
-                name: 'integration_logs',
-                component: IntegrationLogs,
+                path: '/integration_statuses',
+                name: 'integration_statuses',
+                component: IntegrationStatuses,
                 props: true,
             },
         ]

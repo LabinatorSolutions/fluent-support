@@ -2,7 +2,7 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>{{$t('Integration Logs')}}</h3>
+                <h3>{{$t('Integration Statuses')}}</h3>
             </div>
         </div>
         <div v-if="!loading" class="fs_box_body">
@@ -41,7 +41,7 @@ import {
 } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
-    name: "TicketFormConfig",
+    name: 'IntegrationStatuses',
     components: {
         FormBuilder,
     },
@@ -59,7 +59,7 @@ export default {
 
         const fetchSettings = () => {
             state.fetching = true;
-            get("settings/integration-logs")
+            get("settings/integration-statuses")
                 .then((response) => {
                     state.connections = response.connections;
                 })

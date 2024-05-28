@@ -111,8 +111,8 @@ export default {
                     icon: "Key",
                 },
                 {
-                    title: translate("Integration Logs"),
-                    route_name: "integration_logs",
+                    title: translate("Integration Statuses"),
+                    route_name: "integration_statuses",
                     icon: "Connection",
                 },
             ],
