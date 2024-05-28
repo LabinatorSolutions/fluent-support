@@ -872,7 +872,7 @@ class Helper
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/member-press.png',
                 'is_integrated'   => class_exists('MeprUtils'),
                 'description'    => __('A WordPress plugin that enables the creation and management of membership sites, including content access control and subscription billing.', 'fluent-support'),
-                'doc_url'       => ''
+                'doc_url'       => 'https://fluentsupport.com/docs/memberpress-integration/'
             ],
             'google-recaptcha'  => [
                 'title'          => __('Google reCAPTCHA', 'fluent-support'),
