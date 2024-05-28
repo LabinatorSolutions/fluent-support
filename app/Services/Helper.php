@@ -724,7 +724,7 @@ class Helper
         return 'local';
     }
 
-    public static function getIntegrationLogs()
+    public static function getIntegrationStatuses()
     {
         $connections = [
             'woocommerce'     => [
@@ -732,21 +732,21 @@ class Helper
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/woocommerce.png',
                 'is_integrated'   => defined('WC_PLUGIN_FILE'),
                 'description'    => __('The most popular e-commerce platform for WordPress', 'fluent-support'),
-                'doc_url'  => 'https://fluentsupport.com/docs/woocommerce-integration/', 
+                'doc_url'  => 'https://fluentsupport.com/docs/woocommerce-integration/',
             ],
             'lifter-lms'     => [
                 'title'          => __('Lifter Lms', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/lifter-lms.png',
                 'is_integrated'   => defined('LLMS_PLUGIN_FILE'),
                 'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
-                'doc_url'  => 'https://fluentsupport.com/docs/lifterlms-integration/', 
+                'doc_url'  => 'https://fluentsupport.com/docs/lifterlms-integration/',
             ],
             'slack' => [
                 'title'          => __('Slack', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/slack.png',
                 'is_integrated'   => self::getFSIntegrationStatus('slack_settings'),
                 'description'    => __('Business communication platform designed to scale', 'fluent-support'),
-                'doc_url'  => 'https://fluentsupport.com/docs/managing-tickets-using-slack/', 
+                'doc_url'  => 'https://fluentsupport.com/docs/managing-tickets-using-slack/',
             ],
             'pm-pro'  => [
                 'title'          => __('Paid Membership MPro', 'fluent-support'),

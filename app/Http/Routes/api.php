@@ -110,7 +110,7 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->post('/setup-installation', 'SettingsController@setupInstallation');
     $router->post('/recaptcha-settings', 'SettingsController@saveReCaptchaSettings');
     $router->get('/recaptcha-settings', 'SettingsController@getReCaptchaSettings');
-    $router->get('/integration-logs', 'SettingsController@integrationLogs');
+    $router->get('/integration-statuses', 'SettingsController@integrationStatuses');
 
     $router->get('/fluentcrm-settings', 'SettingsController@getFluentCRMSettings');
     $router->post('/intsall-fluentcrm', 'SettingsController@installFluentCRM');
