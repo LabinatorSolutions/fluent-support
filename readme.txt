@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.4
-Stable tag: 1.7.80
+Stable tag: 1.7.90
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,25 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.7.90 (Date: May 28, 2024) =
+* Added - Activity Trends by Time of Day (Pro)
+* Added - Integration with Fluent Boards (Pro)
+* Added - Integrations Logs
+* Added - Upload ticket attachments to their respective ticket folders in Google Drive, organized accordingly (Pro)
+* Added - Duplicate or clone workflows (Pro)
+* Added - Required option  in product field (Pro)
+* Fixed - If the site language is not set to English, the workflow always defaults to manual mode
+* Fixed - Inbox identifier css issue in all tickets table
+* Fixed - If anyone choose View dashboard and draft_reply then it will not show any tickets
+* Fixed - Freshdesk ticket migration issue
+* Fixed - Zendesk ticket migration issue
+* Fixed - Clicking the "Import Tickets" button in the ticket migration module opens multiple modals simultaneously
+* Fixed - Issue with Bookmark
+* Fixed - When the file name is too long, the file will not upload during ticket creation or in responses
+* Fixed - If a restriction is applied to a specific business box, it still appears on the dashboard
+* Fixed - MemberPress integration to show separate lists for recurring and non-recurring subscriptions
+* Fixed - The WooCommerce widget is not shown on the 'View Customer' page
 
 = 1.7.80 (Date: April 3, 2024) =
 * Added - Restrict business boxes for specific agents
