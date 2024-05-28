@@ -884,7 +884,6 @@ ul.fs_tk_actions {
 }
 
 .fs_fbs_select_container {
-    margin-bottom: 20px;
     display: flex;
     justify-content: flex-start;
 }
@@ -897,6 +896,16 @@ ul.fs_tk_actions {
 
 .fs_fbs_select_wrapper {
     margin-right: 20px;
+    width: 50%;
+}
+
+.fs_fbs_date_range {
+    width: 50%;
+    margin-bottom: 40px;
+}
+
+.fs_fbs_date_range_picker {
+    width: 95% !important;
 }
 
 .fs_fbs_button_container {

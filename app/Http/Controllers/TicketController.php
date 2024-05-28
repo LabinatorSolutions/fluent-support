@@ -554,6 +554,8 @@ class TicketController extends Controller
                 'title' => $request->getSafe('title', 'sanitize_text_field'),
                 'description' => $request->getSafe('description', 'wp_kses_post'),
                 'source' => $request->getSafe('source', 'sanitize_text_field'),
+                'started_at' => $request->getSafe('started_at', 'sanitize_text_field'),
+                'due_at' => $request->getSafe('due_at', 'sanitize_text_field'),
             ];
 
             $task = FluentBoardsApi('tasks')->create($taskData);
