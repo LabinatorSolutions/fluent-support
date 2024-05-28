@@ -27,6 +27,7 @@ class TransStrings
             'Good Job' => __('Good Job', 'fluent-support'),
             'tickets' => __('tickets', 'fluent-support'),
             'Tickets' => __('Tickets', 'fluent-support'),
+            'Add Task to Fluent Boards' => __(' Add Task to Fluent Boards', 'fluent-support'),
             'are waiting for reply with' => __('are waiting for reply with', 'fluent-support'),
             'wait time' => __('wait time', 'fluent-support'),
             'max wait time' => __('max wait time', 'fluent-support'),
