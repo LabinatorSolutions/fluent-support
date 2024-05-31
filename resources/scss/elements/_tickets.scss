@@ -885,8 +885,13 @@ ul.fs_tk_actions {
 
 .fs_fbs_select_container {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
+    gap: 25px;
     margin-bottom: 20px;
+
+    .fs_fbs_select_wrapper {
+        width: 50%;
+    }
 }
 
 .fs_fbs_select_label {
@@ -894,23 +899,26 @@ ul.fs_tk_actions {
     margin-bottom: 5px;
     display: block;
 }
-.fs_start_date_picker {
-    width: 50% !important;
-
-    .el-input__wrapper {
-        width: 100% !important;
-    }
-}
-.fs_fbs_select_wrapper {
-    margin-right: 20px;
-    width: 45%;
-}
 
 .fs_fbs_date_range {
     display: flex;
+    justify-content: space-between;
+    gap: 25px;
     width: 100%;
-    //justify-content: space-between;
     margin-bottom: 40px;
+}
+
+.fs_start_date_picker,
+.fs_end_date_picker {
+    width: 50%;
+}
+
+.fs_start_date_picker .fs_date_picker,
+.fs_end_date_picker .fs_date_picker,
+.fs_start_date_picker .el-input__wrapper,
+.fs_end_date_picker .el-input__wrapper {
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 .fs_fbs_date_range_picker {
