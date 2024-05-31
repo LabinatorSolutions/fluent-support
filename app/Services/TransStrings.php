@@ -14,7 +14,7 @@ class TransStrings
             'TicketStatistics'  => __('Ticket Statistics', 'fluent-support'),
             'MentionedTicket'   => __('Mentioned Ticket', 'fluent-support'),
             'TicketsByProduct'  => __('Tickets By Product', 'fluent-support'),
-            'no_bookmarked_ticket' => __('At this moment you don\'t have any bookmarked ticket.', 'fluent-support'),
+            'no_bookmarked_ticket' => __('At this moment you don\'t have any bookmarked tickets.', 'fluent-support'),
             'dashboard_all_catch_up' => __('Looks like you have caught up everything for now.', 'fluent-support'),
             'Your Overview For Today' => __('Your Overview For Today', 'fluent-support'),
             'Your Business Details' => __('Your Business Details', 'fluent-support'),
