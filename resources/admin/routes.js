@@ -40,6 +40,7 @@ import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
 import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
 import HelpScoutAuthorization from "./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization";
 import IntegrationStatuses from './Modules/Settings/IntegrationStatuses';
+import ChatGPTIntegration from "@/admin/Modules/Settings/ChatGPTIntegration.vue";
 
 export default [
     {
@@ -166,6 +167,13 @@ export default [
                 component: IntegrationStatuses,
                 props: true,
             },
+            {
+                path: '/chatGPT_integration',
+                name: 'chatGPT_integration',
+                component: ChatGPTIntegration,
+                props: true,
+            },
+
         ]
     },
     {
