@@ -115,6 +115,11 @@ export default {
                     route_name: "integration_statuses",
                     icon: "Connection",
                 },
+                {
+                    title: translate("ChatGPT Integration"),
+                    route_name: "chatGPT_integration",
+                    icon: "Connection",
+                },
             ],
         });
 

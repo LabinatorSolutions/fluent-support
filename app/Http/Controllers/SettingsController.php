@@ -5,10 +5,13 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Http\Controllers\TicketController;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
+use FluentSupport\Framework\Support\Arr;
 
 /**
  *  SettingsController class is responsible for all settings
@@ -314,6 +317,164 @@ class SettingsController extends Controller
         return $this->sendSuccess([
             'message' => __('Your reCAPTCHA settings added successfully.', 'fluent-support'),
         ]);
+    }
+
+    public function saveChatGPTSettings(Request $request)
+    {
+        $data = $request->get();
+
+        $chatGPTData = [
+            'api_key'    => sanitize_text_field($data['api_key']),
+        ];
+
+        $previousValue = Meta::where('object_type', '_fs_chatGPT_settings')->first();
+
+        if ($previousValue) {
+            Meta::where('object_type', '_fs_chatGPT_settings')->update([
+                'value' => maybe_serialize($chatGPTData)
+            ]);
+            return $this->sendSuccess([
+                'message' => __('Your ChatGPT settings updated successfully.', 'fluent-support'),
+            ]);
+        } else {
+            Meta::insert([
+                'object_type' => '_fs_chatGPT_settings',
+                'key'         => '_fs_chatGPT_data',
+                'value'       => maybe_serialize($chatGPTData)
+            ]);
+        }
+
+        return $this->sendSuccess([
+            'message' => __('Your ChatGPT settings added successfully.', 'fluent-support'),
+        ]);
+
+    }
+
+    public function getChatGPTSettings()
+    {
+        $chatGPTSettingsData = Meta::where('object_type', '_fs_chatGPT_settings')->first();
+        if ($chatGPTSettingsData) {
+            $settings = maybe_unserialize($chatGPTSettingsData->value);
+            return $this->sendSuccess($settings);
+        }
+
+        return [];
+
+    }
+
+//    public function generateResponseUsingChatGPT(Request $request)
+//    {
+//        $data = $request->get();
+//
+//        $responseContent = $data['content'];
+//        $ticketId = (int) $data['id'];
+//
+//        $ticket = Ticket::findOrFail($ticketId);
+//        $ticket['responses'] = $ticket->responses()->get()->toArray();
+//        $ticketArray = $ticket->toArray();
+//        $ticketStringSerialized = serialize($ticketArray);
+//
+//        $startingQuery = "Create a response for ";
+//
+//        $query = $startingQuery . $responseContent . $ticketStringSerialized;
+//
+//        if (empty($query)) {
+//            throw new Exception(__('Query is empty!', 'fluentformpro'));
+//        }
+//
+//
+//        $args = [
+//            "role"    => 'system',
+//            "content" => $query,
+//        ];
+//
+//
+//        $result = $this->makeRequest($args);
+//
+//        return trim(Arr::get($result, 'choices.0.message.content'), '"');
+//    }
+
+    public function generateResponseUsingChatGPT(Request $request)
+    {
+        $responseContent = $request->getSafe('content', 'sanitize_text_field');
+        $ticketId = $request->getSafe('id', 'intval');
+
+        $ticket = Ticket::with('responses')->findOrFail($ticketId);
+        $ticketArray = $ticket->toArray();
+        $ticketStringSerialized = json_encode($ticketArray);
+
+        // Construct the query for the AI model
+        $query = "Create a response for " . $responseContent . $ticketStringSerialized;
+
+        $args = [
+            "role" => 'system',
+            "content" => $query,
+        ];
+
+        $result = $this->makeRequest($args);
+
+        $response = Arr::get($result, 'choices.0.message.content');
+        return trim($response, '"');
+    }
+
+
+    public function makeRequest($args = [], $token = '')
+    {
+        if (!$token) {
+            $token = Meta::where('object_type', '_fs_chatGPT_settings')->first();
+            $token = maybe_unserialize($token->value)['api_key'];
+        }
+
+
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type'  => 'application/json',
+        ];
+
+        $bodyArgs = [
+            "model"    => "gpt-3.5-turbo",
+            "messages" => [
+                $args ?: [
+                    "role"    => "system",
+                    "content" => "You are a helpful assistant."
+                ]
+            ]
+        ];
+
+        add_filter('http_request_timeout', function($timeout) {
+            return 60; // Set timeout to 60 seconds
+        });
+
+        $url = 'https://api.openai.com/v1/chat/completions';
+
+        $request = wp_remote_post($url, [
+            'headers' => $headers,
+            'body'    => json_encode($bodyArgs)
+        ]);
+
+        if (did_filter('http_request_timeout')) {
+            add_filter('http_request_timeout', function($timeout) {
+                return 5; // Set timeout to original 5 seconds
+            });
+        }
+
+        if (is_wp_error($request)) {
+            $message = $request->get_error_message();
+            return new \WP_Error(423, $message);
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($request), true);
+        $code = wp_remote_retrieve_response_code($request);
+
+        if ($code !== 200) {
+            $error = __('Something went wrong.', 'fluentformpro');
+            if (isset($body['error']['message'])) {
+                $error = __($body['error']['message'], 'fluentformpro');
+            }
+            return new \WP_Error(423, $error);
+        }
+
+        return $body;
     }
 
     public function getReCaptchaSettings()

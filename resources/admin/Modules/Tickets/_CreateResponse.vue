@@ -20,7 +20,6 @@
                 </el-select>
             </el-form-item>
         </div>
-
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
 
@@ -36,6 +35,11 @@
                     <el-button v-if="type != 'note' && type !== 'draft_response' " :disabled="creating" @click="create('yes')" size="large"
                                type="danger">
                         {{ translate('Reply and Close') }}
+                    </el-button>
+
+                    <el-button @click="generateResponse('yes')" size="large"
+                               type="info">
+                        {{ translate('AI response') }}
                     </el-button>
                     <p v-if="type== 'note'">{{ translate('internal_note_warning') }}</p>
                 </div>
@@ -143,6 +147,22 @@ export default {
             });
         }
 
+        const generateResponse = () => {
+            post(`settings/${props.ticket.id}/generate-response`, {
+                content: state.response_body,
+                conversation_type: props.type,
+                attachments: state.attachments,
+                cc_emails: state.selected_cc,
+            })
+                .then(response => {
+                    state.response_body = response;
+                    state.attachments = [];
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                });
+        }
+
         watch(() => props.type, (type) => {
             if(type === 'note') {
                 state.show_cc_option = false;
@@ -236,6 +256,7 @@ export default {
             translate,
             toggleCcOption,
             handleCcChange,
+            generateResponse
         };
     }
 }

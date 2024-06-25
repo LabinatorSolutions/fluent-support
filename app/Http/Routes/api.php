@@ -119,6 +119,9 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->get('/remote-upload-settings', 'SettingsController@getRemoteUploadSettings');
     $router->post('/update-remote-upload-driver', 'SettingsController@updateRemoteUploadDriver');
 
+    $router->post('/chat-gpt-integration', 'SettingsController@saveChatGPTSettings');
+    $router->get('/chat-gpt-integration', 'SettingsController@getChatGPTSettings');
+    $router->post('/{id}/generate-response', 'SettingsController@generateResponseUsingChatGPT')->int('id');
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
