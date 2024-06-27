@@ -79,6 +79,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->get('ping', 'AgentController@ping');
     $router->get('ticket-essentials', 'TicketController@getTicketEssentials')->withPolicy('AdminSettingsPolicy');
+
+    $router->post('/{id}/generate-response', 'TicketController@generateResponseUsingChatGPT')->int('id');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
@@ -121,7 +123,6 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
 
     $router->post('/chat-gpt-integration', 'SettingsController@saveChatGPTSettings');
     $router->get('/chat-gpt-integration', 'SettingsController@getChatGPTSettings');
-    $router->post('/{id}/generate-response', 'SettingsController@generateResponseUsingChatGPT')->int('id');
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
