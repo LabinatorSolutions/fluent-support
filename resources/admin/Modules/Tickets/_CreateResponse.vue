@@ -20,7 +20,7 @@
                 </el-select>
             </el-form-item>
         </div>
-        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true" :aiResponse="aiResponse"
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
 
         <div class="fs_row">
@@ -78,6 +78,7 @@ export default {
 
         const state = reactive({
             response_body: '',
+            aiResponse: '',
             show_cc_option: false,
             selected_cc: [],
             cc_emails: [],
@@ -148,14 +149,15 @@ export default {
         }
 
         const generateResponse = () => {
-            post(`settings/${props.ticket.id}/generate-response`, {
+            post(`tickets/${props.ticket.id}/generate-response`, {
                 content: state.response_body,
                 conversation_type: props.type,
                 attachments: state.attachments,
                 cc_emails: state.selected_cc,
             })
                 .then(response => {
-                    state.response_body = response;
+                    // state.response_body = response;
+                    state.aiResponse = response;
                     state.attachments = [];
                 })
                 .catch((errors) => {

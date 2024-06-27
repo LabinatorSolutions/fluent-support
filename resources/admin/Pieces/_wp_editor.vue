@@ -97,6 +97,12 @@ export default {
                 return false
             }
         },
+        aiResponse: {
+            type: String,
+            default() {
+                return ''
+            }
+        },
         showSavedReplies: {
             type: Boolean,
             default() {
@@ -133,6 +139,9 @@ export default {
     watch: {
         plain_content() {
             this.$emit('update:modelValue', this.plain_content);
+        },
+        aiResponse() {
+            this.insertTemplate(this.aiResponse)
         }
     },
     methods: {
