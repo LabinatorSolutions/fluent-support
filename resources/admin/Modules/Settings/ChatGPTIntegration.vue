@@ -5,14 +5,14 @@
         </div>
         <div class="fs_box_body">
             <el-form label-position="top" label-width="140px">
-                <el-form-item label="Api Key">
-                    <el-input
-                        type="password"
-                        v-model="apiKey"
-                    />
-                </el-form-item>
+            <el-form-item label="Api Key">
+                <el-input
+                    type="password"
+                    v-model="apiKey"
+                />
+            </el-form-item>
 
-                <el-button type="primary" @click="saveSettings">Save</el-button>
+            <el-button type="primary" @click="saveSettings">Save</el-button>
             </el-form>
         </div>
     </div>

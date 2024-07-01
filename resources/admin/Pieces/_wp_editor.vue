@@ -5,10 +5,18 @@
                 <el-button size="small" type="primary" v-if="!add_cc" @click="handleCc('show')">
                     <span>{{ $t('Add Cc') }}</span>
                 </el-button>
+                <el-button size="small" type="primary" v-if="!add_cc" @click="handleCc('show')">
+                    <span>{{ $t('Add Cc') }}</span>
+                </el-button>
                 <el-button size="small" type="danger" v-else @click="handleCc('hide')">
                     <span>{{ $t('Discard Cc') }}</span>
                 </el-button>
             </div>
+
+            <div class="fs_chatGPT_box" v-if="aiResponse">
+                <ChatGPTResponseBox @insert="insertTemplate"/>
+            </div>
+
             <div class="fc_shortcode_box" v-if="showShortcodes" style="padding: 5px;">
                 <el-dropdown type="primary" trigger="click">
                     <el-button size="small" type="primary" style="margin-right: .3em;">
@@ -40,7 +48,8 @@
 export default {
     name: 'wp_editor',
     components: {
-        TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined
+        TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined,
+        ChatGPTResponseBox: () => import('../Modules/Tickets/_ChatGPTResponseBox'),
     },
     props: {
         editor_id: {
@@ -98,9 +107,9 @@ export default {
             }
         },
         aiResponse: {
-            type: String,
+            type: Boolean,
             default() {
-                return ''
+                return false
             }
         },
         showSavedReplies: {
@@ -140,9 +149,6 @@ export default {
         plain_content() {
             this.$emit('update:modelValue', this.plain_content);
         },
-        aiResponse() {
-            this.insertTemplate(this.aiResponse)
-        }
     },
     methods: {
         initEditor() {
@@ -220,6 +226,7 @@ export default {
     beforeCreate() {
         if(window.fluentSupportAdmin) {
             this.$options.components.TemplateInserter = require('../Modules/Tickets/_templateInserter').default
+            this.$options.components.ChatGPTResponseBox = require('../Modules/Tickets/_ChatGPTResponseBox').default
         }
     },
     mounted() {

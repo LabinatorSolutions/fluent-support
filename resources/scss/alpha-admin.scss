@@ -657,3 +657,22 @@ ul.fs_saved_replies {
     gap: 10px;
 }
 
+.fs_ai_response_box {
+    margin-top: 10px;
+    overflow: hidden;
+}
+.fs_ai_response_action_button {
+    float: right;
+    padding: 10px;
+}
+
+.fs_generated_text {
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: auto;
+}
+
+.fs_ai_response_loading {
+    padding-top: 20px;
+}
+

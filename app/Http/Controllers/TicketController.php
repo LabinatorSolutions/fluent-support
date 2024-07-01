@@ -15,7 +15,6 @@ use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Tickets\TicketService;
 use FluentSupportPro\App\Services\Integrations\ChatGPT\ChatGPTResponse;
-use FluentSupport\Framework\Support\Arr;
 
 /**
  *  TicketController class for REST API related to ticket
