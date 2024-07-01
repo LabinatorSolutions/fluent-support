@@ -37,10 +37,6 @@
                         {{ translate('Reply and Close') }}
                     </el-button>
 
-                    <el-button @click="generateResponse('yes')" size="large"
-                               type="info">
-                        {{ translate('AI response') }}
-                    </el-button>
                     <p v-if="type== 'note'">{{ translate('internal_note_warning') }}</p>
                 </div>
             </div>
@@ -60,7 +56,6 @@ import {
 } from "@/admin/Composable/FluentFrameworkHelper";
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
-
 export default {
     name: 'CreateResponse',
     props: ['ticket', 'type','draft'],
@@ -72,13 +67,13 @@ export default {
     setup(props, {emit}) {
 
         const {
-            post, translate, handleError, appVars,
+            post, translate, handleError, appVars, get
         } = useFluentHelper();
         const {notify} = useNotify();
 
         const state = reactive({
             response_body: '',
-            aiResponse: '',
+            aiResponse: false,
             show_cc_option: false,
             selected_cc: [],
             cc_emails: [],
@@ -146,23 +141,6 @@ export default {
                      saveResponseDraft();
                  }
             });
-        }
-
-        const generateResponse = () => {
-            post(`tickets/${props.ticket.id}/generate-response`, {
-                content: state.response_body,
-                conversation_type: props.type,
-                attachments: state.attachments,
-                cc_emails: state.selected_cc,
-            })
-                .then(response => {
-                    // state.response_body = response;
-                    state.aiResponse = response;
-                    state.attachments = [];
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                });
         }
 
         watch(() => props.type, (type) => {
@@ -235,7 +213,19 @@ export default {
             }
         }
 
+        const fetchChatGPTAPI = () => {
+            get("settings/chat-gpt-integration")
+                .then((response) => {
+                    state.apiKey = response.api_key;
+                    state.aiResponse = !!state.apiKey;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                });
+        }
+
         onMounted(() => {
+            fetchChatGPTAPI();
             if(!Array.isArray(props.ticket)){
                 if(props.ticket.responses.length === 0){
                     if(props.ticket.carbon_copy && props.ticket.carbon_copy !== ''){
@@ -258,7 +248,6 @@ export default {
             translate,
             toggleCcOption,
             handleCcChange,
-            generateResponse
         };
     }
 }
