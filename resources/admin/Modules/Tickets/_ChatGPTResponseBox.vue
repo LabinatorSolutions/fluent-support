@@ -89,9 +89,10 @@ export default {
 
         const generateResponse = () => {
             state.loading = true;
-            post(`tickets/${state.ticketID}/generate-response`, {
+            post(`chatGPT/${state.ticketID}/generate-response`, {
                 content: state.prompt,
                 id: state.ticketID,
+                type: 'generateResponse'
             })
                 .then(response => {
                     state.aiResponse = response;

@@ -167,6 +167,46 @@
             </div>
         </div>
 
+        <div v-if="other_tickets && other_tickets.length" class="fs_intelligence_card">
+            <div class="fs_intelligence_card__header">
+                <h3>{{ $t('Intelligence') }}</h3>
+            </div>
+
+            <div class="fs_intelligence_card__section">
+                <div class="fs_intelligence_card__body">
+                    <span class="fs_intelligence_card__label">Ticket Summary:</span>
+                    <el-button
+                        type="primary"
+                        size="small"
+                        @click="getTicketSummary"
+                        class="fs_intelligence_card__button"
+                    >
+                        Generate
+                    </el-button>
+                </div>
+                <div class="fs_intelligence_card__result" v-if="ticketSummary">
+                    <pre class="fs_generated_summary">{{ ticketSummary }}</pre>
+                </div>
+            </div>
+
+            <div class="fs_intelligence_card__section">
+                <div class="fs_intelligence_card__body">
+                    <span class="fs_intelligence_card__label">Sentiment:</span>
+                    <el-button
+                        type="primary"
+                        size="small"
+                        @click="getTicketTone"
+                        class="fs_intelligence_card__button"
+                    >
+                        Analyze
+                    </el-button>
+                </div>
+                <div class="fs_intelligence_card__result" v-if="ticketTone">
+                    <pre class="fs_generated_summary">{{ ticketTone }}</pre>
+                </div>
+            </div>
+        </div>
+
         <div v-if="other_tickets && other_tickets.length" class="fs_tk_card fs_tk_other_tickets_card">
             <div class="fs_tk_card_header">
                 <h3>{{ $t('Previous Conversations') }} ({{ other_tickets.length }})</h3>
@@ -259,6 +299,8 @@ export default {
             changing: false,
             activeTabName: 'update_customer_data',
             add_watcher: false,
+            ticketSummary: '',
+            ticketTone: '',
             agents: appVars.support_agents,
             orders: [],
         });
@@ -403,6 +445,41 @@ export default {
             }
         }
 
+        const getTicketSummary = () => {
+            post(`chatGPT/${props.ticket_id}/get-ticket-summary`, {
+                    type: 'ticketSummary'
+            })
+                .then(response => {
+                    state.ticketSummary = response;
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+        }
+
+        const getTicketTone = () => {
+            post(`chatGPT/${props.ticket_id}/get-ticket-tone`, {
+                type: 'ticketTone'
+            })
+                .then(response => {
+                    state.ticketTone = response;
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+        }
+
+
         watch(() => props.watcher_ids, (newIds) => {
             state.watcherIds = newIds;
         });
@@ -442,6 +519,8 @@ export default {
             updateWatcher,
             getOrderDetails,
             getType,
+            getTicketSummary,
+            getTicketTone,
         }
     }
 }

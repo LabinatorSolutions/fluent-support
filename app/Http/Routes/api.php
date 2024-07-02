@@ -79,8 +79,6 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->get('ping', 'AgentController@ping');
     $router->get('ticket-essentials', 'TicketController@getTicketEssentials')->withPolicy('AdminSettingsPolicy');
-
-    $router->post('/{id}/generate-response', 'TicketController@generateResponseUsingChatGPT')->int('id');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
