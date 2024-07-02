@@ -666,13 +666,70 @@ ul.fs_saved_replies {
     padding: 10px;
 }
 
-.fs_generated_text {
+.fs_generated_text, fs_generated_summary {
     font-size: 14px;
     line-height: 1.5;
     overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
 .fs_ai_response_loading {
     padding-top: 20px;
+}
+
+.fs_intelligence_card {
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 3px;
+    padding: 16px;
+    margin-bottom: 16px;
+
+    &__header {
+        margin-bottom: 16px;
+        border-bottom: 1px solid #eaeaea;
+        padding-bottom: 8px;
+
+        h3 {
+            color: #314351;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0;
+            position: relative;
+            padding: 0;
+        }
+    }
+
+    &__section {
+        margin-bottom: 16px;
+    }
+
+    &__body {
+        display: flex;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    &__label {
+        margin-right: 8px;
+        font-weight: 500;
+        flex-shrink: 0;
+    }
+
+    &__button {
+        margin-left: auto;
+    }
+
+    &__result {
+        background-color: #f9f9f9;
+        padding: 8px;
+        border: 1px solid #eaeaea;
+        border-radius: 3px;
+    }
+}
+
+.fs_generated_summary {
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 

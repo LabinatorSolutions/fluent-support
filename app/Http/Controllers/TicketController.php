@@ -14,7 +14,6 @@ use FluentSupport\App\Services\TicketHelper;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Tickets\TicketService;
-use FluentSupportPro\App\Services\Integrations\ChatGPT\ChatGPTResponse;
 
 /**
  *  TicketController class for REST API related to ticket
@@ -589,21 +588,5 @@ class TicketController extends Controller
 
         return TicketHelper::getTicketEssentials($type);
     }
-
-    public function generateResponseUsingChatGPT(Request $request, ChatGPTResponse $chatGPTResponse)
-    {
-        $responseContent = $request->getSafe('content', 'sanitize_text_field');
-        $ticketId = $request->getSafe('id', 'intval');
-
-        $ticket = Ticket::with('responses')->findOrFail($ticketId);
-
-        try {
-            return $chatGPTResponse->generateResponseUsingChatGPT($responseContent, $ticket);
-        }catch (\Exception $e) {
-            return $this->sendError($e->getMessage());
-        }
-
-    }
-
 }
 
