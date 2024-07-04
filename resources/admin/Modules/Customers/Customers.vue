@@ -261,9 +261,10 @@ export default {
         };
 
         const componentKey = computed(() => {
-            return (Math.random() * 1000).toFixed(0).toString();
+            return state.editing_customer && state.editing_customer.id
+                ? state.editing_customer.id.toString()
+                : (Math.random() * 1000).toFixed(0).toString();
         });
-
 
         const showAddCustomerModal = (customer) => {
             state.editing_customer = customer;
