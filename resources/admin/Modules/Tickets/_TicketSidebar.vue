@@ -167,7 +167,7 @@
             </div>
         </div>
 
-        <div v-if="other_tickets && other_tickets.length" class="fs_intelligence_card">
+        <div class="fs_intelligence_card">
             <div class="fs_intelligence_card__header">
                 <h3>{{ $t('Intelligence') }}</h3>
             </div>
