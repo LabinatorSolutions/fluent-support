@@ -213,7 +213,7 @@ export default {
 
         insertShortcode(content) {
             let tinyInstance = tinyMCE.editors[wpActiveEditor];
-            tinyInstance.setContent(this.modelValue + content.target._value);
+            tinyInstance.insertContent(content.target._value);
             this.$emit('update:modelValue', this.modelValue + content.target._value)
         },
 
