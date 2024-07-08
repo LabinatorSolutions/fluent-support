@@ -361,7 +361,6 @@
         .fs_search_bar{
             display: inline-block;
             margin-top: 15px;
-            width: 100%;
         }
     }
 
@@ -932,6 +931,48 @@ ul.el-upload-list.el-upload-list--picture {
 
     .fs_tk_suggestion_articles {
         border-bottom: 1px solid #ebeef3;
+    }
+}
+
+.fs_filters_container {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+
+    .fs_right {
+        display: flex;
+
+        .fs_product {
+            margin-right: 10px;
+        }
+    }
+
+}
+
+.fs_popover_title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.fs_tk_action_bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.el-radio-group {
+    .fs_radios_blocks {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .el-radio {
+            margin-right: 10px;
+        }
+
     }
 }
 

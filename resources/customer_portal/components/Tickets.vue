@@ -1,35 +1,36 @@
 <template>
     <div class="fs_all_tickets">
         <div class="fs_tk_actions fs_tk_header">
-            <div class="fs_tk_left">
-                <div class="fs_button_groups">
-                    <button class="fs_btn fs_btn_all" :class="{ fs_btn_active: filter_type == 'all' }"
-                            @click="filter_type = 'all'">{{$t('All')}}
-                    </button>
-                    <button class="fs_btn fs_btn_open" :class="{ fs_btn_active: filter_type == 'open' }"
-                            @click="filter_type = 'open'">{{$t('Open')}}
-                    </button>
-                    <button class="fs_btn fs_btn_closed" :class="{ fs_btn_active: filter_type == 'closed' }"
-                            @click="filter_type = 'closed'">{{$t('Closed')}}
+            <div class="fs_tk_action_bar">
+                <div class="fs_tk_left">
+                    <div class="fs_button_groups">
+                        <button class="fs_btn fs_btn_all" :class="{ fs_btn_active: filters.status_type == 'all' }"
+                                @click="filters.status_type = 'all'">{{$t('All')}}
+                        </button>
+                        <button class="fs_btn fs_btn_open" :class="{ fs_btn_active: filters.status_type == 'open' }"
+                                @click="filters.status_type = 'open'">{{$t('Open')}}
+                        </button>
+                        <button class="fs_btn fs_btn_closed" :class="{ fs_btn_active: filters.status_type == 'closed' }"
+                                @click="filters.status_type = 'closed'">{{$t('Closed')}}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="fs_create_ticket">
+                    <button v-if="appVars.show_logout" @click="logout" class="fs_btn fs_btn_logout"> {{$t('Logout')}} </button>
+                    <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success fs_btn_create_ticket">
+                        {{ $t('create_ticket_cta') }}
                     </button>
                 </div>
             </div>
-
-            <div class="fs_tk_right">
-                <button v-if="appVars.show_logout" @click="logout" class="fs_btn fs_btn_logout"> {{$t('Logout')}} </button>
-                <button @click="$router.push({ name: 'create_ticket' })" class="fs_btn fs_btn_success fs_btn_create_ticket">
-                    {{ $t('create_ticket_cta') }}
-                </button>
-            </div>
-
-            <div class="fs_search_bar">
-                <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="small"
-                          :placeholder="$t('Please input')" v-model="search">
-                    <template #append>
-                        <el-button @click="fetchTickets()" icon="Search"></el-button>
-                    </template>
-                </el-input>
-            </div>
+            <TicketFilters
+                :filters="filters"
+                :sorting="sorting"
+                :sortingColumns="sortingColumns"
+                :search="search"
+                @update-search-query="updateSearchQuery"
+                @fetch-tickets="fetchTickets"
+            />
         </div>
 
         <div v-if="first_loading" style="padding: 20px; background: white; " class="fs_tk_body">
@@ -91,25 +92,51 @@
 
 <script type="text/babel">
 import Pagination from '../../admin/Pieces/Pagination';
+import TicketFilters from './_TicketFilter';
+import {ArrowDown, Reading, Filter, Sort} from '@element-plus/icons-vue'
 
 export default {
     name: 'tickets',
     components: {
-        Pagination
+        Pagination,
+        TicketFilters
     },
     data() {
         return {
             tickets: [],
-            filter_type: 'all',
+
             pagination: {
                 per_page: 10,
                 current_page: 1,
                 total: 0
             },
+            filters: {
+                product_id: '',
+                status_type: 'all',
+            },
+            sorting: {
+                sortBy: 'id',
+                sortType: 'asc'
+            },
+            sortingColumns: [
+                {
+                    label: 'Ticket ID',
+                    value: 'ID'
+                },
+                {
+                    label: 'Title',
+                    value: 'title'
+                },
+                {
+                    label: 'created_at',
+                    value: 'created_at'
+                },
+            ],
             fetching: false,
             first_loading: true,
             show_filters: true,
             search: '',
+            appVarsData: this.appVars
         }
     },
     computed: {
@@ -121,7 +148,7 @@ export default {
         }
     },
     watch: {
-        filter_type() {
+        "filters.status_type"() {
             this.pagination.current_page = 1;
             this.fetchTickets();
         }
@@ -133,8 +160,9 @@ export default {
             this.$get('tickets', {
                 per_page: this.pagination.per_page,
                 page: this.pagination.current_page,
-                filter_type: this.filter_type,
-                search: this.search
+                search: this.search,
+                filters: this.filters,
+                sorting: this.sorting,
             })
                 .then(response => {
                     if (response.tickets && response.tickets.data) {
@@ -183,6 +211,9 @@ export default {
         pagiAction(number) {
             this.pagination.current_page += number;
             this.fetchTickets();
+        },
+        updateSearchQuery(search) {
+            this.search = search;
         },
         logout() {
             this.$post('logout')
