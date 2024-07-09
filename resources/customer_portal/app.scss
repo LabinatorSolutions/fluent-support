@@ -962,17 +962,19 @@ ul.el-upload-list.el-upload-list--picture {
     margin-bottom: 10px;
 }
 
-.el-radio-group {
-    .fs_radios_blocks {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
+.fs_radio_blocks .el-radio-group  {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.fs_sorting_button {
+    margin-top: 20px;
+}
 
-        .el-radio {
-            margin-right: 10px;
-        }
-
-    }
+.fs_popover_item hr {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    border-bottom-width: 0px;
+    border-top-color: #e4dcd057;
 }
 
