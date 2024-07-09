@@ -12,8 +12,8 @@
                 <el-popover trigger="click" placement="bottom-start" width="240" popper-class="fs_popover">
                     <div class="fs_popover_item">
                         <h3 class="fs_popover_title">{{ $t('Sort By') }}</h3>
-                        <div>
-                            <el-radio-group @change="fetchTickets" class="fs_radios_blocks" v-model="sorting.sortBy">
+                        <div class="fs_radio_blocks">
+                            <el-radio-group @change="fetchTickets" v-model="sorting.sortBy">
                                 <el-radio v-for="column in sortingColumns" :key="column.value" :label="column.value">
                                     {{ column.label }}
                                 </el-radio>
@@ -24,7 +24,7 @@
                             <el-radio-button label="asc">{{ $t('Ascending') }}</el-radio-button>
                             <el-radio-button label="desc">{{ $t('Descending') }}</el-radio-button>
                         </el-radio-group>
-                        <div class="filter-btn-wrap">
+                        <div class="fs_sorting_button">
                             <el-button @click="fetchTickets()" type="primary">
                                 {{ $t('Apply') }}
                             </el-button>
@@ -80,8 +80,5 @@ export default {
 }
 </script>
 
-<style scoped>
-
-</style>
 
 
