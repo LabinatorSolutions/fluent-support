@@ -67,15 +67,13 @@ export default {
         });
 
         const triggerUpdate = () => {
-            const updatedSequence = actionsParam.value.map(action => action.id);
-            context.emit("updateActionSequence", updatedSequence);
+            context.emit("updateWorkFlow");
         };
 
         const removeAction = (actionIndex) => {
             props.actions.splice(actionIndex, 1);
             actionsParam.value.splice(actionIndex, 1);
-            const updatedSequence = actionsParam.value.map(action => action.id);
-            context.emit("updateActionSequence", updatedSequence);
+            context.emit("updateWorkFlow");
         };
 
         onMounted(() => {

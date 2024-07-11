@@ -106,7 +106,7 @@
                     </div>
                     <div class="fs_box_body fs_padded_20">
                         <action-mappers
-                            @updateActions="updateWorkFlow()"
+                            @updateWorkFlow="updateWorkFlow()"
                             :actions="actions"
                             :all_actions="filtred_action_fields"
                             :actionSequence="actionSequence"
