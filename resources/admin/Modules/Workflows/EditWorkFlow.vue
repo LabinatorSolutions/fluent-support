@@ -106,9 +106,11 @@
                     </div>
                     <div class="fs_box_body fs_padded_20">
                         <action-mappers
-                            @update="updateWorkFlow()"
+                            @updateActions="updateWorkFlow()"
                             :actions="actions"
                             :all_actions="filtred_action_fields"
+                            :actionSequence="actionSequence"
+                            @updateActionSequence="updateActionSequence"
                         ></action-mappers>
                     </div>
                 </div>
@@ -158,6 +160,7 @@ export default {
             loading: false,
             saving: false,
             filtred_action_fields: {},
+            actionSequence: [],
         });
 
         watch(
@@ -208,6 +211,10 @@ export default {
             }
         );
 
+        const updateActionSequence = (sequence) => {
+            state.actionSequence = sequence;
+        };
+
         const fetch = async () => {
             state.loading = true;
             get("workflows/" + props.workflow_id, {
@@ -239,6 +246,7 @@ export default {
             post("workflows/" + props.workflow_id, {
                 actions: state.actions,
                 workflow: workFlow,
+                action_sequence: state.actionSequence,
             })
                 .then((response) => {
                     notify({
@@ -276,6 +284,7 @@ export default {
             fetch,
             updateWorkFlow,
             translate,
+            updateActionSequence
         };
     },
 };
@@ -289,3 +298,5 @@ export default {
     flex-direction: row;
 }
 </style>
+
+
