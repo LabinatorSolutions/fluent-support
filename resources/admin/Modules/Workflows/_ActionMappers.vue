@@ -11,6 +11,7 @@
                             @deleteAction="removeAction(index)"
                             @update="triggerUpdate()"
                             :action="element"
+                            :activeName="element.activeName"
                             :actions="all_actions"
                         />
                     </div>
@@ -53,11 +54,15 @@ export default {
 
         const actionsParam = ref([]);
         const showAdder = ref(false);
+        const activeName = ref({});
 
         const appendAction = (action) => {
             showAdder.value = false;
-            action.workflow_id = props.workflow_id;
-            actionsParam.value.push(action);
+            actionsParam.value.push({
+                ...action,
+                workflow_id: props.workflow_id,
+                activeName: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            });
             props.actions.push(action);
         };
 
@@ -96,6 +101,7 @@ export default {
             removeAction,
             translate,
             actionsParam,
+            activeName
         };
     },
 };

@@ -1,9 +1,10 @@
 <template>
     <div v-loading="loading" class="fs_trigger_view">
         <el-collapse
+            v-model="activeName"
         >
             <el-collapse-item
-                :name="actions[action.action_name].title"
+                :name="action.activeName"
                 class="fs_actions_board"
             >
                 <template #title>
@@ -13,7 +14,7 @@
                         {{ actions[action.action_name].title }}
                     </div>
                 </template>
-                <div class="fs_trigger_details">
+                <div  class="fs_trigger_details">
                     <div class="fs_trigger_editor">
                         <h3>{{ $t("Action") }}</h3>
                         <el-select
@@ -85,13 +86,13 @@
 </template>
 
 <script type="text/babel">
-import {ref, onMounted} from "vue";
+import {ref, onMounted, reactive} from "vue";
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ActionMap",
-    props: ["action", "actions"],
+    props: ["action", "actions", "activeName"],
     components: {
         FormBuilder,
     },
@@ -100,6 +101,7 @@ export default {
         const settingsFields = ref({});
         const loading = ref(false);
         const builderReady = ref(true);
+        const activeName = props.activeName;
 
         const triggerEventChanged = () => {
             if (!props.action.action_name) {
@@ -140,6 +142,7 @@ export default {
             triggerEventChanged,
             emitSave,
             deleteAction,
+            activeName,
             translate,
         };
     },
