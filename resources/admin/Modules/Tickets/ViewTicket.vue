@@ -724,6 +724,13 @@ export default {
                 state.draftReplyPermission = appVars.me.permissions.includes('fst_draft_reply');
                 state.draftReplyApprovePermission = appVars.me.permissions.includes('fst_approve_draft_reply');
 
+                // sent the response to body event
+                document.body.dispatchEvent(new CustomEvent('fs_ticket_viewed', {
+                    detail: {
+                        response: response
+                    }
+                }));
+
                 if (appVars.fluentcrm_config) {
                     state.fluentcrm_profile = response.fluentcrm_profile;
                 }
@@ -1224,6 +1231,11 @@ export default {
 
         onBeforeUnmount(() => {
             doAction('ticket_view_exit', props.ticket_id);
+            document.body.dispatchEvent(new CustomEvent('fs_ticket_view_exit', {
+                detail: {
+                    ticket_id: props.ticket_id
+                }
+            }));
         });
 
         return {
