@@ -3,6 +3,7 @@
         <div>
             <draggable
                 v-model="actionsParam"
+                ghost-class="ghost"
                 item-key="id"
             >
                 <template #item="{ element, index }">
@@ -108,4 +109,11 @@ export default {
 </script>
 
 <style scoped>
+.ghost {
+    opacity: 0.5;
+    text-align: center;
+    border-style: dashed;
+    border-radius: 10px;
+    float: none;
+}
 </style>

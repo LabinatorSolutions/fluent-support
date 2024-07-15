@@ -60,6 +60,13 @@
 
     @media (min-width: 768px) and (max-width: 830px) {
         .fs_actions_board {
+            .ghost {
+                opacity: 0.5;
+                text-align: center;
+                border-style: dashed;
+                border-radius: 10px;
+                float: none;
+            }
             .el-collapse-item__header{
                 background-color: #F5F5F5;
                 border-radius: 8px;
