@@ -9,7 +9,7 @@
             <el-button @click="initModal()" icon="MagicStick" size="small" type="default"></el-button>
         </template>
         <div class="fs_template_inserter">
-            <div >
+            <div>
                 <div>
                     <el-input :placeholder="translate('Ask AI to write anything...')" v-model="prompt" class="input-with-select">
                         <template #append>
