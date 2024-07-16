@@ -16,7 +16,6 @@
             <div class="fs_chatGPT_box" v-if="aiResponse">
                 <ChatGPTResponseBox @insert="insertTemplate"/>
             </div>
-
             <div class="fc_shortcode_box" v-if="showShortcodes" style="padding: 5px;">
                 <el-dropdown type="primary" trigger="click">
                     <el-button size="small" type="primary" style="margin-right: .3em;">
@@ -24,23 +23,44 @@
                     </el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-for="(value ,key) in shortcodes" :key="key" :value="key" @click="insertShortcode">
-                                {{value}}
+                            <el-dropdown-item v-for="(value, key) in shortcodes" :key="key" :value="key" @click="insertShortcode">
+                                {{ value }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
             </div>
             <div class="fc_saved_replies_box" v-if="showSavedReplies">
-                <template-inserter @insert="insertTemplate"/>
+                <template-inserter @insert="insertTemplate" />
             </div>
         </div>
         <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">{{ modelValue }}</textarea>
-        <textarea v-else
-                  class="wp_vue_editor wp_vue_editor_plain"
-                  v-model="plain_content"
-                  @click="updateCursorPos">
-        </textarea>
+        <textarea
+            v-else
+            class="wp_vue_editor wp_vue_editor_plain"
+            v-model="plain_content"
+            @click="updateCursorPos"
+        ></textarea>
+        <div v-if="showActionBar" :style="actionBarStyle" class="action-bar">
+
+            <el-popover
+                placement="bottom"
+                :width="480"
+                trigger="manual"
+                :visible="showChatGPTPromptBox"
+                @hide="atHide"
+            >
+                <template #reference>
+                    <el-button @click="editSelection()" icon="MagicStick" size="small" type="default"></el-button>
+                </template>
+                <div class="fs_template_inserter">
+                    <div>
+                        <ChatGPTPromptBox :selectedText="selectedText" @insert="insertAIResponse"/>
+                    </div>
+                </div>
+            </el-popover>
+
+        </div>
     </div>
 </template>
 
@@ -50,6 +70,7 @@ export default {
     components: {
         TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined,
         ChatGPTResponseBox: () => import('../Modules/Tickets/_ChatGPTResponseBox'),
+        ChatGPTPromptBox: () => import('../Modules/Tickets/_ChatGPTPromptBox'),
     },
     props: {
         editor_id: {
@@ -131,18 +152,23 @@ export default {
             buttonInitiated: false,
             currentEditor: false,
             shortcodes: {
-                '{{customer.first_name}}' : 'Customer First Name',
-                '{{customer.last_name}}' : 'Customer Last Name',
-                '{{customer.full_name}}' : 'Customer Full Name',
-                '{{customer.email}}' : 'Customer Email',
-                '{{customer.title}}' : 'Customer Title',
-                '{{customer.status}}' : 'Customer Status',
-                '{{agent.first_name}}' : 'Agent First Name',
-                '{{agent.last_name}}' : 'Agent Last Name',
-                '{{agent.full_name}}' : 'Agent Full Name',
-                '{{agent.email}}' : 'Agent Email',
-                '{{agent.title}}' : 'Agent Title'
-            }
+                '{{customer.first_name}}': 'Customer First Name',
+                '{{customer.last_name}}': 'Customer Last Name',
+                '{{customer.full_name}}': 'Customer Full Name',
+                '{{customer.email}}': 'Customer Email',
+                '{{customer.title}}': 'Customer Title',
+                '{{customer.status}}': 'Customer Status',
+                '{{agent.first_name}}': 'Agent First Name',
+                '{{agent.last_name}}': 'Agent Last Name',
+                '{{agent.full_name}}': 'Agent Full Name',
+                '{{agent.email}}': 'Agent Email',
+                '{{agent.title}}': 'Agent Title'
+            },
+            showActionBar: false,
+            actionBarStyle: {},
+            showChatGPTPromptBox: false,
+            selectedText: '',
+            editorData: {}
         }
     },
     watch: {
@@ -165,9 +191,11 @@ export default {
                     editor.on('change', function (ed, l) {
                         that.changeContentEvent();
                     });
+                    editor.on('mouseup', function (event) {
+                        that.showActionBarOnSelection(editor);
+                    });
                 }
             };
-
 
             if (this.autofocus) {
                 mceConfig.auto_focus = this.editor_id;
@@ -221,12 +249,62 @@ export default {
             let tinyInstance = tinyMCE.editors[wpActiveEditor];
             tinyInstance.setContent(this.modelValue + content)
             this.$emit('update:modelValue', this.modelValue + content)
+        },
+
+        insertAIResponse(content) {
+            let tinyInstance = tinyMCE.editors[wpActiveEditor];
+            const selection = tinyInstance.selection;
+            selection.setContent(content);
+            this.$emit('update:modelValue', tinyInstance.getContent());
+        },
+
+        showActionBarOnSelection(editor) {
+            this.editorData = editor;
+            const selection = this.editorData.selection;
+            if (!selection.isCollapsed()) {
+                const selectedText = selection.getContent({ format: 'text' });
+                if (selectedText.length > 0) {
+                    const rect = selection.getRng().getBoundingClientRect();
+                    this.actionBarStyle = {
+                        top: `${rect.bottom + 10}px`,
+                        left: `${rect.left}px`,
+                        position: 'absolute',
+                        zIndex: 1
+                    };
+
+                    this.showActionBar = true;
+                }
+            } else {
+                this.showActionBar = false;
+            }
+        },
+
+        editSelection() {
+            if (!this.editor) {
+                console.error('TinyMCE editor instance or selection not available.');
+                return;
+            }
+
+            const selection = this.editorData.selection;
+            const selectedText = selection.getContent({ format: 'text' }).trim();
+            if (selectedText) {
+                this.selectedText = selectedText;
+                this.showChatGPTPromptBox = true;
+            }
+        },
+
+        atHide() {
+            console.log("s;ldak;lskd")
+            this.showChatGPTPromptBox = false;
+            this.selectedText = '';
         }
+
     },
     beforeCreate() {
-        if(window.fluentSupportAdmin) {
+        if (window.fluentSupportAdmin) {
             this.$options.components.TemplateInserter = require('../Modules/Tickets/_templateInserter').default
             this.$options.components.ChatGPTResponseBox = require('../Modules/Tickets/_ChatGPTResponseBox').default
+            this.$options.components.ChatGPTPromptBox = require('../Modules/Tickets/_ChatGPTPromptBox').default
         }
     },
     mounted() {
@@ -290,6 +368,13 @@ export default {
             padding: 6px 11px;
         }
     }
+}
+
+.action-bar {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 </style>
