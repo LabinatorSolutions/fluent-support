@@ -42,13 +42,11 @@
             @click="updateCursorPos"
         ></textarea>
         <div v-if="showActionBar" :style="actionBarStyle" class="action-bar">
-
             <el-popover
                 placement="bottom"
                 :width="480"
-                trigger="manual"
+                trigger="click"
                 :visible="showChatGPTPromptBox"
-                @hide="atHide"
             >
                 <template #reference>
                     <el-button @click="editSelection()" icon="MagicStick" size="small" type="default"></el-button>
@@ -271,7 +269,8 @@ export default {
                         position: 'absolute',
                         zIndex: 1
                     };
-
+                    this.selectedText = selectedText;
+                    this.showChatGPTPromptBox = false;
                     this.showActionBar = true;
                 }
             } else {
@@ -292,12 +291,6 @@ export default {
                 this.showChatGPTPromptBox = true;
             }
         },
-
-        atHide() {
-            console.log("s;ldak;lskd")
-            this.showChatGPTPromptBox = false;
-            this.selectedText = '';
-        }
 
     },
     beforeCreate() {
