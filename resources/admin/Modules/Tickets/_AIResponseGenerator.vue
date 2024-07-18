@@ -23,11 +23,14 @@
                         class="fs_response_logo"
                     />
                     <div class="fs_response_actions">
-                        <img
-                            loading="lazy"
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/1d26c22c91547948f1945588bc26e0a2f2b665e51592a02e6d2e61e4c5d4c97a?"
-                            class="fs_response_icon"
-                        />
+                        <div class="fs_copy_text">
+                            <img
+                                loading="lazy"
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/1d26c22c91547948f1945588bc26e0a2f2b665e51592a02e6d2e61e4c5d4c97a?"
+                                class="fs_response_icon"
+                            />
+                        </div>
+
                         <div class="fs_response_insert_icon">
                             <img
                                 loading="lazy"
@@ -62,22 +65,22 @@
                     </el-button>
                 </div>
             </div>
-                <div>
-                    <div class="fs_prompt_subtitle">Some Popular Prompts</div>
-                    <div class="fs_prompt_options_container">
-                        <div
-                            v-for="prompt in presetPrompts"
-                            :key="prompt.text"
-                            :class="['fs_prompt_option', { 'fs_prompt_option_selected': prompt === selectedPrompt }]"
-                            @click="selectPresetPrompt(prompt)"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <circle cx="8" cy="8" r="2" :fill="isSelected(prompt) ? '#FFF' : '#717784'"/>
-                            </svg>
-                            <div class="fs_prompt_option_text">{{ prompt.label }}</div>
-                        </div>
+            <div>
+                <div class="fs_prompt_subtitle">Some Popular Prompts</div>
+                <div class="fs_prompt_options_container">
+                    <div
+                        v-for="prompt in presetPrompts"
+                        :key="prompt.text"
+                        :class="['fs_prompt_option', { 'fs_prompt_option_selected': prompt === selectedPrompt }]"
+                        @click="selectPresetPrompt(prompt)"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="8" r="2" :fill="isSelected(prompt) ? '#FFF' : '#717784'"/>
+                        </svg>
+                        <div class="fs_prompt_option_text">{{ prompt.label }}</div>
                     </div>
                 </div>
+            </div>
         </div>
     </div>
 </template>
@@ -88,8 +91,8 @@ import { useRoute } from "vue-router";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
-    name: 'ChatGPTPromptBox',
-    props: ['selectedText'],
+    name: 'AIResponseGenerator',
+    props: ['selectedText', 'type'],
     setup(props, context) {
         const { post, translate, handleError } = useFluentHelper();
         const route = useRoute();
@@ -101,24 +104,80 @@ export default {
             loading: false,
             ticketID: parseInt(route.params.ticket_id),
             selectedText: props.selectedText,
-            selectedPrompt:'',
+            selectedPrompt: '',
             presetPrompts: [
-                { label: 'Make it Shorter', text: 'shorten' },
-                { label: 'Make it Longer', text: 'lengthen' },
-                { label: 'Make it Friendly', text: 'friendly' },
-                { label: 'Make it Professional', text: 'professional' },
-                { label: 'Simplify', text: 'simplify' },
+                {
+                    label: 'Improve Writing',
+                    text: 'shorten',
+                    description: 'Use AI to make your text more concise and to the point, without losing its essence.'
+                },
+                {
+                    label: 'Fix Spelling & Grammar',
+                    text: 'lengthen',
+                    description: 'AI will correct spelling mistakes and grammar errors, ensuring your text is polished and professional.'
+                },
+                {
+                    label: 'Make Shorter',
+                    text: 'friendly',
+                    description: 'AI will adjust your text to be more casual and approachable, suitable for informal communications.'
+                },
+                {
+                    label: 'Make Longer',
+                    text: 'professional',
+                    description: 'Extend your text with additional details and refined language to enhance its formality and depth.'
+                },
+                {
+                    label: 'Simplify Language',
+                    text: 'simplify',
+                    description: 'AI will simplify complex language to make your text easier to understand, suitable for broader audiences.'
+                }
             ]
         });
 
+        if (props.type === 'ticketResponse') {
+            state.presetPrompts = [
+                {
+                    label: 'Request More Information',
+                    text: 'requestInfo',
+                    description: 'Ask for more details or clarification regarding the issue raised in the ticket.'
+                },
+                {
+                    label: 'Acknowledge Issue',
+                    text: 'acknowledgeIssue',
+                    description: 'Acknowledge the issue reported and assure the customer that it is being looked into.'
+                },
+                {
+                    label: 'Provide Solution',
+                    text: 'provideSolution',
+                    description: 'Give a detailed solution to the problem mentioned in the ticket.'
+                },
+                {
+                    label: 'Follow Up',
+                    text: 'followUp',
+                    description: 'Follow up with the customer to check if the issue has been resolved satisfactorily.'
+                },
+                {
+                    label: 'Close Ticket',
+                    text: 'closeTicket',
+                    description: 'Inform the customer that the ticket is being closed due to resolution of the issue.'
+                }
+            ];
+        }
+
         const generateResponse = () => {
             state.loading = true;
-            post(`chatGPT/${state.ticketID}/generate-response`, {
+            const requestData = {
                 content: state.prompt,
-                selectedText: props.selectedText,
                 id: state.ticketID,
-                type: 'generateResponse'
-            })
+                type: props.type
+            };
+
+            if (props.type !== 'ticketResponse') {
+                requestData.selectedText = props.selectedText;
+                requestData.type = props.type;
+            }
+
+            post(`chatGPT/${state.ticketID}/generate-response`, requestData)
                 .then(response => {
                     state.aiResponse = response;
                     state.loading = false;
@@ -132,22 +191,23 @@ export default {
         const selectPresetPrompt = (preset) => {
             state.selectedPrompt = preset;
             const selectedPrompt = state.presetPrompts.find(item => item.text === preset.text);
-            state.prompt = `${selectedPrompt.label}: ${state.selectedText}`;
+            state.prompt = `${selectedPrompt.description}`;
             generateResponse();
         };
 
-       const isSelected = (prompt) => {
+        const isSelected = (prompt) => {
             return state.selectedPrompt === prompt;
-        }
+        };
 
         const insertReply = (aiResponse) => {
             emit('insert', aiResponse);
             state.visible = false;
         };
+
         const cancelResponse = () => {
             state.aiResponse = '';
-            state.prompt= '';
-        }
+            state.prompt = '';
+        };
 
         return {
             ...toRefs(state),
@@ -382,10 +442,11 @@ textarea {
 }
 .fs_response_content {
     color: #0e121b;
-    font-feature-settings: "ss11" on, "cv09" on, "liga" off, "calt" off;
     letter-spacing: -0.08px;
     margin-top: 12px;
     font: 400 14px/20px Inter, sans-serif;
+    max-height: 180px;
+    overflow-y: auto;
 }
 .fs_ai_response_loading {
     border: 1px solid #E1E4EA;
@@ -393,5 +454,4 @@ textarea {
     padding: 20px;
     margin: 20px 20px 0 20px;;
 }
-
 </style>
