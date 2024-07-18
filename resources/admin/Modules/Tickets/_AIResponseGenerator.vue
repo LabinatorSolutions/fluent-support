@@ -17,35 +17,38 @@
         <div class="fs_response_section">
             <div v-loading="loading" class="fs_response_container" v-if="aiResponse && !loading">
                 <div class="fs_response_header">
-                    <img
-                        loading="lazy"
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/981741ef99f69feb7a0e263c2a597e8199a950434fae0e506010e51ca27c4745?"
-                        class="fs_response_logo"
-                    />
+                    <div class="fs_resize">
+                        <el-button class="fs_resize_button" text @click="isFullSize = !isFullSize">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M16 3.25H17.5V7.75H16V4.75H13V3.25H16ZM4 3.25H7V4.75H4V7.75H2.5V3.25H4ZM16 15.25V12.25H17.5V16.75H13V15.25H16ZM4 15.25H7V16.75H2.5V12.25H4V15.25Z" fill="#525866"/>
+                            </svg>
+                        </el-button>
+                    </div>
                     <div class="fs_response_actions">
                         <div class="fs_copy_text">
-                            <img
-                                loading="lazy"
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/1d26c22c91547948f1945588bc26e0a2f2b665e51592a02e6d2e61e4c5d4c97a?"
-                                class="fs_response_icon"
-                            />
+                            <el-button class="fs_copy_text_button" text @click="copyText">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M6.25 5.5V3.25C6.25 3.05109 6.32902 2.86032 6.46967 2.71967C6.61032 2.57902 6.80109 2.5 7 2.5H16C16.1989 2.5 16.3897 2.57902 16.5303 2.71967C16.671 2.86032 16.75 3.05109 16.75 3.25V13.75C16.75 13.9489 16.671 14.1397 16.5303 14.2803C16.3897 14.421 16.1989 14.5 16 14.5H13.75V16.75C13.75 17.164 13.4125 17.5 12.9948 17.5H4.00525C3.90635 17.5006 3.8083 17.4816 3.71674 17.4442C3.62519 17.4068 3.54192 17.3517 3.47174 17.282C3.40156 17.2123 3.34584 17.1294 3.30779 17.0381C3.26974 16.9468 3.2501 16.8489 3.25 16.75L3.25225 6.25C3.25225 5.836 3.58975 5.5 4.0075 5.5H6.25ZM4.75225 7L4.75 16H12.25V7H4.75225ZM7.75 5.5H13.75V13H15.25V4H7.75V5.5Z" fill="#525866"/>
+                                </svg>
+                            </el-button>
                         </div>
 
-                        <div class="fs_response_insert_icon">
-                            <img
-                                loading="lazy"
-                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/33b02a002d1b1bf13727e504c778bd619082a8bc9224d92c062756572dc1076c?"
-                                class="fs_response_small_icon"
-                            />
+                        <div class="fs_regenerate">
+                            <el-button class="fs_regenerate_button" text @click="generateResponse">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M5.09725 4.32476C6.45817 3.1455 8.19924 2.4975 10 2.50001C14.1423 2.50001 17.5 5.85776 17.5 10C17.5 11.602 16.9975 13.087 16.1425 14.305L13.75 10H16C16.0001 8.82373 15.6544 7.67336 15.006 6.69195C14.3576 5.71054 13.4349 4.94138 12.3529 4.4801C11.2708 4.01882 10.077 3.88578 8.91997 4.09752C7.7629 4.30926 6.69359 4.85643 5.845 5.67101L5.09725 4.32476ZM14.9028 15.6753C13.5418 16.8545 11.8008 17.5025 10 17.5C5.85775 17.5 2.5 14.1423 2.5 10C2.5 8.39801 3.0025 6.91301 3.8575 5.69501L6.25 10H4C3.9999 11.1763 4.34556 12.3267 4.994 13.3081C5.64244 14.2895 6.56505 15.0586 7.64712 15.5199C8.72918 15.9812 9.92296 16.1142 11.08 15.9025C12.2371 15.6908 13.3064 15.1436 14.155 14.329L14.9028 15.6753Z" fill="#335CFF"/>
+                                </svg>
+                            </el-button>
                         </div>
+
                         <div class="fs_response_insert_button">
-                            <el-button class="fs_insert_button" type="primary" @click="insertReply(aiResponse)">Insert Response</el-button>
+                            <el-button class="fs_insert_button"  @click="insertReply(aiResponse)">Insert Response</el-button>
                         </div>
                     </div>
                 </div>
-                <div class="fs_response_content">
-                    <p>{{ aiResponse }}</p>
-                </div>
+                    <div :class="['fs_response_content', { 'full-size': isFullSize }]">
+                        <p>{{ aiResponse }}</p>
+                    </div>
             </div>
             <div class="fs_ai_response_loading" v-if="loading">
                 <el-skeleton :rows="4" animated />
@@ -56,12 +59,10 @@
             <div class="fs_prompt_wrapper">
                 <textarea v-model="prompt" rows="3" placeholder="Enter your prompt here..." class="fs_textarea"></textarea>
                 <div class="fs_prompt_button">
-                    <el-button @click="generateResponse">
-                        <img
-                            loading="lazy"
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/933f740ba3e1c2e6c19acc7e18a018cc745e3d7e2eb86a1be09adcbacacbd339?"
-                            class="fs_prompt_icon"
-                        />
+                    <el-button class="fs_prompt_submit" @click="generateResponse">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M16.25 10.6875L4.02083 15.5833C3.77083 15.6806 3.53819 15.6563 3.32292 15.5104C3.10764 15.3646 3 15.1597 3 14.8958V5.10417C3 4.84028 3.10764 4.63542 3.32292 4.48959C3.53819 4.34375 3.77083 4.31945 4.02083 4.41667L16.25 9.3125C16.5694 9.4375 16.7292 9.66667 16.7292 10C16.7292 10.3333 16.5694 10.5625 16.25 10.6875ZM4.5 13.7708L13.9583 10L4.5 6.22917V8.5L9 10L4.5 11.5V13.7708Z" fill="#525866"/>
+                        </svg>
                     </el-button>
                 </div>
             </div>
@@ -89,6 +90,7 @@
 import { reactive, toRefs } from "vue";
 import { useRoute } from "vue-router";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
+import { ElMessage } from 'element-plus'
 
 export default {
     name: 'AIResponseGenerator',
@@ -105,6 +107,7 @@ export default {
             ticketID: parseInt(route.params.ticket_id),
             selectedText: props.selectedText,
             selectedPrompt: '',
+            isFullSize: false,
             presetPrompts: [
                 {
                     label: 'Improve Writing',
@@ -199,6 +202,22 @@ export default {
             return state.selectedPrompt === prompt;
         };
 
+        const copyText = async () => {
+            try {
+                await navigator.clipboard.writeText(state.aiResponse);
+                    ElMessage({
+                        showClose: true,
+                        message: 'Copied to clipboard',
+                        type: "success",
+                    });
+            } catch (error) {
+                return ElMessage({
+                    message: 'Oops, this is a error message.',
+                    type: 'error'
+                })
+            }
+        };
+
         const insertReply = (aiResponse) => {
             emit('insert', aiResponse);
             state.visible = false;
@@ -217,6 +236,7 @@ export default {
             insertReply,
             cancelResponse,
             isSelected,
+            copyText
         };
     }
 }
@@ -287,12 +307,65 @@ export default {
     bottom: 10px;
     right: 10px;
 }
-.fs_prompt_icon {
-    width: 20px;
-    height: 20px;
+
+.fs_prompt_button .fs_prompt_submit {
+    display: flex;
+    padding: 4px;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+    border-radius: 6px;
+    border: 1px solid #E1E4EA;
+    background: #FFF;
+    box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
 }
+
+.fs_prompt_button .fs_prompt_submit:hover {
+    background: #0E121B;
+}
+
+.fs_prompt_button .fs_prompt_submit:hover svg path {
+    fill: #FFF;
+}
+
+.fs_regenerate .fs_regenerate_button {
+    display: flex;
+    padding: 4px;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+    background: rgba(71, 108, 255, 0.16);
+}
+
+.fs_regenerate .fs_regenerate_button:hover {
+    background: rgba(20, 46, 137, 0.16);
+}
+
+.fs_resize .fs_resize_button {
+    display: flex;
+    padding: 4px;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+}
+
+.fs_resize .fs_resize_button:hover {
+    background: rgba(20, 46, 137, 0.16);
+}
+
+.fs_copy_text .fs_copy_text_button {
+    display: flex;
+    padding: 4px;
+    align-items: center;
+    gap: 10px;
+    border-radius: 6px;
+}
+.fs_copy_text .fs_copy_text_button:hover {
+    background: rgba(20, 46, 137, 0.16);
+}
+
 .fs_prompt_subtitle {
-     color: var(--text-soft-400, #99a0ae);
+     color: #99a0ae;
      font-feature-settings: "ss11" on, "cv09" on, "liga" off, "calt" off;
      letter-spacing: 0.48px;
      text-transform: uppercase;
@@ -448,6 +521,11 @@ textarea {
     max-height: 180px;
     overflow-y: auto;
 }
+
+.fs_response_content.full-size {
+    max-height: none;
+}
+
 .fs_ai_response_loading {
     border: 1px solid #E1E4EA;
     border-radius: 12px;
