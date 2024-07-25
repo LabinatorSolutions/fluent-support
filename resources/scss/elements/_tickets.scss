@@ -933,3 +933,19 @@ ul.fs_tk_actions {
     width: 14px;
     margin-right: 4px ;
 }
+
+.fs_intelligence_card__result {
+    padding: 20px;
+
+    .fs_generated_summary {
+        font-size: 14px;
+        line-height: 1.5;
+        overflow: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        border: 1px solid #335CFF !important;
+        border-radius: 6px;
+        background: rgba(71, 108, 255, 0.10) !important;
+    }
+}
+
