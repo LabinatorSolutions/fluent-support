@@ -192,6 +192,10 @@ export default {
                 .then(response => {
                     state.aiResponse = response;
                     state.loading = false;
+
+                    if (state.prompt) {
+                        state.selectedPrompt = '';
+                    }
                 })
                 .catch(errors => {
                     state.loading = false;
@@ -213,6 +217,7 @@ export default {
 
         const closeModal = () => {
             emit('close');
+            resetData();
         }
 
         const copyText = async () => {
@@ -231,14 +236,15 @@ export default {
             }
         };
 
+        const resetData = () => {
+            state.aiResponse = '';
+            state.selectedPrompt = '';
+            state.prompt = '';
+        }
+
         const insertReply = (aiResponse) => {
             emit('insert', aiResponse);
-            state.visible = false;
-        };
-
-        const cancelResponse = () => {
-            state.aiResponse = '';
-            state.prompt = '';
+            resetData();
         };
 
         return {
@@ -247,7 +253,6 @@ export default {
             selectPresetPrompt,
             translate,
             insertReply,
-            cancelResponse,
             isSelected,
             copyText,
             closeModal

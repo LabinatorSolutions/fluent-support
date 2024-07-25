@@ -26,7 +26,7 @@
                     </template>
                     <div class="fs_template_inserter">
                         <div>
-                            <AIResponseGenerator type="ticketResponse" @close="showAIResponseBox = false" @insert="insertAIResponse"/>
+                            <AIResponseGenerator type="ticketResponse" @close="closeAIResponsePromptBox" @insert="insertAIResponse"/>
                         </div>
                     </div>
                 </el-popover>
@@ -76,7 +76,7 @@
                 </template>
                 <div class="fs_template_inserter">
                     <div>
-                        <AIResponseGenerator type="modifyResponse" :selectedText="selectedText" @close="showChatGPTPromptBox = false" @insert="insertAIResponse"/>
+                        <AIResponseGenerator type="modifyResponse" :selectedText="selectedText" @close="closeSelectedTextPromptBox" @insert="insertAIResponse"/>
                     </div>
                 </div>
             </el-popover>
@@ -240,6 +240,14 @@ export default {
             this.$emit('update:modelValue', content);
         },
 
+        closeSelectedTextPromptBox() {
+            this.showChatGPTPromptBox = false;
+        },
+
+        closeAIResponsePromptBox() {
+            this.showAIResponseBox = false;
+        },
+
         handleCommand(command) {
             if (this.hasWpEditor) {
                 window.tinymce.activeEditor.insertContent(command);
@@ -277,6 +285,9 @@ export default {
             const selection = tinyInstance.selection;
             selection.setContent(content);
             this.$emit('update:modelValue', tinyInstance.getContent());
+            this.showChatGPTPromptBox = false;
+            this.showAIResponseBox = false;
+
         },
 
         showActionBarOnSelection(editor) {
