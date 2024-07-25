@@ -293,16 +293,28 @@ export default {
         showActionBarOnSelection(editor) {
             this.editorData = editor;
             const selection = this.editorData.selection;
+
             if (!selection.isCollapsed()) {
                 const selectedText = selection.getContent({ format: 'text' });
+
                 if (selectedText.length > 0) {
-                    const rect = selection.getRng().getBoundingClientRect();
+                    // Get the bounding rectangle of the entire selection
+                    const range = selection.getRng();
+                    const rect = range.getBoundingClientRect();
+
+                    // Find the bounding rect of the first line of the selection
+                    const rangeStart = range.cloneRange();
+                    rangeStart.setStart(rangeStart.startContainer, rangeStart.startOffset);
+                    rangeStart.setEnd(rangeStart.startContainer, rangeStart.startOffset);
+                    const rectStart = rangeStart.getBoundingClientRect();
+
                     this.actionBarStyle = {
-                        top: `${rect.bottom + 10}px`,
-                        left: `${rect.left}px`,
+                        top: `${rectStart.top + 40}px`,
+                        left: `${rectStart.right - 20}px`,
                         position: 'absolute',
                         zIndex: 1
                     };
+
                     this.selectedText = selectedText;
                     this.showChatGPTPromptBox = false;
                     this.showActionBar = true;
