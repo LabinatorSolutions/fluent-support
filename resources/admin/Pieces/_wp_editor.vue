@@ -26,7 +26,7 @@
                     </template>
                     <div class="fs_template_inserter">
                         <div>
-                            <AIResponseGenerator type="ticketResponse" @insert="insertAIResponse"/>
+                            <AIResponseGenerator type="ticketResponse" @close="showAIResponseBox = false" @insert="insertAIResponse"/>
                         </div>
                     </div>
                 </el-popover>
@@ -46,6 +46,7 @@
                     </template>
                 </el-dropdown>
             </div>
+
             <div class="fc_saved_replies_box" v-if="showSavedReplies">
                 <template-inserter @insert="insertTemplate" />
             </div>
@@ -75,7 +76,7 @@
                 </template>
                 <div class="fs_template_inserter">
                     <div>
-                        <AIResponseGenerator type="modifyResponse" :selectedText="selectedText" @insert="insertAIResponse"/>
+                        <AIResponseGenerator type="modifyResponse" :selectedText="selectedText" @close="showChatGPTPromptBox = false" @insert="insertAIResponse"/>
                     </div>
                 </div>
             </el-popover>
