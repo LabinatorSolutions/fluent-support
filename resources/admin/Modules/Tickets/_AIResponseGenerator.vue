@@ -59,7 +59,7 @@
             <div class="fs_prompt_wrapper">
                 <textarea v-model="prompt" rows="3" placeholder="Enter your prompt here..." class="fs_textarea"></textarea>
                 <div class="fs_prompt_button">
-                    <el-button class="fs_prompt_submit" @click="generateResponse">
+                    <el-button class="fs_prompt_submit" @click="generateResponse(prompt)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                             <path d="M16.25 10.6875L4.02083 15.5833C3.77083 15.6806 3.53819 15.6563 3.32292 15.5104C3.10764 15.3646 3 15.1597 3 14.8958V5.10417C3 4.84028 3.10764 4.63542 3.32292 4.48959C3.53819 4.34375 3.77083 4.31945 4.02083 4.41667L16.25 9.3125C16.5694 9.4375 16.7292 9.66667 16.7292 10C16.7292 10.3333 16.5694 10.5625 16.25 10.6875ZM4.5 13.7708L13.9583 10L4.5 6.22917V8.5L9 10L4.5 11.5V13.7708Z" fill="#525866"/>
                         </svg>
@@ -102,6 +102,7 @@ export default {
 
         const state = reactive({
             prompt: '',
+            presetPrompt: '',
             aiResponse: '',
             loading: false,
             ticketID: parseInt(route.params.ticket_id),
@@ -167,10 +168,10 @@ export default {
             ];
         }
 
-        const generateResponse = () => {
+        const generateResponse = (prompt) => {
             state.loading = true;
             const requestData = {
-                content: state.prompt,
+                content: prompt,
                 id: state.ticketID,
                 type: props.type
             };
@@ -194,8 +195,9 @@ export default {
         const selectPresetPrompt = (preset) => {
             state.selectedPrompt = preset;
             const selectedPrompt = state.presetPrompts.find(item => item.text === preset.text);
-            state.prompt = `${selectedPrompt.description}`;
-            generateResponse();
+            state.presetPrompt = `${selectedPrompt.description}`;
+            state.prompt = '';
+            generateResponse(state.presetPrompt);
         };
 
         const isSelected = (prompt) => {

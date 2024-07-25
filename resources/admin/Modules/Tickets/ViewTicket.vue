@@ -53,6 +53,21 @@
                             </el-popover>
                         </li>
 
+                        <li :title="translate('AI Assistant ')">
+                            <el-dropdown trigger="click">
+                                <el-button type="primary">
+                                        AI Intelligence <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                </el-button>
+
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item @click="getTicketSummary">Ticket Summary</el-dropdown-item>
+                                        <el-dropdown-item @click="getCustomerSentiment">Customer Sentiment</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </li>
+
                     </ul>
                     <div class="fs_product">
                         <el-button v-loading="loading" @click="fetchTicket()"
@@ -322,6 +337,17 @@
                                 }}</span>
                         </div>
                     </div>
+                </div>
+                <div class="fs_intelligence" v-loading="ResponseLoader" v-if="!ResponseLoader">
+                    <div class="fs_intelligence_card__result" v-if="ticketSummary">
+                        <pre class="fs_generated_summary"> {{ ticketSummary}}</pre>
+                    </div>
+                    <div class="fs_intelligence_card__result" v-if="customerSentiment">
+                        <pre class="fs_generated_summary"> {{customerSentiment }}</pre>
+                    </div>
+                </div>
+                <div class="fs_ai_response_loading" v-if="ResponseLoader">
+                    <el-skeleton :rows="4" animated />
                 </div>
                 <create-response
                     v-if="show_response_box && ticket.status != 'closed'"
@@ -698,6 +724,9 @@ export default {
             TicketNotFound: [],
             show_fbs_add_task_modal: false,
             watcherIds: [],
+            ticketSummary: '',
+            customerSentiment: '',
+            ResponseLoader: false,
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -1213,6 +1242,44 @@ export default {
             return status;
         });
 
+        const getTicketSummary = () => {
+            state.ResponseLoader = true;
+            post(`chatGPT/${props.ticket_id}/get-ticket-summary`, {
+                type: 'ticketSummary'
+            })
+                .then(response => {
+                    state.ticketSummary = response;
+                    state.ResponseLoader = false;
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+        }
+
+        const getCustomerSentiment = () => {
+            state.ResponseLoader = true;
+            post(`chatGPT/${props.ticket_id}/get-ticket-tone`, {
+                type: 'ticketTone'
+            })
+                .then(response => {
+                    state.customerSentiment = response;
+                    state.ResponseLoader = false;
+                    notify({
+                        message: response.message,
+                        type: 'success',
+                        position: 'bottom-right'
+                    });
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+        }
+
         onMounted(() => {
             fetchTicket();
 
@@ -1262,7 +1329,9 @@ export default {
             getTextByPerson,
             approveDraftResponse,
             getStatusDisplayName,
-            afterCreatedTask
+            afterCreatedTask,
+            getTicketSummary,
+            getCustomerSentiment,
         }
     }
 }
@@ -1365,5 +1434,28 @@ i.dashicons.dashicons-randomize {
 }
 .fs_ticket_not_found_svg {
     margin-left: 100px;
+}
+.fs_AI_content_container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.fs_AI_content_body {
+    font-size: .5rem;
+    color: #0e121b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin: 0;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fs_ai_response_loading {
+    border: 1px solid #E1E4EA;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px;
 }
 </style>
