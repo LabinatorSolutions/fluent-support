@@ -12,6 +12,13 @@
                 <div class="fs_header_text">Ask AI about the ticket</div>
                 <div class="fs_description_text">Please insert modal description here.</div>
             </div>
+            <div class="fs_close">
+                <el-button class="fs_close_button" @click="closeModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9.99956 8.93949L13.7121 5.22699L14.7726 6.28749L11.0601 9.99999L14.7726 13.7125L13.7121 14.773L9.99956 11.0605L6.28706 14.773L5.22656 13.7125L8.93906 9.99999L5.22656 6.28749L6.28706 5.22699L9.99956 8.93949Z" fill="#525866"/>
+                    </svg>
+                </el-button>
+            </div>
         </div>
 
         <div class="fs_response_section">
@@ -204,6 +211,10 @@ export default {
             return state.selectedPrompt === prompt;
         };
 
+        const closeModal = () => {
+            emit('close');
+        }
+
         const copyText = async () => {
             try {
                 await navigator.clipboard.writeText(state.aiResponse);
@@ -238,7 +249,8 @@ export default {
             insertReply,
             cancelResponse,
             isSelected,
-            copyText
+            copyText,
+            closeModal
         };
     }
 }
@@ -353,6 +365,19 @@ export default {
 
 .fs_resize .fs_resize_button:hover {
     background: rgba(20, 46, 137, 0.16);
+}
+
+.fs_close .fs_close_button {
+    display: flex;
+    padding: 4px;
+    align-items: center;
+    gap: 10px;
+    border: 0px
+}
+
+.fs_close .fs_close_button:hover{
+    border-radius: 4px;
+    background: rgba(131, 148, 215, 0.16);
 }
 
 .fs_copy_text .fs_copy_text_button {
