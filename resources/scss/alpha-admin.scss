@@ -746,6 +746,8 @@ ul.fs_saved_replies {
     align-items: center;
     gap: 10px;
     border-radius: 6px;
+    border: rgba(255, 255, 255, 0);
+    background-color: rgba(255, 255, 255, 0);
 }
 
 .fs_response_actions .fs_regenerate .fs_regenerate_button:hover {
@@ -945,6 +947,16 @@ textarea {
     font: 400 14px/20px Inter, sans-serif;
     max-height: 180px;
     overflow-y: auto;
+}
+
+.fs_response_content p{
+    overflow: hidden;
+    color: #0E121B;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.084px;
 }
 
 .fs_response_content.full-size {
