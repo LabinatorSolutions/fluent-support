@@ -310,7 +310,7 @@ export default {
 
                     this.actionBarStyle = {
                         top: `${rectStart.top + 40}px`,
-                        left: `${rectStart.right - 20}px`,
+                        left: `${rectStart.right + 20}px`,
                         position: 'absolute',
                         zIndex: 1
                     };
