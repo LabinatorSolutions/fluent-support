@@ -242,6 +242,7 @@ export default {
 
         closeSelectedTextPromptBox() {
             this.showChatGPTPromptBox = false;
+            this.showActionBar = false;
         },
 
         closeAIResponsePromptBox() {
@@ -287,7 +288,7 @@ export default {
             this.$emit('update:modelValue', tinyInstance.getContent());
             this.showChatGPTPromptBox = false;
             this.showAIResponseBox = false;
-
+            this.showActionBar = false;
         },
 
         showActionBarOnSelection(editor) {
