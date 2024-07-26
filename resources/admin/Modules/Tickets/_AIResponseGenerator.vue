@@ -1,6 +1,6 @@
 <template>
     <div class="fs_container">
-        <div class="fs_response_header">
+        <div class="fs_ai_header_section">
             <div class="fs_icon_container">
                 <img
                     loading="lazy"
