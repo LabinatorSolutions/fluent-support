@@ -21,7 +21,16 @@
                     :visible="showAIResponseBox"
                 >
                     <template #reference>
-                        <el-button icon="MagicStick" @click="showAIResponseBox = !showAIResponseBox">
+                        <el-button class="fs_ai_response_button" @click="showAIResponseBox = !showAIResponseBox">
+                            <div>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                    <path d="M9.5 1L9.92326 2.87909C10.2823 4.47298 11.527 5.71767 13.1209 6.07671L15 6.5L13.1209 6.92329C11.527 7.28233 10.2823 8.52699 9.92326 10.1209L9.5 12L9.07674 10.1209C8.71766 8.52699 7.47301 7.28233 5.87911 6.92329L4 6.5L5.87911 6.07671C7.47294 5.71767 8.71766 4.47298 9.07674 2.8791L9.5 1Z" fill="white"/>
+                                    <path d="M4 9L4.23089 10.025C4.42673 10.8943 5.10565 11.5733 5.97502 11.7691L7 12L5.97502 12.2309C5.10565 12.4267 4.42673 13.1056 4.23089 13.975L4 15L3.76911 13.975C3.57327 13.1056 2.89435 12.4267 2.02496 12.2309L1 12L2.02496 11.7691C2.89435 11.5733 3.57327 10.8944 3.76911 10.025L4 9Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <p>
+                                Ask AI
+                            </p>
                         </el-button>
                     </template>
                     <div class="fs_template_inserter">
@@ -58,7 +67,7 @@
             v-model="plain_content"
             @click="updateCursorPos"
         ></textarea>
-        <div v-if="showActionBar" :style="actionBarStyle">
+        <div class="fs_ai_modify_response_box" v-if="showActionBar" :style="actionBarStyle">
             <el-popover
                 placement="bottom"
                 :width="480"
@@ -66,11 +75,10 @@
                 :visible="showChatGPTPromptBox"
             >
                 <template #reference>
-                    <el-button @click="editSelection()" size="small" type="default">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M11.6048 10.6479L9.81458 8.85764C9.57058 8.61364 9.44858 8.49164 9.31692 8.42639C9.0665 8.30229 8.7725 8.30229 8.522 8.42639C8.39042 8.49164 8.26839 8.61364 8.02436 8.85764C7.78032 9.10173 7.6583 9.22373 7.59307 9.35531C7.46898 9.60581 7.46898 9.89981 7.59307 10.1502C7.6583 10.2819 7.78032 10.4039 8.02436 10.6479L9.81458 12.4381M11.6048 10.6479L16.9757 16.0187C17.2197 16.2627 17.3417 16.3847 17.4069 16.5164C17.531 16.7668 17.531 17.0608 17.4069 17.3113C17.3417 17.4429 17.2197 17.5649 16.9757 17.809C16.7316 18.053 16.6096 18.175 16.478 18.2402C16.2275 18.3643 15.9335 18.3643 15.6831 18.2402C15.5514 18.175 15.4294 18.053 15.1854 17.809L9.81458 12.4381M11.6048 10.6479L9.81458 12.4381" stroke="#525866" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M14.1673 1.66669L14.413 2.33052C14.7351 3.201 14.8962 3.63623 15.2137 3.95373C15.5312 4.27123 15.9663 4.43228 16.8368 4.75438L17.5007 5.00002L16.8368 5.24566C15.9663 5.56776 15.5312 5.72882 15.2137 6.04631C14.8962 6.36381 14.7351 6.79904 14.413 7.66952L14.1673 8.33335L13.9217 7.66952C13.5996 6.79905 13.4385 6.36381 13.121 6.04631C12.8035 5.72881 12.3683 5.56776 11.4978 5.24566L10.834 5.00002L11.4978 4.75438C12.3683 4.43228 12.8035 4.27123 13.121 3.95373C13.4385 3.63623 13.5996 3.201 13.9217 2.33052L14.1673 1.66669Z" stroke="#525866" stroke-width="1.25" stroke-linejoin="round"/>
-                            <path d="M5 3.33331L5.18423 3.83119C5.42581 4.48404 5.5466 4.81047 5.78472 5.0486C6.02284 5.28671 6.34927 5.4075 7.00212 5.64908L7.5 5.83331L7.00212 6.01755C6.34927 6.25912 6.02284 6.37991 5.78472 6.61804C5.5466 6.85615 5.42581 7.18259 5.18423 7.83544L5 8.33331L4.81577 7.83544C4.57419 7.18259 4.4534 6.85615 4.21528 6.61804C3.97716 6.37991 3.65073 6.25912 2.99788 6.01755L2.5 5.83331L2.99788 5.64908C3.65073 5.4075 3.97716 5.28671 4.21528 5.04859C4.4534 4.81047 4.57419 4.48404 4.81577 3.83119L5 3.33331Z" stroke="#525866" stroke-width="1.25" stroke-linejoin="round"/>
+                    <el-button class="fs_ai_popover_button" @click="editSelection()" size="small" type="default">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                            <path d="M9.71345 0L10.1972 2.14753C10.6075 3.96911 12.03 5.39163 13.8516 5.80196L15.9992 6.28571L13.8516 6.76947C12.03 7.1798 10.6075 8.60227 10.1972 10.4239L9.71345 12.5714L9.22972 10.4239C8.81935 8.60227 7.39689 7.1798 5.57529 6.76947L3.42773 6.28571L5.57529 5.80196C7.3968 5.39163 8.81935 3.96911 9.22972 2.14754L9.71345 0Z" fill="white"/>
+                            <path d="M3.42857 9.14285L3.69244 10.3143C3.91626 11.3078 4.69217 12.0837 5.68574 12.3076L6.85714 12.5714L5.68574 12.8353C4.69217 13.0591 3.91626 13.835 3.69244 14.8286L3.42857 16L3.1647 14.8286C2.94088 13.835 2.16497 13.0591 1.17139 12.8353L0 12.5714L1.17139 12.3076C2.16497 12.0837 2.94088 11.3079 3.1647 10.3143L3.42857 9.14285Z" fill="white"/>
                         </svg>
                     </el-button>
                 </template>
@@ -311,7 +319,7 @@ export default {
 
                     this.actionBarStyle = {
                         top: `${rectStart.top + 40}px`,
-                        left: `${rectStart.right + 20}px`,
+                        left: `${rectStart.right + 30}px`,
                         position: 'absolute',
                         zIndex: 1
                     };
@@ -419,5 +427,60 @@ export default {
     padding: 5px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
+
+.fs_chatGPT_box .fs_ai_response_button {
+    align-items: center;
+    padding: 5px 6px;
+    height: 24px;
+    font-size: 0;
+    font-weight: 500;
+    line-height: 1.33;  /* Line height should be in decimal */
+    color: var(--static-static-white, #fff);
+    background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.16) 0%,
+            rgba(255, 255, 255, 0) 100%
+    ), var(--bg-strong-950, #0e121b);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: var(--radius-4, 4px);
+    box-shadow:
+        0px 1px 2px 0px rgba(27, 28, 29, 0.48),
+        0px 0px 0px 1px #242628;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.fs_chatGPT_box .fs_ai_response_button span {
+    display: flex;
+    justify-content: space-between;
+    gap: 7px;
+}
+
+.fs_chatGPT_box .fs_ai_response_button p {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.33;
+}
+
+.fs_chatGPT_box .fs_ai_response_button:hover {
+    background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.32) 0%,
+            rgba(255, 255, 255, 0.16) 100%
+    ), var(--bg-strong-950, #0e121b);
+    box-shadow:
+        0px 2px 4px 0px rgba(27, 28, 29, 0.64),
+        0px 0px 0px 1px #3a3b3d;
+}
+
+.fs_ai_modify_response_box .fs_ai_popover_button {
+    padding: 6px;
+    gap: 10px;
+    border-radius: 50%;
+    background: #0E121B;
+    height: 30px;
+    width: 30px;
+
+}
+
 
 </style>
