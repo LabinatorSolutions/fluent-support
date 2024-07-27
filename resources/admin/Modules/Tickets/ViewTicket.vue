@@ -343,10 +343,52 @@
                 </div>
                 <div class="fs_intelligence" v-loading="ResponseLoader" v-if="!ResponseLoader">
                     <div class="fs_intelligence_card__result" v-if="ticketSummary">
-                        <pre class="fs_generated_summary"> {{ ticketSummary}}</pre>
+                        <div class="fs_generated_summary">
+                            <div>
+                                <strong>Ticket Summary:</strong>
+                                <p>{{ ticketSummary}}</p>
+                            </div>
+                            <div class="fs_ai_response_actions">
+                                <div class="fs_ai_regenerate">
+                                    <el-button class="fs_ai_regenerate_button" @click="getTicketSummary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                            <path d="M5.09725 4.32476C6.45817 3.1455 8.19924 2.4975 10 2.50001C14.1423 2.50001 17.5 5.85776 17.5 10C17.5 11.602 16.9975 13.087 16.1425 14.305L13.75 10H16C16.0001 8.82373 15.6544 7.67336 15.006 6.69195C14.3576 5.71054 13.4349 4.94138 12.3529 4.4801C11.2708 4.01882 10.077 3.88578 8.91997 4.09752C7.7629 4.30926 6.69359 4.85643 5.845 5.67101L5.09725 4.32476ZM14.9028 15.6753C13.5418 16.8545 11.8008 17.5025 10 17.5C5.85775 17.5 2.5 14.1423 2.5 10C2.5 8.39801 3.0025 6.91301 3.8575 5.69501L6.25 10H4C3.9999 11.1763 4.34556 12.3267 4.994 13.3081C5.64244 14.2895 6.56505 15.0586 7.64712 15.5199C8.72918 15.9812 9.92296 16.1142 11.08 15.9025C12.2371 15.6908 13.3064 15.1436 14.155 14.329L14.9028 15.6753Z" fill="#335CFF"/>
+                                        </svg>
+                                    </el-button>
+                                </div>
+                                <div class="fs_ai_response_close">
+                                    <el-button class="fs_ai_response_close_button" @click="closeAIResponse">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                            <path d="M9.99956 8.93949L13.7121 5.22699L14.7726 6.28749L11.0601 9.99999L14.7726 13.7125L13.7121 14.773L9.99956 11.0605L6.28706 14.773L5.22656 13.7125L8.93906 9.99999L5.22656 6.28749L6.28706 5.22699L9.99956 8.93949Z" fill="#525866"/>
+                                        </svg>
+                                    </el-button>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="fs_intelligence_card__result" v-if="customerSentiment">
-                        <pre class="fs_generated_summary"> {{customerSentiment }}</pre>
+                        <div class="fs_customer_sentiment">
+                            <div>
+                                <div> {{customerSentiment }}</div>
+                            </div>
+                            <div class="fs_ai_response_actions">
+                            <div class="fs_ai_regenerate">
+                                <el-button class="fs_ai_regenerate_button" @click="getCustomerSentiment">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M5.09725 4.32476C6.45817 3.1455 8.19924 2.4975 10 2.50001C14.1423 2.50001 17.5 5.85776 17.5 10C17.5 11.602 16.9975 13.087 16.1425 14.305L13.75 10H16C16.0001 8.82373 15.6544 7.67336 15.006 6.69195C14.3576 5.71054 13.4349 4.94138 12.3529 4.4801C11.2708 4.01882 10.077 3.88578 8.91997 4.09752C7.7629 4.30926 6.69359 4.85643 5.845 5.67101L5.09725 4.32476ZM14.9028 15.6753C13.5418 16.8545 11.8008 17.5025 10 17.5C5.85775 17.5 2.5 14.1423 2.5 10C2.5 8.39801 3.0025 6.91301 3.8575 5.69501L6.25 10H4C3.9999 11.1763 4.34556 12.3267 4.994 13.3081C5.64244 14.2895 6.56505 15.0586 7.64712 15.5199C8.72918 15.9812 9.92296 16.1142 11.08 15.9025C12.2371 15.6908 13.3064 15.1436 14.155 14.329L14.9028 15.6753Z" fill="#335CFF"/>
+                                    </svg>
+                                </el-button>
+                            </div>
+                            <div class="fs_ai_response_close" >
+                                <el-button class="fs_ai_response_close_button" @click="closeAIResponse">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M9.99956 8.93949L13.7121 5.22699L14.7726 6.28749L11.0601 9.99999L14.7726 13.7125L13.7121 14.773L9.99956 11.0605L6.28706 14.773L5.22656 13.7125L8.93906 9.99999L5.22656 6.28749L6.28706 5.22699L9.99956 8.93949Z" fill="#525866"/>
+                                    </svg>
+                                </el-button>
+                            </div>
+                        </div>
+                        </div>
                     </div>
                 </div>
                 <div class="fs_ai_response_loading" v-if="ResponseLoader">
@@ -1245,6 +1287,11 @@ export default {
             return status;
         });
 
+        const closeAIResponse = () => {
+            state.ticketSummary = '';
+            state.customerSentiment = '';
+        }
+
         const getTicketSummary = () => {
             state.ResponseLoader = true;
             post(`chatGPT/${props.ticket_id}/get-ticket-summary`, {
@@ -1252,12 +1299,8 @@ export default {
             })
                 .then(response => {
                     state.ticketSummary = response;
+                    state.customerSentiment = '';
                     state.ResponseLoader = false;
-                    notify({
-                        message: response.message,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -1270,13 +1313,18 @@ export default {
                 type: 'ticketTone'
             })
                 .then(response => {
-                    state.customerSentiment = response;
+                    let sentimentWithEmoji = response;
+                    if (response.includes('Positive')) {
+                        sentimentWithEmoji = '😀 Positive';
+                    } else if (response.includes('Neutral')) {
+                        sentimentWithEmoji = '😐 Neutral';
+                    } else if (response.includes('Negative')) {
+                        sentimentWithEmoji = '😡 Negative ';
+                    }
+
+                    state.customerSentiment = sentimentWithEmoji;
+                    state.ticketSummary= '';
                     state.ResponseLoader = false;
-                    notify({
-                        message: response.message,
-                        type: 'success',
-                        position: 'bottom-right'
-                    });
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -1335,6 +1383,7 @@ export default {
             afterCreatedTask,
             getTicketSummary,
             getCustomerSentiment,
+            closeAIResponse
         }
     }
 }
