@@ -938,18 +938,92 @@ ul.fs_tk_actions {
 }
 
 .fs_intelligence_card__result {
-    padding: 20px;
+    padding: 15px 25px;
+
+    .fs_shared_styles {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+        border-radius: 12px !important;
+        border: 1px solid #335CFF !important;
+        background: #F5F7FA !important;
+        box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
+        display: flex;
+        justify-content: space-between;
+    }
 
     .fs_generated_summary {
-        font-size: 14px;
-        font-family: sens-serif;
+        @extend .fs_shared_styles;
         line-height: 1.5;
         overflow: auto;
         white-space: pre-wrap;
         word-wrap: break-word;
-        border: 1px solid #335CFF !important;
-        border-radius: 6px;
-        background: rgba(71, 108, 255, 0.10) !important;
+        padding: 16px;
+
+        p {
+            font-size: 14px !important;
+        }
+
+        strong {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
     }
+
+    .fs_customer_sentiment {
+        @extend .fs_shared_styles;
+        display: flex;
+        padding: 25px !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        font-size: 24px !important;
+        position: relative;
+
+        .fs_customer_sentiment_content {
+            text-align: center;
+            strong {
+                display: block;
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+        }
+
+        .fs_ai_response_actions {
+            display: flex;
+            position: absolute;
+            right: 12px;
+            top: 0;
+            gap: 8px;
+            align-items: center;
+        }
+    }
+
+    .fs_ai_response_actions {
+        display: flex;
+        gap: 5px;
+    }
+
+    .fs_ai_response_actions {
+        .fs_ai_regenerate,
+        .fs_ai_response_close {
+            .fs_ai_regenerate_button,
+            .fs_ai_response_close_button {
+                display: flex;
+                padding: 4px;
+                align-items: center;
+                gap: 10px;
+                border-radius: 6px;
+                border: none;
+                background-color: transparent;
+
+                &:hover {
+                    background: rgba(20, 46, 137, 0.16);
+                }
+            }
+        }
+    }
+
 }
+
+
 
