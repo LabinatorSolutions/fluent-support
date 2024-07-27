@@ -738,6 +738,9 @@ ul.fs_tk_actions {
                 background: #B9DAF9;
             }
         }
+        &.fs_ai_assistant {
+            padding: 5px 9px;
+        }
     }
 }
 
@@ -939,6 +942,7 @@ ul.fs_tk_actions {
 
     .fs_generated_summary {
         font-size: 14px;
+        font-family: sens-serif;
         line-height: 1.5;
         overflow: auto;
         white-space: pre-wrap;

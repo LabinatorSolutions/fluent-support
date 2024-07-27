@@ -53,10 +53,13 @@
                             </el-popover>
                         </li>
 
-                        <li :title="translate('AI Assistant ')">
+                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant">
                             <el-dropdown trigger="click">
-                                <el-button type="primary">
-                                        AI Intelligence <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                <el-button class="fs_ai_intelligent_button">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                        <path d="M12.1423 0L12.747 2.68442C13.2599 4.96139 15.038 6.73953 17.315 7.25245L19.9994 7.85714L17.315 8.46184C15.038 8.97475 13.2599 10.7528 12.747 13.0298L12.1423 15.7143L11.5376 13.0298C11.0247 10.7528 9.2466 8.97475 6.9696 8.46184L4.28516 7.85714L6.9696 7.25245C9.24649 6.73953 11.0247 4.96139 11.5376 2.68443L12.1423 0Z" fill="white"/>
+                                        <path d="M4.28571 11.4286L4.61555 12.8928C4.89532 14.1347 5.86521 15.1047 7.10717 15.3844L8.57143 15.7143L7.10717 16.0441C5.86521 16.3239 4.89532 17.2937 4.61555 18.5357L4.28571 20L3.95588 18.5357C3.67611 17.2937 2.70621 16.3239 1.46423 16.0441L0 15.7143L1.46423 15.3844C2.70621 15.1047 3.67611 14.1348 3.95588 12.8928L4.28571 11.4286Z" fill="white"/>
+                                    </svg>
                                 </el-button>
 
                                 <template #dropdown>
@@ -1457,5 +1460,22 @@ i.dashicons.dashicons-randomize {
     border-radius: 12px;
     padding: 20px;
     margin: 20px;
+}
+
+.fs_ai_intelligent_button {
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: #0e121b;
+    display: flex;
+    max-width: 36px;
+    padding: 4px 6px;
+    height: 33px;
+}
+
+.fs_ai_intelligent_button svg {
+    aspect-ratio: 1;
+    object-position: center;
+    width: 100%;
 }
 </style>
