@@ -56,10 +56,7 @@
                         <li :title="translate('AI Assistant ')" class="fs_ai_assistant" v-if="aiResponse">
                             <el-dropdown trigger="click">
                                 <el-button class="fs_ai_intelligent_button">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M12.1423 0L12.747 2.68442C13.2599 4.96139 15.038 6.73953 17.315 7.25245L19.9994 7.85714L17.315 8.46184C15.038 8.97475 13.2599 10.7528 12.747 13.0298L12.1423 15.7143L11.5376 13.0298C11.0247 10.7528 9.2466 8.97475 6.9696 8.46184L4.28516 7.85714L6.9696 7.25245C9.24649 6.73953 11.0247 4.96139 11.5376 2.68443L12.1423 0Z" fill="white"/>
-                                        <path d="M4.28571 11.4286L4.61555 12.8928C4.89532 14.1347 5.86521 15.1047 7.10717 15.3844L8.57143 15.7143L7.10717 16.0441C5.86521 16.3239 4.89532 17.2937 4.61555 18.5357L4.28571 20L3.95588 18.5357C3.67611 17.2937 2.70621 16.3239 1.46423 16.0441L0 15.7143L1.46423 15.3844C2.70621 15.1047 3.67611 14.1348 3.95588 12.8928L4.28571 11.4286Z" fill="white"/>
-                                    </svg>
+                                    <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
                                 </el-button>
 
                                 <template #dropdown>
@@ -351,16 +348,12 @@
                             <div class="fs_ai_response_actions">
                                 <div class="fs_ai_regenerate">
                                     <el-button class="fs_ai_regenerate_button" @click="getTicketSummary">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                            <path d="M5.09725 4.32476C6.45817 3.1455 8.19924 2.4975 10 2.50001C14.1423 2.50001 17.5 5.85776 17.5 10C17.5 11.602 16.9975 13.087 16.1425 14.305L13.75 10H16C16.0001 8.82373 15.6544 7.67336 15.006 6.69195C14.3576 5.71054 13.4349 4.94138 12.3529 4.4801C11.2708 4.01882 10.077 3.88578 8.91997 4.09752C7.7629 4.30926 6.69359 4.85643 5.845 5.67101L5.09725 4.32476ZM14.9028 15.6753C13.5418 16.8545 11.8008 17.5025 10 17.5C5.85775 17.5 2.5 14.1423 2.5 10C2.5 8.39801 3.0025 6.91301 3.8575 5.69501L6.25 10H4C3.9999 11.1763 4.34556 12.3267 4.994 13.3081C5.64244 14.2895 6.56505 15.0586 7.64712 15.5199C8.72918 15.9812 9.92296 16.1142 11.08 15.9025C12.2371 15.6908 13.3064 15.1436 14.155 14.329L14.9028 15.6753Z" fill="#335CFF"/>
-                                        </svg>
+                                        <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
                                     </el-button>
                                 </div>
                                 <div class="fs_ai_response_close">
                                     <el-button class="fs_ai_response_close_button" @click="closeAIResponse">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                            <path d="M9.99956 8.93949L13.7121 5.22699L14.7726 6.28749L11.0601 9.99999L14.7726 13.7125L13.7121 14.773L9.99956 11.0605L6.28706 14.773L5.22656 13.7125L8.93906 9.99999L5.22656 6.28749L6.28706 5.22699L9.99956 8.93949Z" fill="#525866"/>
-                                        </svg>
+                                        <img :src="appVars.asset_url + 'images/closeIcon.svg'" alt="">
                                     </el-button>
                                 </div>
                             </div>
@@ -373,21 +366,17 @@
                                 <div> {{customerSentiment }}</div>
                             </div>
                             <div class="fs_ai_response_actions">
-                            <div class="fs_ai_regenerate">
-                                <el-button class="fs_ai_regenerate_button" @click="getCustomerSentiment">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M5.09725 4.32476C6.45817 3.1455 8.19924 2.4975 10 2.50001C14.1423 2.50001 17.5 5.85776 17.5 10C17.5 11.602 16.9975 13.087 16.1425 14.305L13.75 10H16C16.0001 8.82373 15.6544 7.67336 15.006 6.69195C14.3576 5.71054 13.4349 4.94138 12.3529 4.4801C11.2708 4.01882 10.077 3.88578 8.91997 4.09752C7.7629 4.30926 6.69359 4.85643 5.845 5.67101L5.09725 4.32476ZM14.9028 15.6753C13.5418 16.8545 11.8008 17.5025 10 17.5C5.85775 17.5 2.5 14.1423 2.5 10C2.5 8.39801 3.0025 6.91301 3.8575 5.69501L6.25 10H4C3.9999 11.1763 4.34556 12.3267 4.994 13.3081C5.64244 14.2895 6.56505 15.0586 7.64712 15.5199C8.72918 15.9812 9.92296 16.1142 11.08 15.9025C12.2371 15.6908 13.3064 15.1436 14.155 14.329L14.9028 15.6753Z" fill="#335CFF"/>
-                                    </svg>
-                                </el-button>
+                                <div class="fs_ai_regenerate">
+                                    <el-button class="fs_ai_regenerate_button" @click="getCustomerSentiment">
+                                        <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
+                                    </el-button>
+                                </div>
+                                <div class="fs_ai_response_close" >
+                                    <el-button class="fs_ai_response_close_button" @click="closeAIResponse">
+                                        <img :src="appVars.asset_url + 'images/closeIcon.svg'" alt="">
+                                    </el-button>
+                                </div>
                             </div>
-                            <div class="fs_ai_response_close" >
-                                <el-button class="fs_ai_response_close_button" @click="closeAIResponse">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                        <path d="M9.99956 8.93949L13.7121 5.22699L14.7726 6.28749L11.0601 9.99999L14.7726 13.7125L13.7121 14.773L9.99956 11.0605L6.28706 14.773L5.22656 13.7125L8.93906 9.99999L5.22656 6.28749L6.28706 5.22699L9.99956 8.93949Z" fill="#525866"/>
-                                    </svg>
-                                </el-button>
-                            </div>
-                        </div>
                         </div>
                     </div>
                 </div>
@@ -1536,9 +1525,10 @@ i.dashicons.dashicons-randomize {
     height: 33px;
 }
 
-.fs_ai_intelligent_button svg {
-    aspect-ratio: 1;
-    object-position: center;
-    width: 100%;
+.fs_ai_intelligent_button img {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
 }
+
 </style>

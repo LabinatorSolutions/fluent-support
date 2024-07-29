@@ -23,10 +23,7 @@
                     <template #reference>
                         <el-button class="fs_ai_response_button" @click="showAIResponseBox = !showAIResponseBox">
                             <div>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                    <path d="M9.5 1L9.92326 2.87909C10.2823 4.47298 11.527 5.71767 13.1209 6.07671L15 6.5L13.1209 6.92329C11.527 7.28233 10.2823 8.52699 9.92326 10.1209L9.5 12L9.07674 10.1209C8.71766 8.52699 7.47301 7.28233 5.87911 6.92329L4 6.5L5.87911 6.07671C7.47294 5.71767 8.71766 4.47298 9.07674 2.8791L9.5 1Z" fill="white"/>
-                                    <path d="M4 9L4.23089 10.025C4.42673 10.8943 5.10565 11.5733 5.97502 11.7691L7 12L5.97502 12.2309C5.10565 12.4267 4.42673 13.1056 4.23089 13.975L4 15L3.76911 13.975C3.57327 13.1056 2.89435 12.4267 2.02496 12.2309L1 12L2.02496 11.7691C2.89435 11.5733 3.57327 10.8944 3.76911 10.025L4 9Z" fill="white"/>
-                                </svg>
+                                <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
                             </div>
                             <p>
                                 Ask AI
@@ -35,7 +32,7 @@
                     </template>
                     <div class="fs_template_inserter">
                         <div>
-                            <AIResponseGenerator type="ticketResponse" @close="closeAIResponsePromptBox" @insert="insertAIResponse"/>
+                            <AIResponseGenerator type="createResponse" @close="closeAIResponsePromptBox" @insert="insertAIResponse"/>
                         </div>
                     </div>
                 </el-popover>
@@ -76,10 +73,7 @@
             >
                 <template #reference>
                     <el-button class="fs_ai_popover_button" @click="editSelection()" size="small" type="default">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <path d="M9.71345 0L10.1972 2.14753C10.6075 3.96911 12.03 5.39163 13.8516 5.80196L15.9992 6.28571L13.8516 6.76947C12.03 7.1798 10.6075 8.60227 10.1972 10.4239L9.71345 12.5714L9.22972 10.4239C8.81935 8.60227 7.39689 7.1798 5.57529 6.76947L3.42773 6.28571L5.57529 5.80196C7.3968 5.39163 8.81935 3.96911 9.22972 2.14754L9.71345 0Z" fill="white"/>
-                            <path d="M3.42857 9.14285L3.69244 10.3143C3.91626 11.3078 4.69217 12.0837 5.68574 12.3076L6.85714 12.5714L5.68574 12.8353C4.69217 13.0591 3.91626 13.835 3.69244 14.8286L3.42857 16L3.1647 14.8286C2.94088 13.835 2.16497 13.0591 1.17139 12.8353L0 12.5714L1.17139 12.3076C2.16497 12.0837 2.94088 11.3079 3.1647 10.3143L3.42857 9.14285Z" fill="white"/>
-                        </svg>
+                        <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
                     </el-button>
                 </template>
                 <div class="fs_template_inserter">
@@ -100,6 +94,7 @@ export default {
         TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined,
         AIResponseGenerator: () => import('../Modules/Tickets/_AIResponseGenerator'),
     },
+
     props: {
         editor_id: {
             type: String,
@@ -197,7 +192,8 @@ export default {
             showChatGPTPromptBox: false,
             showAIResponseBox: false,
             selectedText: '',
-            editorData: {}
+            editorData: {},
+            appVars: this.appVars,
         }
     },
     watch: {
@@ -479,8 +475,6 @@ export default {
     background: #0E121B;
     height: 30px;
     width: 30px;
-
 }
-
 
 </style>

@@ -63,5 +63,8 @@
     "/assets/images/regenerate.svg": "/assets/images/regenerate.svg",
     "/assets/images/resize.svg": "/assets/images/resize.svg",
     "/assets/images/aiMagicIcon.svg": "/assets/images/aiMagicIcon.svg",
-    "/assets/images/closeIcon.svg": "/assets/images/closeIcon.svg"
+    "/assets/images/closeIcon.svg": "/assets/images/closeIcon.svg",
+    "/assets/images/aiButton.svg": "/assets/images/aiButton.svg",
+    "/assets/images/aiIcon.svg": "/assets/images/aiIcon.svg",
+    "/assets/images/aiPromptSubmitButton.svg": "/assets/images/aiPromptSubmitButton.svg"
 }
