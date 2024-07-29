@@ -4,7 +4,7 @@
             <div class="fs_icon_container">
                 <img
                     loading="lazy"
-                    src="https://cdn.builder.io/api/v1/image/assets/TEMP/cbcacd463bd04094b1ddbaa792ad822f4033c6b88e47146e4f3f8cb7260a55b8?"
+                    :src="appVars.asset_url + 'images/aiMagicIcon.svg'"
                     class="fs_icon"
                 />
             </div>
@@ -14,9 +14,7 @@
             </div>
             <div class="fs_close">
                 <el-button class="fs_close_button" @click="closeModal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                        <path d="M9.99956 8.93949L13.7121 5.22699L14.7726 6.28749L11.0601 9.99999L14.7726 13.7125L13.7121 14.773L9.99956 11.0605L6.28706 14.773L5.22656 13.7125L8.93906 9.99999L5.22656 6.28749L6.28706 5.22699L9.99956 8.93949Z" fill="#525866"/>
-                    </svg>
+                    <img :src="appVars.asset_url + 'images/closeIcon.svg'" alt="">
                 </el-button>
             </div>
         </div>
@@ -26,25 +24,19 @@
                 <div class="fs_response_header">
                     <div class="fs_resize">
                         <el-button class="fs_resize_button" text @click="isFullSize = !isFullSize">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M16 3.25H17.5V7.75H16V4.75H13V3.25H16ZM4 3.25H7V4.75H4V7.75H2.5V3.25H4ZM16 15.25V12.25H17.5V16.75H13V15.25H16ZM4 15.25H7V16.75H2.5V12.25H4V15.25Z" fill="#525866"/>
-                            </svg>
+                            <img :src="appVars.asset_url + 'images/resize.svg'" alt="">
                         </el-button>
                     </div>
                     <div class="fs_response_actions">
                         <div class="fs_copy_text">
                             <el-button class="fs_copy_text_button" text @click="copyText">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M6.25 5.5V3.25C6.25 3.05109 6.32902 2.86032 6.46967 2.71967C6.61032 2.57902 6.80109 2.5 7 2.5H16C16.1989 2.5 16.3897 2.57902 16.5303 2.71967C16.671 2.86032 16.75 3.05109 16.75 3.25V13.75C16.75 13.9489 16.671 14.1397 16.5303 14.2803C16.3897 14.421 16.1989 14.5 16 14.5H13.75V16.75C13.75 17.164 13.4125 17.5 12.9948 17.5H4.00525C3.90635 17.5006 3.8083 17.4816 3.71674 17.4442C3.62519 17.4068 3.54192 17.3517 3.47174 17.282C3.40156 17.2123 3.34584 17.1294 3.30779 17.0381C3.26974 16.9468 3.2501 16.8489 3.25 16.75L3.25225 6.25C3.25225 5.836 3.58975 5.5 4.0075 5.5H6.25ZM4.75225 7L4.75 16H12.25V7H4.75225ZM7.75 5.5H13.75V13H15.25V4H7.75V5.5Z" fill="#525866"/>
-                                </svg>
+                                <img :src="appVars.asset_url + 'images/copyText.svg'" alt="">
                             </el-button>
                         </div>
 
                         <div class="fs_regenerate">
                             <el-button class="fs_regenerate_button" @click="generateResponse">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M5.09725 4.32476C6.45817 3.1455 8.19924 2.4975 10 2.50001C14.1423 2.50001 17.5 5.85776 17.5 10C17.5 11.602 16.9975 13.087 16.1425 14.305L13.75 10H16C16.0001 8.82373 15.6544 7.67336 15.006 6.69195C14.3576 5.71054 13.4349 4.94138 12.3529 4.4801C11.2708 4.01882 10.077 3.88578 8.91997 4.09752C7.7629 4.30926 6.69359 4.85643 5.845 5.67101L5.09725 4.32476ZM14.9028 15.6753C13.5418 16.8545 11.8008 17.5025 10 17.5C5.85775 17.5 2.5 14.1423 2.5 10C2.5 8.39801 3.0025 6.91301 3.8575 5.69501L6.25 10H4C3.9999 11.1763 4.34556 12.3267 4.994 13.3081C5.64244 14.2895 6.56505 15.0586 7.64712 15.5199C8.72918 15.9812 9.92296 16.1142 11.08 15.9025C12.2371 15.6908 13.3064 15.1436 14.155 14.329L14.9028 15.6753Z" fill="#335CFF"/>
-                                </svg>
+                                <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
                             </el-button>
                         </div>
 
@@ -103,7 +95,7 @@ export default {
     name: 'AIResponseGenerator',
     props: ['selectedText', 'type'],
     setup(props, context) {
-        const { post, translate, handleError } = useFluentHelper();
+        const { post, translate, handleError, appVars } = useFluentHelper();
         const route = useRoute();
         const emit = context.emit;
         const { notify } = useNotify();
@@ -257,7 +249,8 @@ export default {
             insertReply,
             isSelected,
             copyText,
-            closeModal
+            closeModal,
+            appVars
         };
     }
 }
