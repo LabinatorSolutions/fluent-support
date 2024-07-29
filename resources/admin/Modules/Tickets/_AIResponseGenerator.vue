@@ -43,7 +43,7 @@
                         </div>
 
                         <div class="fs_response_insert_button">
-                            <el-button class="fs_insert_button"  @click="insertReply(aiResponse)">Insert Response</el-button>
+                            <el-button class="fs_insert_button"  @click="insertReply(aiResponse)">{{translate('Insert Content')}}</el-button>
                         </div>
                     </div>
                 </div>
