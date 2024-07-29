@@ -775,7 +775,7 @@ ul.fs_saved_replies {
 
 .fs_prompt_button {
     position: absolute;
-    bottom: 10px;
+    bottom: 15px;
     right: 10px;
 }
 
@@ -795,8 +795,8 @@ ul.fs_saved_replies {
     background: #0E121B;
 }
 
-.fs_prompt_button .fs_prompt_submit:hover svg path {
-    fill: #FFF;
+.fs_prompt_button .fs_prompt_submit:hover img {
+    filter: brightness(0) invert(1);
 }
 
 .fs_response_actions .fs_regenerate .fs_regenerate_button {

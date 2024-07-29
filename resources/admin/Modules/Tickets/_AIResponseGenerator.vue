@@ -59,9 +59,7 @@
                 <textarea v-model="prompt" rows="3" placeholder="Enter your prompt here..." class="fs_textarea"></textarea>
                 <div class="fs_prompt_button">
                     <el-button class="fs_prompt_submit" @click="generateResponse(prompt)">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                            <path d="M16.25 10.6875L4.02083 15.5833C3.77083 15.6806 3.53819 15.6563 3.32292 15.5104C3.10764 15.3646 3 15.1597 3 14.8958V5.10417C3 4.84028 3.10764 4.63542 3.32292 4.48959C3.53819 4.34375 3.77083 4.31945 4.02083 4.41667L16.25 9.3125C16.5694 9.4375 16.7292 9.66667 16.7292 10C16.7292 10.3333 16.5694 10.5625 16.25 10.6875ZM4.5 13.7708L13.9583 10L4.5 6.22917V8.5L9 10L4.5 11.5V13.7708Z" fill="#525866"/>
-                        </svg>
+                        <img :src="appVars.asset_url + 'images/aiPromptSubmitButton.svg'" alt="">
                     </el-button>
                 </div>
             </div>
@@ -86,16 +84,15 @@
 </template>
 
 <script>
-import { reactive, toRefs } from "vue";
+import { reactive, toRefs, onMounted } from "vue";
 import { useRoute } from "vue-router";
-import {useConfirm, useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
-import { ElMessage } from 'element-plus'
+import { useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'AIResponseGenerator',
     props: ['selectedText', 'type'],
     setup(props, context) {
-        const { post, translate, handleError, appVars } = useFluentHelper();
+        const { post, get, translate, handleError, appVars } = useFluentHelper();
         const route = useRoute();
         const emit = context.emit;
         const { notify } = useNotify();
@@ -109,64 +106,8 @@ export default {
             selectedText: props.selectedText,
             selectedPrompt: '',
             isFullSize: false,
-            presetPrompts: [
-                {
-                    label: 'Improve Writing',
-                    text: 'shorten',
-                    description: 'Use AI to make your text more concise and to the point, without losing its essence.'
-                },
-                {
-                    label: 'Fix Spelling & Grammar',
-                    text: 'lengthen',
-                    description: 'AI will correct spelling mistakes and grammar errors, ensuring your text is polished and professional.'
-                },
-                {
-                    label: 'Make Shorter',
-                    text: 'friendly',
-                    description: 'AI will adjust your text to be more casual and approachable, suitable for informal communications.'
-                },
-                {
-                    label: 'Make Longer',
-                    text: 'professional',
-                    description: 'Extend your text with additional details and refined language to enhance its formality and depth.'
-                },
-                {
-                    label: 'Simplify Language',
-                    text: 'simplify',
-                    description: 'AI will simplify complex language to make your text easier to understand, suitable for broader audiences.'
-                }
-            ]
-        });
-
-        if (props.type === 'ticketResponse') {
-            state.presetPrompts = [
-                {
-                    label: 'Request More Information',
-                    text: 'requestInfo',
-                    description: 'Ask for more details or clarification regarding the issue raised in the ticket.'
-                },
-                {
-                    label: 'Acknowledge Issue',
-                    text: 'acknowledgeIssue',
-                    description: 'Acknowledge the issue reported and assure the customer that it is being looked into.'
-                },
-                {
-                    label: 'Provide Solution',
-                    text: 'provideSolution',
-                    description: 'Give a detailed solution to the problem mentioned in the ticket.'
-                },
-                {
-                    label: 'Follow Up',
-                    text: 'followUp',
-                    description: 'Follow up with the customer to check if the issue has been resolved satisfactorily.'
-                },
-                {
-                    label: 'Close Ticket',
-                    text: 'closeTicket',
-                    description: 'Inform the customer that the ticket is being closed due to resolution of the issue.'
-                }
-            ];
-        }
+            presetPrompts: [],
+        })
 
         const generateResponse = (prompt) => {
             state.loading = true;
@@ -176,7 +117,7 @@ export default {
                 type: props.type
             };
 
-            if (props.type !== 'ticketResponse') {
+            if (props.type !== 'createResponse') {
                 requestData.selectedText = props.selectedText;
                 requestData.type = props.type;
             }
@@ -240,6 +181,20 @@ export default {
             emit('insert', aiResponse);
             resetData();
         };
+
+        const fetchPresets = () => {
+            get('chatGPT/preset-prompts', {type : props.type})
+                .then(response => {
+                    state.presetPrompts = response;
+                })
+                .catch(errors => {
+                    handleError(errors);
+                });
+        };
+
+        onMounted(()=>{
+            fetchPresets();
+        })
 
         return {
             ...toRefs(state),

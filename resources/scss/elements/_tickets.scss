@@ -995,6 +995,7 @@ ul.fs_tk_actions {
             top: 0;
             gap: 8px;
             align-items: center;
+            padding: 5px;
         }
     }
 
@@ -1015,10 +1016,14 @@ ul.fs_tk_actions {
                 border-radius: 6px;
                 border: none;
                 background-color: transparent;
-
+                img {
+                    width: 16px;
+                    height: 16px;
+                }
                 &:hover {
                     background: rgba(20, 46, 137, 0.16);
                 }
+
             }
         }
     }
