@@ -67,7 +67,7 @@
             v-model="plain_content"
             @click="updateCursorPos"
         ></textarea>
-        <div class="fs_ai_modify_response_box" v-if="showActionBar" :style="actionBarStyle">
+        <div class="fs_ai_modify_response_box" v-if="showActionBar && aiResponse" :style="actionBarStyle">
             <el-popover
                 placement="bottom"
                 :width="480"
@@ -434,25 +434,25 @@ export default {
     height: 24px;
     font-size: 0;
     font-weight: 500;
-    line-height: 1.33;  /* Line height should be in decimal */
-    color: var(--static-static-white, #fff);
+    line-height: 1.33;
+    color: #fff;
     background: linear-gradient(
             180deg,
             rgba(255, 255, 255, 0.16) 0%,
             rgba(255, 255, 255, 0) 100%
-    ), var(--bg-strong-950, #0e121b);
+    ), #0e121b;
     border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: var(--radius-4, 4px);
+    border-radius: 4px;
     box-shadow:
-        0px 1px 2px 0px rgba(27, 28, 29, 0.48),
-        0px 0px 0px 1px #242628;
+        0 1px 2px 0 rgba(27, 28, 29, 0.48),
+        0 0 0 1px #242628;
     transition: background 0.3s, box-shadow 0.3s;
 }
 
 .fs_chatGPT_box .fs_ai_response_button span {
     display: flex;
     justify-content: space-between;
-    gap: 7px;
+    gap: 4px;
 }
 
 .fs_chatGPT_box .fs_ai_response_button p {
@@ -466,7 +466,7 @@ export default {
             180deg,
             rgba(255, 255, 255, 0.32) 0%,
             rgba(255, 255, 255, 0.16) 100%
-    ), var(--bg-strong-950, #0e121b);
+    ), #0e121b;
     box-shadow:
         0px 2px 4px 0px rgba(27, 28, 29, 0.64),
         0px 0px 0px 1px #3a3b3d;
