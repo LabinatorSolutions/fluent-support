@@ -822,7 +822,7 @@ export default {
         };
 
         const fetchChatGPTAPI = () => {
-            get("settings/chat-gpt-integration")
+            get("settings/chatGPT-integration")
                 .then((response) => {
                     state.apiKey = response.api_key;
                     state.aiResponse = !!state.apiKey;
