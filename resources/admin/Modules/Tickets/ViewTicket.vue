@@ -53,7 +53,7 @@
                             </el-popover>
                         </li>
 
-                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant">
+                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant" v-if="aiResponse">
                             <el-dropdown trigger="click">
                                 <el-button class="fs_ai_intelligent_button">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -401,6 +401,7 @@
                     @close="show_response_box = ''"
                     :type="show_response_box"
                     :draft="draft"
+                    :aiResponse="aiResponse"
                     @discardDraft="discardDraft"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
@@ -772,6 +773,8 @@ export default {
             ticketSummary: '',
             customerSentiment: '',
             ResponseLoader: false,
+            apiKey: '',
+            aiResponse: false,
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -828,6 +831,17 @@ export default {
                     handleError(error);
                 })
         };
+
+        const fetchChatGPTAPI = () => {
+            get("settings/chat-gpt-integration")
+                .then((response) => {
+                    state.apiKey = response.api_key;
+                    state.aiResponse = !!state.apiKey;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                });
+        }
 
         const getTextByPerson = (conversation, ticket) => {
             if (conversation?.conversation_type === 'draft_response') {
@@ -1332,8 +1346,8 @@ export default {
         }
 
         onMounted(() => {
+            fetchChatGPTAPI();
             fetchTicket();
-
             if (appVars.enable_draft_mode === 'yes') {
                 fetchDraft();
             }
