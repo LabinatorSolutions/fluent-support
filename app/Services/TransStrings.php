@@ -166,6 +166,7 @@ class TransStrings
             'Max Waiting'    => __('Max Waiting', 'fluent-support'),
             'Today'    => __('Today', 'fluent-support'),
             'Yesterday'    => __('Yesterday', 'fluent-support'),
+            'Insert Content'    => __('Insert Content', 'fluent-support'),
             'Yes'       => __('Yes', 'fluent-support'),
             'Enhance Responses with AI' => __('Enhance Responses with AI', 'fluent-support'),
             'Refine ticket responses with ChatGPT to enhance clarity and precision.'    => __('Refine ticket responses with ChatGPT to enhance clarity and precision.', 'fluent-support'),
