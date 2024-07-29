@@ -8,10 +8,12 @@
                     class="fs_icon"
                 />
             </div>
+
             <div class="fs_text_container">
-                <div class="fs_header_text">Ask AI about the ticket</div>
-                <div class="fs_description_text">Please insert modal description here.</div>
+                <div class="fs_header_text">{{ translate(title) }}</div>
+                <div class="fs_description_text">{{ translate(description) }}</div>
             </div>
+
             <div class="fs_close">
                 <el-button class="fs_close_button" @click="closeModal">
                     <img :src="appVars.asset_url + 'images/closeIcon.svg'" alt="">
@@ -64,7 +66,7 @@
                 </div>
             </div>
             <div>
-                <div class="fs_prompt_subtitle">Some Popular Prompts</div>
+                <div class="fs_prompt_subtitle">{{translate('SOME General PROMPTS')}}</div>
                 <div class="fs_prompt_options_container">
                     <div
                         v-for="prompt in presetPrompts"
@@ -84,7 +86,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted } from "vue";
+import { reactive, toRefs, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
@@ -107,7 +109,21 @@ export default {
             selectedPrompt: '',
             isFullSize: false,
             presetPrompts: [],
-        })
+        });
+
+        const modifyResponseTitle = 'Enhance Responses with AI';
+        const modifyResponseDescription = 'Refine ticket responses with ChatGPT to enhance clarity and precision.';
+
+        const generateResponseTitle = 'Generate Responses with AI';
+        const generateResponseDescription = 'Let ChatGPT generate ticket responses to enhance support efficiency.';
+
+        const title = computed(() =>
+            props.type === 'modifyResponse' ? modifyResponseTitle : generateResponseTitle
+        );
+
+        const description = computed(() =>
+            props.type === 'modifyResponse' ? modifyResponseDescription : generateResponseDescription
+        );
 
         const generateResponse = (prompt) => {
             state.loading = true;
@@ -205,7 +221,9 @@ export default {
             isSelected,
             copyText,
             closeModal,
-            appVars
+            appVars,
+            title,
+            description
         };
     }
 }
