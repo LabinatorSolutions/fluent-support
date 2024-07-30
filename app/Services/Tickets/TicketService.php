@@ -234,11 +234,12 @@ class TicketService
      */
     public function delete($ticket)
     {
-        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+        $deletePermission = PermissionManager::currentUserCan('fst_delete_tickets');
         $agent = Helper::getAgentByUserId();
-        if (!$hasAllPermission && $ticket->agent_id != $agent->id) {
+        if (!$deletePermission && $ticket->agent_id != $agent->id) {
             throw new \Exception(__('You are not allowed to delete this ticket', 'fluent-support'));
         }
+
         $ticketData = [
             'id'    => $ticket->id,
             'title' => $ticket->title
