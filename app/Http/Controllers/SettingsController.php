@@ -320,6 +320,32 @@ class SettingsController extends Controller
     {
         $data = $request->get();
 
+        $apiKey = sanitize_text_field($data['api_key']);
+
+        $response = wp_remote_get('https://api.openai.com/v1/models', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type' => 'application/json'
+            ]
+        ]);
+
+        // Check if the request is a WP_Error
+        if (is_wp_error($response)) {
+            return $this->sendError([
+                'message' => __('There was an error verifying the API key.', 'fluent-support'),
+            ]);
+        }
+
+        // Decode the response body
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        // Check if the API key is invalid
+        if (isset($body['error'])) {
+            return $this->sendError([
+                'message' => __('Invalid API key. Please provide a valid ChatGPT API key.', 'fluent-support'),
+            ]);
+        }
+
         $chatGPTData = [
             'api_key'    => sanitize_text_field($data['api_key']),
         ];
@@ -346,6 +372,25 @@ class SettingsController extends Controller
         ]);
 
     }
+
+    public function disconnectChatGPT()
+    {
+        $deletedRecords = Meta::where([
+            'object_type' => '_fs_chatGPT_settings',
+            'key'         => '_fs_chatGPT_data',
+        ])->delete();
+
+        if ($deletedRecords) {
+            return $this->sendSuccess([
+                'message' => __('ChatGPT settings have been successfully disconnected.', 'fluent-support'),
+            ]);
+        } else {
+            return $this->sendError([
+                'message' => __('Failed to disconnect ChatGPT settings. No matching records found or an error occurred.', 'fluent-support'),
+            ]);
+        }
+    }
+
 
     public function getChatGPTSettings()
     {

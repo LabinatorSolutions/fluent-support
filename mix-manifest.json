@@ -56,5 +56,15 @@
     "/assets/images/sidebar-icon.svg": "/assets/images/sidebar-icon.svg",
     "/assets/images/ticketNotFound.svg": "/assets/images/ticketNotFound.svg",
     "/assets/libs/purify/purify.js": "/assets/libs/purify/purify.js",
-    "/assets/libs/purify/purify.min.js": "/assets/libs/purify/purify.min.js"
+    "/assets/libs/purify/purify.min.js": "/assets/libs/purify/purify.min.js",
+    "/assets/images/ChatGPTComponentIcons/regenarate.svg": "/assets/images/ChatGPTComponentIcons/regenarate.svg",
+    "/assets/images/ChatGPTComponentIcons/regenerate.svg": "/assets/images/ChatGPTComponentIcons/regenerate.svg",
+    "/assets/images/copyText.svg": "/assets/images/copyText.svg",
+    "/assets/images/regenerate.svg": "/assets/images/regenerate.svg",
+    "/assets/images/resize.svg": "/assets/images/resize.svg",
+    "/assets/images/aiMagicIcon.svg": "/assets/images/aiMagicIcon.svg",
+    "/assets/images/closeIcon.svg": "/assets/images/closeIcon.svg",
+    "/assets/images/aiButton.svg": "/assets/images/aiButton.svg",
+    "/assets/images/aiIcon.svg": "/assets/images/aiIcon.svg",
+    "/assets/images/aiPromptSubmitButton.svg": "/assets/images/aiPromptSubmitButton.svg"
 }
