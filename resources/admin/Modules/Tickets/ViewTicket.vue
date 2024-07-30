@@ -167,7 +167,7 @@
                                             {{ translate('Close Ticket Silently') }}
                                         </el-dropdown-item>
                                     </div>
-                                    <el-dropdown-item @click="deleteTicket()" v-loading="deleting">
+                                    <el-dropdown-item v-if="deleteTicketPermission" @click="deleteTicket()" v-loading="deleting">
                                         <el-icon>
                                             <Delete />
                                         </el-icon>
@@ -764,6 +764,7 @@ export default {
             ResponseLoader: false,
             apiKey: '',
             aiResponse: false,
+            deleteTicketPermission: false
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -789,6 +790,7 @@ export default {
                 state.conversations = response.responses;
                 state.draftReplyPermission = appVars.me.permissions.includes('fst_draft_reply');
                 state.draftReplyApprovePermission = appVars.me.permissions.includes('fst_approve_draft_reply');
+                state.deleteTicketPermission = appVars.me.permissions.includes('fst_delete_tickets');
 
                 if (appVars.fluentcrm_config) {
                     state.fluentcrm_profile = response.fluentcrm_profile;
