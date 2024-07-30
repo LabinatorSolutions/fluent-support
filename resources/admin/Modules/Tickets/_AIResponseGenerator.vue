@@ -66,7 +66,7 @@
                 </div>
             </div>
             <div>
-                <div class="fs_prompt_subtitle">{{translate('SOME General PROMPTS')}}</div>
+                <div class="fs_prompt_subtitle">{{translate('Some General Prompts')}}</div>
                 <div class="fs_prompt_options_container">
                     <div
                         v-for="prompt in presetPrompts"
@@ -143,7 +143,7 @@ export default {
                     state.aiResponse = response;
                     state.loading = false;
 
-                    if (state.prompt) {
+                    if (state.prompt || state.aiResponse) {
                         state.selectedPrompt = '';
                     }
                 })
