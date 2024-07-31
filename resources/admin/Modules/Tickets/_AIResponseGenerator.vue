@@ -21,6 +21,28 @@
             </div>
         </div>
 
+        <div class="fs_draft" v-if="draftData.length > 1">
+            <el-button class="fs_draft_button" @click="showDraft = !showDraft">
+                <span>{{translate('Draft')}}</span>
+                <img :class="['fs_draft_arrow', { 'rotate-down': showDraft }]" :src="appVars.asset_url + 'images/arrowRight.svg'" alt="">
+            </el-button>
+            <div>
+                <el-collapse-transition>
+                    <div class="fs_draft_widget" v-show="showDraft" >
+                        <div
+                            v-for="(draft, index) in draftData"
+                            :key="index"
+                            class="fs_draft_item"
+                            @click="selectDraft(draft)"
+                        >
+                            <h3>Draft {{index+1}}</h3>
+                            <p>{{ getSnippet(draft) }}</p>
+                        </div>
+                    </div>
+                </el-collapse-transition>
+            </div>
+        </div>
+
         <div class="fs_response_section">
             <div v-loading="loading" class="fs_response_container" v-if="aiResponse && !loading">
                 <div class="fs_response_header">
@@ -43,13 +65,13 @@
                         </div>
 
                         <div class="fs_response_insert_button">
-                            <el-button class="fs_insert_button"  @click="insertReply(aiResponse)">{{translate('Insert Content')}}</el-button>
+                            <el-button class="fs_insert_button" @click="insertReply(aiResponse)">{{ translate('Insert Content') }}</el-button>
                         </div>
                     </div>
                 </div>
-                    <div :class="['fs_response_content', { 'full-size': isFullSize }]">
-                        <p>{{ aiResponse }}</p>
-                    </div>
+                <div :class="['fs_response_content', { 'full-size': isFullSize }]">
+                    <p>{{ aiResponse }}</p>
+                </div>
             </div>
             <div class="fs_ai_response_loading" v-if="loading">
                 <el-skeleton :rows="4" animated />
@@ -66,7 +88,7 @@
                 </div>
             </div>
             <div>
-                <div class="fs_prompt_subtitle">{{translate('Some General Prompts')}}</div>
+                <div class="fs_prompt_subtitle">{{ translate('Some General Prompts') }}</div>
                 <div class="fs_prompt_options_container">
                     <div
                         v-for="prompt in presetPrompts"
@@ -75,7 +97,7 @@
                         @click="selectPresetPrompt(prompt)"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                            <circle cx="8" cy="8" r="2" :fill="isSelected(prompt) ? '#FFF' : '#717784'"/>
+                            <circle cx="8" cy="8" r="2" :fill="isSelected(prompt) ? '#FFF' : '#717784'" />
                         </svg>
                         <div class="fs_prompt_option_text">{{ prompt.label }}</div>
                     </div>
@@ -88,13 +110,13 @@
 <script>
 import { reactive, toRefs, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-import { useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
+import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'AIResponseGenerator',
     props: ['selectedText', 'type'],
     setup(props, context) {
-        const { post, get, translate, handleError, appVars } = useFluentHelper();
+        const { post, get, translate, handleError, appVars, saveData, getData, removeData } = useFluentHelper();
         const route = useRoute();
         const emit = context.emit;
         const { notify } = useNotify();
@@ -109,6 +131,8 @@ export default {
             selectedPrompt: '',
             isFullSize: false,
             presetPrompts: [],
+            draftData: [],
+            showDraft: false
         });
 
         const modifyResponseTitle = 'Enhance Responses with AI';
@@ -124,6 +148,17 @@ export default {
         const description = computed(() =>
             props.type === 'modifyResponse' ? modifyResponseDescription : generateResponseDescription
         );
+
+        const saveDraft = () => {
+            const draftKey = props.type === 'modifyResponse' ? 'modifyResponseDraft' : 'createResponseDraft';
+            const draft = JSON.parse(getData(draftKey)) || [];
+            if (draft.length >= 3) {
+                draft.shift();
+            }
+            draft.push(state.aiResponse);
+            saveData(draftKey, JSON.stringify(draft));
+            state.draftData = draft;
+        };
 
         const generateResponse = (prompt) => {
             state.loading = true;
@@ -142,9 +177,9 @@ export default {
                 .then(response => {
                     state.aiResponse = response;
                     state.loading = false;
-
                     if (state.prompt || state.aiResponse) {
                         state.selectedPrompt = '';
+                        saveDraft();
                     }
                 })
                 .catch(errors => {
@@ -166,9 +201,10 @@ export default {
         };
 
         const closeModal = () => {
+            removeDraft();
             emit('close');
             resetData();
-        }
+        };
 
         const copyText = async () => {
             try {
@@ -191,7 +227,8 @@ export default {
             state.aiResponse = '';
             state.selectedPrompt = '';
             state.prompt = '';
-        }
+            removeDraft();
+        };
 
         const insertReply = (aiResponse) => {
             emit('insert', aiResponse);
@@ -199,7 +236,7 @@ export default {
         };
 
         const fetchPresets = () => {
-            get('chatGPT/preset-prompts', {type : props.type})
+            get('chatGPT/preset-prompts', { type: props.type })
                 .then(response => {
                     state.presetPrompts = response;
                 })
@@ -208,9 +245,24 @@ export default {
                 });
         };
 
-        onMounted(()=>{
+        const removeDraft = () => {
+            const draftKey = props.type === 'modifyResponse' ? 'modifyResponseDraft' : 'createResponseDraft';
+            removeData(draftKey);
+            state.draftData = [];
+        };
+
+        const getSnippet = (text) => {
+            return text.length > 30 ? text.substring(0, 30) + '...' : text;
+        };
+
+        const selectDraft = (draft) => {
+            state.aiResponse = draft;
+        };
+
+        onMounted(() => {
             fetchPresets();
-        })
+            removeDraft();
+        });
 
         return {
             ...toRefs(state),
@@ -223,11 +275,14 @@ export default {
             closeModal,
             appVars,
             title,
-            description
+            description,
+            getSnippet,
+            selectDraft,
+            saveDraft
         };
     }
-}
+};
 </script>
 
-<style scoped>
-</style>
+
+

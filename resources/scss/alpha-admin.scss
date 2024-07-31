@@ -1077,5 +1077,96 @@ textarea {
     padding: 20px;
 }
 
+.fs_draft {
+    padding: 20px 20px 0 20px;
+}
+
+.fs_draft_section {
+    padding: 10px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+}
+
+.fs_draft_header {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.fs_draft_widget {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    margin-top: 20px;
+
+    // Title and content styling inside the widget
+    h3 {
+        color: #0E121B;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 12px;
+        margin: 0;
+    }
+
+    p {
+        margin-top: 8px;
+    }
+}
+
+.fs_draft_item {
+    display: flex;
+    height: 104px;
+    padding: 8px;
+    max-width: 120px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    flex: 1 0 0;
+    border-radius: 10px;
+    border: 1px solid #CACFD8;
+    background: #FFF;
+    box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
+
+    &:hover {
+        border: 1px solid #335CFF;
+        background: rgba(71, 108, 255, 0.10);
+        cursor: pointer;
+    }
+}
+
+.fs_draft .fs_draft_button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    align-self: stretch;
+    border-radius: 8px;
+    background: #E1E4EA;
+    box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
+    color: #0E121B;
+    border: none;
+
+    &:focus {
+        background: #E1E4EA;
+        box-shadow: 0 1px 2px 0 rgba(10, 13, 20, 0.03);
+        color: #0E121B;
+    }
+
+    &:hover {
+        color: #0E121B;
+        background: #D0D3D8;
+        box-shadow: 0 2px 4px 0 rgba(10, 13, 20, 0.1);
+    }
+    .fs_draft_arrow {
+        transition: transform 0.3s ease;
+        transform: rotate(0deg);
+        margin-left: 8px;
+
+        &.rotate-down {
+            transform: rotate(90deg);
+        }
+    }
+
+}
+
 
 
