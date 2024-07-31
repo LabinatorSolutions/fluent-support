@@ -173,6 +173,7 @@ class TransStrings
             'Generate Responses with AI'    => __('Generate Responses with AI', 'fluent-support'),
             'Let ChatGPT generate ticket responses to enhance support efficiency.'    => __('Let ChatGPT generate ticket responses to enhance support efficiency.', 'fluent-support'),
             'Some General Prompts'    => __('Some General Prompts', 'fluent-support'),
+            'Draft'    => __('Draft', 'fluent-support'),
             'Import from other Support Tickets Plugins'  => __('Import from other Support Tickets Plugins', 'fluent-support'),
             'If you want to migrate tickets from other ticketing system like'   => __('If you want to migrate tickets from other ticketing system like', 'fluent-support'),
             'Awesome Support'   =>__('Awesome Support', 'fluent-support'),
