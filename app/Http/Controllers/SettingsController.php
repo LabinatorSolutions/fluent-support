@@ -7,6 +7,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Database\Migrations\AIActivityLogMigrator;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
 
@@ -318,28 +319,18 @@ class SettingsController extends Controller
 
     public function saveChatGPTSettings(Request $request)
     {
-        $data = $request->get();
+        $apiKey = sanitize_text_field($request->get('api_key'));
 
-        $apiKey = sanitize_text_field($data['api_key']);
+        $response = Helper::authorizeChatGPTAPIKey($apiKey);
 
-        $response = wp_remote_get('https://api.openai.com/v1/models', [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $apiKey,
-                'Content-Type' => 'application/json'
-            ]
-        ]);
-
-        // Check if the request is a WP_Error
         if (is_wp_error($response)) {
             return $this->sendError([
                 'message' => __('There was an error verifying the API key.', 'fluent-support'),
             ]);
         }
 
-        // Decode the response body
         $body = json_decode(wp_remote_retrieve_body($response), true);
 
-        // Check if the API key is invalid
         if (isset($body['error'])) {
             return $this->sendError([
                 'message' => __('Invalid API key. Please provide a valid ChatGPT API key.', 'fluent-support'),
@@ -347,31 +338,24 @@ class SettingsController extends Controller
         }
 
         $chatGPTData = [
-            'api_key'    => sanitize_text_field($data['api_key']),
+            'api_key' => $apiKey,
         ];
 
-        $previousValue = Meta::where('object_type', '_fs_chatGPT_settings')->first();
-
-        if ($previousValue) {
-            Meta::where('object_type', '_fs_chatGPT_settings')->update([
-                'value' => maybe_serialize($chatGPTData)
-            ]);
+        try {
+            $isDataSaved = Helper::saveChatGPTData('_fs_chatGPT_settings', '_fs_chatGPT_data', $chatGPTData);
+            if ($isDataSaved) {
+                AIActivityLogMigrator::migrate();
+            }
             return $this->sendSuccess([
-                'message' => __('Your ChatGPT settings updated successfully.', 'fluent-support'),
+                'message' => __('ChatGPT settings have been successfully saved.', 'fluent-support'),
             ]);
-        } else {
-            Meta::insert([
-                'object_type' => '_fs_chatGPT_settings',
-                'key'         => '_fs_chatGPT_data',
-                'value'       => maybe_serialize($chatGPTData)
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => __('An error occurred while saving the settings: ' . $e->getMessage(), 'fluent-support'),
             ]);
         }
-
-        return $this->sendSuccess([
-            'message' => __('Your ChatGPT settings added successfully.', 'fluent-support'),
-        ]);
-
     }
+
 
     public function disconnectChatGPT()
     {
