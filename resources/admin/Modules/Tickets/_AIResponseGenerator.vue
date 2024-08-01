@@ -70,7 +70,7 @@
                     </div>
                 </div>
                 <div :class="['fs_response_content', { 'full-size': isFullSize }]">
-                    <p>{{ aiResponse }}</p>
+                    <div v-html="formattedResponse"></div>
                 </div>
             </div>
             <div class="fs_ai_response_loading" v-if="loading">
@@ -148,6 +148,13 @@ export default {
         const description = computed(() =>
             props.type === 'modifyResponse' ? modifyResponseDescription : generateResponseDescription
         );
+
+        const formattedResponse = computed(() => {
+            return state.aiResponse
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/ {2,}/g, match => match.replace(/ /g, '&nbsp;'));
+        });
 
         const saveDraft = () => {
             const draftKey = props.type === 'modifyResponse' ? 'modifyResponseDraft' : 'createResponseDraft';
@@ -278,7 +285,8 @@ export default {
             description,
             getSnippet,
             selectDraft,
-            saveDraft
+            saveDraft,
+            formattedResponse
         };
     }
 };
