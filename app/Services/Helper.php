@@ -356,6 +356,36 @@ class Helper
         return $baseUrl . '#/ticket/' . $ticket->id . '/view';
     }
 
+    public static function saveChatGPTData($objectType, $key, $data)
+    {
+        $serializedData = maybe_serialize($data);
+
+        $previousValue = Meta::where('object_type', $objectType)->first();
+
+        if ($previousValue) {
+           return Meta::where('object_type', $objectType)->update([
+                'value' => $serializedData
+            ]);
+        } else {
+            return  Meta::insert([
+                'object_type' => $objectType,
+                'key' => $key,
+                'value' => $serializedData
+            ]);
+        }
+
+    }
+
+    public static function authorizeChatGPTAPIKey($apiKey)
+    {
+       return wp_remote_get('https://api.openai.com/v1/models', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $apiKey,
+                'Content-Type' => 'application/json'
+            ]
+        ]);
+    }
+
     public static function isPublicSignedTicketEnabled()
     {
         $businessSettings = self::getBusinessSettings();
