@@ -3,9 +3,9 @@
 namespace FluentSupport\Database\Migrations;
 
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-class AIActivityLogMigrator
+class AIActivityLogsMigrator
 {
-    static $tableName = 'fs_ai_activity_log';
+    static $tableName = 'fs_ai_activity_logs';
 
     public static function migrate()
     {
@@ -21,7 +21,7 @@ class AIActivityLogMigrator
                 `agent_id` BIGINT(20) NULL,
                 `ticket_id` BIGINT(20) NULL,
                 `model_name` VARCHAR(50) NULL,
-                `used_token` MEDIUMTEXT NULL,
+                `used_tokens` MEDIUMTEXT NULL,
                 `prompt` LONGTEXT NULL,
                 `created_at` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL
