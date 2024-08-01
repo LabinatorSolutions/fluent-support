@@ -24,6 +24,9 @@ $app->addShortcode('fluent_support_portal', 'ShortcodeHandler@fluentSupportPorta
 // Activities
 (new \FluentSupport\App\Hooks\Handlers\ActivityLogger())->init();
 
+//AI Activities
+(new \FluentSupport\App\Hooks\Handlers\AIActivityLogger())->init();
+
 /*
  * Email Notification Hooks
  */
