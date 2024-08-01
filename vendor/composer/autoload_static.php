@@ -41,7 +41,7 @@ class ComposerStaticInitcef8a62a26e2e43e6d3efc5a3d6e4d83
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'FluentSupport\\Database\\DBMigrator' => __DIR__ . '/../..' . '/database/DBMigrator.php',
         'FluentSupport\\Database\\DBSeeder' => __DIR__ . '/../..' . '/database/DBSeeder.php',
-        'FluentSupport\\Database\\Migrations\\AIActivityLogMigrator' => __DIR__ . '/../..' . '/database/Migrations/AIActivityLogMigrator.php',
+        'FluentSupport\\Database\\Migrations\\AIActivityLogsMigrator' => __DIR__ . '/../..' . '/database/Migrations/AIActivityLogsMigrator.php',
         'FluentSupport\\Database\\Migrations\\ActivityMigrator' => __DIR__ . '/../..' . '/database/Migrations/ActivityMigrator.php',
         'FluentSupport\\Database\\Migrations\\AttachmentsMigrator' => __DIR__ . '/../..' . '/database/Migrations/AttachmentsMigrator.php',
         'FluentSupport\\Database\\Migrations\\ConversationsMigrator' => __DIR__ . '/../..' . '/database/Migrations/ConversationsMigrator.php',

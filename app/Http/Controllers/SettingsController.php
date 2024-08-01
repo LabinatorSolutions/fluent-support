@@ -7,7 +7,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
-use FluentSupport\Database\Migrations\AIActivityLogMigrator;
+use FluentSupport\Database\Migrations\AIActivityLogsMigrator;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
 
@@ -344,7 +344,7 @@ class SettingsController extends Controller
         try {
             $isDataSaved = Helper::saveChatGPTData('_fs_chatGPT_settings', '_fs_chatGPT_data', $chatGPTData);
             if ($isDataSaved) {
-                AIActivityLogMigrator::migrate();
+                AIActivityLogsMigrator::migrate();
             }
             return $this->sendSuccess([
                 'message' => __('ChatGPT settings have been successfully saved.', 'fluent-support'),
