@@ -6,8 +6,17 @@
                     type="number"
                     min="1"
                     max="60"
-                    v-model="activity_settings.delete_days"
+                    v-model="ai_activity_settings.delete_days"
                 />
+            </el-form-item>
+            <el-form-item>
+                <el-checkbox
+                    true-label="yes"
+                    false-label="no"
+                    v-model="ai_activity_settings.disable_logs"
+                >
+                    {{ translate("Disable Activity Logs") }}
+                </el-checkbox>
             </el-form-item>
         </el-form>
 
@@ -43,14 +52,14 @@ export default {
         const state = reactive ({
             loading: false,
             saving: false,
-            activity_settings: {}
+            ai_activity_settings: {}
         });
 
         const fetchSettings = async() => {
             state.loading = true;
             await get('ai-activity-logger/settings')
                 .then(response => {
-                    state.activity_settings = response.ai_activity_settings;
+                    state.ai_activity_settings = response.ai_activity_settings;
                 })
                 .catch((errors) => {
                     handleError(errors);
@@ -63,7 +72,8 @@ export default {
         const updateSettings = async() => {
             state.saving = true;
             await post('ai-activity-logger/settings', {
-                ai_activity_settings: state.activity_settings
+                ai_activity_settings: state.ai_activity_settings,
+
             })
                 .then(response => {
                     notify({

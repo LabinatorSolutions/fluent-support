@@ -3,7 +3,7 @@
         <el-tab-pane :label="translate('Overall Activities')" name="overall_activities" :lazy="true">
             <activity-logger></activity-logger>
         </el-tab-pane>
-        <el-tab-pane :label="translate('AI Activities')" name="ai_activities" :lazy="true">
+        <el-tab-pane v-if="ai_enabled" :label="translate('AI Activities')" name="ai_activities" :lazy="true">
             <AIActivityLogger></AIActivityLogger>
         </el-tab-pane>
     </el-tabs>
@@ -15,7 +15,8 @@ import AIActivityLogger from "./AIActivityLogger.vue";
 import {
     useFluentHelper,
 } from "@/admin/Composable/FluentFrameworkHelper";
-import { reactive, toRefs } from "vue";
+import {onMounted, reactive, toRefs} from "vue";
+import dayjs from "dayjs";
 
 export default {
     name: 'Activity',
@@ -28,16 +29,30 @@ export default {
         const {
             appVars,
             translate,
+            get
         } = useFluentHelper();
 
         const state = reactive({
             activeName: 'overall_activities',
-            me: appVars.me
+            me: appVars.me,
+            ai_enabled: false
         });
+
+        const isAIEnabled = () => {
+            get("ai-activity-logger/is-ai-enabled",)
+                .then((response) => {
+                    state.ai_enabled = response;
+                })
+        }
+
+        onMounted(() => {
+            isAIEnabled();
+        })
 
         return {
             ...toRefs(state),
-            translate
+            translate,
+            appVars,
         }
     }
 }
