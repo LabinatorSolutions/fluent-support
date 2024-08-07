@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = new FormData(form);
 
         const request = new XMLHttpRequest();
+        const twoFaForm = document.getElementById('fst_login_form');
 
         request.open("POST", reqUrl, true);
         request.responseType = "json";
@@ -98,7 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         request.onload = function () {
             if (this.status === 200) {
-                if (this.response.redirect) {
+                 if (this.response.redirect) {
                     window.location.href = this.response.redirect;
                 } else if (this.response.message) {
                     let el = document.createElement("div");
@@ -222,6 +223,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    function init2FaForm() {
+        const twoFaForm = document.getElementById('fst_login_form');
+        if (twoFaForm) {
+            twoFaForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const loginForm = document.querySelectorAll("#fst_login_form form");
+                const reqUrl = window.fluentSupportPublic.fs_two_fa;
+
+                handleFormSubmission(loginForm[0], 'fs_2fa_confirm', reqUrl);
+            });
+        }
+    }
+
     /*End Handle Recaptcha badge visibility in V3*/
 
     const loginForm = document.querySelectorAll("#fst_login_form form");
@@ -256,7 +270,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             request.onload = function () {
                 if (this.status === 200) {
-                    if (this.response.redirect) {
+                    if (this.response.load_2fa) {
+                        document.getElementById('fst_login_form').innerHTML = this.response.two_fa_form;
+                        init2FaForm();
+                    } else if (this.response.redirect) {
                         window.location.href = this.response.redirect;
                         setTimeout(function () {
                             window.location.reload();

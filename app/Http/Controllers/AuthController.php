@@ -8,6 +8,7 @@ use FluentSupport\Framework\Support\Arr;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\AuthHandler;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
+use FluentSupport\App\Hooks\Handlers\TwoFaHandler;
 
 class AuthController extends Controller
 {
@@ -135,7 +136,6 @@ class AuthController extends Controller
 
         $data = $request->all();
 
-
         $checkRecaptchaAvailability = $this->isRecaptchaApplicable('login_form');
         if ($checkRecaptchaAvailability) {
             $validateCaptcha = ReCaptchaHandler::validateRecaptcha($data['g-recaptcha-response']);
@@ -183,6 +183,11 @@ class AuthController extends Controller
                 'message' => __('Email or Password is not valid. Please try again', 'fluent-support')
             ], 403);
 
+        }
+
+        $twoFactorEnabled = Helper::getBusinessSettings('enable_two_fa');
+        if ('yes' == $twoFactorEnabled) {
+            (new TwoFaHandler)->maybe2FaRedirect($user);
         }
 
         if (apply_filters('fluent_support_use_native_login', true)) {
