@@ -222,6 +222,11 @@ $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
 
+$router->prefix('two_fa')->withPolicy('PublicPolicy')->group(function ($router) {
+    $router->post('/', 'TwofaController@verify2fa');
+});
+
+
 $router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');
 
 $router->prefix('ticket_importer')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
