@@ -375,7 +375,6 @@ class SettingsController extends Controller
         }
     }
 
-
     public function getChatGPTSettings()
     {
         $chatGPTSettingsData = Meta::where('object_type', '_fs_chatGPT_settings')->first();
@@ -385,7 +384,6 @@ class SettingsController extends Controller
         }
 
         return [];
-
     }
 
     public function getReCaptchaSettings()

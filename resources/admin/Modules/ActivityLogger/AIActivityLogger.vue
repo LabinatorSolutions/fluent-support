@@ -1,38 +1,37 @@
 <template>
     <div>
         <div class="fs_ai_activity_box_header">
-            <div class="fs_box_head">
-                {{ translate("AI Activities") }}
-            </div>
-            <div class="fs_ai_activity_box_actions">
-                <div class="fs_ai_activities_date_picker">
-                    <el-date-picker
-                    @change="fetchAIActivities"
-                    v-model="date_range"
-                    type="daterange"
-                    :range-separator="translate('To')"
-                    :start-placeholder="translate('Start')"
-                    :end-placeholder="translate('End')"
-                />
-                </div>
+            <div class="fs_ai_filters">
                 <div class="fs_ai_activities_select_agents">
                     <el-select
-                    clearable
-                    filterable
-                    size="small"
-                    @change="fetchAIActivities()"
-                    v-model="filters.agent_id"
-                    :placeholder="translate('All Support Staff')"
-                    style="margin-right: 10px"
-                >
-                    <el-option
-                        v-for="agent in appVars.support_agents"
-                        :key="agent.id"
-                        :value="agent.id"
-                        :label="agent.full_name"
-                    ></el-option>
-                </el-select>
+                        clearable
+                        filterable
+                        size="small"
+                        @change="fetchAIActivities()"
+                        v-model="filters.agent_id"
+                        :placeholder="translate('All Support Staff')"
+                        style="margin-right: 10px"
+                    >
+                        <el-option
+                            v-for="agent in appVars.support_agents"
+                            :key="agent.id"
+                            :value="agent.id"
+                            :label="agent.full_name"
+                        ></el-option>
+                    </el-select>
                 </div>
+                <div class="fs_ai_activities_date_picker">
+                    <el-date-picker
+                        @change="fetchAIActivities"
+                        v-model="date_range"
+                        type="daterange"
+                        :range-separator="translate('To')"
+                        :start-placeholder="translate('Start')"
+                        :end-placeholder="translate('End')"
+                    />
+                </div>
+            </div>
+            <div class="fs_ai_box_actions">
                 <div class="fs_ai_activities_refresh">
                     <el-button
                     v-loading="loading"
@@ -51,16 +50,17 @@
         <div>
             <el-table :data="aiActivities" style="width: 100%">
                 <el-table-column prop="person.full_name" label="Agent" width="180" />
-                <el-table-column label="Ticket" width="180">
+                <el-table-column label="Ticket">
                     <template v-slot="scope">
                         <router-link class="fs_ticket_link_preview"
                                      :to="{name: 'view_ticket', params: { ticket_id: scope.row.ticket.id}}">
-                            {{ scope.row.ticket.title }}
+                            <p>{{ scope.row.ticket.title }}</p>
                         </router-link>
                     </template>
                 </el-table-column>
+                <el-table-column prop="model_name" label="Model" />
                 <el-table-column prop="tokens" label="Tokens" />
-                <el-table-column prop="prompt" sortable label="Prompt" />
+                <el-table-column prop="prompt" label="Prompt" />
             </el-table>
             <div
                 style="padding-bottom: 20px"
@@ -96,7 +96,6 @@ import dayjs from "dayjs";
 import { useRouter } from "vue-router";
 import {  onMounted, reactive, toRefs } from "vue";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
-import ActivityLogger from "@/admin/Modules/ActivityLogger/ActivityLogger.vue";
 import ActivitySettings from "@/admin/Modules/ActivityLogger/_ActivitySettings.vue";
 export default {
     name: "ActivityLogger",
@@ -112,9 +111,6 @@ export default {
             appVars,
             get,
             translate,
-            handleError,
-            humanDiffTime,
-            setTitle
         } = useFluentHelper();
 
         const state = reactive({

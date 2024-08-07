@@ -43,7 +43,7 @@ class AIActivityLoggerController extends Controller
             'disable_logs' => sanitize_text_field($settings['disable_logs'])
         ];
         try {
-            return Helper::updateSettings($settings);
+            return Helper::updateAISettings($settings);
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage()
@@ -64,6 +64,18 @@ class AIActivityLoggerController extends Controller
                 'message' => $e->getMessage()
             ]);
         }
+    }
+
+    public function isAIEnabled()
+    {
+        try {
+            return Helper::isAIEnabled();
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => $e->getMessage()
+            ]);
+        }
+
     }
 
 

@@ -1021,7 +1021,7 @@ class Helper
         return $activitiesQuery->paginate($perPage, ['*'], 'page', $page);
     }
 
-    public static function updateSettings($settings)
+    public static function updateAISettings($settings)
     {
         $defaults = [
             'delete_days'  => 14,
@@ -1036,6 +1036,17 @@ class Helper
         return [
             'message' => __('AI Activity settings has been updated', 'fluent-support')
         ];
+    }
+
+    public static function isAIEnabled()
+    {
+        $chatGPTSettingsData = Meta::where('object_type', '_fs_chatGPT_settings')->first();
+        $settings = maybe_unserialize($chatGPTSettingsData->value);
+        if ($settings) {
+            return true;
+        }
+
+        return false;
     }
 
     public static function getSettings()

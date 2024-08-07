@@ -215,6 +215,7 @@ $router->prefix('ai-activity-logger')->withPolicy('ActivityLoggerPolicy')->group
     $router->get('/', 'AIActivityLoggerController@getAIActivities');
     $router->post('/settings', 'AIActivityLoggerController@updateSettings');
     $router->get('/settings', 'AIActivityLoggerController@getSettings');
+    $router->get('/is-ai-enabled', 'AIActivityLoggerController@isAIEnabled');
 });
 
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
