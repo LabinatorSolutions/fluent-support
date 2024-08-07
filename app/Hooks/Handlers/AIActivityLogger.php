@@ -21,7 +21,7 @@ class AIActivityLogger
                 'agent_id' => get_current_user_id(),
                 'ticket_id' => $ticketID,
                 'model_name' => 'gpt-3.5-turbo-0125',
-                'used_tokens' => intval($usedTokens),
+                'tokens' => intval($usedTokens),
                 'prompt' => sanitize_text_field($prompt),
             ];
 

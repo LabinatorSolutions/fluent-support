@@ -211,6 +211,12 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
     $router->post('/settings', 'ActivityLoggerController@updateSettings');
 });
 
+$router->prefix('ai-activity-logger')->withPolicy('ActivityLoggerPolicy')->group(function ($router) {
+    $router->get('/', 'AIActivityLoggerController@getAIActivities');
+    $router->post('/settings', 'AIActivityLoggerController@updateSettings');
+    $router->get('/settings', 'AIActivityLoggerController@getSettings');
+});
+
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
