@@ -21,7 +21,7 @@ class AIActivityLogsMigrator
                 `agent_id` BIGINT(20) NULL,
                 `ticket_id` BIGINT(20) NULL,
                 `model_name` VARCHAR(50) NULL,
-                `used_tokens` MEDIUMTEXT NULL,
+                `tokens` MEDIUMTEXT NULL,
                 `prompt` LONGTEXT NULL,
                 `created_at` TIMESTAMP NULL,
                 `updated_at` TIMESTAMP NULL

@@ -34,7 +34,7 @@ import Report from './Modules/Reports/Report';
 import Workflows from './Modules/Workflows/AllWorkflows';
 import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
 
-import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
+import Activity from "./Modules/ActivityLogger/Activity";
 
 import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
 import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
@@ -263,11 +263,11 @@ export default [
         }
     },
     {
-        path: '/activity-logger',
-        name: 'activity_logger',
-        component: ActivityLogger,
+        path: '/activity',
+        name: 'activity',
+        component: Activity,
         meta: {
-            active: 'activity_logger'
+            active: 'activity'
         }
     },
     {

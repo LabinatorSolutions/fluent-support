@@ -7,6 +7,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\AIActivityLogs;
 use FluentSupport\App\Models\Person;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
@@ -981,5 +982,77 @@ class Helper
             return $status == 'true' ? true : false;
         }
         return false;
+    }
+
+    public static function getAIActivities($data)
+    {
+        $page = isset($data['page']) ? intval($data['page']) : 1;
+        $perPage = isset($data['per_page']) ? intval($data['per_page']) : 10;
+
+        $activitiesQuery = AIActivityLogs::with([
+            'person' => function ($query) {
+                $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
+            },
+            'ticket' => function ($query) {
+                $query->select(['id', 'title']);
+            }
+        ])->latest('id');
+
+        $from = sanitize_text_field( Arr::get( $data, 'from', '' ) );
+        $to = sanitize_text_field( Arr::get( $data, 'to', '') );
+
+        if ( $from != $to ) {
+            $from = $from . ' ' . '00:00:00';
+            $to = $to . ' ' . '23:59:59';
+        }
+
+        if ( ( !empty($from) && !empty($to) ) && $from == $to ) {
+            $activitiesQuery->whereDate('created_at', '=', $from);
+        } elseif (!empty($from) && !empty($to)) {
+            $activitiesQuery->whereBetween('created_at', [ $from, $to ]);
+        }
+
+        $agentId = intval( Arr::get($data, 'filters.agent_id') );
+
+        if ($agentId) {
+            $activitiesQuery->where('agent_id', $agentId);
+        }
+
+        return $activitiesQuery->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    public static function updateSettings($settings)
+    {
+        $defaults = [
+            'delete_days'  => 14,
+            'disable_logs' => 'no'
+        ];
+
+        $settings = wp_parse_args($settings, $defaults);
+        $settings['delete_days'] = (int)$settings['delete_days'];
+
+        Helper::updateOption('_ai_activity_settings', $settings);
+
+        return [
+            'message' => __('AI Activity settings has been updated', 'fluent-support')
+        ];
+    }
+
+    public static function getSettings()
+    {
+        $settings = Helper::getOption('_ai_activity_settings', []);
+
+        $defaults = [
+            'delete_days'  => 14,
+            'disable_logs' => 'no'
+        ];
+
+        $settings = wp_parse_args($settings, $defaults);
+
+        if (! $settings ) throw new \Exception('No activity settings found');
+
+        return [
+            'ai_activity_settings' => $settings
+        ];
     }
 }

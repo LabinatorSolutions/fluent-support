@@ -414,6 +414,51 @@ table.fs_table {
     }
 }
 
+.fs_ticket_link_preview {
+    color: #409EFF;
+    text-decoration: none;
+}
+
+.fs_ticket_link_preview strong {
+    font-weight: bold;
+}
+
+.fs_ticket_link_preview:hover {
+    text-decoration: underline;
+}
+
+.fs_ai_activity_box_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    font-size: 16px;
+
+    .fs_box_head{
+        width: auto;
+        clear: both;
+        overflow: hidden;
+        margin: 0;
+        padding: 10px 30px;
+        font-weight: 500;
+        color: #000000;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-style: normal;
+        font-size: 18px;
+        line-height: 25px;
+        background: rgba(255, 255, 255, 0.6);
+    }
+}
+
+.fs_ai_activity_box_actions {
+    float: right;
+    display: flex;
+    gap: 10px;
+    padding: 20px 0;
+}
+
 .fs_warn {
     background: #ffff78;
     padding: 8px 10px;
