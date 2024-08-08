@@ -1,18 +1,6 @@
 <template>
     <div class="wp_vue_editor_wrapper">
-        <div class="fs_shortcode_saved_replies">
-            <div class="fs_cc_email_toggle_button" v-if="showCcToggleButton">
-                <el-button size="small" type="primary" v-if="!add_cc" @click="handleCc('show')">
-                    <span>{{ $t('Add Cc') }}</span>
-                </el-button>
-                <el-button size="small" type="primary" v-if="!add_cc" @click="handleCc('show')">
-                    <span>{{ $t('Add Cc') }}</span>
-                </el-button>
-                <el-button size="small" type="danger" v-else @click="handleCc('hide')">
-                    <span>{{ $t('Discard Cc') }}</span>
-                </el-button>
-            </div>
-
+        <div class="fs_action_buttons">
             <div class="fs_chatGPT_box" v-if="aiResponse">
                 <el-popover
                     placement="bottom"
@@ -26,7 +14,7 @@
                                 <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
                             </div>
                             <p>
-                                Ask AI
+                                {{$t('Ask AI')}}
                             </p>
                         </el-button>
                     </template>
@@ -38,9 +26,18 @@
                 </el-popover>
             </div>
 
-            <div class="fc_shortcode_box" v-if="showShortcodes" style="padding: 5px;">
+            <div class="fs_cc_email_toggle_button" v-if="showCcToggleButton">
+                <el-button size="small" type="primary" v-if="!add_cc" @click="handleCc('show')">
+                    <span>{{ $t('Add Cc') }}</span>
+                </el-button>
+                <el-button size="small" type="danger" v-else @click="handleCc('hide')">
+                    <span>{{ $t('Discard Cc') }}</span>
+                </el-button>
+            </div>
+
+            <div class="fc_shortcode_box" v-if="showShortcodes" >
                 <el-dropdown type="primary" trigger="click">
-                    <el-button size="small" type="primary" style="margin-right: .3em;">
+                    <el-button size="small" type="primary">
                         {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
                     </el-button>
                     <template #dropdown>
@@ -411,10 +408,11 @@ export default {
     }
 }
 
-.fs_shortcode_saved_replies {
+.fs_action_buttons {
     display: inline-flex;
     position: absolute;
     right: 0px;
+    gap: 10px;
     z-index: 2;
     align-items: center;
     .fc_saved_replies_box {
@@ -434,7 +432,7 @@ export default {
 .fs_chatGPT_box .fs_ai_response_button {
     align-items: center;
     padding: 5px 6px;
-    height: 24px;
+    height: 22px;
     font-size: 0;
     font-weight: 500;
     line-height: 1.33;

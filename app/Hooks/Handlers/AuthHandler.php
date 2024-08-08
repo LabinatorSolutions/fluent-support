@@ -259,7 +259,9 @@ class AuthHandler
             return '';
         }
 
-        return $html . '</div>';
+        $html = $html . '</div>';
+
+        return '<div class="fst_registration_fields">' . $html . '</div>';
     }
 
     private function renderTextInput($fieldName, $field)
