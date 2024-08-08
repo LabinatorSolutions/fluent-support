@@ -64,12 +64,12 @@ class EmailVerificationHandler
         ?>
 
         <div class="fs_signup_verification">
-            <div class="fs_field_group fs_field_vefication">
+            <div class="fs_field_group fs_field_verification">
                 <p><?php echo esc_html(sprintf(__('A verification code as been sent to %s. Please provide the code bellow: ', 'fluent-'), $formData['email'])) ?></p>
                 <input type="hidden" name="_email_verification_hash" value="<?php echo esc_attr($hash); ?>"/>
                 <div class="fs_field_label is-required"><label
-                        for="fs_field_vefication"><?php _e('Vefication Code', 'fluent-security'); ?></label></div>
-                <div class="fs_input_wrap"><input type="text" id="fs_field_vefication" placeholder=""
+                        for="fs_field_vefication"><?php _e('Verification Code', 'fluent-support'); ?></label></div>
+                <div class="fs_input_wrap"><input type="text" id="fs_field_verification" placeholder=""
                                                   name="_email_verification_token" required></div>
             </div>
 
