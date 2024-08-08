@@ -1066,4 +1066,66 @@ class Helper
             'ai_activity_settings' => $settings
         ];
     }
+
+    public static function getIp($anonymize = false)
+    {
+        static $ipAddress;
+
+        if ($ipAddress) {
+            return $ipAddress;
+        }
+
+        if (empty($_SERVER['REMOTE_ADDR'])) {
+            // It's a local cli request
+            return '127.0.0.1';
+        }
+
+        $ipAddress = '';
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+            //If it's a valid Cloudflare request
+            if (self::isCfIp($_SERVER['REMOTE_ADDR'])) {
+                //Use the CF-Connecting-IP header.
+                $ipAddress = $_SERVER['HTTP_CF_CONNECTING_IP'];
+            } else {
+                //If it isn't valid, then use REMOTE_ADDR.
+                $ipAddress = $_SERVER['REMOTE_ADDR'];
+            }
+        } else if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
+            // most probably it's local reverse proxy
+            if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+                $ipAddress = $_SERVER["HTTP_CLIENT_IP"];
+            } else if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $ipAddress = (string)rest_is_ip_address(trim(current(preg_split('/,/', sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']))))));
+            }
+        }
+
+        if (!$ipAddress) {
+            $ipAddress = $_SERVER['REMOTE_ADDR'];
+        }
+
+        $ipAddress = preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ipAddress);
+
+        $ipAddress = apply_filters('fluent_auth/user_ip', $ipAddress);
+
+        if ($anonymize) {
+            return wp_privacy_anonymize_ip($ipAddress);
+        }
+
+        $ipAddress = sanitize_text_field(wp_unslash($ipAddress));
+
+        return $ipAddress;
+    }
+
+    public static function loadView($template, $data)
+    {
+        extract($data, EXTR_OVERWRITE);
+
+        $template = sanitize_file_name($template);
+
+        $template = str_replace('.', DIRECTORY_SEPARATOR, $template);
+
+        ob_start();
+        include FLUENT_SUPPORT_PLUGIN_PATH . 'app/Views/emails/' . $template . '.php';
+        return ob_get_clean();
+    }
 }

@@ -98,7 +98,24 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         request.onload = function () {
-            if (this.status === 200) {
+            if (this.response.verification_html) {
+                let html = this.response.verification_html;
+
+                // append html to registrationForm dom
+                let el = document.createElement("div");
+                el.innerHTML = html;
+                registrationForm.appendChild(el);
+
+                let regFields = registrationForm.getElementsByClassName('fst_registration_fields');
+                // hide regFields with css hidden inline css
+                for (let i = 0; i < regFields.length; i++) {
+                    regFields[i].style.display = 'none';
+                }
+                let regButton = registrationForm.querySelector('button'); // Adjust the selector as needed to target the specific button
+                if (regButton) {
+                    regButton.style.display = 'none';
+                }
+            } else if (this.status === 200) {
                  if (this.response.redirect) {
                     window.location.href = this.response.redirect;
                 } else if (this.response.message) {

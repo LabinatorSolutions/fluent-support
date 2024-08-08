@@ -9,6 +9,8 @@ use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\AuthHandler;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
 use FluentSupport\App\Hooks\Handlers\TwoFaHandler;
+use FluentSupport\App\Hooks\Handlers\EmailVerificationHandler;
+
 
 class AuthController extends Controller
 {
@@ -55,8 +57,6 @@ class AuthController extends Controller
          */
         do_action('fluent_support/before_signup_validation', $formData);
 
-        //Testing recaptcha
-
         $checkRecaptchaAvailability = $this->isRecaptchaApplicable('signup_form');
         if ($checkRecaptchaAvailability) {
             $validateCaptcha = ReCaptchaHandler::validateRecaptcha($formData['g-recaptcha-response']);
@@ -66,9 +66,56 @@ class AuthController extends Controller
                 ], 422);
             }
         }
-        //Testing recaptcha
 
         $this->validate($formData, $rules, $messages);
+
+        if (empty($formData['_email_verification_token'])) {
+            $tokenHtml = EmailVerificationHandler::sendSignupEmailVerificationHtml($formData);
+
+            return $this->response([
+                'verification_html' => $tokenHtml
+            ]);
+        } else {
+            $token = $formData['_email_verification_token'];
+            $verificationHash = $formData['_email_verification_hash'];
+
+            $logHash = Meta::where('object_type', 'fs_login_hashes',)
+                ->where('key', $verificationHash)
+                ->first();
+            $logHash = maybe_unserialize($logHash->value);
+
+            if (!$logHash) {
+                wp_send_json([
+                    'message' => __('Please provide a valid verification code that sent to your email address', 'fluent-support')
+                ], 422);
+            }
+
+            // check if it got expired or not
+            if ($logHash['used_count'] > 5 || strtotime($logHash['valid_till']) < current_time('timestamp')) {
+                wp_send_json([
+                    'message' => __('Your verification code has been expired. Please try again', 'fluent-security')
+                ], 422);
+            }
+
+            if (!wp_check_password($token, $logHash['two_fa_code_hash'])) {
+
+                $logHash['used_count'] +=  1;
+                Meta::where('key', $logHash['hash'])->update([
+                    'value' => maybe_serialize($logHash)
+                ]);
+
+                wp_send_json([
+                    'message' => __('Please provide a valid verification code that sent to your email address', 'fluent-security')
+                ], 422);
+            }
+
+            $logHash['used_count'] +=  1;
+            $logHash['status'] = 'used';
+
+            Meta::where('key', $logHash['hash'])->update([
+                'value' => maybe_serialize($logHash)
+            ]);
+        }
 
         /*
          * Action After validate user signup validation success
