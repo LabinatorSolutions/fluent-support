@@ -4,6 +4,7 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Framework\Support\Arr;
 
 
 class TwoFaHandler
@@ -140,29 +141,28 @@ class TwoFaHandler
     private function send2FaEmail($data, $user, $autoLoginUrl = false)
     {
         $emailTo = $user->user_email;
-        $emailSubject = sprintf(__('Your Login code for %1s - %d', 'fluent-support'), get_bloginfo('name'), $data['twoFaCode']);
+        $emailSubject = sprintf(__('Your Login code for %1s', 'fluent-support'), get_bloginfo('name'));
 
-        $emailLines = [
-            '<div style="font-family: Arial, sans-serif; font-size: 16px; line-height: 24px; color: #000; padding: 20px;">',
-            sprintf(__('Hello %s,', 'fluent-support'), $user->display_name),
-            sprintf(__('Someone requested to login to %s and here is the Login code that you can use in the login form', 'fluent-support'), get_bloginfo('name')),
-            '<br/><br/>',
-            '<div style="background-color: #f1f1f1; padding: 15px; border-radius: 5px;">',
-            '<h2 style="font-size: 18px; margin-bottom: 10px;">' . __('Your Login Code:', 'fluent-support') . '</h2>',
-            '<p style="font-size: 22px; padding: 10px; text-align: center; background-color: #fff; border: 2px solid #333; border-radius: 5px; display: inline-block; margin-bottom: 10px;">' . $data['twoFaCode'] . '</p>',
-            sprintf(__('This code will expire in %d minutes and can only be used once.', 'fluent-support'), 5),
-            '</div>',
-            '<br/><br/>',
-            '<hr style="border: none; height: 1px; background-color: #dcdcdc; margin: 20px 0;"/>',
-            '<p style="font-size: 14px;">' . __('If you did not request this login code, please ignore this email.', 'fluent-support') . '</p>',
-            '</div>'
+        $pStart = '<p style="font-family: Arial, sans-serif; font-size: 16px; font-weight: normal; margin: 0; margin-bottom: 16px;">';
+
+        $message = $pStart . sprintf(__('Hello %s,', 'fluent-support'), $user->display_name) . '</p>' .
+            $pStart . sprintf(__('Someone requested to login to %s and here is the Login code that you can use in the login form', 'fluent-support'), get_bloginfo('name')) . '</p>' .
+            $pStart . '<b>' . sprintf(__('Verification Code: %s', 'fluent-security'), $data['twoFaCode']) . '</b></p>' .
+            '<br />' .
+            $pStart . __('This code is valid for 10 minutes and is meant to ensure the security of your account. If you did not initiate this request, please ignore this email.', 'fluent-security') . '</p>';
+
+        $message = apply_filters('fluent_support/signup_verification_email_body', $message, $data['twoFaCode'], $data);
+
+        $data = [
+            'body'        => $message,
+            'pre_header'  => __('Activate your account', 'fluent-security'),
+            'show_footer' => false
         ];
 
-        $emailBody = implode("\r\n", $emailLines);
-
+        $message = Helper::loadView('notification', $data);
         $headers = array('Content-Type: text/html; charset=UTF-8');
 
-        wp_mail($emailTo, $emailSubject, $emailBody, $headers);
+        \wp_mail($emailTo, $emailSubject, $message, $headers);
     }
 
     public function get2faForm($data = [])
@@ -177,11 +177,11 @@ class TwoFaHandler
             <div style="margin-bottom: 10px;">
                 <?php _e('Please check your email inbox and enter the 2-factor authentication code below:', 'fluent-support'); ?>
             </div>
-            <div style="margin-bottom: 20px;">
-                <label for="login_passcode"><?php _e('Two-Factor Authentication Code', 'fluent-support'); ?></label>
+            <div style="margin-bottom: 10px;">
+                <label for="login_passcode"><?php _e('Authentication Code', 'fluent-support'); ?></label>
                 <div>
                     <input
-                        style="font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 3px; width: 100%;"
+                        style="font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 3px; width: 100%; box-sizing: border-box;"
                         placeholder="<?php _e('Login Code', 'fluent-support'); ?>" type="text" name="login_passcode"
                         id="login_passcode" class="input" size="20"/>
                 </div>
@@ -190,7 +190,7 @@ class TwoFaHandler
                 <button
                     style="display: inline-block; cursor: pointer; border: 0; background: #2271b1; color: #fff; text-decoration: none; text-shadow: none; min-height: 32px; padding: 8px 24px; font-size: 14px; border-radius: 3px;"
                     id="fs_2fa_confirm" type="submit">
-                    <?php _e('Login', 'fluent-support'); ?>
+                    <?php _e('Submit', 'fluent-support'); ?>
                 </button>
             </div>
         </form>
