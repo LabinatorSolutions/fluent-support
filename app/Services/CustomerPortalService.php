@@ -302,11 +302,14 @@ class CustomerPortalService
             }
         ])
             ->where('customer_id', $customer->id)
-            ->where('product_id', $filters['product_id'])
             ->orderBy($sorting['sortBy'], $sorting['sortType'])
             ->latest('updated_at');
 
         $ticketsQuery->where('customer_id', $customer->id);
+
+        if (!empty($filters['product_id'])) {
+            $ticketsQuery->where('product_id', $filters['product_id']);
+        }
 
         if ($statuses) {
             $ticketsQuery->whereIn('status', $statuses);
