@@ -23,7 +23,7 @@ class CustomerPortalService
      * @throws Exception
      * @since 1.5.7
      */
-    public function getTickets($customer, $search, $filters= [], $sorting)
+    public function getTickets($customer, $search, $sorting, $filters= [])
     {
         $this->validateCustomer($customer);
 
@@ -31,7 +31,7 @@ class CustomerPortalService
 
         $statuses = $this->getTicketStatues($requestedStatus);
 
-        return $this->ticketsAdditionalData($customer, $statuses, $search, $filters, $sorting);
+        return $this->ticketsAdditionalData($customer, $statuses, $search, $sorting, $filters);
     }
 
     /**
@@ -292,7 +292,7 @@ class CustomerPortalService
      * @return object $tickets
      * @since 1.5.7
      */
-    private function ticketsAdditionalData($customer, $statuses, $search, $filters= [], $sorting)
+    private function ticketsAdditionalData($customer, $statuses, $search, $sorting, $filters= [])
     {
         $ticketsQuery = Ticket::with([
             'customer' => function ($query) {

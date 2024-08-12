@@ -38,7 +38,7 @@ class CustomerPortalController extends Controller
         try {
             $customer = $customerPortalService->resolveCustomer($onBehalf, $userIP);
             return [
-                'tickets' => $customerPortalService->getTickets($customer, $search, $filters, $sorting)
+                'tickets' => $customerPortalService->getTickets($customer, $search, $sorting, $filters)
             ];
         } catch (Exception $e) {
             return $this->sendError([
