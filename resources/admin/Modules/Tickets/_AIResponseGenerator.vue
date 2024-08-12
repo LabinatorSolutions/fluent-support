@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="fs_regenerate">
-                            <el-button class="fs_regenerate_button" @click="generateResponse">
+                            <el-button class="fs_regenerate_button" @click="generateResponse(prompt)">
                                 <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
                             </el-button>
                         </div>
@@ -80,13 +80,14 @@
 
         <div class="fs_main_content">
             <div class="fs_prompt_wrapper">
-                <textarea v-model="prompt" rows="3" placeholder="Enter your prompt here..." class="fs_textarea"></textarea>
+                <textarea v-model="prompt" rows="3" placeholder="Enter your prompt here..." class="fs_textarea" required></textarea>
                 <div class="fs_prompt_button">
-                    <el-button class="fs_prompt_submit" @click="generateResponse(prompt)">
+                    <el-button class="fs_prompt_submit" @click="generateResponse(prompt)" >
                         <img :src="appVars.asset_url + 'images/aiPromptSubmitButton.svg'" alt="">
                     </el-button>
                 </div>
             </div>
+            <div v-if="errorMessage" class="fs_error_message">{{ errorMessage }}</div>
             <div>
                 <div class="fs_prompt_subtitle">{{ translate('Some General Prompts') }}</div>
                 <div class="fs_prompt_options_container">
@@ -124,6 +125,7 @@ export default {
         const state = reactive({
             prompt: '',
             presetPrompt: '',
+            errorMessage: '',
             aiResponse: '',
             loading: false,
             ticketID: parseInt(route.params.ticket_id),
@@ -168,6 +170,12 @@ export default {
         };
 
         const generateResponse = (prompt) => {
+            if (!prompt.trim()) {
+                state.errorMessage = 'Prompt is required.';
+                return;
+            }
+            state.errorMessage = '';
+
             state.loading = true;
             const requestData = {
                 content: prompt,
