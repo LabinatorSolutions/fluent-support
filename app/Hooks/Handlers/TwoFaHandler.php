@@ -114,7 +114,7 @@ class TwoFaHandler
             return false;
         }
 
-        if (strtotime($logHash['created_at']) < current_time('timestamp') - 300 || $logHash['used_count'] > 5 || $logHash['status'] != 'issued') {
+        if (strtotime($logHash['created_at']) < current_time('timestamp') - 600 || $logHash['used_count'] > 5 || $logHash['status'] != 'issued') {
             wp_send_json([
                 'message' => __('Sorry, your login code has been expired. Please try to login again', 'fluent-support')
             ], 423);
