@@ -100,7 +100,7 @@ class AuthController extends Controller
             if (!wp_check_password($token, $logHash['two_fa_code_hash'])) {
 
                 $logHash['used_count'] +=  1;
-                Meta::where('key', $logHash['hash'])->update([
+                Meta::where('key', $logHash['login_hash'])->update([
                     'value' => maybe_serialize($logHash)
                 ]);
 
@@ -112,7 +112,7 @@ class AuthController extends Controller
             $logHash['used_count'] +=  1;
             $logHash['status'] = 'used';
 
-            Meta::where('key', $logHash['hash'])->update([
+            Meta::where('key', $logHash['login_hash'])->update([
                 'value' => maybe_serialize($logHash)
             ]);
         }
