@@ -76,7 +76,7 @@ class AuthHandler
             $return .= '<p style="text-align: center">'
                 . __('Not registered?', 'fluent-support')
                 . ' <a href="#" id="fs_show_signup">'
-                . __('Create an Account', 'fluent-support')
+                . __('Create an account', 'fluent-support')
                 . '</a></p>';
         }
 
@@ -84,7 +84,7 @@ class AuthHandler
             $return .= '<p style="text-align: center">'
                 . __('Forgot your password?', 'fluent-support')
                 . ' <a href="#" id="fs_show_reset_password">'
-                . __('Reset Password', 'fluent-support')
+                . __('Reset password', 'fluent-support')
                 . '</a></p>';
         }
 

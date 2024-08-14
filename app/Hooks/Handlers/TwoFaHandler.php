@@ -174,10 +174,10 @@ class TwoFaHandler
                 class="fs_2fa" id="fs_2fa_form">
                 <input type="hidden" name="login_hash" value="<?php echo esc_attr($data['login_hash']); ?>"/>
                 <div style="margin-bottom: 10px;">
-                    <?php _e('Please check your email inbox and enter the 2-factor authentication code below:', 'fluent-support'); ?>
+                    <?php _e('Please check your email inbox and enter the two-factor verification code below:', 'fluent-support'); ?>
                 </div>
                 <div style="margin-bottom: 10px;">
-                    <label for="login_passcode"><?php _e('Authentication Code', 'fluent-support'); ?></label>
+                    <label for="login_passcode"><?php _e('Verification Code', 'fluent-support'); ?></label>
                     <div>
                         <input
                             style="font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 3px; width: 100%; box-sizing: border-box;"
