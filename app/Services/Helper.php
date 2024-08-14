@@ -759,14 +759,14 @@ class Helper
     {
         $connections = [
             'woocommerce'     => [
-                'title'          => __('Woo Commerce', 'fluent-support'),
+                'title'          => __('WooCommerce', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/woocommerce.png',
                 'is_integrated'   => defined('WC_PLUGIN_FILE'),
                 'description'    => __('The most popular e-commerce platform for WordPress', 'fluent-support'),
                 'doc_url'  => 'https://fluentsupport.com/docs/woocommerce-integration/',
             ],
             'lifter-lms'     => [
-                'title'          => __('Lifter Lms', 'fluent-support'),
+                'title'          => __('LifterLMS', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/lifter-lms.png',
                 'is_integrated'   => defined('LLMS_PLUGIN_FILE'),
                 'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
@@ -780,7 +780,7 @@ class Helper
                 'doc_url'  => 'https://fluentsupport.com/docs/managing-tickets-using-slack/',
             ],
             'pm-pro'  => [
-                'title'          => __('Paid Membership MPro', 'fluent-support'),
+                'title'          => __('Paid Memberships Pro', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/pmpro.png',
                 'is_integrated'   => defined('PMPRO_VERSION'),
                 'description'    => __('The ultimate platform for any member-focused business', 'fluent-support'),
@@ -801,7 +801,7 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/managing-tickets-using-telegram/',
             ],
             'fluent-crm'  => [
-                'title'          => __('Fluent CRM', 'fluent-support'),
+                'title'          => __('FluentCRM', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-crm.png',
                 'is_integrated'   => defined('FLUENTCRM'),
                 'description'    => __('Self-hosted email and marketing automation for WordPress', 'fluent-support'),
@@ -815,7 +815,7 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/fluent-form-integration/',
             ],
             'buddy-boss'  => [
-                'title'          => __('Buddy Boss', 'fluent-support'),
+                'title'          => __('BuddyBoss', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/buddy-boss.png',
                 'is_integrated'   => defined('BP_PLUGIN_DIR'),
                 'description'    => __('Powerful platform for any member-focused business', 'fluent-support'),
@@ -829,7 +829,7 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/managing-tickets-using-discord/',
             ],
             'wishlist-member'  => [
-                'title'          => __('Wishlist Member', 'fluent-support'),
+                'title'          => __('WishList Member', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/wishlist-member.png',
                 'is_integrated'   => defined('WLM3_PLUGIN_VERSION'),
                 'description'    => __('Powerful platform for any member-focused business', 'fluent-support'),
@@ -850,14 +850,14 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/restrict-content-pro-integration/',
             ],
             'better-docs'  => [
-                'title'          => __('Better Docs', 'fluent-support'),
+                'title'          => __('BetterDocs', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/better-docs.png',
                 'is_integrated'   => false,
                 'description'    => __('The standard plugin for knowledge base and documentation', 'fluent-support'),
                 'doc_url'        => 'https://fluentsupport.com/docs/betterdocs-integration/',
             ],
             'whatsapp'  => [
-                'title'          => __('Whatsapp', 'fluent-support'),
+                'title'          => __('WhatsApp', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/whatsapp.jpeg',
                 'is_integrated'   => self::getFSIntegrationStatus('twilio_settings'),
                 'description'    => __('Business communication platform designed for privacy', 'fluent-support'),
@@ -878,7 +878,7 @@ class Helper
                 'doc_url'       => 'https://fluentsupport.com/docs/learndash-integration/',
             ],
             'learn-press'  => [
-                'title'          => __('Learn Press', 'fluent-support'),
+                'title'          => __('LearnPress', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/learn-press.png',
                 'is_integrated'   => defined('LP_PLUGIN_FILE'),
                 'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
@@ -899,7 +899,7 @@ class Helper
                 'doc_url'       => 'https://fluentsupport.com/docs/dropbox-integration/',
             ],
             'member-press'  => [
-                'title'          => __('Member Press', 'fluent-support'),
+                'title'          => __('MemberPress', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/member-press.png',
                 'is_integrated'   => class_exists('MeprUtils'),
                 'description'    => __('A WordPress plugin that enables the creation and management of membership sites, including content access control and subscription billing.', 'fluent-support'),
@@ -913,7 +913,7 @@ class Helper
                 'doc_url'       => 'https://fluentsupport.com/docs/google-recaptcha-integration/',
             ],
             'fluent-boards'  => [
-                'title'          => __('Fluent Boards', 'fluent-support'),
+                'title'          => __('FluentBoards', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-boards.png',
                 'is_integrated'   =>  defined('FLUENT_BOARDS'),
                 'description'    => __('A project management tool designed to streamline workflows and collaboration through customizable, kanban-style boards.', 'fluent-support'),
