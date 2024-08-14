@@ -59,27 +59,25 @@ class EmailVerificationHandler
 
         \wp_mail($formData['email'], $mailSubject, $message, $headers);
 
-
         ob_start();
         ?>
-
-        <div class="fs_signup_verification">
-            <div class="fs_field_group fs_field_verification">
-                <p><?php echo esc_html(sprintf(__('A verification code as been sent to %s. Please provide the code bellow: ', 'fluent-'), $formData['email'])) ?></p>
-                <input type="hidden" name="_email_verification_hash" value="<?php echo esc_attr($hash); ?>"/>
-                <div class="fs_field_label is-required"><label
-                        for="fs_field_vefication"><?php _e('Verification Code', 'fluent-support'); ?></label></div>
-                <div class="fs_input_wrap"><input type="text" id="fs_field_verification" placeholder=""
-                                                  name="_email_verification_token" required></div>
+            <div class="fs_signup_verification">
+                <div class="fs_field_group fs_field_verification">
+                    <p><?php echo esc_html(sprintf(__('A verification code has been sent to %s. Please provide the code below:', 'fluent-support'), $formData['email'])); ?></p>
+                    <input type="hidden" name="_email_verification_hash" value="<?php echo esc_attr($hash); ?>"/>
+                    <div class="fs_field_label is-required">
+                        <label for="fs_field_verification"><?php _e('Verification Code', 'fluent-support'); ?></label>
+                    </div>
+                    <div class="fs_input_wrap">
+                        <input type="text" id="fs_field_verification" placeholder="" name="_email_verification_token" required>
+                    </div>
+                </div>
+                <button
+                    style="display: inline-block; cursor: pointer; border: 0; background: #2271b1; color: #fff; text-decoration: none; text-shadow: none; min-height: 32px; padding: 8px 24px; font-size: 14px; border-radius: 3px; margin-top: 10px;"
+                    id="fs_verification_submit" type="submit">
+                    <?php _e('Complete Signup', 'fluent-support'); ?>
+                </button>
             </div>
-
-            <button
-                style="display: inline-block; cursor: pointer; border: 0; background: #2271b1; color: #fff; text-decoration: none; text-shadow: none; min-height: 32px; padding: 8px 24px; font-size: 14px; border-radius: 3px; margin-top: 10px;"
-                id="fs_verification_submit" type="submit">
-                <?php _e('Complete Signup', 'fluent-support'); ?>
-            </button>
-        </div>
-
         <?php
         return ob_get_clean();
     }

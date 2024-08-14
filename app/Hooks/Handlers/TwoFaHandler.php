@@ -169,32 +169,30 @@ class TwoFaHandler
     {
         ob_start();
         ?>
-
-        <form
-            style="margin-top: 20px; padding: 20px; font-weight: 400; overflow: hidden; background: #f6f6f6; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,.15);"
-            class="fs_2fa" id="fs_2fa_form">
-            <input type="hidden" name="login_hash" value="<?php echo esc_attr($data['login_hash']); ?>"/>
-            <div style="margin-bottom: 10px;">
-                <?php _e('Please check your email inbox and enter the 2-factor authentication code below:', 'fluent-support'); ?>
-            </div>
-            <div style="margin-bottom: 10px;">
-                <label for="login_passcode"><?php _e('Authentication Code', 'fluent-support'); ?></label>
-                <div>
-                    <input
-                        style="font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 3px; width: 100%; box-sizing: border-box;"
-                        placeholder="<?php _e('Login Code', 'fluent-support'); ?>" type="text" name="login_passcode"
-                        id="login_passcode" class="input" size="20"/>
+            <form
+                style="margin-top: 20px; padding: 20px; font-weight: 400; overflow: hidden; background: #f6f6f6; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,.15);"
+                class="fs_2fa" id="fs_2fa_form">
+                <input type="hidden" name="login_hash" value="<?php echo esc_attr($data['login_hash']); ?>"/>
+                <div style="margin-bottom: 10px;">
+                    <?php _e('Please check your email inbox and enter the 2-factor authentication code below:', 'fluent-support'); ?>
                 </div>
-            </div>
-            <div>
-                <button
-                    style="display: inline-block; cursor: pointer; border: 0; background: #2271b1; color: #fff; text-decoration: none; text-shadow: none; min-height: 32px; padding: 8px 24px; font-size: 14px; border-radius: 3px;"
-                    id="fs_2fa_confirm" type="submit">
-                    <?php _e('Submit', 'fluent-support'); ?>
-                </button>
-            </div>
-        </form>
-
+                <div style="margin-bottom: 10px;">
+                    <label for="login_passcode"><?php _e('Authentication Code', 'fluent-support'); ?></label>
+                    <div>
+                        <input
+                            style="font-size: 14px; padding: 8px; border: 1px solid #ccc; border-radius: 3px; width: 100%; box-sizing: border-box;"
+                            placeholder="<?php _e('Login Code', 'fluent-support'); ?>" type="text" name="login_passcode"
+                            id="login_passcode" class="input" size="20"/>
+                    </div>
+                </div>
+                <div>
+                    <button
+                        style="display: inline-block; cursor: pointer; border: 0; background: #2271b1; color: #fff; text-decoration: none; text-shadow: none; min-height: 32px; padding: 8px 24px; font-size: 14px; border-radius: 3px;"
+                        id="fs_2fa_confirm" type="submit">
+                        <?php _e('Verify and Login', 'fluent-support'); ?>
+                    </button>
+                </div>
+            </form>
         <?php
 
         return ob_get_clean();
