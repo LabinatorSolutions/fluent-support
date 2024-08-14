@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
 Tags: support, ticketing, support ticketing, support plugin, helpdesk
 Requires at least: 5.6
 Tested up to: 6.4
-Stable tag: 1.7.90
+Stable tag: 1.8.00
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -188,6 +188,19 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.8.00 (Date: Aug 14, 2024) =
+* Added - Integration with chatGPT (Pro)
+* Added - Product Filter and sorting option in customer portal
+* Added - Email verification in sighup for customer
+* Added - Two-FA in signing for customer
+* Fixed - Freshdesk ticket migration issue
+* Fixed - Response message not being saved correctly in the auto-close settings
+* Fixed - Data remaining in the "Create Customer" form after creating a customer in the Customers module
+* Fixed - Form not resetting after creating a new ticket on behalf of a customer from the dashboard by support staff
+* Fixed - Shortcode always being pasted below the content
+* Fixed - Tickets still being deletable even when the "Delete Ticket" permission is unchecked
+* Fixed - Workflow issue when the ticket-closing condition is triggered
 
 = 1.7.90 (Date: May 28, 2024) =
 * Added - Activity Trends by Time of Day (Pro)
