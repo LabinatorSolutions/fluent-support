@@ -128,7 +128,7 @@ export default {
                     value: 'title'
                 },
                 {
-                    label: 'Created At',
+                    label: 'Created at',
                     value: 'created_at'
                 },
             ],
