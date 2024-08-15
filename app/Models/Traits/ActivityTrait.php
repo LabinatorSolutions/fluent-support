@@ -14,7 +14,7 @@ trait ActivityTrait
 
         $activitiesQuery = static::with([
             'person' => function ($query) {
-                $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
+                $query->select(['first_name', 'person_type', 'email', 'last_name', 'id', 'avatar']);
             }
         ])->latest('id');
 
@@ -37,6 +37,12 @@ trait ActivityTrait
         }
 
         $activities = $activitiesQuery->paginate();
+
+        foreach ($activities as $activity) {
+            if($activity->person) {
+                $activity->person->makeHidden(['email']);
+            }
+        }
 
         if (!$activities) {
             throw new \Exception('No activities found');

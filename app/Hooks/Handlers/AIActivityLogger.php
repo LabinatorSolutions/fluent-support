@@ -17,11 +17,12 @@ class AIActivityLogger
      */
     public function init()
     {
-        add_action('fluent_support/gpt_3.5_activity', function ($ticketID, $prompt, $usedTokens) {
+        add_action('fluent_support/open_ai_response_success', function ($ticketID, $prompt, $usedTokens) {
             $settings = Helper::getOption('_ai_activity_settings', []);
             if (isset($settings['disable_logs']) && $settings['disable_logs'] === 'yes') {
                 return;
             }
+
             $logData = [
                 'agent_id' => get_current_user_id(),
                 'ticket_id' => $ticketID,
