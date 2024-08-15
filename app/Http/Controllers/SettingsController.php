@@ -317,11 +317,15 @@ class SettingsController extends Controller
         ]);
     }
 
-    public function saveChatGPTSettings(Request $request)
+    public function saveOpenAISettings(Request $request)
     {
-        $apiKey = sanitize_text_field($request->get('api_key'));
+        $data = $request->get();
+        $data = [
+            'api_key' => sanitize_text_field($data['api_key']),
+            'model' => sanitize_text_field($data['model']),
+        ];
 
-        $response = Helper::authorizeChatGPTAPIKey($apiKey);
+        $response = Helper::authorizeChatGPTAPIKey($data);
 
         if (is_wp_error($response)) {
             return $this->sendError([
@@ -337,17 +341,13 @@ class SettingsController extends Controller
             ]);
         }
 
-        $chatGPTData = [
-            'api_key' => $apiKey,
-        ];
-
         try {
-            $isDataSaved = Helper::saveChatGPTData('_fs_chatGPT_settings', '_fs_chatGPT_data', $chatGPTData);
+            $isDataSaved = Helper::saveOpenAIData('_fs_openai_settings', '_fs_openai_data', $data);
             if ($isDataSaved) {
                 AIActivityLogsMigrator::migrate();
             }
             return $this->sendSuccess([
-                'message' => __('ChatGPT settings have been successfully saved.', 'fluent-support'),
+                'message' => __('OpenAI settings have been successfully saved.', 'fluent-support'),
             ]);
         } catch (\Exception $e) {
             return $this->sendError([
@@ -357,27 +357,27 @@ class SettingsController extends Controller
     }
 
 
-    public function disconnectChatGPT()
+    public function disconnectOpenAI()
     {
         $deletedRecords = Meta::where([
-            'object_type' => '_fs_chatGPT_settings',
-            'key'         => '_fs_chatGPT_data',
+            'object_type' => '_fs_openai_settings',
+            'key'         => '_fs_openai_data',
         ])->delete();
 
         if ($deletedRecords) {
             return $this->sendSuccess([
-                'message' => __('ChatGPT settings have been successfully disconnected.', 'fluent-support'),
+                'message' => __('OpenAI settings have been successfully disconnected.', 'fluent-support'),
             ]);
         } else {
             return $this->sendError([
-                'message' => __('Failed to disconnect ChatGPT settings. No matching records found or an error occurred.', 'fluent-support'),
+                'message' => __('Failed to disconnect OpenAI settings. No matching records found or an error occurred.', 'fluent-support'),
             ]);
         }
     }
 
-    public function getChatGPTSettings()
+    public function getOpenAISettings()
     {
-        $chatGPTSettingsData = Meta::where('object_type', '_fs_chatGPT_settings')->first();
+        $chatGPTSettingsData = Meta::where('object_type', '_fs_openai_settings')->first();
         if ($chatGPTSettingsData) {
             $settings = maybe_unserialize($chatGPTSettingsData->value);
             return $this->sendSuccess($settings);
