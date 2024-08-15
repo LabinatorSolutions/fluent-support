@@ -12,7 +12,6 @@
                             {{ getExcerpt(ticket) }}
                         </span>
                     </div>
-
                 </router-link>
             </li>
         </ul>
