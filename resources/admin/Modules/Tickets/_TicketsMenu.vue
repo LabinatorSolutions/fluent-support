@@ -1,0 +1,192 @@
+<template>
+    <div v-if="currentTickets" class="fs_tickets_tiny_nav">
+        <ul class="fs_ticket_nav">
+            <li v-for="ticket in currentTickets">
+                <router-link :to="{ name: 'view_ticket', params: { ticket_id: ticket.id } }">
+                    <img v-if="ticket.customer" :title="ticket.customer.email +' - '+ ticket.customer.full_name"
+                         :alt="ticket.customer.full_name"
+                         class="tk_customer_avatar" :src="ticket.customer.photo"/>
+                    <div class="fs_ticket_title">
+                        <span class="fs_ticket_nav_customer_name">{{ ticket.title }}</span>
+                        <span class="fs_ticket_nav_title">
+                            {{ getExcerpt(ticket) }}
+                        </span>
+                    </div>
+
+                </router-link>
+            </li>
+        </ul>
+    </div>
+    <div v-else class="inner_sidebar">
+        <ul>
+            <li>
+                <router-link :class="{router_not_exactly_matched: isAll}" :to="{ name: 'tickets' }"
+                             @click="handleRouteData('All Tickets')">
+                    <el-icon style="vertical-align: middle;">
+                        <Tickets/>
+                    </el-icon>
+                    {{ $t('All Tickets') }}
+                </router-link>
+            </li>
+            <li>
+                <router-link :class="{router_not_exactly_matched: isMine}"
+                             :to="{ name: 'tickets', query: { agent_id: appVars.me.id } }">
+                    <el-icon>
+                        <User/>
+                    </el-icon>
+                    {{ $t('My Tickets') }}
+                </router-link>
+            </li>
+            <li>
+                <router-link :class="{router_not_exactly_matched: isUnassigned }"
+                             :to="{ name: 'tickets', query: { agent_id: 'unassigned' } }">
+                    <el-icon>
+                        <View/>
+                    </el-icon>
+                    {{ $t('Unassigned') }}
+                </router-link>
+            </li>
+            <li v-if="has_pro">
+                <router-link :class="{router_not_exactly_matched: isMentioned }"
+                             :to="{ name: 'tickets', query: {  watcher: 'watcher', agent_id: appVars.me.id } }">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M10.5 1.16634C9.21115 1.16634 8.16634 2.21115 8.16634 3.49999C8.16634 4.78882 9.21115 5.83362 10.5 5.83362C10.982 5.83362 11.4262 5.69291 11.796 5.44517C11.9298 5.35553 12.111 5.39134 12.2006 5.52517C12.2903 5.659 12.2545 5.84015 12.1206 5.92981C11.6548 6.24184 11.0978 6.41695 10.5 6.41695C8.88897 6.41695 7.58301 5.11099 7.58301 3.49999C7.58301 1.88899 8.88897 0.583008 10.5 0.583008C12.111 0.583008 13.417 1.88899 13.417 3.49999L13.4169 3.50571V3.93748C13.4169 4.50127 12.9599 4.95832 12.3961 4.95832C12.0449 4.95832 11.7351 4.78094 11.5514 4.51087C11.2861 4.78669 10.9132 4.95833 10.5003 4.95833C9.69485 4.95833 9.04192 4.30541 9.04192 3.49999C9.04192 2.69458 9.69485 2.04166 10.5003 2.04166C10.8286 2.04166 11.1315 2.15014 11.3753 2.33322C11.3753 2.17219 11.5059 2.04166 11.6669 2.04166C11.828 2.04166 11.9586 2.17225 11.9586 2.33333V3.93748C11.9586 4.17911 12.1545 4.37498 12.3961 4.37498C12.6377 4.37498 12.8336 4.17911 12.8336 3.93748V3.49687L12.8336 3.49191C12.8293 2.20679 11.7862 1.16634 10.5 1.16634ZM9.62526 3.49999C9.62526 3.98325 10.017 4.37499 10.5003 4.37499C10.9835 4.37499 11.3753 3.98325 11.3753 3.49999C11.3753 3.01674 10.9835 2.62499 10.5003 2.62499C10.017 2.62499 9.62526 3.01674 9.62526 3.49999Z"
+                            fill="currentColor"/>
+                        <path
+                            d="M12.8334 8.60417V6.10878C12.5737 6.34124 12.2791 6.53543 11.9584 6.68267V8.60417C11.9584 9.16796 11.5014 9.625 10.9376 9.625H7.29962L4.375 11.8128L4.37438 9.625H3.06258C2.49879 9.625 2.04175 9.16796 2.04175 8.60417V3.64583C2.04175 3.08204 2.49879 2.625 3.06258 2.625H7.11033C7.19025 2.31457 7.31164 2.02082 7.46832 1.75H3.06258C2.01554 1.75 1.16675 2.59879 1.16675 3.64583V8.60417C1.16675 9.65119 2.01554 10.5 3.06258 10.5H3.49962L3.50008 12.1041C3.50008 12.2614 3.55104 12.4146 3.64534 12.5407C3.88654 12.8632 4.34349 12.9291 4.66598 12.6879L7.59071 10.5H10.9376C11.9846 10.5 12.8334 9.65119 12.8334 8.60417Z"
+                            fill="currentColor"/>
+                    </svg>
+                    {{ $t('Bookmarks') }}
+                </router-link>
+            </li>
+        </ul>
+    </div>
+</template>
+
+<script type="text/babel">
+import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
+
+export default {
+    name: 'TicketsMenu',
+    data() {
+        return {}
+    },
+    computed: {
+        currentTickets() {
+            if (this.$route.name != 'view_ticket' || !(window.fsCurrentFilteredTickets && window.fsCurrentFilteredTickets.length)) {
+                return null;
+            }
+
+            return window.fsCurrentFilteredTickets;
+        },
+        isAll() {
+            return this.$route.query.agent_id;
+        },
+        isMine() {
+            return !(this.$route.query.watcher !== 'watcher' && this.appVars.me.id === parseInt(this.$route.query.agent_id));
+        },
+        isUnassigned() {
+            return !(this.$route.query.agent_id === 'unassigned' && !this.$route.query.watcher);
+        },
+        isMentioned() {
+            return !(this.$route.query.watcher === 'watcher' && this.appVars.me.id === parseInt(this.$route.query.agent_id));
+        }
+    },
+    methods: {
+        handleRouteData(title) {
+            useFluentHelper().saveData("routesData", '');
+        },
+        getExcerpt(ticket) {
+            let text = (ticket.preview_response) ? ticket.preview_response.content : ticket.content;
+
+            if (!text) {
+                return '';
+            }
+
+            text = text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+
+            return text.substring(0, 70);
+        }
+    }
+}
+</script>
+
+<style lang="scss">
+.fs_tickets_tiny_nav {
+    width: 220px;
+    ul.fs_ticket_nav {
+        margin: 0 20px 0 0;
+        list-style: none;
+        padding: 0;
+        max-height: 85vh;
+        overflow-y: auto;
+        li {
+            padding: 7px 0;
+            &:hover {
+                background: white;
+            }
+            position: relative;
+            a {
+                display: flex;
+                column-gap: 7px;
+                align-items: center;
+                justify-content: flex-start;
+                text-decoration: none;
+                color: #333;
+                cursor: pointer;
+                &:focus {
+                    outline: none;
+                    box-shadow: none;
+                }
+
+                /*
+                * Create a graiant at the end of list item
+                * It should show as less opacity
+                 */
+                &:after {
+                    content: "";
+                    position: absolute;
+                    width: 40%;
+                    background: linear-gradient(to right, rgba(255, 255, 255, 0), #f1f2f5d9);
+                    bottom: 0;
+                    right: 0;
+                    top: 0;
+                }
+
+                img {
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                }
+                .fs_ticket_title {
+                    display: block;
+                    width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+                span.fs_ticket_nav_customer_name {
+                    display: block;
+                    width: 100%;
+                    font-weight: 500;
+                }
+                .fs_ticket_nav_title {
+                    display: block;
+                    width: 100%;
+                    font-size: 12px;
+                    color: #666;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+                &.router-link-exact-active {
+                    .fs_ticket_nav_title, .fs_ticket_nav_customer_name {
+                        color: #2271b1;
+                    }
+                }
+            }
+        }
+    }
+}
+</style>
