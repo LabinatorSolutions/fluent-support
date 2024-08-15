@@ -1,5 +1,5 @@
 <template>
-    <div v-if="currentTickets" class="fs_tickets_tiny_nav">
+    <div v-if="currentTickets && !isMobile" class="fs_tickets_tiny_nav">
         <ul class="fs_ticket_nav">
             <li v-for="ticket in currentTickets">
                 <router-link :to="{ name: 'view_ticket', params: { ticket_id: ticket.id } }">
@@ -70,7 +70,9 @@ import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     name: 'TicketsMenu',
     data() {
-        return {}
+        return {
+            isMobile: false
+        }
     },
     computed: {
         currentTickets() {
@@ -108,6 +110,9 @@ export default {
 
             return text.substring(0, 70);
         }
+    },
+    mounted() {
+        this.isMobile = window.innerWidth < 768;
     }
 }
 </script>
