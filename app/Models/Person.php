@@ -108,39 +108,35 @@ class Person extends Model
             return $this->attributes['avatar'];
         }
 
-        $email = '';
-        if (isset($this->attributes['email'])) {
-            $email = trim($this->attributes['email']);
+        if (empty($this->attributes['email'])) {
+            return '';
         }
 
-        $hash = md5(strtolower($email));
+        $fallBackName = '';
+        if (isset($this->attributes['first_name'])) {
+            $fallBackName = $this->attributes['first_name'];
+        }
 
-        /*
-         * Filter person profile avatar, by default it use gravatar profile picture
-         *
-         * @since v1.0.0
-         * @param string $url  link to the profile picture
-         * @pram string $email user gravatar email address
+        if (isset($this->attributes['last_name'])) {
+            $fallBackName .= '+' . $this->attributes['last_name'];
+        }
+
+        $hash = md5(strtolower(trim($this->attributes['email'])));
+
+        $fallback = '';
+        if ($fallBackName) {
+            $fallback = '&d=https%3A%2F%2Fui-avatars.com%2Fapi%2F' . urlencode($fallBackName) . '/128';
+        }
+
+        /**
+         * Gravatar URL by Email
+         * @param string $gravatar Gravatar URL
+         * @param string $email Email address
          */
-        /*return apply_filters(
-            'fluent_support/get_avatar',
-            "https://www.gravatar.com/avatar/${hash}?s=128",
-            $email
-        );*/
-        $defaultAvatar = get_option('avatar_default');
-        if('gravatar_default' === $defaultAvatar){
-            return apply_filters(
-                'fluent_support/get_avatar',
-                "https://www.gravatar.com/avatar/$hash?s=128",
-                $email
-            );
-        }else{
-            return apply_filters(
-                'fluent_support/get_avatar',
-                get_avatar_url('', array('default' => $defaultAvatar)),
-                $email
-            );
-        }
+        return apply_filters('fluent_support/get_avatar',
+            "https://www.gravatar.com/avatar/{$hash}?s=128" . $fallback,
+            $this->attributes['email']
+        );
     }
 
     /**
@@ -215,7 +211,7 @@ class Person extends Model
             $meta->update();
         }
 
-        if (!$meta){
+        if (!$meta) {
             Meta::create([
                 'object_type' => 'person_meta',
                 'object_id'   => $this->id,
@@ -234,7 +230,8 @@ class Person extends Model
             ->delete();
     }
 
-    public function restoreAvatar($person, $id){
+    public function restoreAvatar($person, $id)
+    {
         $person->where('id', $id)->update([
             'avatar' => null
         ]);

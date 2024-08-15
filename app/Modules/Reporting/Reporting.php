@@ -582,24 +582,111 @@ class Reporting
 
     public function getTicketStats($from, $to)
     {
-        $query = Ticket::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count');
+        $whereClause = '';
+        if ($from && $to) {
+            // Ensure the dates are in the correct format (Y-m-d H:i:s)
+            $start_date = date('Y-m-d 00:00:00', strtotime($from));
+            $end_date = date('Y-m-d 23:59:59', strtotime($to));
+            $whereClause = "WHERE created_at BETWEEN '$start_date' AND '$end_date'";
+        }
 
-        $this->applyDateFilter($query, $from, $to);
+        global $wpdb;
 
-        return $this->finalizeQuery($query);
+        // SQL query to count tickets by day of week and hour within the specified date range
+        $query = "SELECT DAYNAME(created_at) AS weekday, HOUR(created_at) AS hour, COUNT(*) AS count
+        FROM {$wpdb->prefix}fs_tickets
+        {$whereClause}
+        GROUP BY DAYNAME(created_at), HOUR(created_at)
+        ORDER BY FIELD(DAYNAME(created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(created_at)";
+
+        // Execute the query
+        $results = $wpdb->get_results($query);
+
+        $fillData = array_fill(0, 24, 0);
+        // add :00 on the suffix
+        $fillData = array_combine(array_map(function ($hour) {
+            return sprintf('%1d:00', $hour);
+        }, array_keys($fillData)), $fillData);
+
+        // Prepare the report
+        // Prepare the report
+        $report = [
+            'Mon' => $fillData,
+            'Tue' => $fillData,
+            'Wed' => $fillData,
+            'Thu' => $fillData,
+            'Fri' => $fillData,
+            'Sat' => $fillData,
+            'Sun' => $fillData
+        ];
+
+        foreach ($results as $result) {
+            $weekdayName = substr($result->weekday, 0, 3);
+            if (!isset($report[$weekdayName])) {
+                $report[$weekdayName] = $fillData;
+            }
+            $report[$weekdayName][sprintf('%1d:00', $result->hour)] = (int)$result->count;
+        }
+
+        return $report;
     }
 
     public function getResponseStats($from, $to, $reportType, $agentId = null)
     {
-        $query = Conversation::selectRaw('DAYNAME(created_at) AS day_of_week, HOUR(created_at) AS hour_of_day, COUNT(*) AS count');
 
-        if ($reportType === 'agent' && $agentId) {
-            $query->where('person_id', $agentId);
+        global $wpdb;
+
+        $whereClause = " AND p.person_type = '" . $reportType . "'";
+
+        if ($from && $to) {
+            // Ensure the dates are in the correct format (Y-m-d H:i:s)
+            $start_date = date('Y-m-d 00:00:00', strtotime($from));
+            $end_date = date('Y-m-d 23:59:59', strtotime($to));
+            $whereClause .= " AND c.created_at BETWEEN '$start_date' AND '$end_date'";
         }
 
-        $this->applyDateFilter($query, $from, $to);
+        if ($agentId) {
+            $whereClause .= " AND c.person_id = $agentId";
+        }
 
-        return $this->finalizeQuery($query);
+        // SQL query to count customer responses by day of week and hour within the specified date range
+        $query = "SELECT DAYNAME(c.created_at) AS weekday, HOUR(c.created_at) AS hour, COUNT(*) AS count
+        FROM {$wpdb->prefix}fs_conversations AS c
+        JOIN {$wpdb->prefix}fs_persons AS p ON c.person_id = p.id
+        WHERE c.conversation_type = 'response'
+          {$whereClause}
+        GROUP BY DAYNAME(c.created_at), HOUR(c.created_at)
+        ORDER BY FIELD(DAYNAME(c.created_at), 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), HOUR(c.created_at)";
+
+        // Execute the query
+        $results = $wpdb->get_results($query);
+
+        $fillData = array_fill(0, 24, 0);
+        // add :00 on the suffix
+        $fillData = array_combine(array_map(function ($hour) {
+            return sprintf('%1d:00', $hour);
+        }, array_keys($fillData)), $fillData);
+
+        // Prepare the report
+        $report = [
+            'Mon' => $fillData,
+            'Tue' => $fillData,
+            'Wed' => $fillData,
+            'Thu' => $fillData,
+            'Fri' => $fillData,
+            'Sat' => $fillData,
+            'Sun' => $fillData
+        ];
+
+        foreach ($results as $result) {
+            $weekdayName = substr($result->weekday, 0, 3);
+            if (!isset($report[$weekdayName])) {
+                $report[$weekdayName] = $fillData;
+            }
+            $report[$weekdayName][sprintf('%01d:00', $result->hour)] = (int)$result->count;
+        }
+
+        return $report;
     }
 
     public function applyDateFilter($query, $from, $to)
