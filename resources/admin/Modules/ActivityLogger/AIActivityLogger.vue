@@ -60,9 +60,9 @@
                         <span v-else class="fs_ticket_not_available">#{{ scope.row.ticket_id }} - This ticket has been deleted or is not available.</span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="model_name" label="Model" />
-                <el-table-column prop="tokens" label="Tokens" />
-                <el-table-column prop="prompt" label="Prompt" />
+                <el-table-column :width="160" prop="model_name" label="Model" />
+                <el-table-column :width="90" prop="tokens" label="Tokens" />
+                <el-table-column :min-width="230" prop="prompt" label="Prompt" />
             </el-table>
 
             <div
