@@ -824,7 +824,7 @@ export default {
         };
 
         const fetchChatGPTAPI = () => {
-            get("settings/chatGPT-integration")
+            get("settings/openai-integration")
                 .then((response) => {
                     state.apiKey = response.api_key;
                     state.aiResponse = !!state.apiKey;
@@ -1299,7 +1299,7 @@ export default {
 
         const getTicketSummary = () => {
             state.ResponseLoader = true;
-            post(`chatGPT/${props.ticket_id}/get-ticket-summary`, {
+            post(`openai/${props.ticket_id}/get-ticket-summary`, {
                 type: 'ticketSummary'
             })
                 .then(response => {
@@ -1315,7 +1315,7 @@ export default {
 
         const getCustomerSentiment = () => {
             state.ResponseLoader = true;
-            post(`chatGPT/${props.ticket_id}/get-ticket-tone`, {
+            post(`openai/${props.ticket_id}/get-ticket-tone`, {
                 type: 'ticketTone'
             })
                 .then(response => {

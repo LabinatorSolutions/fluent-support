@@ -116,8 +116,8 @@ export default {
                     icon: "Connection",
                 },
                 {
-                    title: translate("ChatGPT Integration"),
-                    route_name: "chatGPT_integration",
+                    title: translate("OpenAI Integration"),
+                    route_name: "openai_integration",
                     icon: "Connection",
                 },
             ],

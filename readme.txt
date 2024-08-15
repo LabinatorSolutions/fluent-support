@@ -190,7 +190,7 @@ Absolutely not! From the very first, We were careful about this. It stores all t
 == Changelog ==
 
 = 1.8.00 (Date: Aug 15, 2024) =
-* Added - Integration with chatGPT (Pro)
+* Added - Integration with OpenAI (Pro)
 * Added - Product Filter and sorting option in customer portal
 * Added - Email verification in sighup for customer
 * Added - Two-FA in signing for customer
