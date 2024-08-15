@@ -59,7 +59,7 @@
                         </div>
 
                         <div class="fs_regenerate">
-                            <el-button class="fs_regenerate_button" @click="generateResponse(prompt)">
+                            <el-button class="fs_regenerate_button" @click="generateResponse(finalPrompts)">
                                 <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
                             </el-button>
                         </div>
@@ -134,7 +134,8 @@ export default {
             isFullSize: false,
             presetPrompts: [],
             draftData: [],
-            showDraft: false
+            showDraft: false,
+            finalPrompts: []
         });
 
         const modifyResponseTitle = 'Enhance Responses with AI';
@@ -192,6 +193,7 @@ export default {
                 .then(response => {
                     state.aiResponse = response;
                     state.loading = false;
+                    state.finalPrompts = prompt;
                     if (state.prompt || state.aiResponse) {
                         state.selectedPrompt = '';
                         saveDraft();
