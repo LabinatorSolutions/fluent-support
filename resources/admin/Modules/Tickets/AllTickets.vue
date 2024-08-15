@@ -342,6 +342,7 @@ export default {
                         }
 
                         state.tickets = response.tickets.data;
+                        window.fsCurrentFilteredTickets = response.tickets.data;
                         state.pagination.total = response.tickets.total;
                         saveFilters();
                     })
