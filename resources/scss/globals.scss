@@ -449,6 +449,13 @@ table.fs_table {
     }
 }
 
+.fs_ticket_not_available {
+    color: #6c757d;
+    opacity: 0.9;
+    word-break: break-word;
+    white-space: normal;
+}
+
 .fs_warn {
     background: #ffff78;
     padding: 8px 10px;

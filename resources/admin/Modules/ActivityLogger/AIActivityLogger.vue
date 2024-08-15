@@ -52,16 +52,19 @@
                 <el-table-column prop="person.full_name" label="Agent" width="180" />
                 <el-table-column label="Ticket">
                     <template v-slot="scope">
-                        <router-link class="fs_ticket_link_preview"
-                                     :to="{name: 'view_ticket', params: { ticket_id: scope.row.ticket.id}}">
+                        <router-link v-if="scope.row.ticket && scope.row.ticket.id"
+                                     class="fs_ticket_link_preview"
+                                     :to="{ name: 'view_ticket', params: { ticket_id: scope.row.ticket.id } }">
                             <p>{{ scope.row.ticket.title }}</p>
                         </router-link>
+                        <span v-else class="fs_ticket_not_available">#{{ scope.row.ticket_id }} - This ticket has been deleted or is not available.</span>
                     </template>
                 </el-table-column>
                 <el-table-column prop="model_name" label="Model" />
                 <el-table-column prop="tokens" label="Tokens" />
                 <el-table-column prop="prompt" label="Prompt" />
             </el-table>
+
             <div
                 style="padding-bottom: 20px"
                 class="fframe_pagination_wrapper"
@@ -163,5 +166,3 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
