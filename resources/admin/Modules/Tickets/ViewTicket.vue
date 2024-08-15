@@ -910,7 +910,7 @@ export default {
             });
             if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
-                    router.go(-1);
+                 //   router.go(-1);
                 }
             }
         }
