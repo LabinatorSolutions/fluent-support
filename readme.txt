@@ -1,20 +1,20 @@
-=== Fluent Support - WordPress Helpdesk and Customer Support Ticket Plugin ===
-Contributors: techjewel, wpmanageninja, adreastrian, rafiahmedd
-Tags: support, ticketing, support ticketing, support plugin, helpdesk
+=== Fluent Support - Helpdesk & Customer Support Ticket System ===
+Contributors: techjewel, wpmanageninja, adreastrian
+Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
-Tested up to: 6.4
-Stable tag: 1.8.00
+Tested up to: 6.6
+Stable tag: 1.8.0
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The Fastest & Most Feature Rich Support and Customer Ticketing System for WordPress.
-
+The Fastest & Most Feature Rich Support and Customer Ticketing System for WordPress. AI-Powered Customer Support Features.
 == Description ==
-= The Super Fast, most versatile, and feature-rich support and customer ticketing plugin for WordPress =
+= The Super Fast, versatile, and feature-rich support and customer ticketing plugin for WordPress =
 
-Fluent Support is the most versatile and feature-rich help desk and support plugin for WordPress. Provide awesome support and manage customer queries right from your WordPress dashboard.
-Fluent Support is the perfect helpdesk & support ticketing plugin that can match the premium features of SAAS solutions like Zendesk or Helpscout or FreshDesk.
+Fluent Support is a versatile and feature-rich help desk and support plugin designed for WordPress. Helping you provide awesome support and manage customer queries right from your WordPress dashboard.
+
+Fluent Support is the perfect helpdesk & support ticketing plugin that can match the premium features of SaaS solutions like Zendesk or Help Scout or FreshDesk.
 
 [youtube https://www.youtube.com/watch?v=ZI7Rlp-uuZI&t=5s]
 
@@ -24,102 +24,146 @@ Fluent Support is the perfect helpdesk & support ticketing plugin that can match
 
 [youtube https://www.youtube.com/watch?v=29NRuKkVSSI]
 
-= Your Self Hosted Customer Support Solution in WordPress  =
+= Your Self-hosted Customer Support Desk in WordPress  =
 
-[Fluent Support](https://fluentsupport.com) is the best and complete feature-rich customer support ticketing system solution. It is also the simplest and fastest Support Ticketing Plugin on WordPress. Manage your customer queries from different channels like contact form, support ticketing form, email, or from remote website.
-Along with managing tickets, you can assign multiple customer agents with appropriate permission levels. Get in details reports about your customers, agents, and productive your overall customer support desk. From the ticket view, you can see the 360-degree view of your customer like their previous tickets, address, purchase history, membership levels, etc. You can do more when you have all the data about a customer along with their query.
+[Fluent Support](https://fluentsupport.com) is the best and complete feature-rich customer support ticketing system solution. It’s deemed as one of the simplest and fastest support ticketing plugins on WordPress by users. Manage your customer queries from different channels like contact form, support ticketing form, email, or from remote websites.
+Along with managing tickets, you can assign multiple customer agents with appropriate permission levels. Get detailed reports about your customers, agents, and increase the productivity of your overall customer support desk.
 
-Fluent Support is a self-hosted support ticketing system with unlimited tickets, support agents, users, products, tags, channels, You name it! There have no limitations as you own your own system and data.
+From the ticket view, you can see a 360-degree view of your customers, including their previous tickets, address, purchase history, membership levels, etc. You can do more when you have all the data about a customer along with their query.
+
+Fluent Support is a self-hosted support ticketing system with unlimited tickets, support agents, users, products, tags, channels, you name it! There are no limitations as you own your own system and data.
 
 = FEATURES - Every Online Business Needs =
 
 **🎉 All-in-One Customer Support Solution**
-With Fluent Support, you can centralize all of your customer queries and respond, track them efficiently. You can also keep your customer's additional data, notes and track their overall stats.
+With Fluent Support, you can centralize your customer support to track and respond to them efficiently. You can also keep your customers' additional data, notes and track their overall stats.
 
 * Multi-Channel Support Ticketing System
+Bring customer support wherever your customers are with a Multi-Channel Support Ticketing System.
 * Super fast and rich filter based ticket management
+Simplify support process with super fast and rich filter based ticket management
 * Track waiting times for your overall tickets
+Respond to support tickets based on waiting time so customers are satisfied from the get-go.
 
-**🎉 Customer Portal**
-Your customer can open a ticket from your website or use your site's contact form. All the tickets can be viewed by the customer when they log in to your site. For public users, they can respond to a ticket by using a unique signed secure link so you can serve both public users and logged-in users.
+**🎉 Customer Support Portal**
+Your customers can open a ticket from your website or use your website's contact form. All the tickets can be viewed by the customer when they log in to your site. For public users, they can respond to a ticket by using a unique signed secure link so you can serve both public users and logged-in users.
+
+Make your support portal truly your own with a fully customizable portal with block editing enabled.
 
 **🎉 Ticket Segmentation and Reporting**
 
-* Ability to segment tickets by product
+* Ability to segment tickets by Product
+Find tickets fast using effective segmentation such as sorting by Products.
+* Ability to segment tickets by Inbox
+Sort tickets for specific Business if you have multiple inboxes added to Fluent Support.
 * Customer can set the priority
+Let customers set the Priority for their queries to better understand what needs attention.
 * Admin/Support Agent can set the priority of a ticket for their own
+Agents can set their own Priorities as well so no support ticket goes missing or slips through.
 * Adding note for internal use for a ticket
+Save additional context for the new agent or ticket with Internal notes.
 * Get detailed reports of your support agents and customers
+Measure customer support performance at a glance and with unparalleled granularity.
 
-**🎉 Built-in Productivity Tools**
+**🎉 Out-of-the-box Productivity Tools**
 
-* Send a response to multiple tickets at once. Very useful for similar queries
-* Close tickets by filtering tickets that are older than 20 days (as an example).
-* Quickly edit a customer's info from the ticket page or add a note for later usage.
+*Custom Automated and Manual workflows
+Send a response to multiple support tickets at once. Very useful for similar queries.
+Close support tickets by filtering tickets that are older than 20 days (as an example).
+*Agent Permissions
+Control agents access to tickets, profiles and admin panel for complete control
+Quickly edit a customer's info from the ticket page or add a note for later usage.
+Get notified when multiple agents are engaging the same ticket.
+Saved replies allow you to reduce time spent with generic responses and frequent support ticket issues.
+Mention agents to specific tickets to get the right people involved.
+*Activity Heat Map
+Get a GitHub style heatmap for the busiest support days for your team. Includes all support tickets submitted over a selected period of time.
 
-**🎉 Build for Speed & Productivity**
-Fluent Support has been built to save time and make your customer support experience more pleasant. Fluent Support is built on top of VueJS & REST API as a Single Page Application. For each page transition, it does not load the full page. It just fetches the required data over AJAX and loads your UI instantly. It's like magic (Thanks to VueJS and REST API). We also made the UX super friendly, easy, and super simple so you don't need a learning curve for getting started.
+**🎉 Built for Speed & Productivity**
+Fluent Support is built to save time and make your customer support experience more pleasant. Built on top of VueJS & REST API as a Single Page Application, it’s one of the fastest customer ticketing systems.
+
+For each page transition, it does not load the full page. It only fetches the required data over AJAX and loads your UI instantly. It's like magic (thanks to VueJS and REST API). We also made the UX super friendly, easy, and simple so your agents can get started within a couple of hours.
 
 = 🛡️ Fully GDPR Ready =
-Fluent Support is a self-hosted WordPress plugin. You own your data, and no external SAAS connection is required to run your Support system with Fluent Support.
+Fluent Support is a self-hosted WordPress plugin. You own your data, and no external SaaS connection is required to run your Support system with Fluent Support.
+
+= AI-Powered Customer Support Features (PRO)=
+
+Fluent Support includes OpenAI to enhance your customer support. These features save time, improve communication, and improve your team's performance.
+
+* Generate AI-crafted responses for efficiency.
+* Choose Response from drafts
+* Customize prompts and fine-tune replies to match your brand’s voice
+* Quickly summarize messages to understand queries faster
+* Analyze the message tone to respond appropriately
 
 = 🚀 Modern. Powerful. Super Fast 🚀 =
 
-* Build with VueJS and REST API as a Single-page Application
-* Super fast and lean interface so anyone can use it without any learning curve
-* Super awesome Dashboard with charts, graphs, essential data points to show your overall support quality.
-* Separate DB Tables, and it's does not affect your WordPress page speed
+* Built with VueJS and REST API as a Single-page Application.
+* Fast-loading, lean interface so anyone can use it without any learning curve.
+* Super awesome dashboard with visuals for essential data points to show your overall support performance.
+* Separate DB Tables, and it doesn’t affect your WordPress page speed.
 
 = SEAMLESS INTEGRATIONS & Features (Pro) =
 
 Fluent Support features and integrations that will help your business –
 
-<h4>First Class integrations with WooCommerce & EDD:</h4>
-* Let your customers open support ticket against an order so you know exactly what they are talking about.
+<h4>Seamless ecommerce support with WooCommerce & EDD:</h4>
+* Let your customers open a support ticket against an order so you know exactly what they are talking about.
 * Let your customers select a store product for the query.
 * View your customer's orders and purchase history from a ticket view.
 
-<h4>Integrations with Your Membership Plugin</h4>
+<h4>Membership Support with WordPress Membership Plugins</h4>
 Do you have a membership site with Restrict Content Pro / Paid Membership Pro / Wishlist Member then we got your covered.
 When you view your member's ticket you can see all the details of your member's membership information so it's super easy for you to give support to your customer.
 
-<h4>Make your Learning Management System more interesting</h4>
-If you have a LMS site running on LearnDash / LifterLMS / TutorLMS then Fluent Support is a perfect solution for you. With the core integration with your LMS system data, you can view all the details about your student when supporting your students.
+* Let your members open a support ticket so you know exactly what they are talking about.
+* Let your members select a specific plan for the support ticket.
+* View your customer's membership history from the ticket view.
+
+<h4>Make your Learning Management System more interactive</h4>
+If you have a LMS site running on LearnDash / LifterLMS / TutorLMS, then Fluent Support is a perfect solution. With the core integration with your LMS system data, you can view all the details about your student when supporting your students.
+
+* Let your learners open a support ticket so you know exactly what they are talking about.
+* Let your members select a specific plan for the support ticket.
+* View your customer's membership history from the ticket view.
 
 <h4>Core BuddyPress / BuddyBoss Support</h4>
-With BuddyPress / BuddyPress integration, you can get detailed overview about your community member from the same page of your custom ticket overview. So you can respond with the right message always!
+With BuddyPress / BuddyPress integration, you can get a detailed overview about your community members from the same page of your custom ticket overview.
+
+So you can ALWAYS respond with the right message!
 
 = Automate Smartly and Do More in Less Time =
-With the powerful Workflow and Saved Replied feature (pro) you can automatically send replies, add internal notes, set priority, assign appropriate support agent, etc on customer's query event.
+With the powerful Workflow and Saved Replied feature (PRO) you can automatically send replies, add internal notes, set priority, assign appropriate support agent, etc on customer's query event.
 With the manual workflow, you can create a set of tasks and run those tasks on the selected filtered tickets. So you can automate multiple tickets and on a single click.
 
 = Migrate From Other Support Plugins =
-If you are using any of the following Support plugin and wants to migrate to this high performance and super fast support plugin then you can do that in few minutes. We have built a super smooth migration module to make your life easier.
+If you are using any of the following Support plugins and want to migrate to this high performance and super fast support plugin then you can do that in a few minutes. We’ve built a super smooth migration module to make switching a matter of minutes.
 
 <h4> Migrate From Awesome Support - WordPress HelpDesk & Support Plugin</h4>
-If you are an Awesome Support plugin user then we got you covered. Just install Fluent Support, Configure with basic settings, create your agents and then follow the following steps
+For Awesome Support plugin users the process is pretty simple. Just install Fluent Support, Configure with basic settings, create your agents and then follow the following steps
 
 * Go to Fluent Support -> Settings
 * You can see the Awesome Support migration details
 * Click on the migrate now button
 * It will take few minutes depends on your support tickets size
 * Once completed it will ask if you want to delete Awesome Support Tickets from your database.
-* Confirm delete or leave it as it is.
-* Now you have all the data right inside your Fluent Support plugin.
-* Enjoy your day!
+* Confirm Delete or leave it as is.
+* Now you have all the data right inside your Fluent Support Dashboard.
+* Resolve away!
 
 
 <h4>Migrate From SupportCandy – Helpdesk & Support Ticket System</h4>
-If you are a Support Candy plugin user then it's super easy to migrate to Fluent Support. Just install Fluent Support, Configure with basic settings, create your agents and then follow the following steps
+For Support Candy plugin users it's also super easy to migrate to Fluent Support. Just install Fluent Support, configure with basic settings, create your agents and then follow the steps below,
 
 * Go to Fluent Support -> Settings
 * You can see the SupportCandy migration details
 * Click on the migrate now button
-* It will take few minutes depends on your support tickets size in SupportCandy Plugin
+* It will take up to a few minutes depending on your support ticket size and volume in SupportCandy.
 * Once completed it will ask if you want to delete SupportCandy Tickets from your database.
-* Confirm delete or leave it as it is. If you leave it then all data in SupportCandy will remain as it is.
+* Confirm Delete or leave it as it is. If you leave it then all data in SupportCandy will remain as it is.
 * Now you have all the data right inside your Fluent Support plugin.
-* Migration done from "SupportCandy – Helpdesk & Support Ticket System" to Fluent Support Plugin!
+* Migration done from "SupportCandy – Helpdesk & Support Ticket System" to Fluent Support!
 
 
 = Reviews by WordPress Experts =
@@ -135,15 +179,14 @@ If you are a Support Candy plugin user then it's super easy to migrate to Fluent
 
 == Other Plugins By The Same Team ==
 <ul>
-    <li><a href="https://wordpress.org/plugins/fluent-crm/" target="_blank">Fluent CRM – Email Marketing Automation, Newsletter and CRM Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/fluentform/" target="_blank">Fluent Forms – Fastest WordPress Form Builder Plugin</a></li>
-	<li><a href="https://wordpress.org/plugins/ninja-tables/" target="_blank">Ninja Tables – Best WP DataTables Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/ninja-charts/" target="_blank">Ninja Charts – Best WP Charts Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/wp-payment-form/" target="_blank">WPPayForm - Stripe Payments Plugin for WordPress</a></li>
-	<li><a href="https://wordpress.org/plugins/fluentforms-pdf/" target="_blank">Fluent Forms PDF - PDF Entries for Fluent Forms</a></li>
-	<li><a href="https://wordpress.org/plugins/fluent-smtp/" target="_blank">FluentSMTP - WordPress Mail SMTP, SES, SendGrid, MailGun Plugin</a></li>
+<li><a href="https://wordpress.org/plugins/fluent-crm/" target="_blank">FluentCRM - Email Newsletter, Automation, Email Marketing, Email Campaigns, and CRM Solution</a></li>
+	<li><a href="https://wordpress.org/plugins/fluentform/" target="_blank">Contact Form Plugin by Fluent Forms for Quiz, Survey, and Drag & Drop WP Form Builder</a></li>
+	<li><a href="https://wordpress.org/plugins/ninja-tables/" target="_blank">Ninja Tables - Easiest Data Table Builder</a></li>
+	<li><a href="https://wordpress.org/plugins/ninja-charts/" target="_blank">Ninja Charts - WordPress Charts and Graphs Plugin</a></li>
+	<li><a href="https://wordpress.org/plugins/wp-payment-form/" target="_blank">Simple Payment Donations & Subscriptions Plugin by Paymattic - Best Payments Plugin for WP</a></li>
+	<li><a href="https://wordpress.org/plugins/fluentforms-pdf/" target="_blank">PDF Generator For Fluent Forms - The Contact Form Plugin</a></li>
+	<li><a href="https://wordpress.org/plugins/fluent-smtp/" target="_blank">FluentSMTP - WP SMTP Plugin with Amazon SES, SendGrid, MailGun, Postmark, Google and Any SMTP Provider</a></li>
 </ul>
-
 
 
 == Installation ==
@@ -166,16 +209,19 @@ No, there are no limitations. You can manage as many support tickets or customer
 
 = Is it 100% self-hosted? =
 
-Yes, Fluent Support is 100% self-hosted. Fluent Support will not connect with any of our SAAS servers. You own the data, and your data should be hosted on your hosting server.
+Yes, Fluent Support is 100% self-hosted. Fluent Support will not connect with any of our SaaS servers. You own the data, and your data should be hosted on your hosting server.
 
 = Is it GDPR compliant? =
 
 Yes, your data never goes to a different server like HelpScout, ZenDesk or Freshdesk. All the data will be saved and managed into WordPress.
 
-= Will it is a performance issue for WordPress? =
+= Will it cause performance issues for WordPress? =
 
-Absolutely not! From the very first, We were careful about this. It stores all the related data in custom database tables, so it will not affect your WordPress database. We built the application with VueJS, and it’s only run when you go to the admin dashboard of Fluent Support. Also, The Admin UI is super-fast as It’s a SPA and communicates over ajax.
+Absolutely not! From the very first, we were careful about this. It stores all the related data in custom database tables, so it will not affect your WordPress database. We built the application with VueJS, and it’s only run when you go to the admin dashboard of Fluent Support. Also, The Admin UI is super-fast as It’s a SPA and communicates over ajax.
 
+=Can I customize the appearance of the helpdesk to match my WordPress theme?=
+
+Absolutely! Fluent Support offers a customizable support portal, allowing you to seamlessly integrate the helpdesk with your WordPress theme for a cohesive and professional look.
 
 == Screenshots ==
 1. FluentSupport Tickets
