@@ -139,10 +139,10 @@ export default {
         });
 
         const modifyResponseTitle = 'Enhance Responses with AI';
-        const modifyResponseDescription = 'Refine ticket responses with ChatGPT to enhance clarity and precision.';
+        const modifyResponseDescription = 'Refine ticket responses with OpenAI to enhance clarity and precision.';
 
         const generateResponseTitle = 'Generate Responses with AI';
-        const generateResponseDescription = 'Let ChatGPT generate ticket responses to enhance support efficiency.';
+        const generateResponseDescription = 'Let OpenAI generate ticket responses to enhance support efficiency.';
 
         const title = computed(() =>
             props.type === 'modifyResponse' ? modifyResponseTitle : generateResponseTitle
@@ -189,7 +189,7 @@ export default {
                 requestData.type = props.type;
             }
 
-            post(`chatGPT/${state.ticketID}/generate-response`, requestData)
+            post(`openai/${state.ticketID}/generate-response`, requestData)
                 .then(response => {
                     state.aiResponse = response;
                     state.loading = false;
@@ -253,7 +253,7 @@ export default {
         };
 
         const fetchPresets = () => {
-            get('chatGPT/preset-prompts', { type: props.type })
+            get('openai/preset-prompts', { type: props.type })
                 .then(response => {
                     state.presetPrompts = response;
                 })

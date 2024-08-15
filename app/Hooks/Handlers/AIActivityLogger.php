@@ -17,8 +17,9 @@ class AIActivityLogger
      */
     public function init()
     {
-        add_action('fluent_support/open_ai_response_success', function ($ticketID, $prompt, $usedTokens) {
+        add_action('fluent_support/open_ai_response_success', function ($ticketID, $prompt, $usedTokens, $body, $model) {
             $settings = Helper::getOption('_ai_activity_settings', []);
+
             if (isset($settings['disable_logs']) && $settings['disable_logs'] === 'yes') {
                 return;
             }
@@ -26,13 +27,13 @@ class AIActivityLogger
             $logData = [
                 'agent_id' => get_current_user_id(),
                 'ticket_id' => $ticketID,
-                'model_name' => 'gpt-3.5-turbo-0125',
+                'model_name' => $model,
                 'tokens' => intval($usedTokens),
                 'prompt' => sanitize_text_field($prompt),
             ];
 
             AIActivityLogs::create($logData);
-        }, 20, 3);
+        }, 20, 5);
     }
 
 }
