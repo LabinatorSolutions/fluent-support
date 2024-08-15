@@ -357,7 +357,7 @@ class Helper
         return $baseUrl . '#/ticket/' . $ticket->id . '/view';
     }
 
-    public static function saveChatGPTData($objectType, $key, $data)
+    public static function saveOpenAIData($objectType, $key, $data)
     {
         $serializedData = maybe_serialize($data);
 
@@ -377,11 +377,11 @@ class Helper
 
     }
 
-    public static function authorizeChatGPTAPIKey($apiKey)
+    public static function authorizeChatGPTAPIKey($data)
     {
        return wp_remote_get('https://api.openai.com/v1/models', [
             'headers' => [
-                'Authorization' => 'Bearer ' . $apiKey,
+                'Authorization' => 'Bearer ' . $data['api_key'],
                 'Content-Type' => 'application/json'
             ]
         ]);
@@ -1040,14 +1040,26 @@ class Helper
 
     public static function isAIEnabled()
     {
-        $chatGPTSettingsData = Meta::where('object_type', '_fs_chatGPT_settings')->first();
-        $settings = maybe_unserialize($chatGPTSettingsData->value);
-        if ($settings) {
+        $openAISettingsData = Meta::where('object_type', '_fs_openai_settings')->first();
+
+        if (!$openAISettingsData) {
+            return false;
+        }
+
+        $value = $openAISettingsData->value;
+        if (empty($value)) {
+            return false;
+        }
+
+        $settings = maybe_unserialize($value);
+
+        if (is_array($settings) && !empty($settings)) {
             return true;
         }
 
         return false;
     }
+
 
     public static function getSettings()
     {

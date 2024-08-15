@@ -2,21 +2,27 @@
     <div class="fs_box_wrapper">
         <div class="fs_chatGPT_box_header">
             <div>
-                <h3>{{ translate("OpenAI ChatGPT Integration") }}</h3>
-                <p class="fs_chatGPT_description">{{ translate('The OpenAI ChatGPT API can be used to generate and enhance responses.') }}</p>
+                <h3>{{ translate("OpenAI Integration") }}</h3>
+                <p class="fs_chatGPT_description">{{ translate('The OpenAI API can be used to generate and enhance responses.') }}</p>
             </div>
         </div>
-        <div class="fs_box_body"  v-if="!loading">
-            <div class="fs_chatGPT_instruction">
-                <a href="https://platform.openai.com/account/api-keys" class="fs_link">{{ translate('Get OpenAI ChatGPT API Keys') }}</a>
-                <p>{{ translate('Please click on this link to get API keys from OpenAI ChatGPT.') }}</p>
-            </div>
+        <div class="fs_box_body" v-if="!loading">
             <el-form label-position="top" label-width="140px">
                 <el-form-item label="Access Code">
                     <el-input
                         type="password"
                         v-model="apiKey"
                     />
+                </el-form-item>
+                <el-form-item label="Select Model">
+                    <el-select v-model="selectedModel" placeholder="Choose OpenAI model">
+                        <el-option
+                            v-for="model in modelOptions"
+                            :key="model"
+                            :label="model"
+                            :value="model">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-button type="primary" @click="saveSettings">{{translate('Verify OpenAI ChatGPT')}}</el-button>
                 <el-button v-if="disconnectChatGPT" type="danger" @click="disconnect">{{translate('Disconnect')}}</el-button>
@@ -26,30 +32,49 @@
     </div>
 </template>
 
-
 <script>
-import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
-import {onMounted, reactive, toRefs} from "vue";
+import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
+import { onMounted, reactive, toRefs } from "vue";
+
 
 export default {
-    name: "ChatGPTIntegration",
+    name: "OpenAIIntegration",
     setup() {
-
-        const { get, post, handleError, translate } =
-            useFluentHelper();
-
+        const { get, post, handleError, translate } = useFluentHelper();
         const { notify } = useNotify();
 
         const state = reactive({
             apiKey: "",
+            selectedModel: "gpt-3.5-turbo", // Default model
+            modelOptions: [
+                "gpt-3.5-turbo",
+                "gpt-3.5-turbo-0125",
+                "gpt-3.5-turbo-1106",
+                "gpt-3.5-turbo-0125",
+                "gpt-4-0314",
+                "gpt-4-0613",
+                "gpt-4",
+                "gpt-4-1106-preview",
+                "gpt-4-0125-preview",
+                "gpt-4-turbo-preview",
+                "gpt-4-turbo-2024-04-09",
+                "gpt-4-turbo",
+                "gpt-4o-mini-2024-07-18",
+                "gpt-4o-mini",
+                "chatgpt-4o-latest",
+                "gpt-4o-2024-08-06",
+                "gpt-4o-2024-05-13",
+                "gpt-4o"
+            ],
             disconnectChatGPT: false,
             loading: false,
         });
 
         const saveSettings = () => {
             state.loading = true;
-            post("settings/chatGPT-integration", {
+            post("settings/openai-integration", {
                 api_key: state.apiKey,
+                model: state.selectedModel, // Save the selected model
             })
                 .then((response) => {
                     notify({
@@ -68,9 +93,10 @@ export default {
 
         const fetchSettings = () => {
             state.loading = true;
-            get("settings/chatGPT-integration")
+            get("settings/openai-integration")
                 .then((response) => {
                     state.apiKey = response.api_key;
+                    state.selectedModel = response.model
                     if (response.api_key) {
                         state.disconnectChatGPT = true;
                     }
@@ -83,7 +109,7 @@ export default {
         };
 
         const disconnect = () => {
-            post("settings/chatGPT-integration/disconnect")
+            post("settings/openai-integration/disconnect")
                 .then((response) => {
                     notify({
                         message: response.message,
@@ -111,7 +137,3 @@ export default {
     }
 }
 </script>
-
-<style>
-</style>
-
