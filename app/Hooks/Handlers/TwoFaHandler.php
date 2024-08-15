@@ -48,7 +48,8 @@ class TwoFaHandler
             'two_fa_code_hash' => wp_hash_password($twoFaCode),
             'valid_till' => date('Y-m-d H:i:s', current_time('timestamp') + 10 * 30),
             'created_at' => current_time('mysql'),
-            'updated_at' => current_time('mysql')
+            'updated_at' => current_time('mysql'),
+            'used_count' => 0
         );
 
         $existingRecord = Meta::where('key', $hash)->first();
