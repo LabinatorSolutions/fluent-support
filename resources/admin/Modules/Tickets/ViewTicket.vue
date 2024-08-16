@@ -53,6 +53,21 @@
                             </el-popover>
                         </li>
 
+                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant" v-if="aiResponse">
+                            <el-dropdown trigger="click">
+                                <el-button class="fs_ai_intelligent_button">
+                                    <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
+                                </el-button>
+
+                                <template #dropdown>
+                                    <el-dropdown-menu>
+                                        <el-dropdown-item @click="getTicketSummary">Ticket Summary</el-dropdown-item>
+                                        <el-dropdown-item @click="getCustomerSentiment">Customer Sentiment</el-dropdown-item>
+                                    </el-dropdown-menu>
+                                </template>
+                            </el-dropdown>
+                        </li>
+
                     </ul>
                     <div class="fs_product">
                         <el-button v-loading="loading" @click="fetchTicket()"
@@ -152,7 +167,7 @@
                                             {{ translate('Close Ticket Silently') }}
                                         </el-dropdown-item>
                                     </div>
-                                    <el-dropdown-item @click="deleteTicket()" v-loading="deleting">
+                                    <el-dropdown-item v-if="deleteTicketPermission" @click="deleteTicket()" v-loading="deleting">
                                         <el-icon>
                                             <Delete />
                                         </el-icon>
@@ -323,6 +338,51 @@
                         </div>
                     </div>
                 </div>
+                <div class="fs_intelligence" v-loading="ResponseLoader" v-if="!ResponseLoader">
+                    <div class="fs_intelligence_card__result" v-if="ticketSummary">
+                        <div class="fs_generated_summary">
+                            <div>
+                                <strong>Ticket Summary:</strong>
+                                <p>{{ ticketSummary}}</p>
+                            </div>
+                            <div class="fs_ai_response_actions">
+                                <div class="fs_ai_regenerate">
+                                    <el-button class="fs_ai_regenerate_button" @click="getTicketSummary">
+                                        <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
+                                    </el-button>
+                                </div>
+                                <div class="fs_ai_response_close">
+                                    <el-button class="fs_ai_response_close_button" @click="closeAIResponse">
+                                        <img :src="appVars.asset_url + 'images/closeIcon.svg'" alt="">
+                                    </el-button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="fs_intelligence_card__result" v-if="customerSentiment">
+                        <div class="fs_customer_sentiment">
+                            <div>
+                                <div> {{customerSentiment }}</div>
+                            </div>
+                            <div class="fs_ai_response_actions">
+                                <div class="fs_ai_regenerate">
+                                    <el-button class="fs_ai_regenerate_button" @click="getCustomerSentiment">
+                                        <img :src="appVars.asset_url + 'images/regenerate.svg'" alt="">
+                                    </el-button>
+                                </div>
+                                <div class="fs_ai_response_close" >
+                                    <el-button class="fs_ai_response_close_button" @click="closeAIResponse">
+                                        <img :src="appVars.asset_url + 'images/closeIcon.svg'" alt="">
+                                    </el-button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fs_ai_response_loading" v-if="ResponseLoader">
+                    <el-skeleton :rows="4" animated />
+                </div>
                 <create-response
                     v-if="show_response_box && ticket.status != 'closed'"
                     @created="recordNewResponse"
@@ -330,6 +390,7 @@
                     @close="show_response_box = ''"
                     :type="show_response_box"
                     :draft="draft"
+                    :aiResponse="aiResponse"
                     @discardDraft="discardDraft"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
@@ -698,6 +759,12 @@ export default {
             TicketNotFound: [],
             show_fbs_add_task_modal: false,
             watcherIds: [],
+            ticketSummary: '',
+            customerSentiment: '',
+            ResponseLoader: false,
+            apiKey: '',
+            aiResponse: false,
+            deleteTicketPermission: false
         });
 
         watch(() => route.params.ticket_id, (ticketId) => {
@@ -723,6 +790,7 @@ export default {
                 state.conversations = response.responses;
                 state.draftReplyPermission = appVars.me.permissions.includes('fst_draft_reply');
                 state.draftReplyApprovePermission = appVars.me.permissions.includes('fst_approve_draft_reply');
+                state.deleteTicketPermission = appVars.me.permissions.includes('fst_delete_tickets');
 
                 // sent the response to body event
                 document.body.dispatchEvent(new CustomEvent('fs_ticket_viewed', {
@@ -761,6 +829,17 @@ export default {
                     handleError(error);
                 })
         };
+
+        const fetchChatGPTAPI = () => {
+            get("settings/openai-integration")
+                .then((response) => {
+                    state.apiKey = response.api_key;
+                    state.aiResponse = !!state.apiKey;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                });
+        }
 
         const getTextByPerson = (conversation, ticket) => {
             if (conversation?.conversation_type === 'draft_response') {
@@ -838,7 +917,7 @@ export default {
             });
             if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
-                    router.go(-1);
+                 //   router.go(-1);
                 }
             }
         }
@@ -1220,9 +1299,54 @@ export default {
             return status;
         });
 
-        onMounted(() => {
-            fetchTicket();
+        const closeAIResponse = () => {
+            state.ticketSummary = '';
+            state.customerSentiment = '';
+        }
 
+        const getTicketSummary = () => {
+            state.ResponseLoader = true;
+            post(`openai/${props.ticket_id}/get-ticket-summary`, {
+                type: 'ticketSummary'
+            })
+                .then(response => {
+                    state.ticketSummary = response;
+                    state.customerSentiment = '';
+                    state.ResponseLoader = false;
+                })
+                .catch((errors) => {
+                    state.ResponseLoader = false;
+                    handleError(errors);
+                })
+        }
+
+        const getCustomerSentiment = () => {
+            state.ResponseLoader = true;
+            post(`openai/${props.ticket_id}/get-ticket-tone`, {
+                type: 'ticketTone'
+            })
+                .then(response => {
+                    let sentimentWithEmoji = response;
+                    if (response.includes('Positive')) {
+                        sentimentWithEmoji = '😀 Positive';
+                    } else if (response.includes('Neutral')) {
+                        sentimentWithEmoji = '😐 Neutral';
+                    } else if (response.includes('Negative')) {
+                        sentimentWithEmoji = '😡 Negative ';
+                    }
+
+                    state.customerSentiment = sentimentWithEmoji;
+                    state.ticketSummary= '';
+                    state.ResponseLoader = false;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+        }
+
+        onMounted(() => {
+            fetchChatGPTAPI();
+            fetchTicket();
             if (appVars.enable_draft_mode === 'yes') {
                 fetchDraft();
             }
@@ -1274,7 +1398,10 @@ export default {
             getTextByPerson,
             approveDraftResponse,
             getStatusDisplayName,
-            afterCreatedTask
+            afterCreatedTask,
+            getTicketSummary,
+            getCustomerSentiment,
+            closeAIResponse
         }
     }
 }
@@ -1378,4 +1505,45 @@ i.dashicons.dashicons-randomize {
 .fs_ticket_not_found_svg {
     margin-left: 100px;
 }
+.fs_AI_content_container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.fs_AI_content_body {
+    font-size: .5rem;
+    color: #0e121b;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin: 0;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fs_ai_response_loading {
+    border: 1px solid #E1E4EA;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px;
+}
+
+.fs_ai_intelligent_button {
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    background-color: #0e121b;
+    display: flex;
+    max-width: 36px;
+    padding: 4px 6px;
+    height: 33px;
+}
+
+.fs_ai_intelligent_button img {
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
+}
+
 </style>

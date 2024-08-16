@@ -1,19 +1,7 @@
 <template>
     <div class="activities fs_box fs_box_wrapper">
         <div v-if="!loading" class="fs_box_header">
-            <div class="fs_box_head">
-                {{ translate("Overall Activities") }}
-            </div>
-            <div class="fs_box_actions">
-                <el-date-picker
-                    @change="fetchActivities"
-                    v-model="date_range"
-                    type="daterange"
-                    :range-separator="translate('To')"
-                    :start-placeholder="translate('Start')"
-                    :end-placeholder="translate('End')"
-                />
-
+            <div class="fs_activity_filters">
                 <el-select
                     clearable
                     filterable
@@ -30,6 +18,16 @@
                         :label="agent.full_name"
                     ></el-option>
                 </el-select>
+                <el-date-picker
+                    @change="fetchActivities"
+                    v-model="date_range"
+                    type="daterange"
+                    :range-separator="translate('To')"
+                    :start-placeholder="translate('Start')"
+                    :end-placeholder="translate('End')"
+                />
+            </div>
+            <div class="fs_box_actions">
                 <el-button
                     v-loading="loading"
                     @click="fetchActivities()"
@@ -234,5 +232,11 @@ export default {
     justify-content: space-between;
     flex-direction: row;
     font-size: 16px;
+    padding: 20px;
+}
+
+.fs_activity_filters {
+    display: flex;
+    align-items: center;
 }
 </style>

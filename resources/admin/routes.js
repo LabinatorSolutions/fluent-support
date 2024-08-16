@@ -34,12 +34,13 @@ import Report from './Modules/Reports/Report';
 import Workflows from './Modules/Workflows/AllWorkflows';
 import EditWorkFlow from './Modules/Workflows/EditWorkFlow';
 
-import ActivityLogger from "./Modules/ActivityLogger/ActivityLogger";
+import Activity from "./Modules/ActivityLogger/Activity";
 
 import IncomingWebhook from "./Modules/Settings/IncomingWebhook";
 import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
 import HelpScoutAuthorization from "./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization";
 import IntegrationStatuses from './Modules/Settings/IntegrationStatuses';
+import OpenAIIntegration from "@/admin/Modules/Settings/OpenAIIntegration.vue";
 
 export default [
     {
@@ -166,6 +167,13 @@ export default [
                 component: IntegrationStatuses,
                 props: true,
             },
+            {
+                path: '/openai_integration',
+                name: 'openai_integration',
+                component: OpenAIIntegration,
+                props: true,
+            },
+
         ]
     },
     {
@@ -255,11 +263,11 @@ export default [
         }
     },
     {
-        path: '/activity-logger',
-        name: 'activity_logger',
-        component: ActivityLogger,
+        path: '/activity',
+        name: 'activity',
+        component: Activity,
         meta: {
-            active: 'activity_logger'
+            active: 'activity'
         }
     },
     {

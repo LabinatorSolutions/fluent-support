@@ -23,13 +23,15 @@ class CustomerPortalService
      * @throws Exception
      * @since 1.5.7
      */
-    public function getTickets($customer, $requestedStatus, $search)
+    public function getTickets($customer, $search, $sorting, $filters= [])
     {
         $this->validateCustomer($customer);
 
+        $requestedStatus = Arr::get($filters, 'status_type', 'open');
+
         $statuses = $this->getTicketStatues($requestedStatus);
 
-        return $this->ticketsAdditionalData($customer, $statuses, $search);
+        return $this->ticketsAdditionalData($customer, $statuses, $search, $sorting, $filters);
     }
 
     /**
@@ -290,7 +292,7 @@ class CustomerPortalService
      * @return object $tickets
      * @since 1.5.7
      */
-    private function ticketsAdditionalData($customer, $statuses, $search)
+    private function ticketsAdditionalData($customer, $statuses, $search, $sorting, $filters= [])
     {
         $ticketsQuery = Ticket::with([
             'customer' => function ($query) {
@@ -300,9 +302,14 @@ class CustomerPortalService
             }
         ])
             ->where('customer_id', $customer->id)
+            ->orderBy($sorting['sortBy'], $sorting['sortType'])
             ->latest('updated_at');
 
         $ticketsQuery->where('customer_id', $customer->id);
+
+        if (!empty($filters['product_id'])) {
+            $ticketsQuery->where('product_id', $filters['product_id']);
+        }
 
         if ($statuses) {
             $ticketsQuery->whereIn('status', $statuses);

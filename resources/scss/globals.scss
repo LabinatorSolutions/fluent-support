@@ -414,6 +414,48 @@ table.fs_table {
     }
 }
 
+.fs_ticket_link_preview {
+    color: #409EFF;
+    text-decoration: none;
+}
+
+.fs_ticket_link_preview strong {
+    font-weight: bold;
+}
+
+.fs_ticket_link_preview:hover {
+    text-decoration: underline;
+}
+
+.fs_ai_activity_box_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    font-size: 16px;
+    padding: 20px;
+
+    .fs_ai_filters{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.6);
+        gap: 10px;
+    }
+    .fs_ai_box_actions {
+        float: right;
+        display: flex;
+        gap: 10px;
+    }
+}
+
+.fs_ticket_not_available {
+    color: #6c757d;
+    opacity: 0.9;
+    word-break: break-word;
+    white-space: normal;
+}
+
 .fs_warn {
     background: #ffff78;
     padding: 8px 10px;

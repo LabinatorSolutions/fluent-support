@@ -12,7 +12,8 @@ import {
     Search,
     Paperclip,
     ArrowUpBold,
-    ArrowDownBold
+    ArrowDownBold,
+    Sort,
 
 } from '@element-plus/icons-vue/dist';
 
@@ -29,7 +30,8 @@ const components = [
     Paperclip,
     Search,
     ArrowUpBold,
-    ArrowDownBold
+    ArrowDownBold,
+    Sort
 ];
 
 components.forEach(component => {

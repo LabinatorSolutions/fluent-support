@@ -7,6 +7,7 @@ use FluentSupport\App\Models\Agent;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\AIActivityLogs;
 use FluentSupport\App\Models\Person;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
@@ -354,6 +355,36 @@ class Helper
         ], $baseUrl);
 
         return $baseUrl . '#/ticket/' . $ticket->id . '/view';
+    }
+
+    public static function saveOpenAIData($objectType, $key, $data)
+    {
+        $serializedData = maybe_serialize($data);
+
+        $previousValue = Meta::where('object_type', $objectType)->first();
+
+        if ($previousValue) {
+           return Meta::where('object_type', $objectType)->update([
+                'value' => $serializedData
+            ]);
+        } else {
+            return  Meta::insert([
+                'object_type' => $objectType,
+                'key' => $key,
+                'value' => $serializedData
+            ]);
+        }
+
+    }
+
+    public static function authorizeChatGPTAPIKey($data)
+    {
+       return wp_remote_get('https://api.openai.com/v1/models', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $data['api_key'],
+                'Content-Type' => 'application/json'
+            ]
+        ]);
     }
 
     public static function isPublicSignedTicketEnabled()
@@ -728,14 +759,14 @@ class Helper
     {
         $connections = [
             'woocommerce'     => [
-                'title'          => __('Woo Commerce', 'fluent-support'),
+                'title'          => __('WooCommerce', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/woocommerce.png',
                 'is_integrated'   => defined('WC_PLUGIN_FILE'),
                 'description'    => __('The most popular e-commerce platform for WordPress', 'fluent-support'),
                 'doc_url'  => 'https://fluentsupport.com/docs/woocommerce-integration/',
             ],
             'lifter-lms'     => [
-                'title'          => __('Lifter Lms', 'fluent-support'),
+                'title'          => __('LifterLMS', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/lifter-lms.png',
                 'is_integrated'   => defined('LLMS_PLUGIN_FILE'),
                 'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
@@ -749,7 +780,7 @@ class Helper
                 'doc_url'  => 'https://fluentsupport.com/docs/managing-tickets-using-slack/',
             ],
             'pm-pro'  => [
-                'title'          => __('Paid Membership MPro', 'fluent-support'),
+                'title'          => __('Paid Memberships Pro', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/pmpro.png',
                 'is_integrated'   => defined('PMPRO_VERSION'),
                 'description'    => __('The ultimate platform for any member-focused business', 'fluent-support'),
@@ -770,7 +801,7 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/managing-tickets-using-telegram/',
             ],
             'fluent-crm'  => [
-                'title'          => __('Fluent CRM', 'fluent-support'),
+                'title'          => __('FluentCRM', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-crm.png',
                 'is_integrated'   => defined('FLUENTCRM'),
                 'description'    => __('Self-hosted email and marketing automation for WordPress', 'fluent-support'),
@@ -784,7 +815,7 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/fluent-form-integration/',
             ],
             'buddy-boss'  => [
-                'title'          => __('Buddy Boss', 'fluent-support'),
+                'title'          => __('BuddyBoss', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/buddy-boss.png',
                 'is_integrated'   => defined('BP_PLUGIN_DIR'),
                 'description'    => __('Powerful platform for any member-focused business', 'fluent-support'),
@@ -798,7 +829,7 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/managing-tickets-using-discord/',
             ],
             'wishlist-member'  => [
-                'title'          => __('Wishlist Member', 'fluent-support'),
+                'title'          => __('WishList Member', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/wishlist-member.png',
                 'is_integrated'   => defined('WLM3_PLUGIN_VERSION'),
                 'description'    => __('Powerful platform for any member-focused business', 'fluent-support'),
@@ -819,14 +850,14 @@ class Helper
                 'doc_url'        => 'https://fluentsupport.com/docs/restrict-content-pro-integration/',
             ],
             'better-docs'  => [
-                'title'          => __('Better Docs', 'fluent-support'),
+                'title'          => __('BetterDocs', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/better-docs.png',
                 'is_integrated'   => false,
                 'description'    => __('The standard plugin for knowledge base and documentation', 'fluent-support'),
                 'doc_url'        => 'https://fluentsupport.com/docs/betterdocs-integration/',
             ],
             'whatsapp'  => [
-                'title'          => __('Whatsapp', 'fluent-support'),
+                'title'          => __('WhatsApp', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/whatsapp.jpeg',
                 'is_integrated'   => self::getFSIntegrationStatus('twilio_settings'),
                 'description'    => __('Business communication platform designed for privacy', 'fluent-support'),
@@ -847,7 +878,7 @@ class Helper
                 'doc_url'       => 'https://fluentsupport.com/docs/learndash-integration/',
             ],
             'learn-press'  => [
-                'title'          => __('Learn Press', 'fluent-support'),
+                'title'          => __('LearnPress', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/learn-press.png',
                 'is_integrated'   => defined('LP_PLUGIN_FILE'),
                 'description'    => __('Course and e-learning platform built for WordPress', 'fluent-support'),
@@ -868,7 +899,7 @@ class Helper
                 'doc_url'       => 'https://fluentsupport.com/docs/dropbox-integration/',
             ],
             'member-press'  => [
-                'title'          => __('Member Press', 'fluent-support'),
+                'title'          => __('MemberPress', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/member-press.png',
                 'is_integrated'   => class_exists('MeprUtils'),
                 'description'    => __('A WordPress plugin that enables the creation and management of membership sites, including content access control and subscription billing.', 'fluent-support'),
@@ -882,7 +913,7 @@ class Helper
                 'doc_url'       => 'https://fluentsupport.com/docs/google-recaptcha-integration/',
             ],
             'fluent-boards'  => [
-                'title'          => __('Fluent Boards', 'fluent-support'),
+                'title'          => __('FluentBoards', 'fluent-support'),
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-boards.png',
                 'is_integrated'   =>  defined('FLUENT_BOARDS'),
                 'description'    => __('A project management tool designed to streamline workflows and collaboration through customizable, kanban-style boards.', 'fluent-support'),
@@ -951,5 +982,246 @@ class Helper
             return $status == 'true' ? true : false;
         }
         return false;
+    }
+
+    public static function getAIActivities($data)
+    {
+        $page = isset($data['page']) ? intval($data['page']) : 1;
+        $perPage = isset($data['per_page']) ? intval($data['per_page']) : 10;
+
+        $activitiesQuery = AIActivityLogs::with([
+            'person' => function ($query) {
+                $query->select(['first_name', 'person_type', 'last_name', 'id', 'avatar']);
+            },
+            'ticket' => function ($query) {
+                $query->select(['id', 'title']);
+            }
+        ])->latest('id');
+
+        $from = sanitize_text_field( Arr::get( $data, 'from', '' ) );
+        $to = sanitize_text_field( Arr::get( $data, 'to', '') );
+
+        if ( $from != $to ) {
+            $from = $from . ' ' . '00:00:00';
+            $to = $to . ' ' . '23:59:59';
+        }
+
+        if ( ( !empty($from) && !empty($to) ) && $from == $to ) {
+            $activitiesQuery->whereDate('created_at', '=', $from);
+        } elseif (!empty($from) && !empty($to)) {
+            $activitiesQuery->whereBetween('created_at', [ $from, $to ]);
+        }
+
+        $agentId = intval( Arr::get($data, 'filters.agent_id') );
+
+        if ($agentId) {
+            $activitiesQuery->where('agent_id', $agentId);
+        }
+
+        return $activitiesQuery->paginate($perPage, ['*'], 'page', $page);
+    }
+
+    public static function updateAISettings($settings)
+    {
+        $defaults = [
+            'delete_days'  => 14,
+            'disable_logs' => 'no'
+        ];
+
+        $settings = wp_parse_args($settings, $defaults);
+        $settings['delete_days'] = (int)$settings['delete_days'];
+
+        Helper::updateOption('_ai_activity_settings', $settings);
+
+        return [
+            'message' => __('AI Activity settings has been updated', 'fluent-support')
+        ];
+    }
+
+    public static function isAIEnabled()
+    {
+        $openAISettingsData = Meta::where('object_type', '_fs_openai_settings')->first();
+
+        if (!$openAISettingsData) {
+            return false;
+        }
+
+        $value = $openAISettingsData->value;
+        if (empty($value)) {
+            return false;
+        }
+
+        $settings = maybe_unserialize($value);
+
+        if (is_array($settings) && !empty($settings)) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public static function getSettings()
+    {
+        $settings = Helper::getOption('_ai_activity_settings', []);
+
+        $defaults = [
+            'delete_days'  => 14,
+            'disable_logs' => 'no'
+        ];
+
+        $settings = wp_parse_args($settings, $defaults);
+
+        if (! $settings ) throw new \Exception('No activity settings found');
+
+        return [
+            'ai_activity_settings' => $settings
+        ];
+    }
+
+    public static function getIp($anonymize = false)
+    {
+        static $ipAddress;
+
+        if ($ipAddress) {
+            return $ipAddress;
+        }
+
+        if (empty($_SERVER['REMOTE_ADDR'])) {
+            // It's a local cli request
+            return '127.0.0.1';
+        }
+
+        $ipAddress = '';
+        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+            //If it's a valid Cloudflare request
+            if (self::isCfIp($_SERVER['REMOTE_ADDR'])) {
+                //Use the CF-Connecting-IP header.
+                $ipAddress = $_SERVER['HTTP_CF_CONNECTING_IP'];
+            } else {
+                //If it isn't valid, then use REMOTE_ADDR.
+                $ipAddress = $_SERVER['REMOTE_ADDR'];
+            }
+        } else if ($_SERVER['REMOTE_ADDR'] == '127.0.0.1') {
+            // most probably it's local reverse proxy
+            if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+                $ipAddress = $_SERVER["HTTP_CLIENT_IP"];
+            } else if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $ipAddress = (string)rest_is_ip_address(trim(current(preg_split('/,/', sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']))))));
+            }
+        }
+
+        if (!$ipAddress) {
+            $ipAddress = $_SERVER['REMOTE_ADDR'];
+        }
+
+        $ipAddress = preg_replace('/^(\d+\.\d+\.\d+\.\d+):\d+$/', '\1', $ipAddress);
+
+        $ipAddress = apply_filters('fluent_auth/user_ip', $ipAddress);
+
+        if ($anonymize) {
+            return wp_privacy_anonymize_ip($ipAddress);
+        }
+
+        $ipAddress = sanitize_text_field(wp_unslash($ipAddress));
+
+        return $ipAddress;
+    }
+
+    public static function isCfIp($ip = '')
+    {
+        if (!$ip) {
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        $cloudflareIPRanges = array(
+            '103.21.244.0/22',
+            '103.22.200.0/22',
+            '103.31.4.0/22',
+            '104.16.0.0/13',
+            '104.24.0.0/14',
+            '108.162.192.0/18',
+            '131.0.72.0/22',
+            '141.101.64.0/18',
+            '162.158.0.0/15',
+            '172.64.0.0/13',
+            '173.245.48.0/20',
+            '188.114.96.0/20',
+            '190.93.240.0/20',
+            '197.234.240.0/22',
+            '198.41.128.0/17'
+        );
+        $validCFRequest = false;
+        //Make sure that the request came via Cloudflare.
+        foreach ($cloudflareIPRanges as $range) {
+            //Use the ip_in_range function from Joomla.
+            if (self::ipInRange($ip, $range)) {
+                //IP is valid. Belongs to Cloudflare.
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static function ipInRange($ip, $range)
+    {
+        if (strpos($range, '/') !== false) {
+            // $range is in IP/NETMASK format
+            list($range, $netmask) = explode('/', $range, 2);
+            if (strpos($netmask, '.') !== false) {
+                // $netmask is a 255.255.0.0 format
+                $netmask = str_replace('*', '0', $netmask);
+                $netmask_dec = ip2long($netmask);
+                return ((ip2long($ip) & $netmask_dec) == (ip2long($range) & $netmask_dec));
+            } else {
+                // $netmask is a CIDR size block
+                // fix the range argument
+                $x = explode('.', $range);
+                while (count($x) < 4) $x[] = '0';
+                list($a, $b, $c, $d) = $x;
+                $range = sprintf("%u.%u.%u.%u", empty($a) ? '0' : $a, empty($b) ? '0' : $b, empty($c) ? '0' : $c, empty($d) ? '0' : $d);
+                $range_dec = ip2long($range);
+                $ip_dec = ip2long($ip);
+
+                # Strategy 1 - Create the netmask with 'netmask' 1s and then fill it to 32 with 0s
+                #$netmask_dec = bindec(str_pad('', $netmask, '1') . str_pad('', 32-$netmask, '0'));
+
+                # Strategy 2 - Use math to create it
+                $wildcard_dec = pow(2, (32 - $netmask)) - 1;
+                $netmask_dec = ~$wildcard_dec;
+
+                return (($ip_dec & $netmask_dec) == ($range_dec & $netmask_dec));
+            }
+        } else {
+            // range might be 255.255.*.* or 1.2.3.0-1.2.3.255
+            if (strpos($range, '*') !== false) { // a.b.*.* format
+                // Just convert to A-B format by setting * to 0 for A and 255 for B
+                $lower = str_replace('*', '0', $range);
+                $upper = str_replace('*', '255', $range);
+                $range = "$lower-$upper";
+            }
+
+            if (strpos($range, '-') !== false) { // A-B format
+                list($lower, $upper) = explode('-', $range, 2);
+                $lower_dec = (float)sprintf("%u", ip2long($lower));
+                $upper_dec = (float)sprintf("%u", ip2long($upper));
+                $ip_dec = (float)sprintf("%u", ip2long($ip));
+                return (($ip_dec >= $lower_dec) && ($ip_dec <= $upper_dec));
+            }
+            return false;
+        }
+    }
+
+    public static function loadView($template, $data)
+    {
+        extract($data, EXTR_OVERWRITE);
+
+        $template = sanitize_file_name($template);
+
+        $template = str_replace('.', DIRECTORY_SEPARATOR, $template);
+
+        ob_start();
+        include FLUENT_SUPPORT_PLUGIN_PATH . 'app/Views/emails/' . $template . '.php';
+        return ob_get_clean();
     }
 }

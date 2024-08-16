@@ -342,6 +342,7 @@ export default {
                         }
 
                         state.tickets = response.tickets.data;
+                        window.fsCurrentFilteredTickets = response.tickets.data;
                         state.pagination.total = response.tickets.total;
                         saveFilters();
                     })
@@ -613,6 +614,13 @@ export default {
                 ],
             ) => {
                 if (state.app_ready) {
+
+                    if(route.name == 'view_ticket') {
+                        return;
+                    }
+
+                    console.log(route.name);
+
                     if ( newAgentId !== oldAgentId ) {
                         state.filters.agent_id = newAgentId;
                     }
@@ -624,6 +632,8 @@ export default {
                     if ( newFilterType !== oldFilterType ) {
                         state.filter_type = newFilterType;
                     }
+
+
 
                     fetchTickets();
                 }

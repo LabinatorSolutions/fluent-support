@@ -588,6 +588,5 @@ class TicketController extends Controller
 
         return TicketHelper::getTicketEssentials($type);
     }
-
 }
 

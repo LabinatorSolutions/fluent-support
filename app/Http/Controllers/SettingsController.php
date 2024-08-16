@@ -7,6 +7,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
+use FluentSupport\Database\Migrations\AIActivityLogsMigrator;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
 
@@ -314,6 +315,75 @@ class SettingsController extends Controller
         return $this->sendSuccess([
             'message' => __('Your reCAPTCHA settings added successfully.', 'fluent-support'),
         ]);
+    }
+
+    public function saveOpenAISettings(Request $request)
+    {
+        $data = $request->get();
+        $data = [
+            'api_key' => sanitize_text_field($data['api_key']),
+            'model' => sanitize_text_field($data['model']),
+        ];
+
+        $response = Helper::authorizeChatGPTAPIKey($data);
+
+        if (is_wp_error($response)) {
+            return $this->sendError([
+                'message' => __('There was an error verifying the API key.', 'fluent-support'),
+            ]);
+        }
+
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (isset($body['error'])) {
+            return $this->sendError([
+                'message' => __('Invalid API key. Please provide a valid ChatGPT API key.', 'fluent-support'),
+            ]);
+        }
+
+        try {
+            $isDataSaved = Helper::saveOpenAIData('_fs_openai_settings', '_fs_openai_data', $data);
+            if ($isDataSaved) {
+                AIActivityLogsMigrator::migrate();
+            }
+            return $this->sendSuccess([
+                'message' => __('OpenAI settings have been successfully saved.', 'fluent-support'),
+            ]);
+        } catch (\Exception $e) {
+            return $this->sendError([
+                'message' => __('An error occurred while saving the settings: ' . $e->getMessage(), 'fluent-support'),
+            ]);
+        }
+    }
+
+
+    public function disconnectOpenAI()
+    {
+        $deletedRecords = Meta::where([
+            'object_type' => '_fs_openai_settings',
+            'key'         => '_fs_openai_data',
+        ])->delete();
+
+        if ($deletedRecords) {
+            return $this->sendSuccess([
+                'message' => __('OpenAI settings have been successfully disconnected.', 'fluent-support'),
+            ]);
+        } else {
+            return $this->sendError([
+                'message' => __('Failed to disconnect OpenAI settings. No matching records found or an error occurred.', 'fluent-support'),
+            ]);
+        }
+    }
+
+    public function getOpenAISettings()
+    {
+        $chatGPTSettingsData = Meta::where('object_type', '_fs_openai_settings')->first();
+        if ($chatGPTSettingsData) {
+            $settings = maybe_unserialize($chatGPTSettingsData->value);
+            return $this->sendSuccess($settings);
+        }
+
+        return [];
     }
 
     public function getReCaptchaSettings()

@@ -248,10 +248,8 @@ class ReportingController extends Controller
 
         $results = $reporting->getQueryResults($from, $to, $filter);
 
-        $dataItems = $reporting->formatResults($results->toArray());
-
         return $this->send([
-            'stats' => $dataItems
+            'stats' => $results
         ]);
     }
 

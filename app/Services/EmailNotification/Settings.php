@@ -181,6 +181,13 @@ class Settings
                 'label'   => __('Custom Registration Form Field', 'fluent-support'),
                 'options' => $customRegistrationFormOptions
             ],
+            'enable_two_fa' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Enable Two-Factor Authentication', 'fluent-support'),
+                'inline_help'    => __('If you enable this setting, users will be required to submit a second form of authentication, such as a code sent to their email, to login.', 'fluent-support')
+            ],
         ];
 
         if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION')) {

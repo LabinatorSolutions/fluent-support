@@ -115,6 +115,11 @@ export default {
                     route_name: "integration_statuses",
                     icon: "Connection",
                 },
+                {
+                    title: translate("OpenAI Integration"),
+                    route_name: "openai_integration",
+                    icon: "Connection",
+                },
             ],
         });
 
