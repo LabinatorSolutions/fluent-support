@@ -15,13 +15,15 @@ abstract class BaseImporter
     protected $db;
     protected $handler = '';
     protected $mailbox;
-    protected $limit = 50;
+    protected $limit = 20;
+    protected $ticketUpdatedSince;
 
     public function __construct()
     {
         $this->db = Helper::FluentSupport('db');
         $this->mailbox = Helper::getDefaultMailBox();
-        $this->limit = apply_filters('fluent_support/ticket_import_chunk_limit', 50);
+        $this->limit = apply_filters('fluent_support/ticket_import_chunk_limit', 20);
+        $this->ticketUpdatedSince = apply_filters('fluent_support/fs_tickets_updated_since', '2010-01-19T02:00:00Z');
     }
     /**
      * This method `stats` returns an array of ticket stats of targeted helpdesk system

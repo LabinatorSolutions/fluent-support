@@ -84,7 +84,7 @@ class Menu
             __('Activities', 'fluent-support'),
             __('Activities', 'fluent-support'),
             ($isAdmin) ? 'manage_options' : 'fst_view_activity_logs',
-            'fluent-support#/activity-logger',
+            'fluent-support#/activity',
             array($this, 'renderApp')
         );
 
@@ -157,7 +157,7 @@ class Menu
             $secondayItems[] = [
                 'key'       => 'activity_logger',
                 'label'     => __('Activities', 'fluent-support'),
-                'permalink' => $baseUrl . 'activity-logger'
+                'permalink' => $baseUrl . 'activity'
             ];
         }
 

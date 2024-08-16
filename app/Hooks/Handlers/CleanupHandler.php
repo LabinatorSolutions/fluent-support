@@ -22,6 +22,8 @@ class CleanupHandler
     public function initDailyTasks()
     {
         $this->cleanActivityLogs();
+
+        $this->cleanAIActivityLogs();
     }
 
     protected function cleanLiveActivities()
@@ -38,6 +40,19 @@ class CleanupHandler
     protected function cleanActivityLogs()
     {
         $settings = Helper::getOption('_activity_settings', []);
+
+        if (!$settings && empty($settings['delete_days'])) {
+            $settings['delete_days'] = 14;
+        }
+
+        $oldDateTime = date('Y-m-d H:i:s', current_time('timestamp') - ($settings['delete_days'] * 86400));
+
+        Activity::where('created_at', '<', $oldDateTime)->delete();
+    }
+
+    protected function cleanAIActivityLogs()
+    {
+        $settings = Helper::getOption('_ai_activity_settings', []);
 
         if (!$settings && empty($settings['delete_days'])) {
             $settings['delete_days'] = 14;

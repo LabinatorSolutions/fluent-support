@@ -35,7 +35,7 @@
                         value-format="YYYY-MM-DD"
                     />
                 </div>
-                <div class="fs_start_date_picker">
+                <div class="fs_end_date_picker">
                     <label for="ticket-content" class="fs_fbs_input_label">{{ translate("End date ") }}</label>
                     <el-date-picker
                         v-model="endDate"
@@ -196,18 +196,4 @@ export default {
 </script>
 
 <style lang="scss">
-.fs_fbs_date_range {
-    display: flex;
-    justify-content: space-between;
-    width: 95%;
-    gap: 10px;
-    .fs_start_date_picker {
-        width: 54% !important;
-        margin-right: 35px;
-
-        .fs_date_picker {
-            width: 100% !important;
-        }
-    }
-}
 </style>

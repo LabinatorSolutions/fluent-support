@@ -87,7 +87,7 @@ class TicketService
             'person_id'         => $person->id,
             'conversation_type' => 'internal_info',
             'content'           => $ticket->agent->user_id !== $person->user_id ?
-                $person->full_name . __(' assign ') . $ticket->agent->full_name . __(' in this ticket', 'fluent-support') :
+                $person->full_name . __(' assigned ') . $ticket->agent->full_name . __(' in this ticket', 'fluent-support') :
                 $person->full_name .__( ' assign this ticket to self', 'fluent-support')
         ]);
 
@@ -234,11 +234,12 @@ class TicketService
      */
     public function delete($ticket)
     {
-        $hasAllPermission = PermissionManager::currentUserCan('fst_manage_other_tickets');
+        $deletePermission = PermissionManager::currentUserCan('fst_delete_tickets');
         $agent = Helper::getAgentByUserId();
-        if (!$hasAllPermission && $ticket->agent_id != $agent->id) {
+        if (!$deletePermission && $ticket->agent_id != $agent->id) {
             throw new \Exception(__('You are not allowed to delete this ticket', 'fluent-support'));
         }
+
         $ticketData = [
             'id'    => $ticket->id,
             'title' => $ticket->title

@@ -119,6 +119,10 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->get('/remote-upload-settings', 'SettingsController@getRemoteUploadSettings');
     $router->post('/update-remote-upload-driver', 'SettingsController@updateRemoteUploadDriver');
 
+    $router->post('/openai-integration', 'SettingsController@saveOpenAISettings');
+    $router->post('/openai-integration/disconnect', 'SettingsController@disconnectOpenAI');
+    $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
+
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
@@ -208,9 +212,21 @@ $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(fu
     $router->post('/settings', 'ActivityLoggerController@updateSettings');
 });
 
+$router->prefix('ai-activity-logger')->withPolicy('ActivityLoggerPolicy')->group(function ($router) {
+    $router->get('/', 'AIActivityLoggerController@getAIActivities');
+    $router->post('/settings', 'AIActivityLoggerController@updateSettings');
+    $router->get('/settings', 'AIActivityLoggerController@getSettings');
+    $router->get('/is-ai-enabled', 'AIActivityLoggerController@isAIEnabled');
+});
+
 $router->post('signup', 'AuthController@signup')->withPolicy('PublicPolicy');
 
 $router->post('login', 'AuthController@handleLogin')->withPolicy('PublicPolicy');
+
+$router->prefix('two_fa')->withPolicy('PublicPolicy')->group(function ($router) {
+    $router->post('/', 'TwofaController@verify2fa');
+});
+
 
 $router->post('reset_pass', 'AuthController@resetPassword')->withPolicy('PublicPolicy');
 

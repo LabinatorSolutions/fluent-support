@@ -20,10 +20,8 @@
                 </el-select>
             </el-form-item>
         </div>
-
-        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true"
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true" :aiResponse="aiResponse"
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
-
         <div class="fs_row">
             <div class="fs_half">
                 <div  style="text-align: left" class="fs_response_actions">
@@ -37,6 +35,7 @@
                                type="danger">
                         {{ translate('Reply and Close') }}
                     </el-button>
+
                     <p v-if="type== 'note'">{{ translate('internal_note_warning') }}</p>
                 </div>
             </div>
@@ -56,10 +55,9 @@ import {
 } from "@/admin/Composable/FluentFrameworkHelper";
 import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
-
 export default {
     name: 'CreateResponse',
-    props: ['ticket', 'type','draft'],
+    props: ['ticket', 'type','draft', 'aiResponse'],
     components: {
         WpEditor,
         AttachmentForm
@@ -68,7 +66,7 @@ export default {
     setup(props, {emit}) {
 
         const {
-            post, translate, handleError, appVars,
+            post, translate, handleError, appVars, get
         } = useFluentHelper();
         const {notify} = useNotify();
 

@@ -259,6 +259,8 @@ export default {
             changing: false,
             activeTabName: 'update_customer_data',
             add_watcher: false,
+            ticketSummary: '',
+            ticketTone: '',
             agents: appVars.support_agents,
             orders: [],
         });

@@ -109,7 +109,7 @@
                     <error :error="errors.get('title')"/>
                 </el-form-item>
                 <el-form-item :label="translate('Ticket Details')">
-                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content" v-if="editor_ready"
+                    <wp-editor :height="150" :autofocus="true" :media-buttons="false" v-model="ticket.content" v-if="editor_ready"
                                :show-saved-replies="true"/>
                     <error :error="errors.get('content')"/>
                 </el-form-item>

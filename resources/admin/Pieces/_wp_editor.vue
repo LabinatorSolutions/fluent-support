@@ -1,6 +1,31 @@
 <template>
     <div class="wp_vue_editor_wrapper">
-        <div class="fs_shortcode_saved_replies">
+        <div class="fs_action_buttons">
+            <div class="fs_chatGPT_box" v-if="aiResponse">
+                <el-popover
+                    placement="bottom"
+                    :width="480"
+                    trigger="click"
+                    :visible="showAIResponseBox"
+                >
+                    <template #reference>
+                        <el-button class="fs_ai_response_button" @click="showAIResponseBox = !showAIResponseBox">
+                            <div>
+                                <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
+                            </div>
+                            <p>
+                                {{$t('Ask AI')}}
+                            </p>
+                        </el-button>
+                    </template>
+                    <div class="fs_template_inserter">
+                        <div>
+                            <AIResponseGenerator type="createResponse" @close="closeAIResponsePromptBox" @insert="insertAIResponse"/>
+                        </div>
+                    </div>
+                </el-popover>
+            </div>
+
             <div class="fs_cc_email_toggle_button" v-if="showCcToggleButton">
                 <el-button size="small" type="primary" v-if="!add_cc" @click="handleCc('show')">
                     <span>{{ $t('Add Cc') }}</span>
@@ -9,30 +34,53 @@
                     <span>{{ $t('Discard Cc') }}</span>
                 </el-button>
             </div>
-            <div class="fc_shortcode_box" v-if="showShortcodes" style="padding: 5px;">
+
+            <div class="fc_shortcode_box" v-if="showShortcodes" >
                 <el-dropdown type="primary" trigger="click">
-                    <el-button size="small" type="primary" style="margin-right: .3em;">
+                    <el-button size="small" type="primary">
                         {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
                     </el-button>
                     <template #dropdown>
                         <el-dropdown-menu>
-                            <el-dropdown-item v-for="(value ,key) in shortcodes" :key="key" :value="key" @click="insertShortcode">
-                                {{value}}
+                            <el-dropdown-item v-for="(value, key) in shortcodes" :key="key" :value="key" @click="insertShortcode">
+                                {{ value }}
                             </el-dropdown-item>
                         </el-dropdown-menu>
                     </template>
                 </el-dropdown>
             </div>
+
             <div class="fc_saved_replies_box" v-if="showSavedReplies">
-                <template-inserter @insert="insertTemplate"/>
+                <template-inserter @insert="insertTemplate" />
             </div>
         </div>
         <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">{{ modelValue }}</textarea>
-        <textarea v-else
-                  class="wp_vue_editor wp_vue_editor_plain"
-                  v-model="plain_content"
-                  @click="updateCursorPos">
-        </textarea>
+        <textarea
+            v-else
+            class="wp_vue_editor wp_vue_editor_plain"
+            v-model="plain_content"
+            @click="updateCursorPos"
+        ></textarea>
+        <div class="fs_ai_modify_response_box" v-if="showActionBar && aiResponse" :style="actionBarStyle">
+            <el-popover
+                placement="bottom"
+                :width="480"
+                trigger="click"
+                :visible="showChatGPTPromptBox"
+            >
+                <template #reference>
+                    <el-button class="fs_ai_popover_button" @click="editSelection()" size="small" type="default">
+                        <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
+                    </el-button>
+                </template>
+                <div class="fs_template_inserter">
+                    <div>
+                        <AIResponseGenerator type="modifyResponse" :selectedText="selectedText" @close="closeSelectedTextPromptBox" @insert="insertAIResponse"/>
+                    </div>
+                </div>
+            </el-popover>
+
+        </div>
     </div>
 </template>
 
@@ -40,8 +88,10 @@
 export default {
     name: 'wp_editor',
     components: {
-        TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined
+        TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined,
+        AIResponseGenerator: () => import('../Modules/Tickets/_AIResponseGenerator'),
     },
+
     props: {
         editor_id: {
             type: String,
@@ -97,6 +147,12 @@ export default {
                 return false
             }
         },
+        aiResponse: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
         showSavedReplies: {
             type: Boolean,
             default() {
@@ -116,24 +172,31 @@ export default {
             buttonInitiated: false,
             currentEditor: false,
             shortcodes: {
-                '{{customer.first_name}}' : 'Customer First Name',
-                '{{customer.last_name}}' : 'Customer Last Name',
-                '{{customer.full_name}}' : 'Customer Full Name',
-                '{{customer.email}}' : 'Customer Email',
-                '{{customer.title}}' : 'Customer Title',
-                '{{customer.status}}' : 'Customer Status',
-                '{{agent.first_name}}' : 'Agent First Name',
-                '{{agent.last_name}}' : 'Agent Last Name',
-                '{{agent.full_name}}' : 'Agent Full Name',
-                '{{agent.email}}' : 'Agent Email',
-                '{{agent.title}}' : 'Agent Title'
-            }
+                '{{customer.first_name}}': 'Customer First Name',
+                '{{customer.last_name}}': 'Customer Last Name',
+                '{{customer.full_name}}': 'Customer Full Name',
+                '{{customer.email}}': 'Customer Email',
+                '{{customer.title}}': 'Customer Title',
+                '{{customer.status}}': 'Customer Status',
+                '{{agent.first_name}}': 'Agent First Name',
+                '{{agent.last_name}}': 'Agent Last Name',
+                '{{agent.full_name}}': 'Agent Full Name',
+                '{{agent.email}}': 'Agent Email',
+                '{{agent.title}}': 'Agent Title'
+            },
+            showActionBar: false,
+            actionBarStyle: {},
+            showChatGPTPromptBox: false,
+            showAIResponseBox: false,
+            selectedText: '',
+            editorData: {},
+            appVars: this.appVars,
         }
     },
     watch: {
         plain_content() {
             this.$emit('update:modelValue', this.plain_content);
-        }
+        },
     },
     methods: {
         initEditor() {
@@ -150,9 +213,11 @@ export default {
                     editor.on('change', function (ed, l) {
                         that.changeContentEvent();
                     });
+                    editor.on('mouseup', function (event) {
+                        that.showActionBarOnSelection(editor);
+                    });
                 }
             };
-
 
             if (this.autofocus) {
                 mceConfig.auto_focus = this.editor_id;
@@ -174,6 +239,15 @@ export default {
         changeContentEvent() {
             const content = this.editor.getContent(this.editor_id);
             this.$emit('update:modelValue', content);
+        },
+
+        closeSelectedTextPromptBox() {
+            this.showChatGPTPromptBox = false;
+            this.showActionBar = false;
+        },
+
+        closeAIResponsePromptBox() {
+            this.showAIResponseBox = false;
         },
 
         handleCommand(command) {
@@ -198,7 +272,7 @@ export default {
 
         insertShortcode(content) {
             let tinyInstance = tinyMCE.editors[wpActiveEditor];
-            tinyInstance.setContent(this.modelValue + content.target._value);
+            tinyInstance.insertContent(content.target._value);
             this.$emit('update:modelValue', this.modelValue + content.target._value)
         },
 
@@ -206,11 +280,82 @@ export default {
             let tinyInstance = tinyMCE.editors[wpActiveEditor];
             tinyInstance.setContent(this.modelValue + content)
             this.$emit('update:modelValue', this.modelValue + content)
-        }
+        },
+
+        insertAIResponse(content) {
+            let tinyInstance = tinyMCE.get(wpActiveEditor);
+
+            const formattedContent = content
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/ {2,}/g, match => match.replace(/ /g, '&nbsp;'));
+
+            tinyInstance.insertContent(formattedContent);
+
+            this.$emit('update:modelValue', tinyInstance.getContent({ format: 'html' }));
+
+            this.showChatGPTPromptBox = false;
+            this.showAIResponseBox = false;
+            this.showActionBar = false;
+        },
+
+        showActionBarOnSelection(editor) {
+            this.editorData = editor;
+            const selection = this.editorData.selection;
+
+            if (!selection.isCollapsed()) {
+                const selectedText = selection.getContent({ format: 'text' });
+
+                if (selectedText.length > 0) {
+                    // Get the bounding rectangle of the entire selection
+                    const range = selection.getRng();
+                    const rect = range.getBoundingClientRect();
+
+                    // Find the bounding rect of the first line of the selection
+                    const rangeStart = range.cloneRange();
+                    rangeStart.setStart(rangeStart.startContainer, rangeStart.startOffset);
+                    rangeStart.setEnd(rangeStart.startContainer, rangeStart.startOffset);
+                    const rectStart = rangeStart.getBoundingClientRect();
+
+                    this.actionBarStyle = {
+                        top: `${rectStart.top + 40}px`,
+                        left: `${rectStart.right + 30}px`,
+                        position: 'absolute',
+                        zIndex: 1
+                    };
+
+                    this.selectedText = selectedText;
+                    this.showChatGPTPromptBox = false;
+                    this.showActionBar = true;
+                }
+            } else {
+                this.showActionBar = false;
+            }
+        },
+
+        overallTicketResponse() {
+            this.showAIResponseBox = !this.showAIResponseBox;
+        },
+
+        editSelection() {
+            if (!this.editor) {
+                console.error('TinyMCE editor instance or selection not available.');
+                return;
+            }
+
+            const selection = this.editorData.selection;
+            const selectedText = selection.getContent({ format: 'text' }).trim();
+            if (selectedText) {
+                this.selectedText = selectedText;
+                this.showChatGPTPromptBox = true;
+            }
+        },
+
     },
     beforeCreate() {
-        if(window.fluentSupportAdmin) {
+        if (window.fluentSupportAdmin) {
             this.$options.components.TemplateInserter = require('../Modules/Tickets/_templateInserter').default
+            this.$options.components.AIResponseGenerator = require('../Modules/Tickets/_AIResponseGenerator').default
         }
     },
     mounted() {
@@ -263,10 +408,11 @@ export default {
     }
 }
 
-.fs_shortcode_saved_replies {
+.fs_action_buttons {
     display: inline-flex;
     position: absolute;
     right: 0px;
+    gap: 10px;
     z-index: 2;
     align-items: center;
     .fc_saved_replies_box {
@@ -274,6 +420,66 @@ export default {
             padding: 6px 11px;
         }
     }
+}
+
+.action-bar {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.fs_chatGPT_box .fs_ai_response_button {
+    align-items: center;
+    padding: 5px 6px;
+    height: 22px;
+    font-size: 0;
+    font-weight: 500;
+    line-height: 1.33;
+    color: #fff;
+    background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.16) 0%,
+            rgba(255, 255, 255, 0) 100%
+    ), #0e121b;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 4px;
+    box-shadow:
+        0 1px 2px 0 rgba(27, 28, 29, 0.48),
+        0 0 0 1px #242628;
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.fs_chatGPT_box .fs_ai_response_button span {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.fs_chatGPT_box .fs_ai_response_button p {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.33;
+}
+
+.fs_chatGPT_box .fs_ai_response_button:hover {
+    background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.32) 0%,
+            rgba(255, 255, 255, 0.16) 100%
+    ), #0e121b;
+    box-shadow:
+        0px 2px 4px 0px rgba(27, 28, 29, 0.64),
+        0px 0px 0px 1px #3a3b3d;
+}
+
+.fs_ai_modify_response_box .fs_ai_popover_button {
+    padding: 6px;
+    gap: 10px;
+    border-radius: 50%;
+    background: #0E121B;
+    height: 30px;
+    width: 30px;
 }
 
 </style>

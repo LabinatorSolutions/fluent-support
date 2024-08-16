@@ -185,6 +185,7 @@
                 v-if="editing_customer"
                 @updated="closeModal()"
                 :customer="editing_customer"
+                :key="componentKey"
             />
         </el-dialog>
     </div>
@@ -197,7 +198,7 @@ import {
     useFluentHelper,
     useNotify,
 } from "@/admin/Composable/FluentFrameworkHelper";
-import { onMounted, reactive, toRefs } from "vue";
+import { onMounted, reactive, toRefs, computed } from "vue";
 
 export default {
     name: "Customers",
@@ -259,6 +260,12 @@ export default {
                 });
         };
 
+        const componentKey = computed(() => {
+            return state.editing_customer && state.editing_customer.id
+                ? state.editing_customer.id.toString()
+                : (Math.random() * 1000).toFixed(0).toString();
+        });
+
         const showAddCustomerModal = (customer) => {
             state.editing_customer = customer;
             state.showEditModal = true;
@@ -310,6 +317,7 @@ export default {
             setTitle,
             ucFirst,
             humanDiffTime,
+            componentKey,
             tableRowClassName,
             ...toRefs(state),
         };
