@@ -824,7 +824,7 @@ export default {
         };
 
         const fetchChatGPTAPI = () => {
-            get("settings/openai-integration")
+            get("tickets/openai-integration")
                 .then((response) => {
                     state.apiKey = response.api_key;
                     state.aiResponse = !!state.apiKey;
