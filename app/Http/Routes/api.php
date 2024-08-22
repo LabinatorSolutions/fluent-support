@@ -79,6 +79,7 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->get('ping', 'AgentController@ping');
     $router->get('ticket-essentials', 'TicketController@getTicketEssentials')->withPolicy('AdminSettingsPolicy');
+    $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
@@ -121,8 +122,6 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
 
     $router->post('/openai-integration', 'SettingsController@saveOpenAISettings');
     $router->post('/openai-integration/disconnect', 'SettingsController@disconnectOpenAI');
-    $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
-
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
