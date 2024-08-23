@@ -380,6 +380,7 @@ class Menu
         $appVars['has_pro'] = defined('FLUENTSUPPORTPRO_PLUGIN_VERSION');
         if ($appVars['has_pro']) {
             $appVars['agent_feedback_rating'] = Helper::getBusinessSettings('agent_feedback_rating', 'no');
+            $appVars['ai_integration'] = Helper::AIIntegrationStatus();
         }
 
         wp_localize_script('fluent_support_admin_app_start', 'fluentSupportAdmin', $appVars);
