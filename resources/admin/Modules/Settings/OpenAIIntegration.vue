@@ -24,7 +24,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-button type="primary" @click="saveSettings">{{translate('Verify OpenAI ChatGPT')}}</el-button>
+                <el-button type="primary" @click="saveSettings">{{translate('Verify OpenAI')}}</el-button>
                 <el-button v-if="disconnectChatGPT" type="danger" @click="disconnect">{{translate('Disconnect')}}</el-button>
             </el-form>
         </div>

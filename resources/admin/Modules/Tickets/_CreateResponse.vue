@@ -20,7 +20,7 @@
                 </el-select>
             </el-form-item>
         </div>
-        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true" :aiResponse="aiResponse"
+        <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :show-shortcodes="true" :aiIntegration="aiIntegration"
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
         <div class="fs_row">
             <div class="fs_half">
@@ -57,7 +57,7 @@ import WpEditor from '../../Pieces/_wp_editor';
 import AttachmentForm from './_AttachmentForm';
 export default {
     name: 'CreateResponse',
-    props: ['ticket', 'type','draft', 'aiResponse'],
+    props: ['ticket', 'type','draft', 'aiIntegration'],
     components: {
         WpEditor,
         AttachmentForm
