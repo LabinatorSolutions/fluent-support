@@ -631,6 +631,17 @@ class Helper
         return false;
     }
 
+    public static function AIIntegrationStatus() {
+        $chatGPTSettingsData = Meta::where('object_type', '_fs_openai_settings')->value('value');
+
+        if ($chatGPTSettingsData) {
+            $settings = maybe_unserialize($chatGPTSettingsData);
+            return !empty($settings['api_key']);
+        }
+
+        return false;
+    }
+
     public static function showTicketSummaryAdminBar()
     {
         $data = self::getOption('global_business_settings');

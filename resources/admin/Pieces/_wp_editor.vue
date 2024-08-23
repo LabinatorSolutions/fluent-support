@@ -1,7 +1,7 @@
 <template>
     <div class="wp_vue_editor_wrapper">
         <div class="fs_action_buttons">
-            <div class="fs_chatGPT_box" v-if="aiResponse">
+            <div class="fs_chatGPT_box" v-if="aiIntegration">
                 <el-popover
                     placement="bottom"
                     :width="480"
@@ -61,7 +61,7 @@
             v-model="plain_content"
             @click="updateCursorPos"
         ></textarea>
-        <div class="fs_ai_modify_response_box" v-if="showActionBar && aiResponse" :style="actionBarStyle">
+        <div class="fs_ai_modify_response_box" v-if="showActionBar && aiIntegration" :style="actionBarStyle">
             <el-popover
                 placement="bottom"
                 :width="480"
@@ -147,7 +147,7 @@ export default {
                 return false
             }
         },
-        aiResponse: {
+        aiIntegration: {
             type: Boolean,
             default() {
                 return false

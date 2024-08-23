@@ -79,7 +79,6 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
 
     $router->get('ping', 'AgentController@ping');
     $router->get('ticket-essentials', 'TicketController@getTicketEssentials')->withPolicy('AdminSettingsPolicy');
-    $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
 });
 
 $router->prefix('products')->withPolicy('AdminSettingsPolicy')->group(function ($router) {
@@ -120,6 +119,7 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->get('/remote-upload-settings', 'SettingsController@getRemoteUploadSettings');
     $router->post('/update-remote-upload-driver', 'SettingsController@updateRemoteUploadDriver');
 
+    $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
     $router->post('/openai-integration', 'SettingsController@saveOpenAISettings');
     $router->post('/openai-integration/disconnect', 'SettingsController@disconnectOpenAI');
 });
