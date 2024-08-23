@@ -53,7 +53,7 @@
                             </el-popover>
                         </li>
 
-                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant" v-if="aiResponse">
+                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant" v-if="aiIntegration">
                             <el-dropdown trigger="click">
                                 <el-button class="fs_ai_intelligent_button">
                                     <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
@@ -390,7 +390,7 @@
                     @close="show_response_box = ''"
                     :type="show_response_box"
                     :draft="draft"
-                    :aiResponse="aiResponse"
+                    :aiIntegration="aiIntegration"
                     @discardDraft="discardDraft"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
@@ -763,7 +763,7 @@ export default {
             customerSentiment: '',
             ResponseLoader: false,
             apiKey: '',
-            aiResponse: false,
+            aiIntegration: appVars.ai_integration,
             deleteTicketPermission: false
         });
 
@@ -809,6 +809,8 @@ export default {
                         return watcher.tag_id;
                     });
                 }
+
+
             }).catch(error => {
                 state.loading = false;
 
@@ -829,17 +831,6 @@ export default {
                     handleError(error);
                 })
         };
-
-        const fetchChatGPTAPI = () => {
-            get("settings/openai-integration")
-                .then((response) => {
-                    state.apiKey = response.api_key;
-                    state.aiResponse = !!state.apiKey;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                });
-        }
 
         const getTextByPerson = (conversation, ticket) => {
             if (conversation?.conversation_type === 'draft_response') {
@@ -1345,7 +1336,6 @@ export default {
         }
 
         onMounted(() => {
-            fetchChatGPTAPI();
             fetchTicket();
             if (appVars.enable_draft_mode === 'yes') {
                 fetchDraft();

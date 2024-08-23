@@ -60,7 +60,7 @@ class CleanupHandler
 
         $oldDateTime = date('Y-m-d H:i:s', current_time('timestamp') - ($settings['delete_days'] * 86400));
 
-        Activity::where('created_at', '<', $oldDateTime)->delete();
+        AIActivityLogs::where('created_at', '<', $oldDateTime)->delete();
     }
 
     public function maybeDeleteAttachmentsOnClose($ticket)

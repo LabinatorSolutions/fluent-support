@@ -119,10 +119,9 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->get('/remote-upload-settings', 'SettingsController@getRemoteUploadSettings');
     $router->post('/update-remote-upload-driver', 'SettingsController@updateRemoteUploadDriver');
 
+    $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
     $router->post('/openai-integration', 'SettingsController@saveOpenAISettings');
     $router->post('/openai-integration/disconnect', 'SettingsController@disconnectOpenAI');
-    $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
-
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
