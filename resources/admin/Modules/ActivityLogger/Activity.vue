@@ -35,19 +35,8 @@ export default {
         const state = reactive({
             activeName: 'overall_activities',
             me: appVars.me,
-            ai_enabled: false
+            ai_enabled: appVars.ai_integration,
         });
-
-        const isAIEnabled = () => {
-            get("ai-activity-logger/is-ai-enabled",)
-                .then((response) => {
-                    state.ai_enabled = response;
-                })
-        }
-
-        onMounted(() => {
-            isAIEnabled();
-        })
 
         return {
             ...toRefs(state),
