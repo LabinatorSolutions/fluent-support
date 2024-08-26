@@ -1049,29 +1049,6 @@ class Helper
         ];
     }
 
-    public static function isAIEnabled()
-    {
-        $openAISettingsData = Meta::where('object_type', '_fs_openai_settings')->first();
-
-        if (!$openAISettingsData) {
-            return false;
-        }
-
-        $value = $openAISettingsData->value;
-        if (empty($value)) {
-            return false;
-        }
-
-        $settings = maybe_unserialize($value);
-
-        if (is_array($settings) && !empty($settings)) {
-            return true;
-        }
-
-        return false;
-    }
-
-
     public static function getSettings()
     {
         $settings = Helper::getOption('_ai_activity_settings', []);

@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\Models\Activity;
+use FluentSupport\App\Models\AIActivityLogs;
 use FluentSupport\App\Models\Attachment;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\EmailNotification\Settings;
