@@ -8,7 +8,7 @@
                             <li :title="translate('Add Reply')"
                                 class="fs_add_reply"
                                 :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
-                                @click="draftReplyPermission ? show_response_box = 'draft_response' : show_response_box = 'response'">
+                                @click="draftReplyPermission ? show_response_box = 'draft_response' : show_response_box = (show_response_box === 'response' ? '' : 'response')">
                                 <el-icon style="vertical-align: middle;">
                                     <chat-line-square/>
                                 </el-icon>
@@ -16,7 +16,7 @@
                             <li :title="translate('Add Internal Note')"
                                 class="fs_add_note"
                                 :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
-                                @click="show_response_box = 'note'">
+                                @click="show_response_box = (show_response_box === 'note' ? '' : 'note')">
                                 <el-icon style="vertical-align: middle;">
                                     <notebook/>
                                 </el-icon>
@@ -901,7 +901,7 @@ export default {
 
             state.conversations.unshift(response);
             state.ticket.status = data.ticket.status;
-            state.show_response_box = false;
+            state.show_response_box = '';
 
             each(data.update_data, (data, key) => {
                 state.ticket[key] = data;
