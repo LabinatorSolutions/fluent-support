@@ -1,27 +1,20 @@
 <template>
     <div class="fcon_triggers_wrap">
-        <div>
-            <draggable
-                v-model="actionsParam"
-                ghost-class="ghost"
-                item-key="id"
-            >
-                <template #item="{ element, index }">
-                    <div :key="element.id" class="fs_trigger_map">
-                        <action-map
-                            @deleteAction="removeAction(index)"
-                            @update="triggerUpdate()"
-                            :action="element"
-                            :activeName="element.activeName"
-                            :actions="all_actions"
-                        />
-                    </div>
-                </template>
-            </draggable>
+        <div
+            v-for="(action, actionIndex) in actions"
+            :key="actionIndex"
+            class="fc_trigger_map"
+        >
+            <action-map
+                @deleteAction="removeAction(actionIndex)"
+                @update="triggerUpdate()"
+                :action="action"
+                :actions="all_actions"
+            />
         </div>
         <action-adder
-            @success="appendAction"
             v-show="show_adder"
+            @success="appendAction"
             :all_actions="all_actions"
         />
         <el-button
@@ -37,62 +30,41 @@
 
 <script>
 import ActionMap from "./_ActionMap.vue";
-import draggable from "vuedraggable";
 import ActionAdder from "./_ActionAdder.vue";
-import { onMounted, ref, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ActionMappers",
-    props: ["workflow_id", "actions", "all_actions", "actionSequence"],
+    props: ["workflow_id", "actions", "all_actions"],
     components: {
         ActionMap,
         ActionAdder,
-        draggable,
     },
     setup(props, context) {
         const { translate } = useFluentHelper();
 
-        const actionsParam = ref([]);
         const showAdder = ref(false);
-        const activeName = ref({});
 
         const appendAction = (action) => {
             showAdder.value = false;
-            actionsParam.value.push({
-                ...action,
-                workflow_id: props.workflow_id,
-                activeName: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            });
+            action.workflow_id = props.workflow_id;
             props.actions.push(action);
         };
 
-        watch(actionsParam, (newVal) => {
-            const updatedSequence = newVal.map(action => action.id);
-            context.emit("updateActionSequence", updatedSequence);
-        });
-
         const triggerUpdate = () => {
-            context.emit("updateWorkFlow");
+            context.emit("update");
         };
 
         const removeAction = (actionIndex) => {
             props.actions.splice(actionIndex, 1);
-            actionsParam.value.splice(actionIndex, 1);
-            context.emit("updateWorkFlow");
+            context.emit("update");
         };
 
         onMounted(() => {
             if (!props.actions.length) {
                 showAdder.value = true;
             }
-            actionsParam.value = Object.values(props.actions).map((action) => ({
-                id: action.id,
-                title: action.title,
-                action_name: action.action_name,
-                workflow_id: action.workflow_id,
-                settings: action.settings,
-            }));
         });
 
         return {
@@ -101,19 +73,7 @@ export default {
             triggerUpdate,
             removeAction,
             translate,
-            actionsParam,
-            activeName
         };
     },
 };
 </script>
-
-<style scoped>
-.ghost {
-    opacity: 0.5;
-    text-align: center;
-    border-style: dashed;
-    border-radius: 10px;
-    float: none;
-}
-</style>
