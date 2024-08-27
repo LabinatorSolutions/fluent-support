@@ -148,9 +148,9 @@ export default {
             }
         },
         aiIntegration: {
-            type: Boolean,
+            type: String,
             default() {
-                return false
+                return ''
             }
         },
         showSavedReplies: {
