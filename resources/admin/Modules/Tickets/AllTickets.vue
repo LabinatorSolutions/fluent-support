@@ -342,7 +342,7 @@ export default {
                         }
 
                         state.tickets = response.tickets.data;
-                        window.fsCurrentFilteredTickets = response.tickets.data;
+                        window.localStorage.setItem('__fluentsupport_ticket_data', JSON.stringify(response.tickets.data));
                         state.pagination.total = response.tickets.total;
                         saveFilters();
                     })
