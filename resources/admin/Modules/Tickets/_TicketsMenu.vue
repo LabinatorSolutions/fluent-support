@@ -75,13 +75,11 @@ export default {
     },
     computed: {
         currentTickets() {
-            let existingTickets = window.localStorage.getItem('__fluentsupport_ticket_data');
-            existingTickets = JSON.parse(existingTickets);
-
-            if (this.$route.name != 'view_ticket' || !(existingTickets && existingTickets.length)) {
+            if (this.$route.name != 'view_ticket' || !(window.fsCurrentFilteredTickets && window.fsCurrentFilteredTickets.length)) {
                 return null;
             }
-            return existingTickets;
+
+            return window.fsCurrentFilteredTickets;
         },
         isAll() {
             return this.$route.query.agent_id;
