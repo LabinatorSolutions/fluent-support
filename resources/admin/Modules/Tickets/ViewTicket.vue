@@ -763,7 +763,7 @@ export default {
             customerSentiment: '',
             ResponseLoader: false,
             apiKey: '',
-            aiIntegration: appVars.ai_integration,
+            aiIntegration: Boolean(appVars.ai_integration),
             deleteTicketPermission: false
         });
 
