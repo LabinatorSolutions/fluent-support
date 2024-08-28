@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 6.6
-Stable tag: 1.8.0
+Stable tag: 1.8.10
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -234,6 +234,11 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.8.10 (Date: Aug 28, 2024) =
+* Fixed - OpenAI route not found issue
+* Fixed - Customer portal ticket filter issue
+* Fixed - Toggle option for the 'Ticket Reply' and 'Add Note' buttons in view ticket
 
 = 1.8.0 (Date: Aug 15, 2024) =
 * Added - Integration with OpenAI (Pro)
