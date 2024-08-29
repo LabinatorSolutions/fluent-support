@@ -6,7 +6,8 @@
                 <p class="fs_chatGPT_description">{{ translate('The OpenAI API can be used to generate and enhance responses.') }}</p>
             </div>
         </div>
-        <div class="fs_box_body" v-if="!loading">
+        <div class="ai-settings-container" v-if="has_pro">
+            <div class="fs_box_body" v-if="!loading">
             <el-form label-position="top" label-width="140px">
                 <el-form-item label="Access Code">
                     <el-input
@@ -28,7 +29,23 @@
                 <el-button v-if="disconnectChatGPT" type="danger" @click="disconnect">{{translate('Disconnect')}}</el-button>
             </el-form>
         </div>
-        <el-skeleton class="fs_chatGPT_settings_loading" v-else :animated="true" :rows="3" />
+            <el-skeleton class="fs_chatGPT_settings_loading" v-else :animated="true" :rows="3" />
+        </div>
+        <div class="fs_narrow_promo" v-else>
+            <h3>
+                {{
+                    translate("Use OpenAI for responses, ticket summaries, and sentiment analysis")
+                }}
+            </h3>
+            <p>{{ translate("pro_promo") }}</p>
+            <a
+                target="_blank"
+                rel="noopener"
+                href="https://fluentsupport.com"
+                class="el-button el-button--success"
+            >{{ translate("Upgrade To Pro") }}</a
+            >
+        </div>
     </div>
 </template>
 
@@ -40,7 +57,7 @@ import { onMounted, reactive, toRefs } from "vue";
 export default {
     name: "OpenAIIntegration",
     setup() {
-        const { get, post, handleError, translate } = useFluentHelper();
+        const { get, post, handleError, translate, has_pro } = useFluentHelper();
         const { notify } = useNotify();
 
         const state = reactive({
@@ -125,14 +142,17 @@ export default {
         };
 
         onMounted(() => {
-            fetchSettings();
+            if (has_pro) {
+                fetchSettings();
+            }
         });
 
         return {
             ...toRefs(state),
             translate,
             saveSettings,
-            disconnect
+            disconnect,
+            has_pro
         };
     }
 }
