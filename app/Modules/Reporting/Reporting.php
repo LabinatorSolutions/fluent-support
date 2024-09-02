@@ -692,7 +692,7 @@ class Reporting
 
     public function getTicketResponseStats($from, $to, $filter)
     {
-        $query = Conversation::query()->select('id', 'ticket_id', 'person_id', 'created_at')
+        $query = Conversation::query()->select('id', 'ticket_id', 'person_id', 'created_at', 'content')
             //Add person_type to the select
             ->addSelect(['person_type' => Person::select('person_type')
                 ->whereColumn('id', 'fs_conversations.person_id')
