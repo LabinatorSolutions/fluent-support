@@ -173,6 +173,7 @@ class CustomerPortalHandler
             'rest'                       => $restInfo,
             'nonce'                      => wp_create_nonce($slug),
             'support_products'           => Product::select(['id', 'title'])->get(),
+            'product_field_required'     => Helper::isProductRequired(),
             'customer_ticket_priorities' => Helper::customerTicketPriorities(),
             'view_tickets_url'           => '#/',
             'i18n'                       => $i18ns,

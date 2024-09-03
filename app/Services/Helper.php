@@ -9,6 +9,7 @@ use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\AIActivityLogs;
 use FluentSupport\App\Models\Person;
+use FluentSupport\App\Models\Product;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
 
@@ -1212,4 +1213,11 @@ class Helper
         include FLUENT_SUPPORT_PLUGIN_PATH . 'app/Views/emails/' . $template . '.php';
         return ob_get_clean();
     }
+
+    public static function isProductRequired()
+    {
+        $settings = Helper::getOption('_ticket_form_settings', []);
+        return Arr::get($settings, 'product_required_field') === 'yes';
+    }
+
 }

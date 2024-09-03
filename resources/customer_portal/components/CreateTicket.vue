@@ -44,7 +44,7 @@
 
                 <div v-if="products.length || Object.keys(priorities).length" class="fs_tk_row">
                     <div v-if="products.length" class="fs_tk_col">
-                        <el-form-item class="fs_ticket_product fs_input_label" :label="$t('product_services')">
+                        <el-form-item class="fs_ticket_product fs_input_label" :label="$t('product_services')" :required="isProductFieldRequired">
                             <el-select clearable v-model="ticket.product_id" :placeholder="$t('service_placeholder')">
                                 <el-option v-for="product in products" :key="product.id" :value="product.id" :label="product.title"></el-option>
                             </el-select>
@@ -103,6 +103,7 @@ export default {
             custom_data: {},
             attachments: [],
             products: this.appVars.support_products,
+            isProductFieldRequired: !!this.appVars.product_field_required,
             priorities: this.appVars.customer_ticket_priorities,
             suggestions: [],
             fetchingSuggestions: false,
