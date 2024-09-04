@@ -157,6 +157,7 @@ class TransStrings
             'Agent'    => __('Agent', 'fluent-support'),
             'Responses'    => __('Responses', 'fluent-support'),
             'Interactions'    => __('Interactions', 'fluent-support'),
+            'open_ticket_in_new_tab'   => __('Open ticket in new tab', 'fluent-support'),
             'Open Tickets'    => __('Open Tickets', 'fluent-support'),
             'Closed'    => __('Closed', 'fluent-support'),
             'closed' => __('closed', 'fluent-support'),

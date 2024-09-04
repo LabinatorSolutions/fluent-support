@@ -346,6 +346,7 @@ class Menu
             'support_agents'             => $agents,
             'support_products'           => Product::select(['id', 'title'])->get(),
             'client_priorities'          => Helper::customerTicketPriorities(),
+            'open_ticket_in_new_tab'     => Helper::getBusinessSettings('open_ticket_in_new_tab', 'no'),
             'ticket_statuses'            => Helper::ticketStatuses(),
             'ticket_statuses_group'      => Helper::ticketStatusGroups(),
             'changeable_ticket_statuses' => Helper::changeableTicketStatuses(),

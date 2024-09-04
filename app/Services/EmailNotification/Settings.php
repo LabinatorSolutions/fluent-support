@@ -188,6 +188,13 @@ class Settings
                 'checkbox_label' => __('Enable Two-Factor Authentication', 'fluent-support'),
                 'inline_help'    => __('If you enable this setting, users will be required to submit a second form of authentication, such as a code sent to their email, to login.', 'fluent-support')
             ],
+            'open_ticket_in_new_tab'   => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label'   => __('Open Ticket In New Tab', 'fluent-support'),
+                'inline_help'    => __('If you enable this setting, then ticket will be opened in new tab.', 'fluent-support')
+            ],
         ];
 
         if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION')) {
