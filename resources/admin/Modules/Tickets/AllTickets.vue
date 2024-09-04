@@ -293,7 +293,8 @@ export default {
             show_filters: true,
             first_time_loading: true,
             advanced_filters: [[]],
-            filter_type: 'simple'
+            filter_type: 'simple',
+            openTicketInNewTab: appVars.open_ticket_in_new_tab === 'yes' ? true : false,
         })
 
         const fetchTickets = async () => {
@@ -369,12 +370,17 @@ export default {
             }
         }
 
-        const gotToTicket = (row) =>{
-            router.push({
-                name: 'view_ticket',
-                params: {ticket_id: row.id}
-            });
-        }
+        const gotToTicket = (row) => {
+            if (state.openTicketInNewTab) {
+                const ticketUrl = router.resolve({
+                    name: 'view_ticket',
+                    params: { ticket_id: row.id }
+                }).href;
+                window.open(ticketUrl, '_blank');
+            } else {
+                router.push({ name: 'view_ticket', params: { ticket_id: row.id } });
+            }
+        };
 
         const setFromSaveFilters = (callback) => {
             state.filter_type = getData('tickets_filter_type', 'simple');
