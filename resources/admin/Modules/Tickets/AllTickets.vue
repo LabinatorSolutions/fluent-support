@@ -619,7 +619,6 @@ export default {
                         return;
                     }
 
-                    console.log(route.name);
 
                     if ( newAgentId !== oldAgentId ) {
                         state.filters.agent_id = newAgentId;
@@ -632,8 +631,6 @@ export default {
                     if ( newFilterType !== oldFilterType ) {
                         state.filter_type = newFilterType;
                     }
-
-
 
                     fetchTickets();
                 }
