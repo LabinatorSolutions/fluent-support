@@ -21,18 +21,9 @@ export default {
     setup(props, _){
         const {
             appVars,
-            saveData,
             getData
         } = useFluentHelper();
         const router = useRouter();
-
-        const saveRoutDataToLocalStorage = () => {
-            const currentRoute = router.currentRoute.value.query;
-            if (Object.keys(currentRoute).length > 0) {
-                saveData("routesData", JSON.stringify(currentRoute));
-            }
-        };
-
         const loadRouteDataFromLocalStorage = () => {
             const routeName = router.currentRoute.value.name;
             const savedRoute = getData('routesData');
@@ -52,10 +43,6 @@ export default {
 
         watch(() => router.currentRoute.value.name, (newRouteName) => {
             loadRouteDataFromLocalStorage();
-        });
-
-        router.afterEach(() => {
-            saveRoutDataToLocalStorage();
         });
 
         onMounted(() => {
