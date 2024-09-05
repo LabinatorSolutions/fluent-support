@@ -8,6 +8,14 @@
                 class="fs_actions_board"
             >
                 <template #title>
+                    <el-tooltip
+                        class="box-item"
+                        effect="dark"
+                        content="Drag and Drop Action"
+                        placement="top-start"
+                    >
+                        <img :src="appVars.asset_url + '/images/icons/dragAndDrop.svg'">
+                    </el-tooltip>
                     <div
                         class="fs_trigger_name"
                     >
@@ -97,7 +105,7 @@ export default {
         FormBuilder,
     },
     setup(props, context) {
-        const {translate} = useFluentHelper();
+        const {translate, appVars} = useFluentHelper();
         const settingsFields = ref({});
         const loading = ref(false);
         const builderReady = ref(true);
@@ -144,6 +152,7 @@ export default {
             deleteAction,
             activeName,
             translate,
+            appVars
         };
     },
 };

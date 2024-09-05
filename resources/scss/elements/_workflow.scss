@@ -31,9 +31,7 @@
 
 
 .fs_trigger_view {
-    margin: 0 -20px 10px;
-    padding: 0 20px 10px;
-
+    border-bottom: none;
     .fs_trigger_name {
         box-sizing: border-box;
         padding: 15px;
@@ -41,11 +39,15 @@
 
     .fs_actions_board {
         .el-collapse-item__header{
-            background-color: #f7fafc;
-            border-radius: 8px;
+            background: #ffffff;
+            border-bottom: 1px solid #D6DAE1;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s;
+            position: relative;
             cursor: move;
-            border: 1px solid rgb(226, 228, 231);
-            box-shadow: 4px 2px 4px rgb(18 25 97 / 8%);
         }
         .el-collapse-item__wrap {
           border-bottom: 0;
@@ -54,7 +56,7 @@
             border-radius: 8px 8px 0 0;
         }
         .el-collapse-item__header:hover{
-            background-color: #EDF8F2;
+            background-color: rgba(241, 248, 241, 0.91);
         }
     }
 
@@ -114,6 +116,21 @@
         padding: 15px 20px;
         background: #f7fafc;
     }
+}
+
+.ghost {
+    opacity: 0.5;
+    text-align: center;
+    border-style: dashed;
+    border-radius: 10px;
+    float: none;
+}
+
+.fs_all_triggers {
+    border: 1px solid #D6DAE1;
+    border-radius: 8px;
+    margin-top: 24px;
+    overflow: hidden;
 }
 
 span.fs_trigger_sub {
