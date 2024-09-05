@@ -1,9 +1,10 @@
 <template>
-    <div class="fcon_triggers_wrap">
+    <div class="fs_triggers_wrap">
         <div>
             <draggable
                 v-model="actionsParam"
                 ghost-class="ghost"
+                class="fs_all_triggers"
                 item-key="id"
             >
                 <template #item="{ element, index }">
@@ -108,12 +109,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.ghost {
-    opacity: 0.5;
-    text-align: center;
-    border-style: dashed;
-    border-radius: 10px;
-    float: none;
-}
-</style>
