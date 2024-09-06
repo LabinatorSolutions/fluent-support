@@ -5,14 +5,14 @@
                 <div class="fs_box_head">
                     <el-breadcrumb separator="/">
                         <el-breadcrumb-item :to="{ name: 'workflows' }">{{
-                            translate("Workflows")
-                        }}</el-breadcrumb-item>
+                                translate("Workflows")
+                            }}</el-breadcrumb-item>
                         <el-breadcrumb-item>{{
-                            translate("Edit")
-                        }}</el-breadcrumb-item>
+                                translate("Edit")
+                            }}</el-breadcrumb-item>
                         <template v-if="workflow">
                             <el-breadcrumb-item
-                                >{{ workflow.title }} ({{
+                            >{{ workflow.title }} ({{
                                     workflow.status
                                 }})</el-breadcrumb-item
                             >
@@ -21,7 +21,7 @@
                 </div>
                 <div v-if="workflow" class="fs_box_actions fs_ticket_orders">
                     <span style="margin-right: 10px" class="fcon_status"
-                        >{{ translate("Status") }}: {{ workflow.status }}
+                    >{{ translate("Status") }}: {{ workflow.status }}
                         <el-switch
                             @change="updateWorkFlow()"
                             active-value="published"
@@ -34,7 +34,7 @@
                         v-loading="saving"
                         type="success"
                         @click="updateWorkFlow()"
-                        >{{ translate("Update Workflow") }}
+                    >{{ translate("Update Workflow") }}
                     </el-button>
                 </div>
             </div>
@@ -106,9 +106,10 @@
                     </div>
                     <div class="fs_box_body fs_padded_20">
                         <action-mappers
-                            @update="updateWorkFlow()"
+                            @updateWorkFlow="updateWorkFlow()"
                             :actions="actions"
                             :all_actions="filtred_action_fields"
+                            @updateActionSequence="updateActionSequence"
                         ></action-mappers>
                     </div>
                 </div>
@@ -158,6 +159,7 @@ export default {
             loading: false,
             saving: false,
             filtred_action_fields: {},
+            actionSequence: [],
         });
 
         watch(
@@ -207,6 +209,23 @@ export default {
                 return state.filtred_action_fields;
             }
         );
+
+        const updateActionSequence = (sequence) => {
+            state.actionSequence = sequence;
+            post("workflows/action-sequence", {
+                workflow_id: props.workflow_id,
+                action_sequence: sequence,
+            })
+                .then((response) => {
+
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {
+                    state.loading = false;
+                });
+        };
 
         const fetch = async () => {
             state.loading = true;
@@ -276,6 +295,7 @@ export default {
             fetch,
             updateWorkFlow,
             translate,
+            updateActionSequence
         };
     },
 };

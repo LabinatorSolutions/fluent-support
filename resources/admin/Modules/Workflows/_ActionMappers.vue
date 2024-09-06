@@ -45,7 +45,7 @@ import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ActionMappers",
-    props: ["workflow_id", "actions", "all_actions", "actionSequence"],
+    props: ["workflow_id", "actions", "all_actions"],
     components: {
         ActionMap,
         ActionAdder,
@@ -68,9 +68,11 @@ export default {
             props.actions.push(action);
         };
 
-        watch(actionsParam, (newVal) => {
-            const updatedSequence = newVal.map(action => action.id);
-            context.emit("updateActionSequence", updatedSequence);
+        watch(actionsParam, (newVal, oldVal) => {
+            if (oldVal && newVal.length === oldVal.length && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+                const updatedSequence = newVal.map(action => action.id);
+                context.emit("updateActionSequence", updatedSequence);
+            }
         });
 
         const triggerUpdate = () => {
