@@ -105,8 +105,7 @@
                     </el-table-column>
                     <el-table-column min-width="300" :label="translate('Title')">
                         <template #default="scope">
-                            <router-link class="fs_tk_preview"
-                                         :to="{name: 'view_ticket', params: { ticket_id: scope.row.id }}">
+                            <div class="fs_tk_preview">
                                 <strong>{{ scope.row.title }}</strong>
                                 <span style="font-size: 10px;"> {{translate(' by')}} {{ scope.row.customer.first_name }}</span>
                                 <span style="margin-left: 5px; font-size: 10px;"
@@ -141,7 +140,7 @@
                                 <div class="prev_text_parent">
                                     <p class="fs_tk_preview_text" v-html="getExcerpt(scope.row)"></p>
                                 </div>
-                            </router-link>
+                            </div>
                         </template>
                     </el-table-column>
                     <el-table-column width="60">
