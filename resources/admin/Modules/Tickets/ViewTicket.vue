@@ -421,7 +421,7 @@
                                             </div>
                                         </div>
                                         <div class="fs_thread_body">
-                                            <div v-html="santizeContent(draft.value.content)"
+                                            <div v-html="santizeContent(draftContent)"
                                                  class="fs_thread_body"></div>
                                         </div>
                                         <div>
@@ -442,6 +442,7 @@
 
                     <article v-for="conversation in conversations"
                              :key="conversation.id"
+                             :ref="el => setRef(conversation.id, el)"
                              :class="getTicketClasses(conversation, ticket) ">
                         <span :class="getRibbonClass(conversation, ticket)" >{{getTextByPerson(conversation, ticket)}}</span>
                         <div class="fs_thread_content">
@@ -677,8 +678,8 @@ import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import Modal from "../../Pieces/Modal";
 import SplitTicket from "./_SplitTicket"
-import {useFluentHelper, useNotify, useConfirm, wpHooks} from "@/admin/Composable/FluentFrameworkHelper";
-import {computed, nextTick, onMounted, onBeforeUnmount, reactive, toRefs, watch} from "vue";
+import {useFluentHelper, useNotify, useConfirm, wpHooks, useScrollToRef} from "@/admin/Composable/FluentFrameworkHelper";
+import {computed, nextTick, onMounted, onBeforeUnmount, reactive, toRefs, watch, ref, unref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 
 export default {
@@ -699,17 +700,7 @@ export default {
     },
 
     setup(props, _) {
-        const {
-            appVars,
-            get,
-            post,
-            put,
-            del,
-            setTitle,
-            has_pro,
-            handleError,
-            translate,
-        } = useFluentHelper();
+        const { appVars, get, post, put, del, setTitle, has_pro, handleError, translate, } = useFluentHelper();
         const {notify} = useNotify();
         const {confirm} = useConfirm();
         const {doAction} = wpHooks();
@@ -763,7 +754,7 @@ export default {
             customerSentiment: '',
             ResponseLoader: false,
             apiKey: '',
-            aiIntegration: Boolean(appVars.ai_integration),
+            aiIntegration: !!appVars.ai_integration,
             deleteTicketPermission: false
         });
 
@@ -912,6 +903,10 @@ export default {
                 }
             }
         }
+
+        const draftContent = computed(()=> {
+            return state.draft.value?.content;
+        })
 
         const updateTicketAttr = (propName) => {
             console.log( state.ticket[propName]);
@@ -1335,12 +1330,35 @@ export default {
                 })
         }
 
-        onMounted(() => {
-            fetchTicket();
-            if (appVars.enable_draft_mode === 'yes') {
-                fetchDraft();
+        const conversationRefs = ref({});
+
+        const setRef = (id, el) => {
+            if (el) {
+                conversationRefs.value[id] = el;
             }
+        };
+
+        const scrollToHash = async () => {
+            const fullHash = window.location.hash;
+            const hash = fullHash.split('#').pop();
+
+
+            if (hash && conversationRefs.value[hash]) {
+                const ref = conversationRefs.value[hash];
+                return useScrollToRef(ref);
+            }
+        };
+
+        onMounted(async () => {
+             await fetchTicket();
+            if (appVars.enable_draft_mode === 'yes') {
+                await fetchDraft();
+            }
+
             doAction('ticket_view_entered', props.ticket_id);
+
+            await scrollToHash();
+            window.addEventListener("hashchange", scrollToHash);
         });
 
         onBeforeUnmount(() => {
@@ -1355,6 +1373,7 @@ export default {
         return {
             ...toRefs(state),
             setTitle,
+            draftContent,
             has_pro,
             appVars,
             handleError,
@@ -1391,13 +1410,14 @@ export default {
             afterCreatedTask,
             getTicketSummary,
             getCustomerSentiment,
-            closeAIResponse
+            closeAIResponse,
+            setRef
         }
     }
 }
 </script>
 
-<style scoped>
+<style>
 .agent_title {
     content: '';
     position: relative;
