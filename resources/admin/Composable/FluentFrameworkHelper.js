@@ -158,7 +158,8 @@ export function useFluentHelper(){
         longLocalDate,
         setTitle,
         has_pro,
-        renewOptions
+        renewOptions,
+        useScrollToRef
     }
 }
 
@@ -194,4 +195,8 @@ export function useConfirm(){
     return {
         confirm
     }
+}
+
+export function useScrollToRef (ref) {
+     ref.scrollIntoView({ behavior: 'smooth' });
 }
