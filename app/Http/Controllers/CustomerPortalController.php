@@ -32,8 +32,14 @@ class CustomerPortalController extends Controller
         $onBehalf = $request->getSafe('on_behalf', 'sanitize_text_field');
         $userIP = $request->getIp();
         $search = $request->getSafe('search', 'sanitize_text_field');
-        $filters = $request->getSafe('filters', 'sanitize_text_field');
-        $sorting = $request->getSafe('sorting', 'sanitize_text_field');
+        $filters = $request->getSafe([
+            'filters.product_id' => 'intval',
+        ]);
+
+        $sorting = $request->getSafe([
+            'sorting.sortBy' => 'sanitize_sql_orderby',
+            'sorting.sortType' => 'sanitize_sql_orderby'
+        ]);
 
         try {
             $customer = $customerPortalService->resolveCustomer($onBehalf, $userIP);
