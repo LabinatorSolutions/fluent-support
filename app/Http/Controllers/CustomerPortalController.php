@@ -34,6 +34,7 @@ class CustomerPortalController extends Controller
         $search = $request->getSafe('search', 'sanitize_text_field');
         $filters = $request->getSafe([
             'filters.product_id' => 'intval',
+            'filters.status_type' => 'sanitize_text_field'
         ]);
 
         $sorting = $request->getSafe([
