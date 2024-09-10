@@ -13,14 +13,14 @@
                     <div class="fs_popover_item">
                         <h3 class="fs_popover_title">{{ $t('Sort By') }}</h3>
                         <div class="fs_radio_blocks">
-                            <el-radio-group @change="fetchTickets" v-model="sorting.sortBy">
+                            <el-radio-group @change="fetchTickets" v-model="sorting.sort_by">
                                 <el-radio v-for="column in sortingColumns" :key="column.value" :label="column.value">
                                     {{ column.label }}
                                 </el-radio>
                             </el-radio-group>
                         </div>
                         <hr/>
-                        <el-radio-group size="small" v-model="sorting.sortType">
+                        <el-radio-group size="small" v-model="sorting.sort_type">
                             <el-radio-button label="asc">{{ $t('Ascending') }}</el-radio-button>
                             <el-radio-button label="desc">{{ $t('Descending') }}</el-radio-button>
                         </el-radio-group>
@@ -41,7 +41,7 @@
             </div>
         </div>
         <div class="fs_search_bar">
-            <el-input @keyup.enter="fetchTickets" clearable @clear="fetchTickets" style="width: 200px" size="small"
+            <el-input @keyup.enter="fetchTickets" clearable @clear="fetchTickets()" style="width: 200px" size="small"
                       :placeholder="$t('Please input')" v-model="searchQuery">
                 <template #append>
                     <el-button @click="fetchTickets" icon="Search"></el-button>
@@ -65,9 +65,14 @@ export default {
             appVars: this.appVars
         }
     },
-    watch: {
-        searchQuery(newVal, oldVal) {
-            this.$emit('update-search-query', newVal)
+    computed: {
+        searchQuery: {
+            get() {
+                return this.search;
+            },
+            set(value) {
+                this.$emit('update-search-query', value)
+            }
         }
     },
     methods: {
@@ -79,6 +84,3 @@ export default {
     }
 }
 </script>
-
-
-

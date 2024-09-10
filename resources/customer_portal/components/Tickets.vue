@@ -4,14 +4,14 @@
             <div class="fs_tk_action_bar">
                 <div class="fs_tk_left">
                     <div class="fs_button_groups">
-                        <button class="fs_btn fs_btn_all" :class="{ fs_btn_active: filters.status_type == 'all' }"
-                                @click="filters.status_type = 'all'">{{$t('All')}}
+                        <button class="fs_btn fs_btn_all" :class="{ fs_btn_active: filter_type == 'all' }"
+                                @click="filter_type = 'all'">{{$t('All')}}
                         </button>
-                        <button class="fs_btn fs_btn_open" :class="{ fs_btn_active: filters.status_type == 'open' }"
-                                @click="filters.status_type = 'open'">{{$t('Open')}}
+                        <button class="fs_btn fs_btn_open" :class="{ fs_btn_active: filter_type == 'open' }"
+                                @click="filter_type = 'open'">{{$t('Open')}}
                         </button>
-                        <button class="fs_btn fs_btn_closed" :class="{ fs_btn_active: filters.status_type == 'closed' }"
-                                @click="filters.status_type = 'closed'">{{$t('Closed')}}
+                        <button class="fs_btn fs_btn_closed" :class="{ fs_btn_active: filter_type == 'closed' }"
+                                @click="filter_type = 'closed'">{{$t('Closed')}}
                         </button>
                     </div>
                 </div>
@@ -104,7 +104,7 @@ export default {
     data() {
         return {
             tickets: [],
-
+            filter_type: 'all',
             pagination: {
                 per_page: 10,
                 current_page: 1,
@@ -112,16 +112,15 @@ export default {
             },
             filters: {
                 product_id: '',
-                status_type: 'all',
             },
             sorting: {
-                sortBy: 'id',
-                sortType: 'asc'
+                sort_by: 'id',
+                sort_type: 'asc'
             },
             sortingColumns: [
                 {
                     label: 'Ticket ID',
-                    value: 'ID'
+                    value: 'id'
                 },
                 {
                     label: 'Title',
@@ -148,7 +147,7 @@ export default {
         }
     },
     watch: {
-        "filters.status_type"() {
+        filter_type() {
             this.pagination.current_page = 1;
             this.fetchTickets();
         }
@@ -160,6 +159,7 @@ export default {
             this.$get('tickets', {
                 per_page: this.pagination.per_page,
                 page: this.pagination.current_page,
+                filter_type: this.filter_type,
                 search: this.search,
                 filters: this.filters,
                 sorting: this.sorting,
