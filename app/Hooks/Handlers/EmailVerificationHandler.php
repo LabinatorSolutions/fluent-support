@@ -17,7 +17,11 @@ class EmailVerificationHandler
             $verifcationCode = str_pad(mt_rand(100123, 900987), 6, 0, STR_PAD_LEFT);
         }
 
-        $hash = wp_hash_password($formData['email']) . time() . '_' . $verifcationCode;
+        $string = $formData['email'] . '-' . wp_generate_uuid4() . mt_rand(1, 99999999);
+        $hash = wp_hash_password($string);
+        $hash = sanitize_title($hash, '', 'display');
+        $hash .= $formData['email'] . '-' . time();
+
         $data = array(
             'login_hash'       => $hash,
             'status'           => 'issued',
