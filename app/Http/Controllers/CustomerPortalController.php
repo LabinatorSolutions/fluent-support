@@ -31,19 +31,14 @@ class CustomerPortalController extends Controller
     {
         $onBehalf = $request->getSafe('on_behalf', 'sanitize_text_field');
         $userIP = $request->getIp();
-        $requestedStatus = $request->getSafe('filter_type', 'sanitize_text_field');
-
-        $ticketOptions = $request->getSafe([
-            'search' => 'sanitize_text_field',
-            'filters.product_id' => 'intval',
-            'sorting.sort_type' => 'sanitize_sql_orderby',
-            'sorting.sort_by' => 'sanitize_sql_orderby'
-        ]);
+        $search = $request->getSafe('search', 'sanitize_text_field');
+        $filters = $request->getSafe('filters', 'sanitize_text_field');
+        $sorting = $request->getSafe('sorting', 'sanitize_text_field');
 
         try {
             $customer = $customerPortalService->resolveCustomer($onBehalf, $userIP);
             return [
-                'tickets' => $customerPortalService->getTickets($customer, $requestedStatus, $ticketOptions)
+                'tickets' => $customerPortalService->getTickets($customer, $search, $sorting, $filters)
             ];
         } catch (Exception $e) {
             return $this->sendError([
