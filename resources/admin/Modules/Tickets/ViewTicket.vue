@@ -389,7 +389,7 @@
                     :ticket="ticket"
                     @close="show_response_box = ''"
                     :type="show_response_box"
-                    :draft="draft"
+                    :draft="draftData"
                     :aiIntegration="aiIntegration"
                     @discardDraft="discardDraft"
                 />
@@ -406,7 +406,7 @@
                 <div v-if="ticket && ticket.id" class="fs_threads_container">
 
                     <div v-if="appVars.enable_draft_mode === 'yes'">
-                        <article v-if ="draft && !show_response_box"
+                        <article v-if ="showDraft && !show_response_box"
                                  class="fs_saved_draft"
                         >
                             <span class="draft_title"> {{translate('Saved Draft')}} </span>
@@ -421,7 +421,7 @@
                                             </div>
                                         </div>
                                         <div class="fs_thread_body">
-                                            <div v-html="santizeContent(draftContent)"
+                                            <div v-html="santizeContent(draftResponse)"
                                                  class="fs_thread_body"></div>
                                         </div>
                                         <div>
@@ -429,7 +429,7 @@
                                                 <el-button @click="show_response_box = draftReplyPermission ? 'draft_response' : 'response'">
                                                     {{ translate('Edit') }}
                                                 </el-button>
-                                                <el-button @click="discardDraft(draft.id)">
+                                                <el-button @click="discardDraft(draftData.id)">
                                                     {{ translate('Discard') }}
                                                 </el-button>
                                             </el-button-group>
@@ -463,11 +463,12 @@
                                             <span v-else-if="conversation.conversation_type == 'note'"> {{
                                                     translate('added a note')
                                                 }}</span>
+
                                             <div class="carrier_info" v-if="ticket.source == 'email'">
                                                 <div class="from_info" v-if="conversation.person.person_type == 'customer'">
                                                     <span><strong>From: </strong>{{ conversation.person?.full_name }}&lt;{{ conversation.person?.email }}&gt;</span>
                                                 </div>
-                                                <div class="cc_info" v-if="conversation.cc_info.length">
+                                                <div class="cc_info" v-if="conversation.cc_info?.length">
                                                     <span><strong>Cc: </strong>{{ getArrToString(conversation.cc_info) }}</span>
                                                 </div>
                                             </div>
@@ -742,7 +743,8 @@ export default {
             fetch_other_tickets: false,
             draftReplyPermission: false,
             draftReplyApprovePermission: false,
-            draft: {},
+            draftResponse: {},
+            showDraft: false,
             draftData: {},
             show_response_draft: false,
             tickets_to_merge:[],
@@ -775,6 +777,9 @@ export default {
                 customer_id: state.ticket.customer_id,
                 with_data: ['fluentcrm_profile']
             }).then(response => {
+                if (appVars.enable_draft_mode === 'yes') {
+                    fetchDraft();
+                }
                 state.loading = false;
                 state.ticket = response.ticket;
                 setTitle(response.ticket.title);
@@ -815,12 +820,20 @@ export default {
         };
 
         const fetchDraft = async () => {
-            await get(`tickets/${props.ticket_id}/draft`)
-                .then(response => {
-                    state.draft = response.draft;
-                }).catch(error => {
-                    handleError(error);
-                })
+            try {
+                const response = await get(`tickets/${props.ticket_id}/draft`);
+                state.draftData = response.draft;
+
+                if (state.draftData && state.draftData.value.content) {
+                    state.draftResponse = state.draftData.value.content;
+                    state.showDraft = true;
+                } else {
+                    state.draftResponse = null;
+                    state.draft = null;
+                }
+            } catch (error) {
+                handleError(error);
+            }
         };
 
         const getTextByPerson = (conversation, ticket) => {
@@ -889,7 +902,6 @@ export default {
         }
 
         const recordNewResponse = (response, data) => {
-
             state.conversations.unshift(response);
             state.ticket.status = data.ticket.status;
             state.show_response_box = '';
@@ -897,6 +909,7 @@ export default {
             each(data.update_data, (data, key) => {
                 state.ticket[key] = data;
             });
+
             if (appVars.pref.go_back_after_reply === 'yes') {
                 if (window.history.state.back) {
                  //   router.go(-1);
@@ -904,12 +917,7 @@ export default {
             }
         }
 
-        const draftContent = computed(()=> {
-            return state.draft.value?.content;
-        })
-
         const updateTicketAttr = (propName) => {
-            console.log( state.ticket[propName]);
             put(`tickets/${state.ticket.id}/property`, {
                 prop_name: propName,
                 prop_value: state.ticket[propName]
@@ -1245,7 +1253,9 @@ export default {
         const discardDraft = (draftID) => {
             del('tickets/' + draftID + '/draft')
                 .then(response => {
-                    state.draft = null;
+                    state.draftData = null;
+                    state.draftResponse = null;
+                    state.showDraft = false;
                 })
                 .catch((error) => {
                     handleError(error);
@@ -1350,11 +1360,7 @@ export default {
         };
 
         onMounted(async () => {
-             await fetchTicket();
-            if (appVars.enable_draft_mode === 'yes') {
-                await fetchDraft();
-            }
-
+            await fetchTicket();
             doAction('ticket_view_entered', props.ticket_id);
 
             await scrollToHash();
@@ -1373,7 +1379,6 @@ export default {
         return {
             ...toRefs(state),
             setTitle,
-            draftContent,
             has_pro,
             appVars,
             handleError,
