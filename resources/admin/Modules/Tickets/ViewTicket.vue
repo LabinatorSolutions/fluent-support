@@ -1520,22 +1520,6 @@ i.dashicons.dashicons-randomize {
 .fs_ticket_not_found_svg {
     margin-left: 100px;
 }
-.fs_AI_content_container {
-    text-align: center;
-    margin: 20px 0;
-}
-
-.fs_AI_content_body {
-    font-size: .5rem;
-    color: #0e121b;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin: 0;
-    padding: 10px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
 .fs_ai_response_loading {
     border: 1px solid #E1E4EA;
@@ -1553,6 +1537,14 @@ i.dashicons.dashicons-randomize {
     max-width: 36px;
     padding: 4px 6px;
     height: 33px;
+}
+
+.fs_ai_intelligent_button:hover {
+    background-color: #353a43;
+}
+
+.fs_ai_intelligent_button:focus {
+    background-color: #171d26;
 }
 
 .fs_ai_intelligent_button img {
