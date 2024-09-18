@@ -692,10 +692,13 @@ class Reporting
 
     public function getTicketResponseStats($from, $to, $filter)
     {
-        $query = Conversation::query()->select('id', 'ticket_id', 'person_id', 'created_at', 'content')
-            //Add person_type to the select
-            ->addSelect(['person_type' => Person::select('person_type')
-                ->whereColumn('id', 'fs_conversations.person_id')
+        $query = Conversation::query()
+            ->select('id', 'ticket_id', 'person_id', 'created_at', 'content')
+            ->addSelect([
+                'person_type' => Person::select('person_type')
+                    ->whereColumn('id', 'fs_conversations.person_id'),
+                'full_name' => Person::selectRaw("CONCAT(first_name, ' ', last_name)")
+                    ->whereColumn('id', 'fs_conversations.person_id')
             ])
             ->where('conversation_type', 'response')
             ->when(Arr::get($filter, 'person_type'), function (Builder $q, $personType) {
