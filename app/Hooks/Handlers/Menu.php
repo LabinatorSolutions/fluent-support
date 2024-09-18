@@ -155,7 +155,7 @@ class Menu
 
         if (PermissionManager::currentUserCan('fst_view_activity_logs')) {
             $secondayItems[] = [
-                'key'       => 'activity_logger',
+                'key'       => 'activity',
                 'label'     => __('Activities', 'fluent-support'),
                 'permalink' => $baseUrl . 'activity'
             ];
