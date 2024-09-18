@@ -156,6 +156,8 @@ class CustomerPortalHandler
             'priority'          => __('Priority', 'fluent-support'),
             'btn_text'          => __('Create Ticket', 'fluent-support'),
             'submit_heading'    => __('Submit a Support Ticket', 'fluent-support'),
+            'All Products'      => __('All Products', 'fluent-support'),
+            'Please input'      => __('Please input', 'fluent-support'),
             'create_ticket_cta' => __('Create a New Ticket', 'fluent-support'),
             'Reopen This ticket' => __('Reopen This ticket', 'fluent-support'),
             'by'                => __('by', 'fluent-support'),
