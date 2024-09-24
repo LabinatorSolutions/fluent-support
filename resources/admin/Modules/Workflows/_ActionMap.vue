@@ -39,6 +39,7 @@
                         </el-select>
                         <div v-if="action.action_name && builder_ready">
                             <form-builder
+                                :key="dragKey"
                                 :fields="actions[action.action_name].fields"
                                 :form-data="action.settings"
                             >
@@ -100,7 +101,7 @@ import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ActionMap",
-    props: ["action", "actions", "activeName"],
+    props: ["action", "actions", "activeName", "dragKey"],
     components: {
         FormBuilder,
     },
