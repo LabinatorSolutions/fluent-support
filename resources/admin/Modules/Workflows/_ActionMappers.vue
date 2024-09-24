@@ -6,10 +6,12 @@
                 ghost-class="ghost"
                 class="fs_all_triggers"
                 item-key="id"
+                @end="onDragEnd"
             >
                 <template #item="{ element, index }">
                     <div :key="element.id" class="fs_trigger_map">
                         <action-map
+                            :dragKey="dragKey"
                             @deleteAction="removeAction(index)"
                             @update="triggerUpdate()"
                             :action="element"
@@ -53,10 +55,10 @@ export default {
     },
     setup(props, context) {
         const { translate } = useFluentHelper();
-
         const actionsParam = ref([]);
         const showAdder = ref(false);
         const activeName = ref({});
+        const dragKey = ref(Date.now()); // Unique key that updates after each drag
 
         const appendAction = (action) => {
             showAdder.value = false;
@@ -85,6 +87,10 @@ export default {
             context.emit("updateWorkFlow");
         };
 
+        const onDragEnd = () => {
+            dragKey.value = Date.now();
+        };
+
         onMounted(() => {
             if (!props.actions.length) {
                 showAdder.value = true;
@@ -105,9 +111,10 @@ export default {
             removeAction,
             translate,
             actionsParam,
-            activeName
+            activeName,
+            dragKey,
+            onDragEnd,
         };
     },
 };
 </script>
-
