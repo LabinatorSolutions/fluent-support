@@ -5,7 +5,7 @@
         <div v-else class="fs_reply_wrap">
             <h3>{{$t('Write a reply')}}</h3>
             <div>
-                <wp-editor :autofocus="true" :mediaButtons="false" :height="150" v-model="response_body" />
+                <wp-editor :autofocus="true" :mediaButtons="false" :height="150" :ticketId="ticket.id" :is_agent="false" :is_direct_paste="true"  v-model="response_body" />
                 <error :error="errors.get('content')"/>
             </div>
 
