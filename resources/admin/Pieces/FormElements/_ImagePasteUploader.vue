@@ -38,9 +38,6 @@
         this.upload_data.ticket_id =  ticketId;
         this.upload_data.is_agent = is_agent;
 
-        if(!ticketId){
-          return ;
-        }
         const clipboardData = event.clipboardData || window.clipboardData;
         if (clipboardData && clipboardData.items) {
             for (let i = 0; i < clipboardData.items.length; i++) {

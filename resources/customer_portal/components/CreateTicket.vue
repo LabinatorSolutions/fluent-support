@@ -35,7 +35,7 @@
                     <template #label>
                         <label class="fs_input_label"> {{$t('ticket_details')}}</label>
                     </template>
-                    <wp-editor :height="150" :media-buttons="false" v-model="ticket.content"/>
+                    <wp-editor :height="150" :media-buttons="false" :is_direct_paste="true" v-model="ticket.content"/>
                     <p class="fs_tk_help">{{$t('details_help')}}</p>
                     <error :error="errors.get('content')"/>
                 </el-form-item>
