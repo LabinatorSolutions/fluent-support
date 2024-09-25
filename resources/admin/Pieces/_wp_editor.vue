@@ -372,10 +372,30 @@ export default {
         },
         setImagePath(imageUrl) {
             const tinyInstance = tinyMCE.get(this.editor_id);
-            if (tinyInstance) {
-                const imgTag = `<img src="${imageUrl}" alt="Uploaded Image"/>`;
+            if (!tinyInstance) return;
+
+            const imageElement = new Image();
+            imageElement.src = imageUrl;
+
+            imageElement.onload = () => {
+                const maxDimension = 300;
+                const { naturalWidth, naturalHeight } = imageElement;
+                const aspectRatio = naturalWidth / naturalHeight;
+
+                let width = naturalWidth;
+                let height = naturalHeight;
+
+                if (naturalWidth > naturalHeight) {
+                    width = maxDimension;
+                    height = maxDimension / aspectRatio;
+                } else {
+                    height = maxDimension;
+                    width = maxDimension * aspectRatio;
+                }
+
+                const imgTag = `<img src="${imageUrl}" alt="Uploaded Image" style="width: ${width}px; height: ${height}px;" />`;
                 tinyInstance.insertContent(imgTag);
-            }
+            };
         }
     },
     beforeCreate() {
