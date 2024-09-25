@@ -54,7 +54,7 @@
                 <template-inserter @insert="insertTemplate" />
             </div>
         </div>
-        <ImagePasteUploader ref="imagePasteUploader" @imagePath="setImagePath" />
+        <ImagePasteUploader ref="imagePasteUploader" @imagePath="setImagePath" v-loading="loadingImage"/>
         <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">
             {{ modelValue }}
         </textarea>
@@ -64,6 +64,8 @@
             v-model="plain_content"
             @click="updateCursorPos"
         ></textarea>
+        <div v-if="loadingImage" class="loading-overlay">
+        </div>
         <div class="fs_ai_modify_response_box" v-if="showActionBar && aiIntegration" :style="actionBarStyle">
             <el-popover
                 placement="bottom"
@@ -214,6 +216,7 @@ export default {
             selectedText: '',
             editorData: {},
             appVars: this.appVars,
+            loadingImage: false
         }
     },
     watch: {
@@ -256,6 +259,7 @@ export default {
                                 }
 
                                 if (hasImage) {
+                                    that.loadingImage = true;
                                     that.$refs.imagePasteUploader.handleImagePaste(event, that.ticketId, that.is_agent);
                                 }
                             }
@@ -404,7 +408,7 @@ export default {
 
             imageElement.onload = () => {
                 const maxDimension = 300;
-                const { naturalWidth, naturalHeight } = imageElement;
+                const {naturalWidth, naturalHeight} = imageElement;
                 const aspectRatio = naturalWidth / naturalHeight;
 
                 let width = naturalWidth;
@@ -420,6 +424,8 @@ export default {
 
                 const imgTag = `<img src="${imageUrl}" alt="Uploaded Image" style="width: ${width}px; height: ${height}px;" />`;
                 tinyInstance.insertContent(imgTag);
+
+                this.loadingImage = false;
             };
         }
     },
@@ -551,6 +557,24 @@ export default {
     background: #0E121B;
     height: 30px;
     width: 30px;
+}
+
+.wp_vue_editor_wrapper {
+    position: relative;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    pointer-events: none;
 }
 
 </style>
