@@ -369,16 +369,11 @@ export default {
             }
         }
 
-        const gotToTicket = (row) => {
-            if (state.openTicketInNewTab) {
-                const ticketUrl = router.resolve({
-                    name: 'view_ticket',
-                    params: { ticket_id: row.id }
-                }).href;
-                window.open(ticketUrl, '_blank');
-            } else {
-                router.push({ name: 'view_ticket', params: { ticket_id: row.id } });
-            }
+        const gotToTicket = (row) =>{
+            router.push({
+                name: 'view_ticket',
+                params: {ticket_id: row.id}
+            });
         };
 
         const setFromSaveFilters = (callback) => {
