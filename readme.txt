@@ -238,7 +238,6 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 = 1.8.2 (Date: Sep 25, 2024) =
 * Added: Workflow action sequence (Pro)
 * Added: Direct paste image in WP Editor
-* Improvement: Option to open tickets in a new tab in admin portal
 * Fixed: Required sign not visible for product options marked as required during ticket creation
 * Fixed: Reply button toggle option not working in the admin portal
 * Fixed: Issue with the route URL on the All Tickets page
