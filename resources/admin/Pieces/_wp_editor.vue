@@ -239,12 +239,28 @@ export default {
                     editor.on('mouseup', function (event) {
                         that.showActionBarOnSelection(editor);
                     });
+
                     if (that.is_direct_paste) {
                         editor.on('paste', function(event) {
-                            that.$refs.imagePasteUploader.handleImagePaste(event, that.ticketId, that.is_agent);
+                            const clipboardData = event.clipboardData || window.clipboardData;
+
+                            if (clipboardData && clipboardData.items) {
+                                let hasImage = false;
+
+                                for (let i = 0; i < clipboardData.items.length; i++) {
+                                    const item = clipboardData.items[i];
+                                    if (item.kind === 'file') {
+                                        hasImage = true;
+                                        break;
+                                    }
+                                }
+
+                                if (hasImage) {
+                                    that.$refs.imagePasteUploader.handleImagePaste(event, that.ticketId, that.is_agent);
+                                }
+                            }
                         });
                     }
-
                 }
             };
 
