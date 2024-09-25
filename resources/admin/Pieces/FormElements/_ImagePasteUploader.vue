@@ -1,10 +1,10 @@
 <template>
     <div>
-      
+
     </div>
   </template>
-  
-  <script>  
+
+  <script>
   import { useNotify } from "@/admin/Composable/FluentFrameworkHelper";
 
   export default {
@@ -38,7 +38,7 @@
         this.upload_data.ticket_id =  ticketId;
         this.upload_data.is_agent = is_agent;
 
-        if(!ticketId && is_agent !== 'yes'){
+        if(!ticketId){
           return ;
         }
         const clipboardData = event.clipboardData || window.clipboardData;
@@ -110,8 +110,7 @@
     }
   };
   </script>
-  
+
   <style scoped>
   /* No specific styles needed */
   </style>
-  

@@ -175,6 +175,12 @@ export default {
             default() {
                 return false
             }
+        },
+        is_direct_paste: {
+            type: Boolean,
+            default() {
+                return false
+            }
         }
     },
     emits: ['update:modelValue', 'toggleCcOption'],
@@ -233,9 +239,12 @@ export default {
                     editor.on('mouseup', function (event) {
                         that.showActionBarOnSelection(editor);
                     });
-                    editor.on('paste', function(event) {
-                        that.$refs.imagePasteUploader.handleImagePaste(event, that.ticketId, that.is_agent);
-                    });
+                    if (that.is_direct_paste) {
+                        editor.on('paste', function(event) {
+                            that.$refs.imagePasteUploader.handleImagePaste(event, that.ticketId, that.is_agent);
+                        });
+                    }
+
                 }
             };
 
