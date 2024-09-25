@@ -54,7 +54,10 @@
                 <template-inserter @insert="insertTemplate" />
             </div>
         </div>
-        <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">{{ modelValue }}</textarea>
+        <ImagePasteUploader ref="imagePasteUploader" @imagePath="setImagePath" />
+        <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">
+            {{ modelValue }}
+        </textarea>
         <textarea
             v-else
             class="wp_vue_editor wp_vue_editor_plain"
@@ -85,11 +88,13 @@
 </template>
 
 <script type="text/babel">
+import ImagePasteUploader from './FormElements/_ImagePasteUploader';
 export default {
     name: 'wp_editor',
     components: {
         TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined,
         AIResponseGenerator: () => import('../Modules/Tickets/_AIResponseGenerator'),
+        ImagePasteUploader,
     },
 
     props: {
@@ -159,6 +164,18 @@ export default {
                 return false
             }
         },
+        ticketId: {
+            type: String,
+            default() {
+                return false
+            }
+        },
+        is_agent: {
+            type: String,
+            default() {
+                return false
+            }
+        }
     },
     emits: ['update:modelValue', 'toggleCcOption'],
     data() {
@@ -215,6 +232,9 @@ export default {
                     });
                     editor.on('mouseup', function (event) {
                         that.showActionBarOnSelection(editor);
+                    });
+                    editor.on('paste', function(event) {
+                        that.$refs.imagePasteUploader.handleImagePaste(event, that.ticketId, that.is_agent);
                     });
                 }
             };
@@ -350,7 +370,13 @@ export default {
                 this.showChatGPTPromptBox = true;
             }
         },
-
+        setImagePath(imageUrl) {
+            const tinyInstance = tinyMCE.get(this.editor_id);
+            if (tinyInstance) {
+                const imgTag = `<img src="${imageUrl}" alt="Uploaded Image"/>`;
+                tinyInstance.insertContent(imgTag);
+            }
+        }
     },
     beforeCreate() {
         if (window.fluentSupportAdmin) {

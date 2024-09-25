@@ -387,6 +387,7 @@
                     v-if="show_response_box && ticket.status != 'closed'"
                     @created="recordNewResponse"
                     :ticket="ticket"
+                    :is_agent="'yes'"
                     @close="show_response_box = ''"
                     :type="show_response_box"
                     :draft="draftData"
