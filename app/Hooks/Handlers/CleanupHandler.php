@@ -53,6 +53,14 @@ class CleanupHandler
 
     protected function cleanAIActivityLogs()
     {
+        $tableName = 'fs_ai_activity_logs';
+        global $wpdb;
+        $table = $wpdb->prefix . $tableName;
+
+        if ($wpdb->get_var("SHOW TABLES LIKE '$table'") != $table) {
+            return;
+        }
+
         $settings = Helper::getOption('_ai_activity_settings', []);
 
         if (!$settings && empty($settings['delete_days'])) {
