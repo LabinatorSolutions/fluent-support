@@ -236,7 +236,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 == Changelog ==
 
 = 1.8.4 (Date: Sep 27, 2024) =
-* Fixed: Resolved issue causing errors when AI activity log table is missing
+* Hot-fix: Fixed issue with Activity logs cleanup
 
 = 1.8.3 (Date: Sep 25, 2024) =
 * Added: Workflow action sequence (Pro)
