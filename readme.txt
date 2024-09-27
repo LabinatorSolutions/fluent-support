@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 6.6
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -234,6 +234,9 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.8.4 (Date: Sep 27, 2024) =
+* Fixed: Resolved issue causing errors when AI activity log table is missing
 
 = 1.8.3 (Date: Sep 25, 2024) =
 * Added: Workflow action sequence (Pro)
