@@ -16,7 +16,6 @@ class CleanupHandler
     public function initHourlyTasks()
     {
         $this->cleanLiveActivities();
-
         $this->maybeDeleteOldTempFiles();
     }
 
