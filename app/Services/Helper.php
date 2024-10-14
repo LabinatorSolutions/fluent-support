@@ -1220,4 +1220,12 @@ class Helper
         return Arr::get($settings, 'product_required_field') === 'yes';
     }
 
+    public static function getBusinessBox()
+    {
+        $businessEmailBoxes = MailBox::select(['id', 'name', 'email', 'mapped_email'])
+                                    ->where('box_type', 'email')
+                                    ->get();
+        return $businessEmailBoxes;
+    } 
+
 }
