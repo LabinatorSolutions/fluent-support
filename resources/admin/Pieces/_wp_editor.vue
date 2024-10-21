@@ -272,13 +272,21 @@ export default {
                 mceConfig.auto_focus = this.editor_id;
             }
 
-            this.editor.initialize(this.editor_id, {
-                mediaButtons: this.mediaButtons,
-                tinymce: mceConfig,
-                quicktags: true
-            });
+            const initializeEditor = () => {
+                this.editor.initialize(this.editor_id, {
+                    mediaButtons: this.mediaButtons,
+                    tinymce: mceConfig,
+                    quicktags: true
+                });
+            };
 
-            jQuery('#' + this.editor_id).on('change', function (e) {
+            if (document.readyState === "complete" || document.readyState === "interactive") {
+                initializeEditor();
+            } else {
+                jQuery(document).ready(initializeEditor);
+            }
+
+            jQuery('#' + this.editor_id).on('change', function () {
                 that.changeContentEvent();
             });
         },
@@ -427,7 +435,7 @@ export default {
 
                 this.loadingImage = false;
             };
-        }
+        },
     },
     beforeCreate() {
         if (window.fluentSupportAdmin) {
