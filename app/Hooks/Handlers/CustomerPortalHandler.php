@@ -9,6 +9,7 @@ use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Blocks\BlockHelper;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Framework\Support\Arr;
+use FluentSupportPro\App\Services\ProHelper;
 
 class CustomerPortalHandler
 {
@@ -102,6 +103,13 @@ class CustomerPortalHandler
         ];
 
         $assets = $app['url.assets'];
+
+        $ticketFormConfig = ProHelper::getTicketFormConfig();
+
+        if ($ticketFormConfig['disable_rich_text'] !== 'yes') {
+            wp_tinymce_inline_scripts();
+            wp_enqueue_editor();
+        }
 
         wp_enqueue_script('dompurify', $assets.'libs/purify/purify.min.js', [], '2.4.3');
         wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION, true);
@@ -201,11 +209,6 @@ class CustomerPortalHandler
          * @param array $data
          */
         $data = apply_filters('fluent_support/customer_portal_vars', $data);
-
-        if (!empty($data['has_rich_text_editor'])) {
-            wp_tinymce_inline_scripts();
-            wp_enqueue_editor();
-        }
 
         wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', $data);
     }
