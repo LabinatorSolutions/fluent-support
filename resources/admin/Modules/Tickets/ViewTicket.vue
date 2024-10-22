@@ -1349,6 +1349,42 @@ export default {
             }
         };
 
+        const handleKeydown = (event) => {
+            const { metaKey, altKey, code } = event;
+
+            if (metaKey && altKey && code === 'KeyI') {
+                return;
+            }
+
+            if (metaKey && altKey) {
+                event.preventDefault();
+
+                const keyActions = {
+                    KeyR: () => {
+                        let responseType = state.draftReplyPermission ? 'draft_response' : 'response';
+                        state.show_response_box = (state.show_response_box === responseType) ? '' : responseType;
+                    },
+                    KeyN: () => {
+                        state.show_response_box = (state.show_response_box === 'note') ? '' : 'note';
+                    },
+                    KeyQ: () => fetchTicket(),
+                    KeyM: () => {
+                        customerTickets();
+                        state.show_merge_modal = !state.show_merge_modal;
+                        state.app_ready = true;
+                    },
+                    KeyB: () => {
+                        state.show_watcher_modal = !state.show_watcher_modal;
+                    },
+                };
+
+                const action = keyActions[code];
+                if (action) {
+                    action();
+                }
+            }
+        };
+
         const scrollToHash = async () => {
             const fullHash = window.location.hash;
             const hash = fullHash.split('#').pop();
@@ -1366,6 +1402,8 @@ export default {
 
             await scrollToHash();
             window.addEventListener("hashchange", scrollToHash);
+            window.addEventListener("keydown", handleKeydown);
+
         });
 
         onBeforeUnmount(() => {
@@ -1375,6 +1413,7 @@ export default {
                     ticket_id: props.ticket_id
                 }
             }));
+            window.removeEventListener("keydown", handleKeydown);
         });
 
         return {
