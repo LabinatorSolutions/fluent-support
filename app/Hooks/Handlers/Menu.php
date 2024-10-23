@@ -239,6 +239,10 @@ class Menu
 
         $assets = $app['url.assets'];
 
+        add_filter('admin_footer_text', function ($text) {
+            return '<span id="footer-thankyou">We value your feedback! If the plugin is helpful, please rate Fluent Support with <a target="_blank" rel="nofollow" href="https://wordpress.org/support/plugin/fluent-support/reviews/#new-post">★★★★★</a> on WordPress.org. For assistance, check out the <a target="_blank" rel="nofollow" href="https://wordpress.org/support/plugin">keyboard shortcuts</a> and <a target="_blank" rel="nofollow" href="https://fluentsupport.com/docs/">documentation</a>.</span>';
+        });
+
         wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '2.4.3');
 
         wp_enqueue_style(
