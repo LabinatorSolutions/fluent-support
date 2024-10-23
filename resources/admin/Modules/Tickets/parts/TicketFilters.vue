@@ -37,7 +37,7 @@
             <label>{{$t('Priority (Admin)')}}</label>
             <el-select clearable size="small" @change="fetchTickets()" v-model="filters.priority"
                        :placeholder="$t('All')">
-                <el-option v-for="(priority,priorityKey) in appVars.admin_priorities" :key="priorityKey"
+                <el-option v-for="(priority, priorityKey) in appVars.admin_priorities" :key="priorityKey"
                            :value="priorityKey" :label="priority"></el-option>
             </el-select>
         </div>
@@ -45,7 +45,7 @@
             <label>{{$t('Priority (Customer)')}}</label>
             <el-select clearable size="small" @change="fetchTickets()" v-model="filters.client_priority"
                        :placeholder="$t('All')">
-                <el-option v-for="(priority,priorityKey) in appVars.client_priorities" :key="priorityKey"
+                <el-option v-for="(priority, priorityKey) in appVars.client_priorities" :key="priorityKey"
                            :value="priorityKey" :label="priority"></el-option>
             </el-select>
         </div>
@@ -90,7 +90,8 @@
 
 <script type="text/babel">
 import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
-import {computed, reactive, toRefs, watch} from "vue";
+import {computed, onMounted, onUnmounted, reactive, toRefs, watch} from "vue";
+
 export default {
     name: 'TicketFilters',
     emits: ['fetchTickets', 'searchChange', 'resetFilters'],
@@ -116,7 +117,8 @@ export default {
                 get: () => props.search,
                 set: (value) => emit('searchChange', value)
             }),
-            ticket_statuses_group: appVars.ticket_statuses_group
+            ticket_statuses_group: appVars.ticket_statuses_group,
+            statusOrder: Object.keys(appVars.ticket_statuses_group)
         });
 
         const fetchTickets = () => {
@@ -140,6 +142,54 @@ export default {
             return f.status_type !== 'open' || f.product_id || f.mailbox_id || f.agent_id || f.priority || f.client_priority || f.waiting_for_reply || state.searchInput || f.ticket_tags?.length || f.filter_type;
         });
 
+        const handleKeydown = (event) => {
+            const { metaKey, shiftKey, altKey, code } = event;
+            if (!metaKey) return;
+
+            const shiftActions = {
+                ArrowRight: () => shiftStatus("right"),
+                ArrowLeft: () => shiftStatus("left"),
+            };
+
+            const altActions = {
+                KeyR: () => props.resetFilters(),
+                KeyW: () => {
+                    props.filters.waiting_for_reply = props.filters.waiting_for_reply === 'yes' ? 'no' : 'yes';
+                    maybeChangeWaitingReply();
+                },
+            };
+
+            if (shiftKey && shiftActions[code]) {
+                event.preventDefault();
+                shiftActions[code]();
+            }
+
+            if (altKey && altActions[code]) {
+                event.preventDefault();
+                altActions[code]();
+            }
+        };
+
+        const shiftStatus = (direction) => {
+            const currentIndex = state.statusOrder.indexOf(props.filters.status_type);
+            const length = state.statusOrder.length;
+            const newIndex = direction === "right"
+                ? (currentIndex + 1) % length
+                : (currentIndex - 1 + length) % length;
+
+            props.filters.status_type = state.statusOrder[newIndex];
+            fetchTickets();
+        };
+
+
+        onMounted(() => {
+            window.addEventListener("keydown", handleKeydown);
+        });
+
+        onUnmounted(() => {
+            window.removeEventListener("keydown", handleKeydown);
+        });
+
         return {
             appVars,
             translate,
@@ -147,6 +197,7 @@ export default {
             fetchTickets,
             maybeChangeWaitingReply,
             has_active_filter,
+            shiftStatus,
             ...toRefs(state),
         };
     }

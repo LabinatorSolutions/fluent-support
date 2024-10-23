@@ -126,11 +126,35 @@ export default {
         saveRoutes(currentRouteQuery = {}) {
             useFluentHelper().saveData("routesData", JSON.stringify(currentRouteQuery));
         },
+
+        handleKeydown(event) {
+            const { metaKey, shiftKey, code } = event;
+
+            if (!metaKey || !shiftKey) return;
+
+            const keyActions = {
+                KeyA: () => this.$router.push(this.dynamicRoutes[0].to),  // Shortcut for 'All Tickets'
+                KeyM: () => this.$router.push(this.dynamicRoutes[1].to),  // Shortcut for 'My Tickets'
+                KeyU: () => this.$router.push(this.dynamicRoutes[2].to),  // Shortcut for 'Unassigned'
+                KeyB: () => this.$router.push(this.dynamicRoutes[3]?.to),  // Shortcut for 'Bookmarks' (if has_pro)
+            };
+
+            const action = keyActions[code];
+            if (action) {
+                event.preventDefault();
+                action();
+            }
+        },
+
     },
     mounted() {
         this.isMobile = window.innerWidth < 768;
+        window.addEventListener('keydown', this.handleKeydown);  // Add keyboard listener
+    },
+    unmounted() {
+        window.removeEventListener('keydown', this.handleKeydown);  // Clean up on component destroy
     }
-}
+};
 </script>
 
 <style lang="scss">

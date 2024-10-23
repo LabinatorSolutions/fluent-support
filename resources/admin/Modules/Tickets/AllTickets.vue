@@ -216,7 +216,7 @@ import Modal from "../../Pieces/Modal";
 const isEmpty = require('lodash/isEmpty');
 const isArray = require('lodash/isArray');
 import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
-import {nextTick, onMounted, reactive, toRefs, watch} from "vue";
+import {nextTick, onMounted, reactive, toRefs, watch, onUnmounted} from "vue";
 import {useRouter, useRoute} from "vue-router";
 
 export default {
@@ -556,6 +556,35 @@ export default {
             return text.substring(0, 3).padEnd(5, '.');
         }
 
+        const handleKeydown = (event) => {
+            const { metaKey, altKey, code } = event;
+
+            if (metaKey && altKey && code === 'KeyI') {
+                return;
+            }
+
+            if (metaKey && altKey) {
+                event.preventDefault();
+
+                const keyActions = {
+                    KeyN: () => {
+                        state.add_ticket_modal = true;
+                    },
+                    KeyQ: () => {
+                        fetchTickets();
+                    },
+                    KeyF: () => {
+                        state.filter_type = (state.filter_type === 'advanced') ? 'simple' : 'advanced';
+                    },
+                };
+
+                const action = keyActions[code];
+                if (action) {
+                    action();
+                }
+            }
+        };
+
         onMounted(() => {
             state.app_ready = true;
             setFromSaveFilters();
@@ -593,6 +622,11 @@ export default {
                 fetchTickets();
             });
             setTitle(translate('All Tickets'));
+            window.addEventListener("keydown", handleKeydown);
+        });
+
+        onUnmounted(() => {
+            window.removeEventListener("keydown", handleKeydown);
         });
 
         watch(
