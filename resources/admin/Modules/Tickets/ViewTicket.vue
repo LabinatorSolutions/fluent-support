@@ -1369,12 +1369,17 @@ export default {
                     },
                     KeyQ: () => fetchTicket(),
                     KeyM: () => {
-                        customerTickets();
-                        state.show_merge_modal = !state.show_merge_modal;
-                        state.app_ready = true;
+                        if (has_pro) {
+                            customerTickets();
+                            state.show_merge_modal = !state.show_merge_modal;
+                            state.app_ready = true;
+                        }
+
                     },
                     KeyB: () => {
-                        state.show_watcher_modal = !state.show_watcher_modal;
+                        if (has_pro) {
+                            state.show_watcher_modal = !state.show_watcher_modal;
+                        }
                     },
                 };
 
