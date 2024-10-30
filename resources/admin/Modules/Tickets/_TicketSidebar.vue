@@ -38,6 +38,10 @@
             </div>
         </div>
 
+        <div class="fs_tk_card fs_tk_task_timer">
+            <TaskTimer :ticket_id="ticket_id" />
+        </div>
+
         <div class="text-center fs_tk_card" style="height: 100px" v-if="loading">
             <el-skeleton :rows="1" animated/>
         </div>
@@ -224,6 +228,7 @@
 import CustomerForm from "../Customers/_CustomerForm";
 import RemoteSelector from "../../Pieces/RemoteSelector";
 import FluentCrmProfile from './parts/_CrmProfile';
+import TaskTimer from './parts/_TaskTimer';
 import {useFluentHelper, useNotify, useConfirm} from "@/admin/Composable/FluentFrameworkHelper";
 import {onMounted, reactive, toRefs, watch} from "vue";
 
@@ -232,7 +237,8 @@ export default {
     components: {
         CustomerForm,
         RemoteSelector,
-        FluentCrmProfile
+        FluentCrmProfile,
+        TaskTimer
     },
     props: ['ticket_id', 'ticket', 'fluentcrm_profile', 'watchers', 'watcher_ids', 'fetch_other_tickets'],
     emits: ['refresh'],
