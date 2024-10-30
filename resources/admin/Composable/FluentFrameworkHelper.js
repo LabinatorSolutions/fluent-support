@@ -97,6 +97,23 @@ export function useFluentHelper(){
 
     }
 
+    function smartDate (dateString, withTime = false) {
+        if (!dateString) {
+            return "";
+        }
+        let format = "D MMM, YYYY";
+        if (moment(dateString).isSame(new Date(), "year")) {
+            format = "D MMM";
+            if (withTime) {
+                format = "D MMM, hh:mm a";
+            }
+        }
+
+        const dateObj = moment(dateString);
+
+        return dateObj.isValid() ? dateObj.format(format) : null;
+    }
+
     //Error handler
     function handleError(response) {
         if (response.responseJSON) {
@@ -159,7 +176,8 @@ export function useFluentHelper(){
         setTitle,
         has_pro,
         renewOptions,
-        useScrollToRef
+        useScrollToRef,
+        smartDate
     }
 }
 
