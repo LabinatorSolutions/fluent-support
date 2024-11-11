@@ -115,6 +115,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (regButton) {
                     regButton.style.display = 'none';
                 }
+
+                // Remove or hide reCAPTCHA
+                let recaptchaContainer = registrationForm.querySelector('.g-recaptcha');
+                if (recaptchaContainer) {
+                    recaptchaContainer.parentNode.removeChild(recaptchaContainer);
+                }
             } else if (this.status === 200) {
                  if (this.response.redirect) {
                     window.location.href = this.response.redirect;
