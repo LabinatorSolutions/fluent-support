@@ -1,6 +1,7 @@
 <?php
 
 namespace FluentSupport\App\Services\EmailNotification;
+use FluentSupportPro\Database\Migrations\TimeTrackMigrator;
 
 use FluentSupport\App\Services\Helper;
 
@@ -46,6 +47,10 @@ class Settings
     {
         if ($settingsKey == 'global_business_settings' && empty($settings['accepted_file_types'])) {
             $settings['accepted_file_types'] = [];
+        }
+
+        if ($settingsKey == 'global_business_settings' && !empty($settings['agent_time_tracking'])) {
+            TimeTrackMigrator::migrate();
         }
 
         return Helper::updateOption($settingsKey, $settings);
@@ -197,6 +202,14 @@ class Settings
                 'false-label'    => 'no',
                 'checkbox_label' => __('Agent Feedback Rating', 'fluent-support'),
                 'inline_help'    => __("If you enable this setting, users will have the option to provide feedback on an agent's response.", 'fluent-support')
+            ];
+
+            $fields['agent_time_tracking'] = [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Agent Time Tracking', 'fluent-support'),
+                'inline_help' => __("If you enable this setting, the agent can specify the amount of time needed to complete a ticket.", 'fluent-support')
             ];
         }
 
