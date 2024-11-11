@@ -1031,5 +1031,359 @@ ul.fs_tk_actions {
 
 }
 
+.fs-side-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e0e0e0;
+
+    h4 {
+        margin: 0;
+        font-weight: 500;
+        font-size: 16px;
+        color: #444;
+    }
+}
+
+.fs-estimated-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px;
+    background: #fafafa;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+
+    .el-progress-bar__inner {
+        max-width: 100%;
+        border-radius: 3px;
+    }
+
+    .el-progress-bar__innerText {
+        color: #333;
+        font-size: 12px;
+        font-weight: 400;
+    }
+}
+
+.fs-estimated-labels {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    gap: 6px;
+
+    .el-popover {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .el-table {
+        font-size: 12px;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+}
+
+.fs-new-timer {
+    background: #ffffff;
+    padding: 15px;
+    margin: 12px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+
+    .el-form-item {
+        margin-bottom: 12px;
+    }
+
+    .el-input {
+        border-radius: 4px;
+    }
+
+    .el-button {
+        border-radius: 4px;
+        font-weight: 500;
+        padding: 4px 12px;
+    }
+
+    .update-btn {
+        margin-top: 15px;
+    }
+}
+
+.fs-estimation-title {
+    font-weight: 500;
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 6px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.fs-task-timer-wrap {
+    background-color: #ffffff;
+}
+
+.fs-new-log {
+    .el-input__inner {
+        background-color: #fbfbfb;
+        color: #333;
+        font-size: 13px;
+    }
+}
+
+.fs_minute_input {
+    margin-bottom: 15px;
+}
+
+.fs-time-track-agent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.fs-timer-log-popover {
+    .el-table {
+        border: 1px solid #ebeef5;
+        border-radius: 8px;
+        .el-table__inner-wrapper {
+            &:before {
+                display: none;
+            }
+            .el-table__header {
+                margin-bottom: 0;
+                thead {
+                    tr {
+                        th {
+                            border: none;
+                            color: #1b2533;
+                        }
+                    }
+                }
+            }
+            .el-table__body {
+                margin-bottom: 0;
+                tbody {
+                    tr {
+                        &:last-child {
+                            td {
+                                border: none;
+                            }
+                        }
+                        td {
+                            border: none;
+                            background: none;
+                            border-bottom: 1px solid #ebeef5;
+                            .person {
+                                display: flex;
+                                align-items: center;
+                                gap: 7px;
+                                .el-avatar {
+                                    flex: none;
+                                }
+                            }
+                            .detail-log {
+                                padding-left: 20px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 
+
+
+
+.fs_report_timesheet_wrap {
+    padding: 20px 20px;
+
+    .fs_report_timesheet {
+        margin: 0;
+
+        .fs_report-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #ebeef5;
+            margin-bottom: 20px;
+
+            .fs_report-banner-title {
+                margin: 0;
+                display: block;
+                font-size: 20px;
+                color: #1B2533;
+                font-weight: 600;
+            }
+
+            .fs_report_select_board {
+                display: flex;
+                gap: 15px;
+
+                .el-date-editor {
+                    height: auto;
+                    padding: 3px 10px;
+                }
+            }
+        }
+
+        .table-responsive {
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+
+            .el-table {
+                border: 1px solid #ebeef5;
+                border-radius: 8px;
+
+                .el-table__inner-wrapper {
+                    &:before {
+                        display: none;
+                    }
+                }
+
+                thead {
+                    tr {
+                        th {
+                            border: none;
+                            color: #1B2533;
+                            font-weight: 600;
+                        }
+                    }
+                }
+
+                .el-table__header {
+                    margin: 0;
+                }
+
+                .el-table__body {
+                    margin-bottom: 0;
+
+                    tbody {
+                        tr {
+                            td {
+                                border: none;
+                                background: none;
+
+                                .tbs-task-title {
+                                    color: #1B2533;
+                                    font-weight: 500;
+                                    font-size: 14px;
+                                }
+
+                                .total-time {
+                                    color: #1B2533;
+                                    font-weight: 500;
+                                }
+
+                                .fs-timer-report-table-inner {
+                                    padding-left: 50px;
+
+                                    .el-table {
+                                        border-right: none;
+                                        border-top-right-radius: 0;
+                                        border-bottom-right-radius: 0;
+
+                                        .el-table__body {
+                                            tbody {
+                                                tr {
+                                                    &:last-child {
+                                                        td {
+                                                            border-bottom: none;
+                                                        }
+                                                    }
+
+                                                    td {
+                                                        border-bottom: 1px solid #ebeef5;
+
+                                                        .fs-timer-report-person {
+                                                            display: flex;
+                                                            align-items: center;
+                                                            gap: 8px;
+                                                            font-size: 14px;
+                                                            color: #1B2533;
+                                                            font-weight: 500;
+
+                                                            img {
+                                                                display: block;
+                                                                width: 40px;
+                                                                height: 40px;
+                                                                border-radius: 50%;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+.el-popper {
+    &.fs-daterange-popover {
+        .el-picker-panel__body {
+            .el-picker-panel__content {
+                table {
+                    margin: 0;
+
+                    tbody {
+                        tr {
+                            th {
+                                background: none;
+                                border: none;
+                                font-weight: 500;
+                                color: #000000;
+                            }
+
+                            td {
+                                border: none;
+                                background: none;
+
+                                &.in-range {
+                                    .el-date-table-cell {
+                                        background: rgba(107, 60, 235, 0.1);
+                                    }
+                                }
+
+                                &.end-date,
+                                &.start-date {
+                                    .el-date-table-cell {
+                                        color: #ffffff;
+                                        background-color: #6B3CEB;
+                                    }
+                                }
+
+                                .el-date-table-cell__text {
+                                    font-weight: 600;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.fs_time_sheet_person {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.fs_detail_log {
+    padding-left: 20px;
+}
