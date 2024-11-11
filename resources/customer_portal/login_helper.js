@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     //Get element for Sign Up form and show recaptcha if enabled
-    if (document.getElementById('fs_show_signup')) {
+    if (document.getElementById('fstRegistrationForm')) {
         /*If Recaptcha Integration is enabled for signup form*/
         if (reCaptchaSettingsData.is_enabled === 'true' && reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes") {
             const captchaContainer =
