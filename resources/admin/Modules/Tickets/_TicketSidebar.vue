@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="fs_tk_card fs_tk_task_timer">
+        <div class="fs_tk_card fs_tk_task_timer" v-if="appVars.agent_time_tracking === 'yes' && has_pro">
             <TaskTimer :ticket_id="ticket_id" />
         </div>
 
