@@ -95,13 +95,7 @@ export default {
             if (!props.actions.length) {
                 showAdder.value = true;
             }
-            actionsParam.value = Object.values(props.actions).map((action) => ({
-                id: action.id,
-                title: action.title,
-                action_name: action.action_name,
-                workflow_id: action.workflow_id,
-                settings: action.settings,
-            }));
+            actionsParam.value = props.actions
         });
 
         return {
