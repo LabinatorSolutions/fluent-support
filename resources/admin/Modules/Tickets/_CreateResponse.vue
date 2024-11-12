@@ -191,6 +191,8 @@ export default {
                     if(state.draftID){
                         removeDraft();
                     }
+
+                    response.response.content = state.response_body;
                     state.response_body = '';
                     state.selected_cc = [];
                     emit('created', response.response, response);
