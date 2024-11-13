@@ -617,7 +617,7 @@
                                 :watchers="watchers" :watcher_ids="watcherIds" @refresh="fetchTicket" :fetch_other_tickets="fetch_other_tickets"/>
             </div>
         </template>
-        <template v-else-if="TicketNotFound.length">
+        <template v-else-if="ticketNotFound.length">
             <div class="fs_ticket_error_message">
                 <div class="error-container">
                     <img
@@ -627,7 +627,7 @@
                         "
                         class="fs_ticket_not_found_svg"
                     />
-                    <h1>{{ TicketNotFound }}</h1>
+                    <h1>{{ ticketNotFound }}</h1>
                     <p>Go back to <a @click="$router.push({ name: 'tickets' })" style="cursor: pointer;">All Tickets</a> or contact support for assistance.</p>
                 </div>
             </div>
@@ -750,7 +750,7 @@ export default {
             show_response_draft: false,
             tickets_to_merge:[],
             filteredMergeSelectedTickets:[],
-            TicketNotFound: [],
+            ticketNotFound: "",
             show_fbs_add_task_modal: false,
             watcherIds: [],
             ticketSummary: '',
@@ -810,9 +810,8 @@ export default {
 
             }).catch(error => {
                 state.loading = false;
-
-                if (error.responseJSON && error.responseJSON.data && error.responseJSON.data.message) {
-                    state.TicketNotFound = error.responseJSON.data.message;
+                if (error.responseJSON) {
+                    state.ticketNotFound = translate("No matching ticket was found for the provided ID.");
                 }
             })
                 .always(() => {
