@@ -175,6 +175,14 @@ class CustomerPortalHandler
             'Support Staff' => __('Support Staff', 'fluent-support'),
             'Thread Starter' => __('Thread Starter', 'fluent-support'),
             'Thread Follower' => __('Thread Follower', 'fluent-support'),
+            'Sort By' => __('Sort By', 'fluent-support'),
+            'Ascending' => __('Ascending', 'fluent-support'),
+            'Descending' => __('Descending', 'fluent-support'),
+            'Apply' => __('Apply', 'fluent-support'),
+            'Ticket ID' => __('Ticket ID', 'fluent-support'),
+            'Title' => __('Title', 'fluent-support'),
+            'Created at' => __('Created at', 'fluent-support'),
+
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
