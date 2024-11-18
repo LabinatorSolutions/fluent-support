@@ -4,12 +4,13 @@
             <div class="fs_report-banner">
                 <div class="fs_inner_nav">
                     <el-radio-group v-model="reportType">
-                        <el-radio-button label="byTickets">{{ $t('By Tickets') }}</el-radio-button>
-                        <el-radio-button label="byAgents">{{ $t('By Agents') }}</el-radio-button>
+                        <el-radio-button label="byTickets">{{ translate('By Tickets') }}</el-radio-button>
+                        <el-radio-button label="byAgents">{{ translate('By Agents') }}</el-radio-button>
+                        <el-radio-button label="byCustomers">{{ translate('By Customers') }}</el-radio-button>
                     </el-radio-group>
                 </div>
 
-                <div class="fs_report_select_board">
+                <div class="fs_report_filter_panel">
                     <el-date-picker
                         v-model="dateRange"
                         type="daterange"
@@ -26,11 +27,12 @@
                     <el-select
                         clearable
                         placement="bottom"
+                        class="fs_mailbox_options"
                         v-model="SelectedMailBoxID"
                         filterable
                         :loading="boardLoading"
                         @change="renderReport"
-                        :placeholder="$t('All Mail Boxes')"
+                        :placeholder="translate('All Mail Boxes')"
                         style="width: 250px"
                     >
                         <el-option
@@ -39,17 +41,17 @@
                             :label="mailbox.name"
                             :value="mailbox.id"
                         >
-                            <div style="padding: 5px 0 0 0">
+                            <div style="">
                                 <p>{{ mailbox.name }}</p>
                             </div>
                         </el-option>
                     </el-select>
-                    <div>
+                    <div class="fs_time_sheet_export">
                         <el-button type="default" @click="exportReport">
                             <el-icon>
                                 <Download/>
                             </el-icon>
-                            {{ $t('Export') }}
+                            {{ translate('Export') }}
                         </el-button>
                     </div>
                 </div>
@@ -58,7 +60,8 @@
 
         <template v-if="appReady">
             <ByTickets :mailbox_id="SelectedMailBoxID" :date_range="dateRange" v-if="reportType === 'byTickets'"/>
-            <ByAgents :mailbox_id="SelectedMailBoxID" :date_range="dateRange" v-else/>
+            <ByAgents :mailbox_id="SelectedMailBoxID" :date_range="dateRange" v-else-if="reportType === 'byAgents'"/>
+            <ByCustomers :mailbox_id="SelectedMailBoxID" :date_range="dateRange" v-else />
         </template>
     </div>
 
@@ -80,6 +83,7 @@ import {nextTick, onBeforeMount, onMounted, reactive, toRefs} from "vue";
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 import ByTickets from "./ByTickets.vue";
 import ByAgents from "./ByAgents.vue";
+import ByCustomers from "./ByCustomers.vue";
 import {Download} from '@element-plus/icons-vue';
 
 export default {
@@ -87,7 +91,8 @@ export default {
     components: {
         Download,
         ByTickets,
-        ByAgents
+        ByAgents,
+        ByCustomers
     },
     props: ["url"],
     setup(props) {
@@ -130,7 +135,7 @@ export default {
                 },
             ],
         });
-        const getBoards = () => {
+        const getMailboxes = () => {
             state.boardLoading = true;
             get("reports/mail-boxes")
                 .then((response) => {
@@ -168,7 +173,7 @@ export default {
 
         onMounted(() => {
             if (appVars.has_pro) {
-                getBoards();
+                getMailboxes();
                 state.appReady = true;
             }
         });
@@ -185,7 +190,7 @@ export default {
 
         return {
             ...toRefs(state),
-            getBoards,
+            getMailboxes,
             renderReport,
             disabledDate,
             exportReport,
