@@ -1197,10 +1197,6 @@ ul.fs_tk_actions {
     }
 }
 
-
-
-
-
 .fs_report_timesheet_wrap {
     padding: 20px 20px;
 
@@ -1222,13 +1218,26 @@ ul.fs_tk_actions {
                 font-weight: 600;
             }
 
-            .fs_report_select_board {
+            .fs_report_filter_panel {
                 display: flex;
                 gap: 15px;
 
                 .el-date-editor {
                     height: auto;
                     padding: 3px 10px;
+                }
+
+                .fs_mailbox_options {
+                    .el-input__wrapper {
+                        padding: 3px 11px;
+                    }
+
+                }
+
+                .fs_time_sheet_export {
+                    .el-button {
+                        height: 36px;
+                    }
                 }
             }
         }
