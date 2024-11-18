@@ -38,7 +38,7 @@ export default {
     name: 'TicketDateSheetPop',
     props: ['ticket_id','date','timeSheets'],
     setup(props) {
-        const { get, translate, handleError, setTitle, appVars, smartDate } = useFluentHelper();
+        const { smartDate } = useFluentHelper();
         const timeItems = ref([]);
 
         const timeSheetTotal = computed(() => {
