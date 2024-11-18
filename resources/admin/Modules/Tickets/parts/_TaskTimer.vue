@@ -101,7 +101,7 @@ import HourMinuteInput from './_HourMinuteInput.vue';
 
 export default {
     name: 'TaskTimer',
-    props: ['ticket_id'],
+    props: ['ticket_id', 'customer_id'],
     components: {
         Plus, Clock, HourMinuteInput
     },
@@ -169,6 +169,7 @@ export default {
             }
             state.updating = true;
             post(`time-tracks/${props.ticket_id}`, {
+                customer_id: props.customer_id,
                 billable_minutes: state.newLog.billable_minutes,
                 message: state.newLog.message,
                 started_at: state.newLog.started_at
