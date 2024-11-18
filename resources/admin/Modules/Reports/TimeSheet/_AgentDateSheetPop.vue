@@ -36,11 +36,12 @@ export default {
     name: 'AgentDateSheetPop',
     props: ['agent_id', 'date', 'timeSheets'],
     setup(props) {
-        const { get, translate, handleError, setTitle, appVars, smartDate } = useFluentHelper();
+        const {smartDate } = useFluentHelper();
         const timeItems = ref([]);
 
         const timeSheetTotal = computed(() => {
             const sheets = props.timeSheets?.[props.date]?.[props.agent_id] ?? [];
+            console.log(sheets)
             const minutes = sheets.reduce((acc, sheet) => acc + sheet.billable_minutes, 0);
             return formatMinutes(minutes);
         });

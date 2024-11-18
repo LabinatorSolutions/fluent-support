@@ -34,7 +34,7 @@ import AgentDateSheetPop from './_AgentDateSheetPop.vue';
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
-    name: 'ByTasks',
+    name: 'ByAgents',
     components: { AgentDateSheetPop },
     props: {
         mailbox_id: {
@@ -54,7 +54,7 @@ export default {
         const dateLabels = ref([]);
         const isLoaded = ref(false);
 
-        const fetchTracks = async () => {
+        const fetchReportsByAgents = async () => {
             isLoaded.value = false;
             try {
                 const response = await get('reports/timesheet/by-agents', {
@@ -92,7 +92,7 @@ export default {
             return `${hours}h ${intMinutes}m`;
         };
 
-        onMounted(fetchTracks);
+        onMounted(fetchReportsByAgents);
 
         return {
             agents,
@@ -100,7 +100,7 @@ export default {
             timeSheets,
             dateLabels,
             isLoaded,
-            fetchTracks,
+            fetchReportsByAgents,
             getUserTotal,
             formatMinutes,
             smartDate

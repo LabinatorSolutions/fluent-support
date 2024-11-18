@@ -51,7 +51,7 @@ export default {
         const dateLabels = ref([]);
         const isLoaded = ref(false);
 
-        const fetchTracks = async () => {
+        const fetchReportsByTickets = async () => {
             isLoaded.value = false;
             try {
                 const response = await get('reports/timesheet/by-tickets', {
@@ -89,7 +89,7 @@ export default {
             return `${hours}h ${intMinutes}m`;
         };
 
-        onMounted(fetchTracks);
+        onMounted(fetchReportsByTickets);
 
         return {
             tasks,
@@ -97,7 +97,7 @@ export default {
             timeSheets,
             dateLabels,
             isLoaded,
-            fetchTracks,
+            fetchReportsByTickets,
             getTaskTotal,
             formatMinutes,
             smartDate
