@@ -1396,3 +1396,55 @@ ul.fs_tk_actions {
 .fs_detail_log {
     padding-left: 20px;
 }
+
+
+.fs_time_sheet_box_header {
+    width: auto;
+    clear: both;
+    overflow: hidden;
+    margin: 0;
+    padding: 10px 30px;
+    font-weight: 500;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 25px;
+    background: rgba(255, 255, 255, 0.6);
+}
+
+.fs_time_sheet_box_actions {
+    display: flex;
+}
+
+.fs_time_sheet_select {
+    width: 300px;
+    margin-right: 20px;
+}
+
+.fs_time_sheet_export el-button {
+    background-color: #ffffff;
+    color: #409eff;
+    border: 1px solid #409eff;
+    transition: all 0.3s ease;
+}
+
+.fs_time_sheet_export el-button:hover {
+    background-color: #409eff;
+    color: #ffffff;
+}
+
+.fs_time_sheet_box_body {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.fs_time_sheet_person {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
