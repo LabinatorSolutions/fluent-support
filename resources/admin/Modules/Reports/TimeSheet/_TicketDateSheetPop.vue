@@ -33,6 +33,7 @@
 import { ref, computed, onMounted } from 'vue';
 import each from 'lodash/each';
 import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
+import {timesheetUtils} from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
 
 export default {
     name: 'TicketDateSheetPop',
@@ -42,9 +43,7 @@ export default {
         const timeItems = ref([]);
 
         const timeSheetTotal = computed(() => {
-            const sheets = props.timeSheets?.[props.date]?.[props.ticket_id] ?? [];
-            const minutes = sheets.reduce((acc, sheet) => acc + sheet.billable_minutes, 0);
-            return formatMinutes(minutes);
+            return timesheetUtils.calculateTimeSheetTotal(props.timeSheets, props.date, props.ticket_id);
         });
 
         const initItems = () => {
@@ -54,15 +53,8 @@ export default {
             });
         };
 
-        const formatMinutes = (minutes) => {
-            const intMinutes = parseInt(minutes);
-            if (!intMinutes) return '--';
-
-            const hours = Math.floor(intMinutes / 60);
-            const remainingMinutes = intMinutes % 60;
-
-            return hours ? `${hours}h ${remainingMinutes}m` : `${remainingMinutes}m`;
-        };
+        const formatMinutes = (minutes) =>
+            timesheetUtils.formatMinutes(minutes);
 
         onMounted(initItems);
 
