@@ -24,44 +24,14 @@
                         popper-class="fs-daterange-popover"
                     />
 
-                    <el-select
-                        clearable
-                        placement="bottom"
-                        class="fs_mailbox_options"
-                        v-model="SelectedMailBoxID"
-                        filterable
-                        :loading="boardLoading"
-                        @change="renderReport"
-                        :placeholder="translate('All Mail Boxes')"
-                        style="width: 250px"
-                    >
-                        <el-option
-                            v-for="mailbox in mailBoxes"
-                            :key="mailbox.id"
-                            :label="mailbox.name"
-                            :value="mailbox.id"
-                        >
-                            <div style="">
-                                <p>{{ mailbox.name }}</p>
-                            </div>
-                        </el-option>
-                    </el-select>
-                    <div class="fs_time_sheet_export">
-                        <el-button type="default" @click="exportReport">
-                            <el-icon>
-                                <Download/>
-                            </el-icon>
-                            {{ translate('Export') }}
-                        </el-button>
-                    </div>
                 </div>
             </div>
         </div>
 
         <template v-if="appReady">
-            <ByTickets :mailbox_id="SelectedMailBoxID" :date_range="dateRange" v-if="reportType === 'byTickets'"/>
-            <ByAgents :mailbox_id="SelectedMailBoxID" :date_range="dateRange" v-else-if="reportType === 'byAgents'"/>
-            <ByCustomers :mailbox_id="SelectedMailBoxID" :date_range="dateRange" v-else />
+            <ByTickets  :date_range="dateRange" v-if="reportType === 'byTickets'"/>
+            <ByAgents  :date_range="dateRange" v-else-if="reportType === 'byAgents'"/>
+            <ByCustomers  :date_range="dateRange" v-else />
         </template>
     </div>
 
@@ -100,7 +70,6 @@ export default {
 
         const state = reactive({
             reportType: "byTickets",
-            mailBoxes: [],
             dateRange: [],
             SelectedMailBoxID: "",
             boardLoading: false,
@@ -135,18 +104,6 @@ export default {
                 },
             ],
         });
-        const getMailboxes = () => {
-            state.boardLoading = true;
-            get("reports/mail-boxes")
-                .then((response) => {
-                    state.mailBoxes = response.mailBoxes;
-                    state.mailBoxes.unshift({id: "", name: "All Mail boxes"});
-                    state.boardLoading = false;
-                })
-                .catch((error) => {
-                    console.error(error);
-                });
-        };
 
         const renderReport = () => {
             state.appReady = false;
@@ -159,21 +116,8 @@ export default {
             return time.getTime() > Date.now();
         };
 
-        const exportReport = () => {
-            if (!appVars.has_pro) {
-                alert("Time Sheet export feature is only available on the pro version");
-                return false;
-            }
-            location.href = `${window.fluentSupportAdmin.ajaxurl}?${new URLSearchParams({
-                action: "fluent_support_export_timesheet",
-                mailbox_id: state.SelectedMailBoxID,
-                date_range: state.dateRange,
-            }).toString()}`;
-        };
-
         onMounted(() => {
             if (appVars.has_pro) {
-                getMailboxes();
                 state.appReady = true;
             }
         });
@@ -190,10 +134,8 @@ export default {
 
         return {
             ...toRefs(state),
-            getMailboxes,
             renderReport,
             disabledDate,
-            exportReport,
             has_pro,
             translate
         };
