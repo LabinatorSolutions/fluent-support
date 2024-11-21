@@ -98,16 +98,13 @@
 import {onMounted, ref} from 'vue';
 import AgentDateSheetPop from './_AgentDateSheetPop.vue';
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
+import {timesheetUtils}from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils"
 import Modal from "@/admin/Pieces/Modal.vue";
 
 export default {
     name: 'ByAgents',
     components: {Modal, AgentDateSheetPop},
     props: {
-        mailbox_id: {
-            type: String,
-            required: true
-        },
         date_range: {
             type: Array,
             required: true
@@ -128,61 +125,43 @@ export default {
         const fetchReportsByAgents = async () => {
             isLoaded.value = false;
             const params = {
-                mailbox_id: props.mailbox_id,
+                agent_id: selectedAgent.value,
                 date_range: props.date_range
             };
 
-            if (selectedAgent.value) {
-                params.agent_id = selectedAgent.value;
-            }
             try {
                 const response = await get('reports/timesheet/by-agents', params);
                 agents.value = response.agents;
                 timeSheets.value = response.time_sheets;
                 dateLabels.value = response.date_labels;
-                totalMinutes.value = response.totalMinutes;
+                totalMinutes.value = response.total_minutes;
 
                 if (!params.agent_id) {
-
-                    allAgents.value = response.agents.map(agent => ({
+                    allAgents.value = response.all_agents.map(agent => ({
                         key: agent.id,
                         label: agent.full_name
                     }));
                 }
             } catch (error) {
-                // this.$handleError(error);
+                handleError(error);
             } finally {
                 isLoaded.value = true;
             }
         };
 
-        const getUserTotal = (userId) => {
-            const minutes = dateLabels.value.reduce((acc, date) => {
-                const sheets = timeSheets.value?.[date]?.[userId] || [];
-                return acc + sheets.reduce((acc, sheet) => acc + sheet.billable_minutes, 0);
-            }, 0);
-            return formatMinutes(minutes);
-        };
+        const getUserTotal = (userId) =>
+            timesheetUtils.calculateEntityTotalMinutes(dateLabels.value, timeSheets.value, userId);
 
-        const formatMinutes = (minutes) => {
-            let intMinutes = parseInt(minutes);
-            if (!intMinutes) return '--';
-
-            const hours = Math.floor(intMinutes / 60);
-            intMinutes %= 60;
-
-            if (!hours) return `${intMinutes}m`;
-            if (!intMinutes) return `${hours}h`;
-            return `${hours}h ${intMinutes}m`;
-        };
-
+        const formatMinutes = (minutes) =>
+            timesheetUtils.formatMinutes(minutes);
         const exportReport = () => {
-            location.href = `${window.fluentSupportAdmin.ajaxurl}?${new URLSearchParams({
-                action: "fluent_support_export_agents_timesheet",
-                selectedAgents: includeOrExcludeAgents.value,
+            timesheetUtils.exportReport({
+                selectedItems: includeOrExcludeAgents.value,
                 dateRange: props.date_range,
-            }).toString()}`;
-        };
+                action: "fluent_support_export_agents_timesheet",
+                itemKey: "selectedAgents"
+            });
+        }
 
         onMounted(fetchReportsByAgents);
 

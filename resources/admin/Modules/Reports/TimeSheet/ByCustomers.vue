@@ -68,7 +68,6 @@
                 </template>
             </el-table-column>
 
-
             <Teleport to="body">
                 <modal :show="openSettings" :title="translate('Include Customers in Time Sheet')"
                        @close="openSettings = false">
@@ -104,15 +103,12 @@ import {onMounted, ref} from 'vue';
 import CustomerDataSheetPop from './_CustomerDataSheetPop.vue';
 import {useFluentHelper} from '@/admin/Composable/FluentFrameworkHelper';
 import Modal from "@/admin/Pieces/Modal.vue";
+import {timesheetUtils} from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
 
 export default {
     name: 'ByCustomers',
     components: {Modal, CustomerDataSheetPop},
     props: {
-        mailbox_id: {
-            type: String,
-            required: true
-        },
         date_range: {
             type: Array,
             required: true
@@ -120,39 +116,32 @@ export default {
     },
     setup(props) {
         const {get, handleError, smartDate, translate} = useFluentHelper();
-        const allCustomers = ref([]); // Holds all customer data for dropdown
-        const customers = ref([]); // Holds filtered customer data
+        const allCustomers = ref([]);
+        const customers = ref([]);
         const totalMinutes = ref(0);
         const timeSheets = ref({});
         const dateLabels = ref([]);
         const isLoaded = ref(false);
-        const selectedCustomer = ref(null); // For selected customer ID
+        const selectedCustomer = ref(null);
         const openSettings = ref(false);
         const includeOrExcludeCustomers = ref([]);
 
-        // Fetch data based on customer selection
         const fetchReportsByCustomers = async () => {
             isLoaded.value = false;
             try {
                 const params = {
-                    mailbox_id: props.mailbox_id,
+                    customer_id: selectedCustomer.value,
                     date_range: props.date_range
                 };
-                // // Include the selected customer ID in the API request if one is selected
-                if (selectedCustomer.value) {
-                    console.log(selectedCustomer)
-                    params.customer_id = selectedCustomer.value;
-                }
 
                 const response = await get('reports/timesheet/by-customers', params);
                 customers.value = response.customers;
                 timeSheets.value = response.time_sheets;
                 dateLabels.value = response.date_labels;
-                totalMinutes.value = response.totalMinutes;
+                totalMinutes.value = response.total_minutes;
 
-                // Load all customers for dropdown only once
                 if (!params.customer_id) {
-                    allCustomers.value = response.customers.map(customer => ({
+                    allCustomers.value = response.all_customers.map(customer => ({
                         key: customer.id,
                         label: customer.full_name
                     }));
@@ -165,33 +154,22 @@ export default {
             }
         };
 
-        const getUserTotal = (userId) => {
-            const minutes = dateLabels.value.reduce((acc, date) => {
-                const sheets = timeSheets.value?.[date]?.[userId] || [];
-                return acc + sheets.reduce((acc, sheet) => acc + sheet.billable_minutes, 0);
-            }, 0);
-            return formatMinutes(minutes);
-        };
+        const getUserTotal = (userId) =>
+            timesheetUtils.calculateEntityTotalMinutes(dateLabels.value, timeSheets.value, userId);
 
-        const formatMinutes = (minutes) => {
-            let intMinutes = parseInt(minutes);
-            if (!intMinutes) return '--';
 
-            const hours = Math.floor(intMinutes / 60);
-            intMinutes %= 60;
+        const formatMinutes = (minutes) =>
+            timesheetUtils.formatMinutes(minutes);
 
-            if (!hours) return `${intMinutes}m`;
-            if (!intMinutes) return `${hours}h`;
-            return `${hours}h ${intMinutes}m`;
-        };
 
         const exportReport = () => {
-            location.href = `${window.fluentSupportAdmin.ajaxurl}?${new URLSearchParams({
-                action: "fluent_support_export_customers_timesheet",
-                selectedCustomers: includeOrExcludeCustomers.value,
+            timesheetUtils.exportReport({
+                selectedItems: includeOrExcludeCustomers.value,
                 dateRange: props.date_range,
-            }).toString()}`;
-        };
+                action: "fluent_support_export_customers_timesheet",
+                itemKey: "selectedCustomers"
+            });
+        }
 
         onMounted(() => fetchReportsByCustomers());
 
