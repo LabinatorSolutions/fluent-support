@@ -10,7 +10,7 @@
         </div>
         <div v-if="appVars.mailboxes.length" class="fs_tk_filter">
             <label>{{$t('Inbox')}}</label>
-            <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.mailbox_id"
+            <el-select clearable filterable  @change="fetchTickets()" v-model="filters.mailbox_id"
                        :placeholder="$t('All Inbox')">
                 <el-option v-for="mailbox in appVars.mailboxes" :key="mailbox.id" :value="mailbox.id"
                            :label="mailbox.name"></el-option>
@@ -18,7 +18,7 @@
         </div>
         <div class="fs_tk_filter">
             <label>{{$t('Product')}}</label>
-            <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.product_id"
+            <el-select clearable filterable  @change="fetchTickets()" v-model="filters.product_id"
                        :placeholder="$t('All Products')">
                 <el-option v-for="product in appVars.support_products" :key="product.id" :value="product.id"
                            :label="product.title"></el-option>
@@ -26,7 +26,7 @@
         </div>
         <div class="fs_tk_filter">
             <label>{{$t('Support Staff')}}</label>
-            <el-select clearable filterable size="small" @change="fetchTickets()" v-model="filters.agent_id"
+            <el-select clearable filterable @change="fetchTickets()" v-model="filters.agent_id"
                        :placeholder="$t('All Support Staff')">
                 <el-option value="unassigned" :label="$t('Un-Assigned')"></el-option>
                 <el-option v-for="agent in appVars.support_agents" :key="agent.id" :value="agent.id"
@@ -35,7 +35,7 @@
         </div>
         <div class="fs_tk_filter">
             <label>{{$t('Priority (Admin)')}}</label>
-            <el-select clearable size="small" @change="fetchTickets()" v-model="filters.priority"
+            <el-select clearable @change="fetchTickets()" v-model="filters.priority"
                        :placeholder="$t('All')">
                 <el-option v-for="(priority,priorityKey) in appVars.admin_priorities" :key="priorityKey"
                            :value="priorityKey" :label="priority"></el-option>
@@ -43,7 +43,7 @@
         </div>
         <div class="fs_tk_filter">
             <label>{{$t('Priority (Customer)')}}</label>
-            <el-select clearable size="small" @change="fetchTickets()" v-model="filters.client_priority"
+            <el-select clearable @change="fetchTickets()" v-model="filters.client_priority"
                        :placeholder="$t('All')">
                 <el-option v-for="(priority,priorityKey) in appVars.client_priorities" :key="priorityKey"
                            :value="priorityKey" :label="priority"></el-option>
@@ -57,7 +57,6 @@
                 :placeholder="$t('Filter By Tags')"
                 multiple
                 :popper-append-to-body=true
-                size="small"
                 collapse-tags
             >
                 <el-option v-for="tag in appVars.ticket_tags"
@@ -68,7 +67,7 @@
         </div>
         <div class="fs_tk_filter">
             <label>{{$t('Search')}}</label>
-            <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()" size="small"
+            <el-input @keyup.enter="fetchTickets()" clearable @clear="fetchTickets()"
                       :placeholder="$t('Please input')" v-model="searchInput">
                 <template #append>
                     <el-button @click="fetchTickets()" icon="Search"></el-button>
@@ -81,8 +80,8 @@
                        v-model="filters.waiting_for_reply"></el-switch>
         </div>
         <div class="fs_tk_filter">
-            <el-button :type="(has_active_filter) ? 'danger' : 'default'" @click="resetFilters()"
-                       size="small">{{$t('Reset Filters')}}
+            <el-button :type="(has_active_filter) ? 'danger' : 'default'" @click="resetFilters()">
+                {{$t('Reset Filters')}}
             </el-button>
         </div>
     </div>
