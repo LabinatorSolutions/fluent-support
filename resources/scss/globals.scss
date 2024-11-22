@@ -124,6 +124,13 @@
         }
         .fs_box_actions {
             display: flex;
+            float: right;
+            .fs_cs_status_filter{
+                .el-select{
+                    padding-right: 0.7em;
+                    margin-right: 1.7em;
+                }
+            }
         }
 
         .fs_box_head {
@@ -141,10 +148,6 @@
                     margin: 0 0 0 4px;
                 }
             }
-        }
-
-        .fs_box_actions {
-            float: right;
         }
     }
 
