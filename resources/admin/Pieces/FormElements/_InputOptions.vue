@@ -1,6 +1,13 @@
 <template>
     <div>
-        <el-select clearable filterable :multiple="field.multiple" :placeholder="field.placeholder" v-model="modelValueLocal">
+        <el-select
+            clearable
+            filterable
+            :multiple="field.multiple"
+            :placeholder="field.placeholder"
+            :model-value="modelValueLocal"
+            @update:model-value="updateValue"
+        >
             <el-option
                 v-for="item in field.options"
                 :key="item.id"
@@ -18,23 +25,9 @@ export default {
     name: 'InputOptions',
     props: ['field', 'modelValue'],
     emits: ['update:modelValue'],
-    data() {
-        return {
-            modelValueLocal: this.convertToInt(this.modelValue)
-        }
-    },
-    watch: {
-        modelValue: {
-            handler(newValue) {
-                this.modelValueLocal = this.convertToInt(newValue);
-            },
-            deep: true
-        },
-        modelValueLocal: {
-            handler(newValue) {
-                this.$emit('update:modelValue',newValue);
-            },
-            deep: true
+    computed: {
+        modelValueLocal() {
+            return this.convertToInt(this.modelValue);
         }
     },
     methods: {
@@ -43,6 +36,11 @@ export default {
                 return value.map(item => parseInt(item) || item);
             }
             return parseInt(value) || value;
+        },
+        updateValue(newValue) {
+            if (JSON.stringify(newValue) !== JSON.stringify(this.modelValue)) {
+                this.$emit('update:modelValue', newValue);
+            }
         }
     }
 }
