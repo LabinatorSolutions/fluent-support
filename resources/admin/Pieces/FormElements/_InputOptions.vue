@@ -13,19 +13,36 @@
     </div>
 </template>
 
-<script type="text/babel">
+<script>
 export default {
     name: 'InputOptions',
     props: ['field', 'modelValue'],
     emits: ['update:modelValue'],
     data() {
         return {
-            modelValueLocal: this.modelValue
+            modelValueLocal: this.convertToInt(this.modelValue)
         }
     },
     watch: {
-        modelValueLocal(value) {
-            this.$emit('update:modelValue', value);
+        modelValue: {
+            handler(newValue) {
+                this.modelValueLocal = this.convertToInt(newValue);
+            },
+            deep: true
+        },
+        modelValueLocal: {
+            handler(newValue) {
+                this.$emit('update:modelValue',newValue);
+            },
+            deep: true
+        }
+    },
+    methods: {
+        convertToInt(value) {
+            if (Array.isArray(value)) {
+                return value.map(item => parseInt(item) || item);
+            }
+            return parseInt(value) || value;
         }
     }
 }
