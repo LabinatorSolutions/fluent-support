@@ -975,10 +975,7 @@ class Helper
     {
         $settings = self::getIntegrationOption($settingName, null);
         if ($settings) {
-            $enabled = Meta::where('object_type', 'enabled_upload_drivers')
-                ->where('key', $settingName)
-                ->where('value', 'yes')
-                ->first();
+            $enabled = Arr::get($settings, 'status', false);
             return $enabled ? true : false;
         }
         return false;
