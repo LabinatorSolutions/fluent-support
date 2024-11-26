@@ -121,6 +121,7 @@
             v-model="addFieldVisible"
             :append-to-body="true"
             width="60%"
+            class="fs_dialog"
         >
             <custom-field-form
                 form_type="new"
@@ -140,6 +141,7 @@
             v-model="updateFieldVisible"
             :append-to-body="true"
             width="60%"
+            class="fs_dialog"
         >
             <custom-field-form
                 v-if="updateFieldVisible"

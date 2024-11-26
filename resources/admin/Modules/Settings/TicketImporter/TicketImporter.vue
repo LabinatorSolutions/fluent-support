@@ -55,7 +55,7 @@
                                         </el-button>
                                     </div>
 
-                                    <el-dialog v-if=!had_tickets v-model="import_done" title="Delete Imported Tickets">
+                                    <el-dialog v-if=!had_tickets v-model="import_done" title="Delete Imported Tickets" class="fs_dialog">
                                         <span> {{$t('Do you want to delete all imported tickets and its data?')}} </span>
                                         <template #footer>
                                           <span class="dialog-footer">

@@ -188,7 +188,7 @@
                 </ul>
             </div>
         </div>
-        <el-dialog v-model="customerManagementModal" :title="$t('Customer Management')">
+        <el-dialog v-model="customerManagementModal" :title="$t('Customer Management')" class="fs_dialog">
             <el-tabs v-model="activeTabName" @tab-click="handleClick">
                 <el-tab-pane :label="$t('Update Customer')" name="update_customer_data">
                     <customer-form @updated="closeModal" :customer="ticket.customer"/>
