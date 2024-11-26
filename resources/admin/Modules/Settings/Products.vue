@@ -96,6 +96,7 @@
         </div>
 
         <el-dialog
+            v-if="editing_product"
             :append-to-body="true"
             :title="
                 editing_product && editing_product.id
@@ -103,8 +104,8 @@
                     : translate('Create New Supported Product')
             "
             v-model="ticket_modal"
-            v-if="editing_product"
             width="60%"
+            class="fs_dialog"
         >
             <el-form label-position="top" :data="editing_product">
                 <el-form-item :label="translate('Title')">

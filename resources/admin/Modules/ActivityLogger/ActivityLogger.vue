@@ -5,7 +5,6 @@
                 <el-select
                     clearable
                     filterable
-                    size="small"
                     @change="fetchActivities()"
                     v-model="filters.agent_id"
                     :placeholder="translate('All Support Staff')"
@@ -110,6 +109,7 @@
             :title="translate('Activity Log Settings')"
             width="60%"
             :append-to-body="true"
+            class="fs_dialog"
         >
             <activity-settings
                 @updated="

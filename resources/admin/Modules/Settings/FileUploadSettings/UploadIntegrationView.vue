@@ -40,6 +40,7 @@
             :title="title"
             v-model="dialogVisible"
             @close="closeDialog"
+            class="fs_dialog"
         >
             <div v-if="selectedDriver && dialogVisible">
                 <o-auth2-settings @driverRemoved="handleDriverRemoved(selectedDriverName)" :driver_name="selectedDriverName"
