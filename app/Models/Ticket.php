@@ -1054,11 +1054,11 @@ class Ticket extends Model
     public function getTicket($ticketWith, $withCrmData, $ticketId)
     {
         $agent = Helper::getAgentByUserId();
-        $restictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
+        $restrictedBusinessBoxes = PermissionManager::currentUserRestrictedBusinessBoxes();
 
         $ticket = self::with($ticketWith)->findOrFail($ticketId);
 
-        if (in_array($ticket->mailbox_id, $restictedBusinessBoxes)) {
+        if (in_array($ticket->mailbox_id, $restrictedBusinessBoxes)) {
             throw new \Exception('Ticket cannot be fetched due to restricted mailbox');
         }
 
@@ -1606,10 +1606,5 @@ class Ticket extends Model
 
     }
 
-    // accessor
-//    public function getCreatedAtAttribute($date)
-//    {
-//        return date('Y-m-d H:i:s', strtotime($date));
-//    }
 }
 

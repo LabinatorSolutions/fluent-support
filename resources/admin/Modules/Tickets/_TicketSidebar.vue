@@ -38,8 +38,8 @@
             </div>
         </div>
 
-        <div class="fs_tk_card fs_tk_task_timer">
-            <TaskTimer :ticket_id="ticket_id" />
+        <div class="fs_tk_card fs_tk_task_timer" v-if="appVars.agent_time_tracking === 'yes' && has_pro">
+            <TaskTimer :ticket_id="ticket_id" :customer_id="ticket.customer_id" />
         </div>
 
         <div class="text-center fs_tk_card" style="height: 100px" v-if="loading">
@@ -192,7 +192,7 @@
                 </ul>
             </div>
         </div>
-        <el-dialog v-model="customerManagementModal" :title="$t('Customer Management')">
+        <el-dialog v-model="customerManagementModal" :title="$t('Customer Management')" class="fs_dialog">
             <el-tabs v-model="activeTabName" @tab-click="handleClick">
                 <el-tab-pane :label="$t('Update Customer')" name="update_customer_data">
                     <customer-form @updated="closeModal" :customer="ticket.customer"/>

@@ -48,6 +48,10 @@ export function useRestApi() {
 
 
 jQuery(document).ajaxSuccess((event, xhr, settings) => {
+    if (!window.fluentSupportAdmin) {
+        return;
+    }
+
     const nonce = xhr.getResponseHeader('X-WP-Nonce');
     if (nonce) {
         window.fluentSupportAdmin.rest.nonce = nonce;

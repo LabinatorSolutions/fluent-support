@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     //Get element for Sign Up form and show recaptcha if enabled
-    if (document.getElementById('fs_show_signup')) {
+    if (document.getElementById('fstRegistrationForm')) {
         /*If Recaptcha Integration is enabled for signup form*/
         if (reCaptchaSettingsData.is_enabled === 'true' && reCaptchaSettingsData.formContainingReCaptcha["signup_form"] === "yes") {
             const captchaContainer =
@@ -114,6 +114,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 let regButton = registrationForm.querySelector('button'); // Adjust the selector as needed to target the specific button
                 if (regButton) {
                     regButton.style.display = 'none';
+                }
+
+                // Remove or hide reCAPTCHA
+                let recaptchaContainer = registrationForm.querySelector('.g-recaptcha');
+                if (recaptchaContainer) {
+                    recaptchaContainer.parentNode.removeChild(recaptchaContainer);
                 }
             } else if (this.status === 200) {
                  if (this.response.redirect) {
