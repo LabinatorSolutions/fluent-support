@@ -621,3 +621,11 @@ ul.fs_contact_results {
         display: block;
     }
 }
+.fs_reCaptcha_settings_body{
+    .settings-body{
+        .el-form-item--label-top .el-form-item__label{
+            margin-bottom: 0px;
+            margin-right: 5px;
+        }
+    }
+}
