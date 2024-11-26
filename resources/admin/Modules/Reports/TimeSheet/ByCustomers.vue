@@ -36,7 +36,12 @@
                     <template #default="{ row }">
                         <div class="fs_time_sheet_person">
                             <el-avatar :src="row.photo" size="small"></el-avatar>
-                            <span>{{ row.full_name }}</span>
+                            <router-link
+                                :to="{ name: 'view_customer', params: { customer_id: row.id }, }"
+                                target="_blank"
+                                style="text-decoration: none;">
+                                <strong>{{ row.full_name }}</strong>
+                            </router-link>
                         </div>
                     </template>
                 </el-table-column>
@@ -52,8 +57,8 @@
                         <span>{{ smartDate(column.label) }}</span>
                     </template>
                     <template #default="{ row }">
-                        <CustomerDataSheetPop
-                            :customer_id="row.id"
+                        <UserAgentDateSheetPop
+                            :user_id="row.id"
                             :date="date"
                             :timeSheets="timeSheets"
                         />
@@ -103,14 +108,14 @@
 
 <script>
 import {onMounted, ref} from 'vue';
-import CustomerDataSheetPop from './_CustomerDataSheetPop.vue';
 import {useFluentHelper} from '@/admin/Composable/FluentFrameworkHelper';
 import Modal from "@/admin/Pieces/Modal.vue";
 import {timesheetUtils} from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
+import UserAgentDateSheetPop from "@/admin/Modules/Reports/TimeSheet/_UserAgentDateSheetPop.vue";
 
 export default {
     name: 'ByCustomers',
-    components: {Modal, CustomerDataSheetPop},
+    components: {UserAgentDateSheetPop, Modal},
     props: {
         date_range: {
             type: Array,

@@ -2,7 +2,7 @@
     <div class="fs_time_sheet"  v-if="isLoaded">
         <div class="fs_time_sheet_box_header">
             <div class="fs_time_sheet_box_head">
-                {{"Time Sheet Report By Tickets"}}
+                {{translate("Time Sheet Report By Tickets")}}
             </div>
             <div class="fs_time_sheet_box_actions">
                 <el-select
@@ -33,7 +33,12 @@
             <el-table :data="tasks" style="width: 100%">
                 <el-table-column fixed="left" prop="ticket" label="Ticket" min-width="120">
                     <template #default="{ row }">
-                        <strong>{{ row.ticket.title }}</strong>
+                        <router-link
+                            :to="{ name: 'view_ticket', params: { ticket_id: row.id } }"
+                            target="_blank"
+                            style="text-decoration: none;">
+                            <strong>{{ row.title }}</strong>
+                        </router-link>
                     </template>
                 </el-table-column>
                 <el-table-column :min-width="100" v-for="date in dateLabels" :key="date" :prop="date" :label="date" min-width="100">
@@ -41,7 +46,7 @@
                         <span>{{ smartDate(column.label) }}</span>
                     </template>
                     <template #default="{ row }">
-                        <TicketDateSheetPop :ticket_id="row.ticket.id" :date="date" :timeSheets="timeSheets" />
+                        <TicketDateSheetPop :ticket_id="row.id" :date="date" :timeSheets="timeSheets" />
                     </template>
                 </el-table-column>
                 <el-table-column label="Total" width="160" fixed="right">
@@ -49,7 +54,7 @@
                         <span>Total ({{ formatMinutes(totalMinutes) }})</span>
                     </template>
                     <template #default="{ row }">
-                        <strong>{{ getTicketTotal(row.ticket) }}</strong>
+                        <strong>{{ getTicketTotal(row.id) }}</strong>
                     </template>
                 </el-table-column>
 
@@ -122,7 +127,7 @@ export default {
             };
             try {
                 const response = await get('reports/timesheet/by-tickets', params);
-                tasks.value = response.tasks;
+                tasks.value = response.tickets;
                 timeSheets.value = response.time_sheets;
                 dateLabels.value = response.date_labels;
                 totalMinutes.value = response.total_minutes;
