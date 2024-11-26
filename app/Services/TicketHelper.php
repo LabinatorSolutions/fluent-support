@@ -251,4 +251,17 @@ class TicketHelper
         return $type ? $data[$type] : $data;
     }
 
+    public static function getLabelSearch($agentId)
+    {
+        $lists = Meta::where('object_id', $agentId)
+                        ->where('object_type', 'search_meta')
+                        ->where('key', 'label_search')
+                        ->first();
+        $unserialize = null;
+        if ($lists) {
+            $unserialize = maybe_unserialize($lists->value);
+        }
+
+        return $unserialize;
+    }
 }

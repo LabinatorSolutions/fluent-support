@@ -22,6 +22,12 @@
                         style="margin-left: 0.6em;"
                         :disabled="!has_pro"
                     />
+
+                    <div v-if="filter_type === 'advanced'" class="" style="" @click="openLabelSearchDrawer">
+                        <svg width="14" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.5 9.5H8.5V8H5.5V9.5ZM0.25 0.5V2H13.75V0.5H0.25ZM2.5 5.75H11.5V4.25H2.5V5.75Z" fill="#525866"/>
+                        </svg>
+                    </div>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-select filterable @change="fetchTickets()" v-model="order_by" size="small" style="padding-right: 10px;">
@@ -60,6 +66,9 @@
                         </el-button>
                         <el-button @click="advanced_filters = [[]]; fetchTickets()">
                             {{ translate('Clear Filters') }}
+                        </el-button>
+                        <el-button v-if="countAdvancedFilterData(advanced_filters)" @click="isLabelSearchOpen = true">
+                            {{ translate('Save Search') }}
                         </el-button>
                     </div>
                     <div class="fs_narrow_promo" v-else>
@@ -198,6 +207,34 @@
             </template>
         </modal>
 
+        <el-dialog
+            :title="title"
+            v-model="isLabelSearchOpen"
+            @close="isLabelSearchOpen = false"
+        >
+            <el-form label-position="top">
+                <el-form-item :label="translate('Search Name')">
+                    <el-input
+                        type="text"
+                        :placeholder="translate('Search Name')"
+                        v-model="label_search_name"
+                    />
+                </el-form-item>
+            </el-form>
+
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button
+                        v-loading="saving"
+                        :disabled="saving"
+                        type="success"
+                        @click="handleSaveSearch"
+                        >{{ translate("Save") }}</el-button
+                    >
+                </span>
+            </template>
+        </el-dialog>
+
         <ticket-bulk-actions v-if="appReady" @fetchTickets="fetchTickets()" :ticket_selections="ticket_selections"/>
 
     </div>
@@ -281,6 +318,9 @@ export default {
                 created_at: translate('Created At')
             },
             search: '',
+            label_search_name: '',
+            openLabelSearchDrawer: false,
+            isLabelSearchOpen: false,
             order_by: 'last_customer_response',
             order_type: 'ASC',
             ticket_selections: [],
@@ -295,6 +335,45 @@ export default {
             filter_type: 'simple',
             openTicketInNewTab: appVars.open_ticket_in_new_tab === 'yes' ? true : false,
         })
+
+        const countAdvancedFilterData = (filters) => {
+            return filters.reduce((total, innerArray) => {
+                if (Array.isArray(innerArray)) {
+                    const validEntries = innerArray.filter(item => item.value && item.value.trim() !== "");
+                    return total + validEntries.length;
+                }
+                return total;
+            }, 0);
+        }
+
+        const handleSaveSearch = () => {
+            state.ticket_selections = [];
+            state.loading = true;
+            let query = {
+                filter_type: state.filter_type,
+                label_search_name: state.label_search_name
+            };
+            if(state.filter_type == 'advanced' && has_pro) {
+                query.advanced_filters = JSON.stringify(state.advanced_filters);
+            }
+
+            post('tickets/label-search', {
+                query
+            })
+                .then((response) => {
+                    notify({
+                        message: response.message,
+                        type: "success",
+                        position: "bottom-right",
+                    });
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {
+                    
+                });
+        }
 
         const fetchTickets = async () => {
             if (!state.app_ready) {
@@ -700,6 +779,8 @@ export default {
             getExcerpt,
             resetFilters,
             getExcerptBox,
+            handleSaveSearch,
+            countAdvancedFilterData
         }
     }
 }
