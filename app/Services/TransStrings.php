@@ -698,6 +698,12 @@ class TransStrings
             'Set Estimation' => __('Set Estimation', 'fluent-support'),
             'Update Estimation' => __('Update Estimation', 'fluent-support'),
             'Set Estimated Time' => __('Set Estimated Time', 'fluent-support'),
+            'By Tickets' => __('By Tickets', 'fluent-support'),
+            'By Agents' => __('By Agents', 'fluent-support'),
+            'By Customers' => __('By Customers', 'fluent-support'),
+            'Customer Time Sheet Report' => __('Customer Time Sheet Report', 'fluent-support'),
+            'Agent Time Sheet Report' => __('Customer Time Sheet Report', 'fluent-support'),
+            'Time Sheet Report By Tickets' => __('Time Sheet Report By Tickets', 'fluent-support')
         ];
     }
 }

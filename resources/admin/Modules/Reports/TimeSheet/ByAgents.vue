@@ -2,7 +2,7 @@
     <div class="fs_time_sheet" v-if="isLoaded" >
         <div class="fs_time_sheet_box_header">
             <div class="fs_time_sheet_box_head">
-                {{"Agent Time Sheet Report"}}
+                {{translate("Agent Time Sheet Report")}}
             </div>
             <div class="fs_time_sheet_box_actions">
                 <el-select
@@ -31,11 +31,16 @@
         </div>
         <div class="fs_time_sheet_box_body">
             <el-table :data="agents" style="width: 100%">
-                <el-table-column fixed="left" prop="user" label="User" min-width="120">
+                <el-table-column fixed="left" prop="agent" label="Agent" min-width="120">
                     <template #default="{ row }">
                         <div class="fs_time_sheet_person">
                             <el-avatar :src="row.photo" size="small"></el-avatar>
-                            <span>{{ row.full_name }}</span>
+                            <a
+                                :href="`/wp-admin/user-edit.php?user_id=${row.id}`"
+                                target="_blank"
+                                style="text-decoration: none; margin-left: 8px;">
+                                <strong> {{ row.full_name }} </strong>
+                            </a>
                         </div>
                     </template>
                 </el-table-column>
@@ -50,7 +55,11 @@
                         <span>{{ smartDate(column.label) }}</span>
                     </template>
                     <template #default="{ row }">
-                        <AgentDateSheetPop :agent_id="row.id" :date="date" :timeSheets="timeSheets" />
+                        <UserAgentDateSheetPop
+                            :user_id="row.id"
+                            :date="date"
+                            :timeSheets="timeSheets"
+                        />
                     </template>
                 </el-table-column>
                 <el-table-column label="Total" width="160" fixed="right">
@@ -100,14 +109,14 @@
 
 <script>
 import {onMounted, ref} from 'vue';
-import AgentDateSheetPop from './_AgentDateSheetPop.vue';
+import UserAgentDateSheetPop from './_UserAgentDateSheetPop.vue'
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 import {timesheetUtils}from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils"
 import Modal from "@/admin/Pieces/Modal.vue";
 
 export default {
     name: 'ByAgents',
-    components: {Modal, AgentDateSheetPop},
+    components: {Modal, UserAgentDateSheetPop},
     props: {
         date_range: {
             type: Array,
