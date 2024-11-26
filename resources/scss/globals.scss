@@ -182,6 +182,14 @@
         border-bottom-right-radius: 5px;
         border-top: 1px solid #c5c4c4;
     }
+
+    &.fs_dialog {
+        padding: 0;
+        .el-dialog__footer,
+        .el-dialog__header {
+            padding: 10px 20px;
+        }
+    }
 }
 
 

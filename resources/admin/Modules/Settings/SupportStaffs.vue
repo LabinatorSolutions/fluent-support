@@ -176,6 +176,7 @@
             v-if="editing_agent"
             width="60%"
             @close="resetAgentModal()"
+            class="fs_dialog"
         >
             <el-form label-position="top" :data="editing_agent">
                 <el-form-item :label="translate('Email')">

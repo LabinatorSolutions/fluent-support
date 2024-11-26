@@ -103,6 +103,7 @@
             :title="translate('Add a New Business Inbox')"
             v-model="create_modal"
             width="60%"
+            class="fs_dialog"
         >
             <el-form
                 v-if="can_create_mailbox"
@@ -165,6 +166,7 @@
             :title="translate('Are You Sure? You can not undo this action.')"
             v-model="deleting_box.show_modal"
             width="60%"
+            class="fs_dialog"
         >
             <el-form :data="deleting_box" label-position="top">
                 <el-form-item :label="translate('Fallback Business')">

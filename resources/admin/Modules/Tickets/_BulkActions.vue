@@ -101,7 +101,8 @@
         <el-dialog
             :title="translate('Reply To Selected Tickets')"
             v-model="add_response_modal"
-            width="60%">
+            width="60%"
+            class="fs_dialog">
             <create-response @created="fetchTickets()" v-if="add_response_modal" :ticket="ticket_selections"/>
         </el-dialog>
     </div>

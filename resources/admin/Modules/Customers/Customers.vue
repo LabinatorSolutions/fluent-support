@@ -177,6 +177,7 @@
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%"
+            class="fs_dialog"
         >
             <customer-form
                 v-if="editing_customer"
