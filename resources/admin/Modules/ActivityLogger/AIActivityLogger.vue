@@ -81,6 +81,7 @@
             :title="translate('Activity Log Settings')"
             width="60%"
             :append-to-body="true"
+            class="fs_dialog"
         >
             <AIActivitySettings
                 @updated="

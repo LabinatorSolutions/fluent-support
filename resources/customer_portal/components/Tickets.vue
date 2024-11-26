@@ -119,15 +119,15 @@ export default {
             },
             sortingColumns: [
                 {
-                    label: 'Ticket ID',
+                    label: this.$t('Ticket ID'),
                     value: 'id'
                 },
                 {
-                    label: 'Title',
+                    label: this.$t('Title'),
                     value: 'title'
                 },
                 {
-                    label: 'Created at',
+                    label: this.$t('Created at'),
                     value: 'created_at'
                 },
             ],

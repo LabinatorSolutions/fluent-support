@@ -23,6 +23,7 @@
             :append-to-body="true"
             :title="translate('Review your Workflow')"
             width="60%"
+            class="fs_dialog"
         >
             <div v-if="modalVisible" v-loading="fetchingActions" class="fs_workflow_desc">
                 <h3>{{ translate('Running the') }} <b>{{ selected_workflow.title }}</b>

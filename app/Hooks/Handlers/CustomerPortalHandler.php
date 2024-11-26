@@ -104,16 +104,6 @@ class CustomerPortalHandler
 
         $assets = $app['url.assets'];
 
-        $ticketFormConfig = ProHelper::getTicketFormConfig();
-
-        if ($ticketFormConfig['disable_rich_text'] !== 'yes') {
-            wp_tinymce_inline_scripts();
-            wp_enqueue_editor();
-        }
-
-        wp_enqueue_script('dompurify', $assets.'libs/purify/purify.min.js', [], '2.4.3');
-        wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION, true);
-        wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css', [], FLUENT_SUPPORT_VERSION);
 
         $i18ns = [
             'Conversation'                => __('Conversation', 'fluent-support'),
@@ -175,6 +165,13 @@ class CustomerPortalHandler
             'Support Staff' => __('Support Staff', 'fluent-support'),
             'Thread Starter' => __('Thread Starter', 'fluent-support'),
             'Thread Follower' => __('Thread Follower', 'fluent-support'),
+            'Sort By' => __('Sort By', 'fluent-support'),
+            'Ascending' => __('Ascending', 'fluent-support'),
+            'Descending' => __('Descending', 'fluent-support'),
+            'Apply' => __('Apply', 'fluent-support'),
+            'Ticket ID' => __('Ticket ID', 'fluent-support'),
+            'Title' => __('Title', 'fluent-support'),
+            'Created at' => __('Created at', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
@@ -209,6 +206,15 @@ class CustomerPortalHandler
          * @param array $data
          */
         $data = apply_filters('fluent_support/customer_portal_vars', $data);
+
+        if (!empty($data['has_rich_text_editor'])) {
+            wp_tinymce_inline_scripts();
+            wp_enqueue_editor();
+        }
+
+        wp_enqueue_script('dompurify', $assets.'libs/purify/purify.min.js', [], '2.4.3');
+        wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION, true);
+        wp_enqueue_style('fs_tk_customer_portal', $assets . 'portal/css/app.css', [], FLUENT_SUPPORT_VERSION);
 
         wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', $data);
     }

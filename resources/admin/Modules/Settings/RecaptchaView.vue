@@ -16,7 +16,6 @@
                     <el-form label-position="top" label-width="140px">
                         <el-switch
                             v-model="reCaptchaEnabled"
-                            class="ml-2"
                             style="
                         --el-switch-on-color: #13ce66;
                         --el-switch-off-color: #ff4949;
@@ -61,6 +60,7 @@
                         <el-form-item
                             :label="translate('Use Recaptcha')"
                             @change="loadRecaptchaResponse"
+                            class="mr-2"
                         >
                             <el-checkbox
                                 v-model="formContainingReCaptcha.login_form"

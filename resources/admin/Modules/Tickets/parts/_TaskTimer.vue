@@ -1,12 +1,12 @@
 <template>
     <div class="fs-task-timer-wrap">
         <div class="fs-side-header">
-            <h4 class="sidebar-title">Time Tracking</h4>
+            <h4 class="fs-sidebar-title">{{ translate('Time Tracking') }}</h4>
             <el-button @click="toggleLog" size="small">
                 <el-icon>
                     <Plus/>
                 </el-icon>
-                <span>Log</span>
+                <span>{{ translate('Log') }}</span>
             </el-button>
         </div>
         <div class="fs-timer-container">
@@ -18,28 +18,29 @@
                              :percentage="percentileCompleted"
                              :text-inside="true" :stroke-width="20">
                     <span v-if="estimatedMinutes">{{ percentileCompleted }}%</span>
-                    <span v-else>n/a</span>
+                    <span v-else>{{ translate('n/a') }}</span>
                 </el-progress>
             </div>
             <div class="fs-estimated-labels">
-                <el-popover ref="estimatedTimePop" popper-class="fs-timer-log-popover" :placement="estimateTimePopoverPlacement" :width="400" trigger="click">
+                <el-popover ref="estimatedTimePop" popper-class="fs-timer-log-popover"
+                            :placement="estimateTimePopoverPlacement" :width="400" trigger="click">
                     <template #reference>
                         <div style="cursor: pointer;">{{ totalLoggedLabel }} logged</div>
                     </template>
                     <el-table stripe :data="tracks" style="width: 100%">
                         <el-table-column type="expand" width="30">
                             <template #default="{ row }">
-                                <div class="detail-log">
-                                    <p><b>Logged at:</b> {{ smartDate(row.created_at, true) }}</p>
-                                    <p><b>Work Description:</b> {{ row.message }}</p>
+                                <div class="fs_detail_log">
+                                    <p><b>{{ translate('Logged at:') }}</b> {{ smartDate(row.created_at, true) }}</p>
+                                    <p><b>{{ translate('Work Description:') }}</b> {{ row.message }}</p>
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="user" label="User">
+                        <el-table-column prop="agent" label="agent">
                             <template #default="{ row }">
-                                <div class="person">
-                                    <el-avatar :src="row.user?.photo" size="small"></el-avatar>
-                                    <span>{{ row.user?.display_name }}</span>
+                                <div class="fs-time-track-agent">
+                                    <el-avatar :src="row.agent?.photo" size="small"></el-avatar>
+                                    <span>{{ row.agent?.full_name }}</span>
                                 </div>
                             </template>
                         </el-table-column>
@@ -61,13 +62,14 @@
                             <span @click="toggleEstimatedForm" style="cursor: pointer;" v-if="estimatedMinutes">
                                 {{ totalEstimationLabel }} estimated</span>
                             <el-button @click="toggleEstimatedForm" v-else type="info" size="small">
-                                Set Estimation
+                                {{ translate('Set Estimation') }}
                             </el-button>
                         </template>
-                        <h4 class="estimation-title">Set Estimated Time</h4>
+                        <h4 class="fs-estimation-title">{{translate('Set Estimated Time')}}</h4>
                         <HourMinuteInput v-if="estimatedForm" v-model="estimatedMinutes"/>
-                        <el-button :disabled="updating" v-loading="updating" @click="updateEstimatedTime" class="update-btn" type="success">
-                            Update Estimation
+                        <el-button :disabled="updating" v-loading="updating" @click="updateEstimatedTime"
+                                   class="update-btn" type="success">
+                            {{ translate('Update Estimation') }}
                         </el-button>
                     </el-popover>
                 </div>
@@ -76,11 +78,14 @@
                 <el-form ref="newLogForm" v-loading="updating" label-position="top">
                     <HourMinuteInput v-model="newLog.billable_minutes"/>
                     <el-form-item label="Work Description">
-                        <el-input placeholder="Describe this log entry" v-model="newLog.message" type="textarea" rows="2"/>
+                        <el-input placeholder="Describe this log entry" v-model="newLog.message" type="textarea"
+                                  rows="2"/>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="success" :disabled="updating" v-loading="updating" @click="logTime()">Log Time</el-button>
-                        <el-button text @click="logForm = false">Cancel</el-button>
+                        <el-button type="success" :disabled="updating" v-loading="updating" @click="logTime()">
+                            {{ translate('Log Time') }}
+                        </el-button>
+                        <el-button text @click="logForm = false">{{ translate('Cancel') }}</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -89,19 +94,24 @@
 </template>
 
 <script>
-import { reactive, computed, onMounted, toRefs } from 'vue';
-import { useFluentHelper } from "../../../Composable/FluentFrameworkHelper";
-import { Plus, Clock } from '@element-plus/icons-vue';
+import {computed, onMounted, reactive, toRefs} from 'vue';
+import {useFluentHelper} from "../../../Composable/FluentFrameworkHelper";
+import {Clock, Plus} from '@element-plus/icons-vue';
 import HourMinuteInput from './_HourMinuteInput.vue';
 
 export default {
     name: 'TaskTimer',
-    props: ['ticket_id'],
+    props: ['ticket_id', 'customer_id'],
     components: {
         Plus, Clock, HourMinuteInput
     },
     setup(props) {
-        const { smartDate, get, post } = useFluentHelper();
+        const {
+            translate,
+            smartDate,
+            get,
+            post
+        } = useFluentHelper();
 
         const state = reactive({
             tracks: [],
@@ -110,7 +120,11 @@ export default {
             updating: false,
             estimatedForm: false,
             logForm: false,
-            newLog: { billable_minutes: '', message: '', started_at: '' },
+            newLog: {
+                billable_minutes: '',
+                message: '',
+                started_at: ''
+            },
             estimateTimePopoverPlacement: 'left'
         });
 
@@ -120,25 +134,19 @@ export default {
         const totalLoggedLabel = computed(() => formatMinutes(totalLoggedMinutes.value));
         const totalEstimationLabel = computed(() => formatMinutes(state.estimatedMinutes));
 
-        function toggleLog() {
+        const toggleLog = () => {
             state.logForm = !state.logForm;
         }
 
-        function toggleEstimatedForm() {
+        const toggleEstimatedForm = () => {
             state.estimatedForm = !state.estimatedForm;
         }
 
-        // function fetchTracks() {
-        //     state.loading = true;
-        //     setTimeout(() => { state.tracks = []; state.loading = false; }, 1000);
-        // }
-
         const fetchTracks = () => {
             state.loading = true;
-            get('tickets/' + props.ticket_id + '/time-tracks')
+            get(`time-tracks/${props.ticket_id}`)
                 .then(response => {
-                    // state.tracks = response.tracks;
-                    // state.estimatedMinutes = response.estimated_minutes;
+                    state.tracks = response.tracks;
                     state.estimatedMinutes = response.estimated_minutes;
                 })
                 .catch(error => {
@@ -146,7 +154,7 @@ export default {
                 })
         };
 
-        function formatMinutes(minutes) {
+        const formatMinutes = (minutes) => {
             const intMinutes = parseInt(minutes);
             if (!intMinutes) return '';
             const hours = Math.floor(intMinutes / 60);
@@ -154,23 +162,39 @@ export default {
             return hours ? `${hours}h ${remMinutes}m` : `${remMinutes}m`;
         }
 
-        function logTime() {
+        const logTime = () => {
             if (state.newLog.billable_minutes < 1) {
                 alert('Please enter a valid time');
                 return;
             }
             state.updating = true;
-            setTimeout(() => {
-                state.tracks.push({ ...state.newLog });
-                state.logForm = false;
-                state.newLog = { billable_minutes: '', message: '', started_at: '' };
-                state.updating = false;
-            }, 1000);
+            post(`time-tracks/${props.ticket_id}`, {
+                customer_id: props.customer_id,
+                billable_minutes: state.newLog.billable_minutes,
+                message: state.newLog.message,
+                started_at: state.newLog.started_at
+            })
+                .then(response => {
+                    state.tracks.push(response.track);
+
+                    state.logForm = false;
+                    state.updating = false;
+                    state.newLog = {
+                        billable_minutes: '',
+                        message: '',
+                        started_at: ''
+                    };
+                })
+                .catch(error => {
+                    this.logForm = false;
+                    state.updating = false;
+                    console.error('Error posting time track:', error);
+                });
         }
 
         const updateEstimatedTime = () => {
             state.updating = true;
-            post('tickets/' + props.ticket_id + '/time-tracks/estimated-time', {
+            post('time-tracks/' + props.ticket_id + '/estimated-time', {
                 estimated_minutes: state.estimatedMinutes
             })
                 .then(response => {
@@ -197,118 +221,13 @@ export default {
             progressColor,
             toggleLog,
             toggleEstimatedForm,
-            formatMinutes,
             logTime,
-            updateEstimatedTime
+            formatMinutes,
+            updateEstimatedTime,
+            translate
         };
     }
 };
 </script>
-
-<style lang="scss">
-.fs-side-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #e0e0e0;
-
-    h4 {
-        margin: 0;
-        font-weight: 500;
-        font-size: 16px;
-        color: #444;
-    }
-}
-
-.fs-estimated-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 10px;
-    background: #fafafa;
-    border-radius: 6px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-
-    .el-progress-bar__inner {
-        max-width: 100%;
-        border-radius: 3px;
-    }
-
-    .el-progress-bar__innerText {
-        color: #333;
-        font-size: 12px;
-        font-weight: 400;
-    }
-}
-
-.fs-estimated-labels {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 12px;
-    gap: 6px;
-
-    .el-popover {
-        font-size: 12px;
-        color: #666;
-    }
-
-    .el-table {
-        font-size: 12px;
-        border-radius: 4px;
-        overflow: hidden;
-    }
-}
-
-.fs-new-timer {
-    background: #ffffff;
-    padding: 15px;
-    margin: 12px 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-
-    .el-form-item {
-        margin-bottom: 12px;
-    }
-
-    .el-input {
-        border-radius: 4px;
-    }
-
-    .el-button {
-        border-radius: 4px;
-        font-weight: 500;
-        padding: 4px 12px;
-    }
-
-    .update-btn {
-        margin-top: 15px;
-    }
-}
-
-.estimation-title {
-    font-weight: 500;
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 6px;
-    padding: 8px 0;
-    border-bottom: 1px solid #eaeaea;
-}
-
-.fs-task-timer-wrap {
-    background-color: #ffffff;
-}
-
-.fs-new-log {
-    .el-input__inner {
-        background-color: #fbfbfb;
-        color: #333;
-        font-size: 13px;
-    }
-}
-</style>
 
 
