@@ -182,6 +182,7 @@
                             v-model="show_fbs_add_task_modal"
                             v-if="has_pro && show_fbs_add_task_modal"
                             :title="translate('Add Task to Fluent Boards')"
+                            class="fs_dialog"
                         >
                             <FluentBoardsIntegration @created="afterCreatedTask" :ticket=ticket :fluentcrm_profile="fluentcrm_profile" />
                         </el-dialog>
@@ -190,6 +191,7 @@
                             v-model="show_merge_modal"
                             v-if="has_pro && show_merge_modal"
                             :title="translate('Merge Tickets')"
+                            class="fs_dialog"
                         >
                             <div class="fs_box_body" v-if="customer_tickets.length && app_ready">
                                 <el-table
@@ -224,6 +226,7 @@
                             v-model="show_watcher_modal"
                             v-if="has_pro && show_watcher_modal"
                             :title="translate('Add Bookmark')"
+                            class="fs_dialog"
                         >
                             <div class="fs_box_body">
                                 <el-select :multiple="true" v-model="watcherIds">
@@ -604,7 +607,8 @@
                             :title="translate('Updating Custom Field Data')"
                             v-model="showCustomDataEditForm"
                             v-if="showCustomDataEditForm"
-                            width="60%">
+                            width="60%"
+                            class="fs_dialog">
                             <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id"
                                                :custom_data="ticket.custom_fields"/>
                         </el-dialog>

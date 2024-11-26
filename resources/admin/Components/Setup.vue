@@ -140,6 +140,7 @@
             top="30vh"
             custom-class="fc_essential_modal"
             v-model="show_essential_modal"
+            class="fs_dialog"
             width="30%">
             <p>
                 Get improved features and faster fixes by sharing non-sensitive data via usage tracking that shows us

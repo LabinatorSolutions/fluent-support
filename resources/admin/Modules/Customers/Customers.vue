@@ -6,7 +6,6 @@
                     <h3>{{ translate("All Customers") }}</h3>
                     <el-button
                         @click="showAddCustomerModal({})"
-                        size="small"
                         icon="Plus"
                         >{{ translate("Add Customer") }}
                     </el-button>
@@ -18,7 +17,6 @@
                             filterable
                             @change="fetchCustomers()"
                             v-model="status"
-                            size="small"
                             style="padding-right: 0.7em"
                         >
                             <el-option
@@ -33,7 +31,6 @@
                         @keyup.enter="fetchCustomers()"
                         clearable
                         @clear="fetchCustomers()"
-                        size="small"
                         :placeholder="translate('Search Customers')"
                         v-model="search"
                     >
@@ -180,6 +177,7 @@
             v-model="showEditModal"
             v-if="editing_customer"
             width="60%"
+            class="fs_dialog"
         >
             <customer-form
                 v-if="editing_customer"

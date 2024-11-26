@@ -148,7 +148,6 @@
                                 :placeholder="translate('Select Product')"
                                 v-model="editing_reply.product_id"
                                 clearable
-                                size="small"
                             >
                                 <el-option
                                     v-for="product in products"

@@ -118,6 +118,7 @@
             v-model="tag_modal"
             v-if="editing_tag"
             width="60%"
+            class="fs_dialog"
         >
             <el-form label-position="top" :data="editing_tag">
                 <el-form-item :label="translate('Title')">
