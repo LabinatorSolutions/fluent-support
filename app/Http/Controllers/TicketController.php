@@ -2,6 +2,8 @@
 
 namespace FluentSupport\App\Http\Controllers;
 
+use FluentSupport\App\Models\Meta;
+use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Http\Requests\TicketRequest;
 use FluentSupport\App\Http\Requests\TicketResponseRequest;
 use FluentSupport\App\Models\Conversation;
@@ -588,5 +590,92 @@ class TicketController extends Controller
 
         return TicketHelper::getTicketEssentials($type);
     }
+
+    public function fetchLabelSearch(Ticket $ticket)
+    {
+        try {
+            $agent_id = get_current_user_id();
+            return TicketHelper::getLabelSearch($agent_id);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
+        }
+    }
+
+    /**
+     * storeLabelSearch method will create response for label search list
+     * @param Request $request
+     * @return array
+     * @throws \Exception
+     */
+    public function storeLabelSearch(Request $request)
+    {
+        $searchData = $request->get('query');
+        $filterType = Arr::get($searchData, 'filter_type', '');
+
+        if ($filterType == 'advanced') {
+            try {
+                $agent_id = get_current_user_id();
+                $existingRecord = Meta::where('object_id', $agent_id)
+                                        ->where('object_type', 'search_meta')
+                                        ->where('key', 'label_search')
+                                        ->first();
+
+                if ($existingRecord) {
+                    $existingData = maybe_unserialize($existingRecord->value) ?: [];
+                    if (isset($searchData['id'])) {
+                        $updated = false;
+                        foreach ($existingData as &$record) {
+                            if (isset($record['id']) && $record['id'] == $searchData['id']) {
+                                $record = array_merge($record, $searchData);
+                                $updated = true;
+                                break;
+                            }
+                        }
+                        if (!$updated) {
+                            $existingData[] = $searchData;
+                        }
+                    } else {
+                        $newId = $this->generateNewId($existingData);
+                        $searchData['id'] = $newId;
+                        $existingData[] = $searchData;
+                    }
+
+                    $existingRecord->update([
+                        'value' => maybe_serialize($existingData)
+                    ]);
+                } else {
+                    $searchData['id'] = 1;
+                    Meta::insert([
+                        'object_type' => 'search_meta',
+                        'key'         => 'label_search',
+                        'object_id'   => $agent_id,
+                        'value'       => maybe_serialize([$searchData])
+                    ]);
+                }
+
+                return '';
+            } catch (\Exception $e) {
+                return $this->sendError($e->getMessage());
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Generate a new unique ID based on existing records.
+     *
+     * @param array $existingData
+     * @return int
+     */
+    private function generateNewId(array $existingData)
+    {
+        if (empty($existingData)) {
+            return 1;
+        }
+
+        $maxId = max(array_column($existingData, 'id'));
+        return $maxId + 1;
+    }
+
 }
 

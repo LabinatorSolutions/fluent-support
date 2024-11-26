@@ -26,6 +26,8 @@ $router->prefix('tickets')->withPolicy('AgentTicketPolicy')->group(function ($ro
     $router->get('agent_performance', 'AgentController@agentPerformance');
     $router->get('/', 'TicketController@index');
     $router->post('/', 'TicketController@createTicket');
+    $router->get('/label-search', 'TicketController@fetchLabelSearch');
+    $router->post('/label-search', 'TicketController@storeLabelSearch');
 
     $router->get('/{ticket_id}', 'TicketController@getTicket')->int('ticket_id');
 
