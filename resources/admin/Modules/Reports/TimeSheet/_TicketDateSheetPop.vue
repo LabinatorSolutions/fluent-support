@@ -16,7 +16,13 @@
                 <template #default="{ row }">
                     <div class="fs_time_sheet_person">
                         <el-avatar :src="row.agent?.photo" size="small"></el-avatar>
-                        <span>{{ row.agent?.full_name }}</span>
+                        <a
+                            :href="`/wp-admin/user-edit.php?user_id=${row.agent.id}`"
+                            target="_blank"
+                            style="text-decoration: none; margin-left: 8px;">
+                            <strong> {{ row.agent.full_name }} </strong>
+                        </a>
+
                     </div>
                 </template>
             </el-table-column>
