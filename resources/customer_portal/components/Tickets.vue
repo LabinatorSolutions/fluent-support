@@ -115,7 +115,7 @@ export default {
             },
             sorting: {
                 sort_by: 'id',
-                sort_type: 'asc'
+                sort_type: 'desc'
             },
             sortingColumns: [
                 {
