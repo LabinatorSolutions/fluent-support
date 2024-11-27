@@ -36,7 +36,7 @@
                         <div class="fs_time_sheet_person">
                             <el-avatar :src="row.photo" size="small"></el-avatar>
                             <a
-                                :href="`/wp-admin/user-edit.php?user_id=${row.id}`"
+                                :href="`/wp-admin/user-edit.php?user_id=${row.user_id}`"
                                 target="_blank"
                                 style="text-decoration: none; margin-left: 8px;">
                                 <strong> {{ row.full_name }} </strong>
