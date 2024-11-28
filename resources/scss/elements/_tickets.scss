@@ -1426,6 +1426,12 @@ ul.fs_tk_actions {
 
 .fs_time_sheet_box_actions {
     display: flex;
+    .el-select {
+        min-width: 175px;
+        .el-select__input{
+            width: 100% !important;
+        }
+    }
 }
 
 .fs_time_sheet_select {
