@@ -28,10 +28,19 @@
                 font-size: 12px;
                 color: #a4b2bd;
             }
+            .el-select {
+                min-width: 175px;
+                .el-select__input{
+                    width: 100% !important;
+                }
+            }
         }
     }
 
     .fs_box_actions.fs_ticket_orders > div {
+        .el-select__input{
+            width: 100% !important;
+        }
         width: 80%;
         float: left;
     }
@@ -1417,6 +1426,12 @@ ul.fs_tk_actions {
 
 .fs_time_sheet_box_actions {
     display: flex;
+    .el-select {
+        min-width: 175px;
+        .el-select__input{
+            width: 100% !important;
+        }
+    }
 }
 
 .fs_time_sheet_select {

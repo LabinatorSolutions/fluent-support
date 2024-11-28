@@ -54,13 +54,7 @@
                     </el-tooltip>
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
-                    <el-select
-                        filterable
-                        @change="fetchTickets()"
-                        v-model="order_by"
-                        size="small"
-                        style="padding-right: 10px"
-                    >
+                    <el-select filterable @change="fetchTickets()" v-model="order_by" style="padding-right: 10px;">
                         <el-option
                             v-for="(column, columnName) in filterColumns"
                             :key="columnName"

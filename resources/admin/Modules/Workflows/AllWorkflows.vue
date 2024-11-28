@@ -141,6 +141,7 @@
             v-model="showAddModal"
             :title="translate('Add a New Workflow')"
             width="60%"
+            class="fs_dialog"
         >
             <el-form :data="new_workflow" label-position="top">
                 <el-form-item :label="translate('Your Workflow Name')">

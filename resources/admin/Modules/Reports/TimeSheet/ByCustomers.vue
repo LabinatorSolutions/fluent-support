@@ -1,113 +1,121 @@
 <template>
-    <div class="fs_time_sheet_box_header">
-        <div class="fs_time_sheet_box_head">
-            {{translate("Customer Time Sheet Report")}}
-        </div>
-        <div class="fs_time_sheet_box_actions">
-            <el-select
-                v-model="selectedCustomer"
-                @change="fetchReportsByCustomers"
-                placeholder="Select a customer"
-                class="fs_time_sheet_select"
-                clearable
-            >
-                <el-option
-                    v-for="customer in allCustomers"
-                    :key="customer.key"
-                    :label="customer.label"
-                    :value="customer.key"
-                />
+    <div class="fs_time_sheet" v-if="isLoaded" >
+        <div class="fs_time_sheet_box_header">
+            <div class="fs_time_sheet_box_head">
+                {{translate("Customer Time Sheet Report")}}
+            </div>
+            <div class="fs_time_sheet_box_actions">
+                <el-select
+                    v-model="selectedCustomer"
+                    @change="fetchReportsByCustomers"
+                    placeholder="Select a customer"
+                    class="fs_time_sheet_select"
+                    clearable
+                >
+                    <el-option
+                        v-for="customer in allCustomers"
+                        :key="customer.key"
+                        :label="customer.label"
+                        :value="customer.key"
+                    />
 
-            </el-select>
-            <div class="fs_time_sheet_export">
-                <el-button type="default" @click="openSettings=true">
-                    <el-icon>
-                        <Download/>
-                    </el-icon>
-                    {{ translate('Export') }}
-                </el-button>
+                </el-select>
+                <div class="fs_time_sheet_export">
+                    <el-button type="default" @click="openSettings=true">
+                        <el-icon>
+                            <Download/>
+                        </el-icon>
+                        {{ translate('Export') }}
+                    </el-button>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="fs_time_sheet_box_body">
-        <el-table v-if="isLoaded" :data="customers" style="width: 100%">
-            <el-table-column fixed="left" prop="customer" label="Customer" min-width="120">
-                <template #default="{ row }">
-                    <div class="fs_time_sheet_person">
-                        <el-avatar :src="row.photo" size="small"></el-avatar>
-                        <span>{{ row.full_name }}</span>
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column
-                :min-width="100"
-                v-for="date in dateLabels"
-                :key="date"
-                :prop="date"
-                :label="date"
-                min-width="100"
-            >
-                <template #header="{ column }">
-                    <span>{{ smartDate(column.label) }}</span>
-                </template>
-                <template #default="{ row }">
-                    <CustomerDataSheetPop
-                        :customer_id="row.id"
-                        :date="date"
-                        :timeSheets="timeSheets"
-                    />
-                </template>
-            </el-table-column>
-            <el-table-column label="Total" width="160" fixed="right">
-                <template #header="{ column }">
-                    <span>Total ({{ formatMinutes(totalMinutes) }})</span>
-                </template>
-                <template #default="{ row }">
-                    <strong>{{ getUserTotal(row.id) }}</strong>
-                </template>
-            </el-table-column>
-
-            <Teleport to="body">
-                <modal :show="openSettings" :title="translate('Include Customers in Time Sheet')"
-                       @close="openSettings = false">
-                    <template #body>
-                        <div class="fs_summary_settings">
-                            <el-row :gutter="20">
-                                <el-col :span="18">
-                                    <span> {{ translate("If you don't select any customer then all the customers report will be displayed here otherwise it will show only selected agents report.") }}</span>
-                                </el-col>
-                            </el-row>
-
-                            <el-transfer
-                                v-model="includeOrExcludeCustomers"
-                                :data="allCustomers"
-                                :titles="['Available Agents', 'Selected Agents']"
-                                filterable
-                            />
+        <div class="fs_time_sheet_box_body">
+            <el-table :data="customers" style="width: 100%">
+                <el-table-column fixed="left" prop="customer" label="Customer" min-width="120">
+                    <template #default="{ row }">
+                        <div class="fs_time_sheet_person">
+                            <el-avatar :src="row.photo" size="small"></el-avatar>
+                            <router-link
+                                :to="{ name: 'view_customer', params: { customer_id: row.id }, }"
+                                target="_blank"
+                                style="text-decoration: none;">
+                                <strong>{{ row.full_name }}</strong>
+                            </router-link>
                         </div>
                     </template>
-                    <template #footer>
-                        <el-button @click="openSettings = false">{{ translate('Cancel') }}</el-button>
-                        <el-button type="primary" @click="exportReport">{{ translate('Export') }}</el-button>
+                </el-table-column>
+                <el-table-column
+                    :min-width="100"
+                    v-for="date in dateLabels"
+                    :key="date"
+                    :prop="date"
+                    :label="date"
+                    min-width="100"
+                >
+                    <template #header="{ column }">
+                        <span>{{ smartDate(column.label) }}</span>
                     </template>
-                </modal>
-            </Teleport>
-        </el-table>
-        <el-skeleton :animated="true" :rows="10" v-else/>
+                    <template #default="{ row }">
+                        <UserAgentDateSheetPop
+                            :user_id="row.id"
+                            :date="date"
+                            :timeSheets="timeSheets"
+                        />
+                    </template>
+                </el-table-column>
+                <el-table-column label="Total" width="160" fixed="right">
+                    <template #header="{ column }">
+                        <span>Total ({{ formatMinutes(totalMinutes) }})</span>
+                    </template>
+                    <template #default="{ row }">
+                        <strong>{{ getUserTotal(row.id) }}</strong>
+                    </template>
+                </el-table-column>
+
+                <Teleport to="body">
+                    <modal :show="openSettings" :title="translate('Include Customers in Time Sheet')"
+                           @close="openSettings = false">
+                        <template #body>
+                            <div class="fs_summary_settings">
+                                <el-row :gutter="20">
+                                    <el-col :span="18">
+                                        <span> {{ translate("If you don't select any customer then all the customers report will be displayed here otherwise it will show only selected agents report.") }}</span>
+                                    </el-col>
+                                </el-row>
+
+                                <el-transfer
+                                    v-model="includeOrExcludeCustomers"
+                                    :data="allCustomers"
+                                    :titles="['Available Agents', 'Selected Agents']"
+                                    filterable
+                                />
+                            </div>
+                        </template>
+                        <template #footer>
+                            <el-button @click="openSettings = false">{{ translate('Cancel') }}</el-button>
+                            <el-button type="primary" @click="exportReport">{{ translate('Export') }}</el-button>
+                        </template>
+                    </modal>
+                </Teleport>
+            </el-table>
+        </div>
+    </div>
+    <div class="fs_time_sheet_skeleton"  v-else>
+        <el-skeleton :animated="true" :rows="10"/>
     </div>
 </template>
 
 <script>
 import {onMounted, ref} from 'vue';
-import CustomerDataSheetPop from './_CustomerDataSheetPop.vue';
 import {useFluentHelper} from '@/admin/Composable/FluentFrameworkHelper';
 import Modal from "@/admin/Pieces/Modal.vue";
 import {timesheetUtils} from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
+import UserAgentDateSheetPop from "@/admin/Modules/Reports/TimeSheet/_UserAgentDateSheetPop.vue";
 
 export default {
     name: 'ByCustomers',
-    components: {Modal, CustomerDataSheetPop},
+    components: {UserAgentDateSheetPop, Modal},
     props: {
         date_range: {
             type: Array,

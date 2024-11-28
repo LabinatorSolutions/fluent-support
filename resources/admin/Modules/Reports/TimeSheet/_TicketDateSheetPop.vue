@@ -7,8 +7,8 @@
             <el-table-column type="expand" width="30">
                 <template #default="{row}">
                     <div class="fs_detail_log">
-                        <p><b>Logged at:</b> {{ smartDate(row.created_at, true) }}</p>
-                        <p><b>Work Description:</b> {{ row.message }}</p>
+                        <p><b>{{translate('Logged at:')}}</b> {{ smartDate(row.created_at, true) }}</p>
+                        <p><b>{{translate('Work Description:')}}</b> {{ row.message }}</p>
                     </div>
                 </template>
             </el-table-column>
@@ -16,7 +16,13 @@
                 <template #default="{ row }">
                     <div class="fs_time_sheet_person">
                         <el-avatar :src="row.agent?.photo" size="small"></el-avatar>
-                        <span>{{ row.agent?.full_name }}</span>
+                        <a
+                            :href="`/wp-admin/user-edit.php?user_id=${row.agent?.user_id}`"
+                            target="_blank"
+                            style="text-decoration: none; margin-left: 8px;">
+                            <strong> {{ row.agent?.full_name }} </strong>
+                        </a>
+
                     </div>
                 </template>
             </el-table-column>
@@ -39,7 +45,7 @@ export default {
     name: 'TicketDateSheetPop',
     props: ['ticket_id','date','timeSheets'],
     setup(props) {
-        const { smartDate } = useFluentHelper();
+        const { smartDate, translate } = useFluentHelper();
         const timeItems = ref([]);
 
         const timeSheetTotal = computed(() => {
@@ -62,7 +68,8 @@ export default {
             timeItems,
             timeSheetTotal,
             formatMinutes,
-            smartDate
+            smartDate,
+            translate
         };
     }
 };
