@@ -124,6 +124,13 @@
         }
         .fs_box_actions {
             display: flex;
+            float: right;
+            .fs_cs_status_filter{
+                .el-select{
+                    padding-right: 0.7em;
+                    margin-right: 1.7em;
+                }
+            }
         }
 
         .fs_box_head {
@@ -141,10 +148,6 @@
                     margin: 0 0 0 4px;
                 }
             }
-        }
-
-        .fs_box_actions {
-            float: right;
         }
     }
 
@@ -178,6 +181,14 @@
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         border-top: 1px solid #c5c4c4;
+    }
+
+    &.fs_dialog {
+        padding: 0;
+        .el-dialog__footer,
+        .el-dialog__header {
+            padding: 10px 20px;
+        }
     }
 }
 
@@ -610,6 +621,7 @@ ul.fs_contact_results {
         display: block;
     }
 }
+
 .fs_advanced_filter_btn {
     width: 24px;
     height: 24px;
@@ -729,3 +741,10 @@ ul.fs_contact_results {
     }
 }
 
+.fs_reCaptcha_settings_body{
+    .settings-body{
+        .el-form-item--label-top .el-form-item__label{
+            display: block;
+        }
+    }
+}

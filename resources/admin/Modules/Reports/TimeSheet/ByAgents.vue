@@ -1,109 +1,122 @@
 <template>
-    <div class="fs_time_sheet_box_header">
-        <div class="fs_time_sheet_box_head">
-            {{"Agent Time Sheet Report"}}
-        </div>
-        <div class="fs_time_sheet_box_actions">
-            <el-select
-                v-model="selectedAgent"
-                @change="fetchReportsByAgents"
-                placeholder="Select an Agent"
-                clearable
-                class="fs_time_sheet_select"
-            >
-                <el-option
-                    v-for="agent in allAgents"
-                    :key="agent.key"
-                    :label="agent.label"
-                    :value="agent.key"
-                />
-            </el-select>
-            <div class="fs_time_sheet_export">
-                <el-button type="default" @click="openSettings = true">
-                    <el-icon>
-                        <Download/>
-                    </el-icon>
-                    {{ translate('Export') }}
-                </el-button>
+    <div class="fs_time_sheet" v-if="isLoaded" >
+        <div class="fs_time_sheet_box_header">
+            <div class="fs_time_sheet_box_head">
+                {{translate("Agent Time Sheet Report")}}
             </div>
+            <div class="fs_time_sheet_box_actions">
+                <el-select
+                    v-model="selectedAgent"
+                    @change="fetchReportsByAgents"
+                    placeholder="Select an Agent"
+                    clearable
+                    class="fs_time_sheet_select"
+                >
+                    <el-option
+                        v-for="agent in allAgents"
+                        :key="agent.key"
+                        :label="agent.label"
+                        :value="agent.key"
+                    />
+                </el-select>
+                <div class="fs_time_sheet_export">
+                    <el-button type="default" @click="openSettings = true">
+                        <el-icon>
+                            <Download/>
+                        </el-icon>
+                        {{ translate('Export') }}
+                    </el-button>
+                </div>
+            </div>
+        </div>
+        <div class="fs_time_sheet_box_body">
+            <el-table :data="agents" style="width: 100%">
+                <el-table-column fixed="left" prop="agent" label="Agent" min-width="120">
+                    <template #default="{ row }">
+                        <div class="fs_time_sheet_person">
+                            <el-avatar :src="row.photo" size="small"></el-avatar>
+                            <a
+                                :href="`/wp-admin/user-edit.php?user_id=${row.user_id}`"
+                                target="_blank"
+                                style="text-decoration: none; margin-left: 8px;">
+                                <strong> {{ row.full_name }} </strong>
+                            </a>
+                        </div>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    :min-width="100"
+                    v-for="date in dateLabels"
+                    :key="date"
+                    :prop="date"
+                    :label="date"
+                >
+                    <template #header="{ column }">
+                        <span>{{ smartDate(column.label) }}</span>
+                    </template>
+                    <template #default="{ row }">
+                        <UserAgentDateSheetPop
+                            :user_id="row.id"
+                            :date="date"
+                            :timeSheets="timeSheets"
+                        />
+                    </template>
+                </el-table-column>
+                <el-table-column label="Total" width="160" fixed="right">
+                    <template #header="{ column }">
+                        <span>Total ({{ formatMinutes(totalMinutes) }})</span>
+                    </template>
+                    <template #default="{ row }">
+                        <strong>{{ getUserTotal(row.id) }}</strong>
+                    </template>
+                </el-table-column>
+
+                <Teleport to="body">
+                    <modal :show="openSettings" :title="translate('Include Customers in Time Sheet')"
+                           @close="openSettings = false">
+                        <template #body>
+                            <div class="fs_summary_settings">
+                                <el-row :gutter="20">
+                                    <el-col :span="18">
+                                        <span> {{ translate("If you don't select any customer then all the customers report will be displayed here otherwise it will show only selected agents report.") }}</span>
+                                    </el-col>
+                                </el-row>
+
+                                <el-transfer
+                                    v-model="includeOrExcludeAgents"
+                                    :data="allAgents"
+                                    :titles="['Available Agents', 'Selected Agents']"
+                                    filterable
+                                />
+                            </div>
+                        </template>
+                        <template #footer>
+                            <el-button @click="openSettings = false">{{ translate('Cancel') }}</el-button>
+                            <el-button type="primary" @click="exportReport">{{ translate('Export') }}</el-button>
+                        </template>
+                    </modal>
+                </Teleport>
+            </el-table>
+
         </div>
     </div>
 
-    <div class="fs_time_sheet_box_body">
-        <el-table v-if="isLoaded" :data="agents" style="width: 100%">
-            <el-table-column fixed="left" prop="user" label="User" min-width="120">
-                <template #default="{ row }">
-                    <div class="fs_time_sheet_person">
-                        <el-avatar :src="row.photo" size="small"></el-avatar>
-                        <span>{{ row.full_name }}</span>
-                    </div>
-                </template>
-            </el-table-column>
-            <el-table-column
-                :min-width="100"
-                v-for="date in dateLabels"
-                :key="date"
-                :prop="date"
-                :label="date"
-            >
-                <template #header="{ column }">
-                    <span>{{ smartDate(column.label) }}</span>
-                </template>
-                <template #default="{ row }">
-                    <AgentDateSheetPop :agent_id="row.id" :date="date" :timeSheets="timeSheets" />
-                </template>
-            </el-table-column>
-            <el-table-column label="Total" width="160" fixed="right">
-                <template #header="{ column }">
-                    <span>Total ({{ formatMinutes(totalMinutes) }})</span>
-                </template>
-                <template #default="{ row }">
-                    <strong>{{ getUserTotal(row.id) }}</strong>
-                </template>
-            </el-table-column>
-
-            <Teleport to="body">
-                <modal :show="openSettings" :title="translate('Include Customers in Time Sheet')"
-                       @close="openSettings = false">
-                    <template #body>
-                        <div class="fs_summary_settings">
-                            <el-row :gutter="20">
-                                <el-col :span="18">
-                                    <span> {{ translate("If you don't select any customer then all the customers report will be displayed here otherwise it will show only selected agents report.") }}</span>
-                                </el-col>
-                            </el-row>
-
-                            <el-transfer
-                                v-model="includeOrExcludeAgents"
-                                :data="allAgents"
-                                :titles="['Available Agents', 'Selected Agents']"
-                                filterable
-                            />
-                        </div>
-                    </template>
-                    <template #footer>
-                        <el-button @click="openSettings = false">{{ translate('Cancel') }}</el-button>
-                        <el-button type="primary" @click="exportReport">{{ translate('Export') }}</el-button>
-                    </template>
-                </modal>
-            </Teleport>
-        </el-table>
-
-        <el-skeleton :animated="true" :rows="10" v-else />
+    <div class="fs_time_sheet_skeleton"  v-else>
+        <el-skeleton :animated="true" :rows="10"/>
     </div>
 </template>
 
 
 <script>
 import {onMounted, ref} from 'vue';
-import AgentDateSheetPop from './_AgentDateSheetPop.vue';
+import UserAgentDateSheetPop from './_UserAgentDateSheetPop.vue'
 import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 import {timesheetUtils}from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils"
 import Modal from "@/admin/Pieces/Modal.vue";
 
 export default {
     name: 'ByAgents',
-    components: {Modal, AgentDateSheetPop},
+    components: {Modal, UserAgentDateSheetPop},
     props: {
         date_range: {
             type: Array,

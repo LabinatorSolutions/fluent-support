@@ -2,7 +2,8 @@
     <el-dialog
         :title="translate('Move all tickets to new Business Box')"
         v-model="move_ticket.show_modal"
-        width="60%" @close="closeModal">
+        width="60%" @close="closeModal"
+        class="fs_dialog">
         <el-form label-position="top">
             <el-form-item :label="translate('Fallback Business')">
                 <el-select v-model="move_ticket.fallback_box" :placeholder="translate('Select Business Box')">
