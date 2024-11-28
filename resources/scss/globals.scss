@@ -610,3 +610,122 @@ ul.fs_contact_results {
         display: block;
     }
 }
+.fs_advanced_filter_btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    background: #ffffff;
+    border: 1px solid #E1E4EA;
+    margin-left: 8px;
+}
+.fs-el-drawer {
+    .el-drawer__body {
+        padding: 0 !important;
+    }
+}
+.fs_label_search_drawer {
+    .fs_label_search_drawer_header {
+        margin-top: 30px;
+        padding: 0px 15px 0px 15px;
+        border-bottom: 1px solid #eaecf0;
+        .head {
+            padding: 16px 0; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center; 
+            width: 100%; 
+            box-sizing: border-box;
+
+            .left {
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 28px;
+            }
+
+            .right {
+                .icon {
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border: 1px solid #eaecf0;
+                    border-radius: 50%;
+                    cursor: pointer;
+
+                    svg {
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+            }
+        }
+    }
+    .fs-table-items {
+        padding: 20px;
+        .fs-each-search{
+            // border: 1px solid #d6dae1;
+            // border-radius: 8px;
+            font-weight: 500;
+            font-size: 16px;
+            color: #525866;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 8px 8px 16px;
+            line-height: 1;
+            border-radius: 8px;
+            transition: .3s;
+            &:hover {
+                background: #F5F7FA;
+                color: #0E121B;
+            }
+            .fs-each-search-left {
+                align-items: center;
+                display: flex;
+                gap: 20px;
+            }
+            .fs-search-name{
+                cursor: pointer;
+            }
+            .fs-search-actions {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                .el-button {
+                    margin: 0;
+                    padding: 0;
+                    border: none;
+                    background: none;
+                    transition: .3s;
+                    &:hover {
+                        background: none;
+                        border: none;
+                    }
+                    &.el-button--danger {
+                        background: none;
+                        svg {
+                            path {
+                                transition: .3s;
+                            }
+                        }
+                        &:hover {
+                            svg {
+                                path {
+                                    fill: #FB3748;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
