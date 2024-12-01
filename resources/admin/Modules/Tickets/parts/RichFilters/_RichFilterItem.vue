@@ -4,14 +4,14 @@
             {{ ucFirst(itemConfig.provider) }} <span class="fs_provider_separator">/</span> {{ itemConfig.label }}
         </td>
         <td style="width: 190px" class="fs_filter_operator">
-            <el-select size="small" :placeholder="$t('Select Operator')" @visible-change="maybeOperatorSelected"
+            <el-select :placeholder="$t('Select Operator')" @visible-change="maybeOperatorSelected"
                        v-model="item.operator">
                 <el-option v-for="(optionLabel,option) in operatorOptions" :key="option" :value="option"
                            :label="optionLabel"></el-option>
             </el-select>
         </td>
         <td class="fs_filter_value">
-            <el-input size="small" v-if="!itemConfig.type || itemConfig.type === 'text'" :placeholder="$t('Condition Value')"
+            <el-input v-if="!itemConfig.type || itemConfig.type === 'text'" :placeholder="$t('Condition Value')"
                       type="text" v-model="item.value"/>
             <template v-if="itemConfig.type === 'selections'">
                 <template v-if="itemConfig.component === 'options_selector'">
@@ -22,7 +22,7 @@
                     }"></option-selector>
                 </template>
                 <template v-else-if="itemConfig.options">
-                    <el-select size="small" :multiple="itemConfig.is_multiple" :placeholder="$t('Select Option')"
+                    <el-select :multiple="itemConfig.is_multiple" :placeholder="$t('Select Option')"
                                v-model="item.value">
                         <el-option v-for="(optionLabel,option) in itemConfig.options" :key="option" :value="option"
                                    :label="optionLabel"></el-option>
@@ -31,9 +31,9 @@
                 <pre v-else>{{ itemConfig }}</pre>
             </template>
             <template v-else-if="itemConfig.type === 'dates'">
-                <el-input size="small" v-if="item.operator === 'days_before' || item.operator === 'days_within'"
+                <el-input v-if="item.operator === 'days_before' || item.operator === 'days_within'"
                           type="number" placeholder="Days" v-model="item.value"/>
-                <el-date-picker value-format="YYYY-MM-DD" v-else-if="item.operator === 'date_range'" size="small"
+                <el-date-picker value-format="YYYY-MM-DD" v-else-if="item.operator === 'date_range'"
                     v-model="item.value"
                     type="daterange"
                     :range-separator="$t('To')"
@@ -42,13 +42,13 @@
                     :unlink-panels=true
                 >
                 </el-date-picker>
-                <el-date-picker v-else value-format="YYYY-MM-DD" size="small"
+                <el-date-picker v-else value-format="YYYY-MM-DD"
                                 v-model="item.value"></el-date-picker>
 
             </template>
         </td>
         <td style="width: 50px; text-align: right;">
-            <el-button @click="removeItem()" type="danger" size="small" plain icon="Delete"></el-button>
+            <el-button @click="removeItem()" type="danger" plain icon="Delete"></el-button>
         </td>
     </tr>
 </template>
