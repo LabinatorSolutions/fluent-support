@@ -6,10 +6,7 @@
                     {{ $t("Saved Filtering Options") }}
                 </div>
                 <div class="right">
-                    <div
-                        class="icon"
-                        @click="openLabelSearchDrawer = false"
-                    >
+                    <div class="icon" @click="closeModal">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
@@ -35,12 +32,7 @@
                 v-for="(item, index) in labelSearchList"
                 :key="index"
             >
-                <div
-                    class="fs-search-name"
-                    @click="handleAdvanceSearch(item)"
-                >
-                    {{ item.label_search_name }}
-                </div>
+                <div class="fs-search-name" @click="handleSavedSearch(item)">{{ item.label_search_name }}</div>
 
                 <div class="fs-search-actions">
                     <el-button @click="handleLabelSearchEdit(item)">
@@ -57,10 +49,7 @@
                             />
                         </svg>
                     </el-button>
-                    <el-popconfirm
-                        title="Are you sure to delete this?"
-                        @confirm="handleLabelSearchDelete(item.id)"
-                    >
+                    <el-popconfirm title="Are you sure to delete this?" @confirm="handleLabelSearchDelete(item.id)">
                         <template #reference>
                             <el-button type="danger">
                                 <svg
@@ -82,13 +71,6 @@
             </div>
         </div>
     </div>
-    <template #footer>
-        <div style="flex: auto">
-            <el-button @click="cancelClick">{{
-                translate("Close")
-            }}</el-button>
-        </div>
-    </template>
 </template>
 
 <script type="text/babel">
@@ -143,55 +125,19 @@ export default {
             search: "",
             label_search_name: "",
             labelSearchList: [],
-            // openLabelSearchDrawer: false,
             isLabelSearchOpen: false,
-            openTicketInNewTab:
-                appVars.open_ticket_in_new_tab === "yes" ? true : false,
         });
 
-        const cancelClick = () => {
-            emit('update:openLabelSearchDrawer', false);
+        const closeModal = () => {
+            emit('update:close', false);
         };
 
-        const countAdvancedFilterData = (filters) => {
-            return filters.reduce((total, innerArray) => {
-                if (Array.isArray(innerArray)) {
-                    const validEntries = innerArray.filter(
-                        (item) => item.value && item.value.trim() !== ""
-                    );
-                    return total + validEntries.length;
-                }
-                return total;
-            }, 0);
-        };
-
-        const fetchLabelSearch = () => {
-            state.openLabelSearchDrawer = true;
-            get("tickets/label-search")
-                .then((response) => {
-                    state.labelSearchList = response;
-                })
-                .always(() => {
-                    this.loading = false;
-                })
-                .catch((error) => {
-                    handleError(error);
-                });
-        };
-
-        const handleAdvanceSearch = (item) => {
-            state.advanced_filters = JSON.parse(item.advanced_filters)
-            state.filter_type = item.filter_type
-            state.label_search_name = ''
-            state.label_search_id = ''
-            fetchTickets()
+        const handleSavedSearch = (item) => {
+            emit('getSavedSearch', item)
         } 
 
         const handleLabelSearchEdit = (item) => {
-            state.advanced_filters = JSON.parse(item.advanced_filters)
-            state.filter_type = item.filter_type
-            state.label_search_name = item.label_search_name
-            state.label_search_id = item.id
+            emit('setLabelSearchItem', item)
         }
 
         const openSaveSearchModal = () => {
@@ -200,58 +146,8 @@ export default {
         }
 
         const handleLabelSearchDelete = (id) => {
-            del(`tickets/${id}/label-search`)
-                .then((response) => {
-                    if (response) {
-                        state.labelSearchList = state.labelSearchList.filter(item => item.id !== id);
-                        notify({
-                                message: response.message,
-                                type: "success",
-                                position: "bottom-right",
-                            });
-                        }
-                })
-                .catch((error) => {
-                    handleError(error);
-                })
-                .always(() => {
-                    state.doing_bulk = false;
-                });
+            emit('delete', id)
         }
-
-        const handleKeydown = (event) => {
-            const { metaKey, altKey, code } = event;
-
-            if (metaKey && altKey && code === "KeyI") {
-                return;
-            }
-
-            if (metaKey && altKey) {
-                event.preventDefault();
-
-                const keyActions = {
-                    KeyN: () => {
-                        state.add_ticket_modal = true;
-                    },
-                    KeyQ: () => {
-                        fetchTickets();
-                    },
-                    KeyF: () => {
-                        state.filter_type =
-                            state.filter_type === "advanced"
-                                ? "simple"
-                                : "advanced";
-                    },
-                };
-
-                const action = keyActions[code];
-                if (action) {
-                    action();
-                }
-            }
-        };
-
-       
 
         return {
             appVars,
@@ -267,10 +163,11 @@ export default {
             getData,
             notify,
             ...toRefs(state),
-            cancelClick,
+            closeModal,
             handleLabelSearchEdit,
             handleLabelSearchDelete,
             openSaveSearchModal,
+            handleSavedSearch,
         };
     },
 }
