@@ -125,9 +125,9 @@
                         </el-button>
                         <el-button
                             v-if="countAdvancedFilterData(advanced_filters)"
-                            @click="isLabelSearchOpen = true"
+                            @click="openSaveSearchModal"
                         >
-                            {{ translate("Save Search") }}
+                            {{ label_search_id ? translate("Update Search") : translate("Save Search") }}
                         </el-button>
                     </div>
                     <div class="fs_narrow_promo" v-else>
@@ -393,9 +393,10 @@
         </modal>
 
         <el-dialog
-            :title="title"
+            :title="translate('Save search')"
             v-model="isLabelSearchOpen"
             @close="isLabelSearchOpen = false"
+            class="fs_dialog"
         >
             <el-form label-position="top">
                 <el-form-item :label="translate('Search Name')">
@@ -507,34 +508,6 @@
             </template>
         </el-drawer>
 
-        <!-- <el-drawer
-            class=""
-            v-model="openLabelSearchDrawer"
-            :with-header="true"
-            title="I am the title"
-            size="25%"
-        > -->
-        <!-- <template #header="{ titleClass }">
-                <h4 :class="titleClass">Saved Filtering Options</h4> -->
-        <!-- <el-button type="danger" @click="close">
-                    <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
-                    Close
-                </el-button> -->
-        <!-- </template> -->
-
-        <!-- <div class="fs_drawer_content">
-                
-            </div>
-
-            <template #footer>
-                <div style="flex: auto">
-                    <el-button @click="cancelClick">{{
-                        translate("Close")
-                    }}</el-button>
-                </div>
-            </template>
-        </el-drawer> -->
-
         <ticket-bulk-actions
             v-if="appReady"
             @fetchTickets="fetchTickets()"
@@ -625,6 +598,7 @@ export default {
                 response_count: translate("Response Count"),
                 created_at: translate("Created At"),
             },
+            label_search_id: '',
             search: "",
             label_search_name: "",
             labelSearchList: [],
@@ -646,47 +620,8 @@ export default {
                 appVars.open_ticket_in_new_tab === "yes" ? true : false,
         });
 
-        const countAdvancedFilterData = (filters) => {
-            return filters.reduce((total, innerArray) => {
-                if (Array.isArray(innerArray)) {
-                    const validEntries = innerArray.filter(
-                        (item) => item.value && item.value.trim() !== ""
-                    );
-                    return total + validEntries.length;
-                }
-                return total;
-            }, 0);
-        };
-
         const cancelClick = () => {
             state.openLabelSearchDrawer = false;
-        };
-
-        const handleSaveSearch = () => {
-            state.ticket_selections = [];
-            state.loading = true;
-            let query = {
-                filter_type: state.filter_type,
-                label_search_name: state.label_search_name,
-            };
-            if (state.filter_type == "advanced" && has_pro) {
-                query.advanced_filters = JSON.stringify(state.advanced_filters);
-            }
-
-            post("tickets/label-search", {
-                query,
-            })
-                .then((response) => {
-                    notify({
-                        message: response.message,
-                        type: "success",
-                        position: "bottom-right",
-                    });
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {});
         };
 
         const fetchTickets = async () => {
@@ -923,20 +858,6 @@ export default {
             return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
         };
 
-        const fetchLabelSearch = () => {
-            state.openLabelSearchDrawer = true;
-            get("tickets/label-search")
-                .then((response) => {
-                    state.labelSearchList = response;
-                })
-                .always(() => {
-                    this.loading = false;
-                })
-                .catch((error) => {
-                    handleError(error);
-                });
-        };
-
         const resetFilters = () => {
             state.filters = {
                 status_type: "open",
@@ -960,12 +881,6 @@ export default {
             fetchTickets();
         };
 
-        const handleAdvanceSearch = (item) => {
-            state.advanced_filters = JSON.parse(item.advanced_filters)
-            state.filter_type = item.filter_type
-            fetchTickets()
-        } 
-
         const resetWithOutFetch = () => {
             state.filters = {
                 status_type: "open",
@@ -984,16 +899,113 @@ export default {
             return text.substring(0, 3).padEnd(5, ".");
         };
 
+        const countAdvancedFilterData = (filters) => {
+            return filters.reduce((total, innerArray) => {
+                if (Array.isArray(innerArray)) {
+                    const validEntries = innerArray.filter(
+                        (item) => item.value && item.value.trim() !== ""
+                    );
+                    return total + validEntries.length;
+                }
+                return total;
+            }, 0);
+        };
+
+        const handleSaveSearch = () => {
+            if (!state.label_search_name || (state.filter_type === "advanced" && !state.advanced_filters.length)) {
+                notify({
+                    message: "Please provide a valid name or filter criteria.",
+                    type: "warning",
+                    position: "bottom-right",
+                });
+                return;
+            }
+            state.isLabelSearchOpen = false
+            state.ticket_selections = [];
+            state.loading = true;
+            let query = {
+                filter_type: state.filter_type,
+                label_search_name: state.label_search_name,
+            };
+
+            if (state.filter_type == "advanced" && has_pro) {
+                query.advanced_filters = JSON.stringify(state.advanced_filters);
+            }
+
+            if (state.label_search_id) {
+                query.id = state.label_search_id;
+            }
+
+            post("tickets/label-search", {
+                query,
+            })
+                .then((response) => {
+                    notify({
+                        message: response.message,
+                        type: "success",
+                        position: "bottom-right",
+                    });
+                    state.label_search_id = null;
+                    state.loading = false;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {});
+        };
+
+        const fetchLabelSearch = () => {
+            state.openLabelSearchDrawer = true;
+            get("tickets/label-search")
+                .then((response) => {
+                    state.labelSearchList = response;
+                })
+                .always(() => {
+                    this.loading = false;
+                })
+                .catch((error) => {
+                    handleError(error);
+                });
+        };
+
+        const handleAdvanceSearch = (item) => {
+            state.advanced_filters = JSON.parse(item.advanced_filters)
+            state.filter_type = item.filter_type
+            state.label_search_name = ''
+            state.label_search_id = ''
+            fetchTickets()
+        } 
+
         const handleLabelSearchEdit = (item) => {
-            console.log(item)
+            state.advanced_filters = JSON.parse(item.advanced_filters)
+            state.filter_type = item.filter_type
+            state.label_search_name = item.label_search_name
+            state.label_search_id = item.id
+        }
+
+        const openSaveSearchModal = () => {
+            state.isLabelSearchOpen = true
+            state.label_search_name = state.label_search_id ? state.label_search_name : ''
         }
 
         const handleLabelSearchDelete = (id) => {
-            notify({
-                message: 'Successfully deleted!',
-                type: "success",
-                position: "bottom-right",
-            });
+            del(`tickets/${id}/label-search`)
+                .then((response) => {
+                    if (response) {
+                        state.labelSearchList = state.labelSearchList.filter(item => item.id !== id);
+                        notify({
+                                message: response.message,
+                                type: "success",
+                                position: "bottom-right",
+                            });
+                        }
+                })
+                .catch((error) => {
+                    handleError(error);
+                })
+                .always(() => {
+                    state.doing_bulk = false;
+                });
         }
 
         const handleKeydown = (event) => {
@@ -1139,7 +1151,8 @@ export default {
             fetchLabelSearch,
             handleAdvanceSearch,
             handleLabelSearchEdit,
-            handleLabelSearchDelete
+            handleLabelSearchDelete,
+            openSaveSearchModal,
         };
     },
 };
