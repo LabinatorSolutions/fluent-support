@@ -603,136 +603,30 @@ class TicketController extends Controller
 
     public function storeOrUpdateLabelSearch(Request $request)
     {
-        $searchData = $request->get('query');
-        $filterType = Arr::get($searchData, 'filter_type', '');
+        try {
+            $agent_id = get_current_user_id();
+            $searchData = $request->get('query');
+            $filterType = Arr::get($searchData, 'filter_type', '');
+            if ($filterType == 'advanced') {
+                return TicketHelper::saveSearchLabel($agent_id,$searchData,$filterType);
+            } 
 
-        if ($filterType == 'advanced') {
-            try {
-                $agent_id = get_current_user_id();
-                $existingRecord = Meta::where('object_id', $agent_id)
-                                        ->where('object_type', 'search_meta')
-                                        ->where('key', 'label_search')
-                                        ->first();
-
-                // If record exists, unserialize the data or initialize an empty array
-                $existingData = $existingRecord ? maybe_unserialize($existingRecord->value) ?: [] : [];
-
-                // Check if it's an update or new entry
-                $isUpdate = isset($searchData['id']) && array_filter($existingData, function ($item) use ($searchData) {
-                    return isset($item['id']) && $item['id'] == $searchData['id'];
-                });
-
-                // Handle adding or updating
-                $updatedData = $this->addOrUpdateSearchData($existingData, $searchData);
-
-                // Save the updated data back to the database
-                if ($existingRecord) {
-                    $existingRecord->update([
-                        'value' => maybe_serialize($updatedData)
-                    ]);
-                } else {
-                    Meta::insert([
-                        'object_type' => 'search_meta',
-                        'key'         => 'label_search',
-                        'object_id'   => $agent_id,
-                        'value'       => maybe_serialize($updatedData)
-                    ]);
-                }
-
-                $message = $isUpdate 
-                ? __('Your saved search has been updated successfully!', 'fluent-support') 
-                : __('Your search has been saved successfully!', 'fluent-support');
-
-                return [
-                    'message' => $message,
-                ];
-            } catch (\Exception $e) {
-                return $this->sendError($e->getMessage());
-            }
+            return [
+                'message' => __('Invalid filter type.', 'fluent-support'),
+            ];
+            
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
         }
-        return [
-            'message' => __('Invalid filter type.', 'fluent-support'),
-        ];
-    }
-
-    /**
-     * Add or update search data in the existing list.
-     *
-     * @param array $existingData
-     * @param array $searchData
-     * @return array
-     */
-    private function addOrUpdateSearchData(array $existingData, array $searchData): array
-    {
-        if (isset($searchData['id'])) {
-            $updated = false;
-
-            // Update the existing record with the matching ID
-            foreach ($existingData as &$record) {
-                if (isset($record['id']) && $record['id'] == $searchData['id']) {
-                    $record = array_merge($record, $searchData);
-                    $updated = true;
-                    break;
-                }
-            }
-
-            // If no matching record found, append the new data
-            if (!$updated) {
-                $existingData[] = $searchData;
-            }
-        } else {
-            // If no ID provided, generate a new one and add the data
-            $newId = $this->generateNewId($existingData);
-            $searchData['id'] = $newId;
-            $existingData[] = $searchData;
-        }
-
-        return $existingData;
-    }
-
-    /**
-     * Generate a new unique ID based on existing records.
-     *
-     * @param array $existingData
-     * @return int
-     */
-    private function generateNewId(array $existingData): int
-    {
-        if (empty($existingData)) {
-            return 1; // Start with ID 1 if no existing data
-        }
-
-        $maxId = max(array_column($existingData, 'id'));
-        return $maxId + 1; // Increment the highest ID by 1
     }
 
     public function deleteLabelSearch(Request $request, $search_id)
     {
-        $agent_id = get_current_user_id();
-        $existingRecord = Meta::where('object_id', $agent_id)
-                                ->where('object_type', 'search_meta')
-                                ->where('key', 'label_search')
-                                ->first();
-
-        if ($existingRecord) {
-            $existingData = maybe_unserialize($existingRecord->value) ?: [];
-
-            $updatedData = array_filter($existingData, function ($item) use ($search_id) {
-                return isset($item['id']) && $item['id'] != $search_id;
-            });
-
-            if (count($existingData) !== count($updatedData)) {
-                $existingRecord->update([
-                    'value' => maybe_serialize(array_values($updatedData))
-                ]);
-                return [
-                    'message' => __('Search deleted successfully.', 'fluent-support'),
-                ];
-            }
-
-            return [
-                'message' => __('Search ID not found.', 'fluent-support'),
-            ];
+        try {
+            $agent_id = get_current_user_id();
+            return TicketHelper::deleteSavedSearch($search_id);
+        } catch (\Exception $e) {
+            return $this->sendError($e->getMessage());
         }
     }
 }
