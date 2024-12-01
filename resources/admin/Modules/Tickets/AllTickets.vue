@@ -125,7 +125,9 @@
                         </el-button>
                         <el-button
                             v-if="countAdvancedFilterData(advanced_filters)"
+                            type="primary"
                             @click="openSaveSearchModal"
+                            class="fs_saved_search_btn"
                         >
                             {{ label_search_id ? translate("Update Search") : translate("Save Search") }}
                         </el-button>
