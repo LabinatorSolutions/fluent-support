@@ -257,7 +257,7 @@ class TicketHelper
                         ->where('object_type', 'search_meta')
                         ->where('key', 'label_search')
                         ->first();
-        $unserialize = null;
+        $unserialize = [];
         if ($lists) {
             $unserialize = maybe_unserialize($lists->value);
         }
