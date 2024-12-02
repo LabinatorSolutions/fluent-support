@@ -32,26 +32,30 @@
                         class="box-item"
                         effect="dark"
                         content="Saved Filtering Options"
-                        placement="top-start">
-                        <div
-                        v-if="filter_type === 'advanced'"
-                        class="fs_advanced_filter_btn"
-                        @click="fetchLabelSearch"
+                        placement="top-start"
                     >
-                        <svg
-                            width="14"
-                            height="10"
-                            viewBox="0 0 14 10"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M5.5 9.5H8.5V8H5.5V9.5ZM0.25 0.5V2H13.75V0.5H0.25ZM2.5 5.75H11.5V4.25H2.5V5.75Z"
-                                fill="#525866"
-                            />
-                        </svg>
-                    </div>
+                        <div class="fs_advanced_filter_btn">
+                            <el-button
+                                @click="fetchLabelSearch()"
+                                size="small"
+                                class="fs_label_search_button"
+                            >
+                                <svg
+                                    width="14"
+                                    height="10"
+                                    viewBox="0 0 14 10"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M5.5 9.5H8.5V8H5.5V9.5ZM0.25 0.5V2H13.75V0.5H0.25ZM2.5 5.75H11.5V4.25H2.5V5.75Z"
+                                        fill="#525866"
+                                    />
+                                </svg>
+                            </el-button>
+                        </div>
                     </el-tooltip>
+
                 </div>
                 <div class="fs_box_actions fs_ticket_orders">
                     <el-select filterable @change="fetchTickets()" v-model="order_by" style="padding-right: 10px;">
@@ -429,8 +433,9 @@
             v-model="openLabelSearchDrawer"
             class="fs-el-drawer"
         >
-            <label-search-drawer 
-                :labelSearchList="labelSearchList"  
+            <label-search-drawer
+                :labelSearchList="labelSearchList"
+                :filtersValue="advanced_filters"
                 @close="closeSavedSearchListModal"
                 @getSavedSearch="handleAdvanceSearch"
                 @setLabelSearchItem="handleLabelSearchEdit"
@@ -914,8 +919,8 @@ export default {
             state.label_search_id = ''
             state.openLabelSearchDrawer = false;
             fetchTickets()
-            
-        } 
+
+        }
 
         const handleLabelSearchEdit = (item) => {
             state.advanced_filters = JSON.parse(item.advanced_filters)
