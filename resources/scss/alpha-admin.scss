@@ -1179,5 +1179,39 @@ textarea {
     height: 24px;
 }
 
+.fs_label_search_drawer {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.fs_label_search_drawer_header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.fs-table-items {
+    overflow-y: auto;
+    height: calc(100% - 60px);
+    padding: 15px;
+}
+
+.no-data-message {
+    text-align: center;
+    font-size: 16px;
+    color: #999;
+    margin-top: 20px;
+}
+
+.fs-search-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
 
 

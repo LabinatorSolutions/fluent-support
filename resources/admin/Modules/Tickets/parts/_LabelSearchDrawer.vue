@@ -1,5 +1,6 @@
 <template>
     <div class="fs_label_search_drawer">
+        <!-- Fixed Header Section -->
         <div class="fs_label_search_drawer_header">
             <div class="head">
                 <div class="left">
@@ -14,6 +15,7 @@
                 </div>
             </div>
         </div>
+
         <div class="fs-table-items">
             <div
                 class="fs-each-search"
@@ -43,13 +45,10 @@
         </div>
     </div>
 </template>
+
 <script>
 import { reactive, toRefs, watch } from "vue";
-
-import {
-    useFluentHelper,
-    useNotify,
-} from "@/admin/Composable/FluentFrameworkHelper";
+import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "LabelSearchDrawer",
@@ -66,9 +65,7 @@ export default {
         }
     },
     setup(props, { emit }) {
-        const {
-            translate,
-        } = useFluentHelper();
+        const { translate } = useFluentHelper();
         const state = reactive({
             selectedItem: null,
             userSelected: false, // Flag to track user selection
@@ -121,3 +118,5 @@ export default {
     },
 };
 </script>
+
+
