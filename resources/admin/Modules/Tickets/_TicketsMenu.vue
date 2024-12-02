@@ -145,7 +145,6 @@ export default {
                 action();
             }
         },
-
     },
     mounted() {
         this.isMobile = window.innerWidth < 768;

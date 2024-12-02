@@ -36,11 +36,16 @@
                                 </div>
                             </template>
                         </el-table-column>
-                        <el-table-column prop="agent" label="agent">
+                        <el-table-column prop="agent" label="Agent">
                             <template #default="{ row }">
                                 <div class="fs-time-track-agent">
                                     <el-avatar :src="row.agent?.photo" size="small"></el-avatar>
-                                    <span>{{ row.agent?.full_name }}</span>
+                                    <a
+                                        :href="`/wp-admin/user-edit.php?user_id=${row.agent.user_id}`"
+                                        target="_blank"
+                                        style="text-decoration: none; margin-left: 8px;">
+                                        <strong> {{ row.agent?.full_name  }} </strong>
+                                    </a>
                                 </div>
                             </template>
                         </el-table-column>
@@ -229,5 +234,7 @@ export default {
     }
 };
 </script>
+
+
 
 
