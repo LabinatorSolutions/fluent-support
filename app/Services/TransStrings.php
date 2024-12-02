@@ -703,7 +703,8 @@ class TransStrings
             'By Customers' => __('By Customers', 'fluent-support'),
             'Customer Time Sheet Report' => __('Customer Time Sheet Report', 'fluent-support'),
             'Agent Time Sheet Report' => __('Customer Time Sheet Report', 'fluent-support'),
-            'Time Sheet Report By Tickets' => __('Time Sheet Report By Tickets', 'fluent-support')
+            'Time Sheet Report By Tickets' => __('Time Sheet Report By Tickets', 'fluent-support'),
+            'Saved Filtering Options' => __('Saved Filtering Options', 'fluent-support'),
         ];
     }
 }
