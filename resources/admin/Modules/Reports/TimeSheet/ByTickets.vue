@@ -8,8 +8,10 @@
                 <el-select
                     v-model="selectedMailBoxes"
                     @change="fetchReportsByTickets"
-                    placeholder="Select a Mailbox"
+                    placeholder="Select Mailboxes"
                     clearable
+                    filterable
+                    multiple
                     class="fs_time_sheet_select"
                 >
                     <el-option
@@ -19,8 +21,9 @@
                         :value="mailBox.key"
                     />
                 </el-select>
+
                 <div class="fs_time_sheet_export">
-                    <el-button type="default" @click="openSettings = true">
+                    <el-button type="default" @click="exportReport">
                         <el-icon>
                             <Download/>
                         </el-icon>
@@ -57,32 +60,6 @@
                         <strong>{{ getTicketTotal(row.id) }}</strong>
                     </template>
                 </el-table-column>
-
-                <Teleport to="body">
-                    <modal :show="openSettings" :title="translate('Include Customers in Time Sheet')"
-                           @close="openSettings = false">
-                        <template #body>
-                            <div class="fs_summary_settings">
-                                <el-row :gutter="20">
-                                    <el-col :span="18">
-                                        <span> {{ translate("If you don't select any customer then all the customers report will be displayed here otherwise it will show only selected agents report.") }}</span>
-                                    </el-col>
-                                </el-row>
-
-                                <el-transfer
-                                    v-model="includeOrExcludeMailBoxes"
-                                    :data="allMailBoxes"
-                                    :titles="['Available Mail Boxes', 'Selected Mail Boxes']"
-                                    filterable
-                                />
-                            </div>
-                        </template>
-                        <template #footer>
-                            <el-button @click="openSettings = false">{{ translate('Cancel') }}</el-button>
-                            <el-button type="primary" @click="exportReport">{{ translate('Export') }}</el-button>
-                        </template>
-                    </modal>
-                </Teleport>
             </el-table>
         </div>
     </div>
@@ -115,9 +92,7 @@ export default {
         const timeSheets = ref({});
         const dateLabels = ref([]);
         const isLoaded = ref(false);
-        const openSettings = ref(false);
         const selectedMailBoxes = ref([]);
-        const includeOrExcludeMailBoxes = ref([]);
 
         const fetchReportsByTickets = async () => {
             isLoaded.value = false;
@@ -153,8 +128,9 @@ export default {
 
 
         const exportReport = () => {
+            console.log("I am here")
             timesheetUtils.exportReport({
-                selectedItems: includeOrExcludeMailBoxes.value,
+                selectedItems: selectedMailBoxes.value,
                 dateRange: props.date_range,
                 action: "fluent_support_export_tickets_timesheet",
                 itemKey: "mailbox_id"
@@ -173,10 +149,8 @@ export default {
             getTicketTotal,
             formatMinutes,
             smartDate,
-            openSettings,
             allMailBoxes,
             selectedMailBoxes,
-            includeOrExcludeMailBoxes,
             exportReport,
             translate
         };

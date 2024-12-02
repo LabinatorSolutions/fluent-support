@@ -9,8 +9,10 @@
                     v-model="selectedCustomer"
                     @change="fetchReportsByCustomers"
                     placeholder="Select a customer"
-                    class="fs_time_sheet_select"
                     clearable
+                    filterable
+                    multiple
+                    class="fs_time_sheet_select"
                 >
                     <el-option
                         v-for="customer in allCustomers"
@@ -21,7 +23,7 @@
 
                 </el-select>
                 <div class="fs_time_sheet_export">
-                    <el-button type="default" @click="openSettings=true">
+                    <el-button type="default" @click="exportReport">
                         <el-icon>
                             <Download/>
                         </el-icon>
@@ -72,32 +74,6 @@
                         <strong>{{ getUserTotal(row.id) }}</strong>
                     </template>
                 </el-table-column>
-
-                <Teleport to="body">
-                    <modal :show="openSettings" :title="translate('Include Customers in Time Sheet')"
-                           @close="openSettings = false">
-                        <template #body>
-                            <div class="fs_summary_settings">
-                                <el-row :gutter="20">
-                                    <el-col :span="18">
-                                        <span> {{ translate("If you don't select any customer then all the customers report will be displayed here otherwise it will show only selected agents report.") }}</span>
-                                    </el-col>
-                                </el-row>
-
-                                <el-transfer
-                                    v-model="includeOrExcludeCustomers"
-                                    :data="allCustomers"
-                                    :titles="['Available Agents', 'Selected Agents']"
-                                    filterable
-                                />
-                            </div>
-                        </template>
-                        <template #footer>
-                            <el-button @click="openSettings = false">{{ translate('Cancel') }}</el-button>
-                            <el-button type="primary" @click="exportReport">{{ translate('Export') }}</el-button>
-                        </template>
-                    </modal>
-                </Teleport>
             </el-table>
         </div>
     </div>
@@ -131,8 +107,6 @@ export default {
         const dateLabels = ref([]);
         const isLoaded = ref(false);
         const selectedCustomer = ref(null);
-        const openSettings = ref(false);
-        const includeOrExcludeCustomers = ref([]);
 
         const fetchReportsByCustomers = async () => {
             isLoaded.value = false;
@@ -172,7 +146,7 @@ export default {
 
         const exportReport = () => {
             timesheetUtils.exportReport({
-                selectedItems: includeOrExcludeCustomers.value,
+                selectedItems: selectedCustomer.value,
                 dateRange: props.date_range,
                 action: "fluent_support_export_customers_timesheet",
                 itemKey: "selectedCustomers"
@@ -193,8 +167,6 @@ export default {
             formatMinutes,
             smartDate,
             selectedCustomer,
-            openSettings,
-            includeOrExcludeCustomers,
             translate,
             exportReport
         };
