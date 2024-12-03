@@ -50,7 +50,9 @@ class Settings
         }
 
         if ($settingsKey == 'global_business_settings' && !empty($settings['agent_time_tracking'])) {
-            TimeTrackMigrator::migrate();
+            if (class_exists(TimeTrackMigrator::class) && $settings['agent_time_tracking'] === 'yes') {
+                TimeTrackMigrator::migrate();
+            }
         }
 
         return Helper::updateOption($settingsKey, $settings);
@@ -79,7 +81,8 @@ class Settings
             'del_files_on_close'    => 'no',
             'enable_admin_bar_summary' => 'no',
             'enable_draft_mode' => 'no',
-            'agent_feedback_rating' => 'no'
+            'agent_feedback_rating' => 'no',
+            'keyboard_shortcuts'   => 'no'
         ];
 
         //Get default/existing settings from database using the key global_business_settings
@@ -193,6 +196,13 @@ class Settings
                 'checkbox_label' => __('Enable Two-Factor Authentication', 'fluent-support'),
                 'inline_help'    => __('If you enable this setting, users will be required to submit a second form of authentication, such as a code sent to their email, to login.', 'fluent-support')
             ],
+            'keyboard_shortcuts' => [
+                'type'           => 'inline-checkbox',
+                'true_label'     => 'yes',
+                'false-label'    => 'no',
+                'checkbox_label' => __('Enable Keyboard Shortcuts', 'fluent-support'),
+                'inline_help'    => __("If you enable this, agents can use keyboard shortcuts for faster actions.", 'fluent-support')
+            ]
         ];
 
         if (defined('FLUENTSUPPORTPRO_PLUGIN_VERSION')) {
