@@ -148,10 +148,14 @@ export default {
     },
     mounted() {
         this.isMobile = window.innerWidth < 768;
-        window.addEventListener('keydown', this.handleKeydown);  // Add keyboard listener
+        if(this.appVars.keyboard_shortcuts === 'yes') {
+            window.addEventListener('keydown', this.handleKeydown);
+        }
     },
     unmounted() {
-        window.removeEventListener('keydown', this.handleKeydown);  // Clean up on component destroy
+        if(this.appVars.keyboard_shortcuts === 'yes') {
+            window.removeEventListener('keydown', this.handleKeydown);
+        }
     }
 };
 </script>

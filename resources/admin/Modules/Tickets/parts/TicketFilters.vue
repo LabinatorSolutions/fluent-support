@@ -183,11 +183,15 @@ export default {
 
 
         onMounted(() => {
-            window.addEventListener("keydown", handleKeydown);
+            if(appVars.keyboard_shortcuts === 'yes') {
+                window.addEventListener("keydown", handleKeydown);
+            }
         });
 
         onUnmounted(() => {
-            window.removeEventListener("keydown", handleKeydown);
+            if(appVars.keyboard_shortcuts === 'yes') {
+                window.removeEventListener("keydown", handleKeydown);
+            }
         });
 
         return {
