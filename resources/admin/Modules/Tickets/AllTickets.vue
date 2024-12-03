@@ -1024,11 +1024,15 @@ export default {
                 fetchTickets();
             });
             setTitle(translate("All Tickets"));
-            window.addEventListener("keydown", handleKeydown);
+            if(appVars.keyboard_shortcuts === 'yes') {
+                window.addEventListener("keydown", handleKeydown);
+            }
         });
 
         onUnmounted(() => {
-            window.removeEventListener("keydown", handleKeydown);
+            if(appVars.keyboard_shortcuts === 'yes') {
+                window.removeEventListener("keydown", handleKeydown);
+            }
         });
 
         watch(

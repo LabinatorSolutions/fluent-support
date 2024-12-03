@@ -1410,8 +1410,9 @@ export default {
 
             await scrollToHash();
             window.addEventListener("hashchange", scrollToHash);
-            window.addEventListener("keydown", handleKeydown);
-
+            if(appVars.keyboard_shortcuts === 'yes') {
+                window.addEventListener("keydown", handleKeydown);
+            }
         });
 
         onBeforeUnmount(() => {
@@ -1421,7 +1422,9 @@ export default {
                     ticket_id: props.ticket_id
                 }
             }));
-            window.removeEventListener("keydown", handleKeydown);
+            if(appVars.keyboard_shortcuts === 'yes') {
+                window.removeEventListener("keydown", handleKeydown);
+            }
         });
 
         return {
