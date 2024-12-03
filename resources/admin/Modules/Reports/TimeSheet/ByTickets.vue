@@ -129,7 +129,6 @@ export default {
 
 
         const exportReport = () => {
-            console.log("I am here")
             timesheetUtils.exportReport({
                 selectedItems: selectedMailBoxes.value,
                 dateRange: props.date_range,
