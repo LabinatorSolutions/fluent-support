@@ -12,6 +12,7 @@
                     clearable
                     filterable
                     multiple
+                    collapse-tags
                     class="fs_time_sheet_select"
                 >
                     <el-option
