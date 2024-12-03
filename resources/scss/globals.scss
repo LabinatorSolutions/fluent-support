@@ -649,11 +649,11 @@ ul.fs_contact_results {
         padding: 0px 15px 0px 15px;
         border-bottom: 1px solid #eaecf0;
         .head {
-            padding: 16px 0; 
+            padding: 16px 0;
             display: flex;
             justify-content: space-between;
-            align-items: center; 
-            width: 100%; 
+            align-items: center;
+            width: 100%;
             box-sizing: border-box;
 
             .left {
@@ -685,8 +685,6 @@ ul.fs_contact_results {
     .fs-table-items {
         padding: 20px;
         .fs-each-search{
-            // border: 1px solid #d6dae1;
-            // border-radius: 8px;
             font-weight: 500;
             font-size: 16px;
             color: #525866;
@@ -697,6 +695,11 @@ ul.fs_contact_results {
             line-height: 1;
             border-radius: 8px;
             transition: .3s;
+            &.selected {
+                border: 1px solid #0E121B;
+                background-color: #F5F7FA;
+                color: #0E121B;
+            }
             &:hover {
                 background: #F5F7FA;
                 color: #0E121B;
