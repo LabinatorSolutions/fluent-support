@@ -14,10 +14,13 @@
                 <el-icon style="font-size: 30px;">
                     <Clock/>
                 </el-icon>
-                <el-progress :color="progressColor" style="width: 100%;"
-                             :percentage="percentileCompleted"
-                             :text-inside="true" :stroke-width="20">
-                    <span v-if="estimatedMinutes">{{ percentileCompleted }}%</span>
+                <el-progress
+                    :color="progressColor"
+                    style="width: 100%;"
+                    :percentage="percentileCompleted"
+                    :text-inside="true"
+                    :stroke-width="20">
+                    <span v-if="estimatedMinutes" :style="{ color: textColor }">{{ percentileCompleted }}%</span>
                     <span v-else>{{ translate('n/a') }}</span>
                 </el-progress>
             </div>
@@ -197,6 +200,10 @@ export default {
                 });
         }
 
+        const textColor = computed(() => {
+            return percentileCompleted.value >= 15 ? 'white' : 'black';
+        });
+
         const updateEstimatedTime = () => {
             state.updating = true;
             post('time-tracks/' + props.ticket_id + '/estimated-time', {
@@ -229,7 +236,8 @@ export default {
             logTime,
             formatMinutes,
             updateEstimatedTime,
-            translate
+            textColor,
+            translate,
         };
     }
 };
