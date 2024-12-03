@@ -72,7 +72,7 @@ export default {
         });
 
         const closeModal = () => {
-            emit("update:close", false);
+            emit("close", false);
         };
 
         const selectItem = (index) => {
