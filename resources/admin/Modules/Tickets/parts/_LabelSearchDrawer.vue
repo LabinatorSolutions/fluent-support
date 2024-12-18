@@ -18,6 +18,7 @@
 
         <div class="fs-table-items">
             <div
+                v-if="labelSearchList.length"
                 class="fs-each-search"
                 v-for="(item, index) in labelSearchList"
                 :key="index"
@@ -41,6 +42,9 @@
                         </template>
                     </el-popconfirm>
                 </div>
+            </div>
+            <div v-else-if="!labelSearchList.length">
+                <p class="fs-table-no-data">No Data Found</p>
             </div>
         </div>
     </div>
