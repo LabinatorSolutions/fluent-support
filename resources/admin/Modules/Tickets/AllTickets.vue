@@ -840,6 +840,9 @@ export default {
         };
 
         const getExcerptBox = (text) => {
+            if (!text || typeof text !== "string") {
+                return "";
+            }
             return text.substring(0, 3).padEnd(5, ".");
         };
 
