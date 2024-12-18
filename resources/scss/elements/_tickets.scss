@@ -1424,13 +1424,20 @@ ul.fs_tk_actions {
     background: rgba(255, 255, 255, 0.6);
 }
 
-.fs_time_sheet_box_actions, .fs_agent_report_rh_filter, .fs_product_report_rh_filter, .fs_feedback_filter_options {
+.fs_agent_report_rh_filter, .fs_product_report_rh_filter, .fs_feedback_filter_options {
     display: flex;
     .el-select {
         min-width: 175px;
         .el-select__input{
             width: 100% !important;
         }
+    }
+}
+
+.fs_time_sheet_box_actions {
+    display: flex;
+    .el-select {
+        width: 250px;
     }
 }
 
