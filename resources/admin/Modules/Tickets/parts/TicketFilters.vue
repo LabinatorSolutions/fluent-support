@@ -3,7 +3,7 @@
         <div class="fs_tk_filter">
             <label>{{$t('Status')}}</label>
             <el-radio-group @change="fetchTickets()" v-model="filters.status_type">
-                <el-radio-button v-for="(status, statusKey) in ticket_statuses_group" :label=statusKey>
+                <el-radio-button v-for="(status, statusKey) in ticket_statuses_group" :value=statusKey>
                     {{translate(ucFirst(statusKey))}}
                 </el-radio-button>
             </el-radio-group>
