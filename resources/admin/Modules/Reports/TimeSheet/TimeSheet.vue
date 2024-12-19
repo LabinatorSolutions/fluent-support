@@ -21,7 +21,6 @@
                         start-placeholder="Start date"
                         end-placeholder="End date"
                         :shortcuts="shortcuts"
-                        popper-class="fs-daterange-popover"
                     />
 
                 </div>

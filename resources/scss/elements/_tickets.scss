@@ -1351,52 +1351,6 @@ ul.fs_tk_actions {
 }
 
 
-.el-popper {
-    &.fs-daterange-popover {
-        .el-picker-panel__body {
-            .el-picker-panel__content {
-                table {
-                    margin: 0;
-
-                    tbody {
-                        tr {
-                            th {
-                                background: none;
-                                border: none;
-                                font-weight: 500;
-                                color: #000000;
-                            }
-
-                            td {
-                                border: none;
-                                background: none;
-
-                                &.in-range {
-                                    .el-date-table-cell {
-                                        background: rgba(107, 60, 235, 0.1);
-                                    }
-                                }
-
-                                &.end-date,
-                                &.start-date {
-                                    .el-date-table-cell {
-                                        color: #ffffff;
-                                        background-color: #6B3CEB;
-                                    }
-                                }
-
-                                .el-date-table-cell__text {
-                                    font-weight: 600;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 .fs_time_sheet_person {
     display: flex;
     align-items: center;
