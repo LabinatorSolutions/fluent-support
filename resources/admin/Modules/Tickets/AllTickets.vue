@@ -31,7 +31,7 @@
                     <el-tooltip
                         class="box-item"
                         effect="dark"
-                        :content="translate('Saved Filtering Options')"
+                        :content="translate('Saved Filters')"
                         placement="top-start"
                     >
                         <div class="fs_advanced_filter_btn">
