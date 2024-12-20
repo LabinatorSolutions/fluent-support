@@ -4,7 +4,7 @@
         <div class="fs_label_search_drawer_header">
             <div class="head">
                 <div class="left">
-                    {{ translate("Saved Filtering Options") }}
+                    {{ translate("Saved Filters") }}
                 </div>
                 <div class="right">
                     <div class="icon" @click="closeModal">
