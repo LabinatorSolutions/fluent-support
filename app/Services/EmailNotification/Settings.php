@@ -167,7 +167,7 @@ class Settings
                 'true_label'     => 'yes',
                 'false-label'    => 'no',
                 'checkbox_label' => __('Delete all attachments on ticket close', 'fluent-support'),
-                'inline_help'    => __('If you enable this then when a ticket get closed it will delete all the attachments associated with the particular ticket.', 'fluent-support')
+                'inline_help'    => __('If you enable this feature, all attachments associated with a ticket will be deleted when the ticket is closed.', 'fluent-support')
             ],
             'enable_admin_bar_summary' => [
                 'type'           => 'inline-checkbox',
@@ -181,7 +181,7 @@ class Settings
                 'true_label'     => 'yes',
                 'false-label'    => 'no',
                 'checkbox_label' => __('Enable Draft Mode', 'fluent-support'),
-                'inline_help'    => __('If you enable this setting, then if an agent close a ticket accidentally then the written response will be saved as draft.', 'fluent-support')
+                'inline_help'    => __('If you enable this setting, any written response will be saved as a draft if an agent accidentally closes a ticket.', 'fluent-support')
             ],
             'custom_registration_form_field'   => [
                 'wrapper_class' => 'inline-checkbox',
