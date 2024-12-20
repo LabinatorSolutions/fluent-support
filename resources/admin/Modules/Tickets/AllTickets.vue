@@ -942,6 +942,7 @@ export default {
             del(`tickets/${id}/label-search`)
                 .then((response) => {
                     if (response) {
+                        state.label_search_id = state.label_search_id === id ? null : state.label_search_id;
                         state.labelSearchList = state.labelSearchList.filter(item => item.id !== id);
                         notify({
                                 message: response.message,
