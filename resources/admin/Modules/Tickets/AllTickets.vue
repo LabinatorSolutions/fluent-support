@@ -30,6 +30,7 @@
 
                     <el-tooltip
                         class="box-item"
+                        v-if="has_pro"
                         effect="dark"
                         :content="translate('Saved Filters')"
                         placement="top-start"
