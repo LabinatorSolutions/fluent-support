@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-25 09:07+0000\n"
+"POT-Creation-Date: 2024-12-23 06:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -35,17 +35,13 @@ msgstr ""
 msgid " in this ticket"
 msgstr ""
 
-#: app/Models/Ticket.php:1487 builds/fluent-support/app/Models/Ticket.php:1487
-msgid " tickets has been assigned to"
-msgstr ""
-
 #: app/Services/Tickets/TicketService.php:263
 #: builds/fluent-support/app/Services/Tickets/TicketService.php:263
 msgid " tickets have been deleted"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:74
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:74
+#: app/Services/EmailNotification/Settings.php:76
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:76
 #, php-format
 msgid ""
 "%1sPlease login or create an account to access the Customer Support "
@@ -187,8 +183,8 @@ msgid ""
 "sites, including content access control and subscription billing."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:147
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:147
+#: app/Services/EmailNotification/Settings.php:150
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:150
 msgid "Accepted File Types"
 msgstr ""
 
@@ -219,6 +215,7 @@ msgid "Actions"
 msgstr ""
 
 #: app/Hooks/Handlers/EmailVerificationHandler.php:57
+#: builds/fluent-support/app/Hooks/Handlers/EmailVerificationHandler.php:57
 msgid "Activate your account"
 msgstr ""
 
@@ -233,7 +230,7 @@ msgstr ""
 #: app/Services/TransStrings.php:282
 #: app/Hooks/Handlers/CustomerPortalHandler.php:117
 #: builds/fluent-support/app/Services/TransStrings.php:282
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:127
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:117
 msgid "active"
 msgstr ""
 
@@ -246,10 +243,10 @@ msgid "Active Tickets"
 msgstr ""
 
 #: app/Hooks/Handlers/Menu.php:84 app/Hooks/Handlers/Menu.php:85
-#: app/Hooks/Handlers/Menu.php:159
+#: app/Hooks/Handlers/Menu.php:161
 #: builds/fluent-support/app/Hooks/Handlers/Menu.php:84
 #: builds/fluent-support/app/Hooks/Handlers/Menu.php:85
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:159
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:161
 msgid "Activities"
 msgstr ""
 
@@ -413,7 +410,7 @@ msgstr ""
 #: app/Services/TransStrings.php:640
 #: app/Hooks/Handlers/CustomerPortalHandler.php:135
 #: builds/fluent-support/app/Services/TransStrings.php:640
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:145
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:135
 msgid "Additional info"
 msgstr ""
 
@@ -500,8 +497,8 @@ msgstr ""
 msgid "Agent Email"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:203
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:203
+#: app/Services/EmailNotification/Settings.php:213
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:213
 msgid "Agent Feedback Rating"
 msgstr ""
 
@@ -533,8 +530,8 @@ msgstr ""
 msgid "Agent Performance (Today)"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:211
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:211
+#: app/Services/EmailNotification/Settings.php:221
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:221
 msgid "Agent Time Tracking"
 msgstr ""
 
@@ -543,15 +540,15 @@ msgstr ""
 msgid "Agents Reports"
 msgstr ""
 
-#: app/Services/Helper.php:1049
-#: builds/fluent-support/app/Services/Helper.php:1049
+#: app/Services/Helper.php:1046
+#: builds/fluent-support/app/Services/Helper.php:1046
 msgid "AI Activity settings has been updated"
 msgstr ""
 
 #: app/Services/TransStrings.php:285
 #: app/Hooks/Handlers/CustomerPortalHandler.php:111
 #: builds/fluent-support/app/Services/TransStrings.php:285
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:121
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:111
 msgid "All"
 msgstr ""
 
@@ -585,7 +582,7 @@ msgstr ""
 #: app/Services/TransStrings.php:287
 #: app/Hooks/Handlers/CustomerPortalHandler.php:157
 #: builds/fluent-support/app/Services/TransStrings.php:287
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:167
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:157
 msgid "All Products"
 msgstr ""
 
@@ -704,7 +701,7 @@ msgid "App Secret"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:171
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:181
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:171
 msgid "Apply"
 msgstr ""
 
@@ -836,7 +833,7 @@ msgid "Are You Sure? You can not undo this action."
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:169
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:179
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:169
 msgid "Ascending"
 msgstr ""
 
@@ -1018,9 +1015,9 @@ msgstr ""
 msgid "Business Inbox Access Restriction"
 msgstr ""
 
-#: app/Services/TransStrings.php:120 app/Hooks/Handlers/Menu.php:169
+#: app/Services/TransStrings.php:120 app/Hooks/Handlers/Menu.php:171
 #: builds/fluent-support/app/Services/TransStrings.php:120
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:169
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:171
 msgid "Business Inboxes"
 msgstr ""
 
@@ -1037,8 +1034,23 @@ msgstr ""
 #: app/Services/TransStrings.php:385
 #: app/Hooks/Handlers/CustomerPortalHandler.php:161
 #: builds/fluent-support/app/Services/TransStrings.php:385
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:171
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:161
 msgid "by"
+msgstr ""
+
+#: app/Services/TransStrings.php:702
+#: builds/fluent-support/app/Services/TransStrings.php:702
+msgid "By Agents"
+msgstr ""
+
+#: app/Services/TransStrings.php:703
+#: builds/fluent-support/app/Services/TransStrings.php:703
+msgid "By Customers"
+msgstr ""
+
+#: app/Services/TransStrings.php:701
+#: builds/fluent-support/app/Services/TransStrings.php:701
+msgid "By Tickets"
 msgstr ""
 
 #: app/Services/TransStrings.php:132
@@ -1101,7 +1113,7 @@ msgid "Click Here to Renew your License"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:110
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:120
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:110
 msgid "Click Here to Write a reply"
 msgstr ""
 
@@ -1123,7 +1135,7 @@ msgstr ""
 #: app/Services/TransStrings.php:319
 #: app/Hooks/Handlers/CustomerPortalHandler.php:131
 #: builds/fluent-support/app/Services/TransStrings.php:319
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:141
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:131
 msgid "Click to upload"
 msgstr ""
 
@@ -1150,7 +1162,7 @@ msgstr ""
 #: app/Services/TransStrings.php:379
 #: app/Hooks/Handlers/CustomerPortalHandler.php:127
 #: builds/fluent-support/app/Services/TransStrings.php:379
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:137
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:127
 msgid "Close Ticket"
 msgstr ""
 
@@ -1169,14 +1181,14 @@ msgstr ""
 #: builds/fluent-support/app/Services/TransStrings.php:161
 #: builds/fluent-support/app/Services/Helper.php:119
 #: builds/fluent-support/app/Services/Helper.php:686
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:124
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:114
 msgid "Closed"
 msgstr ""
 
 #: app/Services/TransStrings.php:162
 #: app/Hooks/Handlers/CustomerPortalHandler.php:119
 #: builds/fluent-support/app/Services/TransStrings.php:162
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:129
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:119
 msgid "closed"
 msgstr ""
 
@@ -1279,7 +1291,7 @@ msgid "Continue"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:109
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:119
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:109
 msgid "Conversation"
 msgstr ""
 
@@ -1341,7 +1353,7 @@ msgid "Create"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:159
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:169
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:159
 msgid "Create a New Ticket"
 msgstr ""
 
@@ -1363,7 +1375,7 @@ msgstr ""
 #: app/Services/TransStrings.php:51
 #: app/Hooks/Handlers/CustomerPortalHandler.php:142
 #: builds/fluent-support/app/Services/TransStrings.php:51
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:152
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:142
 msgid "Create Customer"
 msgstr ""
 
@@ -1428,7 +1440,7 @@ msgstr ""
 #: app/Services/TransStrings.php:373
 #: app/Hooks/Handlers/CustomerPortalHandler.php:155
 #: builds/fluent-support/app/Services/TransStrings.php:373
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:165
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:155
 msgid "Create Ticket"
 msgstr ""
 
@@ -1439,7 +1451,7 @@ msgid "Created At"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:174
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:184
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:174
 msgid "Created at"
 msgstr ""
 
@@ -1504,8 +1516,8 @@ msgstr ""
 msgid "Custom Fields"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:186
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:186
+#: app/Services/EmailNotification/Settings.php:189
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:189
 msgid "Custom Registration Form Field"
 msgstr ""
 
@@ -1554,9 +1566,9 @@ msgstr ""
 msgid "Customer has been added"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:430
+#: app/Http/Controllers/TicketController.php:432
 #: app/Http/Controllers/CustomerController.php:90
-#: builds/fluent-support/app/Http/Controllers/TicketController.php:430
+#: builds/fluent-support/app/Http/Controllers/TicketController.php:432
 #: builds/fluent-support/app/Http/Controllers/CustomerController.php:90
 msgid "Customer has been updated"
 msgstr ""
@@ -1593,6 +1605,12 @@ msgid ""
 "support staff"
 msgstr ""
 
+#: app/Services/TransStrings.php:704 app/Services/TransStrings.php:705
+#: builds/fluent-support/app/Services/TransStrings.php:704
+#: builds/fluent-support/app/Services/TransStrings.php:705
+msgid "Customer Time Sheet Report"
+msgstr ""
+
 #: app/Models/Customer.php:51 builds/fluent-support/app/Models/Customer.php:51
 msgid "Customer Title"
 msgstr ""
@@ -1621,7 +1639,7 @@ msgstr ""
 #: app/Services/TransStrings.php:332
 #: app/Hooks/Handlers/CustomerPortalHandler.php:120
 #: builds/fluent-support/app/Services/TransStrings.php:332
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:130
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:120
 msgid "Date"
 msgstr ""
 
@@ -1635,13 +1653,13 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:166
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:166
+#: app/Services/EmailNotification/Settings.php:169
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:169
 msgid "Delete all attachments on ticket close"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:140
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:150
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:140
 msgid "Delete Customer"
 msgstr ""
 
@@ -1671,7 +1689,7 @@ msgid "Delete Tickets"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:170
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:180
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:170
 msgid "Descending"
 msgstr ""
 
@@ -1692,8 +1710,8 @@ msgstr ""
 msgid "Disable Activity Logs"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:141
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:141
+#: app/Services/EmailNotification/Settings.php:144
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:144
 msgid "Disable Public Ticket interaction"
 msgstr ""
 
@@ -1888,8 +1906,8 @@ msgstr ""
 msgid "Enable Conditional Logics"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:180
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:180
+#: app/Services/EmailNotification/Settings.php:183
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:183
 msgid "Enable Draft Mode"
 msgstr ""
 
@@ -1898,8 +1916,8 @@ msgstr ""
 msgid "Enable Dynamic Product Selection"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:173
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:173
+#: app/Services/EmailNotification/Settings.php:176
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:176
 msgid "Enable Fluent Summary In Admin Bar"
 msgstr ""
 
@@ -1908,13 +1926,18 @@ msgstr ""
 msgid "Enable FluentCRM Integration"
 msgstr ""
 
+#: app/Services/EmailNotification/Settings.php:203
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:203
+msgid "Enable Keyboard Shortcuts"
+msgstr ""
+
 #: app/Services/TransStrings.php:86
 #: builds/fluent-support/app/Services/TransStrings.php:86
 msgid "Enable This Email Notification"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:193
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:193
+#: app/Services/EmailNotification/Settings.php:196
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:196
 msgid "Enable Two-Factor Authentication"
 msgstr ""
 
@@ -1958,8 +1981,8 @@ msgstr ""
 msgid "Export Agents Summary"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:564
-#: builds/fluent-support/app/Http/Controllers/TicketController.php:564
+#: app/Http/Controllers/TicketController.php:566
+#: builds/fluent-support/app/Http/Controllers/TicketController.php:566
 msgid "Failed to create task."
 msgstr ""
 
@@ -2244,15 +2267,15 @@ msgstr ""
 msgid "Generate Responses with AI"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:313
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:313
+#: app/Hooks/Handlers/Menu.php:316
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:316
 msgid ""
 "Get activity notification to Slack Channel and keep your support team super "
 "engaged"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:306
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:306
+#: app/Hooks/Handlers/Menu.php:309
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:309
 msgid ""
 "Get activity notification to Telegram Messenger and reply directly from "
 "Telegram inbox"
@@ -2283,9 +2306,9 @@ msgstr ""
 msgid "Global Email Settings"
 msgstr ""
 
-#: app/Services/TransStrings.php:39 app/Hooks/Handlers/Menu.php:185
+#: app/Services/TransStrings.php:39 app/Hooks/Handlers/Menu.php:187
 #: builds/fluent-support/app/Services/TransStrings.php:39
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:185
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:187
 msgid "Global Settings"
 msgstr ""
 
@@ -2339,7 +2362,9 @@ msgstr ""
 msgid "Have a new license Key?"
 msgstr ""
 
+#: app/Hooks/Handlers/EmailVerificationHandler.php:47
 #: app/Hooks/Handlers/TwoFaHandler.php:149
+#: builds/fluent-support/app/Hooks/Handlers/EmailVerificationHandler.php:47
 #: builds/fluent-support/app/Hooks/Handlers/TwoFaHandler.php:149
 #, php-format
 msgid "Hello %s,"
@@ -2385,50 +2410,56 @@ msgstr ""
 msgid "If you don't select any column, by default system will take all."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:212
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:212
+#: app/Services/EmailNotification/Settings.php:170
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:170
+msgid ""
+"If you enable this feature, all attachments associated with a ticket will be "
+"deleted when the ticket is closed."
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:184
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:184
+msgid ""
+"If you enable this setting, any written response will be saved as a draft if "
+"an agent accidentally closes a ticket."
+msgstr ""
+
+#: app/Services/EmailNotification/Settings.php:222
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:222
 msgid ""
 "If you enable this setting, the agent can specify the amount of time needed "
 "to complete a ticket."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:181
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:181
-msgid ""
-"If you enable this setting, then if an agent close a ticket accidentally "
-"then the written response will be saved as draft."
-msgstr ""
-
-#: app/Services/EmailNotification/Settings.php:194
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:194
+#: app/Services/EmailNotification/Settings.php:197
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:197
 msgid ""
 "If you enable this setting, users will be required to submit a second form "
 "of authentication, such as a code sent to their email, to login."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:204
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:204
+#: app/Services/EmailNotification/Settings.php:214
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:214
 msgid ""
 "If you enable this setting, users will have the option to provide feedback "
 "on an agent's response."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:142
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:142
+#: app/Services/EmailNotification/Settings.php:145
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:145
 msgid ""
 "If you enable this then only logged in user can reply the tickets. Otherwise,"
 " url will be signed and intended user can reply without logging in"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:167
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:167
+#: app/Services/EmailNotification/Settings.php:204
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:204
 msgid ""
-"If you enable this then when a ticket get closed it will delete all the "
-"attachments associated with the particular ticket."
+"If you enable this, agents can use keyboard shortcuts for faster actions."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:174
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:174
+#: app/Services/EmailNotification/Settings.php:177
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:177
 msgid ""
 "If you enable this, logged in user can see the ticket summary from top nav "
 "bar."
@@ -2447,7 +2478,7 @@ msgid ""
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:125
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:135
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:125
 msgid "If you still have related issues. Please reopen this ticket and reply"
 msgstr ""
 
@@ -2598,6 +2629,11 @@ msgstr ""
 #: app/Http/Controllers/SettingsController.php:340
 #: builds/fluent-support/app/Http/Controllers/SettingsController.php:340
 msgid "Invalid API key. Please provide a valid ChatGPT API key."
+msgstr ""
+
+#: app/Http/Controllers/TicketController.php:615
+#: builds/fluent-support/app/Http/Controllers/TicketController.php:615
+msgid "Invalid filter type."
 msgstr ""
 
 #: app/Http/Controllers/CustomerPortalController.php:103
@@ -2816,17 +2852,17 @@ msgid "Login Form"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:116
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:126
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:116
 msgid "Logout"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:146
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:156
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:146
 msgid "Looking for similar articles..."
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:138
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:148
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:138
 msgid "Looks like you did not open any support tickets yet"
 msgstr ""
 
@@ -2945,8 +2981,8 @@ msgstr ""
 msgid "Match Value"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:154
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:154
+#: app/Services/EmailNotification/Settings.php:157
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:157
 msgid "Max File Size (in MegaByte)"
 msgstr ""
 
@@ -2961,8 +2997,8 @@ msgstr ""
 msgid "Max Waiting"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:160
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:160
+#: app/Services/EmailNotification/Settings.php:163
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:163
 msgid "Maximum File Upload"
 msgstr ""
 
@@ -3003,8 +3039,8 @@ msgstr ""
 msgid "Merge Tickets"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:134
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:134
+#: app/Services/EmailNotification/Settings.php:137
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:137
 msgid "Message for non logged in users"
 msgstr ""
 
@@ -3052,7 +3088,7 @@ msgstr ""
 #: app/Services/TransStrings.php:284
 #: app/Hooks/Handlers/CustomerPortalHandler.php:115
 #: builds/fluent-support/app/Services/TransStrings.php:284
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:125
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:115
 msgid "new"
 msgstr ""
 
@@ -3073,7 +3109,7 @@ msgstr ""
 #: app/Services/TransStrings.php:656
 #: app/Hooks/Handlers/CustomerPortalHandler.php:122
 #: builds/fluent-support/app/Services/TransStrings.php:656
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:132
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:122
 msgid "Next"
 msgstr ""
 
@@ -3103,7 +3139,7 @@ msgid "No Custom Fields Found"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:139
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:149
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:139
 msgid "No support tickets found for this filter"
 msgstr ""
 
@@ -3157,7 +3193,7 @@ msgid "oAuth2 Authorised redirect URI"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:118
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:128
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:118
 msgid "on-hold"
 msgstr ""
 
@@ -3175,21 +3211,21 @@ msgstr ""
 #: app/Services/TransStrings.php:384
 #: app/Hooks/Handlers/CustomerPortalHandler.php:124
 #: builds/fluent-support/app/Services/TransStrings.php:384
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:134
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:124
 msgid "Only you and official support agents can view this conversation"
 msgstr ""
 
 #: app/Services/TransStrings.php:280
 #: app/Hooks/Handlers/CustomerPortalHandler.php:112
 #: builds/fluent-support/app/Services/TransStrings.php:280
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:122
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:112
 msgid "Open"
 msgstr ""
 
 #: app/Services/TransStrings.php:681
 #: app/Hooks/Handlers/CustomerPortalHandler.php:113
 #: builds/fluent-support/app/Services/TransStrings.php:681
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:123
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:113
 msgid "open"
 msgstr ""
 
@@ -3362,7 +3398,7 @@ msgstr ""
 #: app/Services/TransStrings.php:383
 #: app/Hooks/Handlers/CustomerPortalHandler.php:128
 #: builds/fluent-support/app/Services/TransStrings.php:383
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:138
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:128
 msgid "Please do not share any private information."
 msgstr ""
 
@@ -3381,7 +3417,7 @@ msgstr ""
 #: app/Services/TransStrings.php:298
 #: app/Hooks/Handlers/CustomerPortalHandler.php:158
 #: builds/fluent-support/app/Services/TransStrings.php:298
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:168
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:158
 msgid "Please input"
 msgstr ""
 
@@ -3443,7 +3479,7 @@ msgstr ""
 #: app/Services/TransStrings.php:376
 #: app/Hooks/Handlers/CustomerPortalHandler.php:152
 #: builds/fluent-support/app/Services/TransStrings.php:376
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:162
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:152
 msgid "Please provide details about your problem"
 msgstr ""
 
@@ -3457,8 +3493,8 @@ msgstr ""
 msgid "Please provide fallback box"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:135
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:135
+#: app/Services/EmailNotification/Settings.php:138
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:138
 msgid ""
 "Please provide message for not logged in users. You can place login "
 "shortcode too Use shortcode <code>[fluent_support_login]</code> to show "
@@ -3474,8 +3510,8 @@ msgid ""
 "email settings"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:130
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:130
+#: app/Services/EmailNotification/Settings.php:133
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:133
 msgid ""
 "Please provide the page id where you want to show the tickets for your "
 "customers. Use shortcode <code>[fluent_support_portal]</code> in that page"
@@ -3518,8 +3554,8 @@ msgstr ""
 msgid "Please setup your support portal first"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:126
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:126
+#: app/Services/EmailNotification/Settings.php:129
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:129
 msgid "Portal Page"
 msgstr ""
 
@@ -3542,7 +3578,7 @@ msgid "Press enter to save"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:123
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:133
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:123
 msgid "Prev"
 msgstr ""
 
@@ -3554,7 +3590,7 @@ msgstr ""
 #: app/Services/TransStrings.php:307
 #: app/Hooks/Handlers/CustomerPortalHandler.php:154
 #: builds/fluent-support/app/Services/TransStrings.php:307
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:164
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:154
 msgid "Priority"
 msgstr ""
 
@@ -3571,7 +3607,7 @@ msgstr ""
 #: app/Services/TransStrings.php:381
 #: app/Hooks/Handlers/CustomerPortalHandler.php:133
 #: builds/fluent-support/app/Services/TransStrings.php:381
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:143
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:133
 msgid "Private"
 msgstr ""
 
@@ -3692,21 +3728,21 @@ msgstr ""
 #: app/Services/TransStrings.php:371
 #: app/Hooks/Handlers/CustomerPortalHandler.php:153
 #: builds/fluent-support/app/Services/TransStrings.php:371
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:163
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:153
 msgid "Related Product/Service"
 msgstr ""
 
 #: app/Services/TransStrings.php:347
 #: app/Hooks/Handlers/CustomerPortalHandler.php:160
 #: builds/fluent-support/app/Services/TransStrings.php:347
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:170
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:160
 msgid "Reopen This ticket"
 msgstr ""
 
 #: app/Services/TransStrings.php:354
 #: app/Hooks/Handlers/CustomerPortalHandler.php:129
 #: builds/fluent-support/app/Services/TransStrings.php:354
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:139
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:129
 msgid "replied"
 msgstr ""
 
@@ -3715,8 +3751,8 @@ msgstr ""
 msgid "Replied By Agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:254
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:254
+#: app/Services/EmailNotification/Settings.php:264
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:264
 msgid "Replied by Agent (To Customer)"
 msgstr ""
 
@@ -3725,8 +3761,8 @@ msgstr ""
 msgid "Replied By Customer"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:278
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:278
+#: app/Services/EmailNotification/Settings.php:288
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:288
 msgid "Replied by Customer (To Agent/Admin)"
 msgstr ""
 
@@ -3743,7 +3779,7 @@ msgstr ""
 #: app/Services/TransStrings.php:380
 #: app/Hooks/Handlers/CustomerPortalHandler.php:136
 #: builds/fluent-support/app/Services/TransStrings.php:380
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:146
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:136
 msgid "Reply"
 msgstr ""
 
@@ -3917,9 +3953,14 @@ msgstr ""
 msgid "Saved Draft"
 msgstr ""
 
-#: app/Services/TransStrings.php:192 app/Hooks/Handlers/Menu.php:150
+#: app/Services/TransStrings.php:707
+#: builds/fluent-support/app/Services/TransStrings.php:707
+msgid "Saved Filters"
+msgstr ""
+
+#: app/Services/TransStrings.php:192 app/Hooks/Handlers/Menu.php:152
 #: builds/fluent-support/app/Services/TransStrings.php:192
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:150
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:152
 msgid "Saved Replies"
 msgstr ""
 
@@ -3943,9 +3984,19 @@ msgstr ""
 msgid "Search Customers"
 msgstr ""
 
+#: app/Services/TicketHelper.php:357
+#: builds/fluent-support/app/Services/TicketHelper.php:357
+msgid "Search deleted successfully."
+msgstr ""
+
 #: app/Services/TransStrings.php:653
 #: builds/fluent-support/app/Services/TransStrings.php:653
 msgid "Search Existing contact or provide email address"
+msgstr ""
+
+#: app/Services/TicketHelper.php:362
+#: builds/fluent-support/app/Services/TicketHelper.php:362
+msgid "Search ID not found."
 msgstr ""
 
 #: app/Services/TransStrings.php:654
@@ -4059,15 +4110,15 @@ msgstr ""
 msgid "Select Option"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:128
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:128
+#: app/Services/EmailNotification/Settings.php:131
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:131
 msgid "Select Portal Page"
 msgstr ""
 
 #: app/Services/TransStrings.php:372
 #: app/Hooks/Handlers/CustomerPortalHandler.php:148
 #: builds/fluent-support/app/Services/TransStrings.php:372
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:158
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:148
 msgid "Select Priority"
 msgstr ""
 
@@ -4079,7 +4130,7 @@ msgstr ""
 #: app/Services/TransStrings.php:136
 #: app/Hooks/Handlers/CustomerPortalHandler.php:145
 #: builds/fluent-support/app/Services/TransStrings.php:136
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:155
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:145
 msgid "Select related Product/Service"
 msgstr ""
 
@@ -4145,7 +4196,7 @@ msgstr ""
 msgid "Selected response has been updated"
 msgstr ""
 
-#: app/Models/Ticket.php:1511 builds/fluent-support/app/Models/Ticket.php:1511
+#: app/Models/Ticket.php:1536 builds/fluent-support/app/Models/Ticket.php:1536
 msgid "Selected tags has been added to tickets"
 msgstr ""
 
@@ -4159,15 +4210,15 @@ msgstr ""
 msgid "Send Attachments(Not Recommended)"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:305
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:305
+#: app/Hooks/Handlers/Menu.php:308
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:308
 msgid ""
 "Send Telegram notifications to Group, Channel or individual person inbox and "
 "reply from Telegram inbox"
 msgstr ""
 
-#: app/Hooks/Handlers/Menu.php:312
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:312
+#: app/Hooks/Handlers/Menu.php:315
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:315
 msgid "Send ticket activity notifications to slack"
 msgstr ""
 
@@ -4273,9 +4324,9 @@ msgstr ""
 msgid "Signup Form"
 msgstr ""
 
-#: app/Services/Helper.php:788 app/Hooks/Handlers/Menu.php:311
+#: app/Services/Helper.php:788 app/Hooks/Handlers/Menu.php:314
 #: builds/fluent-support/app/Services/Helper.php:788
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:311
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:314
 msgid "Slack"
 msgstr ""
 
@@ -4354,7 +4405,7 @@ msgid ""
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:168
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:178
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:168
 msgid "Sort By"
 msgstr ""
 
@@ -4372,7 +4423,7 @@ msgstr ""
 #: app/Services/TransStrings.php:386
 #: app/Hooks/Handlers/CustomerPortalHandler.php:130
 #: builds/fluent-support/app/Services/TransStrings.php:386
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:140
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:130
 msgid "started the conversation"
 msgstr ""
 
@@ -4402,7 +4453,7 @@ msgstr ""
 #: app/Hooks/Handlers/PrivacyHandler.php:220
 #: builds/fluent-support/app/Services/TransStrings.php:76
 #: builds/fluent-support/app/Models/Traits/CustomerTrait.php:87
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:131
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:121
 #: builds/fluent-support/app/Hooks/Handlers/PrivacyHandler.php:220
 msgid "Status"
 msgstr ""
@@ -4410,14 +4461,14 @@ msgstr ""
 #: app/Services/TransStrings.php:364
 #: app/Hooks/Handlers/CustomerPortalHandler.php:150
 #: builds/fluent-support/app/Services/TransStrings.php:364
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:160
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:150
 msgid "Subject"
 msgstr ""
 
 #: app/Services/TransStrings.php:374
 #: app/Hooks/Handlers/CustomerPortalHandler.php:156
 #: builds/fluent-support/app/Services/TransStrings.php:374
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:166
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:156
 msgid "Submit a Support Ticket"
 msgstr ""
 
@@ -4432,7 +4483,7 @@ msgid "Successfully registered to the site."
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:147
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:157
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:147
 msgid "Suggested articles"
 msgstr ""
 
@@ -4474,7 +4525,7 @@ msgstr ""
 #: app/Services/TransStrings.php:247
 #: app/Hooks/Handlers/CustomerPortalHandler.php:165
 #: builds/fluent-support/app/Services/TransStrings.php:247
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:175
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:165
 msgid "Support Staff"
 msgstr ""
 
@@ -4531,13 +4582,13 @@ msgstr ""
 msgid "Tag Description"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:397
-#: builds/fluent-support/app/Http/Controllers/TicketController.php:397
+#: app/Http/Controllers/TicketController.php:399
+#: builds/fluent-support/app/Http/Controllers/TicketController.php:399
 msgid "Tag has been added to this ticket"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:414
-#: builds/fluent-support/app/Http/Controllers/TicketController.php:414
+#: app/Http/Controllers/TicketController.php:416
+#: builds/fluent-support/app/Http/Controllers/TicketController.php:416
 msgid "Tag has been removed from this ticket"
 msgstr ""
 
@@ -4551,14 +4602,14 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: app/Http/Controllers/TicketController.php:571
-#: builds/fluent-support/app/Http/Controllers/TicketController.php:571
+#: app/Http/Controllers/TicketController.php:573
+#: builds/fluent-support/app/Http/Controllers/TicketController.php:573
 msgid "Task successfully added to Fluent Boards"
 msgstr ""
 
-#: app/Services/Helper.php:809 app/Hooks/Handlers/Menu.php:304
+#: app/Services/Helper.php:809 app/Hooks/Handlers/Menu.php:307
 #: builds/fluent-support/app/Services/Helper.php:809
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:304
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:307
 msgid "Telegram"
 msgstr ""
 
@@ -4590,6 +4641,7 @@ msgid ""
 msgstr ""
 
 #: app/Hooks/Handlers/EmailVerificationHandler.php:48
+#: builds/fluent-support/app/Hooks/Handlers/EmailVerificationHandler.php:48
 msgid ""
 "Thank you for registering with us! To complete the setup of your account, "
 "please enter the verification code below on the registration page."
@@ -4648,45 +4700,46 @@ msgid "There was an error verifying the API key."
 msgstr ""
 
 #: app/Hooks/Handlers/EmailVerificationHandler.php:51
+#: builds/fluent-support/app/Hooks/Handlers/EmailVerificationHandler.php:51
 msgid ""
 "This code is valid for 10 minutes and is meant to ensure the security of "
 "your account. If you did not initiate this request, please ignore this email."
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:279
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:279
+#: app/Services/EmailNotification/Settings.php:289
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:289
 msgid ""
 "This email will be sent to Assigned Agent or Admin when a customer reply to "
 "a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:287
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:287
+#: app/Services/EmailNotification/Settings.php:297
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:297
 msgid "This email will be sent to newly assigned agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:247
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:247
+#: app/Services/EmailNotification/Settings.php:257
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:257
 msgid "This email will be sent when a customer submit a support ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:263
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:263
+#: app/Services/EmailNotification/Settings.php:273
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:273
 msgid "This email will be sent when an agent close a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:295
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:295
+#: app/Services/EmailNotification/Settings.php:305
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:305
 msgid "This email will be sent when an agent create a ticket for a customer"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:255
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:255
+#: app/Services/EmailNotification/Settings.php:265
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:265
 msgid "This email will be sent when an agent reply to a ticket"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:271
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:271
+#: app/Services/EmailNotification/Settings.php:281
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:281
 msgid ""
 "This email will be sent when the business when a new ticket has been "
 "submitted"
@@ -4717,12 +4770,12 @@ msgstr ""
 #: app/Services/TransStrings.php:346
 #: app/Hooks/Handlers/CustomerPortalHandler.php:126
 #: builds/fluent-support/app/Services/TransStrings.php:346
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:136
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:126
 msgid "This ticket has been closed at"
 msgstr ""
 
 #: app/Hooks/Handlers/CustomerPortalHandler.php:132
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:142
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:132
 msgid "This ticket is"
 msgstr ""
 
@@ -4734,19 +4787,19 @@ msgstr ""
 #: app/Services/TransStrings.php:686
 #: app/Hooks/Handlers/CustomerPortalHandler.php:167
 #: builds/fluent-support/app/Services/TransStrings.php:686
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:177
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:167
 msgid "Thread Follower"
 msgstr ""
 
 #: app/Services/TransStrings.php:685
 #: app/Hooks/Handlers/CustomerPortalHandler.php:166
 #: builds/fluent-support/app/Services/TransStrings.php:685
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:176
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:166
 msgid "Thread Starter"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:286
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:286
+#: app/Services/EmailNotification/Settings.php:296
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:296
 msgid "Ticket Agent Change (To Agent)"
 msgstr ""
 
@@ -4769,8 +4822,8 @@ msgstr ""
 msgid "Ticket Closed By Agent"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:262
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:262
+#: app/Services/EmailNotification/Settings.php:272
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:272
 msgid "Ticket Closed by Agent (To Customer)"
 msgstr ""
 
@@ -4784,13 +4837,13 @@ msgstr ""
 msgid "Ticket Content"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:270
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:270
+#: app/Services/EmailNotification/Settings.php:280
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:280
 msgid "Ticket Created (To Admin)"
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:246
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:246
+#: app/Services/EmailNotification/Settings.php:256
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:256
 msgid "Ticket Created (To Customer)"
 msgstr ""
 
@@ -4809,8 +4862,8 @@ msgstr ""
 msgid "Ticket created at "
 msgstr ""
 
-#: app/Services/EmailNotification/Settings.php:294
-#: builds/fluent-support/app/Services/EmailNotification/Settings.php:294
+#: app/Services/EmailNotification/Settings.php:304
+#: builds/fluent-support/app/Services/EmailNotification/Settings.php:304
 msgid "Ticket Created by Agent (To Customer)"
 msgstr ""
 
@@ -4832,7 +4885,7 @@ msgstr ""
 #: app/Services/TransStrings.php:368
 #: app/Hooks/Handlers/CustomerPortalHandler.php:151
 #: builds/fluent-support/app/Services/TransStrings.php:368
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:161
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:151
 msgid "Ticket Details"
 msgstr ""
 
@@ -4892,7 +4945,7 @@ msgstr ""
 #: app/Hooks/Handlers/PrivacyHandler.php:71
 #: app/Hooks/Handlers/PrivacyHandler.php:153
 #: builds/fluent-support/app/Services/TransStrings.php:109
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:182
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:172
 #: builds/fluent-support/app/Hooks/Handlers/PrivacyHandler.php:71
 #: builds/fluent-support/app/Hooks/Handlers/PrivacyHandler.php:153
 msgid "Ticket ID"
@@ -5047,6 +5100,11 @@ msgstr ""
 msgid "tickets with"
 msgstr ""
 
+#: app/Services/TransStrings.php:706
+#: builds/fluent-support/app/Services/TransStrings.php:706
+msgid "Time Sheet Report By Tickets"
+msgstr ""
+
 #: app/Services/TransStrings.php:693
 #: builds/fluent-support/app/Services/TransStrings.php:693
 msgid "Time Tracking"
@@ -5056,7 +5114,7 @@ msgstr ""
 #: app/Hooks/Handlers/CustomerPortalHandler.php:173
 #: builds/fluent-support/app/Services/TransStrings.php:75
 #: builds/fluent-support/app/Hooks/Handlers/AdminBarHandler.php:90
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:183
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:173
 msgid "Title"
 msgstr ""
 
@@ -5185,7 +5243,7 @@ msgstr ""
 #: app/Services/TransStrings.php:388
 #: app/Hooks/Handlers/CustomerPortalHandler.php:162
 #: builds/fluent-support/app/Services/TransStrings.php:388
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:172
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:162
 msgid "Unknown error. Please reload this page"
 msgstr ""
 
@@ -5202,7 +5260,7 @@ msgstr ""
 #: app/Services/TransStrings.php:50
 #: app/Hooks/Handlers/CustomerPortalHandler.php:141
 #: builds/fluent-support/app/Services/TransStrings.php:50
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:151
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:141
 msgid "Update Customer"
 msgstr ""
 
@@ -5312,6 +5370,7 @@ msgid "Verification Code"
 msgstr ""
 
 #: app/Hooks/Handlers/EmailVerificationHandler.php:49
+#: builds/fluent-support/app/Hooks/Handlers/EmailVerificationHandler.php:49
 #, php-format
 msgid "Verification Code: %s"
 msgstr ""
@@ -5359,7 +5418,7 @@ msgstr ""
 #: app/Services/TransStrings.php:375
 #: app/Hooks/Handlers/CustomerPortalHandler.php:164
 #: builds/fluent-support/app/Services/TransStrings.php:375
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:174
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:164
 msgid "View All"
 msgstr ""
 
@@ -5381,7 +5440,7 @@ msgstr ""
 #: app/Services/TransStrings.php:387
 #: app/Hooks/Handlers/CustomerPortalHandler.php:163
 #: builds/fluent-support/app/Services/TransStrings.php:387
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:173
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:163
 msgid "View Your Tickets"
 msgstr ""
 
@@ -5449,7 +5508,7 @@ msgstr ""
 #: app/Services/TransStrings.php:365
 #: app/Hooks/Handlers/CustomerPortalHandler.php:144
 #: builds/fluent-support/app/Services/TransStrings.php:365
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:154
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:144
 msgid "What's this support ticket about?"
 msgstr ""
 
@@ -5525,11 +5584,11 @@ msgid "workflow will perform the following actions:"
 msgstr ""
 
 #: app/Services/TransStrings.php:604 app/Hooks/Handlers/Menu.php:75
-#: app/Hooks/Handlers/Menu.php:76 app/Hooks/Handlers/Menu.php:177
+#: app/Hooks/Handlers/Menu.php:76 app/Hooks/Handlers/Menu.php:179
 #: builds/fluent-support/app/Services/TransStrings.php:604
 #: builds/fluent-support/app/Hooks/Handlers/Menu.php:75
 #: builds/fluent-support/app/Hooks/Handlers/Menu.php:76
-#: builds/fluent-support/app/Hooks/Handlers/Menu.php:177
+#: builds/fluent-support/app/Hooks/Handlers/Menu.php:179
 msgid "Workflows"
 msgstr ""
 
@@ -5540,7 +5599,7 @@ msgstr ""
 #: app/Services/TransStrings.php:378
 #: app/Hooks/Handlers/CustomerPortalHandler.php:134
 #: builds/fluent-support/app/Services/TransStrings.php:378
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:144
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:134
 msgid "Write a reply"
 msgstr ""
 
@@ -5577,7 +5636,7 @@ msgstr ""
 #: app/Services/TransStrings.php:389
 #: app/Hooks/Handlers/CustomerPortalHandler.php:137
 #: builds/fluent-support/app/Services/TransStrings.php:389
-#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:147
+#: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:137
 msgid "You"
 msgstr ""
 
@@ -5795,6 +5854,16 @@ msgstr ""
 #: builds/fluent-support/app/Hooks/Handlers/EmailVerificationHandler.php:43
 #, php-format
 msgid "Your registration verification code for %s"
+msgstr ""
+
+#: app/Services/TicketHelper.php:302
+#: builds/fluent-support/app/Services/TicketHelper.php:302
+msgid "Your saved search has been updated successfully!"
+msgstr ""
+
+#: app/Services/TicketHelper.php:303
+#: builds/fluent-support/app/Services/TicketHelper.php:303
+msgid "Your search has been saved successfully!"
 msgstr ""
 
 #: app/Services/TransStrings.php:458
