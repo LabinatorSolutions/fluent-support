@@ -23,7 +23,7 @@
                     />
                 </el-select>
                 <div class="fs_time_sheet_export">
-                    <el-button type="default" @click="exportReport = true">
+                    <el-button type="default" @click="exportReport">
                         <el-icon>
                             <Download/>
                         </el-icon>
