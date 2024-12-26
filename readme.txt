@@ -2,7 +2,7 @@
 Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
-Tested up to: 6.6
+Tested up to: 6.7.1
 Stable tag: 1.8.5
 Requires PHP: 7.3
 License: GPLv2 or later
@@ -235,7 +235,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 
 == Changelog ==
 
-= 1.8.5 (Date: Dec 23, 2024) =
+= 1.8.5 (Date: Dec 26, 2024) =
 * Added: Agent Time Tracking (Pro)
 * Added: Saved search (Pro)
 * Added: Keyboard Shortcuts
