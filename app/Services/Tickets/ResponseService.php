@@ -131,6 +131,23 @@ class ResponseService
 
         $ticket->save();
 
+        preg_match_all('/<img[^>]+src="([^">]+)"/', $createdResponse->content, $matches);
+        $imageUrls = $matches[1]; // Extracted image URLs
+        if (!empty($imageUrls)) {
+            $storageDriver = Helper::getUploadDriverKey();
+            foreach ($imageUrls as $imageUrl) {
+                $uploadsDir = WP_CONTENT_DIR . '/uploads';
+                $imageRelativePath = 'fluent-support/temp_files/' . basename($imageUrl);
+                $absolutePath = $uploadsDir . '/' . $imageRelativePath;
+                $newFileInfo = UploadService::copyFileTicketFolder($absolutePath, $ticket->id);
+
+                if ($newFileInfo && !empty($newFileInfo['file_path'])) {
+                    $createdResponse->content = str_replace($imageUrl, $newFileInfo['url'], $createdResponse->content);
+                }
+            }
+            $createdResponse->save();
+        }
+
         //If file upload failed to local during create response
         if ($attachmentHashes = Arr::get($data, 'attachments', [])) {
             $attachments = Attachment::where('ticket_id', $ticket->id)
