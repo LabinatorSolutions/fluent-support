@@ -20,7 +20,6 @@ class UploadService
     public static function handleTempFileUpload($file)
     {
         $uploadInfo = FileSystem::setSubDir('temp_files')->put($file);
-
         if (!empty($uploadInfo) && is_array($uploadInfo)) {
             return $uploadInfo;
         }
