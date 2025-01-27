@@ -19,6 +19,45 @@
                     @fetch-tickets="fetchTickets"
                 />
             </div>
+
+            <div class="fs_tickets_table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="conversation-header">Conversation</th>
+                        <th class="fs_date_header">Date</th>
+                        <th class="fs_status_header">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-if="loading">
+                        <td colspan="3">
+                            <el-skeleton :rows="5" animated/>
+                        </td>
+                    </tr>
+                    <tr v-else v-for="ticket in tickets" :key="ticket.id" class="ticket-row">
+                        <td class="conversation-cell">
+                            <router-link class="fs_ticket_conversation"
+                                         :to="{name: 'view_ticket', params: { ticket_id: ticket.id }}">
+                                <div class="fs_ticket_title">
+                                    <strong>{{ ticket.title }}</strong>
+                                    <span class="fs_response_count">{{ ticket.response_count }}</span>
+                                </div>
+                                <p class="fs_ticket_preview">{{ getExcerpt(ticket) }}</p>
+                            </router-link>
+                        </td>
+                        <td class="date-cell">{{ ticket.human_date }}</td>
+                        <td class="fs_status_cell">
+                                <span :class="['fs_status_badge', getStatusClass(ticket.status)]">
+                                    <span class="fs_status_dot"></span>
+                                    {{ ticket.status }}
+                                </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 </template>
@@ -97,8 +136,21 @@ export default {
             }
         },
 
+        getStatusClass(status) {
+            return status.toLowerCase()
+        },
+
+        getExcerpt(row) {
+            let text = (row.preview_response) ? row.preview_response.content : row.content;
+            if (!text) {
+                return '';
+            }
+            return text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
+        },
+
         handlePageChange(page) {
             this.pagination.current_page = page
+            this.fetchTickets()
         },
 
         updateSearchQuery(search) {
@@ -106,9 +158,23 @@ export default {
         },
 
         debouncedSearch: debounce(function () {
-            this.pagination.current_page = 1
+            this.fetchTickets()
         }, 300)
     },
+    watch: {
+        filterType: {
+            handler() {
+                this.fetchTickets()
+            }
+        },
+        search: {
+            handler() {
+                this.debouncedSearch()
+            }
+        },
+    },
+    created() {
+        this.fetchTickets()
+    }
 }
 </script>
-
