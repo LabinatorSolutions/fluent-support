@@ -1,5 +1,6 @@
 <template>
     <div class="fs_section_one">
+        <!-- Status Filter -->
         <div class="status-filter">
             <div class="button-groups">
                 <button
@@ -13,6 +14,7 @@
             </div>
         </div>
 
+        <!-- Product Filter and Sort Button -->
         <div class="filters-right">
             <div class="product-filter">
                 <el-select
@@ -30,6 +32,7 @@
                     />
                 </el-select>
             </div>
+
             <div class="fs_sorting">
                 <el-popover trigger="click" placement="bottom-start" width="240" popper-class="fs_popover">
                     <div class="fs_popover_item">
@@ -47,36 +50,35 @@
                             <el-radio-button label="desc">{{ $t('Descending') }}</el-radio-button>
                         </el-radio-group>
                         <div class="fs_sorting_button">
-                            <el-button @click="fetchTickets()" type="primary">
+                            <el-button @click="fetchTickets" type="primary">
                                 {{ $t('Apply') }}
                             </el-button>
                         </div>
                     </div>
                     <template #reference>
-                        <span>
-                            <el-tooltip effect="dark" :content="$t('Sort')" placement="top">
-                                <el-button>
-                                    <svg width="20" height="20" viewBox="0 0 20 20"
-                                         fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M16 4V13H18.25L15.25 16.75L12.25 13H14.5V4H16ZM10 14.5V16H3.25V14.5H10ZM11.5 9.25V10.75H3.25V9.25H11.5ZM11.5 4V5.5H3.25V4H11.5Z"
-                                            fill="#99A0AE"
-                                        />
-                                    </svg>
-                                </el-button>
-                            </el-tooltip>
-                        </span>
+                        <el-tooltip effect="dark" :content="$t('Sort')" placement="top">
+                            <el-button>
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M16 4V13H18.25L15.25 16.75L12.25 13H14.5V4H16ZM10 14.5V16H3.25V14.5H10ZM11.5 9.25V10.75H3.25V9.25H11.5ZM11.5 4V5.5H3.25V4H11.5Z"
+                                        fill="#99A0AE"
+                                    />
+                                </svg>
+                            </el-button>
+                        </el-tooltip>
                     </template>
                 </el-popover>
             </div>
         </div>
     </div>
 
+    <!-- Search Bar -->
     <div class="fs_section_two">
         <el-input
             v-model="localSearchQuery"
             placeholder="Search..."
             clearable
+            @keyup.enter="fetchTickets"
             @input="onSearchInput"
             class="search-input"
         >
@@ -95,8 +97,6 @@
 </template>
 
 <script>
-import { debounce } from 'lodash';
-
 export default {
     name: 'TicketFilters',
     props: {
@@ -122,7 +122,6 @@ export default {
             ];
         }
     },
-
     methods: {
         updateStatusFilter(status) {
             this.localStatusFilter = status;
@@ -135,6 +134,11 @@ export default {
                 statusFilter: this.localStatusFilter
             });
         },
+        onSearchInput() {
+            if (!this.localSearchQuery) {
+                this.fetchTickets();
+            }
+        }
     },
     watch: {
         localSearchQuery(newVal) {
@@ -143,4 +147,6 @@ export default {
     }
 };
 </script>
+
+
 
