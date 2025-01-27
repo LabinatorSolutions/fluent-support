@@ -1,6 +1,5 @@
 <template>
     <div class="fs_section_one">
-        <!-- Status Filter -->
         <div class="status-filter">
             <div class="button-groups">
                 <button
@@ -14,7 +13,6 @@
             </div>
         </div>
 
-        <!-- Product Filter and Sort Button -->
         <div class="filters-right">
             <div class="product-filter">
                 <el-select
@@ -72,7 +70,6 @@
         </div>
     </div>
 
-    <!-- Search Bar -->
     <div class="fs_section_two">
         <el-input
             v-model="localSearchQuery"
@@ -148,5 +145,51 @@ export default {
 };
 </script>
 
+<style lang="scss" scoped>
+.fs_section_one {
+    display: flex;
+    gap: 10px;
+    max-width: 486px;
+}
 
+.button-groups {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: rgb(245, 247, 250);
+    border-radius: 10px;
+    max-width: 250px;
 
+    .status-btn {
+        padding: 6px 16px;
+        border: none;
+        background: transparent;
+        color: #6B7280;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: 6px;
+        cursor: pointer;
+        min-width: 78px;
+
+        &:hover {
+            background: #e5e7eb;
+        }
+
+        &.active {
+            background: white;
+            color: #111827;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+    }
+}
+
+.filters-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fs_sorting .el-button {
+    padding: 5px;
+}
+</style>
