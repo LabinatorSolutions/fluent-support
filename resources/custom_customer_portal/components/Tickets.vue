@@ -21,41 +21,35 @@
             </div>
 
             <div class="fs_tickets_table">
-                <table>
-                    <thead>
-                    <tr>
-                        <th class="conversation-header">Conversation</th>
-                        <th class="fs_date_header">Date</th>
-                        <th class="fs_status_header">Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr v-if="loading">
-                        <td colspan="3">
-                            <el-skeleton :rows="5" animated/>
-                        </td>
-                    </tr>
-                    <tr v-else v-for="ticket in tickets" :key="ticket.id" class="ticket-row">
-                        <td class="conversation-cell">
+                <el-table
+                    :data="tickets"
+                    v-loading="loading"
+                    style="width: 100%"
+                    :header-cell-style="{ background: '#f5f7fa', color: '#0e121b', fontWeight: '500'}"
+                    :row-class-name="'ticket-row'"
+                >
+                    <el-table-column prop="title" label="Conversation" class-name="conversation-cell" width="450">
+                        <template #default="{ row }">
                             <router-link class="fs_ticket_conversation"
-                                         :to="{name: 'view_ticket', params: { ticket_id: ticket.id }}">
+                                         :to="{ name: 'view_ticket', params: { ticket_id: row.id }}">
                                 <div class="fs_ticket_title">
-                                    <strong>{{ ticket.title }}</strong>
-                                    <span class="fs_response_count">{{ ticket.response_count }}</span>
+                                    <strong>{{ row.title }}</strong>
+                                    <span class="fs_response_count">{{ row.response_count }}</span>
                                 </div>
-                                <p class="fs_ticket_preview">{{ getExcerpt(ticket) }}</p>
+                                <p class="fs_ticket_preview">{{ getExcerpt(row) }}</p>
                             </router-link>
-                        </td>
-                        <td class="date-cell">{{ ticket.human_date }}</td>
-                        <td class="fs_status_cell">
-                                <span :class="['fs_status_badge', getStatusClass(ticket.status)]">
-                                    <span class="fs_status_dot"></span>
-                                    {{ ticket.status }}
-                                </span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="human_date" label="Date" class-name="date-cell" width="196"/>
+                    <el-table-column prop="status" label="Status" class-name="fs_status_cell" width="130">
+                        <template #default="{ row }">
+                            <span :class="['fs_status_badge', getStatusClass(row.status)]">
+                                <span class="fs_status_dot"></span>
+                                {{ row.status }}
+                            </span>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </div>
 
             <div class="fs_pagination_section">
@@ -329,168 +323,152 @@ export default {
             overflow: hidden;
             padding: 20px 16px 16px;
 
-            table {
-                width: 100%;
-                border-collapse: separate;
-                border-spacing: 0;
+            .el-table {
 
-                thead th:first-child {
-                    border-top-left-radius: 8px;
-                    border-bottom-left-radius: 8px;
+                overflow: hidden;
+
+                .el-table__header {
+                    table-layout: auto;
+                    thead {
+                        th {
+                            &:first-child {
+                                border-top-left-radius: 8px;
+                                border-bottom-left-radius: 8px;
+                                overflow: hidden; // Ensure the borders render correctly
+                            }
+
+                            &:last-child {
+                                border-top-right-radius: 8px;
+                                border-bottom-right-radius: 8px;
+                                overflow: hidden; // Ensure the borders render correctly
+                            }
+                        }
+                    }
+
+                    th {
+                        background: rgba(245, 247, 250, 1);
+                        color: rgba(14, 18, 27, 1);
+                        font-weight: 500;
+                        font-size: 14px;
+                        line-height: 20px;
+                    }
                 }
 
-                thead th:last-child {
-                    border-top-right-radius: 8px;
-                    border-bottom-right-radius: 8px;
-                }
+                .el-table__body {
+                    .ticket-row {
+                        background: white;
 
-                th {
-                    color: rgba(14, 18, 27, 1);
-                    font-weight: 500;
-                    font-size: 14px;
-                    background: rgba(245, 247, 250, 1);
-                    line-height: 20px;
-                }
+                        &:hover {
+                            background: rgba(245, 247, 250, 1);
+                        }
 
-                .ticket-row {
-                    background: white;
+                        td {
+                            padding: 16px 24px;
+                            border-bottom: 1px solid #F3F4F6;
 
-                    td {
-                        padding: 16px 24px;
-                        border-bottom: 1px solid #F3F4F6;
+                            &.conversation-cell {
+                                .fs_ticket_conversation {
+                                    text-decoration: none;
 
-                        &.conversation-cell {
-                            .fs_ticket_conversation {
-                                text-decoration: none;
+                                    .fs_ticket_title {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 8px;
+                                        margin-bottom: 4px;
 
-                                .fs_ticket_title {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 8px;
-                                    margin-bottom: 4px;
+                                        strong {
+                                            font-size: 14px;
+                                            font-weight: 500;
+                                            line-height: 20px;
+                                            letter-spacing: -0.006em;
+                                            text-align: left;
+                                            text-underline-position: from-font;
+                                            text-decoration-skip-ink: none;
+                                            margin: 0;
+                                        }
 
-                                    strong {
-                                        font-size: 14px;
-                                        font-weight: 500;
-                                        line-height: 20px;
-                                        letter-spacing: -0.006em;
+                                        .fs_response_count {
+                                            background: rgba(225, 228, 234, 1);
+                                            color: rgba(34, 37, 48, 1);
+                                            border-radius: 50%;
+                                            width: 16px;
+                                            height: 16px;
+                                            display: flex;
+                                            align-items: center;
+                                            justify-content: center;
+                                            font-size: 11px;
+                                            font-weight: 500;
+                                            line-height: 12px;
+                                            letter-spacing: 0.02em;
+                                            text-align: center;
+                                            text-underline-position: from-font;
+                                            text-decoration-skip-ink: none;
+                                        }
+                                    }
+
+                                    .fs_ticket_preview {
+                                        color: #6B7280;
+                                        font-size: 12px;
+                                        font-weight: 400;
                                         text-align: left;
                                         text-underline-position: from-font;
                                         text-decoration-skip-ink: none;
                                         margin: 0;
-                                    }
-
-                                    .fs_response_count {
-                                        background: rgba(225, 228, 234, 1);
-                                        color: rgba(34, 37, 48, 1);
-                                        border-radius: 50%;
-                                        width: 16px;
-                                        height: 16px;
-                                        display: flex;
-                                        align-items: center;
-                                        justify-content: center;
-                                        font-size: 11px;
-                                        font-weight: 500;
-                                        line-height: 12px;
-                                        letter-spacing: 0.02em;
-                                        text-align: center;
-                                        text-underline-position: from-font;
-                                        text-decoration-skip-ink: none;
+                                        max-height: 23px;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
                                     }
                                 }
-
-                                .fs_ticket_preview {
-                                    color: #6B7280;
-                                    font-size: 12px;
-                                    font-weight: 400;
-                                    text-align: left;
-                                    text-underline-position: from-font;
-                                    text-decoration-skip-ink: none;
-                                    margin: 0;
-                                    max-height: 23px;
-                                    overflow: hidden;
-                                    text-overflow: ellipsis;
-                                }
                             }
-                        }
 
-                        &.date-cell {
-                            font-size: 14px;
-                            font-weight: 400;
-                            line-height: 20px;
-                            text-align: left;
-                            color: rgba(14, 18, 27, 1);
-                            width: 20%;
-                        }
+                            &.date-cell {
+                                font-size: 14px;
+                                font-weight: 400;
+                                line-height: 20px;
+                                text-align: left;
+                                color: rgba(14, 18, 27, 1);
+                                width: 20%;
+                            }
 
-                        &.fs_status_cell {
-                            width: 20%;
-                        }
+                            &.fs_status_cell {
+                                width: 20%;
+                            }
 
-                        .fs_status_badge {
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 6px;
-                            padding: 4px 8px;
-                            border-radius: 6px;
-                            border: 1px solid rgba(225, 228, 234, 1);
-                            font-size: 12px;
-                            font-weight: 500;
-                            line-height: 16px;
-                            text-align: left;
-                            color: rgba(82, 88, 102, 1);
+                            .fs_status_badge {
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 6px;
+                                padding: 4px 8px;
+                                border-radius: 6px;
+                                border: 1px solid rgba(225, 228, 234, 1);
+                                font-size: 12px;
+                                font-weight: 500;
+                                line-height: 16px;
+                                text-align: left;
+                                color: rgba(82, 88, 102, 1);
 
-                            &.active {
+                                &.active {
+                                    .fs_status_dot {
+                                        color: rgba(31, 193, 107, 1);
+                                    }
+                                }
+
+                                &.new {
+                                    .fs_status_dot {
+                                        color: #e76b6b;
+                                    }
+                                }
+
                                 .fs_status_dot {
-                                    color: rgba(31, 193, 107, 1);
+                                    width: 6px;
+                                    height: 6px;
+                                    border-radius: 50%;
+                                    background: currentColor;
                                 }
-                            }
-
-                            &.new {
-                                .fs_status_dot {
-                                    color: #e76b6b;
-                                }
-                            }
-
-                            .fs_status_dot {
-                                width: 6px;
-                                height: 6px;
-                                border-radius: 50%;
-                                background: currentColor;
                             }
                         }
                     }
                 }
-            }
-
-            thead {
-                background: rgba(245, 247, 250, 1);
-            }
-
-            thead th:first-child {
-                border-top-left-radius: 8px;
-            }
-
-            thead th:last-child {
-                border-top-right-radius: 8px;
-            }
-
-            tbody tr:last-child td:first-child {
-                border-bottom-left-radius: 8px;
-            }
-
-            tbody tr:last-child td:last-child {
-                border-bottom-right-radius: 8px;
-            }
-
-            th, td {
-                padding: 16px 20px 16px 20px;
-                text-align: left;
-                border-bottom: 1px solid rgba(225, 228, 234, 1);
-            }
-
-            .ticket-row {
-                background: white;
             }
         }
 
