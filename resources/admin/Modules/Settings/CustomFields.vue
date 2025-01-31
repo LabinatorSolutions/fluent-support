@@ -249,7 +249,8 @@ export default {
                 });
                 return false;
             }
-            if (item.options && !item.options.length) {
+
+            if (!item.options.length || (item.options && item.options.some(option => option.trim() === ""))) {
                 notify({
                     type: "error",
                     message: "Please Field Option Values",
