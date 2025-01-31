@@ -39,8 +39,7 @@ if (!mix.inProduction()) {
 
 mix
     .js('resources/admin/start.js', 'assets/admin/js/start.js').vue({ version: 3 })
-    // .js('resources/customer_portal/portal.js', 'assets/portal/js/app.js').vue({ version: 3 })
-    .js('resources/custom_customer_portal/js/app.js', 'assets/portal/js/app.js')
+    .js('resources/customer_portal/portal.js', 'assets/portal/js/app.js').vue({ version: 3 })
     .js('resources/admin/global_admin.js', 'assets/admin/js/global_admin.js')
     .js('resources/admin/global_summary.js', 'assets/admin/js/global_summary.js')
     .js('resources/customer_portal/login_helper.js', 'assets/portal/js/login_helper.js')

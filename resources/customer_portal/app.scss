@@ -656,7 +656,7 @@
         }
 
         input.el-input__inner {
-                border: none;
+            border: none;
         }
 
         textarea {
@@ -871,8 +871,11 @@
     padding: 10px 0 30px;
 }
 
-#fluent_support_client_app .el-table--fit.el-table table tr td {
-    padding: 12px 0 !important;
+#fluent_support_client_app {
+    max-width: 808px;
+    .el-table--fit.el-table table tr td {
+        padding: 12px 0 !important;
+    }
 }
 
 .el-upload-list--picture {
