@@ -4,12 +4,15 @@ namespace FluentSupport\App\Services;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\Ticket;
+use FluentSupport\App\Models\Conversation;
 use FluentSupport\App\Models\Customer;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Models\AIActivityLogs;
 use FluentSupport\App\Models\Person;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Services\Includes\UploadService;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\Framework\Support\Arr;
 
@@ -1224,5 +1227,91 @@ class Helper
                                     ->get();
         return $businessEmailBoxes;
     } 
+
+    public static function tempImageMoveUploadDir($ticketId, $contentType)
+    {
+        // Fetch content based on the content type
+        $content = self::getContentByType($ticketId, $contentType);
+        if (empty($content)) {
+            return;
+        }
+
+        // Extract image URLs from the content
+        $imageUrls = self::extractImageUrls($content);
+        if (empty($imageUrls)) {
+            return;
+        }
+
+        // Move images to the upload directory and update content
+        self::moveImagesAndUpdateContent($imageUrls, $ticketId, $contentType, $content);
+    }
+
+    /**
+     * Fetch content based on the content type.
+     */
+    private static function getContentByType($ticketId, $contentType)
+    {
+        if ($contentType == 'ticket-create') {
+            $ticket = Ticket::find($ticketId);
+            return $ticket ? $ticket->content : null;
+        }
+
+        $conversation = Conversation::find($ticketId);
+        return $conversation ? $conversation->content : null;
+    }
+
+    /**
+     * Extract image URLs from the content.
+     */
+    private static function extractImageUrls($content)
+    {
+        preg_match_all('/<img[^>]+src="([^">]+)"/', $content, $matches);
+        return $matches[1] ?? [];
+    }
+
+    /**
+     * Move images to the upload directory and update content.
+     */
+    private static function moveImagesAndUpdateContent($imageUrls, $ticketId, $contentType, $content)
+    {
+        $uploadsDir = WP_CONTENT_DIR . '/uploads';
+        $tempDir = 'fluent-support/temp_files/';
+
+        foreach ($imageUrls as $imageUrl) {
+            $imageRelativePath = $tempDir . basename($imageUrl);
+            $absolutePath = $uploadsDir . '/' . $imageRelativePath;
+
+            $newFileInfo = UploadService::copyFileTicketFolder($absolutePath, $ticketId);
+            if (empty($newFileInfo['file_path'])) {
+                continue; // Skip if the file couldn't be copied
+            }
+
+            // Update content with the new image URL
+            $content = str_replace($imageUrl, $newFileInfo['url'], $content);
+        }
+
+        // Save the updated content
+        self::saveUpdatedContent($ticketId, $contentType, $content);
+    }
+
+    /**
+     * Save the updated content based on the content type.
+     */
+    private static function saveUpdatedContent($ticketId, $contentType, $content)
+    {
+        if ($contentType == 'ticket-create') {
+            $ticket = Ticket::find($ticketId);
+            if ($ticket) {
+                $ticket->content = $content;
+                $ticket->save();
+            }
+        } else {
+            $conversation = Conversation::find($ticketId);
+            if ($conversation) {
+                $conversation->content = $content;
+                $conversation->save();
+            }
+        }
+    }
 
 }
