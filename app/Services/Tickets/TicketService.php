@@ -189,6 +189,8 @@ class TicketService
      */
     public static function addTicketAttachments($data, $disabledFields, $ticket, $customer)
     {
+        Helper::tempImageMoveUploadDir($ticket->id, 'ticket-create');
+
         if (($attachmentsHashes = Arr::get($data, 'attachments')) && !in_array('file_upload', $disabledFields)) {
             $attachments = Attachment::whereIn('file_hash', $attachmentsHashes)
                 ->where('status', 'in-active')
