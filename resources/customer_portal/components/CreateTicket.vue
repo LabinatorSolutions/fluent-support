@@ -34,6 +34,36 @@
                         <error :error="errors.get('title')"/>
                     </div>
 
+                    <div v-if="shouldShowSuggestions && ticket.title.length" class="fs_suggestions_popover">
+                        <div class="fs_suggestions_header">
+                            <label>Suggested Articles</label>
+                            <el-button
+                                type="text"
+                                class="fs_close_button"
+                                @click="closeSuggestions"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                     fill="none">
+                                    <path
+                                        d="M9.99956 8.93949L13.7121 5.22699L14.7726 6.28749L11.0601 9.99999L14.7726 13.7125L13.7121 14.773L9.99956 11.0605L6.28706 14.773L5.22656 13.7125L8.93906 9.99999L5.22656 6.28749L6.28706 5.22699L9.99956 8.93949Z"
+                                        fill="#525866"/>
+                                </svg>
+                            </el-button>
+                        </div>
+                        <div v-for="(suggestion, index) in suggestions" :key="index" class="fs_suggestions_title">
+                            <a :href="suggestion.link" target="_blank" class="fs_article_item">
+                                <el-icon class="fs_article_icon">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M16.75 7V16.7448C16.7507 16.8432 16.732 16.9409 16.6949 17.0322C16.6579 17.1234 16.6032 17.2065 16.534 17.2766C16.4649 17.3468 16.3826 17.4026 16.2919 17.4409C16.2011 17.4792 16.1037 17.4993 16.0052 17.5H3.99475C3.79736 17.5 3.60804 17.4216 3.4684 17.2821C3.32875 17.1426 3.2502 16.9534 3.25 16.756V3.244C3.25 2.84125 3.58675 2.5 4.0015 2.5H12.2477L16.75 7ZM15.25 7.75H11.5V4H4.75V16H15.25V7.75ZM7 6.25H9.25V7.75H7V6.25ZM7 9.25H13V10.75H7V9.25ZM7 12.25H13V13.75H7V12.25Z"
+                                            fill="#525866"/>
+                                    </svg>
+                                </el-icon>
+                                <p>{{ suggestion.title }}</p>
+                            </a>
+                        </div>
+                    </div>
                 </el-form-item>
 
                 <div v-if="products.length || Object.keys(priorities).length" class="fs_tk_row">
@@ -112,6 +142,7 @@ import WpEditor from '../../admin/Pieces/_wp_editor'
 import Error from '../../admin/Pieces/Error'
 import Errors from '../../admin/Bits/Errors'
 import CustomFieldsForm from "./_CustomFieldForm";
+import AttachmentForm from "./_AttachmentForm";
 import {debounce} from "lodash";
 
 export default defineComponent({
@@ -124,6 +155,7 @@ export default defineComponent({
         UploadFilled,
         CustomFieldsForm,
         List,
+        AttachmentForm
     },
 
     data() {
@@ -149,7 +181,30 @@ export default defineComponent({
             shouldShowSuggestions: false,
         }
     },
+    computed: {
+        exceptions() {
+            return this.errors.errors;
+        }
+    },
+    watch: {
+        'ticket.title': function (newVal, oldVal) {
 
+            if (!this.appVars.has_doc_integration) {
+                return;
+            }
+
+            if (this.hasQueryOrSpace(newVal)) {
+                this.fetchingSuggestions = true;
+                this.debouncedGetSuggestions();
+            } else {
+                this.fetchingSuggestions = false;
+                this.suggestions = [];
+            }
+        }
+    },
+    created() {
+        this.debouncedGetSuggestions = debounce(this.getSuggestions, 500);
+    },
     methods: {
         create() {
             this.errors.clear()
@@ -170,7 +225,32 @@ export default defineComponent({
                     this.creating = false
                 })
         },
+        closeSuggestions() {
+            this.shouldShowSuggestions = false;
+        },
+        getSuggestions() {
+            this.$get('search-doc', {
+                search: this.ticket.title
+            })
+                .then(response => {
+                    this.suggestions = response;
 
+                    if (this.suggestions.length) {
+                        this.shouldShowSuggestions = true;
+                    }
+                })
+                .catch((errors) => {
+                    console.log(errors);
+                    // this.errors.record(errors);
+                })
+                .always(() => {
+                    this.fetchingSuggestions = false;
+                });
+        },
+
+        hasQueryOrSpace(search) {
+            return search && (search.length >= 5 || (search.split(' ').length > 1));
+        }
     }
 })
 </script>
