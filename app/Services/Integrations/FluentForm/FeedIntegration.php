@@ -398,29 +398,50 @@ class FeedIntegration extends IntegrationManagerController
             'source_type'      => 'submission_item'
         ]);
 
-        if($ticketData['attachments']) {
+        if ($ticketData['attachments']) {
             $attachments = explode(',', $ticketData['attachments']);
-            $fluentFormUploadDir = wp_upload_dir()['basedir'] . FLUENTFORM_UPLOAD_DIR;
+            $uploadDir = wp_upload_dir();
 
-            foreach ($attachments as $attachment){
-                $fileName = explode('/', $attachment);
-                $fileName = end($fileName);
-                $filePath = $fluentFormUploadDir . '/' . $fileName;
-                $fileInfo = wp_check_filetype($filePath);
+            foreach ($attachments as $attachment) {
+                $isMediaLibrary = false;
+                $attachmentId = null;
 
-                Attachment::create(
-                    [
+                // Try to get attachment ID if it's a media library URL
+                $attachmentId = attachment_url_to_postid($attachment);
+                if ($attachmentId) {
+                    $isMediaLibrary = true;
+                }
+
+                if ($isMediaLibrary) {
+                    $filePath = get_attached_file($attachmentId);
+                    $fileName = basename($filePath);
+                    $fileType = get_post_mime_type($attachmentId);
+                    $fullUrl = wp_get_attachment_url($attachmentId);
+                } else {
+                    $fileName = basename($attachment);
+                    $filePath = $uploadDir['basedir'] . FLUENTFORM_UPLOAD_DIR . '/' . $fileName;
+                    $fileInfo = wp_check_filetype($filePath);
+                    $fileType = (!empty($fileInfo['type'])) ? $fileInfo['type'] : '';
+                    $fullUrl = $attachment;
+                }
+
+                if (file_exists($filePath)) {
+                    Attachment::create([
                         'ticket_id' => $ticket->id,
                         'file_path' => sanitize_text_field($filePath),
-                        'full_url'  => sanitize_url($attachment),
-                        'title'     => $fileName,
+                        'full_url'  => sanitize_url($fullUrl),
+                        'title'     => sanitize_text_field($fileName),
                         'person_id' => $customer->id,
-                        'file_type' => (!empty($fileInfo['type'])) ? $fileInfo['type'] : '',
-                    ]
-                );
+                        'file_type' => sanitize_text_field($fileType),
+                        'is_media_library' => $isMediaLibrary,
+                        'attachment_id' => $attachmentId
+                    ]);
+                }
             }
+
             $ticket->load('attachments');
         }
+
         return true;
     }
 
