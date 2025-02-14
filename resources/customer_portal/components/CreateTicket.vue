@@ -108,6 +108,9 @@
                     </div>
                 </div>
 
+                <!-- File Upload -->
+                <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments"/>
+
                 <!-- Priority -->
                 <el-form-item label="Priority" v-if="Object.keys(priorities).length">
                     <el-select
