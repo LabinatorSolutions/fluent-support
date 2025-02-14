@@ -134,6 +134,8 @@
                     </div>
                 </el-form-item>
 
+                <custom-fields-form :ticket="ticket" :custom_data="custom_data" :exceptions="exceptions"/>
+
                 <!-- Submit Button -->
                 <el-form-item class="fs_submit_button_container">
                     <el-button
