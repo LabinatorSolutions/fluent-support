@@ -66,6 +66,21 @@
                     </div>
                 </el-form-item>
 
+                <el-form-item class="fs_tk_suggestions">
+                    <label class="fs_ticket_details_label"> {{ $t('ticket_details') }}</label>
+                    <wp-editor :height="150" :media-buttons="false" :is_direct_paste="true" v-model="ticket.content"/>
+                    <p class="fs_tk_help">{{ $t('details_help') }}</p>
+
+                    <div v-if="errors.get('content')" class="error-message">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M8 14C4.6862 14 2 11.3138 2 8C2 4.6862 4.6862 2 8 2C11.3138 2 14 4.6862 14 8C14 11.3138 11.3138 14 8 14ZM7.4 7.4V11H8.6V7.4H7.4ZM7.4 5V6.2H8.6V5H7.4Z"
+                                fill="#FB3748"/>
+                        </svg>
+                        <error :error="errors.get('content')"/>
+                    </div>
+                </el-form-item>
+
                 <div v-if="products.length || Object.keys(priorities).length" class="fs_tk_row">
                     <div v-if="products.length" class="fs_tk_col">
                         <el-form-item class="fs_ticket_product fs_input_label" :label="$t('product_services')"
