@@ -624,16 +624,6 @@
 
             .fs_tk_col {
                 flex: 1 1 50%;
-                padding-left: 15px;
-                padding-right: 15px;
-
-                &:nth-child(even) {
-                    padding-right: 0;
-                }
-
-                &:nth-child(odd) {
-                    padding-left: 0;
-                }
 
                 @media all and (max-width: 768px) {
                     flex: auto;
@@ -650,7 +640,7 @@
 
         input.el-input__inner, textarea {
             line-height: 40px;
-            padding: 0 15px !important;
+            //padding: 0 15px !important;
             -webkit-transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
             transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
         }
