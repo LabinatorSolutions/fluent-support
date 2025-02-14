@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { Upload } from '@element-plus/icons-vue';
+import {Upload} from '@element-plus/icons-vue';
 
 export default {
     components: {
@@ -89,3 +89,77 @@ export default {
     }
 };
 </script>
+
+<style>
+.upload-container {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+
+    .upload-area {
+        .el-upload {
+            .el-upload-dragger {
+                border: 2px dashed #CAD9D8;
+                border-radius: 12px;
+
+            }
+        }
+    }
+
+
+    .upload-icon {
+        font-size: 28px;
+        color: #909399;
+        margin-bottom: 16px;
+    }
+
+    .upload-text {
+        text-align: center;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .upload-instruction {
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: -0.006em;
+        margin-bottom: 8px;
+    }
+
+    .upload-info {
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 16px;
+        margin-top: 0;
+        color: rgba(82, 88, 102, 1);
+
+    }
+
+    .browse-button {
+        margin-top: 12px;
+        border-radius: 8px;
+
+        .upload-button {
+            border-radius: 8px;
+            gap: 4px;
+            padding: 6px 12px;
+            color: rgba(14, 18, 27, 1);
+            box-shadow: 0px 1px 2px 0px rgba(10, 13, 20, 0.03);
+            background: #fff;
+            border: 1px solid rgba(225, 228, 234, 1);
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            transition: background 0.3s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+
+            &:hover {
+                background: rgba(245, 247, 250, 1);
+            }
+
+        }
+
+
+    }
+}
+</style>
