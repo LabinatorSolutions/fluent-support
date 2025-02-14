@@ -52,28 +52,15 @@
                 </el-table>
             </div>
 
-            <div class="fs_pagination_section">
-                <span class="fs_page_info">Page {{ pagination.current_page }} of {{ totalPages }}</span>
-                <div class="fs_pagination_controls">
-                    <el-select v-model="pagination.per_page" class="fs_per_page_select">
-                        <el-option label="10 / page" :value="10"/>
-                    </el-select>
-                    <div class="fs_page_numbers">
-                        <button class="fs_page_btn" disabled>&laquo;</button>
-                        <button class="fs_page_btn" disabled>&lsaquo;</button>
-                        <button
-                            v-for="n in 5"
-                            :key="n"
-                            :class="['fs_page_number', { active: pagination.current_page === n }]"
-                        >
-                            {{ n }}
-                        </button>
-                        <span class="fs_page_ellipsis">...</span>
-                        <button class="fs_page_btn">16</button>
-                        <button class="fs_page_btn">&rsaquo;</button>
-                        <button class="fs_page_btn">&raquo;</button>
-                    </div>
-                </div>
+            <div
+                style="padding-bottom: 20px"
+                class="fs_pagination_section"
+                v-if="tickets.length"
+            >
+                <Pagination
+                    @fetch="fetchTickets()"
+                    :pagination="pagination"
+                />
             </div>
         </div>
     </div>
@@ -83,10 +70,12 @@
 import {debounce} from 'lodash'
 import {List} from '@element-plus/icons-vue'
 import TicketFilters from "@/customer_portal/components/_TicketFilter.vue";
+import Pagination from "./pieces/Pagination";
 
 export default {
     name: 'TicketsList',
     components: {
+        Pagination,
         TicketFilters,
         List
     },
