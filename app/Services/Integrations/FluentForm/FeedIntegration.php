@@ -399,10 +399,18 @@ class FeedIntegration extends IntegrationManagerController
         ]);
 
         if ($ticketData['attachments']) {
-            $attachments = explode(',', $ticketData['attachments']);
+            $attachments = is_array($ticketData['attachments'])
+                ? $ticketData['attachments']
+                : explode(',', $ticketData['attachments']);
+
             $uploadDir = wp_upload_dir();
 
             foreach ($attachments as $attachment) {
+                $attachment = trim($attachment);
+                if (empty($attachment)) {
+                    continue;
+                }
+
                 $isMediaLibrary = false;
                 $attachmentId = null;
 
@@ -412,30 +420,42 @@ class FeedIntegration extends IntegrationManagerController
                     $isMediaLibrary = true;
                 }
 
-                if ($isMediaLibrary) {
-                    $filePath = get_attached_file($attachmentId);
-                    $fileName = basename($filePath);
-                    $fileType = get_post_mime_type($attachmentId);
-                    $fullUrl = wp_get_attachment_url($attachmentId);
-                } else {
-                    $fileName = basename($attachment);
-                    $filePath = $uploadDir['basedir'] . FLUENTFORM_UPLOAD_DIR . '/' . $fileName;
-                    $fileInfo = wp_check_filetype($filePath);
-                    $fileType = (!empty($fileInfo['type'])) ? $fileInfo['type'] : '';
-                    $fullUrl = $attachment;
-                }
+                try {
+                    if ($isMediaLibrary) {
+                        $filePath = get_attached_file($attachmentId);
+                        if (!$filePath) {
+                            continue;
+                        }
+                        $fileName = basename($filePath);
+                        $fileType = get_post_mime_type($attachmentId);
+                        $fullUrl = wp_get_attachment_url($attachmentId);
+                    } else {
+                        $fileName = basename($attachment);
+                        $filePath = $uploadDir['basedir'] . FLUENTFORM_UPLOAD_DIR . '/' . $fileName;
+                        $fileInfo = wp_check_filetype($filePath);
+                        $fileType = (!empty($fileInfo['type'])) ? $fileInfo['type'] : '';
+                        $fullUrl = $attachment;
+                    }
 
-                if (file_exists($filePath)) {
-                    Attachment::create([
-                        'ticket_id' => $ticket->id,
-                        'file_path' => sanitize_text_field($filePath),
-                        'full_url'  => sanitize_url($fullUrl),
-                        'title'     => sanitize_text_field($fileName),
-                        'person_id' => $customer->id,
-                        'file_type' => sanitize_text_field($fileType),
-                        'is_media_library' => $isMediaLibrary,
-                        'attachment_id' => $attachmentId
-                    ]);
+                    if (file_exists($filePath)) {
+                        try {
+                            Attachment::create([
+                                'ticket_id' => $ticket->id,
+                                'file_path' => sanitize_text_field($filePath),
+                                'full_url'  => sanitize_url($fullUrl),
+                                'title'     => sanitize_text_field($fileName),
+                                'person_id' => $customer->id,
+                                'file_type' => sanitize_text_field($fileType),
+                                'is_media_library' => $isMediaLibrary,
+                                'attachment_id' => $attachmentId
+                            ]);
+                        } catch (\Exception $e) {
+                            error_log("Failed to create attachment record: " . $e->getMessage());
+                        }
+                    }
+                } catch (\Exception $e) {
+                    error_log("Error processing attachment: " . $e->getMessage());
+                    continue;
                 }
             }
 
