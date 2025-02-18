@@ -40,8 +40,8 @@
                             </router-link>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="human_date" label="Date" class-name="date-cell" width="196"/>
-                    <el-table-column prop="status" label="Status" class-name="fs_status_cell" width="130">
+                    <el-table-column prop="human_date" label="Date" class-name="date-cell" width="160"/>
+                    <el-table-column prop="status" label="Status" class-name="fs_status_cell" width="120">
                         <template #default="{ row }">
                             <span :class="['fs_status_badge', getStatusClass(row.status)]">
                                 <span class="fs_status_dot"></span>
