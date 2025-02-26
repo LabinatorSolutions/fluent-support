@@ -1,0 +1,380 @@
+.fluent-support-block {
+    width: 800px;
+}
+.fs_tickets_block_container {
+
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgb(225, 228, 234);
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+// Header styles
+.fs_tickets_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.fs_tickets_title {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 28px;
+    text-align: left;
+    text-underline-position: from-font;
+    margin: 0;
+    color: #111827;
+}
+
+.fs_create_ticket_button {
+    background: #18181B;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    height: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .fs_plus_icon {
+        margin-right: 8px;
+        font-size: 18px;
+    }
+
+    &:hover {
+        background-color: #1f2937;
+    }
+}
+
+// Filters section
+
+
+
+
+.fs_tickets_filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+
+    .fs_status_filter {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        background: rgb(245, 247, 250);
+        border-radius: 10px;
+        max-width: 250px;
+    }
+
+    .fs_filters_left {
+        display: flex;
+        gap: 8px;
+    }
+}
+
+
+
+.fs_filter_button {
+    padding: 6px 16px;
+    border: none;
+    background: transparent;
+    color: #6B7280;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    min-width: 78px;
+    &.active {
+        background: white;
+        color: #111827;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    &:hover:not(.active) {
+        background-color: #f9fafb;
+    }
+}
+
+.fs_filters_right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.fs_product_dropdown {
+    select {
+        appearance: none;
+        background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e") no-repeat right 8px center;
+        background-size: 16px;
+        background-color: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 4px 10px;
+        font-size: 14px;
+        color: #374151;
+        min-width: 180px;
+
+        &:focus {
+            outline: none;
+            border-color: #d1d5db;
+        }
+    }
+}
+
+.fs_filter_toggle_button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    width: 36px;
+    height: 36px;
+    color: #6b7280;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #f9fafb;
+    }
+}
+
+.fs_search_wrapper {
+    position: relative;
+
+    .fs_search_input {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 4px 10px;
+        font-size: 14px;
+        color: #374151;
+
+        &:focus {
+            outline: none;
+            border-color: #d1d5db;
+        }
+
+        &::placeholder {
+            color: #9ca3af;
+        }
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+}
+
+// Table header
+.fs_tickets_table_header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px 120px;
+    gap: 16px;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgb(245, 247, 250);
+    color: rgb(14, 18, 27);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.fs_header_date {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.fs_ticket_table {
+    padding: 0 20px 20px 20px;
+}
+// Tickets list
+.fs_tickets_list {
+    display: flex;
+    flex-direction: column;
+}
+
+.fs_ticket_item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 120px 120px;
+    gap: 16px;
+    padding: 16px 8px;
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: #f9fafb;
+    }
+}
+
+.fs_ticket_conversation {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fs_ticket_title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #111827;
+    font-size: 14px;
+
+    .fs_ticket_count {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #e5e7eb;
+        color: #4b5563;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 999px;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+    }
+}
+
+.fs_ticket_description {
+    font-size: 14px;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fs_ticket_date {
+    font-size: 14px;
+    color: #374151;
+}
+
+.fs_ticket_status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #374151;
+    font-weight: 500;
+
+    .fs_status_indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+
+        &.active {
+            background-color: #10b981;
+        }
+
+        &.pending {
+            background-color: #f59e0b;
+        }
+
+        &.closed {
+            background-color: #6b7280;
+        }
+    }
+}
+
+// Pagination
+.fs_tickets_pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+
+    .fs_pagination_left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        .fs_pagination_info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .fs_pagination_per_page {
+            select {
+                background-color: transparent;
+                font-size: 14px;
+                color: #6b7280;
+                cursor: pointer;
+                padding: 5px 20px 5px 10px;
+                border-radius: 10px;
+                border: 1px solid #e5e7eb;
+
+                &:focus {
+                    outline: none;
+                }
+            }
+        }
+    }
+}
+
+
+
+.fs_pagination_controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.fs_pagination_button  {
+    background: transparent;
+    color: #666;
+    min-width: 32px;
+    height: 32px;
+    line-height: 28px;
+    border-radius: 8px;
+    font-weight: 400;
+    font-size: 13px;
+    border: 1px solid rgb(225, 228, 234);
+
+    &:first-child {
+        border: none;
+    }
+
+    &:last-child {
+        border: none;
+    }
+
+    &.active {
+        background: rgba(245, 247, 250, 1);
+        color: #333;
+        font-weight: 600;
+    }
+
+    &:hover:not(.active) {
+        background-color: #f9fafb;
+        z-index: 1;
+    }
+}
+
+.pagination-ellipsis {
+    background: transparent;
+    color: #666;
+    min-width: 32px;
+    height: 32px;
+    line-height: 32px;
+    border-radius: 8px;
+    font-weight: normal;
+    border: 1px solid rgba(225, 228, 234, 1);
+}
+
+// Loading state
+.fs_loading_state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 0;
+    color: #6b7280;
+    gap: 16px;
+}
