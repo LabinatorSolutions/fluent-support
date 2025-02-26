@@ -27,6 +27,26 @@ class BlockEditorHandler
             'render_callback' => array($this, 'fst_render_block'),
             'attributes' => BlockAttributes::CustomerPortalAttributes(),
         ));
+
+
+
+        wp_enqueue_script(
+            'fluent-support/all-tickets',
+            $assets . 'block-editor/js/AllTicketsIndex.js',
+            array('wp-blocks', 'wp-components', 'wp-block-editor', 'wp-element'),
+            FLUENT_SUPPORT_VERSION,
+            true
+        );
+
+        wp_localize_script('fluent-support/all-tickets', 'fluent_support_vars', [
+            'rest'            => $this->getRestInfo(),
+        ]);
+
+        register_block_type( 'fluent-support/all-tickets' , array(
+            'editor_script' => 'fluent-support/all-tickets',
+            'render_callback' => array($this, 'fst_render_block'),
+            'attributes' => BlockAttributes::CustomerPortalAttributes(),
+        ));
     }
 
     protected function getRestInfo()
@@ -57,6 +77,7 @@ class BlockEditorHandler
         }
 
         $param .= "attributes='".json_encode($attributes)."'";
+
         return do_shortcode("[fluent_support_portal $param]");
     }
 }
