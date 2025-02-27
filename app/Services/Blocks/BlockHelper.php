@@ -38,16 +38,20 @@ class BlockHelper
                     border-radius: <?php echo isset($attributes['allTicketsFilterBorderRadius']) ? $attributes['allTicketsFilterBorderRadius'] : 8; ?>px;
                 }
 
-                .fs_tickets_table .el-table__header thead th:first-child,
+                .fs_tickets_table .el-table__header thead th:first-child {
+                    border-top-left-radius: <?php echo isset($attributes['allTicketsTableHeaderBorderRadius']) ? $attributes['allTicketsTableHeaderBorderRadius'] : 8; ?>px;
+                    border-bottom-left-radius: <?php echo isset($attributes['allTicketsTableHeaderBorderRadius']) ? $attributes['allTicketsTableHeaderBorderRadius'] : 8; ?>px;
+                }
+
                 .fs_tickets_table .el-table__header thead th:last-child {
-                    border-radius: <?php echo isset($attributes['allTicketsTableHeaderBorderRadius']) ? $attributes['allTicketsTableHeaderBorderRadius'] : 8; ?>px;
+                    border-top-right-radius: <?php echo isset($attributes['allTicketsTableHeaderBorderRadius']) ? $attributes['allTicketsTableHeaderBorderRadius'] : 8; ?>px;
+                    border-bottom-right-radius: <?php echo isset($attributes['allTicketsTableHeaderBorderRadius']) ? $attributes['allTicketsTableHeaderBorderRadius'] : 8; ?>px;
                 }
 
                 .fs_pagination_container .el-select__wrapper,
                 .fs_pagination_container .el-pagination .el-pager li {
                     border-radius: <?php echo isset($attributes['allTicketsFooterButtonBorderRadius']) ? $attributes['allTicketsFooterButtonBorderRadius'] : 8; ?>px;
                 }
-
             }
 
         </style>
