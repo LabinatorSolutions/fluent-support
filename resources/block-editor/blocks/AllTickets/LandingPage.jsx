@@ -35,7 +35,7 @@ export const TicketsLandingBlock = props => {
     }).map((ticket, index) => ({...ticket, id: index + 1}));
 
     const blockStyles = {
-        borderRadius: `${blockAttributes.borderRadius || 0}px`,
+        borderRadius: `${blockAttributes.allTicketsBorderRadius || 0}px`,
     };
 
 
@@ -46,7 +46,7 @@ export const TicketsLandingBlock = props => {
     }
 
     const filterStyle = {
-        borderRadius: `${blockAttributes.filterBorderRadius || 0}px`,
+        borderRadius: `${blockAttributes.allTicketsFilterBorderRadius || 0}px`,
     }
 
     const tableHeaderBorderRadius = {
@@ -72,8 +72,8 @@ export const TicketsLandingBlock = props => {
                 <PanelBody title={__('General Style Settings')} initialOpen={true}>
                     <RangeControl
                         label={__('Border Radius')}
-                        value={blockAttributes.borderRadius || 0}
-                        onChange={value => setAttributes({borderRadius: value})}
+                        value={blockAttributes.allTicketsBorderRadius || 0}
+                        onChange={value => setAttributes({allTicketsBorderRadius: value})}
                         min={0}
                         max={20}
                     />
@@ -109,8 +109,8 @@ export const TicketsLandingBlock = props => {
 
                     <RangeControl
                         label={__('Filter Border Radius')}
-                        value={blockAttributes.filterBorderRadius || 8}
-                        onChange={value => setAttributes({filterBorderRadius: value})}
+                        value={blockAttributes.allTicketsFilterBorderRadius || 8}
+                        onChange={value => setAttributes({allTicketsFilterBorderRadius: value})}
                         min={0}
                         max={20}
                     />
