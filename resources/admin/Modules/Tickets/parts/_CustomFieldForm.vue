@@ -2,9 +2,8 @@
     <div class="fs_custom_fields">
         <template v-if="appReady">
             <el-row v-if="fields" :gutter="30">
-                <el-col v-for="(field, fieldName) in computedFields" :key="fieldName" :xs="24" :md="12">
+                <el-col v-for="(field, fieldName) in computedFields" :key="fieldName" :xs="24" :md="12" v-show="field.is_renderable">
                     <el-form :data="formData" :label-position="labelPosition">
-                        <div v-if="field.is_renderable" class="fs_tk_col">
                             <el-form-item :label="field.label">
                                 <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
                                           :type="field.type" v-model="formData[field.slug]"/>
@@ -28,7 +27,6 @@
                                 </el-checkbox-group>
                                 <p v-else>Not editable</p>
                             </el-form-item>
-                        </div>
                     </el-form>
                 </el-col>
             </el-row>
