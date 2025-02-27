@@ -1,11 +1,11 @@
 <template>
-    <div class="pagination-container">
+    <div class="fs_pagination_container">
         <!-- Left section with total and page size -->
-        <div class="pagination-left">
-            <span class="page-text">Page {{ pagination.current_page }} of {{ Math.ceil(pagination.total / pagination.per_page) }}</span>
+        <div class="fs_pagination_left">
+            <span class="fs_page_text">Page {{ pagination.current_page }} of {{ Math.ceil(pagination.total / pagination.per_page) }}</span>
             <el-select
                 v-model="pagination.per_page"
-                class="per-page-select"
+                class="fs_per_page_select"
                 @change="changeSize"
             >
                 <el-option
@@ -68,99 +68,107 @@ export default {
 </script>
 
 <style>
-.pagination-container {
+.fs_pagination_container {
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 20px;
-}
 
-.pagination-left {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
 
-.page-text {
-    color: #666;
-    font-size: 14px;
-}
+    .fs_pagination_left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
 
-.per-page-select {
-    width: 120px;
-}
+    .fs_page_text {
+        color: #666;
+        font-size: 14px;
+    }
 
-/* Select styling */
-.el-select .el-input__wrapper {
-    background-color: white;
-    box-shadow: 0 0 0 1px #dcdfe6;
-    border-radius: 6px;
-}
+    .fs_per_page_select {
+        width: 120px;
 
-.el-select .el-input__wrapper:hover {
-    box-shadow: 0 0 0 1px #c0c4cc;
-}
+        .el-select__wrapper {
+            border-radius: 8px;
+        }
+    }
 
-.el-select-dropdown__item {
-    padding: 8px 16px;
-    font-size: 14px;
-}
+    /* Select styling */
 
-/* Pagination styling */
-.el-pagination {
-    --el-pagination-bg-color: transparent;
-    --el-pagination-hover-color: #f3f4f6;
-    --el-pagination-button-color: #666;
-    --el-pagination-button-disabled-color: #ccc;
-}
+    .el-select .el-input__wrapper {
+        background-color: white;
+        box-shadow: 0 0 0 1px #dcdfe6;
+        border-radius: 6px;
+    }
 
-.el-pagination .el-pager li {
-    background: transparent;
-    color: #666;
-    min-width: 32px;
-    height: 32px;
-    line-height: 32px;
-    border-radius: 8px;
-    margin: 0 4px;
-    font-weight: normal;
-    border: 1px solid rgba(225, 228, 234, 1);
-}
+    .el-select .el-input__wrapper:hover {
+        box-shadow: 0 0 0 1px #c0c4cc;
+    }
 
-.el-pagination .el-pager li.is-active {
-    background: rgba(245, 247, 250, 1);
-    color: #333;
-    font-weight: 600;
-}
+    .el-select-dropdown__item {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
 
-.el-pagination .btn-prev,
-.el-pagination .btn-next {
-    background: transparent;
-    color: #666;
-    border: none;
-    margin: 0 4px;
-    border-radius: 6px;
-}
+    /* Pagination styling */
 
-.el-pagination .btn-prev:disabled,
-.el-pagination .btn-next:disabled {
-    color: #ccc;
-}
+    .el-pagination {
+        --el-pagination-bg-color: transparent;
+        --el-pagination-hover-color: #f3f4f6;
+        --el-pagination-button-color: #666;
+        --el-pagination-button-disabled-color: #ccc;
+    }
 
-.el-pagination .btn-prev:hover:not(:disabled),
-.el-pagination .btn-next:hover:not(:disabled),
-.el-pagination .el-pager li:hover:not(.is-active) {
-    background: #f3f4f6;
-}
+    .el-pagination .el-pager li {
+        background: transparent;
+        color: #666;
+        min-width: 32px;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 8px;
+        margin: 0 4px;
+        font-weight: normal;
+        border: 1px solid rgba(225, 228, 234, 1);
+    }
 
-/* Dropdown menu styling */
-.el-select-dropdown__item.selected {
-    color: #333;
-    font-weight: 600;
-    background-color: #f3f4f6;
-}
+    .el-pagination .el-pager li.is-active {
+        background: rgba(245, 247, 250, 1);
+        color: #333;
+        font-weight: 600;
+    }
 
-.el-select-dropdown__item:hover {
-    background-color: #f3f4f6;
+    .el-pagination .btn-prev,
+    .el-pagination .btn-next {
+        background: transparent;
+        color: #666;
+        border: none;
+        margin: 0 4px;
+        border-radius: 6px;
+    }
+
+    .el-pagination .btn-prev:disabled,
+    .el-pagination .btn-next:disabled {
+        color: #ccc;
+    }
+
+    .el-pagination .btn-prev:hover:not(:disabled),
+    .el-pagination .btn-next:hover:not(:disabled),
+    .el-pagination .el-pager li:hover:not(.is-active) {
+        background: #f3f4f6;
+    }
+
+    /* Dropdown menu styling */
+
+    .el-select-dropdown__item.selected {
+        color: #333;
+        font-weight: 600;
+        background-color: #f3f4f6;
+    }
+
+    .el-select-dropdown__item:hover {
+        background-color: #f3f4f6;
+    }
 }
 </style>
