@@ -2,31 +2,33 @@
     <div class="fs_custom_fields">
         <template v-if="appReady">
             <el-row v-if="fields" :gutter="30">
-                <el-col v-for="(field, fieldName) in fields" :key="fieldName" :xs="24" :md="12">
+                <el-col v-for="(field, fieldName) in computedFields" :key="fieldName" :xs="24" :md="12">
                     <el-form :data="formData" :label-position="labelPosition">
-                        <el-form-item :label="field.label">
-                            <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
-                                      :type="field.type" v-model="formData[field.slug]"/>
-                            <el-select v-else-if="field.type == 'select-one'" v-model="formData[field.slug]">
-                                <el-option v-for="option in field.options" :key="option"
-                                           :value="option" :label="option"></el-option>
-                            </el-select>
-                            <el-select v-else-if="field.type == 'select'" :filterable="field.filterable"
-                                       :multiple="field.multiple"
-                                       v-model="formData[field.slug]">
-                                <el-option v-for="option in field.options" :key="option.id"
-                                           :value="option.id" :label="option.title"></el-option>
-                            </el-select>
-                            <el-radio-group v-else-if="field.type == 'radio'" v-model="formData[field.slug]">
-                                <el-radio v-for="option in field.options" :key="option"
-                                          :value="option" :label="option"></el-radio>
-                            </el-radio-group>
-                            <el-checkbox-group v-else-if="field.type == 'checkbox'" v-model="formData[field.slug]">
-                                <el-checkbox v-for="option in field.options" :key="option"
-                                             :value="option" :label="option"></el-checkbox>
-                            </el-checkbox-group>
-                            <p v-else>Not editable</p>
-                        </el-form-item>
+                        <div v-if="field.is_renderable" class="fs_tk_col">
+                            <el-form-item :label="field.label">
+                                <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
+                                          :type="field.type" v-model="formData[field.slug]"/>
+                                <el-select v-else-if="field.type == 'select-one'" v-model="formData[field.slug]">
+                                    <el-option v-for="option in field.options" :key="option"
+                                               :value="option" :label="option"></el-option>
+                                </el-select>
+                                <el-select v-else-if="field.type == 'select'" :filterable="field.filterable"
+                                           :multiple="field.multiple"
+                                           v-model="formData[field.slug]">
+                                    <el-option v-for="option in field.options" :key="option.id"
+                                               :value="option.id" :label="option.title"></el-option>
+                                </el-select>
+                                <el-radio-group v-else-if="field.type == 'radio'" v-model="formData[field.slug]">
+                                    <el-radio v-for="option in field.options" :key="option"
+                                              :value="option" :label="option"></el-radio>
+                                </el-radio-group>
+                                <el-checkbox-group v-else-if="field.type == 'checkbox'" v-model="formData[field.slug]">
+                                    <el-checkbox v-for="option in field.options" :key="option"
+                                                 :value="option" :label="option"></el-checkbox>
+                                </el-checkbox-group>
+                                <p v-else>Not editable</p>
+                            </el-form-item>
+                        </div>
                     </el-form>
                 </el-col>
             </el-row>
@@ -126,7 +128,124 @@ export default {
                     this.saving = false;
                 });
         },
+        isRenderable(field) {
+            if (field.has_logics != 'yes' || !field.conditions || !field.conditions.length) {
+                return true;
+            }
+            let singlePass = false;
+            let allPassed = true;
+            each(field.conditions, (condition) => {
+                if (this.dependencyPass(condition)) {
+                    singlePass = true;
+                } else {
+                    this.custom_data[field.slug] = [];
+                    allPassed = false;
+                }
+            });
+
+            if (field.match_type == 'all') {
+                return singlePass && allPassed;
+            }
+
+            return singlePass;
+        },
+        /**
+         * Helper function for show/hide dependent elements
+         & @return {Boolean}
+         */
+        compare(sourceVal, operator, givenVal) {
+            if (givenVal === undefined) {
+                return false;
+            }
+            if (typeof sourceVal == 'string') {
+                sourceVal = sourceVal.toLowerCase();
+            }
+
+            if (typeof givenVal == 'string') {
+                givenVal = givenVal.toLowerCase();
+            }
+
+            if (isArray(givenVal)) {
+                givenVal = givenVal.map((val) => {
+                    return val.toLowerCase();
+                });
+            }
+
+            switch (operator) {
+                case '=':
+                    if (isArray(givenVal)) {
+                        return givenVal.indexOf(sourceVal) !== -1;
+                    }
+                    return sourceVal == givenVal
+                case '!=':
+                    if (isArray(givenVal)) {
+                        return givenVal.indexOf(sourceVal) === -1;
+                    }
+                    if (sourceVal !== '' && (givenVal === '' || givenVal === undefined)) {
+                        return false;
+                    }
+                    return sourceVal != givenVal
+                case 'contains':
+                    sourceVal = sourceVal.toString();
+                    return givenVal.indexOf(sourceVal) !== -1;
+                case 'not_contains':
+                    sourceVal = sourceVal.toString();
+                    return givenVal.indexOf(sourceVal) === -1;
+                case 'lt':
+                    return givenVal < sourceVal;
+                case 'gt':
+                    return givenVal > sourceVal;
+                default:
+                    return false
+            }
+        },
+
+        /**
+         * Checks if a prop is dependent on another
+         * @param condition
+         * @return {boolean}
+         */
+        dependencyPass(condition) {
+            if (condition && condition.item_key && condition.operator) {
+                let itemKey = condition.item_key;
+                let sourceValue = '';
+
+                if (itemKey.indexOf('ticket_') === 0) { // it's a ticket property
+                    itemKey = itemKey.replace('ticket_', '');
+                    if (itemKey == 'product_id') {
+                        sourceValue = this.formattedProducts[this.ticket[itemKey]];
+                    } else {
+                        sourceValue = this.ticket[itemKey];
+                    }
+                } else {
+                    sourceValue = this.custom_data[itemKey];
+                }
+
+                if (!sourceValue) {
+                    sourceValue = '';
+                }
+
+                if (this.compare(condition.value, condition.operator, sourceValue)) {
+                    return true;
+                }
+
+                return false;
+            }
+            return true;
+        }
     },
+    computed: {
+        computedFields() {
+            let fieldData = Object.keys(this.fields);
+            let data = this.fields;
+            fieldData.forEach((i) => {
+                data[i].is_renderable = this.isRenderable(data[i]);
+            });
+
+            return data;
+        }
+    },
+
     mounted() {
         if (isEmpty(this.appVars.custom_fields)) {
             return false;
