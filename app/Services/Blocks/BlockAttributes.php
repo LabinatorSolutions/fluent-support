@@ -50,6 +50,10 @@ class BlockAttributes
                 'type' => 'string',
                 'default' => 'Create a New Ticket',
             ],
+            'allTicketsBorderRadius' => [
+                'type' => 'number',
+                'default' => 16,
+            ],
             'allTicketsHeaderBackgroundColor' => [
                 'type' => 'string',
                 'default' => '#FFFFFF',
@@ -70,7 +74,7 @@ class BlockAttributes
                 'type' => 'string',
                 'default' => 'rgba(255, 255, 255, 1)',
             ],
-            'filterBorderRadius' => [
+            'allTicketsFilterBorderRadius' => [
                 'type' => 'number',
                 'default' => 8,
             ],
