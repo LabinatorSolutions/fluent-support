@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_support_ticket_container">
+    <div class="fs_create_ticket_container">
         <!-- Back Button -->
         <div class="fs_back_nav">
             <el-button link class="fs_back_button" @click="$router.push({ name: 'dashboard' })">
@@ -282,35 +282,37 @@ export default defineComponent({
 
 <style lang="scss">
 
-// General Input and Select Wrappers
-.el-input__wrapper,
-.el-select__wrapper {
-    border-radius: 10px;
-    padding: 5px 5px 5px 12px;
-}
 
-.el-select__wrapper {
-    padding: 10px 10px 10px 12px;
-}
-
-// Focus States
-.el-input__wrapper.is-focus,
-.el-select__wrapper.is-focused {
-    box-shadow: 0 0 0 1px rgba(14, 18, 27, 1) inset !important;
-    border-color: rgba(14, 18, 27, 1) !important;
-}
-
-// Error States
-.el-input.error .el-input__wrapper,
-.el-select.error .el-select__wrapper {
-    box-shadow: 0 0 0 1px rgba(251, 55, 72, 1) inset !important;
-}
 
 // Support Ticket Container
-.fs_support_ticket_container {
+.fs_create_ticket_container {
     background-color: #f8f9fa;
     min-height: 100vh;
     padding: 20px;
+
+    // General Input and Select Wrappers
+    .el-input__wrapper,
+    .el-select__wrapper {
+        border-radius: 10px;
+        padding: 5px 5px 5px 12px;
+    }
+
+    .el-select__wrapper {
+        padding: 10px 10px 10px 12px;
+    }
+
+    // Focus States
+    .el-input__wrapper.is-focus,
+    .el-select__wrapper.is-focused {
+        box-shadow: 0 0 0 1px rgba(14, 18, 27, 1) inset !important;
+        border-color: rgba(14, 18, 27, 1) !important;
+    }
+
+    // Error States
+    .el-input.error .el-input__wrapper,
+    .el-select.error .el-select__wrapper {
+        box-shadow: 0 0 0 1px rgba(251, 55, 72, 1) inset !important;
+    }
 
     .wp-editor-wrap {
         margin-top: 8px;
