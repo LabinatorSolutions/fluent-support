@@ -93,7 +93,7 @@ class AuthController extends Controller
             // check if it got expired or not
             if ($logHash['used_count'] > 5 || strtotime($logHash['valid_till']) < current_time('timestamp')) {
                 wp_send_json([
-                    'message' => __('Your verification code has been expired. Please try again', 'fluent-security')
+                    'message' => __('Your verification code has been expired. Please try again', 'fluent-support')
                 ], 422);
             }
 
@@ -105,7 +105,7 @@ class AuthController extends Controller
                 ]);
 
                 wp_send_json([
-                    'message' => __('Please provide a valid verification code that sent to your email address', 'fluent-security')
+                    'message' => __('Please provide a valid verification code that sent to your email address', 'fluent-support')
                 ], 422);
             }
 

@@ -1282,7 +1282,7 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
 
         return [
-            'message' => __('Ticket has been closed', 'fluent_support'),
+            'message' => __('Ticket has been closed', 'fluent-support'),
             'ticket'  => (new TicketService())->close($ticket, $agent, '', $closeSilently)
         ];
     }
@@ -1302,7 +1302,7 @@ class Ticket extends Model
 
 
         return [
-            'message' => __('Ticket has been opened again', 'fluent_support'),
+            'message' => __('Ticket has been opened again', 'fluent-support'),
             'ticket'  => (new TicketService())->reopen($ticket, $agent)
         ];
     }
@@ -1354,9 +1354,13 @@ class Ticket extends Model
         $ticket = static::findOrFail($ticketId);
 
         $this->checkAgentPermission($ticket);
-
+        $propName = sanitize_text_field($propName);
+        $message = sprintf(
+            __('%s has been updated', 'fluent-support'),
+            esc_html(str_replace('_', ' ', ucwords($propName)))
+        );
         return [
-            'message'     => __(str_replace('_', ' ', ucwords($propName)) . ' has been updated', 'fluent-support'),
+            'message'     => $message,
             'update_data' => $this->handlePropertyUpdate($propName, $propValue, $ticket, $assigner)
         ];
     }
