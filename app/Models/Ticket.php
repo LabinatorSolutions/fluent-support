@@ -1356,6 +1356,7 @@ class Ticket extends Model
         $this->checkAgentPermission($ticket);
         $propName = sanitize_text_field($propName);
         $message = sprintf(
+            /* translators: %s: The name of the property that was updated */
             __('%s has been updated', 'fluent-support'),
             esc_html(str_replace('_', ' ', ucwords($propName)))
         );
@@ -1453,10 +1454,14 @@ class Ticket extends Model
             (new TicketService())->close($ticket, $agent);
         });
 
+        // translators: %d represents the number of tickets that have been closed.
         return [
-            'message' => sprintf(__('%d tickets have been closed', 'fluent-support'), count($tickets))
+            'message' => sprintf(
+                /* translators: %d represents the number of closed tickets. */
+                __('%d tickets have been closed.', 'fluent-support'),
+                count($tickets)
+            )
         ];
-    }
 
     /**
      * This `bulkAssignAgent` will assign all given or selected tickets to given agent
@@ -1500,19 +1505,26 @@ class Ticket extends Model
             do_action('fluent_support/agent_assigned_to_ticket', $agent, $ticket, $assigner);
         });
 
-        $assignedMessage =  "$assignedCount tickets have been assigned to {$agent->full_name}.";
+        // translators: %1$d is the number of assigned tickets, %2$s is the agent's full name.
+        $assignedMessage = sprintf(
+            /* translators: %1$d is the number of tickets assigned, %2$s is the agent's name. */
+            __('%1$d tickets have been assigned to %2$s.', 'fluent-support'),
+            $assignedCount,
+            $agent->full_name
+        );
 
+        // translators: %1$d is the number of skipped tickets.
         $skippedMessage = $skippedCount > 0
-            ? "$skippedCount tickets were skipped due to mailbox restrictions or already being assigned."
+            ? sprintf(
+                /* translators: %1$d is the number of skipped tickets due to mailbox restrictions. */
+                __('%1$d tickets were skipped due to mailbox restrictions or already being assigned.', 'fluent-support'),
+                $skippedCount
+            )
             : "";
 
         return [
-            'message' => __(
-                trim($assignedMessage . ' ' . $skippedMessage), // Ensure no extra spaces
-                'fluent-support'
-            )
+            'message' => trim($assignedMessage . ' ' . $skippedMessage)
         ];
-
     }
 
 

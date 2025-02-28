@@ -350,8 +350,12 @@ class SettingsController extends Controller
                 'message' => __('OpenAI settings have been successfully saved.', 'fluent-support'),
             ]);
         } catch (\Exception $e) {
+            // translators: %s is the error message from the exception
+            $translatedMessage = __('An error occurred while saving the settings: %s', 'fluent-support');
+            $errorMessage = sprintf($translatedMessage, $e->getMessage());
+        
             return $this->sendError([
-                'message' => __('An error occurred while saving the settings: ' . $e->getMessage(), 'fluent-support'),
+                'message' => $errorMessage,
             ]);
         }
     }
