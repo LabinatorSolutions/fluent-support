@@ -140,7 +140,7 @@ class ExternalPages
         $uploads_dir = wp_upload_dir()['basedir'];
         
         if (!$file_path || strpos($file_path, $uploads_dir) !== 0 || !file_exists($file_path)) {
-            wp_die(__('File not found or access denied', 'fluent-support'), 403);
+            wp_die(esc_html__('File not found or access denied', 'fluent-support'), 403);
             return;
         }
         
