@@ -59,7 +59,7 @@ class Ticket extends Model
                 $model->slug = static::slugify($model->title);
             }
 
-            $model->hash = substr(md5(time() . wp_generate_uuid4()), 0, 8) . mt_rand(1, 99);
+            $model->hash = substr(md5(time() . wp_generate_uuid4()), 0, 8) . wp_rand(1, 99);
             $model->content_hash = md5($model->content);
 
             $model->last_customer_response = current_time('mysql');
@@ -1462,6 +1462,7 @@ class Ticket extends Model
                 count($tickets)
             )
         ];
+    }
 
     /**
      * This `bulkAssignAgent` will assign all given or selected tickets to given agent
