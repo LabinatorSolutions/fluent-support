@@ -136,11 +136,20 @@ class ExternalPages
     // Helper method to serve an attachment
     private function serveLocalAttachment($attachment)
     {
+        $file_path = realpath($attachment->file_path);
+        $uploads_dir = wp_upload_dir()['basedir'];
+        
+        if (!$file_path || strpos($file_path, $uploads_dir) !== 0 || !file_exists($file_path)) {
+            wp_die(__('File not found or access denied', 'fluent-support'), 403);
+            return;
+        }
+        
         ob_get_clean();
-        ini_set('user_agent', 'Fluent Support/' . FLUENT_SUPPORT_VERSION . '; ' . get_bloginfo('url'));
-        header("Content-Type: {$attachment->file_type}");
-        header("Content-Disposition: inline; filename=\"{$attachment->title}\"");
-        echo esc_html(file_get_contents($attachment->file_path));
+        ini_set('user_agent', 'Fluent Support/' . FLUENT_SUPPORT_VERSION . '; ' . esc_url(get_bloginfo('url')));
+        
+        header("Content-Type: " . esc_attr($attachment->file_type));
+        header("Content-Disposition: inline; filename=\"" . esc_attr($attachment->title) . "\"");
+        readfile($file_path);
         die();
     }
 
