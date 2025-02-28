@@ -30,10 +30,10 @@ class TwoFaHandler
         try {
             $twoFaCode = str_pad(random_int(100123, 900987), 6, 0, STR_PAD_LEFT);
         } catch (\Exception $e) {
-            $twoFaCode = str_pad(mt_rand(100123, 900987), 6, 0, STR_PAD_LEFT);
+            $twoFaCode = str_pad(wp_rand(100123, 900987), 6, 0, STR_PAD_LEFT);
         }
 
-        $string = $user->ID . '-' . wp_generate_uuid4() . mt_rand(1, 99999999);
+        $string = $user->ID . '-' . wp_generate_uuid4() . wp_rand(1, 99999999);
         $hash = wp_hash_password($string);
         $hash = sanitize_title($hash, '', 'display');
         $hash .= $user->ID . '-' . time();

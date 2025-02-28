@@ -428,7 +428,7 @@ class Conversation extends Model
     {
         if ( !PermissionManager::currentUserCan('fst_manage_other_tickets') ) {
             if ( $ticketAgentId != $agentId ) {
-                throw new \Exception("Sorry, You do not have permission to {$task} this response");
+                throw new \Exception(sprintf("Sorry, You do not have permission to %s this response", esc_html($task)));
             }
         } else {
             return true;
