@@ -19,7 +19,7 @@ class UploadService
 
     public static function handleTempFileUpload($file)
     {
-        
+
         $uploadDir = wp_upload_dir();
         $fluentSupportFolder = $uploadDir['basedir'] . DIRECTORY_SEPARATOR . FLUENT_SUPPORT_UPLOAD_DIR;
         if (!file_exists($fluentSupportFolder . DIRECTORY_SEPARATOR . 'index.html')) {

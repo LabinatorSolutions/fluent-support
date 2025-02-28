@@ -233,7 +233,7 @@ class FeedIntegration extends IntegrationManagerController
         if(empty($customFields)){
             return[
                 'component' => 'html_info',
-                'html_info' => __('', 'fluentform')
+                'html_info' => ''
             ];
         }
 
