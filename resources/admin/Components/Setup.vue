@@ -74,7 +74,7 @@
                             {{ $t('Share Essentials') }}
                         </el-checkbox>
                         <p style="margin-top: 10px;">
-                            {{ $t('Allow FluentCRM to collect non-sensitive diagnostic data and usage information.') }}
+                            {{ $t('Allow Fluent Support to collect non-sensitive diagnostic data and usage information.') }}
                             <span style="text-decoration: underline;"
                                   @click="show_essential = !show_essential">{{ $t('what we collect') }}</span></p>
                         <p v-if="show_essential">
@@ -133,7 +133,7 @@
         </div>
 
         <el-dialog
-            title="Build a better FluentCRM"
+            title="Build a better Fluent Support"
             :close-on-click-modal="false"
             :show-close="false"
             :append-to-body="true"
