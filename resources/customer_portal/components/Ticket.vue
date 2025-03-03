@@ -1,64 +1,85 @@
 <template>
     <div class="fs_ticket_wrapper fs_ticket">
+        <!-- Back Button -->
+        <div class="fs_back_nav">
+            <el-button link class="fs_back_button" @click="$router.push({ name: 'dashboard' })">
+                <svg class="fs_svg_back" width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.2045 4.99907L5.917 8.71157L4.8565 9.77207L0.0834961 4.99907L4.8565 0.226074L5.917 1.28657L2.2045 4.99907Z" fill="#0E121B"/>
+                </svg>
+                <span class="fs_back_btn">Back to All Tickets</span>
+            </el-button>
+        </div>
         <div class="fs_tickets_container">
             <template v-if="ticket">
-                <div class="fs_ticket_header">
-                    <div class="fs_tk_subject">
-                        <h2 class="fs_ticket_subject">
-                            <span class="fs_ticket_number">#{{ ticket.id }}</span>
-                            {{ ticket.title }}
-                            <span class="fs_status_badge">
-                                <span class="fs_status_dot"></span> Active
-                            </span>
-                        </h2>
-                        <div v-if="ticket.product" class="fs_product_name">
-                            {{ ticket.product.title }}
+                <div class="fs_ticket_heroarea" :class="{ 'sticky-header': isSticky }">
+                    <div class="fs_ticket_header">
+                        <div class="fs_tk_subject">
+                            <h2 class="fs_ticket_subject">
+                                <!-- <span class="fs_ticket_number"></span> -->
+                                #{{ ticket.id }} {{ ticket.title }}
+                                <span class="fs_status_badge" :class="['fs_status_badge_' + (ticket.status === 'closed' ? 'closed' : 'active')]">
+                                    <span class="fs_status_dot" :class="['fs_status_dot_' + (ticket.status === 'closed' ? 'closed' : 'active')]"></span> 
+                                    <span v-if="ticket.status === 'closed'">Closed</span>
+                                    <span v-else>Active</span>
+                                </span>
+                            </h2>
+                            <div v-if="ticket.product" class="fs_product_name">
+                                {{ ticket.product.title }}
+                            </div>
+                        </div>
+                        <div class="fs_ticket_actions">
+                            <div class="fs_tk_thread" @click="scrollToThreadStarter">
+                                Thread starter
+                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6.75 9.129L10.773 5.106L11.8335 6.1665L6 12L0.166504 6.1665L1.227 5.106L5.25 9.129V0H6.75V9.129Z" fill="#525866"/>
+                                </svg>
+                            </div>
+                            <div v-loading="fetching" class="fs_ticket_refresh_btn" @click="fetchTicket()">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3.09725 2.32476C4.45817 1.1455 6.19924 0.497495 8 0.500007C12.1423 0.500007 15.5 3.85776 15.5 8.00001C15.5 9.60201 14.9975 11.087 14.1425 12.305L11.75 8.00001H14C14.0001 6.82373 13.6544 5.67336 13.006 4.69195C12.3576 3.71054 11.4349 2.94138 10.3529 2.4801C9.27082 2.01882 8.07704 1.88578 6.91997 2.09752C5.7629 2.30926 4.69359 2.85643 3.845 3.67101L3.09725 2.32476ZM12.9028 13.6753C11.5418 14.8545 9.80076 15.5025 8 15.5C3.85775 15.5 0.5 12.1423 0.5 8.00001C0.5 6.39801 1.0025 4.91301 1.8575 3.69501L4.25 8.00001H2C1.9999 9.17629 2.34556 10.3267 2.994 11.3081C3.64244 12.2895 4.56505 13.0586 5.64712 13.5199C6.72918 13.9812 7.92296 14.1142 9.08003 13.9025C10.2371 13.6908 11.3064 13.1436 12.155 12.329L12.9028 13.6753Z" fill="#525866"/>
+                                </svg>
+                            </div>
+
+                            <div class="fs_close_ticket" v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating" @click="closeTicket()">
+                                <span class="fs_close_ticket_title">{{$t('Close Ticket')}}</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="fs_ticket_actions">
-                        <div class="fs_tk_thread">
-                            <span class="fs_">
-                                Thread starter
-                            </span>
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6.75 9.129L10.773 5.106L11.8335 6.1665L6 12L0.166504 6.1665L1.227 5.106L5.25 9.129V0H6.75V9.129Z" fill="#525866"/>
-                            </svg>
+                    <div class="fs_ticket_response">
+                        <div class="fs_ticket_alert">
+                            <el-alert
+                                v-if="ticket.privacy === 'private'"
+                                show-icon
+                                :title="`${$t('This ticket is')} ${$t('Private')}. ${$t('agent_and_officials_can_see')}`"
+                                type="info"
+                            />
+                            <el-alert
+                                v-else
+                                show-icon
+                                :title="`${$t('This ticket is')} ${$t('Public')}. ${$t('not_to_share_private_info')}`"
+                                type="info"
+                            />
                         </div>
-                        <div v-loading="fetching" class="fs_ticket_refresh_btn" @click="fetchTicket()">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M3.09725 2.32476C4.45817 1.1455 6.19924 0.497495 8 0.500007C12.1423 0.500007 15.5 3.85776 15.5 8.00001C15.5 9.60201 14.9975 11.087 14.1425 12.305L11.75 8.00001H14C14.0001 6.82373 13.6544 5.67336 13.006 4.69195C12.3576 3.71054 11.4349 2.94138 10.3529 2.4801C9.27082 2.01882 8.07704 1.88578 6.91997 2.09752C5.7629 2.30926 4.69359 2.85643 3.845 3.67101L3.09725 2.32476ZM12.9028 13.6753C11.5418 14.8545 9.80076 15.5025 8 15.5C3.85775 15.5 0.5 12.1423 0.5 8.00001C0.5 6.39801 1.0025 4.91301 1.8575 3.69501L4.25 8.00001H2C1.9999 9.17629 2.34556 10.3267 2.994 11.3081C3.64244 12.2895 4.56505 13.0586 5.64712 13.5199C6.72918 13.9812 7.92296 14.1142 9.08003 13.9025C10.2371 13.6908 11.3064 13.1436 12.155 12.329L12.9028 13.6753Z" fill="#525866"/>
-                            </svg>
+
+                        <div style="text-align: center;" class="fst_reply_box" v-if="ticket.status == 'closed'">
+                            <p>{{$t('ticket_closed')}} {{ ticket.resolved_at }}
+                                <span v-if="ticket.closed_by_person">
+                                    {{$t('by')}} <b>{{ getHumanName(ticket.closed_by_person) }}</b>
+                                </span>
+                                <br/>{{$t('reopen_ticket_instruction')}}</p>
+                            <el-button :disabled="updating" v-loading="updating" @click="reOpen()" type="info" size="small">
+                                {{$t('Reopen This ticket')}}
+                            </el-button>
                         </div>
-                        <!-- <el-button class="fs_refresh_button" v-loading="fetching" @click="fetchTicket()" icon="Refresh" size="small"></el-button> -->
-                        <!-- <a class="el-button el-button--default el-button--small fs_all_button" :href="appVars.view_tickets_url">{{$t('All')}}</a> -->
-                        <div class="fs_close_ticket" v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating" @click="closeTicket()">
-                            <el-checkbox v-model="checked1" class="fs_close_btn_checkbox" size="large" />
-                            <span class="fs_close_ticket_title">{{$t('Close Ticket')}}</span>
-                        </div>
+                        <inline-reply v-else @created="recordNewResponse" :ticket="ticket"/>
                     </div>
                 </div>
+                
                 <div class="fs_ticket_body">
-                    
-                    <div class="fs_ticket_alert">
-                        <el-alert show-icon title="This ticket is Private. Only you and official support agents can view this conversation" type="info" />
-                    </div>
-
-                    <div style="text-align: center;" class="fst_reply_box" v-if="ticket.status == 'closed'">
-                        <p>{{$t('ticket_closed')}} {{ ticket.resolved_at }}
-                            <span v-if="ticket.closed_by_person">
-                                {{$t('by')}} <b>{{ getHumanName(ticket.closed_by_person) }}</b>
-                            </span>
-                            <br/>{{$t('reopen_ticket_instruction')}}</p>
-                        <el-button :disabled="updating" v-loading="updating" @click="reOpen()" type="info" size="small">
-                            {{$t('Reopen This ticket')}}
-                        </el-button>
-                    </div>
-                    <inline-reply v-else @created="recordNewResponse" :ticket="ticket"/>
-
-                    <div class="fs_ticket_threads_container">
-
+                    <div class="fs_ticket_threads_container" id="fs_ticket_threads_container">
                         <article v-for="conversation in conversations"
                                 :key="conversation.id"
+                                class="fs_customer_conversation"
                                 :class="getTicketClasses(conversation, ticket) ">
                             
                             <div class="fs_ticket_thread_content">
@@ -131,54 +152,62 @@
                                 </section>
                             </div>
                         </article>
-                        <article class="fs_ticket_thread conversion_starter">
-                            <div class="fs_ticket_thread_content">
-                                <section class="fs_ticket_avatar">
-                                    <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
-                                </section>
-                                <section class="fs_ticket_thread_wrap">
-                                    <section class="fs_thread_message">
-                                        <div class="fs_thread_head">
-                                            <div class="fs_thread_name">
-                                                <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('conversation_started')}}
-                                            </div>
-                                        </div>
-                                        <div v-html="purify(ticket.content)" class="fs_thread_body"></div>
-                                            
-                                        <div class="fs_actions_head">
-                                            <div class="fs_thread_actions">
-                                                {{ ticket.human_date }}
-                                            </div>
-                                        </div>
-
-                                        <div class="fst_file_lists" v-if="ticket.attachments && ticket.attachments.length">
-                                            <ul>
-                                                <li v-if="ticket.attachments.length"
-                                                    v-for="attachment in ticket.attachments"
-                                                    :key="attachment.file_hash"
-                                                >
-                                                    <el-icon> <Paperclip /> </el-icon> <a target="_blank" rel="noopener"
-                                                                                        :href="attachment.secureUrl">{{
-                                                        attachment.title
-                                                    }}</a>
-                                                </li>
-                                            </ul>
-                                        </div>
+                        <article class="fs_ticket_thread fs_conversion_starter" ref="conversionStarter">
+                            <div class="fs_conversion_starter_section">
+                                <div v-if="conversations.length > 2" class="fs_ticket_go_to_top_btn" @click="scrollToLastConversation">
+                                    Go to present message
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.7495 6.871V16H9.24952V6.871L5.22652 10.894L4.16602 9.8335L9.99952 4L15.833 9.8335L14.7725 10.894L10.7495 6.871Z" fill="#525866"/>
+                                    </svg>
+                                </div>
+                                <div class="fs_ticket_thread_content fs_starter_thread_content">
+                                    <section class="fs_ticket_avatar">
+                                        <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
                                     </section>
-                                </section>
-                            </div>
-                            <div v-if="!isEmpty(ticket.custom_fields)" class="fc_custom_data_wrap">
-                                <h3>{{ $t('Additional info') }}</h3>
-                                <ul>
-                                    <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
-                                        <b>{{ appVars.custom_fields[fieldName].label }}</b> :
-                                        <span v-if="isArray(fieldValue)">
-                                                <span class="fs_custom_check_value" v-for="value in fieldValue"
-                                                    :key="value">{{ value }}</span>
-                                            </span>
-                                        <span v-else v-html="purify(fieldValue)"></span>
-                                    </li>
-                                </ul>
+                                    <section class="fs_ticket_thread_wrap">
+                                        <section class="fs_thread_message">
+                                            <div class="fs_thread_head">
+                                                <div class="fs_thread_name">
+                                                    <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('conversation_started')}}
+                                                </div>
+                                            </div>
+                                            <div v-html="purify(ticket.content)" class="fs_thread_body"></div>
+                                                
+                                            <div class="fs_actions_head">
+                                                <div class="fs_thread_actions">
+                                                    {{ ticket.human_date }}
+                                                </div>
+                                            </div>
+
+                                            <div class="fst_file_lists" v-if="ticket.attachments && ticket.attachments.length">
+                                                <ul>
+                                                    <li v-if="ticket.attachments.length"
+                                                        v-for="attachment in ticket.attachments"
+                                                        :key="attachment.file_hash"
+                                                    >
+                                                        <el-icon> <Paperclip /> </el-icon> <a target="_blank" rel="noopener"
+                                                                                            :href="attachment.secureUrl">{{
+                                                            attachment.title
+                                                        }}</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </section>
+                                    </section>
+                                </div>
+                                <div v-if="!isEmpty(ticket.custom_fields)" class="fs_custom_data_wrap">
+                                    <h3>{{ $t('Additional info') }}</h3>
+                                    <ul>
+                                        <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
+                                            <b class="fs_custom_info_label">{{ appVars.custom_fields[fieldName].label }}</b> :
+                                            <span v-if="isArray(fieldValue)">
+                                                    <span class="fs_custom_check_value" v-for="value in fieldValue"
+                                                        :key="value">{{ value }}</span>
+                                                </span>
+                                            <span v-else v-html="purify(fieldValue)"></span>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </article>
                     </div>
@@ -215,10 +244,21 @@ export default {
             fetching: false,
             signon_id: '',
             updating: false,
-            error_message: ''
+            error_message: '',
+            isSticky: false
         }
     },
     methods: {
+        scrollToThreadStarter() {
+            this.isSticky = true;
+            const ticketWrap = document.querySelector('.fs_ticket_threads_container');
+            ticketWrap.scrollTop = ticketWrap.scrollHeight;
+        },
+        scrollToLastConversation() {
+            this.isSticky = true;
+            const ticketWrap = document.querySelector('.fs_ticket_threads_container');
+            ticketWrap.scrollTop = 0;
+        },
         fetchTicket() {
             this.fetching = true;
             this.$get(`tickets/${this.ticket_id}`, {
@@ -378,6 +418,22 @@ export default {
         box-sizing: border-box;
     }
 }
+.fs_back_nav{
+    margin-bottom: 20px;
+}
+.fs_svg_back{
+    margin: 16px;
+    top: 5.23px;
+    left: 7.08px;
+    color: #0E121B;
+}
+.fs_back_btn {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.6%;
+    color: #0E121B;
+}
 .fs_ticket_wrapper {
     padding: 20px;
     background: #f8fafc;
@@ -389,150 +445,186 @@ export default {
         box-shadow: none;
         // max-width: 1200px;
         margin: 0 auto;
+        .fs_ticket_heroarea{
+            &.sticky-header {
+                position: sticky;
+                top: 0;
+                z-index: 10; 
+                background: #fff;
+            }
+            .fs_ticket_header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 16px 20px;
+                border-bottom: 1px solid #E5E7EB;
+                position: relative;
+                background: white; /* Ensure the header has a background */
+                transition: top 0.3s ease; /* Smooth transition for sticky behavior */
+                @media (max-width: 665px) {
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 8px;
+                }
 
-        .fs_ticket_header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid #E5E7EB;
-            position: relative;
-            .fs_ticket_actions {
-                margin: 0;
-                right: 0;
-                top: 1px;
-                // width: 327px;
-                display: flex; 
-                align-items: center;
-                gap: 8px;
-                .fs_tk_thread{
-                    border-radius: 8px;
-                    padding: 8px;
-                    height: 36px;
-                    gap: 4px;
-                    border: 1px solid #E1E4EA;
-                    align-items: center;
-                    display: flex;
-                    justify-content: center;
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    font-size: 14px;
-                    line-height: 20px;
-                    color: var(--text-sub-600, #525866);
-                }
-                .fs_ticket_refresh_btn{
-                    border: 1px solid #E1E4EA;
-                    align-items: center;
-                    display: flex;
-                    justify-content: center;
-                    border-radius: 8px;
-                    padding: 8px;
-                    width: 36px;
-                    height: 36px;
-                    gap: 4px;
-                    cursor: pointer;
-                }
-                .fs_close_ticket{
-                    background: var(--bg-weak-50, #F5F7FA);
-                    color: var(--text-sub-600, #525866);
-                   gap: 8px;
-                   height: 36px;
-                   padding: 8px;
-                   display: flex;
-                   align-items: center;
-                   justify-content: center;
-                   font-size: 14px;
-                   line-height: 20px;
-                   border-radius: 8px;
-                   .fs_close_btn_checkbox .el-checkbox__inner{
-                       width: 16px;
-                       height: 16px;
-                       left: 2px;
-                       border-radius: 4px;
-                       border: 2px solid #E1E4EA;
-                   }
-                   .fs_close_ticket_title{
-                    font-weight: 500;
-                    size: 14px;
-                    line-height: 20px;
-                   }
-                }
-            }
-            .fs_ticket_number {
-                font-size: 20px;
-                color: #000000;
-                font-weight: 500;
-                line-height: 28px;
-                display: block;
-                margin-right: 4px;
-            }
-            .fs_ticket_subject{
-                word-wrap: break-word;
-                color: #314351;
-                display: inline-block;
-                font-size: 20px;
-                font-weight: 500;
-                line-height: 28px;
-                margin: 0;
-                color: #000000;
-                display: flex;
-                align-items: center;
-                font-weight: 500;
-                font-size: 18px;
-                line-height: 24px;
-            }
-            .fs_tk_subject {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 2px;
-                // height: 28px;
-                // width: 421px;
-                .fs_product_name {
-                    display: block;
+                .fs_ticket_actions {
                     margin: 0;
-                    font-weight: 400;
-                    font-size: 14px;
-                    line-height: 20px;
-                    color: var(--text-sub-600, #525866);
-                }
-        
-                .fs_status_badge {
-                    display: inline-flex;
+                    right: 0;
+                    top: 1px;
+                    // width: 327px;
+                    display: flex; 
                     align-items: center;
-                    gap: 6px;
-                    padding: 4px 8px;
-                    border-radius: 15px;
-                    font-size: 12px;
-                    font-weight: 500;
-                    line-height: 16px;
-                    text-align: left;
-                    color: rgb(82, 88, 102);
-                    margin-left: 5px;
-                    background-color: #EEFBF6;
-                    color: #23A682;
-                    .fs_status_dot {
-                        color: rgb(31, 193, 107);
-                        width: 6px;
-                        height: 6px;
-                        border-radius: 50%;
-                        background: currentColor;
+                    gap: 8px;
+                    flex: none;
+                    @media (max-width: 665px) {
+                        flex-wrap: wrap;
+                    }
+                    .fs_tk_thread{
+                        border-radius: 8px;
+                        padding: 8px;
+                        flex: none;
+                        gap: 4px;
+                        border: 1px solid #E1E4EA;
+                        align-items: center;
+                        display: flex;
+                        justify-content: center;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 14px;
+                        line-height: 20px;
+                        color: var(--text-sub-600, #525866);
+                        cursor: pointer;
+                    }
+                    .fs_ticket_refresh_btn{
+                        border: 1px solid #E1E4EA;
+                        align-items: center;
+                        display: flex;
+                        justify-content: center;
+                        border-radius: 8px;
+                        padding: 8px;
+                        width: 36px;
+                        height: 36px;
+                        gap: 4px;
+                        cursor: pointer;
+                    }
+                    .fs_close_ticket{
+                        background: var(--bg-weak-50, #F5F7FA);
+                        color: var(--text-sub-600, #525866);
+                        gap: 8px;
+                        padding: 8px;
+                        flex: none;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 14px;
+                        line-height: 20px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                    //    .fs_close_btn_checkbox .el-checkbox__inner{
+                    //        width: 16px;
+                    //        height: 16px;
+                    //        left: 2px;
+                    //        border-radius: 4px;
+                    //        border: 2px solid #E1E4EA;
+                    //    }
+                    .fs_close_ticket_title{
+                        font-weight: 500;
+                        size: 14px;
+                        line-height: 20px;
+                    }
                     }
                 }
-            }
+                .fs_ticket_number {
+                    font-size: 20px;
+                    color: #000000;
+                    font-weight: 500;
+                    line-height: 28px;
+                    display: block;
+                    margin-right: 4px;
+                }
+                .fs_ticket_subject{
+                    word-wrap: break-word;
+                    color: #314351;
+                    display: inline-block;
+                    font-size: 20px;
+                    font-weight: 500;
+                    line-height: 28px;
+                    margin: 0;
+                    color: #000000;
+                    // display: flex;
+                    // align-items: center;
+                    font-weight: 500;
+                    font-size: 18px;
+                    line-height: 24px;
+                }
+                .fs_tk_subject {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 2px;
+                    // height: 28px;
+                    // width: 421px;
+                    .fs_product_name {
+                        display: block;
+                        margin: 0;
+                        font-weight: 400;
+                        font-size: 14px;
+                        line-height: 20px;
+                        color: var(--text-sub-600, #525866);
+                    }
             
-            label {
-                font-size: 20px;
-                font-weight: 500;
-                line-height: 28px;
-                text-align: left;
-                text-underline-position: from-font;
-                text-decoration-skip-ink: none;
-                margin: 0;
-                color: #111827;
+                    .fs_status_badge {
+                        &.fs_status_badge_active {
+                            background-color: #EEFBF6;
+                            color: #23A682;
+                        }
+                        &.fs_status_badge_closed {
+                            background: #F2F5F8;
+                            color: #717784;
+                        }
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        padding: 4px 8px;
+                        border-radius: 15px;
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 16px;
+                        text-align: left;
+                        color: rgb(82, 88, 102);
+                        margin-left: 5px;
+                        
+                        .fs_status_dot {
+                            &.fs_status_dot_active {
+                                background-color: #1FC16B;
+                            }
+                            &.fs_status_dot_closed {
+                                background: #717784;
+                            }
+                            color: rgb(31, 193, 107);
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: currentColor;
+                        }
+                    }
+                }
+            
+                label {
+                    font-size: 20px;
+                    font-weight: 500;
+                    line-height: 28px;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    margin: 0;
+                    color: #111827;
+                }
             }
         }
+
+        
     }
     
 }
@@ -574,23 +666,67 @@ export default {
     margin: 0;
 }
 .fs_ticket_threads_container {
-    padding: 20px 16px;
+   // padding: 20px 16px;
     border-top: 1px solid var(--stroke-soft-200, #E1E4EA);
+    max-height: 500px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #E1E4EA #f8fafc;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f8fafc;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #E1E4EA;
+        border-radius: 4px;
+        border: 2px solid #f8fafc;
+    }
+    .fs_customer_conversation{
+        padding: 20px 16px;
+    }
     .fs_ticket_thread {
         border-bottom: 1px solid #E1E4EA;
-        padding: 12px 0;
-        &:first-child {
-            padding-top: 0;
-        }
+        // padding: 12px 0;
+        position: relative;
         &:last-child {
             padding-bottom: 0;
             border-bottom: none;
         }
-        &.conversion_starter {
+        &.fs_conversion_starter {
+            .fs_conversion_starter_section{
+                padding: 8px;
+                background: #F9FAFB;
+            }
             .fs_ticket_thread_content {
                 padding-bottom: 12px;
 
             }
+            .fs_starter_thread_content{
+                margin: 16px;
+            }
+        }
+        .fs_ticket_go_to_top_btn {
+            position: absolute;
+            right: 16px;
+            top: -16px;
+            z-index: 9;
+            background: #fff;
+            border: 1px solid var(--stroke-soft-200, #E1E4EA);
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            border-radius: 8px;
+            color: var(--text-sub-600, #525866);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 6px;
+            cursor: pointer;
         }
         .fs_ticket_thread_content {
             display: flex;
@@ -705,6 +841,49 @@ export default {
             color: var(--icon-strong-950, #0E121B);
             opacity: .4;
         }
+    }
+}
+.fs_custom_data_wrap {
+    h3 {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: -0.6%;
+        margin-top: 0;
+        color: var(--text-strong-950, #0E121B);
+    }
+    margin: 8px;
+    padding: 16px;
+    border-top: 1px solid #e5e9ec;
+    background: #F2F5F8;
+    border-radius: 12px;
+    .fs_custom_info_label {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: -0.6%;
+        color: #525866;
+    }
+
+    > ul {
+        display: block;
+        margin: 0;
+        padding: 0;
+
+        li {
+            font-size: 14px;
+            color: #0E121B;
+            list-style: none;
+            margin-bottom: 10px;
+        }
+    }
+
+    span.fs_custom_check_value {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: -0.6%;
+        color: #0E121B;
     }
 }
 </style>
