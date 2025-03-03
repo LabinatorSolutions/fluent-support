@@ -1,6 +1,6 @@
 <template>
-    <div class="fst_reply_box" :class=" (is_focused) ? 'fst_reply_box_focused' : '' ">
-        <textarea @click="is_focused = true" v-if="!is_focused" class="fs_reply_text" :placeholder="$t('Click Here to Write a reply')"></textarea>
+    <div class="fs_ticket_reply_box">
+        <textarea @click="is_focused = true" v-if="!is_focused" class="fs_ticket_reply_text" :placeholder="$t('Click Here to Write a reply')"></textarea>
 
         <div v-else class="fs_reply_wrap">
             <h3>{{$t('Write a reply')}}</h3>
@@ -10,28 +10,30 @@
             </div>
 
             <div class="fs_row">
-                <div v-if="appVars.has_file_upload" class="fs_half">
+                <div v-if="appVars.has_file_upload" class="fs_full">
                     <attachment-form :ticket="ticket" :attachments="attachments" />
                 </div>
-                <div :class="{fs_no_attachment: !appVars.has_file_upload}" class="fs_half">
-                    <div class="fs_response_actions">
-                        <el-checkbox class="fs_close_checkbox" v-model="close_ticket" true-label="yes" false-label="no">{{$t('Close Ticket')}}</el-checkbox>
-                        <el-button v-loading="creating" :disabled="creating" @click="reply()" size="small" type="success">{{$t('Reply')}}</el-button>
+                <div :class="{fs_no_attachment: !appVars.has_file_upload}" class="fs_full">
+                    <div class="fs_customer_response_actions">
+                        <p @click="handleReplyAndClose">{{$t('Reply and Close')}}</p>
+                        <el-button v-loading="creating" class="fs_reply_btn" :disabled="creating" @click="reply()">
+                            <span>{{$t('Reply')}} </span>
+                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.75 12L15.25 6L7.75 0V3.75C3.60775 3.75 0.25 7.10775 0.25 11.25C0.25 11.4548 0.2575 11.6572 0.274 11.8575C1.37125 9.777 3.5215 8.33925 6.01525 8.25375L6.25 8.25H7.75V12ZM9.25 6.75H6.2245L5.96425 6.75525C5.0005 6.7875 4.07125 6.98775 3.20725 7.32975C4.3075 6.05625 5.935 5.25 7.75 5.25H9.25V3.12075L12.8485 6L9.25 8.87925V6.75Z" fill="white"/>
+                            </svg>
+                        </el-button>
                     </div>
                 </div>
             </div>
 
             <error :error="errors.get('permission_error')"/>
-
-            <p class="fs_private_disc" v-if="ticket.privacy == 'private'">{{$t('This ticket is')}} <b>{{$t('Private')}}</b>. {{$t('agent_and_officials_can_see')}}</p>
-            <p class="fs_public_disc" v-else>{{$t('This ticket is')}} <b>{{$t('Public')}}</b>. {{$t('not_to_share_private_info')}}</p>
         </div>
     </div>
 </template>
 
 <script type="text/babel">
 import WpEditor from '../../admin/Pieces/_wp_editor';
-import AttachmentForm from '../../admin/Modules/Tickets/_AttachmentForm';
+import AttachmentForm from './_AttachmentForm';
 import Error from '../../admin/Pieces/Error';
 import Errors from '../../admin/Bits/Errors';
 
@@ -54,6 +56,11 @@ export default {
         }
     },
     methods: {
+        handleReplyAndClose(){
+            this.close_ticket = 'yes';
+            this.reply();
+        },
+
         reply() {
             this.creating = true;
             this.errors.clear();
@@ -87,3 +94,62 @@ export default {
     }
 }
 </script>
+<style lang="scss">
+.fs_ticket_reply_box {
+    padding: 15px 15px;
+}
+.fs_ticket_reply_text {
+    width: 100%;
+    border: 2px solid #E1E4EA;
+    height: 40;
+    border-radius: 8px;
+    border-width: 1px;
+    padding-top: 10px;
+    padding-right: 16px;
+    padding-bottom: 10px;
+    padding-left: 16px;
+    background: #F5F7FA;
+    gap: 12px;
+}
+.fs_reply_wrap h3 {
+    font-family: Inter;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.6%;
+}
+.fs_customer_response_actions{
+    display: flex;
+    justify-content: end;
+    gap:8px;
+    align-items: center;
+    .fs_reply_btn{
+        background: #0E121B;
+        color: white;
+        display: flex;
+        align-items: center;
+        width: 81px;
+        height: 32px;
+        border-radius: 8px;
+        padding-top: 6px;
+        padding-right: 6px;
+        padding-bottom: 6px;
+        padding-left: 8px;
+        svg{
+            fill: white;
+            margin-left: 8px;
+        }
+    }
+    p{
+        cursor: pointer;
+        color: #525866;
+        font-family: Inter;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        text-decoration: underline;
+        text-decoration-thickness: Auto;
+        margin: 0;
+    }
+}
+</style>
