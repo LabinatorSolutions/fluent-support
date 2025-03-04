@@ -49,4 +49,4 @@ mix
     .copy('resources/images', 'assets/images')
     .copy('resources/libs', 'assets/libs');
 mix.js('resources/block-editor/index.js', 'assets/block-editor/js/fst_block.js').react();
-mix.js('resources/block-editor/blocks/AllTickets/AllTicketsIndex.js', 'assets/block-editor/js/AllTicketsIndex.js').react();
+mix.js('resources/block-editor/blocks/customerPortal/index.js', 'assets/block-editor/js/AllTicketsIndex.js').react();
