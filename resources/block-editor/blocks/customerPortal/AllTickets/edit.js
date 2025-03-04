@@ -1,5 +1,5 @@
 const {Fragment} = wp.element;
-import InspectorSettings from './InspectorSettings';
+// import InspectorSettings from './InspectorSettings';
 
 import { TicketsLandingBlock } from './LandingPage.jsx';
 

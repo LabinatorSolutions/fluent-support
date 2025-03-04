@@ -15,7 +15,7 @@ const {__} = wp.i18n;
 import './all-tickets.scss';
 
 export const TicketsLandingBlock = props => {
-    const {attributes: blockAttributes, setAttributes} = props;
+    const {attributes: blockAttributes, setAttributes, showSection} = props;
 
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -25,7 +25,7 @@ export const TicketsLandingBlock = props => {
     const totalPages = 16;
 
     // Sample ticket data that matches the screenshot
-    const sampleTickets = Array(8).fill({
+    const sampleTickets = Array(5).fill({
         id: 1,
         title: "Sudden charge without notice",
         description: "This is Zawad from Authlab, facing a isshue about...",
@@ -141,7 +141,7 @@ export const TicketsLandingBlock = props => {
                     <label className="fs_tickets_title">
                         {'All Tickets'}
                     </label>
-                    <button className="fs_create_ticket_button" style={buttonStyles}>
+                    <button className="fs_create_ticket_button" style={buttonStyles} onClick={() => showSection('createTicket')}>
                         <span className="fs_plus_icon">+</span>
                         {'Create Ticket'}
                     </button>
@@ -221,7 +221,9 @@ export const TicketsLandingBlock = props => {
                     {/* Tickets List */}
                     <div className="fs_tickets_list">
                         {sampleTickets.map(ticket => (
-                            <div key={ticket.id} className="fs_ticket_item">
+                            <div key={ticket.id} className="fs_ticket_item"
+                                 onClick={() => showSection('viewTicket')}
+                                 style={{ cursor: 'pointer' }}>
                                 <div className="fs_ticket_conversation">
                                     <div className="fs_ticket_title">
                                         {ticket.title}
@@ -241,6 +243,7 @@ export const TicketsLandingBlock = props => {
                             </div>
                         ))}
                     </div>
+
                 </div>
 
                 {/* Pagination */}

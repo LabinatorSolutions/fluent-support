@@ -2,7 +2,7 @@ const { __ } = wp.i18n;
 const { registerBlockType } = wp.blocks;
 
 import Edit from './edit';
-import icons from '../utils/icons';
+import icons from '../../utils/icons';
 
 
 registerBlockType('fluent-support/all-tickets', {
