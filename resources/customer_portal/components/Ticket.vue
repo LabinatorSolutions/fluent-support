@@ -11,67 +11,76 @@
         </div>
         <div class="fs_tickets_container">
             <template v-if="ticket">
-                <div class="fs_ticket_heroarea" :class="{ 'sticky-header': isSticky }">
-                    <div class="fs_ticket_header">
+                <div class="fs_ticket_heroarea">
+                    <!-- <div class="fs_ticket_header"> -->
                         <div class="fs_tk_subject">
                             <h2 class="fs_ticket_subject">
-                                <!-- <span class="fs_ticket_number"></span> -->
                                 #{{ ticket.id }} {{ ticket.title }}
-                                <span class="fs_status_badge" :class="['fs_status_badge_' + (ticket.status === 'closed' ? 'closed' : 'active')]">
-                                    <span class="fs_status_dot" :class="['fs_status_dot_' + (ticket.status === 'closed' ? 'closed' : 'active')]"></span> 
-                                    <span v-if="ticket.status === 'closed'">Closed</span>
-                                    <span v-else>Active</span>
-                                </span>
                             </h2>
-                            <div v-if="ticket.product" class="fs_product_name">
-                                {{ ticket.product.title }}
+                            <div class="fs_status_badge" :class="['fs_status_badge_' + (ticket.status === 'closed' ? 'closed' : 'active')]">
+                                <span class="fs_status_dot" :class="['fs_status_dot_' + (ticket.status === 'closed' ? 'closed' : 'active')]"></span> 
+                                <span v-if="ticket.status === 'closed'">Closed</span>
+                                <span v-else>Active</span>
                             </div>
                         </div>
                         <div class="fs_ticket_actions">
-                            <div class="fs_tk_thread" @click="scrollToThreadStarter">
-                                Thread starter
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M6.75 9.129L10.773 5.106L11.8335 6.1665L6 12L0.166504 6.1665L1.227 5.106L5.25 9.129V0H6.75V9.129Z" fill="#525866"/>
+                            <div v-if="ticket.product" class="fs_product_name">
+                                <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M1.9001 16.2995V4.32953C1.90004 4.14478 1.95684 3.96449 2.06279 3.81314C2.16873 3.66179 2.31869 3.54671 2.4923 3.48353L11.1962 0.319127C11.2642 0.294383 11.3371 0.286397 11.4089 0.295847C11.4806 0.305298 11.549 0.331906 11.6083 0.373415C11.6675 0.414925 11.7159 0.470112 11.7493 0.534297C11.7827 0.598483 11.8001 0.669774 11.8001 0.742127V5.19983L17.4845 7.09433C17.6638 7.15404 17.8197 7.26867 17.9302 7.42197C18.0407 7.57527 18.1001 7.75946 18.1001 7.94843V16.2995H19.9001V18.0995H0.100098V16.2995H1.9001ZM3.7001 16.2995H10.0001V2.66903L3.7001 4.96043V16.2995ZM16.3001 16.2995V8.59733L11.8001 7.09703V16.2995H16.3001Z" fill="#525866"/>
                                 </svg>
+                                <p>{{ ticket.product.title }}</p>
                             </div>
-                            <div v-loading="fetching" class="fs_ticket_refresh_btn" @click="fetchTicket()">
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M3.09725 2.32476C4.45817 1.1455 6.19924 0.497495 8 0.500007C12.1423 0.500007 15.5 3.85776 15.5 8.00001C15.5 9.60201 14.9975 11.087 14.1425 12.305L11.75 8.00001H14C14.0001 6.82373 13.6544 5.67336 13.006 4.69195C12.3576 3.71054 11.4349 2.94138 10.3529 2.4801C9.27082 2.01882 8.07704 1.88578 6.91997 2.09752C5.7629 2.30926 4.69359 2.85643 3.845 3.67101L3.09725 2.32476ZM12.9028 13.6753C11.5418 14.8545 9.80076 15.5025 8 15.5C3.85775 15.5 0.5 12.1423 0.5 8.00001C0.5 6.39801 1.0025 4.91301 1.8575 3.69501L4.25 8.00001H2C1.9999 9.17629 2.34556 10.3267 2.994 11.3081C3.64244 12.2895 4.56505 13.0586 5.64712 13.5199C6.72918 13.9812 7.92296 14.1142 9.08003 13.9025C10.2371 13.6908 11.3064 13.1436 12.155 12.329L12.9028 13.6753Z" fill="#525866"/>
-                                </svg>
-                            </div>
+                            <div v-if="ticket.status != 'closed'" class="fs_ticket_actions_btn">
+                                <div v-loading="fetching" class="fs_ticket_refresh_btn" @click="fetchTicket()">
+                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M3.09725 2.32476C4.45817 1.1455 6.19924 0.497495 8 0.500007C12.1423 0.500007 15.5 3.85776 15.5 8.00001C15.5 9.60201 14.9975 11.087 14.1425 12.305L11.75 8.00001H14C14.0001 6.82373 13.6544 5.67336 13.006 4.69195C12.3576 3.71054 11.4349 2.94138 10.3529 2.4801C9.27082 2.01882 8.07704 1.88578 6.91997 2.09752C5.7629 2.30926 4.69359 2.85643 3.845 3.67101L3.09725 2.32476ZM12.9028 13.6753C11.5418 14.8545 9.80076 15.5025 8 15.5C3.85775 15.5 0.5 12.1423 0.5 8.00001C0.5 6.39801 1.0025 4.91301 1.8575 3.69501L4.25 8.00001H2C1.9999 9.17629 2.34556 10.3267 2.994 11.3081C3.64244 12.2895 4.56505 13.0586 5.64712 13.5199C6.72918 13.9812 7.92296 14.1142 9.08003 13.9025C10.2371 13.6908 11.3064 13.1436 12.155 12.329L12.9028 13.6753Z" fill="#525866"/>
+                                    </svg>
+                                    <span>Refresh</span>
+                                </div>
 
-                            <div class="fs_close_ticket" v-if="ticket.status != 'closed'" :disabled="updating" v-loading="updating" @click="closeTicket()">
-                                <span class="fs_close_ticket_title">{{$t('Close Ticket')}}</span>
+                                <div class="fs_close_ticket" :disabled="updating" v-loading="updating" @click="closeTicket()">
+                                    <span class="fs_close_ticket_title">{{$t('Close Ticket')}}</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    <!-- </div> -->
                     <div class="fs_ticket_response">
                         <div class="fs_ticket_alert">
                             <el-alert
-                                v-if="ticket.privacy === 'private'"
+                                v-if="ticket.privacy === 'private' && ticket.status !== 'closed'"
                                 show-icon
                                 :title="`${$t('This ticket is')} ${$t('Private')}. ${$t('agent_and_officials_can_see')}`"
                                 type="info"
                             />
                             <el-alert
-                                v-else
+                                v-if="ticket.privacy === 'public' && ticket.status !== 'closed'"
                                 show-icon
                                 :title="`${$t('This ticket is')} ${$t('Public')}. ${$t('not_to_share_private_info')}`"
                                 type="info"
                             />
+
+                            <div  v-if="ticket.status === 'closed'" class="fs_ticket_closed_alert">
+                                <span class="fs_ticket_closed_content">
+                                    <svg width="22" height="22" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M6 12C2.6862 12 0 9.3138 0 6C0 2.6862 2.6862 0 6 0C9.3138 0 12 2.6862 12 6C12 9.3138 9.3138 12 6 12ZM5.4 5.4V9H6.6V5.4H5.4ZM5.4 3V4.2H6.6V3H5.4Z" fill="#335CFF"/>
+                                    </svg>
+
+                                    <p>{{$t('ticket_closed')}} {{ ticket.resolved_at }}
+                                        <span v-if="ticket.closed_by_person">
+                                            {{$t('by')}} {{ getHumanName(ticket.closed_by_person) }}
+                                        </span>
+                                        {{$t('reopen_ticket_instruction')}}
+                                    </p>
+                                </span>
+                                
+                                <a class="fs_ticket_reopen" :disabled="updating" v-loading="updating" @click="reOpen()">
+                                    {{$t('Reopen This ticket')}}
+                                </a>
+                            </div>
+
                         </div>
 
-                        <div style="text-align: center;" class="fst_reply_box" v-if="ticket.status == 'closed'">
-                            <p>{{$t('ticket_closed')}} {{ ticket.resolved_at }}
-                                <span v-if="ticket.closed_by_person">
-                                    {{$t('by')}} <b>{{ getHumanName(ticket.closed_by_person) }}</b>
-                                </span>
-                                <br/>{{$t('reopen_ticket_instruction')}}</p>
-                            <el-button :disabled="updating" v-loading="updating" @click="reOpen()" type="info" size="small">
-                                {{$t('Reopen This ticket')}}
-                            </el-button>
-                        </div>
-                        <inline-reply v-else @created="recordNewResponse" :ticket="ticket"/>
+                        <inline-reply v-if="ticket.status !== 'closed'" @created="recordNewResponse" :ticket="ticket"/>
                     </div>
                 </div>
                 
@@ -154,12 +163,6 @@
                         </article>
                         <article class="fs_ticket_thread fs_conversion_starter" ref="conversionStarter">
                             <div class="fs_conversion_starter_section">
-                                <div v-if="conversations.length > 2" class="fs_ticket_go_to_top_btn" @click="scrollToLastConversation">
-                                    Go to present message
-                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10.7495 6.871V16H9.24952V6.871L5.22652 10.894L4.16602 9.8335L9.99952 4L15.833 9.8335L14.7725 10.894L10.7495 6.871Z" fill="#525866"/>
-                                    </svg>
-                                </div>
                                 <div class="fs_ticket_thread_content fs_starter_thread_content">
                                     <section class="fs_ticket_avatar">
                                         <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
@@ -249,16 +252,6 @@ export default {
         }
     },
     methods: {
-        scrollToThreadStarter() {
-            this.isSticky = true;
-            const ticketWrap = document.querySelector('.fs_ticket_threads_container');
-            ticketWrap.scrollTop = ticketWrap.scrollHeight;
-        },
-        scrollToLastConversation() {
-            this.isSticky = true;
-            const ticketWrap = document.querySelector('.fs_ticket_threads_container');
-            ticketWrap.scrollTop = 0;
-        },
         fetchTicket() {
             this.fetching = true;
             this.$get(`tickets/${this.ticket_id}`, {
@@ -453,10 +446,7 @@ export default {
                 background: #fff;
             }
             .fs_ticket_header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 16px 20px;
+                // padding: 16px 20px;
                 border-bottom: 1px solid #E5E7EB;
                 position: relative;
                 background: white; /* Ensure the header has a background */
@@ -466,18 +456,38 @@ export default {
                     align-items: flex-start;
                     gap: 8px;
                 }
-
-                .fs_ticket_actions {
+            }
+            .fs_ticket_actions {
+                    display: flex; 
+                    align-items: center;
+                    justify-content: space-between;
                     margin: 0;
                     right: 0;
                     top: 1px;
-                    // width: 327px;
-                    display: flex; 
-                    align-items: center;
                     gap: 8px;
+                    padding: 20px;
                     flex: none;
+                    border-top: 1px solid #E1E4EA;
+                    border-bottom: 1px solid #E1E4EA;
                     @media (max-width: 665px) {
                         flex-wrap: wrap;
+                    }
+                    .fs_product_name {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                        p {
+                            display: inline;
+                            margin: 0;
+                            font-weight: 400;
+                            font-size: 14px;
+                            line-height: 20px;
+                            color: var(--text-sub-600, #525866);
+                        } 
+                    }
+                    .fs_ticket_actions_btn {
+                        display: flex;
+                        gap: 8px;
                     }
                     .fs_tk_thread{
                         border-radius: 8px;
@@ -503,10 +513,16 @@ export default {
                         justify-content: center;
                         border-radius: 8px;
                         padding: 8px;
-                        width: 36px;
                         height: 36px;
                         gap: 4px;
                         cursor: pointer;
+                        span {
+                            font-weight: 500;
+                            font-size: 14px;
+                            line-height: 20px;
+                            letter-spacing: -0.6%;
+                            color: #525866;
+                        }
                     }
                     .fs_close_ticket{
                         background: var(--bg-weak-50, #F5F7FA);
@@ -552,28 +568,16 @@ export default {
                     line-height: 28px;
                     margin: 0;
                     color: #000000;
-                    // display: flex;
-                    // align-items: center;
                     font-weight: 500;
                     font-size: 18px;
                     line-height: 24px;
                 }
                 .fs_tk_subject {
+                    padding: 20px;
                     display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
+                    align-items: center;
+                    justify-content: space-between;
                     gap: 2px;
-                    // height: 28px;
-                    // width: 421px;
-                    .fs_product_name {
-                        display: block;
-                        margin: 0;
-                        font-weight: 400;
-                        font-size: 14px;
-                        line-height: 20px;
-                        color: var(--text-sub-600, #525866);
-                    }
-            
                     .fs_status_badge {
                         &.fs_status_badge_active {
                             background-color: #EEFBF6;
@@ -621,7 +625,6 @@ export default {
                     margin: 0;
                     color: #111827;
                 }
-            }
         }
 
         
@@ -666,26 +669,7 @@ export default {
     margin: 0;
 }
 .fs_ticket_threads_container {
-   // padding: 20px 16px;
     border-top: 1px solid var(--stroke-soft-200, #E1E4EA);
-    max-height: 500px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #E1E4EA #f8fafc;
-
-    &::-webkit-scrollbar {
-        width: 8px;
-    }
-
-    &::-webkit-scrollbar-track {
-        background: #f8fafc;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: #E1E4EA;
-        border-radius: 4px;
-        border: 2px solid #f8fafc;
-    }
     .fs_customer_conversation{
         padding: 20px 16px;
     }
@@ -709,24 +693,6 @@ export default {
             .fs_starter_thread_content{
                 margin: 16px;
             }
-        }
-        .fs_ticket_go_to_top_btn {
-            position: absolute;
-            right: 16px;
-            top: -16px;
-            z-index: 9;
-            background: #fff;
-            border: 1px solid var(--stroke-soft-200, #E1E4EA);
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 20px;
-            border-radius: 8px;
-            color: var(--text-sub-600, #525866);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 6px;
-            cursor: pointer;
         }
         .fs_ticket_thread_content {
             display: flex;
@@ -825,7 +791,35 @@ export default {
     }
 }
 .fs_ticket_alert {
-    padding: 20px 16px 0;
+    padding: 20px 16px;
+    .fs_ticket_closed_alert{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px;
+        background: #EBF1FF;
+        border-radius: 8px;
+        .fs_ticket_closed_content{
+            display: flex;
+            align-items: center;
+            width: 400px;
+            gap: 8px;
+        }
+        .fs_ticket_reopen{
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 16px;
+            text-decoration: underline;
+            color: #0E121B;
+            cursor: pointer;
+        }
+        p {
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            margin: 0;
+        }
+    }
     .el-alert {
         background: var(--state-information-lighter, #EBF1FF);
         font-weight: 400;
