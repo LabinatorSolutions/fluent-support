@@ -123,6 +123,7 @@ export default {
     justify-content: end;
     gap:8px;
     align-items: center;
+    margin-top: 12px;
     .fs_reply_btn{
         background: #0E121B;
         color: white;
