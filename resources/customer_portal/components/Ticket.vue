@@ -24,11 +24,11 @@
                             </div>
                         </div>
                         <div class="fs_ticket_actions">
-                            <div v-if="ticket.product" class="fs_product_name">
-                                <svg width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <div class="fs_product_name">
+                                <svg v-if="ticket.product" width="20" height="19" viewBox="0 0 20 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M1.9001 16.2995V4.32953C1.90004 4.14478 1.95684 3.96449 2.06279 3.81314C2.16873 3.66179 2.31869 3.54671 2.4923 3.48353L11.1962 0.319127C11.2642 0.294383 11.3371 0.286397 11.4089 0.295847C11.4806 0.305298 11.549 0.331906 11.6083 0.373415C11.6675 0.414925 11.7159 0.470112 11.7493 0.534297C11.7827 0.598483 11.8001 0.669774 11.8001 0.742127V5.19983L17.4845 7.09433C17.6638 7.15404 17.8197 7.26867 17.9302 7.42197C18.0407 7.57527 18.1001 7.75946 18.1001 7.94843V16.2995H19.9001V18.0995H0.100098V16.2995H1.9001ZM3.7001 16.2995H10.0001V2.66903L3.7001 4.96043V16.2995ZM16.3001 16.2995V8.59733L11.8001 7.09703V16.2995H16.3001Z" fill="#525866"/>
                                 </svg>
-                                <p>{{ ticket.product.title }}</p>
+                                <p v-if="ticket.product">{{ ticket.product.title }}</p>
                             </div>
                             <div v-if="ticket.status != 'closed'" class="fs_ticket_actions_btn">
                                 <div v-loading="fetching" class="fs_ticket_refresh_btn" @click="fetchTicket()">
