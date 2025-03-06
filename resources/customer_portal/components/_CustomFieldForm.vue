@@ -251,68 +251,7 @@ export default {
 </script>
 
 <style lang="scss">
-.fs_custom_fields_wrap {
 
-    .el-input,
-    .el-select {
-        &.error {
-            .el-input__wrapper,
-            .el-select__wrapper {
-                box-shadow: 0 0 0 1px rgba(251, 55, 72, 1) inset !important;
-            }
-        }
-    }
-
-
-    .el-input__wrapper {
-        border-radius: 10px;
-        padding: 5px 5px 5px 12px;
-    }
-
-    .el-select__wrapper {
-        border-radius: 10px;
-        padding: 10px 10px 10px 12px
-
-    }
-
-    .el-input__wrapper.is-focus,
-    .el-select__wrapper.is-focused {
-        box-shadow: 0 0 0 1px rgba(14, 18, 27, 1) inset !important;
-        border-color: rgba(14, 18, 27, 1) !important;
-    }
-
-
-    .el-form {
-        .fs_tk_row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-
-        }
-    }
-}
-
-.fs_custom_fields_wrap {
-    margin-top: 20px;
-
-    .el-select__wrapper.is-focus {
-        box-shadow: 0 0 0 1px black inset !important;
-        border-color: black !important;
-    }
-
-    .fs_custom_fields {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
-
-    .fs_input_label {
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 8px;
-    }
-
-}
 
 </style>
 
