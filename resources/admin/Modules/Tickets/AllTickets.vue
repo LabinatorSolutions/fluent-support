@@ -850,9 +850,17 @@ export default {
         const countAdvancedFilterData = (filters) => {
             return filters.reduce((total, innerArray) => {
                 if (Array.isArray(innerArray)) {
-                    const validEntries = innerArray.filter(
-                        (item) => item.value && item.value.trim() !== ""
-                    );
+                    const validEntries = innerArray.filter((item) => {
+                        if (typeof item.value === 'string') {
+                            return item.value.trim() !== "";
+                        }
+
+                        if (Array.isArray(item.value)) {
+                            return item.value.some(val => typeof val === 'string' && val.trim() !== "");
+                        }
+
+                        return false;
+                    });
                     return total + validEntries.length;
                 }
                 return total;
