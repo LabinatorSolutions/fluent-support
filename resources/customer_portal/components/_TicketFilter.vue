@@ -1,7 +1,7 @@
 <template>
-    <div class="fs_section_one">
-        <div class="status-filter">
-            <div class="button-groups">
+    <div class="fs_filter_actions">
+        <div class="fs_status_filter">
+            <div class="fs_button_groups">
                 <button
                     v-for="status in statusOptions"
                     :key="status.value"
@@ -13,8 +13,8 @@
             </div>
         </div>
 
-        <div class="filters-right">
-            <div class="product-filter">
+        <div class="fs_filters_right">
+            <div class="fs_product_filter">
                 <el-select
                     v-model="filters.product_id"
                     placeholder="All Products"
@@ -73,7 +73,7 @@
         </div>
     </div>
 
-    <div class="fs_section_two">
+    <div class="fs_search_filter">
         <el-input
             v-model="localSearchQuery"
             placeholder="Search..."
@@ -149,13 +149,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fs_section_one {
+.fs_filter_actions {
     display: flex;
     gap: 10px;
     max-width: 486px;
 }
 
-.button-groups {
+.fs_button_groups {
     display: flex;
     gap: 4px;
     padding: 4px;
@@ -186,7 +186,7 @@ export default {
     }
 }
 
-.filters-right {
+.fs_filters_right {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -194,5 +194,6 @@ export default {
 
 .fs_sorting .el-button {
     padding: 5px;
+    border-radius: 8px;
 }
 </style>
