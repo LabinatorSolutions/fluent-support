@@ -47,7 +47,7 @@
                         </svg>
                     </div>
                     <div class="fs-file-infos">
-                        <span class="fs-file-name">{{ file.name }}</span>
+                        <span class="fs-file-name">{{ truncateFileName(file.name) }}</span>
                         <span class="fs-file-size">{{ file.size }} <span class="fs-dot"></span>
                             <span class="fs-file-status" :class="file.status">
                                 <template v-if="file.status == 'success'">
@@ -102,6 +102,13 @@ export default {
         };
     },
     methods: {
+        truncateFileName(name) {
+            const maxLength = 15;
+            if (name.length > maxLength) {
+                return name.substring(0, maxLength) + '...';
+            }
+            return name;
+        },
         handleRemove(file) {
             this.error_message = '';
             const fileIndex = this.file_lists.findIndex(f => f.uid === file.uid);
