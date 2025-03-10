@@ -253,22 +253,33 @@
                                         gap: 6px;
                                         padding: 4px 8px;
                                         border-radius: 6px;
-                                        border: 1px solid rgba(225, 228, 234, 1);
                                         font-size: 12px;
                                         font-weight: 500;
                                         line-height: 16px;
                                         text-align: left;
-                                        color: rgba(82, 88, 102, 1);
+
 
                                         &.active {
+                                            color: rgba(35, 166, 130, 1);
+                                            background-color: rgba(238, 251, 246, 1);
                                             .fs_status_dot {
-                                                color: rgba(31, 193, 107, 1);
+                                                color: rgba(35, 166, 130, 1);
                                             }
                                         }
 
                                         &.new {
+                                            background-color: rgba(235, 241, 255, 1);
+                                            color: rgba(51, 92, 255, 1);
                                             .fs_status_dot {
-                                                color: #e76b6b;
+                                                color: rgba(51, 92, 255, 1);
+                                            }
+                                        }
+
+                                        &.closed {
+                                            background-color: rgba(242, 245, 248, 1);
+                                            color: rgba(82, 88, 102, 1);
+                                            .fs_status_dot {
+                                                color: rgba(113, 119, 132, 1);
                                             }
                                         }
 
