@@ -115,7 +115,7 @@ export const CreateTicketBlock = props => {
                 </PanelBody>
             </InspectorControls>
 
-            <div className="fs_create_ticket_container" style={blockStyles}>
+            <div className="fs_create_ticket" style={blockStyles}>
                 <div className="fs_create_ticket_header">
                     <h2 className="fs_form_title">Submit a Support Ticket</h2>
                 </div>
