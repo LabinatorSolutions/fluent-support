@@ -11,14 +11,12 @@ $hover-bg: #f7f7f7;
 $tab-bg: #eee;
 
 .fs_create_ticket {
-    &_container {
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         padding: 0;
         margin: 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-    }
 
     &_header {
         padding: 20px 24px;
