@@ -259,6 +259,74 @@
                     }
                 }
 
+                @media (max-width: 767px) {
+                    .fs_filters_section {
+                        flex-direction: column;
+                        gap: 10px; 
+                        padding: 10px; 
+
+                        .fs_filter_actions{
+                            display: grid;
+                            .fs_button_groups{
+                                max-width: 100%;
+                                justify-content: center;
+                            }
+                            .fs_filters_right{
+                                .fs_product_filter {
+                                    max-width: 100%;
+                                    width: 100%;
+                            
+                                    .el-select {
+                                        width: 100% !important;
+                                    }
+                                }
+                            }
+                        }
+                
+                        .fs_filter_one,
+                        .fs_filter_buttons,
+                        .fs_filter_controls {
+                            width: 100%;
+                        }
+                
+                        .fs_filter_one {
+                            flex-direction: column; 
+                            gap: 10px; 
+                
+                            .fs_product_filter {
+                                max-width: 100%;
+                                .el-select {
+                                    max-width: 100% !important;
+                                }
+                            }
+                        }
+                
+                        .fs_filter_buttons {
+                            flex-wrap: wrap; 
+                            justify-content: center;
+                            gap: 8px;
+                            width: 100%;
+                
+                            .filter-btn {
+                                flex: 1;
+                                min-width: auto;
+                            }
+                        }
+                
+                        .fs_filter_controls {
+                            display: flex;
+                            flex-direction: column;
+                            gap: 10px;
+                
+                            .fs_product_select,
+                            .fs_search_input {
+                                width: 100%;
+                                min-width: auto;
+                            }
+                        }
+                    }
+                }
+
                 .fs_tickets_table {
                     background: rgba(255, 255, 255, 1);
                     overflow: hidden;
@@ -275,13 +343,13 @@
                                     &:first-child {
                                         border-top-left-radius: 8px;
                                         border-bottom-left-radius: 8px;
-                                        overflow: hidden; // Ensure the borders render correctly
+                                        overflow: hidden; 
                                     }
 
                                     &:last-child {
                                         border-top-right-radius: 8px;
                                         border-bottom-right-radius: 8px;
-                                        overflow: hidden; // Ensure the borders render correctly
+                                        overflow: hidden; 
                                     }
                                 }
                             }
@@ -1497,6 +1565,11 @@
                             }
                         }
                     }
+                }
+            }
+            @media (max-width: 480px) {
+                .el-upload-list {
+                    grid-template-columns: 1fr; /* Single column */
                 }
             }
         }
