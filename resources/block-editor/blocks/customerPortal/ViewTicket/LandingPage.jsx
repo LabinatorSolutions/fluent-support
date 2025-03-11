@@ -114,6 +114,18 @@ export const ViewTicketBlock = props => {
                 </PanelBody>
             </InspectorControls>
 
+            <div className="fs_back_nav">
+                <button className="fs_back_button" onClick={() => showSection('allTickets')}>
+                    <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M2.20437 4.9992L5.91687 8.7117L4.85637 9.7722L0.083374 4.9992L4.85637 0.226196L5.91687 1.2867L2.20437 4.9992Z"
+                            fill="#0E121B"
+                        />
+                    </svg>
+                    <span>Back to All Tickets</span>
+                </button>
+            </div>
+
             <div className="fs_view_ticket" style={blockStyles}>
                 <div className="fs_view_ticket_header">
                     <h2 className="fs_ticket_title">#2053 fluent support</h2>
@@ -131,7 +143,8 @@ export const ViewTicketBlock = props => {
 
                 <div className="fs_ticket_privacy_notice">
                     <span className="fs_privacy_icon">i</span>
-                    <p className="fs_privacy_text">This ticket is private—only you and official support agents can view it.</p>
+                    <p className="fs_privacy_text">This ticket is private—only you and official support agents can view
+                        it.</p>
                     <button className="fs_close_notice_button">×</button>
                 </div>
 
@@ -223,7 +236,7 @@ export const ViewTicketBlock = props => {
                 <div className="fs_conversation_container">
                     <div className="fs_conversation_message fs_user_message">
                         <div className="fs_message_avatar">
-                            <img src="/path/to/panda-avatar.jpg" alt="User Avatar"/>
+                            <img src="../../img/avatar_2.jpg" alt="User Avatar"/>
                         </div>
                         <div className="fs_message_content">
                             <div className="fs_message_header">

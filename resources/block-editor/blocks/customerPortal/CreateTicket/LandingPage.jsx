@@ -115,6 +115,18 @@ export const CreateTicketBlock = props => {
                 </PanelBody>
             </InspectorControls>
 
+            <div className="fs_back_nav">
+                <button className="fs_back_button" onClick={() => showSection('allTickets')}>
+                    <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M2.20437 4.9992L5.91687 8.7117L4.85637 9.7722L0.083374 4.9992L4.85637 0.226196L5.91687 1.2867L2.20437 4.9992Z"
+                            fill="#0E121B"
+                        />
+                    </svg>
+                    <span>Back to All Tickets</span>
+                </button>
+            </div>
+
             <div className="fs_create_ticket" style={blockStyles}>
                 <div className="fs_create_ticket_header">
                     <h2 className="fs_form_title">Submit a Support Ticket</h2>
@@ -159,19 +171,32 @@ export const CreateTicketBlock = props => {
                                     <select className="fs_paragraph_dropdown">
                                         <option>Paragraph</option>
                                     </select>
-                                    <button className="fs_toolbar_button fs_bold"><span className="dashicons dashicons-editor-bold"></span></button>
-                                    <button className="fs_toolbar_button fs_italic"><span className="dashicons dashicons-editor-italic"></span></button>
-                                    <button className="fs_toolbar_button fs_list_bullets"><span className="dashicons dashicons-editor-ul"></span></button>
-                                    <button className="fs_toolbar_button fs_list_numbers"><span className="dashicons dashicons-editor-ol"></span></button>
-                                    <button className="fs_toolbar_button fs_link"><span className="dashicons dashicons-admin-links"></span></button>
-                                    <button className="fs_toolbar_button fs_quote"><span className="dashicons dashicons-editor-quote"></span></button>
-                                    <button className="fs_toolbar_button fs_align_left"><span className="dashicons dashicons-editor-alignleft"></span></button>
-                                    <button className="fs_toolbar_button fs_align_center"><span className="dashicons dashicons-editor-aligncenter"></span></button>
-                                    <button className="fs_toolbar_button fs_align_right"><span className="dashicons dashicons-editor-alignright"></span></button>
-                                    <button className="fs_toolbar_button fs_align_justify"><span className="dashicons dashicons-editor-justify"></span></button>
-                                    <button className="fs_toolbar_button fs_font"><span className="dashicons dashicons-editor-textcolor"></span></button>
-                                    <button className="fs_toolbar_button fs_undo"><span className="dashicons dashicons-undo"></span></button>
-                                    <button className="fs_toolbar_button fs_redo"><span className="dashicons dashicons-redo"></span></button>
+                                    <button className="fs_toolbar_button fs_bold"><span
+                                        className="dashicons dashicons-editor-bold"></span></button>
+                                    <button className="fs_toolbar_button fs_italic"><span
+                                        className="dashicons dashicons-editor-italic"></span></button>
+                                    <button className="fs_toolbar_button fs_list_bullets"><span
+                                        className="dashicons dashicons-editor-ul"></span></button>
+                                    <button className="fs_toolbar_button fs_list_numbers"><span
+                                        className="dashicons dashicons-editor-ol"></span></button>
+                                    <button className="fs_toolbar_button fs_link"><span
+                                        className="dashicons dashicons-admin-links"></span></button>
+                                    <button className="fs_toolbar_button fs_quote"><span
+                                        className="dashicons dashicons-editor-quote"></span></button>
+                                    <button className="fs_toolbar_button fs_align_left"><span
+                                        className="dashicons dashicons-editor-alignleft"></span></button>
+                                    <button className="fs_toolbar_button fs_align_center"><span
+                                        className="dashicons dashicons-editor-aligncenter"></span></button>
+                                    <button className="fs_toolbar_button fs_align_right"><span
+                                        className="dashicons dashicons-editor-alignright"></span></button>
+                                    <button className="fs_toolbar_button fs_align_justify"><span
+                                        className="dashicons dashicons-editor-justify"></span></button>
+                                    <button className="fs_toolbar_button fs_font"><span
+                                        className="dashicons dashicons-editor-textcolor"></span></button>
+                                    <button className="fs_toolbar_button fs_undo"><span
+                                        className="dashicons dashicons-undo"></span></button>
+                                    <button className="fs_toolbar_button fs_redo"><span
+                                        className="dashicons dashicons-redo"></span></button>
                                 </div>
                                 <textarea
                                     className="fs_editor_textarea"
@@ -188,7 +213,8 @@ export const CreateTicketBlock = props => {
                         <label className="fs_form_label">File Upload</label>
                         <button className="fs_browse_file_button" style={inputStyles}>Browse File</button>
                         <div className="fs_upload_text_container">
-                            <p className="fs_upload_subtext">(Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max file size: 2.0MB)</p>
+                            <p className="fs_upload_subtext">(Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max
+                                file size: 2.0MB)</p>
                         </div>
                     </div>
 
