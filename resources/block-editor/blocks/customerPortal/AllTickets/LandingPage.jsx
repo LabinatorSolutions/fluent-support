@@ -30,7 +30,7 @@ export const TicketsLandingBlock = props => {
         title: "Sudden charge without notice",
         description: "This is Zawad from Authlab, facing a isshue about...",
         date: "05 Jul, 2024",
-        status: "Active",
+        status: "active",
         count: 2
     }).map((ticket, index) => ({...ticket, id: index + 1}));
 
@@ -141,7 +141,8 @@ export const TicketsLandingBlock = props => {
                     <label className="fs_tickets_title">
                         {'All Tickets'}
                     </label>
-                    <button className="fs_create_ticket_button" style={buttonStyles} onClick={() => showSection('createTicket')}>
+                    <button className="fs_create_ticket_button" style={buttonStyles}
+                            onClick={() => showSection('createTicket')}>
                         <span className="fs_plus_icon">+</span>
                         {'Create Ticket'}
                     </button>
@@ -223,7 +224,7 @@ export const TicketsLandingBlock = props => {
                         {sampleTickets.map(ticket => (
                             <div key={ticket.id} className="fs_ticket_item"
                                  onClick={() => showSection('viewTicket')}
-                                 style={{ cursor: 'pointer' }}>
+                                 style={{cursor: 'pointer'}}>
                                 <div className="fs_ticket_conversation">
                                     <div className="fs_ticket_title">
                                         {ticket.title}
@@ -236,20 +237,25 @@ export const TicketsLandingBlock = props => {
                                 <div className="fs_ticket_date">
                                     {ticket.date}
                                 </div>
-                                <div className="fs_ticket_status">
-                                    <span className={`fs_status_indicator ${ticket.status.toLowerCase()}`}></span>
+                                <span className="fs_status_badge">
+                                    <span className="fs_status_dot"></span>
                                     {ticket.status}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                </span>
+                    {/*        <div className="fs_ticket_status">*/}
+                    {/*        <span className={`fs_status_indicator ${ticket.status.toLowerCase()}`}></span>*/}
+                    {/*{ticket.status}*/}
+                {/*</div>*/}
+            </div>
+            ))}
+        </div>
 
-                </div>
+</div>
 
-                {/* Pagination */}
-                <div className="fs_tickets_pagination">
-                    <div className={'fs_pagination_left'}>
-                        <div className="fs_pagination_info" style={footerButtonBorderRadius}>
+{/* Pagination */
+}
+    <div className="fs_tickets_pagination">
+        <div className={'fs_pagination_left'}>
+        <div className="fs_pagination_info" style={footerButtonBorderRadius}>
                             Page {currentPage} of {totalPages}
                         </div>
 
