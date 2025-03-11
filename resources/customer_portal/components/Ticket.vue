@@ -1,14 +1,8 @@
 <template>
     <div class="fs_ticket_wrapper fs_ticket">
         <!-- Back Button -->
-        <div class="fs_back_nav">
-            <el-button link class="fs_back_button" @click="$router.push({ name: 'dashboard' })">
-                <svg class="fs_svg_back" width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M2.2045 4.99907L5.917 8.71157L4.8565 9.77207L0.0834961 4.99907L4.8565 0.226074L5.917 1.28657L2.2045 4.99907Z" fill="#0E121B"/>
-                </svg>
-                <span class="fs_back_btn">Back to All Tickets</span>
-            </el-button>
-        </div>
+        <back-button />
+        
         <div class="fs_tickets_container">
             <template v-if="ticket">
                 <div class="fs_ticket_heroarea">
@@ -19,8 +13,8 @@
                             </h2>
                             <div class="fs_status_badge" :class="['fs_status_badge_' + (ticket.status === 'closed' ? 'closed' : 'active')]">
                                 <span class="fs_status_dot" :class="['fs_status_dot_' + (ticket.status === 'closed' ? 'closed' : 'active')]"></span> 
-                                <span v-if="ticket.status === 'closed'">Closed</span>
-                                <span v-else>Active</span>
+                                <span v-if="ticket.status === 'closed'">{{$t('Closed')}}</span>
+                                <span v-else>{{$t('Active')}}</span>
                             </div>
                         </div>
                         <div class="fs_ticket_actions">
@@ -35,7 +29,7 @@
                                     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M3.09725 2.32476C4.45817 1.1455 6.19924 0.497495 8 0.500007C12.1423 0.500007 15.5 3.85776 15.5 8.00001C15.5 9.60201 14.9975 11.087 14.1425 12.305L11.75 8.00001H14C14.0001 6.82373 13.6544 5.67336 13.006 4.69195C12.3576 3.71054 11.4349 2.94138 10.3529 2.4801C9.27082 2.01882 8.07704 1.88578 6.91997 2.09752C5.7629 2.30926 4.69359 2.85643 3.845 3.67101L3.09725 2.32476ZM12.9028 13.6753C11.5418 14.8545 9.80076 15.5025 8 15.5C3.85775 15.5 0.5 12.1423 0.5 8.00001C0.5 6.39801 1.0025 4.91301 1.8575 3.69501L4.25 8.00001H2C1.9999 9.17629 2.34556 10.3267 2.994 11.3081C3.64244 12.2895 4.56505 13.0586 5.64712 13.5199C6.72918 13.9812 7.92296 14.1142 9.08003 13.9025C10.2371 13.6908 11.3064 13.1436 12.155 12.329L12.9028 13.6753Z" fill="#525866"/>
                                     </svg>
-                                    <span>Refresh</span>
+                                    <span>{{$t('Refresh')}}</span>
                                 </div>
 
                                 <div class="fs_close_ticket" :disabled="updating" v-loading="updating" @click="closeTicket()">
@@ -231,6 +225,8 @@
 
 <script type="text/babel">
 import InlineReply from "./InlineReply";
+import BackButton from "./pieces/BackButton";
+
 const isEmpty = require('lodash/isEmpty');
 const isArray = require('lodash/isArray');
 
@@ -238,7 +234,8 @@ export default {
     name: 'ticket',
     props: ['ticket_id'],
     components: {
-        InlineReply
+        InlineReply,
+        BackButton
     },
     data() {
         return {
