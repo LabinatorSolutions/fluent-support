@@ -251,32 +251,56 @@
     color: #374151;
 }
 
-.fs_ticket_status {
-    display: flex;
+.fs_status_badge {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-size: 14px;
-    color: #374151;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: 500;
+    line-height: 16px;
+    text-align: left;
+    color: rgb(35, 166, 130);
+    background-color: rgb(238, 251, 246);
+    width: fit-content;
+    height: fit-content;
 
-    .fs_status_indicator {
-        width: 8px;
-        height: 8px;
+    .fs_status_dot {
+        width: 6px;
+        height: 6px;
         border-radius: 50%;
-
-        &.active {
-            background-color: #10b981;
-        }
-
-        &.pending {
-            background-color: #f59e0b;
-        }
-
-        &.closed {
-            background-color: #6b7280;
-        }
+        background: currentColor;
+        color: rgb(35, 166, 130);
     }
 }
+
+//.fs_ticket_status {
+//    display: flex;
+//    align-items: center;
+//    gap: 6px;
+//    font-size: 14px;
+//    color: #374151;
+//    font-weight: 500;
+//
+//    .fs_status_indicator {
+//        width: 8px;
+//        height: 8px;
+//        border-radius: 50%;
+//
+//        &.active {
+//            background-color: #10b981;
+//        }
+//
+//        &.pending {
+//            background-color: #f59e0b;
+//        }
+//
+//        &.closed {
+//            background-color: #6b7280;
+//        }
+//    }
+//}
 
 // Pagination
 .fs_tickets_pagination {

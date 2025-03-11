@@ -10,12 +10,9 @@ export default function Edit({attributes, setAttributes}) {
     const restInfo = window.fluent_support_vars.rest;
     const basePath = restInfo.namespace+'/'+restInfo.version+'/';
     // State variables to manage UI state
-    // const [showSection, setShowSection] = useState('allTickets');
-    // const [showSection, setShowSection] = useState('createTicket')
-    const [showSection, setShowSection] = useState('viewTicket');
+    const [showSection, setShowSection] = useState('allTickets');
     const [mailboxes, setMailboxes] = useState([]);
     const [selectedInspector, setSelectedInspector] = useState('allTicketsStyle');
-    console.log(showSection);
     // Fetch mailboxes data from the REST API on component mount
     useEffect(() => {
         apiFetch({
