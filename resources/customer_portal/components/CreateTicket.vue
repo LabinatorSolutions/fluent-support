@@ -1,17 +1,8 @@
 <template>
     <div class="fs_create_ticket_container">
         <!-- Back Button -->
-        <div class="fs_back_nav">
-            <el-button link class="fs_back_button" @click="$router.push({ name: 'dashboard' })">
-                <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M2.20437 4.9992L5.91687 8.7117L4.85637 9.7722L0.083374 4.9992L4.85637 0.226196L5.91687 1.2867L2.20437 4.9992Z"
-                        fill="#0E121B"/>
-                </svg>
-                <span>Back to All Tickets</span>
-            </el-button>
-        </div>
-
+        <back-button />
+        
         <div class="fs_ticket_form_container">
             <div class="fs_ticket_header">
                 <label>Submit a Support Ticket</label>
@@ -168,6 +159,7 @@ import Error from '../../admin/Pieces/Error'
 import Errors from '../../admin/Bits/Errors'
 import CustomFieldsForm from "./_CustomFieldForm";
 import AttachmentForm from "./_AttachmentForm";
+import BackButton from "./pieces/BackButton";
 import {debounce} from "lodash";
 
 export default defineComponent({
@@ -180,7 +172,8 @@ export default defineComponent({
         UploadFilled,
         CustomFieldsForm,
         List,
-        AttachmentForm
+        AttachmentForm,
+        BackButton
     },
 
     data() {
