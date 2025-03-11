@@ -10,6 +10,33 @@ $text-secondary: #6b7280;
 $hover-bg: #f7f7f7;
 $tab-bg: #eee;
 
+.fs_back_nav {
+    display: flex;
+    align-items: center;
+}
+
+.fs_back_button {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #0e121b;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0;
+
+    span {
+        margin-left: 6px;
+        text-decoration: none;
+    }
+
+    &:hover span {
+        text-decoration: none;
+    }
+}
+
+
 .fs_view_ticket {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     background-color: #ffffff;
