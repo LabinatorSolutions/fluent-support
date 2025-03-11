@@ -3,14 +3,16 @@ const {useBlockProps} = wp.blockEditor;
 const { apiFetch } = wp;
 import AllTickets from './AllTickets/LandingPage';
 import CreateTicket from './CreateTicket/LandingPage';
+import ViewTicket from "./ViewTicket/LandingPage";
 
 
 export default function Edit({attributes, setAttributes}) {
     const restInfo = window.fluent_support_vars.rest;
     const basePath = restInfo.namespace+'/'+restInfo.version+'/';
     // State variables to manage UI state
-    const [showSection, setShowSection] = useState('allTickets');
-    // const [showSection, setShowSection] = useState('createTicket');
+    // const [showSection, setShowSection] = useState('allTickets');
+    // const [showSection, setShowSection] = useState('createTicket')
+    const [showSection, setShowSection] = useState('viewTicket');
     const [mailboxes, setMailboxes] = useState([]);
     const [selectedInspector, setSelectedInspector] = useState('allTicketsStyle');
     console.log(showSection);
@@ -59,6 +61,16 @@ export default function Edit({attributes, setAttributes}) {
                 )}
                 {showSection === 'createTicket' && (
                     <CreateTicket
+                        attributes={attributes}
+                        setAttributes={setAttributes}
+                        showSection={setShowSection}
+                        activeClass={getActiveClass}
+                        selectedInspector={setSelectedInspector}
+                        preventParentPropagation={preventParentPropagation}
+                    />
+                )}
+                {showSection === 'viewTicket' && (
+                    <ViewTicket
                         attributes={attributes}
                         setAttributes={setAttributes}
                         showSection={setShowSection}
