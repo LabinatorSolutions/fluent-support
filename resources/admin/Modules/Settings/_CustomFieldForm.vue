@@ -47,7 +47,7 @@
                     <li v-for="(optionName, optionIndex) in item.options" :key="optionIndex">
                         <el-input :placeholder="translate('Option Value')" v-model="item.options[optionIndex]" type="text">
                             <template #suffix>
-                                <i @click="removeOptionItem(optionIndex)" class="fluentcrm_clickable el-icon-close"></i>
+                                <el-icon v-if="item.options.length > 1" @click="removeOptionItem(optionIndex)" class="fs_clickable el-icon-close el-input__icon"><Delete /></el-icon>
                             </template>
                         </el-input>
                     </li>
@@ -164,6 +164,7 @@
 
 <script type="text/babel">
 import each from 'lodash/each';
+import { Delete } from '@element-plus/icons-vue'
 import { reactive, toRefs, computed, nextTick, ref } from "vue";
 import {
     useFluentHelper,
@@ -316,3 +317,8 @@ export default {
     }
 }
 </script>
+<style lang="scss">
+.fs_clickable{
+    cursor: pointer;
+}
+</style>
