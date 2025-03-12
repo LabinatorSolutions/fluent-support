@@ -64,7 +64,7 @@
                                         params: { customer_id: scope.row.id },
                                     }"
                                 >
-                                    {{ scope.row.full_name }}
+                                    {{ scope.row.full_name ? scope.row.full_name: 'N/A' }}
                                 </router-link>
                             </template>
                         </el-table-column>
