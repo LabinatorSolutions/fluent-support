@@ -11,7 +11,6 @@
     margin: 0 auto;
 }
 
-// Header styles
 .fs_tickets_header {
     display: flex;
     justify-content: space-between;
@@ -167,7 +166,6 @@
     }
 }
 
-// Table header
 .fs_tickets_table_header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 120px 120px;
@@ -190,7 +188,7 @@
 .fs_ticket_table {
     padding: 0 20px 20px 20px;
 }
-// Tickets list
+
 .fs_tickets_list {
     display: flex;
     flex-direction: column;
@@ -275,34 +273,6 @@
     }
 }
 
-//.fs_ticket_status {
-//    display: flex;
-//    align-items: center;
-//    gap: 6px;
-//    font-size: 14px;
-//    color: #374151;
-//    font-weight: 500;
-//
-//    .fs_status_indicator {
-//        width: 8px;
-//        height: 8px;
-//        border-radius: 50%;
-//
-//        &.active {
-//            background-color: #10b981;
-//        }
-//
-//        &.pending {
-//            background-color: #f59e0b;
-//        }
-//
-//        &.closed {
-//            background-color: #6b7280;
-//        }
-//    }
-//}
-
-// Pagination
 .fs_tickets_pagination {
     display: flex;
     align-items: center;
