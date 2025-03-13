@@ -1,76 +1,80 @@
-/*eslint-disable*/
-const { InspectorControls } = wp.blockEditor;
-const { __ } = wp.i18n;
+const { InspectorControls, ColorPalette } = wp.blockEditor;
 const {
     PanelBody,
-    PanelRow,
-    TextControl,
-    SelectControl,
-    CheckboxControl,
-    ColorPalette,
     RangeControl
 } = wp.components;
+const { __ } = wp.i18n;
 
-// Assuming you have a global variable for ticket categories/products
-const productsVar = window.tickets_block?.products || {};
-const products = Object.values(productsVar);
+export const generateStyles = (attributes) => {
+    return {
+        blockStyles: {
+            borderRadius: `${attributes.containerBorderRadius || 0}px`,
+        },
+        primaryButtonStyles: {
+            backgroundColor: attributes.primaryButtonBgColor || '#007cba',
+            color: attributes.primaryButtonTextColor || '#ffffff',
+        },
+        secondaryButtonStyles: {
+            backgroundColor: attributes.secondaryButtonBgColor || '#007cba',
+            color: attributes.secondaryButtonTextColor || '#ffffff',
+        },
+    };
+};
 
-const InspectorSettings = props => {
-    const {
-        attributes: {
-            title,
-            productIds,
-            period,
-            perPage,
-            showFilter,
-            showPagination,
-            noTicketsMessage,
-            backgroundColor,
-            textColor,
-            borderRadius,
-            loadingMessage,
-            createButtonText
-        }, setAttributes
-    } = props;
-
-
+const TicketsInspectorControls = ({ attributes, setAttributes }) => {
     return (
         <InspectorControls>
-            <PanelBody title={__("Style Settings")} initialOpen={false}>
-                <PanelRow>
-                    <div className="tickets_block_style_settings">
-                        <div className="tickets_block_inspector_widget">
-                            <label className="components-base-control__label">
-                                {__('Background Color')}
-                            </label>
-                            <ColorPalette
-                                value={backgroundColor}
-                                onChange={(value) => setAttributes({ backgroundColor: value })}
-                            />
-
-                            <label className="components-base-control__label">
-                                {__('Text Color')}
-                            </label>
-                            <ColorPalette
-                                value={textColor}
-                                onChange={(value) => setAttributes({ textColor: value })}
-                            />
-
-                            <RangeControl
-                                label={__('Border Radius')}
-                                value={borderRadius}
-                                onChange={(value) => setAttributes({ borderRadius: value })}
-                                min={0}
-                                max={20}
-                            />
-
-
-                        </div>
+            <PanelBody title={__('General Style Settings')} initialOpen={true}>
+                <RangeControl
+                    label={__('Border Radius')}
+                    value={attributes.containerBorderRadius || 0}
+                    onChange={value => setAttributes({ containerBorderRadius: value })}
+                    min={0}
+                    max={20}
+                />
+                <PanelBody title={__('Primary Button Style')}>
+                    <div className="components-base-control">
+                        <label className="components-base-control__label">
+                            {__('Primary Button Text Color')}
+                        </label>
+                        <ColorPalette
+                            value={attributes.primaryButtonTextColor}
+                            onChange={value => setAttributes({ primaryButtonTextColor: value })}
+                        />
                     </div>
-                </PanelRow>
+                    <div className="components-base-control">
+                        <label className="components-base-control__label">
+                            {__('Primary Button Background Color')}
+                        </label>
+                        <ColorPalette
+                            value={attributes.primaryButtonBgColor}
+                            onChange={value => setAttributes({ primaryButtonBgColor: value })}
+                        />
+                    </div>
+                </PanelBody>
+                <PanelBody title={__('Secondary Button Style')}>
+                    <div className="components-base-control">
+                        <label className="components-base-control__label">
+                            {__('Secondary Button Text Color')}
+                        </label>
+                        <ColorPalette
+                            value={attributes.secondaryButtonTextColor}
+                            onChange={value => setAttributes({ secondaryButtonTextColor: value })}
+                        />
+                    </div>
+                    <div className="components-base-control">
+                        <label className="components-base-control__label">
+                            {__('Secondary Button Background Color')}
+                        </label>
+                        <ColorPalette
+                            value={attributes.secondaryButtonBgColor}
+                            onChange={value => setAttributes({ secondaryButtonBgColor: value })}
+                        />
+                    </div>
+                </PanelBody>
             </PanelBody>
         </InspectorControls>
     );
 };
 
-export default InspectorSettings;
+export default TicketsInspectorControls;
