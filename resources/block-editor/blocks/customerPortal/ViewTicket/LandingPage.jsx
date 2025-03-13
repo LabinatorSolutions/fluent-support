@@ -1,18 +1,16 @@
 const {Fragment, useState} = wp.element;
-const {InspectorControls, ColorPalette} = wp.blockEditor;
 const {
-    PanelBody,
     SelectControl,
     TextControl,
     Button,
     Spinner,
     SearchControl,
-    ToggleControl,
-    RangeControl
+    ToggleControl
 } = wp.components;
 const {__} = wp.i18n;
 
 import './view_ticket.scss';
+import ViewTicketInspectorControls, { generateStyles } from './InspectorSettings';
 
 export const ViewTicketBlock = props => {
     const {attributes: blockAttributes, setAttributes, showSection} = props;
@@ -21,98 +19,16 @@ export const ViewTicketBlock = props => {
     const [details, setDetails] = useState('');
     const [replyText, setReplyText] = useState('');
 
-    const blockStyles = {
-        borderRadius: `${blockAttributes.viewTicketBorderRadius || 16}px`,
-    };
-
-    const inputStyles = {
-        borderRadius: `${blockAttributes.viewTicketInputBorderRadius || 8}px`,
-    };
-
-    const buttonStyles = {
-        borderRadius: `${blockAttributes.viewTicketButtonBorderRadius || 8}px`,
-        backgroundColor: blockAttributes.viewTicketButtonBackgroundColor || '#1E1E1E',
-        color: blockAttributes.viewTicketButtonTextColor || '#ffffff',
-    };
-
-    const tabStyles = {
-        borderRadius: `${blockAttributes.viewTicketTabBorderRadius || 4}px`,
-    };
-
-    const handleSubmitReply = () => {
-        console.log('Reply submitted:', replyText);
-        setReplyText('');
-    };
-
-    const handleCloseTicket = () => {
-        console.log('Ticket closed');
-        showSection('allTickets');
-    };
-
-    const handleRefresh = () => {
-        console.log('Refreshing ticket');
-    };
+    const {
+        blockStyles,
+        primaryButtonStyles,
+        secondaryButtonStyles,
+        inputFieldStyle
+    } = generateStyles(blockAttributes);
 
     return (
         <Fragment>
-            <InspectorControls>
-                <PanelBody title={__('General Style Settings')} initialOpen={true}>
-                    <RangeControl
-                        label={__('Border Radius')}
-                        value={blockAttributes.viewTicketBorderRadius || 0}
-                        onChange={value => setAttributes({viewTicketBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Input Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Input Border Radius')}
-                        value={blockAttributes.viewTicketInputBorderRadius || 8}
-                        onChange={value => setAttributes({viewTicketInputBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Button Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Button Border Radius')}
-                        value={blockAttributes.viewTicketButtonBorderRadius || 8}
-                        onChange={value => setAttributes({viewTicketButtonBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={blockAttributes.viewTicketButtonTextColor}
-                            onChange={value => setAttributes({viewTicketButtonTextColor: value})}
-                        />
-                    </div>
-
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={blockAttributes.viewTicketButtonBackgroundColor}
-                            onChange={value => setAttributes({viewTicketButtonBackgroundColor: value})}
-                        />
-                    </div>
-                </PanelBody>
-                <PanelBody title={__('Tab Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Tab Border Radius')}
-                        value={blockAttributes.viewTicketTabBorderRadius || 4}
-                        onChange={value => setAttributes({viewTicketTabBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-            </InspectorControls>
+            <ViewTicketInspectorControls attributes={blockAttributes} setAttributes={setAttributes} />
 
             <div className="fs_back_nav">
                 <button className="fs_back_button" onClick={() => showSection('allTickets')}>
@@ -133,10 +49,10 @@ export const ViewTicketBlock = props => {
                 </div>
 
                 <div className="fs_ticket_actions">
-                    <button className="fs_refresh_button" onClick={handleRefresh}>
+                    <button className="fs_refresh_button" style={secondaryButtonStyles}>
                         <span className="dashicons dashicons-update-alt"></span> Refresh
                     </button>
-                    <button className="fs_close_ticket_button" onClick={handleCloseTicket}>
+                    <button className="fs_close_ticket_button" style={secondaryButtonStyles}>
                         Close Ticket
                     </button>
                 </div>
@@ -152,18 +68,16 @@ export const ViewTicketBlock = props => {
                     <h3 className="fs_reply_header">Write a reply</h3>
                     <div className="fs_ticket_details_container">
                         <div className="fs_ticket_details_tabs">
-                            <div className="fs_tabs_wrapper" style={tabStyles}>
+                            <div className="fs_tabs_wrapper">
                                 <button
                                     className={`fs_tab_button ${activeTab === 'Visual' ? 'active' : ''}`}
                                     onClick={() => setActiveTab('Visual')}
-                                    style={tabStyles}
                                 >
                                     Visual
                                 </button>
                                 <button
                                     className={`fs_tab_button ${activeTab === 'Text' ? 'active' : ''}`}
                                     onClick={() => setActiveTab('Text')}
-                                    style={tabStyles}
                                 >
                                     Text
                                 </button>
@@ -206,13 +120,12 @@ export const ViewTicketBlock = props => {
                                 placeholder="Enter ticket details here..."
                                 value={details}
                                 onChange={(e) => setDetails(e.target.value)}
-                                style={inputStyles}
                             ></textarea>
                         </div>
                     </div>
                     <div className="fs_attachment_section">
                         <h4 className="fs_attachment_header">Add Attachment</h4>
-                        <button className="fs_browse_file_button" style={inputStyles}>
+                        <button className="fs_browse_file_button" style={secondaryButtonStyles}>
                             <span className="dashicons dashicons-upload"></span> Browse File
                         </button>
                         <p className="fs_attachment_info">
@@ -226,7 +139,7 @@ export const ViewTicketBlock = props => {
                         </a>
                         <button
                             className="fs_reply_button"
-                            onClick={handleSubmitReply}
+                            style={primaryButtonStyles}
                         >
                             Reply <span className="dashicons dashicons-arrow-right-alt"></span>
                         </button>
