@@ -1,18 +1,16 @@
 const {Fragment, useState} = wp.element;
-const {InspectorControls, ColorPalette} = wp.blockEditor;
 const {
-    PanelBody,
     SelectControl,
     TextControl,
     Button,
     Spinner,
     SearchControl,
     ToggleControl,
-    RangeControl
 } = wp.components;
 const {__} = wp.i18n;
 
 import './all-tickets.scss';
+import TicketsInspectorControls, {generateStyles} from './InspectorSettings';
 
 export const TicketsLandingBlock = props => {
     const {attributes: blockAttributes, setAttributes, showSection} = props;
@@ -34,30 +32,13 @@ export const TicketsLandingBlock = props => {
         count: 2
     }).map((ticket, index) => ({...ticket, id: index + 1}));
 
-    const blockStyles = {
-        borderRadius: `${blockAttributes.allTicketsBorderRadius || 0}px`,
-    };
+    // Get styles from the utility function in TicketsInspectorControls
+    const {
+        blockStyles,
+        primaryButtonStyles,
+    } = generateStyles(blockAttributes);
 
-
-    const buttonStyles = {
-        borderRadius: `${blockAttributes.createTicketButtonBorderRadius || 0}px`,
-        backgroundColor: blockAttributes.createTicketButtonBackgroundColor || '#007cba',
-        color: blockAttributes.createTicketButtonTextColor || '#ffffff',
-    }
-
-    const filterStyle = {
-        borderRadius: `${blockAttributes.allTicketsFilterBorderRadius || 0}px`,
-    }
-
-    const tableHeaderBorderRadius = {
-        borderRadius: `${blockAttributes.allTicketsTableHeaderBorderRadius || 0}px`,
-    };
-
-    const footerButtonBorderRadius = {
-        borderRadius: `${blockAttributes.allTicketsFooterButtonBorderRadius || 0}px`,
-    }
-
-
+    // These handler functions should stay in the main component since they interact with state variables
     const handlePageChange = (page) => {
         setCurrentPage(page);
     };
@@ -68,80 +49,17 @@ export const TicketsLandingBlock = props => {
 
     return (
         <Fragment>
-            <InspectorControls>
-                <PanelBody title={__('General Style Settings')} initialOpen={true}>
-                    <RangeControl
-                        label={__('Border Radius')}
-                        value={blockAttributes.allTicketsBorderRadius || 0}
-                        onChange={value => setAttributes({allTicketsBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Header Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Button Border Radius')}
-                        value={blockAttributes.createTicketButtonBorderRadius || 8}
-                        onChange={value => setAttributes({createTicketButtonBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={blockAttributes.createTicketButtonTextColor}
-                            onChange={value => setAttributes({createTicketButtonTextColor: value})}
-                        />
-                    </div>
-
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={blockAttributes.createTicketButtonBackgroundColor}
-                            onChange={value => setAttributes({createTicketButtonBackgroundColor: value})}
-                        />
-                    </div>
-
-                    <RangeControl
-                        label={__('Filter Border Radius')}
-                        value={blockAttributes.allTicketsFilterBorderRadius || 8}
-                        onChange={value => setAttributes({allTicketsFilterBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Body Style Settings')} initialOpen={false}>
-
-                    <RangeControl
-                        label={__('Table Header Border Radius')}
-                        value={blockAttributes.allTicketsTableHeaderBorderRadius || 0}
-                        onChange={value => setAttributes({allTicketsTableHeaderBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Footer Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Border Radius')}
-                        value={blockAttributes.allTicketsFooterButtonBorderRadius || 0}
-                        onChange={value => setAttributes({allTicketsFooterButtonBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-            </InspectorControls>
+            <TicketsInspectorControls
+                attributes={blockAttributes}
+                setAttributes={setAttributes}
+            />
             <div className="fs_tickets_block_container" style={blockStyles}>
                 {/* Header */}
                 <div className="fs_tickets_header">
                     <label className="fs_tickets_title">
                         {'All Tickets'}
                     </label>
-                    <button className="fs_create_ticket_button" style={buttonStyles}
+                    <button className="fs_create_ticket_button" style={primaryButtonStyles}
                             onClick={() => showSection('createTicket')}>
                         <span className="fs_plus_icon">+</span>
                         {'Create Ticket'}
@@ -150,7 +68,7 @@ export const TicketsLandingBlock = props => {
 
                 <div className="fs_tickets_filters">
                     <div className="fs_filters_left">
-                        <div className={'fs_status_filter'} style={filterStyle}>
+                        <div className={'fs_status_filter'}>
                             <button
                                 className={`fs_filter_button ${currentFilter === 'all' ? 'active' : ''}`}
                                 onClick={() => handleFilterChange('all')}
@@ -172,7 +90,6 @@ export const TicketsLandingBlock = props => {
                         </div>
                         <div className="fs_product_dropdown">
                             <select
-                                style={filterStyle}
                                 value={selectedProduct}
                                 onChange={(e) => setSelectedProduct(e.target.value)}
                             >
@@ -182,7 +99,7 @@ export const TicketsLandingBlock = props => {
                             </select>
                         </div>
 
-                        <button className="fs_filter_toggle_button" style={filterStyle}>
+                        <button className="fs_filter_toggle_button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 4H21V6H3V4ZM5 11H19V13H5V11ZM7 18H17V20H7V18Z" fill="currentColor"/>
@@ -191,10 +108,8 @@ export const TicketsLandingBlock = props => {
                     </div>
 
                     <div className="fs_filters_right">
-
                         <div className="fs_search_wrapper">
                             <input
-                                style={filterStyle}
                                 type="text"
                                 placeholder="Search..."
                                 value={searchQuery}
@@ -207,7 +122,7 @@ export const TicketsLandingBlock = props => {
 
                 {/* Table Header */}
                 <div className={'fs_ticket_table'}>
-                    <div className="fs_tickets_table_header" style={tableHeaderBorderRadius}>
+                    <div className="fs_tickets_table_header">
                         <div className="fs_header_conversation">Conversation</div>
                         <div className="fs_header_date">
                             Date
@@ -241,26 +156,20 @@ export const TicketsLandingBlock = props => {
                                     <span className="fs_status_dot"></span>
                                     {ticket.status}
                                 </span>
-                    {/*        <div className="fs_ticket_status">*/}
-                    {/*        <span className={`fs_status_indicator ${ticket.status.toLowerCase()}`}></span>*/}
-                    {/*{ticket.status}*/}
-                {/*</div>*/}
-            </div>
-            ))}
-        </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
 
-</div>
-
-{/* Pagination */
-}
-    <div className="fs_tickets_pagination">
-        <div className={'fs_pagination_left'}>
-        <div className="fs_pagination_info" style={footerButtonBorderRadius}>
+                {/* Pagination */}
+                <div className="fs_tickets_pagination">
+                    <div className={'fs_pagination_left'}>
+                        <div className="fs_pagination_info">
                             Page {currentPage} of {totalPages}
                         </div>
 
                         <div className="fs_pagination_per_page">
-                            <select value={`${blockAttributes.perPage || 10} / page`} style={footerButtonBorderRadius}>
+                            <select value={`${blockAttributes.perPage || 10} / page`}>
                                 <option value="10 / page">10 / page</option>
                                 <option value="20 / page">20 / page</option>
                                 <option value="30 / page">30 / page</option>
@@ -268,38 +177,37 @@ export const TicketsLandingBlock = props => {
                         </div>
                     </div>
                     <div className={'fs_pagination_right'}>
-                        <div className="fs_pagination_controls" style={footerButtonBorderRadius}>
+                        <div className="fs_pagination_controls">
                             <button className="fs_pagination_button"
-                                    style={footerButtonBorderRadius}
                                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}>‹
                             </button>
 
-                            <button style={footerButtonBorderRadius}
-                                    className={`fs_pagination_button ${currentPage === 1 ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(1)}>1
+                            <button
+                                className={`fs_pagination_button ${currentPage === 1 ? 'active' : ''}`}
+                                onClick={() => handlePageChange(1)}>1
                             </button>
-                            <button style={footerButtonBorderRadius}
-                                    className={`fs_pagination_button ${currentPage === 2 ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(2)}>2
+                            <button
+                                className={`fs_pagination_button ${currentPage === 2 ? 'active' : ''}`}
+                                onClick={() => handlePageChange(2)}>2
                             </button>
-                            <button style={footerButtonBorderRadius}
-                                    className={`fs_pagination_button ${currentPage === 3 ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(3)}>3
+                            <button
+                                className={`fs_pagination_button ${currentPage === 3 ? 'active' : ''}`}
+                                onClick={() => handlePageChange(3)}>3
                             </button>
-                            <button style={footerButtonBorderRadius}
-                                    className={`fs_pagination_button ${currentPage === 4 ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(4)}>4
+                            <button
+                                className={`fs_pagination_button ${currentPage === 4 ? 'active' : ''}`}
+                                onClick={() => handlePageChange(4)}>4
                             </button>
-                            <button style={footerButtonBorderRadius}
-                                    className={`fs_pagination_button ${currentPage === 5 ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(5)}>5
+                            <button
+                                className={`fs_pagination_button ${currentPage === 5 ? 'active' : ''}`}
+                                onClick={() => handlePageChange(5)}>5
                             </button>
 
-                            <span style={footerButtonBorderRadius} className="pagination-ellipsis">...</span>
+                            <span className="pagination-ellipsis">...</span>
 
-                            <button style={footerButtonBorderRadius}
-                                    className={`fs_pagination_button ${currentPage === totalPages ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(totalPages)}>
+                            <button
+                                className={`fs_pagination_button ${currentPage === totalPages ? 'active' : ''}`}
+                                onClick={() => handlePageChange(totalPages)}>
                                 {totalPages}
                             </button>
 
