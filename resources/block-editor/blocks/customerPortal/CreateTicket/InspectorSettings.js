@@ -1,24 +1,16 @@
 import React from 'react';
-const { InspectorControls, ColorPalette } = wp.blockEditor;
-const {
-    PanelBody,
-    RangeControl
-} = wp.components;
+const { InspectorControls } = wp.blockEditor;
+const { PanelBody, RangeControl } = wp.components;
 const { __ } = wp.i18n;
 
-const generateStyles = (attributes) => {
+import { GeneralInspectorSettings, generateStyles as generalGenerateStyles } from '../GeneralInspectorSettings';
+
+export const generateStyles = (attributes) => {
+
+    const generalStyles = generalGenerateStyles(attributes);
+
     return {
-        blockStyles: {
-            borderRadius: `${attributes.containerBorderRadius || 0}px`,
-        },
-        primaryButtonStyles: {
-            backgroundColor: attributes.primaryButtonBgColor || '#007cba',
-            color: attributes.primaryButtonTextColor || '#ffffff',
-        },
-        secondaryButtonStyles: {
-            backgroundColor: attributes.secondaryButtonBgColor || '#007cba',
-            color: attributes.secondaryButtonTextColor || '#ffffff',
-        },
+        ...generalStyles,
         inputFieldStyle: {
             borderRadius: `${attributes.ticketInputBorderRadius || 0}px`,
         }
@@ -28,56 +20,10 @@ const generateStyles = (attributes) => {
 const CreateTicketInspectorControls = ({ attributes, setAttributes }) => {
     return (
         <InspectorControls>
-            <PanelBody title={__('General Style Settings')} initialOpen={true}>
-                <RangeControl
-                    label={__('Border Radius')}
-                    value={attributes.containerBorderRadius || 0}
-                    onChange={value => setAttributes({ containerBorderRadius: value })}
-                    min={0}
-                    max={20}
-                />
-                <PanelBody title={__('Primary Button Style')}>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Primary Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.primaryButtonTextColor}
-                            onChange={value => setAttributes({ primaryButtonTextColor: value })}
-                        />
-                    </div>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Primary Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.primaryButtonBgColor}
-                            onChange={value => setAttributes({ primaryButtonBgColor: value })}
-                        />
-                    </div>
-                </PanelBody>
-                <PanelBody title={__('Secondary Button Style')}>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Secondary Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.secondaryButtonBgColor}
-                            onChange={value => setAttributes({secondaryButtonBgColor: value})}
-                        />
-                    </div>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Secondary Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.secondaryButtonTextColor}
-                            onChange={value => setAttributes({secondaryButtonTextColor: value})}
-                        />
-                    </div>
-
-                </PanelBody>
-            </PanelBody>
+            <GeneralInspectorSettings
+                attributes={attributes}
+                setAttributes={setAttributes}
+            />
             <PanelBody title={__('Page wise Style Settings')} initialOpen={true}>
                 <RangeControl
                     label={__('Input Field Border Radius')}
@@ -87,10 +33,8 @@ const CreateTicketInspectorControls = ({ attributes, setAttributes }) => {
                     max={20}
                 />
             </PanelBody>
-
         </InspectorControls>
     );
 };
 
-export { generateStyles };
 export default CreateTicketInspectorControls;
