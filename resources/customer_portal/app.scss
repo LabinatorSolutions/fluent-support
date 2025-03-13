@@ -2,1581 +2,1682 @@
 @import "~element-plus/theme-chalk/el-loading.css";
 @import "~element-plus/theme-chalk/el-icon.css";
 
-
 #fluent_support_client_app {
     * {
         box-sizing: border-box;
     }
+
     max-width: 808px;
-    .fst_client_portal {
-        a.el-button {
-            text-decoration: none;
+}
+.fs_client_portal {
+
+    a.el-button {
+        text-decoration: none;
+    }
+
+    .el-form-item__error {
+        position: relative;
+    }
+
+    .wp-editor-wrap {
+        margin-top: 8px;
+
+        .wp-editor-container {
+            border: 1px solid rgb(225, 228, 234);
+            border-radius: 10px;
+            overflow: hidden;
         }
 
-        .el-form-item__error {
-            position: relative;
+        .mce-container.mce-panel {
+            box-shadow: none !important;
         }
 
-        .wp-editor-wrap {
-            margin-top: 8px;
+        .mce-top-part::before {
+            display: none !important;
+        }
 
-            .wp-editor-container {
-                border: 1px solid rgb(225, 228, 234);
-                border-radius: 8px;
-                overflow: hidden;
+        .mce-container-body.mce-stack-layout {
+            background: rgba(245, 247, 250, 1);
+
+            .mce-first .mce-last {
+                padding: 2px 4px;
+            }
+        }
+
+        .mce-btn-group .mce-btn.mce-listbox {
+            border-radius: 8px;
+            border-color: rgba(255, 255, 255, 1) !important;
+            background-color: rgba(255, 255, 255, 1) !important;
+            box-shadow: none !important;
+        }
+
+        .mce-btn {
+            background: transparent !important;
+            border: none !important;
+            border-radius: 4px !important;
+            margin: 0 2px !important;
+
+            i.mce-ico {
+                color: #6B7280 !important;
+                font-size: 18px !important;
             }
 
-            .mce-container.mce-panel {
-                box-shadow: none !important;
+            &:hover {
+                background-color: #F3F4F6 !important;
             }
 
-            .mce-top-part::before {
-                display: none !important;
-            }
-
-            .mce-container-body.mce-stack-layout {
-                background: rgba(245, 247, 250, 1);
-
-                .mce-first .mce-last {
-                    padding: 2px 4px;
-                }
-            }
-
-            .mce-btn-group .mce-btn.mce-listbox {
-                border-radius: 8px;
-                border-color: rgba(255, 255, 255, 1) !important;
-                background-color: rgba(255, 255, 255, 1) !important;
-                box-shadow: none !important;
-            }
-
-            .mce-btn {
-                background: transparent !important;
-                border: none !important;
-                border-radius: 4px !important;
-                margin: 0 2px !important;
+            &.mce-active {
+                background-color: #F3F4F6 !important;
 
                 i.mce-ico {
-                    color: #6B7280 !important;
-                    font-size: 18px !important;
+                    color: #111827 !important;
                 }
-
-                &:hover {
-                    background-color: #F3F4F6 !important;
-                }
-
-                &.mce-active {
-                    background-color: #F3F4F6 !important;
-
-                    i.mce-ico {
-                        color: #111827 !important;
-                    }
-                }
-            }
-
-            .wp-editor-tabs {
-                border-radius: 6px;
-                border: 1px solid rgba(225, 228, 234, 1);
-                background-color: rgba(255, 255, 255, 1);
-                padding: 4px;
-                float: right;
-                margin-bottom: 10px;
-
-                .wp-switch-editor {
-                    top: auto;
-                    margin: 0;
-                    height: auto;
-                    border-radius: 4px;
-                    border-width: 0px;
-                    font-size: 12px;
-                    line-height: 16px;
-                    color: rgba(153, 160, 174, 1);
-
-                    &[aria-pressed="true"] {
-                        background-color: rgba(245, 246, 247, 1);
-                        color: rgba(14, 18, 27, 1);
-                    }
-                }
-            }
-
-            .mce-edit-area {
-                border: none !important;
-            }
-
-            .mce-statusbar {
-                display: none !important;
             }
         }
 
-        // Ticket Lists CSS Start
-        .fs_ticket_wrapper {
-            padding: 20px;
-            background: #f8fafc;
-            min-height: 100vh;
+        .wp-editor-tabs {
+            border-radius: 6px;
+            border: 1px solid rgba(225, 228, 234, 1);
+            background-color: rgba(255, 255, 255, 1);
+            padding: 4px;
+            float: right;
+            margin-bottom: 10px;
 
-            .fs_logout_container {
-                width: 100%;
+            .wp-switch-editor {
+                top: auto;
+                margin: 0;
+                height: auto;
+                border-radius: 4px;
+                border-width: 0px;
+                font-size: 12px;
+                line-height: 16px;
+                color: rgba(153, 160, 174, 1);
+
+                &[aria-pressed="true"] {
+                    background-color: rgba(245, 246, 247, 1);
+                    color: rgba(14, 18, 27, 1);
+                }
+            }
+        }
+
+        .mce-edit-area {
+            border: none !important;
+        }
+
+        .mce-statusbar {
+            display: none !important;
+        }
+    }
+
+    // Ticket Lists CSS Start
+    .fs_ticket_wrapper {
+        padding: 20px;
+        background: #f8fafc;
+        min-height: 100vh;
+
+        .fs_logout_container {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 16px;
+
+            .fs_logout_button {
+                display: inline-block;
+
+                .fs_btn_logout {
+                    display: inline-flex;
+                    align-items: center;
+                    background: transparent;
+                    border: none;
+                    color: #FB3748;
+                    font-size: 14px;
+                    font-weight: 500;
+                    padding: 0;
+                    cursor: pointer;
+                    transition: color 0.2s ease;
+                    text-decoration: none;
+
+                    &:hover {
+                        color: #d92738;
+                    }
+
+                    .fs_logout_icon {
+                        margin-right: 6px;
+                    }
+
+                    .fs_logout_text {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        .fs_tickets_container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(225, 228, 234, 1);
+            max-width: 1200px;
+            margin: 0 auto;
+
+            .fs_tickets_header {
                 display: flex;
-                justify-content: flex-end;
-                margin-bottom: 16px;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px;
+                border-bottom: 1px solid #E5E7EB;
 
-                .fs_logout_button {
-                    display: inline-block;
+                label {
+                    font-size: 20px;
+                    font-weight: 500;
+                    line-height: 28px;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    margin: 0;
+                    color: #111827;
+                }
 
-                    .fs_btn_logout {
-                        display: inline-flex;
-                        align-items: center;
-                        background: transparent;
+                .fs_create_ticket_btn {
+                    background: #18181B;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    padding: 8px 16px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    height: auto;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    &:hover {
+                        background: #27272A;
+                    }
+                }
+            }
+
+            .fs_filters_section {
+                display: flex;
+                justify-content: space-between;
+                gap: 20px;
+                padding: 20px 20px 0px 20px;
+
+                .fs_filter_one {
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+
+                    .fs_product_filter {
+                        min-width: 180px;
+
+                        .el-select__wrapper {
+                            border-radius: 8px;
+                        }
+                    }
+                }
+
+                .fs_filter_buttons {
+                    display: flex;
+                    gap: 4px;
+                    padding: 4px;
+                    background: rgba(245, 247, 250, 1);
+                    border-radius: 10px;
+
+                    .filter-btn {
+                        padding: 6px 16px;
                         border: none;
-                        color: #FB3748;
+                        background: transparent;
+                        color: #6B7280;
                         font-size: 14px;
                         font-weight: 500;
-                        padding: 0;
+                        border-radius: 6px;
                         cursor: pointer;
-                        transition: color 0.2s ease;
-                        text-decoration: none;
+                        min-width: 78px;
 
-                        &:hover {
-                            color: #d92738;
+                        &.active {
+                            background: white;
+                            color: #111827;
+                            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
                         }
+                    }
+                }
 
-                        .fs_logout_icon {
-                            margin-right: 6px;
-                        }
+                .fs_filter_controls {
+                    .fs_product_select {
+                        width: 200px;
+                        font-size: 14px;
+                    }
 
-                        .fs_logout_text {
-                            text-decoration: underline;
+                    .fs_search_input {
+                        flex: 1;
+                        font-size: 14px;
+                        min-width: 200px;
+
+                        .el-input__wrapper {
+                            border-radius: 8px;
                         }
                     }
                 }
             }
 
-            .fs_tickets_container {
-                background: white;
-                border-radius: 16px;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                border: 1px solid rgba(225, 228, 234, 1);
-                max-width: 1200px;
-                margin: 0 auto;
+            @media (max-width: 767px) {
+                .fs_filters_section {
+                    flex-direction: column;
+                    gap: 10px;
+                    padding: 10px;
 
-                .fs_tickets_header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    padding: 20px;
-                    border-bottom: 1px solid #E5E7EB;
+                    .fs_filter_actions {
+                        display: grid;
 
-                    label {
-                        font-size: 20px;
-                        font-weight: 500;
-                        line-height: 28px;
-                        text-align: left;
-                        text-underline-position: from-font;
-                        text-decoration-skip-ink: none;
-                        margin: 0;
-                        color: #111827;
-                    }
+                        .fs_button_groups {
+                            max-width: 100%;
+                            justify-content: center;
+                        }
 
-                    .fs_create_ticket_btn {
-                        background: #18181B;
-                        color: white;
-                        border: none;
-                        border-radius: 8px;
-                        padding: 8px 16px;
-                        font-size: 14px;
-                        font-weight: 500;
-                        height: auto;
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
+                        .fs_filters_right {
+                            .fs_product_filter {
+                                max-width: 100%;
+                                width: 100%;
 
-                        &:hover {
-                            background: #27272A;
+                                .el-select {
+                                    width: 100% !important;
+                                }
+                            }
                         }
                     }
-                }
 
-                .fs_filters_section {
-                    display: flex;
-                    justify-content: space-between;
-                    gap: 20px;
-                    padding: 20px 20px 0px 20px;
+                    .fs_filter_one,
+                    .fs_filter_buttons,
+                    .fs_filter_controls {
+                        width: 100%;
+                    }
 
                     .fs_filter_one {
-                        display: flex;
+                        flex-direction: column;
                         gap: 10px;
-                        align-items: center;
 
                         .fs_product_filter {
-                            min-width: 180px;
+                            max-width: 100%;
 
-                            .el-select__wrapper {
-                                border-radius: 8px;
+                            .el-select {
+                                max-width: 100% !important;
                             }
                         }
                     }
 
                     .fs_filter_buttons {
-                        display: flex;
-                        gap: 4px;
-                        padding: 4px;
-                        background: rgba(245, 247, 250, 1);
-                        border-radius: 10px;
+                        flex-wrap: wrap;
+                        justify-content: center;
+                        gap: 8px;
+                        width: 100%;
 
                         .filter-btn {
-                            padding: 6px 16px;
-                            border: none;
-                            background: transparent;
-                            color: #6B7280;
-                            font-size: 14px;
-                            font-weight: 500;
-                            border-radius: 6px;
-                            cursor: pointer;
-                            min-width: 78px;
-
-                            &.active {
-                                background: white;
-                                color: #111827;
-                                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-                            }
+                            flex: 1;
+                            min-width: auto;
                         }
                     }
 
                     .fs_filter_controls {
-                        .fs_product_select {
-                            width: 200px;
-                            font-size: 14px;
-                        }
-
-                        .fs_search_input {
-                            flex: 1;
-                            font-size: 14px;
-                            min-width: 200px;
-
-                            .el-input__wrapper {
-                                border-radius: 8px;
-                            }
-                        }
-                    }
-                }
-
-                @media (max-width: 767px) {
-                    .fs_filters_section {
+                        display: flex;
                         flex-direction: column;
-                        gap: 10px; 
-                        padding: 10px; 
+                        gap: 10px;
 
-                        .fs_filter_actions{
-                            display: grid;
-                            .fs_button_groups{
-                                max-width: 100%;
-                                justify-content: center;
-                            }
-                            .fs_filters_right{
-                                .fs_product_filter {
-                                    max-width: 100%;
-                                    width: 100%;
-                            
-                                    .el-select {
-                                        width: 100% !important;
-                                    }
-                                }
-                            }
-                        }
-                
-                        .fs_filter_one,
-                        .fs_filter_buttons,
-                        .fs_filter_controls {
+                        .fs_product_select,
+                        .fs_search_input {
                             width: 100%;
-                        }
-                
-                        .fs_filter_one {
-                            flex-direction: column; 
-                            gap: 10px; 
-                
-                            .fs_product_filter {
-                                max-width: 100%;
-                                .el-select {
-                                    max-width: 100% !important;
-                                }
-                            }
-                        }
-                
-                        .fs_filter_buttons {
-                            flex-wrap: wrap; 
-                            justify-content: center;
-                            gap: 8px;
-                            width: 100%;
-                
-                            .filter-btn {
-                                flex: 1;
-                                min-width: auto;
-                            }
-                        }
-                
-                        .fs_filter_controls {
-                            display: flex;
-                            flex-direction: column;
-                            gap: 10px;
-                
-                            .fs_product_select,
-                            .fs_search_input {
-                                width: 100%;
-                                min-width: auto;
-                            }
+                            min-width: auto;
                         }
                     }
                 }
+            }
 
-                .fs_tickets_table {
-                    background: rgba(255, 255, 255, 1);
+            .fs_tickets_table {
+                background: rgba(255, 255, 255, 1);
+                overflow: hidden;
+                padding: 20px 16px 16px;
+
+                .el-table {
+
                     overflow: hidden;
-                    padding: 20px 16px 16px;
 
-                    .el-table {
+                    .el-table__header {
+                        table-layout: auto;
 
-                        overflow: hidden;
-
-                        .el-table__header {
-                            table-layout: auto;
-                            thead {
-                                th {
-                                    &:first-child {
-                                        border-top-left-radius: 8px;
-                                        border-bottom-left-radius: 8px;
-                                        overflow: hidden; 
-                                    }
-
-                                    &:last-child {
-                                        border-top-right-radius: 8px;
-                                        border-bottom-right-radius: 8px;
-                                        overflow: hidden; 
-                                    }
-                                }
-                            }
-
+                        thead {
                             th {
-                                background: rgba(245, 247, 250, 1);
-                                color: rgba(14, 18, 27, 1);
-                                font-weight: 500;
-                                font-size: 14px;
-                                line-height: 20px;
+                                &:first-child {
+                                    border-top-left-radius: 8px;
+                                    border-bottom-left-radius: 8px;
+                                    overflow: hidden;
+                                }
+
+                                &:last-child {
+                                    border-top-right-radius: 8px;
+                                    border-bottom-right-radius: 8px;
+                                    overflow: hidden;
+                                }
                             }
                         }
 
-                        .el-table__body {
-                            .ticket-row {
-                                background: white;
+                        th {
+                            background: rgba(245, 247, 250, 1);
+                            color: rgba(14, 18, 27, 1);
+                            font-weight: 500;
+                            font-size: 14px;
+                            line-height: 20px;
+                        }
+                    }
 
-                                &:hover {
-                                    background: rgba(245, 247, 250, 1);
-                                }
+                    .el-table__body {
+                        .ticket-row {
+                            background: white;
 
-                                td {
-                                    padding: 16px 24px;
-                                    border-bottom: 1px solid #F3F4F6;
+                            &:hover {
+                                background: rgba(245, 247, 250, 1);
+                            }
 
-                                    &.conversation-cell {
-                                        .fs_ticket_conversation {
-                                            text-decoration: none;
+                            td {
+                                padding: 16px 24px;
+                                border-bottom: 1px solid #F3F4F6;
 
-                                            .fs_ticket_title {
-                                                display: flex;
-                                                align-items: center;
-                                                gap: 8px;
-                                                margin-bottom: 4px;
+                                &.conversation-cell {
+                                    .fs_ticket_conversation {
+                                        text-decoration: none;
 
-                                                strong {
-                                                    font-size: 14px;
-                                                    font-weight: 500;
-                                                    line-height: 20px;
-                                                    letter-spacing: -0.006em;
-                                                    text-align: left;
-                                                    text-underline-position: from-font;
-                                                    text-decoration-skip-ink: none;
-                                                    margin: 0;
-                                                }
+                                        .fs_ticket_title {
+                                            display: flex;
+                                            align-items: center;
+                                            gap: 8px;
+                                            margin-bottom: 4px;
 
-                                                .fs_response_count {
-                                                    background: rgba(225, 228, 234, 1);
-                                                    color: rgba(34, 37, 48, 1);
-                                                    border-radius: 50%;
-                                                    width: 16px;
-                                                    height: 16px;
-                                                    display: flex;
-                                                    align-items: center;
-                                                    justify-content: center;
-                                                    font-size: 11px;
-                                                    font-weight: 500;
-                                                    line-height: 12px;
-                                                    letter-spacing: 0.02em;
-                                                    text-align: center;
-                                                    text-underline-position: from-font;
-                                                    text-decoration-skip-ink: none;
-                                                }
-                                            }
-
-                                            .fs_ticket_preview {
-                                                color: #6B7280;
-                                                font-size: 12px;
-                                                font-weight: 400;
+                                            strong {
+                                                font-size: 14px;
+                                                font-weight: 500;
+                                                line-height: 20px;
+                                                letter-spacing: -0.006em;
                                                 text-align: left;
                                                 text-underline-position: from-font;
                                                 text-decoration-skip-ink: none;
                                                 margin: 0;
-                                                max-height: 23px;
-                                                overflow: hidden;
-                                                text-overflow: ellipsis;
                                             }
+
+                                            .fs_response_count {
+                                                background: rgba(225, 228, 234, 1);
+                                                color: rgba(34, 37, 48, 1);
+                                                border-radius: 50%;
+                                                width: 16px;
+                                                height: 16px;
+                                                display: flex;
+                                                align-items: center;
+                                                justify-content: center;
+                                                font-size: 11px;
+                                                font-weight: 500;
+                                                line-height: 12px;
+                                                letter-spacing: 0.02em;
+                                                text-align: center;
+                                                text-underline-position: from-font;
+                                                text-decoration-skip-ink: none;
+                                            }
+                                        }
+
+                                        .fs_ticket_preview {
+                                            color: #6B7280;
+                                            font-size: 12px;
+                                            font-weight: 400;
+                                            text-align: left;
+                                            text-underline-position: from-font;
+                                            text-decoration-skip-ink: none;
+                                            margin: 0;
+                                            max-height: 23px;
+                                            overflow: hidden;
+                                            text-overflow: ellipsis;
                                         }
                                     }
+                                }
 
-                                    &.date-cell {
-                                        font-size: 14px;
-                                        font-weight: 400;
-                                        line-height: 20px;
-                                        text-align: left;
-                                        color: rgba(14, 18, 27, 1);
-                                        width: 20%;
-                                    }
+                                &.date-cell {
+                                    font-size: 14px;
+                                    font-weight: 400;
+                                    line-height: 20px;
+                                    text-align: left;
+                                    color: rgba(14, 18, 27, 1);
+                                    width: 20%;
+                                }
 
-                                    &.fs_status_cell {
-                                        width: 20%;
-                                    }
+                                &.fs_status_cell {
+                                    width: 20%;
+                                }
 
-                                    .fs_status_badge {
-                                        display: inline-flex;
-                                        align-items: center;
-                                        gap: 6px;
-                                        padding: 4px 8px;
-                                        border-radius: 6px;
-                                        font-size: 12px;
-                                        font-weight: 500;
-                                        line-height: 16px;
-                                        text-align: left;
+                                .fs_status_badge {
+                                    display: inline-flex;
+                                    align-items: center;
+                                    gap: 6px;
+                                    padding: 4px 8px;
+                                    border-radius: 6px;
+                                    font-size: 12px;
+                                    font-weight: 500;
+                                    line-height: 16px;
+                                    text-align: left;
 
 
-                                        &.active {
-                                            color: rgba(35, 166, 130, 1);
-                                            background-color: rgba(238, 251, 246, 1);
-                                            .fs_status_dot {
-                                                color: rgba(35, 166, 130, 1);
-                                            }
-                                        }
-
-                                        &.new {
-                                            background-color: rgba(235, 241, 255, 1);
-                                            color: rgba(51, 92, 255, 1);
-                                            .fs_status_dot {
-                                                color: rgba(51, 92, 255, 1);
-                                            }
-                                        }
-
-                                        &.closed {
-                                            background-color: rgba(242, 245, 248, 1);
-                                            color: rgba(82, 88, 102, 1);
-                                            .fs_status_dot {
-                                                color: rgba(113, 119, 132, 1);
-                                            }
-                                        }
+                                    &.active {
+                                        color: rgba(35, 166, 130, 1);
+                                        background-color: rgba(238, 251, 246, 1);
 
                                         .fs_status_dot {
-                                            width: 6px;
-                                            height: 6px;
-                                            border-radius: 50%;
-                                            background: currentColor;
+                                            color: rgba(35, 166, 130, 1);
                                         }
+                                    }
+
+                                    &.new {
+                                        background-color: rgba(235, 241, 255, 1);
+                                        color: rgba(51, 92, 255, 1);
+
+                                        .fs_status_dot {
+                                            color: rgba(51, 92, 255, 1);
+                                        }
+                                    }
+
+                                    &.closed {
+                                        background-color: rgba(242, 245, 248, 1);
+                                        color: rgba(82, 88, 102, 1);
+
+                                        .fs_status_dot {
+                                            color: rgba(113, 119, 132, 1);
+                                        }
+                                    }
+
+                                    .fs_status_dot {
+                                        width: 6px;
+                                        height: 6px;
+                                        border-radius: 50%;
+                                        background: currentColor;
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
 
-                .fs_pagination_section {
+            .fs_pagination_section {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 4px 0;
+
+                .fs_page_info {
+                    color: #6B7280;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+
+                .fs_pagination_controls {
                     display: flex;
-                    justify-content: space-between;
                     align-items: center;
-                    padding: 20px 4px 0;
+                    gap: 16px;
 
-                    .fs_page_info {
-                        color: #6B7280;
+                    .fs_per_page_select {
+                        width: 120px;
                         font-size: 14px;
-                        font-weight: 500;
                     }
 
-                    .fs_pagination_controls {
+                    .fs_page_numbers {
                         display: flex;
-                        align-items: center;
-                        gap: 16px;
+                        gap: 4px;
 
-                        .fs_per_page_select {
-                            width: 120px;
+                        .fs_page_btn,
+                        .fs_page_number {
+                            min-width: 32px;
+                            height: 32px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border: 1px solid #E5E7EB;
+                            background: white;
+                            border-radius: 6px;
+                            color: #6B7280;
+                            cursor: pointer;
+                            font-size: 14px;
+                            font-weight: 500;
+
+                            &.active {
+                                background: #F3F4F6;
+                                color: #111827;
+                                border-color: #E5E7EB;
+                            }
+
+                            &:disabled {
+                                opacity: 0.5;
+                                cursor: not-allowed;
+                            }
+                        }
+
+                        .fs_page_ellipsis {
+                            display: flex;
+                            align-items: center;
+                            padding: 0 8px;
+                            color: #6B7280;
                             font-size: 14px;
                         }
-
-                        .fs_page_numbers {
-                            display: flex;
-                            gap: 4px;
-
-                            .fs_page_btn,
-                            .fs_page_number {
-                                min-width: 32px;
-                                height: 32px;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                border: 1px solid #E5E7EB;
-                                background: white;
-                                border-radius: 6px;
-                                color: #6B7280;
-                                cursor: pointer;
-                                font-size: 14px;
-                                font-weight: 500;
-
-                                &.active {
-                                    background: #F3F4F6;
-                                    color: #111827;
-                                    border-color: #E5E7EB;
-                                }
-
-                                &:disabled {
-                                    opacity: 0.5;
-                                    cursor: not-allowed;
-                                }
-                            }
-
-                            .fs_page_ellipsis {
-                                display: flex;
-                                align-items: center;
-                                padding: 0 8px;
-                                color: #6B7280;
-                                font-size: 14px;
-                            }
-                        }
                     }
                 }
             }
         }
-        // Ticket Lists End
+    }
 
-        // Create Ticket CSS start
-        .fs_create_ticket_container {
-            background-color: #f8f9fa;
-            min-height: 100vh;
-            padding: 20px;
+    // Ticket Lists End
 
-            // General Input and Select Wrappers
-            .el-input__wrapper,
-            .el-select__wrapper {
-                border-radius: 10px;
-                padding: 5px 5px 5px 12px;
-            }
+    // Create Ticket CSS start
+    .fs_create_ticket_container {
+        background-color: #f8f9fa;
+        min-height: 100vh;
+        padding: 20px;
 
-            .el-select__wrapper {
-                padding: 10px 10px 10px 12px;
-            }
-
-            // Focus States
-            .el-input__wrapper.is-focus,
-            .el-select__wrapper.is-focused {
-                box-shadow: 0 0 0 1px rgba(14, 18, 27, 1) inset !important;
-                border-color: rgba(14, 18, 27, 1) !important;
-            }
-
-            // Error States
-            .el-input.error .el-input__wrapper,
-            .el-select.error .el-select__wrapper {
-                box-shadow: 0 0 0 1px rgba(251, 55, 72, 1) inset !important;
-            }
-
-        }
-
-        // Ticket Form and Button Styles
-        .fs_ticket_form_container {
-            background: rgba(255, 255, 255, 1);
-            border-radius: 16px;
-            border: 1px solid rgba(225, 228, 234, 1);
-        }
-
-        .fs_ticket_header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(225, 228, 234, 1);
-
-            label {
-                font-weight: 500;
-                font-size: 20px;
-                line-height: 28px;
-                color: rgba(0, 0, 0, 1);
-            }
-        }
-
-        .fs_ticket_form {
-            padding: 20px 16px;
-        }
-
-        .fs_submit_button_container {
-            margin-top: 10px;
-
-            .el-form-item__content {
-                display: flex !important;
-                justify-content: flex-end;
-            }
-
-            .fs_create_ticket_button {
-                border-radius: 8px;
-                gap: 4px;
-                padding: 20px 16px;
-                color: #fff;
-                background: rgba(14, 18, 27, 1);
-                border: none;
-                font-weight: 500;
-                font-size: 14px;
-                line-height: 20px;
-                transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
-            }
-
-            .fs_create_ticket_button:hover {
-                background: #222;
-            }
-        }
-
-        // Editor Container
-        .editor-container {
-            border: 1px solid #dcdfe6;
-            border-radius: 4px;
-        }
-
-        .editor-header {
-            display: flex;
-            align-items: center;
-            padding: 8px;
-            background-color: #f5f7fa;
-            border-bottom: 1px solid #dcdfe6;
-        }
-
-        .editor-toolbar {
-            display: flex;
-            gap: 8px;
-            flex: 1;
-        }
-
-        .editor-mode {
-            margin-left: auto;
-        }
-
-        .priority-select,
-        .name-input,
-        .hint-text {
-            width: 100%;
-            margin-top: 4px;
-        }
-
-        .name-input .el-input__wrapper {
-            border-color: #ff4949;
-        }
-
-        .hint-text {
-            color: #ff4949;
-            font-size: 12px;
-        }
-
-        .el-form-item__label {
-            font-weight: 500 !important;
-            line-height: 20px !important;
-            color: rgba(14, 18, 27, 1);
-            font-size: 14px;
-        }
-
-        .el-button-group .el-button {
-            border-radius: 4px;
-            margin: 0 1px;
-        }
-
-        .fs_suggestions_popover {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background: white;
-            border-radius: 8px;
-            border: 1px solid #dcdfe6;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            z-index: 1000;
-            max-width: 700px;
-            margin-top: 5px;
-
-            .fs_suggestions_header {
-                display: flex;
-                justify-content: space-between;
-                padding: 0 10px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .fs_suggestions_popover {
-                max-width: 100%;
-                padding: 0.75rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .fs_suggestions_popover {
-                padding: 0.5rem;
-            }
-        }
-
-        // Close button styles
-        .fs_close_button {
-            padding: 4px;
-            color: #909399;
-        }
-
-        .fs_close_button:hover {
-            color: #409EFF;
-        }
-
-        // Article Item
-        .fs_article_item {
-            display: flex;
-            align-items: center;
-            height: 20px;
-            padding: 10px 12px;
-            text-decoration: none;
+        // General Input and Select Wrappers
+        .el-input__wrapper,
+        .el-select__wrapper {
             border-radius: 10px;
-            transition: background-color 0.2s;
+            padding: 5px 5px 5px 12px;
         }
 
-        .fs_article_item:hover {
-            background-color: #f5f7fa;
-            color: #409EFF;
+        .el-select__wrapper {
+            padding: 10px 10px 10px 12px;
         }
 
-        .fs_article_icon {
-            margin-right: 8px;
-            color: #909399;
+        // Focus States
+        .el-input__wrapper.is-focus,
+        .el-select__wrapper.is-focused {
+            box-shadow: 0 0 0 1px rgba(14, 18, 27, 1) inset !important;
+            border-color: rgba(14, 18, 27, 1) !important;
         }
 
-        .fs_suggestions_title p {
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 20px;
-            color: rgba(14, 18, 27, 1);
+        // Error States
+        .el-input.error .el-input__wrapper,
+        .el-select.error .el-select__wrapper {
+            box-shadow: 0 0 0 1px rgba(251, 55, 72, 1) inset !important;
         }
 
-        .fs_ticket_details_label {
-            position: absolute;
-            z-index: 2;
-            top: 15px;
+    }
+
+    // Ticket Form and Button Styles
+    .fs_ticket_form_container {
+        background: rgba(255, 255, 255, 1);
+        border-radius: 16px;
+        border: 1px solid rgba(225, 228, 234, 1);
+    }
+
+    .fs_ticket_header {
+        padding: 20px;
+        border-bottom: 1px solid rgba(225, 228, 234, 1);
+
+        label {
             font-weight: 500;
-            line-height: 20px;
-            font-size: 14px;
+            font-size: 20px;
+            line-height: 28px;
+            color: rgba(0, 0, 0, 1);
+        }
+    }
+
+    .fs_ticket_form {
+        padding: 20px 16px;
+    }
+
+    .fs_submit_button_container {
+        margin-top: 10px;
+
+        .el-form-item__content {
+            display: flex !important;
+            justify-content: flex-end;
         }
 
-        .fs_tk_help {
-            margin-top: 5px !important;
-            color: #76777b !important;
-            width: 100% !important;
-            display: block !important;
-        }
-
-        // Error Messages
-        .error-message {
-            display: flex;
-            align-items: center;
-            color: rgba(251, 55, 72, 1);
-            font-size: 12px;
-            font-weight: 400;
-            line-height: 16px;
-            padding: 8px 0;
-
-            svg {
-                margin-right: 4px;
-            }
-        }
-        // Create Ticket CSS End
-
-        // Ticket Filter CSS Start
-        .fs_filter_actions {
-            display: flex;
-            gap: 10px;
-            max-width: 486px;
-        }
-
-        .fs_button_groups {
-            display: flex;
+        .fs_create_ticket_button {
+            border-radius: 8px;
             gap: 4px;
-            padding: 4px;
-            background: rgb(245, 247, 250);
-            border-radius: 10px;
-            max-width: 250px;
-
-            .status-btn {
-                padding: 6px 16px;
-                border: none;
-                background: transparent;
-                color: #6B7280;
-                font-size: 14px;
-                font-weight: 500;
-                border-radius: 6px;
-                cursor: pointer;
-                min-width: 78px;
-
-                &:hover {
-                    background: #e5e7eb;
-                }
-
-                &.active {
-                    background: white;
-                    color: #111827;
-                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-                }
-            }
-        }
-
-        .fs_filters_right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .fs_sorting .el-button {
-            padding: 5px;
-            border-radius: 8px;
-        }
-
-        //  Ticket Filter CSS End
-
-        // Ticket View CSS Start
-        .fs_back_nav{
-            margin-bottom: 20px;
-        }
-        .fs_svg_back{
-            margin: 16px;
-            top: 5.23px;
-            left: 7.08px;
-            color: #0E121B;
-        }
-        .fs_back_btn {
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 20px;
-            letter-spacing: -0.6%;
-            color: #0E121B;
-        }
-        .fs_ticket_wrapper {
-            padding: 20px;
-            background: #f8fafc;
-            min-height: 100vh;
-
-            .fs_tickets_container {
-                border-radius: 16px;
-                border: 1px solid var(--stroke-soft-200, #E1E4EA);
-                box-shadow: none;
-                // max-width: 1200px;
-                margin: 0 auto;
-                .fs_ticket_heroarea{
-                    &.sticky-header {
-                        position: sticky;
-                        top: 0;
-                        z-index: 10;
-                        background: #fff;
-                    }
-                    .fs_ticket_header {
-                        // padding: 16px 20px;
-                        border-bottom: 1px solid #E5E7EB;
-                        position: relative;
-                        background: white; /* Ensure the header has a background */
-                        transition: top 0.3s ease; /* Smooth transition for sticky behavior */
-                        @media (max-width: 665px) {
-                            flex-direction: column;
-                            align-items: flex-start;
-                            gap: 8px;
-                        }
-                    }
-                    .fs_ticket_actions {
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            margin: 0;
-                            right: 0;
-                            top: 1px;
-                            gap: 8px;
-                            padding: 20px;
-                            flex: none;
-                            border-top: 1px solid #E1E4EA;
-                            border-bottom: 1px solid #E1E4EA;
-                            @media (max-width: 665px) {
-                                flex-wrap: wrap;
-                            }
-                            .fs_product_name {
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                                p {
-                                    display: inline;
-                                    margin: 0;
-                                    font-weight: 400;
-                                    font-size: 14px;
-                                    line-height: 20px;
-                                    color: var(--text-sub-600, #525866);
-                                }
-                            }
-                            .fs_ticket_actions_btn {
-                                display: flex;
-                                gap: 8px;
-                            }
-                            .fs_tk_thread{
-                                border-radius: 8px;
-                                padding: 8px;
-                                flex: none;
-                                gap: 4px;
-                                border: 1px solid #E1E4EA;
-                                align-items: center;
-                                display: flex;
-                                justify-content: center;
-                                display: flex;
-                                align-items: center;
-                                gap: 6px;
-                                font-size: 14px;
-                                line-height: 20px;
-                                color: var(--text-sub-600, #525866);
-                                cursor: pointer;
-                            }
-                            .fs_ticket_refresh_btn{
-                                border: 1px solid #E1E4EA;
-                                align-items: center;
-                                display: flex;
-                                justify-content: center;
-                                border-radius: 8px;
-                                padding: 8px;
-                                height: 36px;
-                                gap: 4px;
-                                cursor: pointer;
-                                span {
-                                    font-weight: 500;
-                                    font-size: 14px;
-                                    line-height: 20px;
-                                    letter-spacing: -0.6%;
-                                    color: #525866;
-                                }
-                            }
-                            .fs_close_ticket{
-                                background: var(--bg-weak-50, #F5F7FA);
-                                color: var(--text-sub-600, #525866);
-                                gap: 8px;
-                                padding: 8px;
-                                flex: none;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                font-size: 14px;
-                                line-height: 20px;
-                                border-radius: 8px;
-                                cursor: pointer;
-
-                                .fs_close_ticket_title{
-                                    font-weight: 500;
-                                    size: 14px;
-                                    line-height: 20px;
-                                }
-                            }
-                        }
-                        .fs_ticket_number {
-                            font-size: 20px;
-                            color: #000000;
-                            font-weight: 500;
-                            line-height: 28px;
-                            display: block;
-                            margin-right: 4px;
-                        }
-                        .fs_ticket_subject{
-                            word-wrap: break-word;
-                            color: #314351;
-                            display: inline-block;
-                            font-size: 20px;
-                            font-weight: 500;
-                            line-height: 28px;
-                            margin: 0;
-                            color: #000000;
-                            font-weight: 500;
-                            font-size: 18px;
-                            line-height: 24px;
-                        }
-                        .fs_tk_subject {
-                            padding: 20px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            gap: 2px;
-                            .fs_status_badge {
-                                &.fs_status_badge_active {
-                                    background-color: #EEFBF6;
-                                    color: #23A682;
-                                }
-                                &.fs_status_badge_closed {
-                                    background: #F2F5F8;
-                                    color: #717784;
-                                }
-                                display: inline-flex;
-                                align-items: center;
-                                gap: 6px;
-                                padding: 4px 8px;
-                                border-radius: 15px;
-                                font-size: 12px;
-                                font-weight: 500;
-                                line-height: 16px;
-                                text-align: left;
-                                color: rgb(82, 88, 102);
-                                margin-left: 5px;
-
-                                .fs_status_dot {
-                                    &.fs_status_dot_active {
-                                        background-color: #1FC16B;
-                                    }
-                                    &.fs_status_dot_closed {
-                                        background: #717784;
-                                    }
-                                    color: rgb(31, 193, 107);
-                                    width: 6px;
-                                    height: 6px;
-                                    border-radius: 50%;
-                                    background: currentColor;
-                                }
-                            }
-                        }
-
-                        label {
-                            font-size: 20px;
-                            font-weight: 500;
-                            line-height: 28px;
-                            text-align: left;
-                            text-underline-position: from-font;
-                            text-decoration-skip-ink: none;
-                            margin: 0;
-                            color: #111827;
-                        }
-                }
-
-
-            }
-
-        }
-        .agent_title {
-            content: '';
-            position: relative;
-            left: 0;
-            top: 0;
-            background: #1785EB;
-            color: #fff;
-            padding: 5px 10px;
-            font-size: 11px;
-        }
-        .fs_thread_name{
-            color: #0E121B;
-            font-weight: 500;
-            font-size: 14px;
-            line-height: 20px;
-            display: inline-block;
-        }
-
-        .fs_thread_ribbon_agent{
-            background: #C0D5FF;
-            color: #122368;
-            border-radius: 2rem;
-        }
-        .fs_thread_ribbon_customer_cc{
-            background: #EC5c03;
-        }
-        .fs_thread_body p{
-            margin: 0;
-        }
-        .fs_ticket_threads_container {
-            border-top: 1px solid var(--stroke-soft-200, #E1E4EA);
-            .fs_customer_conversation{
-                padding: 20px 16px;
-            }
-            .fs_ticket_thread {
-                border-bottom: 1px solid #E1E4EA;
-                // padding: 12px 0;
-                position: relative;
-                &:last-child {
-                    padding-bottom: 0;
-                    border-bottom: none;
-                }
-                &.fs_conversion_starter {
-                    .fs_conversion_starter_section{
-                        padding: 8px;
-                        background: #F9FAFB;
-                    }
-                    .fs_ticket_thread_content {
-                        padding-bottom: 12px;
-
-                    }
-                    .fs_starter_thread_content{
-                        margin: 16px;
-                    }
-                }
-                .fs_ticket_thread_content {
-                    display: flex;
-                    align-items: flex-start;
-                    gap: 16px;
-                    .fs_ticket_avatar {
-                        overflow: hidden;
-                        border-radius: 50%;
-                        width: 32px;
-                        height: 32px;
-                        flex: none;
-                        img {
-                            display: block;
-                            width: 100%;
-                            height: 100%;
-                            object-fit: cover;
-                        }
-                    }
-                    .fs_ticket_thread_wrap {
-                        .fs_thread_head {
-                            .fs_thread_name {
-                                display: flex;
-                                align-items: center;
-                                gap: 8px;
-                                font-weight: 500;
-                                font-size: 14px;
-                                line-height: 20px;
-                                color: var(--text-strong-950, #0E121B);
-                                strong {
-                                    font-weight: 500;
-                                }
-                                .fs_thread_ribbon {
-                                    display: block;
-                                    position: relative;
-                                    left: 0;
-                                    color: var(--state-information-dark, #122368);
-                                    padding: 2px 8px;
-                                    font-weight: 500;
-                                    font-size: 12px;
-                                    line-height: 16px;
-                                    border-radius: 30px;
-                                    &.fs_thread_ribbon_customer {
-                                        color: var(--state-faded-dark, #222530);
-                                        background: #E1E4EA;
-                                    }
-                                }
-                            }
-                        }
-                        .fs_thread_body {
-                            margin: 8px 0 12px 0;
-                            p {
-                                font-weight: 400;
-                                font-size: 14px;
-                                line-height: 20px;
-                                color: var(--text-strong-950, #0E121B);
-                                margin: 0;
-                            }
-                        }
-                        .fs_actions_head {
-                            display: flex;
-                            align-items: center;
-                            gap: 16px;
-                            .fs_thread_actions {
-                                font-weight: 400;
-                                font-size: 12px;
-                                line-height: 16px;
-                                display: block;
-                                color: var(--text-sub-600, #525866);
-                            }
-                            .fs_agent_feedback_actions {
-                                color: #a5b2bd;
-                                font-size: 12px;
-                                .el-button-group {
-                                    display: flex;
-                                    align-items: center;
-                                    .el-button {
-                                        margin: 0;
-                                        padding: 0;
-                                        border: none;
-                                        height: auto;
-                                        border-right: 1px solid #E1E4EA;
-                                        padding-right: 8px;
-                                        margin-right: 8px;
-                                        &:last-child {
-                                            border-right: none;
-                                        }
-                                        &:hover {
-                                            background: none;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        .fs_ticket_alert {
             padding: 20px 16px;
-            .fs_ticket_closed_alert{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 8px;
-                background: #EBF1FF;
-                border-radius: 8px;
-                .fs_ticket_closed_content{
-                    display: flex;
-                    align-items: center;
-                    width: 400px;
-                    gap: 8px;
-                }
-                .fs_ticket_reopen{
-                    font-weight: 500;
-                    font-size: 12px;
-                    line-height: 16px;
-                    text-decoration: underline;
-                    color: #0E121B;
-                    cursor: pointer;
-                }
-                p {
-                    font-weight: 400;
-                    font-size: 12px;
-                    line-height: 16px;
-                    margin: 0;
-                }
-            }
-            .el-alert {
-                background: var(--state-information-lighter, #EBF1FF);
-                font-weight: 400;
-                font-size: 12px;
-                line-height: 16px;
-                color: var(--text-strong-950, #0E121B);
-                padding: 8px 10px;
-                border-radius: 8px;
-                .el-icon {
-                    color: var(--state-information-base, #335CFF);
-                }
-                .el-alert__close-btn {
-                    color: var(--icon-strong-950, #0E121B);
-                    opacity: .4;
-                }
-            }
-        }
-        .fs_custom_data_wrap {
-            h3 {
-                font-weight: 500;
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: -0.6%;
-                margin-top: 0;
-                color: var(--text-strong-950, #0E121B);
-            }
-            margin: 8px;
-            padding: 16px;
-            border-top: 1px solid #e5e9ec;
-            background: #F2F5F8;
-            border-radius: 12px;
-            .fs_custom_info_label {
-                font-weight: 400;
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: -0.6%;
-                color: #525866;
-            }
-
-            > ul {
-                display: block;
-                margin: 0;
-                padding: 0;
-
-                li {
-                    font-size: 14px;
-                    color: #0E121B;
-                    list-style: none;
-                    margin-bottom: 10px;
-                }
-            }
-
-            span.fs_custom_check_value {
-                font-weight: 400;
-                font-size: 14px;
-                line-height: 20px;
-                letter-spacing: -0.6%;
-                color: #0E121B;
-            }
-        }
-
-        // Ticket View CSS End
-
-        // InlineReply CSS Start
-        .fs_ticket_reply_box {
-            padding: 15px 15px;
-        }
-        .fs_ticket_reply_text {
-            width: 100%;
-            border: 2px solid #E1E4EA;
-            height: 40;
-            border-radius: 8px;
-            border-width: 1px;
-            padding-top: 10px;
-            padding-right: 16px;
-            padding-bottom: 10px;
-            padding-left: 16px;
-            background: #F5F7FA;
-            gap: 12px;
-        }
-        .fs_reply_wrap h3 {
-            font-family: Inter;
+            color: #fff;
+            background: rgba(14, 18, 27, 1);
+            border: none;
             font-weight: 500;
             font-size: 14px;
             line-height: 20px;
-            letter-spacing: -0.6%;
+            transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
         }
-        .fs_customer_response_actions{
+
+        .fs_create_ticket_button:hover {
+            background: #222;
+        }
+    }
+
+    // Editor Container
+    .editor-container {
+        border: 1px solid #dcdfe6;
+        border-radius: 4px;
+    }
+
+    .editor-header {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        background-color: #f5f7fa;
+        border-bottom: 1px solid #dcdfe6;
+    }
+
+    .editor-toolbar {
+        display: flex;
+        gap: 8px;
+        flex: 1;
+    }
+
+    .editor-mode {
+        margin-left: auto;
+    }
+
+    .priority-select,
+    .name-input,
+    .hint-text {
+        width: 100%;
+        margin-top: 4px;
+    }
+
+    .name-input .el-input__wrapper {
+        border-color: #ff4949;
+    }
+
+    .hint-text {
+        color: #ff4949;
+        font-size: 12px;
+    }
+
+    .el-form-item__label {
+        font-weight: 500 !important;
+        line-height: 20px !important;
+        color: rgba(14, 18, 27, 1);
+        font-size: 14px;
+    }
+
+    .el-button-group .el-button {
+        border-radius: 4px;
+        margin: 0 1px;
+    }
+
+    .fs_suggestions_popover {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #dcdfe6;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+        padding: 1rem;
+        z-index: 1000;
+        max-width: 700px;
+        margin-top: 5px;
+
+        .fs_suggestions_header {
             display: flex;
-            justify-content: end;
-            gap:8px;
-            align-items: center;
-            margin-top: 12px;
-            .fs_reply_btn{
-                background: #0E121B;
-                color: white;
-                display: flex;
-                align-items: center;
-                width: 81px;
-                height: 32px;
-                border-radius: 8px;
-                padding-top: 6px;
-                padding-right: 6px;
-                padding-bottom: 6px;
-                padding-left: 8px;
-                svg{
-                    fill: white;
-                    margin-left: 8px;
-                }
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .fs_suggestions_popover {
+            max-width: 100%;
+            padding: 0.75rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .fs_suggestions_popover {
+            padding: 0.5rem;
+        }
+    }
+
+    // Close button styles
+    .fs_close_button {
+        padding: 4px;
+        color: #909399;
+    }
+
+    .fs_close_button:hover {
+        color: #409EFF;
+    }
+
+    // Article Item
+    .fs_article_item {
+        display: flex;
+        align-items: center;
+        height: 20px;
+        padding: 10px 12px;
+        text-decoration: none;
+        border-radius: 10px;
+        transition: background-color 0.2s;
+    }
+
+    .fs_article_item:hover {
+        background-color: #f5f7fa;
+        color: #409EFF;
+    }
+
+    .fs_article_icon {
+        margin-right: 8px;
+        color: #909399;
+    }
+
+    .fs_suggestions_title p {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 20px;
+        color: rgba(14, 18, 27, 1);
+    }
+
+    .fs_ticket_details_label {
+        position: absolute;
+        z-index: 2;
+        top: 15px;
+        font-weight: 500;
+        line-height: 20px;
+        font-size: 14px;
+    }
+
+    .fs_tk_help {
+        margin-top: 5px !important;
+        color: #76777b !important;
+        width: 100% !important;
+        display: block !important;
+    }
+
+    // Error Messages
+    .error-message {
+        display: flex;
+        align-items: center;
+        color: rgba(251, 55, 72, 1);
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 16px;
+        padding: 8px 0;
+
+        svg {
+            margin-right: 4px;
+        }
+    }
+
+    // Create Ticket CSS End
+
+    // Ticket Filter CSS Start
+    .fs_filter_actions {
+        display: flex;
+        gap: 10px;
+        max-width: 486px;
+    }
+
+    .fs_button_groups {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        background: rgb(245, 247, 250);
+        border-radius: 10px;
+        max-width: 250px;
+
+        .status-btn {
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            color: #6B7280;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 78px;
+
+            &:hover {
+                background: #e5e7eb;
             }
-            p{
-                cursor: pointer;
-                color: #525866;
-                font-family: Inter;
-                font-weight: 500;
-                font-size: 14px;
-                line-height: 20px;
-                text-decoration: underline;
-                text-decoration-thickness: Auto;
-                margin: 0;
+
+            &.active {
+                background: white;
+                color: #111827;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
             }
         }
-        // InlineReply CSS End
+    }
 
-        // Custom Field CSS Start
-        .fs_custom_fields_wrap {
+    .fs_filters_right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
 
-            .el-input,
-            .el-select {
-                &.error {
-                    .el-input__wrapper,
-                    .el-select__wrapper {
-                        box-shadow: 0 0 0 1px rgba(251, 55, 72, 1) inset !important;
-                    }
+    .fs_sorting .el-button {
+        padding: 5px;
+        border-radius: 8px;
+    }
+
+    //  Ticket Filter CSS End
+
+    // Ticket View CSS Start
+    .fs_back_nav {
+        margin-bottom: 20px;
+    }
+
+    .fs_svg_back {
+        margin: 16px;
+        top: 5.23px;
+        left: 7.08px;
+        color: #0E121B;
+    }
+
+    .fs_back_btn {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: -0.6%;
+        color: #0E121B;
+    }
+
+    .fs_ticket_wrapper {
+        padding: 20px;
+        background: #f8fafc;
+        min-height: 100vh;
+
+        .fs_tickets_container {
+            border-radius: 16px;
+            border: 1px solid var(--stroke-soft-200, #E1E4EA);
+            box-shadow: none;
+            // max-width: 1200px;
+            margin: 0 auto;
+
+            .fs_ticket_heroarea {
+                &.sticky-header {
+                    position: sticky;
+                    top: 0;
+                    z-index: 10;
+                    background: #fff;
                 }
-            }
 
-
-            .el-input__wrapper {
-                border-radius: 10px;
-                padding: 5px 5px 5px 12px;
-            }
-
-            .el-textarea__inner {
-                border-radius: 10px;
-            }
-
-            .el-select__wrapper {
-                border-radius: 10px;
-                padding: 10px 10px 10px 12px
-
-            }
-
-            .el-input__wrapper.is-focus,
-            .el-select__wrapper.is-focused {
-                box-shadow: 0 0 0 1px rgba(14, 18, 27, 1) inset !important;
-                border-color: rgba(14, 18, 27, 1) !important;
-            }
-
-
-            .el-form {
-                .fs_tk_row {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 16px;
-
-                }
-            }
-        }
-
-        .fs_custom_fields_wrap {
-            margin-top: 20px;
-
-            .el-select__wrapper.is-focus {
-                box-shadow: 0 0 0 1px black inset !important;
-                border-color: black !important;
-            }
-
-            .fs_input_label {
-                font-weight: 600;
-                color: #333;
-                margin-bottom: 8px;
-            }
-
-        }
-        // Custom CSS Field End
-
-        // AttachmentForm CSS Start
-        .fs-file-uploader {
-            box-sizing: border-box;
-            *,*:before,*:after {
-                box-sizing: border-box;
-            }
-            .el-upload {
-                width: 100%;
-                justify-content: flex-start;
-                margin-bottom: 8px;
-                margin-top: 10px;
-                .fs-upload-content {
-                    .fc-upload-text {
-                        display: flex;
+                .fs_ticket_header {
+                    // padding: 16px 20px;
+                    border-bottom: 1px solid #E5E7EB;
+                    position: relative;
+                    background: white; /* Ensure the header has a background */
+                    transition: top 0.3s ease; /* Smooth transition for sticky behavior */
+                    @media (max-width: 665px) {
                         flex-direction: column;
                         align-items: flex-start;
-                        .fs_upload_instruction {
-                            margin: 0 0 4px;
+                        gap: 8px;
+                    }
+                }
+
+                .fs_ticket_actions {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin: 0;
+                    right: 0;
+                    top: 1px;
+                    gap: 8px;
+                    padding: 20px;
+                    flex: none;
+                    border-top: 1px solid #E1E4EA;
+                    border-bottom: 1px solid #E1E4EA;
+                    @media (max-width: 665px) {
+                        flex-wrap: wrap;
+                    }
+
+                    .fs_product_name {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+
+                        p {
+                            display: inline;
+                            margin: 0;
+                            font-weight: 400;
+                            font-size: 14px;
+                            line-height: 20px;
+                            color: var(--text-sub-600, #525866);
+                        }
+                    }
+
+                    .fs_ticket_actions_btn {
+                        display: flex;
+                        gap: 8px;
+                    }
+
+                    .fs_tk_thread {
+                        border-radius: 8px;
+                        padding: 8px;
+                        flex: none;
+                        gap: 4px;
+                        border: 1px solid #E1E4EA;
+                        align-items: center;
+                        display: flex;
+                        justify-content: center;
+                        display: flex;
+                        align-items: center;
+                        gap: 6px;
+                        font-size: 14px;
+                        line-height: 20px;
+                        color: var(--text-sub-600, #525866);
+                        cursor: pointer;
+                    }
+
+                    .fs_ticket_refresh_btn {
+                        border: 1px solid #E1E4EA;
+                        align-items: center;
+                        display: flex;
+                        justify-content: center;
+                        border-radius: 8px;
+                        padding: 8px;
+                        height: 36px;
+                        gap: 4px;
+                        cursor: pointer;
+
+                        span {
+                            font-weight: 500;
+                            font-size: 14px;
+                            line-height: 20px;
+                            letter-spacing: -0.6%;
+                            color: #525866;
+                        }
+                    }
+
+                    .fs_close_ticket {
+                        background: var(--bg-weak-50, #F5F7FA);
+                        color: var(--text-sub-600, #525866);
+                        gap: 8px;
+                        padding: 8px;
+                        flex: none;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 14px;
+                        line-height: 20px;
+                        border-radius: 8px;
+                        cursor: pointer;
+
+                        .fs_close_ticket_title {
+                            font-weight: 500;
+                            size: 14px;
+                            line-height: 20px;
+                        }
+                    }
+                }
+
+                .fs_ticket_number {
+                    font-size: 20px;
+                    color: #000000;
+                    font-weight: 500;
+                    line-height: 28px;
+                    display: block;
+                    margin-right: 4px;
+                }
+
+                .fs_ticket_subject {
+                    word-wrap: break-word;
+                    color: #314351;
+                    display: inline-block;
+                    font-size: 20px;
+                    font-weight: 500;
+                    line-height: 28px;
+                    margin: 0;
+                    color: #000000;
+                    font-weight: 500;
+                    font-size: 18px;
+                    line-height: 24px;
+                }
+
+                .fs_tk_subject {
+                    padding: 20px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 2px;
+
+                    .fs_status_badge {
+                        &.fs_status_badge_active {
+                            background-color: #EEFBF6;
+                            color: #23A682;
+                        }
+
+                        &.fs_status_badge_closed {
+                            background: #F2F5F8;
+                            color: #717784;
+                        }
+
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 6px;
+                        padding: 4px 8px;
+                        border-radius: 15px;
+                        font-size: 12px;
+                        font-weight: 500;
+                        line-height: 16px;
+                        text-align: left;
+                        color: rgb(82, 88, 102);
+                        margin-left: 5px;
+
+                        .fs_status_dot {
+                            &.fs_status_dot_active {
+                                background-color: #1FC16B;
+                            }
+
+                            &.fs_status_dot_closed {
+                                background: #717784;
+                            }
+
+                            color: rgb(31, 193, 107);
+                            width: 6px;
+                            height: 6px;
+                            border-radius: 50%;
+                            background: currentColor;
+                        }
+                    }
+                }
+
+                label {
+                    font-size: 20px;
+                    font-weight: 500;
+                    line-height: 28px;
+                    text-align: left;
+                    text-underline-position: from-font;
+                    text-decoration-skip-ink: none;
+                    margin: 0;
+                    color: #111827;
+                }
+            }
+
+
+        }
+
+    }
+
+    .agent_title {
+        content: '';
+        position: relative;
+        left: 0;
+        top: 0;
+        background: #1785EB;
+        color: #fff;
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+
+    .fs_thread_name {
+        color: #0E121B;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        display: inline-block;
+    }
+
+    .fs_thread_ribbon_agent {
+        background: #C0D5FF;
+        color: #122368;
+        border-radius: 2rem;
+    }
+
+    .fs_thread_ribbon_customer_cc {
+        background: #EC5c03;
+    }
+
+    .fs_thread_body p {
+        margin: 0;
+    }
+
+    .fs_ticket_threads_container {
+        border-top: 1px solid var(--stroke-soft-200, #E1E4EA);
+
+        .fs_customer_conversation {
+            padding: 20px 16px;
+        }
+
+        .fs_ticket_thread {
+            border-bottom: 1px solid #E1E4EA;
+            // padding: 12px 0;
+            position: relative;
+
+            &:last-child {
+                padding-bottom: 0;
+                border-bottom: none;
+            }
+
+            &.fs_conversion_starter {
+                .fs_conversion_starter_section {
+                    padding: 8px;
+                    background: #F9FAFB;
+                }
+
+                .fs_ticket_thread_content {
+                    padding-bottom: 12px;
+
+                }
+
+                .fs_starter_thread_content {
+                    margin: 16px;
+                }
+            }
+
+            .fs_ticket_thread_content {
+                display: flex;
+                align-items: flex-start;
+                gap: 16px;
+
+                .fs_ticket_avatar {
+                    overflow: hidden;
+                    border-radius: 50%;
+                    width: 32px;
+                    height: 32px;
+                    flex: none;
+
+                    img {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+
+                .fs_ticket_thread_wrap {
+                    .fs_thread_head {
+                        .fs_thread_name {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
                             font-weight: 500;
                             font-size: 14px;
                             line-height: 20px;
                             color: var(--text-strong-950, #0E121B);
+
+                            strong {
+                                font-weight: 500;
+                            }
+
+                            .fs_thread_ribbon {
+                                display: block;
+                                position: relative;
+                                left: 0;
+                                color: var(--state-information-dark, #122368);
+                                padding: 2px 8px;
+                                font-weight: 500;
+                                font-size: 12px;
+                                line-height: 16px;
+                                border-radius: 30px;
+
+                                &.fs_thread_ribbon_customer {
+                                    color: var(--state-faded-dark, #222530);
+                                    background: #E1E4EA;
+                                }
+                            }
                         }
-                        .fs-upload-button {
-                            border: 1px solid var(--stroke-soft-200, #E1E4EA);
-                            border-radius: 8px;
-                            font-weight: 500;
+                    }
+
+                    .fs_thread_body {
+                        margin: 8px 0 12px 0;
+
+                        p {
+                            font-weight: 400;
                             font-size: 14px;
                             line-height: 20px;
+                            color: var(--text-strong-950, #0E121B);
+                            margin: 0;
+                        }
+                    }
+
+                    .fs_actions_head {
+                        display: flex;
+                        align-items: center;
+                        gap: 16px;
+
+                        .fs_thread_actions {
+                            font-weight: 400;
+                            font-size: 12px;
+                            line-height: 16px;
+                            display: block;
                             color: var(--text-sub-600, #525866);
-                            padding: 8px 16px 8px 8px;
-                            background: none;
-                            height: auto;
-                            > span {
-                                gap: 8px;
+                        }
+
+                        .fs_agent_feedback_actions {
+                            color: #a5b2bd;
+                            font-size: 12px;
+
+                            .el-button-group {
+                                display: flex;
                                 align-items: center;
-                            }
-                            i {
-                                font-size: 18px;
-                                display: block;
+
+                                .el-button {
+                                    margin: 0;
+                                    padding: 0;
+                                    border: none;
+                                    height: auto;
+                                    border-right: 1px solid #E1E4EA;
+                                    padding-right: 8px;
+                                    margin-right: 8px;
+
+                                    &:last-child {
+                                        border-right: none;
+                                    }
+
+                                    &:hover {
+                                        background: none;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
-            .fs-upload-info {
-                margin: 0;
+        }
+    }
+
+    .fs_ticket_alert {
+        padding: 20px 16px;
+
+        .fs_ticket_closed_alert {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background: #EBF1FF;
+            border-radius: 8px;
+
+            .fs_ticket_closed_content {
+                display: flex;
+                align-items: center;
+                width: 400px;
+                gap: 8px;
+            }
+
+            .fs_ticket_reopen {
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 16px;
+                text-decoration: underline;
+                color: #0E121B;
+                cursor: pointer;
+            }
+
+            p {
                 font-weight: 400;
                 font-size: 12px;
                 line-height: 16px;
-                color: var(--text-sub-600, #525866);
+                margin: 0;
             }
-            .el-upload-list {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-                margin-top: 10px;
-                .el-upload-list__item {
-                    width: 100%;
-                    height: auto;
-                    margin: 0;
-                    border: none;
-                    padding: 0;
-                    .fs-file-list {
-                        position: relative;
-                        border: 1px solid var(--stroke-soft-200, #E1E4EA);
-                        border-radius: 12px;
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        padding: 16px;
-                        width: 100%;
-                        .fs-file-icon {
-                            width: 40px;
-                            flex: none;
-                            svg {
-                                display: block;
-                            }
-                        }
-                        .fs-file-delete {
-                            position: absolute;
-                            right: 16px;
-                            top: 16px;
-                            font-size: 16px;
-                            cursor: pointer;
-                        }
-                        .fs-file-infos {
-                            display: flex;
-                            flex-direction: column;
-                            align-items: flex-start;
-                            gap: 4px;
-                            padding-right: 10px;
-                            .fs-file-name {
-                                font-weight: 500;
-                                font-size: 14px;
-                                line-height: 20px;
-                                color: var(--text-strong-950, #0E121B);
-                                text-align: left;
-                            }
-                            .fs-file-size {
-                                color: var(--text-sub-600, #525866);
-                                font-weight: 400;
-                                font-size: 12px;
-                                line-height: 16px;
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                                .fs-dot {
-                                    display: block;
-                                    width: 2px;
-                                    height: 2px;
-                                    border-radius: 50%;
-                                    background: var(--text-sub-600, #525866);
-                                }
-                            }
-                            .fs-file-status {
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                                font-weight: 400;
-                                font-size: 12px;
-                                line-height: 16px;
-                                color: var(--text-strong-950, #0E121B);
-                                &.success {
-                                    i {
-                                        color: var(--state-success-base, #1FC16B);
-                                    }
-                                }
-                                i {
-                                    color: #dd093c;
-                                    font-size: 14px;
-                                }
-                            }
-                        }
-                    }
-                }
+        }
+
+        .el-alert {
+            background: var(--state-information-lighter, #EBF1FF);
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: var(--text-strong-950, #0E121B);
+            padding: 8px 10px;
+            border-radius: 8px;
+
+            .el-icon {
+                color: var(--state-information-base, #335CFF);
             }
-            @media (max-width: 480px) {
-                .el-upload-list {
-                    grid-template-columns: 1fr; /* Single column */
+
+            .el-alert__close-btn {
+                color: var(--icon-strong-950, #0E121B);
+                opacity: .4;
+            }
+        }
+    }
+
+    .fs_custom_data_wrap {
+        h3 {
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: -0.6%;
+            margin-top: 0;
+            color: var(--text-strong-950, #0E121B);
+        }
+
+        margin: 8px;
+        padding: 16px;
+        border-top: 1px solid #e5e9ec;
+        background: #F2F5F8;
+        border-radius: 12px;
+
+        .fs_custom_info_label {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: -0.6%;
+            color: #525866;
+        }
+
+        > ul {
+            display: block;
+            margin: 0;
+            padding: 0;
+
+            li {
+                font-size: 14px;
+                color: #0E121B;
+                list-style: none;
+                margin-bottom: 10px;
+            }
+        }
+
+        span.fs_custom_check_value {
+            font-weight: 400;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: -0.6%;
+            color: #0E121B;
+        }
+    }
+
+    // Ticket View CSS End
+
+    // InlineReply CSS Start
+    .fs_ticket_reply_box {
+        padding: 15px 15px;
+    }
+
+    .fs_ticket_reply_text {
+        width: 100%;
+        border: 2px solid #E1E4EA;
+        height: 40;
+        border-radius: 8px;
+        border-width: 1px;
+        padding-top: 10px;
+        padding-right: 16px;
+        padding-bottom: 10px;
+        padding-left: 16px;
+        background: #F5F7FA;
+        gap: 12px;
+    }
+
+    .fs_reply_wrap h3 {
+        font-family: Inter;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 20px;
+        letter-spacing: -0.6%;
+    }
+
+    .fs_customer_response_actions {
+        display: flex;
+        justify-content: end;
+        gap: 8px;
+        align-items: center;
+        margin-top: 12px;
+
+        .fs_reply_btn {
+            background: #0E121B;
+            color: white;
+            display: flex;
+            align-items: center;
+            width: 81px;
+            height: 32px;
+            border-radius: 8px;
+            padding-top: 6px;
+            padding-right: 6px;
+            padding-bottom: 6px;
+            padding-left: 8px;
+
+            svg {
+                fill: white;
+                margin-left: 8px;
+            }
+        }
+
+        p {
+            cursor: pointer;
+            color: #525866;
+            font-family: Inter;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            text-decoration: underline;
+            text-decoration-thickness: Auto;
+            margin: 0;
+        }
+    }
+
+    // InlineReply CSS End
+
+    // Custom Field CSS Start
+    .fs_custom_fields_wrap {
+
+        .el-input,
+        .el-select {
+            &.error {
+                .el-input__wrapper,
+                .el-select__wrapper {
+                    box-shadow: 0 0 0 1px rgba(251, 55, 72, 1) inset !important;
                 }
             }
         }
 
-        // AttachmentForm CSS End
+
+        .el-input__wrapper {
+            border-radius: 10px;
+            padding: 5px 5px 5px 12px;
+        }
+
+        .el-textarea__inner {
+            border-radius: 10px;
+        }
+
+        .el-select__wrapper {
+            border-radius: 10px;
+            padding: 10px 10px 10px 12px
+
+        }
+
+        .el-input__wrapper.is-focus,
+        .el-select__wrapper.is-focused {
+            box-shadow: 0 0 0 1px rgba(14, 18, 27, 1) inset !important;
+            border-color: rgba(14, 18, 27, 1) !important;
+        }
+
+
+        .el-form {
+            .fs_tk_row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 16px;
+
+            }
+        }
     }
-    .el-table--fit.el-table table tr td {
-        padding: 12px 0 !important;
+
+    .fs_custom_fields_wrap {
+        margin-top: 20px;
+
+        .el-select__wrapper.is-focus {
+            box-shadow: 0 0 0 1px black inset !important;
+            border-color: black !important;
+        }
+
+        .fs_input_label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
     }
+
+    // Custom CSS Field End
+
+    // AttachmentForm CSS Start
+    .fs-file-uploader {
+        box-sizing: border-box;
+
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        .el-upload {
+            width: 100%;
+            justify-content: flex-start;
+            margin-bottom: 8px;
+            margin-top: 10px;
+
+            .fs-upload-content {
+                .fc-upload-text {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+
+                    .fs_upload_instruction {
+                        margin: 0 0 4px;
+                        font-weight: 500;
+                        font-size: 14px;
+                        line-height: 20px;
+                        color: var(--text-strong-950, #0E121B);
+                    }
+
+                    .fs-upload-button {
+                        border: 1px solid var(--stroke-soft-200, #E1E4EA);
+                        border-radius: 8px;
+                        font-weight: 500;
+                        font-size: 14px;
+                        line-height: 20px;
+                        color: var(--text-sub-600, #525866);
+                        padding: 8px 16px 8px 8px;
+                        background: none;
+                        height: auto;
+
+                        > span {
+                            gap: 8px;
+                            align-items: center;
+                        }
+
+                        i {
+                            font-size: 18px;
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+
+        .fs-upload-info {
+            margin: 0;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 16px;
+            color: var(--text-sub-600, #525866);
+        }
+
+        .el-upload-list {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 10px;
+
+            .el-upload-list__item {
+                width: 100%;
+                height: auto;
+                margin: 0;
+                border: none;
+                padding: 0;
+
+                .fs-file-list {
+                    position: relative;
+                    border: 1px solid var(--stroke-soft-200, #E1E4EA);
+                    border-radius: 12px;
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 16px;
+                    width: 100%;
+
+                    .fs-file-icon {
+                        width: 40px;
+                        flex: none;
+
+                        svg {
+                            display: block;
+                        }
+                    }
+
+                    .fs-file-delete {
+                        position: absolute;
+                        right: 16px;
+                        top: 16px;
+                        font-size: 16px;
+                        cursor: pointer;
+                    }
+
+                    .fs-file-infos {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 4px;
+                        padding-right: 10px;
+
+                        .fs-file-name {
+                            font-weight: 500;
+                            font-size: 14px;
+                            line-height: 20px;
+                            color: var(--text-strong-950, #0E121B);
+                            text-align: left;
+                        }
+
+                        .fs-file-size {
+                            color: var(--text-sub-600, #525866);
+                            font-weight: 400;
+                            font-size: 12px;
+                            line-height: 16px;
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+
+                            .fs-dot {
+                                display: block;
+                                width: 2px;
+                                height: 2px;
+                                border-radius: 50%;
+                                background: var(--text-sub-600, #525866);
+                            }
+                        }
+
+                        .fs-file-status {
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+                            font-weight: 400;
+                            font-size: 12px;
+                            line-height: 16px;
+                            color: var(--text-strong-950, #0E121B);
+
+                            &.success {
+                                i {
+                                    color: var(--state-success-base, #1FC16B);
+                                }
+                            }
+
+                            i {
+                                color: #dd093c;
+                                font-size: 14px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        @media (max-width: 480px) {
+            .el-upload-list {
+                grid-template-columns: 1fr; /* Single column */
+            }
+        }
+    }
+
+    // AttachmentForm CSS End
 }
+
+.el-table--fit.el-table table tr td {
+    padding: 12px 0 !important;
+}
+
