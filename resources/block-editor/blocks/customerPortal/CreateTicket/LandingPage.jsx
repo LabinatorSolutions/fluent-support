@@ -1,21 +1,11 @@
-const {Fragment, useState} = wp.element;
-const {InspectorControls, ColorPalette} = wp.blockEditor;
-const {
-    PanelBody,
-    SelectControl,
-    TextControl,
-    Button,
-    Spinner,
-    SearchControl,
-    ToggleControl,
-    RangeControl
-} = wp.components;
-const {__} = wp.i18n;
+const { Fragment, useState } = wp.element;
+const { __ } = wp.i18n;
 
 import './create_ticket.scss';
+import CreateTicketInspectorControls, { generateStyles } from './InspectorSettings';
 
 export const CreateTicketBlock = props => {
-    const {attributes: blockAttributes, setAttributes, showSection} = props;
+    const { attributes: blockAttributes, setAttributes, showSection } = props;
 
     const [subject, setSubject] = useState('');
     const [details, setDetails] = useState('');
@@ -24,96 +14,19 @@ export const CreateTicketBlock = props => {
     const [activeTab, setActiveTab] = useState('Visual');
     const [nameError, setNameError] = useState(false);
 
-    const blockStyles = {
-        borderRadius: `${blockAttributes.createTicketBorderRadius || 0}px`,
-    };
-
-    const inputStyles = {
-        borderRadius: `${blockAttributes.createTicketInputBorderRadius || 8}px`,
-    };
-
-    const buttonStyles = {
-        borderRadius: `${blockAttributes.createTicketButtonBorderRadius || 0}px`,
-        backgroundColor: blockAttributes.createTicketButtonBackgroundColor || '#1E1E1E',
-        color: blockAttributes.createTicketButtonTextColor || '#ffffff',
-    };
-
-    const tabStyles = {
-        borderRadius: `${blockAttributes.createTicketTabBorderRadius || 4}px`,
-    };
-
-    const handleSubmit = () => {
-        // Validate required fields
-        if (!name) {
-            setNameError(true);
-            return;
-        }
-
-        // Handle form submission
-        console.log('Ticket submitted:', {subject, details, priority, name});
-        showSection('allTickets');
-    };
+    const {
+        blockStyles,
+        primaryButtonStyles,
+        secondaryButtonStyles,
+        inputFieldStyle
+    } = generateStyles(blockAttributes);
 
     return (
         <Fragment>
-            <InspectorControls>
-                <PanelBody title={__('General Style Settings')} initialOpen={true}>
-                    <RangeControl
-                        label={__('Border Radius')}
-                        value={blockAttributes.createTicketBorderRadius || 0}
-                        onChange={value => setAttributes({createTicketBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Input Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Input Border Radius')}
-                        value={blockAttributes.createTicketInputBorderRadius || 8}
-                        onChange={value => setAttributes({createTicketInputBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-                <PanelBody title={__('Button Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Button Border Radius')}
-                        value={blockAttributes.createTicketButtonBorderRadius || 8}
-                        onChange={value => setAttributes({createTicketButtonBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={blockAttributes.createTicketButtonTextColor}
-                            onChange={value => setAttributes({createTicketButtonTextColor: value})}
-                        />
-                    </div>
-
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={blockAttributes.createTicketButtonBackgroundColor}
-                            onChange={value => setAttributes({createTicketButtonBackgroundColor: value})}
-                        />
-                    </div>
-                </PanelBody>
-                <PanelBody title={__('Tab Style Settings')} initialOpen={false}>
-                    <RangeControl
-                        label={__('Tab Border Radius')}
-                        value={blockAttributes.createTicketTabBorderRadius || 4}
-                        onChange={value => setAttributes({createTicketTabBorderRadius: value})}
-                        min={0}
-                        max={20}
-                    />
-                </PanelBody>
-            </InspectorControls>
+            <CreateTicketInspectorControls
+                attributes={blockAttributes}
+                setAttributes={setAttributes}
+            />
 
             <div className="fs_back_nav">
                 <button className="fs_back_button" onClick={() => showSection('allTickets')}>
@@ -140,8 +53,7 @@ export const CreateTicketBlock = props => {
                             className="fs_form_input"
                             placeholder="What's this support ticket about?"
                             value={subject}
-                            onChange={(e) => setSubject(e.target.value)}
-                            style={inputStyles}
+                            style={inputFieldStyle}
                         />
                     </div>
 
@@ -149,18 +61,16 @@ export const CreateTicketBlock = props => {
                         <label className="fs_form_label">Ticket Details</label>
                         <div className="fs_ticket_details_container">
                             <div className="fs_ticket_details_tabs">
-                                <div className="fs_tabs_wrapper" style={tabStyles}>
+                                <div className="fs_tabs_wrapper">
                                     <button
                                         className={`fs_tab_button ${activeTab === 'Visual' ? 'active' : ''}`}
                                         onClick={() => setActiveTab('Visual')}
-                                        style={tabStyles}
                                     >
                                         Visual
                                     </button>
                                     <button
                                         className={`fs_tab_button ${activeTab === 'Text' ? 'active' : ''}`}
                                         onClick={() => setActiveTab('Text')}
-                                        style={tabStyles}
                                     >
                                         Text
                                     </button>
@@ -203,7 +113,6 @@ export const CreateTicketBlock = props => {
                                     placeholder="Enter ticket details here..."
                                     value={details}
                                     onChange={(e) => setDetails(e.target.value)}
-                                    style={inputStyles}
                                 ></textarea>
                             </div>
                         </div>
@@ -211,7 +120,7 @@ export const CreateTicketBlock = props => {
 
                     <div className="fs_form_group">
                         <label className="fs_form_label">File Upload</label>
-                        <button className="fs_browse_file_button" style={inputStyles}>Browse File</button>
+                        <button className="fs_browse_file_button" style={secondaryButtonStyles}>Browse File</button>
                         <div className="fs_upload_text_container">
                             <p className="fs_upload_subtext">(Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max
                                 file size: 2.0MB)</p>
@@ -224,8 +133,8 @@ export const CreateTicketBlock = props => {
                             <select
                                 className="fs_form_dropdown"
                                 value={priority}
+                                style={inputFieldStyle}
                                 onChange={(e) => setPriority(e.target.value)}
-                                style={inputStyles}
                             >
                                 <option value="Normal">Normal</option>
                                 <option value="High">High</option>
@@ -242,11 +151,11 @@ export const CreateTicketBlock = props => {
                             className={`fs_form_input ${nameError ? 'fs_input_error' : ''}`}
                             placeholder="Enter your name"
                             value={name}
+                            style={inputFieldStyle}
                             onChange={(e) => {
                                 setName(e.target.value);
                                 setNameError(false);
                             }}
-                            style={inputStyles}
                         />
                         {nameError && (
                             <div className="fs_error_message">
@@ -258,8 +167,7 @@ export const CreateTicketBlock = props => {
                     <div className="fs_form_actions">
                         <button
                             className="fs_create_ticket_submit_button"
-                            onClick={handleSubmit}
-                            style={buttonStyles}
+                            style={primaryButtonStyles}
                         >
                             Create Ticket
                         </button>
