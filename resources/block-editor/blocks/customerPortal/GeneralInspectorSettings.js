@@ -1,4 +1,4 @@
-const { Fragment,useState,useEffect } = wp.element;
+const { Fragment, useState, useEffect } = wp.element;
 const { InspectorControls, PanelColorSettings } = wp.blockEditor;
 const {
     PanelBody,
@@ -51,10 +51,33 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
     return (
         <Fragment>
             <PanelBody title={__('General Style Settings')} initialOpen={true}>
+                <PanelRow>
+                    <div className="fs_block_inspector_widget">
+                        {isLoading ? (
+                            <p>{__('Loading mailboxes...')}</p>
+                        ) : (
+                            <div>
+                                <h3 className="label">{__('Select Mailbox')}</h3>
+                                <select
+                                    id="mailboxSelect"
+                                    value={attributes.selectedMailbox}
+                                    onChange={(event) => setAttributes({selectedMailbox: event.target.value})}
+                                >
+                                    <option value="">{__('Select a Mailbox')}</option>
+                                    {mailboxes.map(mailbox => (
+                                        <option key={mailbox.id} value={mailbox.id}>
+                                            {mailbox.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                </PanelRow>
                 <RangeControl
                     label={__('Border Radius')}
                     value={attributes.containerBorderRadius || 0}
-                    onChange={(value) => setAttributes({ containerBorderRadius: value })}
+                    onChange={(value) => setAttributes({containerBorderRadius: value})}
                     min={0}
                     max={20}
                 />
@@ -65,7 +88,7 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                     colorSettings={[
                         {
                             value: attributes.primaryButtonTextColor,
-                            onChange: (color) => setAttributes({ primaryButtonTextColor: color }),
+                            onChange: (color) => setAttributes({primaryButtonTextColor: color}),
                             label: __('Text Color'),
                         },
                         {
@@ -92,27 +115,6 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                         },
                     ]}
                 />
-
-                <PanelRow>
-                    <div className="fs_block_inspector_widget">
-                    {isLoading ? (
-                        <p>{__('Loading mailboxes...')}</p>
-                    ) : (
-                        <SelectControl
-                            label={__('Select Mailbox')}
-                            value={attributes.selectedMailbox}
-                            options={[
-                                { label: __('Select a Mailbox'), value: '' },
-                                ...mailboxes.map(mailbox => ({
-                                    label: mailbox.name,
-                                    value: mailbox.id,
-                                }))
-                            ]}
-                            onChange={(value) => setAttributes({ selectedMailbox: value })}
-                        />
-                    )}
-                    </div>
-                </PanelRow>
             </PanelBody>
         </Fragment>
     );
