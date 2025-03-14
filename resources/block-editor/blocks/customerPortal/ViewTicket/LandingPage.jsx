@@ -23,7 +23,7 @@ export const ViewTicketBlock = props => {
         blockStyles,
         primaryButtonStyles,
         secondaryButtonStyles,
-        inputFieldStyle
+        avatarStyle
     } = generateStyles(blockAttributes);
 
     return (
@@ -148,8 +148,8 @@ export const ViewTicketBlock = props => {
 
                 <div className="fs_conversation_container">
                     <div className="fs_conversation_message fs_user_message">
-                        <div className="fs_message_avatar">
-                            <img src="../../img/avatar_2.jpg" alt="User Avatar"/>
+                        <div className="fs_message_avatar" style={avatarStyle}>
+                            <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g" alt="User Avatar"/>
                         </div>
                         <div className="fs_message_content">
                             <div className="fs_message_header">
@@ -165,11 +165,11 @@ export const ViewTicketBlock = props => {
                     </div>
 
                     <div className="fs_conversation_message fs_thread_start">
-                        <div className="fs_message_avatar">
-                            <img src="/path/to/panda-avatar.jpg" alt="User Avatar"/>
+                        <div className="fs_message_avatar" style={avatarStyle}>
+                            <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g" alt="User Avatar"/>
                         </div>
                         <div className="fs_message_content">
-                            <div className="fs_message_header">
+                        <div className="fs_message_header">
                                 <div className="fs_message_author">
                                     <span className="fs_author_name">You</span>
                                     <span className="fs_author_info">started the conversation</span>
