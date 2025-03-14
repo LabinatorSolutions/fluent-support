@@ -365,3 +365,41 @@
     color: #6b7280;
     gap: 16px;
 }
+
+
+.fs_logout_container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+
+    .fs_logout_button {
+        display: inline-block;
+
+        .fs_btn_logout {
+            display: inline-flex;
+            align-items: center;
+            background: transparent;
+            border: none;
+            color: #FB3748;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            text-decoration: none;
+
+            &:hover {
+                color: #d92738;
+            }
+
+            .fs_logout_icon {
+                margin-right: 6px;
+            }
+
+            .fs_logout_text {
+                text-decoration: underline;
+            }
+        }
+    }
+}
