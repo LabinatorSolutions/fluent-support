@@ -368,12 +368,12 @@ $tab-bg: #eee;
                         }
 
                         .fs_author_role {
-                            background-color: #f6f7f7;
-                            border: 1px solid #dcdcde;
-                            border-radius: 3px;
-                            padding: 2px 6px;
-                            font-size: 11px;
-                            color: #50575e;
+                            background: #E1E4EA;
+                            padding: 2px 8px;
+                            font-weight: 500;
+                            font-size: 12px;
+                            line-height: 16px;
+                            border-radius: 30px;
                         }
 
                         .fs_author_info {
@@ -409,8 +409,6 @@ $tab-bg: #eee;
         }
     }
 }
-
-
 
 .fs_block_inspector_widget {
     width: 100%;
