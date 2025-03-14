@@ -38,6 +38,10 @@ class BlockAttributes
                 'type' => 'string',
                 'default' => '50%',
             ],
+            'showLogoutButton' => [
+                'type' => 'boolean',
+                'default' => false,
+            ],
         ];
     }
 }

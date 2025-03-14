@@ -20,11 +20,7 @@ export const generateStyles = (attributes) => {
 const CreateTicketInspectorControls = ({ attributes, setAttributes }) => {
     return (
         <InspectorControls>
-            <GeneralInspectorSettings
-                attributes={attributes}
-                setAttributes={setAttributes}
-            />
-            <PanelBody title={__('Page wise Style Settings')} initialOpen={true}>
+            <PanelBody title={__('Custom Page Style')} initialOpen={true}>
                 <RangeControl
                     label={__('Input Field Border Radius')}
                     value={attributes.ticketInputBorderRadius || 0}
@@ -33,6 +29,10 @@ const CreateTicketInspectorControls = ({ attributes, setAttributes }) => {
                     max={20}
                 />
             </PanelBody>
+            <GeneralInspectorSettings
+                attributes={attributes}
+                setAttributes={setAttributes}
+            />
         </InspectorControls>
     );
 };

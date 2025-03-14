@@ -68,8 +68,8 @@ class BlockEditorHandler
     public function fst_render_block($attributes)
     {
         $param = '';
-        if(isset($attributes['allTicketsLogoutButtonVisibility']) && $attributes['allTicketsLogoutButtonVisibility']) {
-            $param = "show_logout=yes ";
+        if(isset($attributes['showLogoutButton']) && $attributes['showLogoutButton']) {
+            $param = "show_logout=yes";
         }
 
         if(isset($attributes['businessBoxId']) && $attributes['businessBoxId']) {
