@@ -72,8 +72,8 @@ class BlockEditorHandler
             $param = "show_logout=yes";
         }
 
-        if(isset($attributes['businessBoxId']) && $attributes['businessBoxId']) {
-            $param .= "business_box_id='{$attributes['businessBoxId']}' ";
+        if(isset($attributes['selectedMailbox']) && $attributes['selectedMailbox']) {
+            $param .= "business_box_id='{$attributes['selectedMailbox']}' ";
         }
 
         $param .= "attributes='".json_encode($attributes)."'";
