@@ -34,6 +34,10 @@ class BlockAttributes
                 'type' => 'number',
                 'default' => 10,
             ],
+            'avatarBorderRadius' => [
+                'type' => 'string',
+                'default' => '50%',
+            ],
         ];
     }
 }

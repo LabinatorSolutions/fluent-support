@@ -51,6 +51,10 @@ class BlockHelper
                 .fs_custom_fields_wrap .el-select__wrapper {
                     border-radius: <?php echo $attributes['ticketInputBorderRadius'] ?? 10; ?>px;
                 }
+
+                .fs_client_portal .fs_ticket_threads_container .fs_ticket_thread .fs_ticket_thread_content .fs_ticket_avatar {
+                    border-radius: <?php echo $attributes['avatarBorderRadius'] ?? '50%'; ?>;
+                }
             }
 
         </style>
