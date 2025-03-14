@@ -42,8 +42,8 @@ export const ViewTicketBlock = props => {
                 </button>
             </div>
 
-            <div className="fs_view_ticket" style={blockStyles}>
-                <div className="fs_view_ticket_header">
+            <div className="fs_editor_view_ticket" style={blockStyles}>
+                <div className="fs_editor_view_ticket_header">
                     <h2 className="fs_ticket_title">#2053 fluent support</h2>
                     <div className="fs_ticket_status active">Active</div>
                 </div>

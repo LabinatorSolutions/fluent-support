@@ -1,10 +1,16 @@
-import React from 'react';
-const { InspectorControls, ColorPalette } = wp.blockEditor;
+const { Fragment, useState, useEffect } = wp.element;
+const { InspectorControls, PanelColorSettings } = wp.blockEditor;
 const {
     PanelBody,
-    RangeControl
+    PanelRow,
+    RangeControl,
+    SelectControl
 } = wp.components;
 const { __ } = wp.i18n;
+const { apiFetch } = wp;
+
+const restInfo = window.fluent_support_vars.rest;
+const basePath = restInfo.namespace + '/' + restInfo.version + '/';
 
 export const generateStyles = (attributes) => {
     return {
@@ -23,57 +29,93 @@ export const generateStyles = (attributes) => {
 };
 
 export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
+    const [mailboxes, setMailboxes] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setIsLoading(true);
+        apiFetch({
+            path: basePath + 'mailboxes',
+        }).then((res) => {
+            setMailboxes(res.mailboxes || []);
+            setIsLoading(false);
+        }).catch(error => {
+            console.error('Error fetching mailboxes:', error);
+            setIsLoading(false);
+        });
+    }, []);
+
+    // Make sure selectedMailbox is properly initialized
+    const selectedMailbox = attributes.selectedMailbox || '';
+
     return (
-        <>
+        <Fragment>
             <PanelBody title={__('General Style Settings')} initialOpen={true}>
+                <PanelRow>
+                    <div className="fs_block_inspector_widget">
+                        {isLoading ? (
+                            <p>{__('Loading mailboxes...')}</p>
+                        ) : (
+                            <div>
+                                <h3 className="label">{__('Select Mailbox')}</h3>
+                                <select
+                                    id="mailboxSelect"
+                                    value={attributes.selectedMailbox}
+                                    onChange={(event) => setAttributes({selectedMailbox: event.target.value})}
+                                >
+                                    <option value="">{__('Select a Mailbox')}</option>
+                                    {mailboxes.map(mailbox => (
+                                        <option key={mailbox.id} value={mailbox.id}>
+                                            {mailbox.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                </PanelRow>
                 <RangeControl
                     label={__('Border Radius')}
                     value={attributes.containerBorderRadius || 0}
-                    onChange={value => setAttributes({ containerBorderRadius: value })}
+                    onChange={(value) => setAttributes({containerBorderRadius: value})}
                     min={0}
                     max={20}
                 />
-                <PanelBody title={__('Primary Button Style')}>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Primary Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.primaryButtonTextColor}
-                            onChange={value => setAttributes({ primaryButtonTextColor: value })}
-                        />
-                    </div>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Primary Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.primaryButtonBgColor}
-                            onChange={value => setAttributes({ primaryButtonBgColor: value })}
-                        />
-                    </div>
-                </PanelBody>
-                <PanelBody title={__('Secondary Button Style')}>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Secondary Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.secondaryButtonBgColor}
-                            onChange={value => setAttributes({ secondaryButtonBgColor: value })}
-                        />
-                    </div>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Secondary Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.secondaryButtonTextColor}
-                            onChange={value => setAttributes({ secondaryButtonTextColor: value })}
-                        />
-                    </div>
-                </PanelBody>
+
+                <PanelColorSettings
+                    title={__('Primary Button Style')}
+                    initialOpen={true}
+                    colorSettings={[
+                        {
+                            value: attributes.primaryButtonTextColor,
+                            onChange: (color) => setAttributes({primaryButtonTextColor: color}),
+                            label: __('Text Color'),
+                        },
+                        {
+                            value: attributes.primaryButtonBgColor,
+                            onChange: (color) => setAttributes({ primaryButtonBgColor: color }),
+                            label: __('Background Color'),
+                        },
+                    ]}
+                />
+
+                <PanelColorSettings
+                    title={__('Secondary Button Style')}
+                    initialOpen={true}
+                    colorSettings={[
+                        {
+                            value: attributes.secondaryButtonTextColor,
+                            onChange: (color) => setAttributes({ secondaryButtonTextColor: color }),
+                            label: __('Text Color'),
+                        },
+                        {
+                            value: attributes.secondaryButtonBgColor,
+                            onChange: (color) => setAttributes({ secondaryButtonBgColor: color }),
+                            label: __('Background Color'),
+                        },
+                    ]}
+                />
             </PanelBody>
-        </>
+        </Fragment>
     );
 };
