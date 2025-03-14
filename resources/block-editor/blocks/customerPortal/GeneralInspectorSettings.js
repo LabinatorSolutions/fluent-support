@@ -1,5 +1,6 @@
 import React from 'react';
-const { InspectorControls, ColorPalette } = wp.blockEditor;
+const { Fragment } = wp.element;
+const { InspectorControls, PanelColorSettings } = wp.blockEditor;
 const {
     PanelBody,
     RangeControl
@@ -24,7 +25,7 @@ export const generateStyles = (attributes) => {
 
 export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
     return (
-        <>
+        <Fragment>
             <PanelBody title={__('General Style Settings')} initialOpen={true}>
                 <RangeControl
                     label={__('Border Radius')}
@@ -33,47 +34,41 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                     min={0}
                     max={20}
                 />
-                <PanelBody title={__('Primary Button Style')}>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Primary Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.primaryButtonTextColor}
-                            onChange={value => setAttributes({ primaryButtonTextColor: value })}
-                        />
-                    </div>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Primary Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.primaryButtonBgColor}
-                            onChange={value => setAttributes({ primaryButtonBgColor: value })}
-                        />
-                    </div>
-                </PanelBody>
-                <PanelBody title={__('Secondary Button Style')}>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Secondary Button Background Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.secondaryButtonBgColor}
-                            onChange={value => setAttributes({ secondaryButtonBgColor: value })}
-                        />
-                    </div>
-                    <div className="components-base-control">
-                        <label className="components-base-control__label">
-                            {__('Secondary Button Text Color')}
-                        </label>
-                        <ColorPalette
-                            value={attributes.secondaryButtonTextColor}
-                            onChange={value => setAttributes({ secondaryButtonTextColor: value })}
-                        />
-                    </div>
-                </PanelBody>
+
+                <PanelColorSettings
+                    title={__('Primary Button Style')}
+                    initialOpen={true}
+                    colorSettings={[
+                        {
+                            value: attributes.primaryButtonTextColor,
+                            onChange: (color) => setAttributes({ primaryButtonTextColor: color }),
+                            label: __('Text Color'),
+                        },
+                        {
+                            value: attributes.primaryButtonBgColor,
+                            onChange: (color) => setAttributes({ primaryButtonBgColor: color }),
+                            label: __('Background Color'),
+                        },
+                    ]}
+                />
+
+                <PanelColorSettings
+                    title={__('Secondary Button Style')}
+                    initialOpen={true}
+                    colorSettings={[
+                        {
+                            value: attributes.secondaryButtonTextColor,
+                            onChange: (color) => setAttributes({ secondaryButtonTextColor: color }),
+                            label: __('Text Color'),
+                        },
+                        {
+                            value: attributes.secondaryButtonBgColor,
+                            onChange: (color) => setAttributes({ secondaryButtonBgColor: color }),
+                            label: __('Background Color'),
+                        },
+                    ]}
+                />
             </PanelBody>
-        </>
+        </Fragment>
     );
 };
