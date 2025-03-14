@@ -921,7 +921,6 @@
                     gap: 8px;
                     padding: 20px;
                     flex: none;
-                    border-top: 1px solid #E1E4EA;
                     border-bottom: 1px solid #E1E4EA;
                     @media (max-width: 665px) {
                         flex-wrap: wrap;
@@ -1036,7 +1035,7 @@
                     align-items: center;
                     justify-content: space-between;
                     gap: 2px;
-
+                    border-bottom: 1px solid #E1E4EA;
                     .fs_status_badge {
                         &.fs_status_badge_active {
                             background-color: #EEFBF6;
