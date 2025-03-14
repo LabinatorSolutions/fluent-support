@@ -3,6 +3,7 @@
 namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
+use FluentSupport\Framework\Support\Arr;
 use FluentSupport\App\Services\Blocks\BlockAttributes;
 
 class BlockEditorHandler
@@ -19,13 +20,31 @@ class BlockEditorHandler
         );
 
         wp_localize_script('fluent-support/customer-portal', 'fluent_support_vars', [
-            'rest'            => $this->getRestInfo(),
+            'rest' => $this->getRestInfo(),
         ]);
 
-        register_block_type( 'fluent-support/customer-portal' , array(
-            'editor_script' => 'fluent-support/customer-portal',
+        register_block_type('fluent-support/customer-portal', array(
+            'editor_script'   => 'fluent-support/customer-portal',
             'render_callback' => array($this, 'fst_render_block'),
-            'attributes' => BlockAttributes::CustomerPortalAttributes(),
+            'attributes'      => BlockAttributes::CustomerPortalAttributes(),
+        ));
+
+        wp_enqueue_script(
+            'fluent-support/all-tickets',
+            $assets . 'block-editor/js/AllTicketsIndex.js',
+            array('wp-blocks', 'wp-components', 'wp-block-editor', 'wp-element'),
+            FLUENT_SUPPORT_VERSION,
+            true
+        );
+
+        wp_localize_script('fluent-support/all-tickets', 'fluent_support_vars', [
+            'rest' => $this->getRestInfo(),
+        ]);
+
+        register_block_type('fluent-support/all-tickets', array(
+            'editor_script'   => 'fluent-support/all-tickets',
+            'render_callback' => array($this, 'fst_render_block'),
+            'attributes'      => BlockAttributes::CustomerPortalAttributes(),
         ));
     }
 
@@ -48,15 +67,17 @@ class BlockEditorHandler
     public function fst_render_block($attributes)
     {
         $param = '';
-        if(isset($attributes['allTicketsLogoutButtonVisibility']) && $attributes['allTicketsLogoutButtonVisibility']) {
-            $param = "show_logout=yes ";
+
+        if (Arr::get($attributes, 'showLogoutButton')) {
+            $param = "show_logout=yes";
         }
 
-        if(isset($attributes['businessBoxId']) && $attributes['businessBoxId']) {
-            $param .= "business_box_id='{$attributes['businessBoxId']}' ";
+        if ($selectedMailbox = Arr::get($attributes, 'selectedMailbox')) {
+            $param .= " business_box_id='{$selectedMailbox}'";
         }
 
-        $param .= "attributes='".json_encode($attributes)."'";
+        $param .= " attributes='" . json_encode($attributes) . "'";
+
         return do_shortcode("[fluent_support_portal $param]");
     }
 }
