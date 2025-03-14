@@ -42,6 +42,10 @@ class BlockAttributes
                 'type' => 'boolean',
                 'default' => false,
             ],
+            'selectedMailbox' => [
+                'type' => 'number',
+                'default' => 0,
+            ]
         ];
     }
 }

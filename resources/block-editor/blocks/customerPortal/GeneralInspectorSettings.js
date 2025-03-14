@@ -1,11 +1,16 @@
-import React from 'react';
-const { Fragment } = wp.element;
+const { Fragment,useState,useEffect } = wp.element;
 const { InspectorControls, PanelColorSettings } = wp.blockEditor;
 const {
     PanelBody,
-    RangeControl
+    PanelRow,
+    RangeControl,
+    SelectControl
 } = wp.components;
 const { __ } = wp.i18n;
+const { apiFetch } = wp;
+
+const restInfo = window.fluent_support_vars.rest;
+const basePath = restInfo.namespace + '/' + restInfo.version + '/';
 
 export const generateStyles = (attributes) => {
     return {
@@ -24,13 +29,32 @@ export const generateStyles = (attributes) => {
 };
 
 export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
+    const [mailboxes, setMailboxes] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        setIsLoading(true);
+        apiFetch({
+            path: basePath + 'mailboxes',
+        }).then((res) => {
+            setMailboxes(res.mailboxes || []);
+            setIsLoading(false);
+        }).catch(error => {
+            console.error('Error fetching mailboxes:', error);
+            setIsLoading(false);
+        });
+    }, []);
+
+    // Make sure selectedMailbox is properly initialized
+    const selectedMailbox = attributes.selectedMailbox || '';
+
     return (
         <Fragment>
             <PanelBody title={__('General Style Settings')} initialOpen={true}>
                 <RangeControl
                     label={__('Border Radius')}
                     value={attributes.containerBorderRadius || 0}
-                    onChange={value => setAttributes({ containerBorderRadius: value })}
+                    onChange={(value) => setAttributes({ containerBorderRadius: value })}
                     min={0}
                     max={20}
                 />
@@ -68,6 +92,27 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                         },
                     ]}
                 />
+
+                <PanelRow>
+                    <div className="fs_block_inspector_widget">
+                    {isLoading ? (
+                        <p>{__('Loading mailboxes...')}</p>
+                    ) : (
+                        <SelectControl
+                            label={__('Select Mailbox')}
+                            value={attributes.selectedMailbox}
+                            options={[
+                                { label: __('Select a Mailbox'), value: '' },
+                                ...mailboxes.map(mailbox => ({
+                                    label: mailbox.name,
+                                    value: mailbox.id,
+                                }))
+                            ]}
+                            onChange={(value) => setAttributes({ selectedMailbox: value })}
+                        />
+                    )}
+                    </div>
+                </PanelRow>
             </PanelBody>
         </Fragment>
     );
