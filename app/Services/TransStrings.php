@@ -707,7 +707,6 @@ class TransStrings
             'Saved Filters' => __('Saved Filters', 'fluent-support'),
             'Back to All Tickets' => __('Back to All Tickets', 'fluent-support'),
             'Refresh' => __('Refresh', 'fluent-support'),
-            'Conversation' => __('Conversation', 'fluent-support'),
         ];
     }
 }
