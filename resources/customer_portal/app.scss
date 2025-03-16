@@ -962,11 +962,12 @@
 
     // Ticket View CSS Start
     .fs_back_nav {
+        display: flex;
+        gap: 4px;
         margin-bottom: 20px;
     }
 
     .fs_svg_back {
-        margin: 16px;
         top: 5.23px;
         left: 7.08px;
         color: #0E121B;

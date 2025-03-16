@@ -57,7 +57,6 @@
                     </div>
                 </el-form-item>
 
-
                 <el-form-item class="fs_tk_suggestions">
                     <label class="fs_ticket_details_label"> {{ $t('ticket_details') }}</label>
                     <wp-editor :height="150" :media-buttons="false" :is_direct_paste="true" v-model="ticket.content"/>
