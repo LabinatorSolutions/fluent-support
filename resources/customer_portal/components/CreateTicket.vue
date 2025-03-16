@@ -2,13 +2,13 @@
     <div class="fs_create_ticket_container">
         <!-- Back Button -->
         <back-button />
-        
+
         <div class="fs_ticket_form_container">
             <div class="fs_ticket_header">
-                <label>Submit a Support Ticket</label>
+                <label>{{$t('submit_heading')}}</label>
             </div>
             <el-form :model="ticket" label-position="top" class="fs_ticket_form">
-                <el-form-item label="Subject" class="fs_input_wrapper">
+                <el-form-item :label="$t('Subject')" class="fs_input_wrapper">
                     <el-input
                         size="default"
                         v-model="ticket.title"
@@ -27,7 +27,7 @@
 
                     <div v-if="shouldShowSuggestions && ticket.title.length" class="fs_suggestions_popover">
                         <div class="fs_suggestions_header">
-                            <label>Suggested Articles</label>
+                            <label>{{$t('Suggested Articles')}}</label>
                             <el-button
                                 type="text"
                                 class="fs_close_button"
