@@ -65,7 +65,7 @@ export const ViewTicketBlock = props => {
                 </div>
 
                 <div className="fs_reply_container">
-                    <h3 className="fs_reply_header">Write a reply</h3>
+                    <label className="fs_reply_header">Write a reply</label>
                     <div className="fs_ticket_details_container">
                         <div className="fs_ticket_details_tabs">
                             <div className="fs_tabs_wrapper">
