@@ -214,15 +214,31 @@
                     justify-content: space-between;
                     gap: 60px;
                     max-width: 486px;
-
                     .fs_filter_left {
                         display: flex;
                         gap: 10px;
+                        .fs_product_filter_head{
+                            display: flex;
+                            gap: 10px;
+                            @media screen and (max-width: 768px) {
+                                .fs_product_filter{
+                                    .el-select{
+                                        width: 232px !important;
+                                    }
+                                }
+                                
+                            }
+                        }
                     }
 
                     .fs_filter_right {
                         .fs_search_filter {
                             width: max-content;
+                        }
+                        @media screen and (max-width: 768px) {
+                            .fs_search_filter {
+                                width: 100%;
+                            }
                         }
                     }
 
@@ -257,6 +273,13 @@
                         }
                     }
 
+                    @media screen and (max-width: 768px) {
+                      .fs_button_groups {
+                        max-width: none;
+                        justify-content: center;
+                      }
+                    }
+
                     .fs_filters_right {
                         display: flex;
                         align-items: center;
@@ -267,6 +290,27 @@
                         padding: 5px;
                         border-radius: 8px;
                     }
+
+                    @media (max-width: 768px) {
+                        .fs_filter_left {
+                            flex-direction: column;
+                            gap:10px;
+                        }
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .fs_filter_container {
+                        flex-direction: column;
+                        gap: 10px;
+                        // padding: 10px;
+                    }
+                }
+            }
+
+            @media screen and (max-width: 767px) {
+                .fs_filters_section{
+                    display: block;
                 }
             }
 
