@@ -172,6 +172,9 @@ class CustomerPortalHandler
             'Ticket ID' => __('Ticket ID', 'fluent-support'),
             'Title' => __('Title', 'fluent-support'),
             'Created at' => __('Created at', 'fluent-support'),
+            'Subject' => __('Subject', 'fluent-support'),
+            'Suggested Articles' => __('Suggested Articles', 'fluent-support'),
+            'Log Out' => __('Log Out', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();

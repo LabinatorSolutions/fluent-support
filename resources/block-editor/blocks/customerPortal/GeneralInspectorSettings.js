@@ -9,6 +9,8 @@ const {
 const { __ } = wp.i18n;
 const { apiFetch } = wp;
 
+import './editor.scss';
+
 const restInfo = window.fluent_support_vars.rest;
 const basePath = restInfo.namespace + '/' + restInfo.version + '/';
 
@@ -84,6 +86,7 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
 
                 <PanelColorSettings
                     title={__('Primary Button Style')}
+                    className="fs_panel_color_settings"
                     initialOpen={true}
                     colorSettings={[
                         {
@@ -102,6 +105,7 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                 <PanelColorSettings
                     title={__('Secondary Button Style')}
                     initialOpen={true}
+                    className={'fs_panel_color_settings'}
                     colorSettings={[
                         {
                             value: attributes.secondaryButtonTextColor,

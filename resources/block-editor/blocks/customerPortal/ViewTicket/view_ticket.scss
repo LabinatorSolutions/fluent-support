@@ -36,7 +36,6 @@ $tab-bg: #eee;
     }
 }
 
-
 .fs_editor_view_ticket {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     background-color: #ffffff;
@@ -375,19 +374,5 @@ $tab-bg: #eee;
                 }
             }
         }
-    }
-}
-
-.fs_block_inspector_widget {
-    width: 100%;
-    margin-bottom: 20px;
-    h3 {
-        margin-bottom: 5px;
-    }
-    select {
-        border: 1px solid var(--fcal_block_border_color);
-        border-radius: 8px;
-        padding: 3px 16px;
-        width: 100%;
     }
 }
