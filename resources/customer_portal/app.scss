@@ -815,65 +815,73 @@
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
         padding: 1rem;
         z-index: 1000;
-        max-width: 700px;
         margin-top: 5px;
 
         .fs_suggestions_header {
             display: flex;
             justify-content: space-between;
             padding: 0 10px;
-        }
-    }
 
-    @media (max-width: 768px) {
-        .fs_suggestions_popover {
+            label {
+                color: rgba(82, 88, 102, 1);
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 16px;
+            }
+        }
+
+        .fs_suggestions_title {
+            display: flex;
+            height: 40px;
+            gap: 12px;
+            border-radius: 10px;
+            padding: 10px 12px;
+
+            p {
+                font-weight: 400;
+                font-size: 14px;
+                line-height: 20px;
+                color: rgba(14, 18, 27, 1);
+            }
+
+            &:hover {
+                background-color: #f5f7fa;
+                color: #409EFF;
+            }
+        }
+
+        .fs_article_item {
+            display: flex;
+            align-items: center;
+            height: 20px;
+            width: 100%;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+
+        .fs_article_icon {
+            margin-right: 8px;
+            color: #909399;
+        }
+
+        @media (max-width: 768px) {
             max-width: 100%;
             padding: 0.75rem;
         }
-    }
 
-    @media (max-width: 480px) {
-        .fs_suggestions_popover {
+        @media (max-width: 480px) {
             padding: 0.5rem;
         }
     }
 
-    // Close button styles
     .fs_close_button {
         padding: 4px;
         color: #909399;
-    }
 
-    .fs_close_button:hover {
-        color: #409EFF;
-    }
-
-    // Article Item
-    .fs_article_item {
-        display: flex;
-        align-items: center;
-        height: 20px;
-        padding: 10px 12px;
-        text-decoration: none;
-        border-radius: 10px;
-        transition: background-color 0.2s;
-    }
-
-    .fs_article_item:hover {
-        background-color: #f5f7fa;
-        color: #409EFF;
-    }
-
-    .fs_article_icon {
-        margin-right: 8px;
-        color: #909399;
-    }
-
-    .fs_suggestions_title p {
-        font-weight: 400;
-        font-size: 14px;
-        line-height: 20px;
-        color: rgba(14, 18, 27, 1);
+        &:hover {
+            color: #409EFF;
+        }
     }
 
     .fs_ticket_details_label {
