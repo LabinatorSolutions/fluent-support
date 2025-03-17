@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_ticket_reply_box">
+    <div class="fs_ticket_reply_box" :class="is_focused === true ? 'fs_ticket_reply_header' : '' ">
         <h3>{{$t('Write a reply')}}</h3>
         <textarea @click="is_focused = true" v-if="!is_focused" class="fs_ticket_reply_text" :placeholder="$t('Click Here to Write a reply')"></textarea>
 
