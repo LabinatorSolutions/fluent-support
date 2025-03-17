@@ -13,10 +13,13 @@ class BlockEditorHandler
         $app = App::getInstance();
 
         $assets = $app['url.assets'];
-        wp_register_script(
+
+        wp_enqueue_script(
             'fluent-support/customer-portal',
-            $assets . 'block-editor/js/fst_block.js',
-            array('jquery', 'wp-blocks', 'wp-element', 'wp-components', 'wp-editor', 'wp-i18n', 'wp-api-fetch'),
+            $assets . 'block-editor/js/fs_block.js',
+            array('wp-blocks', 'wp-components', 'wp-block-editor', 'wp-element'),
+            FLUENT_SUPPORT_VERSION,
+            true
         );
 
         wp_localize_script('fluent-support/customer-portal', 'fluent_support_vars', [
@@ -25,25 +28,7 @@ class BlockEditorHandler
 
         register_block_type('fluent-support/customer-portal', array(
             'editor_script'   => 'fluent-support/customer-portal',
-            'render_callback' => array($this, 'fst_render_block'),
-            'attributes'      => BlockAttributes::CustomerPortalAttributes(),
-        ));
-
-        wp_enqueue_script(
-            'fluent-support/all-tickets',
-            $assets . 'block-editor/js/AllTicketsIndex.js',
-            array('wp-blocks', 'wp-components', 'wp-block-editor', 'wp-element'),
-            FLUENT_SUPPORT_VERSION,
-            true
-        );
-
-        wp_localize_script('fluent-support/all-tickets', 'fluent_support_vars', [
-            'rest' => $this->getRestInfo(),
-        ]);
-
-        register_block_type('fluent-support/all-tickets', array(
-            'editor_script'   => 'fluent-support/all-tickets',
-            'render_callback' => array($this, 'fst_render_block'),
+            'render_callback' => array($this, 'renderBlock'),
             'attributes'      => BlockAttributes::CustomerPortalAttributes(),
         ));
     }
@@ -64,7 +49,7 @@ class BlockEditorHandler
         ];
     }
 
-    public function fst_render_block($attributes)
+    public function renderBlock($attributes)
     {
         $param = '';
 
