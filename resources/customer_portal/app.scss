@@ -1488,6 +1488,12 @@
     // InlineReply CSS Start
     .fs_ticket_reply_box {
         padding: 15px 15px;
+        &.fs_ticket_reply_header{
+            h3 {
+                position: absolute;
+                margin-top: 11px;
+            }
+        }
         h3 {
             font-family: Inter;
             font-weight: 500;
@@ -1495,8 +1501,6 @@
             line-height: 20px;
             letter-spacing: -0.6%;
             margin-top: 0px;
-            position: absolute;
-            margin-top: 11px;
         }
     }
 
