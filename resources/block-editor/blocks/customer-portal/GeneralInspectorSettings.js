@@ -17,15 +17,15 @@ const basePath = restInfo.namespace + '/' + restInfo.version + '/';
 export const generateStyles = (attributes) => {
     return {
         blockStyles: {
-            borderRadius: `${attributes.containerBorderRadius || 0}px`,
+            borderRadius: `${attributes.containerBorderRadius || 16}px`,
         },
         primaryButtonStyles: {
-            backgroundColor: attributes.primaryButtonBgColor || '#007cba',
-            color: attributes.primaryButtonTextColor || '#ffffff',
+            backgroundColor: attributes.primaryButtonBgColor || 'rgba(14, 18, 27, 1)',
+            color: attributes.primaryButtonTextColor || 'rgba(255, 255, 255, 1)',
         },
         secondaryButtonStyles: {
-            backgroundColor: attributes.secondaryButtonBgColor || '#007cba',
-            color: attributes.secondaryButtonTextColor || '#ffffff',
+            backgroundColor: attributes.secondaryButtonBgColor || 'rgba(255, 255, 255, 1)',
+            color: attributes.secondaryButtonTextColor || '#18181B',
         },
     };
 };
