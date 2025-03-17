@@ -1145,18 +1145,17 @@
             }
 
             &.fs_conversion_starter {
+                background: #F9FAFB;
+                border-radius: 0 0 16px 16px;
                 .fs_conversion_starter_section {
-                    padding: 8px;
-                    background: #F9FAFB;
+                    .fs_join_thread_custom_field{
+                        padding: 14px;
+                    }
                 }
 
                 .fs_ticket_thread_content {
                     padding-bottom: 12px;
 
-                }
-
-                .fs_starter_thread_content {
-                    margin: 16px;
                 }
             }
 
@@ -1338,9 +1337,7 @@
             color: var(--text-strong-950, #0E121B);
         }
 
-        margin: 8px;
         padding: 16px;
-        border-top: 1px solid #e5e9ec;
         background: #F2F5F8;
         border-radius: 12px;
 
@@ -1361,7 +1358,6 @@
                 font-size: 14px;
                 color: #0E121B;
                 list-style: none;
-                margin-bottom: 10px;
             }
         }
 
