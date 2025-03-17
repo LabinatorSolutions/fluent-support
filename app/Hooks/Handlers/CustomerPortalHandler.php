@@ -175,6 +175,9 @@ class CustomerPortalHandler
             'Subject' => __('Subject', 'fluent-support'),
             'Suggested Articles' => __('Suggested Articles', 'fluent-support'),
             'Log Out' => __('Log Out', 'fluent-support'),
+            'Completed' => __('Completed', 'fluent-support'),
+            'Processing' => __('Processing', 'fluent-support'),
+            'Failed' => __('Failed', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();
