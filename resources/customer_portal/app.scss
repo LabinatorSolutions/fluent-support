@@ -20,7 +20,7 @@
     }
 
     .wp-editor-wrap {
-        margin-top: 8px;
+        // margin-top: 8px;
 
         .wp-editor-container {
             border: 1px solid rgb(225, 228, 234);
@@ -1383,7 +1383,7 @@
     }
 
     .fs_ticket_alert {
-        padding: 20px 16px;
+        padding: 20px 16px 0px 16px;
 
         .fs_ticket_closed_alert {
             display: flex;
@@ -1488,6 +1488,16 @@
     // InlineReply CSS Start
     .fs_ticket_reply_box {
         padding: 15px 15px;
+        h3 {
+            font-family: Inter;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: -0.6%;
+            margin-top: 0px;
+            position: absolute;
+            margin-top: 11px;
+        }
     }
 
     .fs_ticket_reply_text {
@@ -1502,14 +1512,6 @@
         padding-left: 16px;
         background: #F5F7FA;
         gap: 12px;
-    }
-
-    .fs_reply_wrap h3 {
-        font-family: Inter;
-        font-weight: 500;
-        font-size: 14px;
-        line-height: 20px;
-        letter-spacing: -0.6%;
     }
 
     .fs_customer_response_actions {
