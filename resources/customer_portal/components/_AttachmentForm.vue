@@ -51,10 +51,13 @@
                         <span class="fs-file-size">{{ file.size }} <span class="fs-dot"></span>
                             <span class="fs-file-status" :class="file.status">
                                 <template v-if="file.status == 'success'">
-                                    <el-icon><CircleCheckFilled /></el-icon> Completed
+                                    <el-icon><CircleCheckFilled /></el-icon> {{ $t('Completed') }}
+                                </template>
+                                <template v-else-if="file.status == 'uploading'">
+                                    <el-icon><Loading /></el-icon> {{ $t('Processing') }}
                                 </template>
                                 <template v-else>
-                                    <el-icon><CircleCloseFilled /></el-icon> Failed
+                                    <el-icon><CircleCloseFilled /></el-icon> {{ $t('Failed') }}
                                 </template>
                             </span>
                         </span>
@@ -72,14 +75,15 @@
 </template>
 
 <script>
-import {Upload, Delete, CircleCloseFilled, CircleCheckFilled} from '@element-plus/icons-vue';
+import {Upload, Delete, Loading, CircleCloseFilled, CircleCheckFilled} from '@element-plus/icons-vue';
 
 export default {
     components: {
         Upload,
         Delete,
         CircleCloseFilled,
-        CircleCheckFilled
+        CircleCheckFilled,
+        Loading
     },
     props: {
         ticket: Object,
