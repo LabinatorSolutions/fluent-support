@@ -33,7 +33,7 @@
             <div class="fs_sorting">
                 <el-popover trigger="click" placement="bottom-start" width="240" popper-class="fs_popover">
                     <div class="fs_popover_item">
-                        <h3 class="fs_popover_title">{{ $t('Sort By') }}</h3>
+                        <label class="fs_popover_title">{{ $t('Sort By') }}</label>
                         <div class="fs_radio_blocks">
                             <el-radio-group @change="fetchTickets" v-model="sorting.sort_by">
                                 <el-radio v-for="column in sortingColumns" :key="column.value" :label="column.value">
@@ -42,7 +42,7 @@
                             </el-radio-group>
                         </div>
                         <hr/>
-                        <el-radio-group size="small" v-model="sorting.sort_type">
+                        <el-radio-group class="fs_switch_button" size="small" v-model="sorting.sort_type">
                             <el-radio-button label="asc">{{ $t('Ascending') }}</el-radio-button>
                             <el-radio-button label="desc">{{ $t('Descending') }}</el-radio-button>
                         </el-radio-group>
@@ -104,12 +104,12 @@
 export default {
     name: 'TicketFilters',
     props: {
-        filters: { type: Object, required: true },
-        sorting: { type: Object, required: true },
-        sortingColumns: { type: Array, required: true },
-        search: { type: String, default: '' },
-        statusFilter: { type: String, default: 'all' },
-        appVars: { type: Object, required: true }
+        filters: {type: Object, required: true},
+        sorting: {type: Object, required: true},
+        sortingColumns: {type: Array, required: true},
+        search: {type: String, default: ''},
+        statusFilter: {type: String, default: 'all'},
+        appVars: {type: Object, required: true}
     },
     data() {
         return {
@@ -120,9 +120,9 @@ export default {
     computed: {
         statusOptions() {
             return [
-                { label: this.$t('All'), value: 'all' },
-                { label: this.$t('Open'), value: 'open' },
-                { label: this.$t('Closed'), value: 'closed' }
+                {label: this.$t('All'), value: 'all'},
+                {label: this.$t('Open'), value: 'open'},
+                {label: this.$t('Closed'), value: 'closed'}
             ];
         }
     },
@@ -152,6 +152,65 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.fs_popover_item {
+    padding: 10px;
 
+    .fs_popover_title {
+        margin-top: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2F3448;
+    }
+
+    .fs_radio_blocks {
+        margin-top: 10px;
+        .el-radio-group {
+            display: grid;
+
+            .el-radio__input {
+                &.is-checked {
+                    .el-radio__inner {
+                        background: #18181B;
+                        border-color: #18181B;
+                    }
+
+                    & + .el-radio__label {
+                        color: #18181B;
+                    }
+                }
+            }
+        }
+    }
+
+    .fs_switch_button {
+        display: flex;
+        margin: 16px 0px;
+
+        .el-radio-button {
+            line-height: 1.25rem;
+
+            &.is-active {
+                .el-radio-button__inner {
+                    border-color: #c0c2c4;
+                    background-color: #d9dadc;
+                    color: #253241;
+                    box-shadow: none;
+                }
+            }
+
+        }
+
+    }
+
+    .fs_sorting_button {
+        .el-button {
+            background: #18181B;
+            color: #fff;
+            border-color: #18181B;
+            border-radius: 8px;
+        }
+
+    }
+}
 </style>
