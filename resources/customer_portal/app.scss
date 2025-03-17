@@ -220,13 +220,75 @@
                         .fs_product_filter_head{
                             display: flex;
                             gap: 10px;
+
+                            .fs_sorting {
+                                .fs_popover_item {
+                                    padding: 10px;
+
+                                    .fs_popover_title {
+                                        margin-top: 0;
+                                        font-size: 16px;
+                                        font-weight: 600;
+                                        color: #2F3448;
+                                    }
+
+                                    .fs_radio_blocks {
+                                        margin-top: 10px;
+                                        .el-radio-group {
+                                            display: grid;
+
+                                            .el-radio__input {
+                                                &.is-checked {
+                                                    .el-radio__inner {
+                                                        background: #18181B;
+                                                        border-color: #18181B;
+                                                    }
+
+                                                    & + .el-radio__label {
+                                                        color: #18181B;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    .fs_switch_button {
+                                        display: flex;
+                                        margin: 16px 0px;
+
+                                        .el-radio-button {
+                                            line-height: 1.25rem;
+
+                                            &.is-active {
+                                                .el-radio-button__inner {
+                                                    border-color: #c0c2c4;
+                                                    background-color: #d9dadc;
+                                                    color: #253241;
+                                                    box-shadow: none;
+                                                }
+                                            }
+
+                                        }
+
+                                    }
+
+                                    .fs_sorting_button {
+                                        .el-button {
+                                            background: #18181B;
+                                            color: #fff;
+                                            border-color: #18181B;
+                                            border-radius: 8px;
+                                        }
+                                    }
+                                }
+                            }
                             @media screen and (max-width: 768px) {
                                 .fs_product_filter{
                                     .el-select{
                                         width: 232px !important;
                                     }
                                 }
-                                
+
                             }
                         }
                     }
