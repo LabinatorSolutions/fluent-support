@@ -30,8 +30,8 @@ export const ViewTicketBlock = props => {
         <Fragment>
             <ViewTicketInspectorControls attributes={blockAttributes} setAttributes={setAttributes} />
 
-            <div className="fs_back_nav">
-                <button className="fs_back_button" onClick={() => showSection('allTickets')}>
+            <div className="fs_block_back_nav">
+                <button className="fs_block_back_button" onClick={() => showSection('allTickets')}>
                     <svg width="6" height="10" viewBox="0 0 6 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M2.20437 4.9992L5.91687 8.7117L4.85637 9.7722L0.083374 4.9992L4.85637 0.226196L5.91687 1.2867L2.20437 4.9992Z"
