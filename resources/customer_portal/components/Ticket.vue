@@ -155,53 +155,55 @@
                         </article>
                         <article class="fs_ticket_thread fs_conversion_starter" ref="conversionStarter">
                             <div class="fs_conversion_starter_section">
-                                <div class="fs_ticket_thread_content fs_starter_thread_content">
-                                    <section class="fs_ticket_avatar">
-                                        <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
-                                    </section>
-                                    <section class="fs_ticket_thread_wrap">
-                                        <section class="fs_thread_message">
-                                            <div class="fs_thread_head">
-                                                <div class="fs_thread_name">
-                                                    <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('conversation_started')}}
-                                                </div>
-                                            </div>
-                                            <div v-html="purify(ticket.content)" class="fs_thread_body"></div>
-
-                                            <div class="fs_actions_head">
-                                                <div class="fs_thread_actions">
-                                                    {{ ticket.human_date }}
-                                                </div>
-                                            </div>
-
-                                            <div class="fst_file_lists" v-if="ticket.attachments && ticket.attachments.length">
-                                                <ul>
-                                                    <li v-if="ticket.attachments.length"
-                                                        v-for="attachment in ticket.attachments"
-                                                        :key="attachment.file_hash"
-                                                    >
-                                                        <el-icon> <Paperclip /> </el-icon> <a target="_blank" rel="noopener"
-                                                                                            :href="attachment.secureUrl">{{
-                                                            attachment.title
-                                                        }}</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
+                                <div class="fs_join_thread_custom_field">
+                                    <div class="fs_ticket_thread_content fs_starter_thread_content">
+                                        <section class="fs_ticket_avatar">
+                                            <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
                                         </section>
-                                    </section>
-                                </div>
-                                <div v-if="!isEmpty(ticket.custom_fields)" class="fs_custom_data_wrap">
-                                    <h3>{{ $t('Additional info') }}</h3>
-                                    <ul>
-                                        <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
-                                            <b class="fs_custom_info_label">{{ appVars.custom_fields[fieldName].label }}</b> :
-                                            <span v-if="isArray(fieldValue)">
-                                                    <span class="fs_custom_check_value" v-for="value in fieldValue"
-                                                        :key="value">{{ value }}</span>
-                                                </span>
-                                            <span v-else v-html="purify(fieldValue)"></span>
-                                        </li>
-                                    </ul>
+                                        <section class="fs_ticket_thread_wrap">
+                                            <section class="fs_thread_message">
+                                                <div class="fs_thread_head">
+                                                    <div class="fs_thread_name">
+                                                        <strong>{{ getHumanName(ticket.customer) }}</strong> {{$t('conversation_started')}}
+                                                    </div>
+                                                </div>
+                                                <div v-html="purify(ticket.content)" class="fs_thread_body"></div>
+
+                                                <div class="fs_actions_head">
+                                                    <div class="fs_thread_actions">
+                                                        {{ ticket.human_date }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="fst_file_lists" v-if="ticket.attachments && ticket.attachments.length">
+                                                    <ul>
+                                                        <li v-if="ticket.attachments.length"
+                                                            v-for="attachment in ticket.attachments"
+                                                            :key="attachment.file_hash"
+                                                        >
+                                                            <el-icon> <Paperclip /> </el-icon> <a target="_blank" rel="noopener"
+                                                                                                :href="attachment.secureUrl">{{
+                                                                attachment.title
+                                                            }}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </section>
+                                        </section>
+                                    </div>
+                                    <div v-if="!isEmpty(ticket.custom_fields)" class="fs_custom_data_wrap">
+                                        <h3>{{ $t('Additional info') }}</h3>
+                                        <ul>
+                                            <li v-for="(fieldValue, fieldName) in ticket.custom_fields" :key="fieldName">
+                                                <b class="fs_custom_info_label">{{ appVars.custom_fields[fieldName].label }}</b> :
+                                                <span v-if="isArray(fieldValue)">
+                                                        <span class="fs_custom_check_value" v-for="value in fieldValue"
+                                                            :key="value">{{ value }}</span>
+                                                    </span>
+                                                <span v-else v-html="purify(fieldValue)"></span>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </article>
