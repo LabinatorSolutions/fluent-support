@@ -2,13 +2,13 @@
     <div class="fs_create_ticket_container">
         <!-- Back Button -->
         <back-button />
-        
+
         <div class="fs_ticket_form_container">
             <div class="fs_ticket_header">
-                <label>Submit a Support Ticket</label>
+                <label>{{$t('submit_heading')}}</label>
             </div>
             <el-form :model="ticket" label-position="top" class="fs_ticket_form">
-                <el-form-item label="Subject" class="fs_input_wrapper">
+                <el-form-item :label="$t('Subject')" class="fs_input_wrapper">
                     <el-input
                         size="default"
                         v-model="ticket.title"
@@ -27,7 +27,7 @@
 
                     <div v-if="shouldShowSuggestions && ticket.title.length" class="fs_suggestions_popover">
                         <div class="fs_suggestions_header">
-                            <label>Suggested Articles</label>
+                            <label>{{$t('Suggested Articles')}}</label>
                             <el-button
                                 type="text"
                                 class="fs_close_button"
@@ -57,7 +57,6 @@
                     </div>
                 </el-form-item>
 
-
                 <el-form-item class="fs_tk_suggestions">
                     <label class="fs_ticket_details_label"> {{ $t('ticket_details') }}</label>
                     <wp-editor :height="150" :media-buttons="false" :is_direct_paste="true" v-model="ticket.content"/>
@@ -72,9 +71,6 @@
                         <error :error="errors.get('content')"/>
                     </div>
                 </el-form-item>
-
-
-                <!-- File Upload -->
 
                 <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments"/>
 
@@ -99,13 +95,10 @@
                                 </svg>
                                 <error :error="errors.get('product_id')"/>
                             </div>
-
-
                         </el-form-item>
                     </div>
                 </div>
 
-                <!-- Priority -->
                 <el-form-item label="Priority" v-if="Object.keys(priorities).length">
                     <el-select
                         v-model="ticket.client_priority"
@@ -131,11 +124,8 @@
                     </div>
                 </el-form-item>
 
-                <!-- Your Name -->
-
                 <custom-fields-form :ticket="ticket" :custom_data="custom_data" :exceptions="exceptions"/>
 
-                <!-- Submit Button -->
                 <el-form-item class="fs_submit_button_container">
                     <el-button
                         type="primary"
@@ -143,7 +133,7 @@
                         @click="create"
                         class="fs_create_ticket_button"
                     >
-                        Create Ticket
+                       {{$t('Create Ticket')}}
                     </el-button>
                 </el-form-item>
             </el-form>

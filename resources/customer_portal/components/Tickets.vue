@@ -12,9 +12,9 @@
         </div>
         <div class="fs_tickets_container">
             <div class="fs_tickets_header">
-                <label>All Tickets</label>
+                <label> {{$t('All Tickets')}}</label>
                 <el-button class="fs_create_ticket_btn" @click="$router.push({ name: 'create_ticket' })">
-                    + Create a New Ticket
+                    {{ '+ ' + $t('Create Ticket') }}
                 </el-button>
             </div>
 
@@ -38,7 +38,7 @@
                     :header-cell-style="{ background: '#f5f7fa', color: '#0e121b', fontWeight: '500'}"
                     :row-class-name="'ticket-row'"
                 >
-                    <el-table-column prop="title" label="Conversation" class-name="conversation-cell" width="450">
+                    <el-table-column prop="title" :label="$t('Conversation')" class-name="conversation-cell" width="450">
                         <template #default="{ row }">
                             <router-link class="fs_ticket_conversation"
                                          :to="{ name: 'view_ticket', params: { ticket_id: row.id }}">
@@ -50,8 +50,8 @@
                             </router-link>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="human_date" label="Date" class-name="date-cell" width="160"/>
-                    <el-table-column prop="status" label="Status" class-name="fs_status_cell" width="120">
+                    <el-table-column prop="human_date" :label="$t('Date')" class-name="date-cell" width="160"/>
+                    <el-table-column prop="status" :label="$t('Status')" class-name="fs_status_cell" width="120">
                         <template #default="{ row }">
                             <span :class="['fs_status_badge', getStatusClass(row.status)]">
                                 <span class="fs_status_dot"></span>

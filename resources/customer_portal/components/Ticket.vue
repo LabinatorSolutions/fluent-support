@@ -1,18 +1,16 @@
 <template>
     <div class="fs_ticket_wrapper fs_ticket">
-        <!-- Back Button -->
         <back-button />
-        
+
         <div class="fs_tickets_container">
             <template v-if="ticket">
                 <div class="fs_ticket_heroarea">
-                    <!-- <div class="fs_ticket_header"> -->
                         <div class="fs_tk_subject">
                             <h2 class="fs_ticket_subject">
                                 #{{ ticket.id }} {{ ticket.title }}
                             </h2>
                             <div class="fs_status_badge" :class="['fs_status_badge_' + (ticket.status === 'closed' ? 'closed' : 'active')]">
-                                <span class="fs_status_dot" :class="['fs_status_dot_' + (ticket.status === 'closed' ? 'closed' : 'active')]"></span> 
+                                <span class="fs_status_dot" :class="['fs_status_dot_' + (ticket.status === 'closed' ? 'closed' : 'active')]"></span>
                                 <span v-if="ticket.status === 'closed'">{{$t('Closed')}}</span>
                                 <span v-else>{{$t('Active')}}</span>
                             </div>
@@ -37,7 +35,6 @@
                                 </div>
                             </div>
                         </div>
-                    <!-- </div> -->
                     <div class="fs_ticket_response">
                         <div v-if="hasVisibleAlerts" class="fs_ticket_alert">
                             <el-alert
@@ -68,7 +65,7 @@
                                         {{$t('reopen_ticket_instruction')}}
                                     </p>
                                 </span>
-                                
+
                                 <a class="fs_ticket_reopen" :disabled="updating" v-loading="updating" @click="reOpen()">
                                     {{$t('Reopen This ticket')}}
                                 </a>
@@ -78,14 +75,14 @@
                         <inline-reply v-if="ticket.status !== 'closed'" @created="recordNewResponse" :ticket="ticket"/>
                     </div>
                 </div>
-                
+
                 <div class="fs_ticket_body">
                     <div class="fs_ticket_threads_container" id="fs_ticket_threads_container">
                         <article v-for="conversation in conversations"
                                 :key="conversation.id"
                                 class="fs_customer_conversation"
                                 :class="getTicketClasses(conversation, ticket) ">
-                            
+
                             <div class="fs_ticket_thread_content">
                                 <section class="fs_ticket_avatar" v-if="!['ticket_split_activity', 'ticket_merge_activity'].includes(conversation.conversation_type)">
                                     <img v-if="conversation.person" :src="conversation.person.photo"
@@ -170,7 +167,7 @@
                                                 </div>
                                             </div>
                                             <div v-html="purify(ticket.content)" class="fs_thread_body"></div>
-                                                
+
                                             <div class="fs_actions_head">
                                                 <div class="fs_thread_actions">
                                                     {{ ticket.human_date }}
