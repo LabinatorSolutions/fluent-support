@@ -1,19 +1,19 @@
 <template>
-    <div class="fs_filter_actions">
-        <div class="fs_status_filter">
-            <div class="fs_button_groups">
-                <button
-                    v-for="status in statusOptions"
-                    :key="status.value"
-                    :class="['status-btn', { active: localStatusFilter === status.value }]"
-                    @click="updateStatusFilter(status.value)"
-                >
-                    {{ status.label }}
-                </button>
-            </div>
-        </div>
+    <div class="fs_filter_container">
 
-        <div class="fs_filters_right">
+        <div class="fs_filter_left">
+            <div class="fs_status_filter">
+                <div class="fs_button_groups">
+                    <button
+                        v-for="status in statusOptions"
+                        :key="status.value"
+                        :class="['status-btn', { active: localStatusFilter === status.value }]"
+                        @click="updateStatusFilter(status.value)"
+                    >
+                        {{ status.label }}
+                    </button>
+                </div>
+            </div>
             <div class="fs_product_filter">
                 <el-select
                     v-model="filters.product_id"
@@ -30,7 +30,6 @@
                     />
                 </el-select>
             </div>
-
             <div class="fs_sorting">
                 <el-popover trigger="click" placement="bottom-start" width="240" popper-class="fs_popover">
                     <div class="fs_popover_item">
@@ -71,29 +70,34 @@
                 </el-popover>
             </div>
         </div>
+
+        <div class="fs_filter_right">
+            <div class="fs_search_filter">
+                <el-input
+                    v-model="localSearchQuery"
+                    placeholder="Search..."
+                    clearable
+                    @keyup.enter="fetchTickets"
+                    @input="onSearchInput"
+                    class="search-input"
+                >
+                    <template #prefix>
+                        <svg class="search-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                fill="none"
+                            />
+                        </svg>
+                    </template>
+                </el-input>
+            </div>
+        </div>
+
     </div>
 
-    <div class="fs_search_filter">
-        <el-input
-            v-model="localSearchQuery"
-            placeholder="Search..."
-            clearable
-            @keyup.enter="fetchTickets"
-            @input="onSearchInput"
-            class="search-input"
-        >
-            <template #prefix>
-                <svg class="search-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        fill="none"
-                    />
-                </svg>
-            </template>
-        </el-input>
-    </div>
+
 </template>
 
 <script>
