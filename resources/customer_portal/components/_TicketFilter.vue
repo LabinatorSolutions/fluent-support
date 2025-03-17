@@ -210,7 +210,6 @@ export default {
             border-color: #18181B;
             border-radius: 8px;
         }
-
     }
 }
 </style>
