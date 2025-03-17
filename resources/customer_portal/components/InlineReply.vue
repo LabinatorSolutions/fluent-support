@@ -1,9 +1,10 @@
 <template>
     <div class="fs_ticket_reply_box">
+        <h3>{{$t('Write a reply')}}</h3>
         <textarea @click="is_focused = true" v-if="!is_focused" class="fs_ticket_reply_text" :placeholder="$t('Click Here to Write a reply')"></textarea>
 
         <div v-else class="fs_reply_wrap">
-            <h3>{{$t('Write a reply')}}</h3>
+            
             <div>
                 <wp-editor :autofocus="true" :mediaButtons="false" :height="150" :ticketId="ticket.id" :is_agent="false" :is_direct_paste="true"  v-model="response_body" />
                 <error :error="errors.get('content')"/>
