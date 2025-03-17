@@ -72,9 +72,6 @@
                     </div>
                 </el-form-item>
 
-
-                <!-- File Upload -->
-
                 <attachment-form v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments"/>
 
                 <div v-if="products.length || Object.keys(priorities).length" class="fs_tk_row">
@@ -98,13 +95,10 @@
                                 </svg>
                                 <error :error="errors.get('product_id')"/>
                             </div>
-
-
                         </el-form-item>
                     </div>
                 </div>
 
-                <!-- Priority -->
                 <el-form-item label="Priority" v-if="Object.keys(priorities).length">
                     <el-select
                         v-model="ticket.client_priority"
@@ -130,11 +124,8 @@
                     </div>
                 </el-form-item>
 
-                <!-- Your Name -->
-
                 <custom-fields-form :ticket="ticket" :custom_data="custom_data" :exceptions="exceptions"/>
 
-                <!-- Submit Button -->
                 <el-form-item class="fs_submit_button_container">
                     <el-button
                         type="primary"
@@ -142,7 +133,7 @@
                         @click="create"
                         class="fs_create_ticket_button"
                     >
-                        Create Ticket
+                       {{$t('Create Ticket')}}
                     </el-button>
                 </el-form-item>
             </el-form>
