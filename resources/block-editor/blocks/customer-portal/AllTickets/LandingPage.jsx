@@ -61,14 +61,14 @@ export const TicketsLandingBlock = props => {
                 setAttributes={setAttributes}
             />
             {(showLogout.showLogoutButton) && (
-            <div className={'fs_logout_container'}>
-                <div className="fs_logout_button">
+            <div className={'fs_block_logout_container'}>
+                <div className="fs_block_logout_button">
                 <a
                     href="#"
-                    className="fs_btn fs_btn_logout"
+                    className="fs_block_btn fs_block_btn_logout"
                 >
                     <svg
-                        className="fs_logout_icon"
+                        className="fs_block_logout_icon"
                         width="20"
                         height="20"
                         viewBox="0 0 20 20"
@@ -80,46 +80,46 @@ export const TicketsLandingBlock = props => {
                             fill="#FB3748"
                         />
                     </svg>
-                    <span className="fs_logout_text">Log Out</span>
+                    <span className="fs_block_logout_text">Log Out</span>
                 </a>
             </div>
             </div>
             )}
-            <div className="fs_tickets_block_container" style={blockStyles}>
-                <div className="fs_tickets_header">
-                    <label className="fs_tickets_title">
+            <div className="fs_block_tickets_block_container" style={blockStyles}>
+                <div className="fs_block_tickets_header">
+                    <label className="fs_block_tickets_title">
                         {'All Tickets'}
                     </label>
-                    <button className="fs_create_ticket_button" style={primaryButtonStyles}
+                    <button className="fs_block_create_ticket_button" style={primaryButtonStyles}
                             onClick={() => showSection('createTicket')}>
-                        <span className="fs_plus_icon">+</span>
+                        <span className="fs_block_plus_icon">+</span>
                         {'Create Ticket'}
                     </button>
                 </div>
 
-                <div className="fs_tickets_filters">
-                    <div className="fs_filters_left">
-                        <div className={'fs_status_filter'}>
+                <div className="fs_block_tickets_filters">
+                    <div className="fs_block_filters_left">
+                        <div className={'fs_block_status_filter'}>
                             <button
-                                className={`fs_filter_button ${currentFilter === 'all' ? 'active' : ''}`}
+                                className={`fs_block_filter_button ${currentFilter === 'all' ? 'active' : ''}`}
                                 onClick={() => handleFilterChange('all')}
                             >
                                 All
                             </button>
                             <button
-                                className={`fs_filter_button ${currentFilter === 'open' ? 'active' : ''}`}
+                                className={`fs_block_filter_button ${currentFilter === 'open' ? 'active' : ''}`}
                                 onClick={() => handleFilterChange('open')}
                             >
                                 Open
                             </button>
                             <button
-                                className={`fs_filter_button ${currentFilter === 'closed' ? 'active' : ''}`}
+                                className={`fs_block_filter_button ${currentFilter === 'closed' ? 'active' : ''}`}
                                 onClick={() => handleFilterChange('closed')}
                             >
                                 Closed
                             </button>
                         </div>
-                        <div className="fs_product_dropdown">
+                        <div className="fs_block_product_dropdown">
                             <select
                                 value={selectedProduct}
                                 onChange={(e) => setSelectedProduct(e.target.value)}
@@ -130,7 +130,7 @@ export const TicketsLandingBlock = props => {
                             </select>
                         </div>
 
-                        <button className="fs_filter_toggle_button">
+                        <button className="fs_block_filter_toggle_button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path d="M3 4H21V6H3V4ZM5 11H19V13H5V11ZM7 18H17V20H7V18Z" fill="currentColor"/>
@@ -138,53 +138,53 @@ export const TicketsLandingBlock = props => {
                         </button>
                     </div>
 
-                    <div className="fs_filters_right">
-                        <div className="fs_search_wrapper">
+                    <div className="fs_block_filters_right">
+                        <div className="fs_block_search_wrapper">
                             <input
                                 type="text"
                                 placeholder="Search..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="fs_search_input"
+                                className="fs_block_search_input"
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Table Header */}
-                <div className={'fs_ticket_table'}>
-                    <div className="fs_tickets_table_header">
-                        <div className="fs_header_conversation">Conversation</div>
-                        <div className="fs_header_date">
+                <div className={'fs_block_ticket_table'}>
+                    <div className="fs_block_tickets_table_header">
+                        <div className="fs_block_header_conversation">Conversation</div>
+                        <div className="fs_block_header_date">
                             Date
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7 10l5 5 5-5z" fill="currentColor"/>
                             </svg>
                         </div>
-                        <div className="fs_header_status">Status</div>
+                        <div className="fs_block_header_status">Status</div>
                     </div>
 
                     {/* Tickets List */}
-                    <div className="fs_tickets_list">
+                    <div className="fs_block_tickets_list">
                         {sampleTickets.map(ticket => (
-                            <div key={ticket.id} className="fs_ticket_item"
+                            <div key={ticket.id} className="fs_block_ticket_item"
                                  onClick={() => showSection('viewTicket')}
                                  style={{cursor: 'pointer'}}>
-                                <div className="fs_ticket_conversation">
-                                    <div className="fs_ticket_title">
+                                <div className="fs_block_ticket_conversation">
+                                    <div className="fs_block_ticket_title">
                                         {ticket.title}
-                                        <span className="fs_ticket_count">{ticket.count}</span>
+                                        <span className="fs_block_ticket_count">{ticket.count}</span>
                                     </div>
-                                    <div className="fs_ticket_description">
+                                    <div className="fs_block_ticket_description">
                                         {ticket.description}
                                     </div>
                                 </div>
-                                <div className="fs_ticket_date">
+                                <div className="fs_block_ticket_date">
                                     {ticket.date}
                                 </div>
-                                <span className="fs_status_badge">
-                                    <span className="fs_status_dot"></span>
+                                <span className="fs_block_status_badge">
+                                    <span className="fs_block_status_dot"></span>
                                     {ticket.status}
                                 </span>
                             </div>
@@ -193,13 +193,13 @@ export const TicketsLandingBlock = props => {
                 </div>
 
                 {/* Pagination */}
-                <div className="fs_tickets_pagination">
-                    <div className={'fs_pagination_left'}>
-                        <div className="fs_pagination_info">
+                <div className="fs_block_tickets_pagination">
+                    <div className={'fs_block_pagination_left'}>
+                        <div className="fs_block_pagination_info">
                             Page {currentPage} of {totalPages}
                         </div>
 
-                        <div className="fs_pagination_per_page">
+                        <div className="fs_block_pagination_per_page">
                             <select value={`${blockAttributes.perPage || 10} / page`}>
                                 <option value="10 / page">10 / page</option>
                                 <option value="20 / page">20 / page</option>
@@ -207,42 +207,42 @@ export const TicketsLandingBlock = props => {
                             </select>
                         </div>
                     </div>
-                    <div className={'fs_pagination_right'}>
-                        <div className="fs_pagination_controls">
-                            <button className="fs_pagination_button"
+                    <div className={'fs_block_pagination_right'}>
+                        <div className="fs_block_pagination_controls">
+                            <button className="fs_block_pagination_button"
                                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}>‹
                             </button>
 
                             <button
-                                className={`fs_pagination_button ${currentPage === 1 ? 'active' : ''}`}
+                                className={`fs_block_pagination_button ${currentPage === 1 ? 'active' : ''}`}
                                 onClick={() => handlePageChange(1)}>1
                             </button>
                             <button
-                                className={`fs_pagination_button ${currentPage === 2 ? 'active' : ''}`}
+                                className={`fs_block_pagination_button ${currentPage === 2 ? 'active' : ''}`}
                                 onClick={() => handlePageChange(2)}>2
                             </button>
                             <button
-                                className={`fs_pagination_button ${currentPage === 3 ? 'active' : ''}`}
+                                className={`fs_block_pagination_button ${currentPage === 3 ? 'active' : ''}`}
                                 onClick={() => handlePageChange(3)}>3
                             </button>
                             <button
-                                className={`fs_pagination_button ${currentPage === 4 ? 'active' : ''}`}
+                                className={`fs_block_pagination_button ${currentPage === 4 ? 'active' : ''}`}
                                 onClick={() => handlePageChange(4)}>4
                             </button>
                             <button
-                                className={`fs_pagination_button ${currentPage === 5 ? 'active' : ''}`}
+                                className={`fs_block_pagination_button ${currentPage === 5 ? 'active' : ''}`}
                                 onClick={() => handlePageChange(5)}>5
                             </button>
 
                             <span className="pagination-ellipsis">...</span>
 
                             <button
-                                className={`fs_pagination_button ${currentPage === totalPages ? 'active' : ''}`}
+                                className={`fs_block_pagination_button ${currentPage === totalPages ? 'active' : ''}`}
                                 onClick={() => handlePageChange(totalPages)}>
                                 {totalPages}
                             </button>
 
-                            <button className="fs_pagination_button"
+                            <button className="fs_block_pagination_button"
                                     onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}>›
                             </button>
                         </div>

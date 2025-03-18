@@ -1,7 +1,7 @@
 .fluent-support-block {
     width: 800px;
 }
-.fs_tickets_block_container {
+.fs_block_tickets_block_container {
 
     background: white;
     border-radius: 16px;
@@ -11,7 +11,7 @@
     margin: 0 auto;
 }
 
-.fs_tickets_header {
+.fs_block_tickets_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -19,7 +19,7 @@
     border-bottom: 1px solid #E5E7EB;
 }
 
-.fs_tickets_title {
+.fs_block_tickets_title {
     font-size: 20px;
     font-weight: 500;
     line-height: 28px;
@@ -29,7 +29,7 @@
     color: #111827;
 }
 
-.fs_create_ticket_button {
+.fs_block_create_ticket_button {
     background: #18181B;
     color: white;
     border: none;
@@ -42,7 +42,7 @@
     align-items: center;
     gap: 8px;
 
-    .fs_plus_icon {
+    .fs_block_plus_icon {
         margin-right: 8px;
         font-size: 18px;
     }
@@ -52,13 +52,13 @@
     }
 }
 
-.fs_tickets_filters {
+.fs_block_tickets_filters {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
 
-    .fs_status_filter {
+    .fs_block_status_filter {
         display: flex;
         gap: 4px;
         padding: 4px;
@@ -67,13 +67,13 @@
         max-width: 250px;
     }
 
-    .fs_filters_left {
+    .fs_block_filters_left {
         display: flex;
         gap: 8px;
     }
 }
 
-.fs_filter_button {
+.fs_block_filter_button {
     padding: 6px 16px;
     border: none;
     background: transparent;
@@ -94,13 +94,13 @@
     }
 }
 
-.fs_filters_right {
+.fs_block_filters_right {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.fs_product_dropdown {
+.fs_block_product_dropdown {
     select {
         background-size: 16px;
         background-color: #fff;
@@ -118,7 +118,7 @@
     }
 }
 
-.fs_filter_toggle_button {
+.fs_block_filter_toggle_button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -135,10 +135,10 @@
     }
 }
 
-.fs_search_wrapper {
+.fs_block_search_wrapper {
     position: relative;
 
-    .fs_search_input {
+    .fs_block_search_input {
         border: 1px solid #e5e7eb;
         border-radius: 10px;
         padding: 4px 10px;
@@ -165,7 +165,7 @@
     }
 }
 
-.fs_tickets_table_header {
+.fs_block_tickets_table_header {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 120px 120px;
     gap: 16px;
@@ -178,22 +178,22 @@
     line-height: 20px;
 }
 
-.fs_header_date {
+.fs_block_header_date {
     display: flex;
     align-items: center;
     gap: 4px;
 }
 
-.fs_ticket_table {
+.fs_block_ticket_table {
     padding: 0 20px 20px 20px;
 }
 
-.fs_tickets_list {
+.fs_block_tickets_list {
     display: flex;
     flex-direction: column;
 }
 
-.fs_ticket_item {
+.fs_block_ticket_item {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 120px 120px;
     gap: 16px;
@@ -206,13 +206,13 @@
     }
 }
 
-.fs_ticket_conversation {
+.fs_block_ticket_conversation {
     display: flex;
     flex-direction: column;
     gap: 4px;
 }
 
-.fs_ticket_title {
+.fs_block_ticket_title {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -220,7 +220,7 @@
     color: #111827;
     font-size: 14px;
 
-    .fs_ticket_count {
+    .fs_block_ticket_count {
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -235,7 +235,7 @@
     }
 }
 
-.fs_ticket_description {
+.fs_block_ticket_description {
     font-size: 14px;
     color: #6b7280;
     white-space: nowrap;
@@ -243,12 +243,12 @@
     text-overflow: ellipsis;
 }
 
-.fs_ticket_date {
+.fs_block_ticket_date {
     font-size: 14px;
     color: #374151;
 }
 
-.fs_status_badge {
+.fs_block_status_badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -263,7 +263,7 @@
     width: fit-content;
     height: fit-content;
 
-    .fs_status_dot {
+    .fs_block_status_dot {
         width: 6px;
         height: 6px;
         border-radius: 50%;
@@ -272,22 +272,22 @@
     }
 }
 
-.fs_tickets_pagination {
+.fs_block_tickets_pagination {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 20px;
 
-    .fs_pagination_left {
+    .fs_block_pagination_left {
         display: flex;
         align-items: center;
         gap: 16px;
-        .fs_pagination_info {
+        .fs_block_pagination_info {
             color: #666;
             font-size: 14px;
         }
 
-        .fs_pagination_per_page {
+        .fs_block_pagination_per_page {
             select {
                 background-color: transparent;
                 font-size: 14px;
@@ -305,12 +305,12 @@
     }
 }
 
-.fs_pagination_controls {
+.fs_block_pagination_controls {
     display: flex;
     align-items: center;
     gap: 8px;
 }
-.fs_pagination_button  {
+.fs_block_pagination_button  {
     background: transparent;
     color: #666;
     min-width: 32px;
@@ -353,7 +353,7 @@
 }
 
 // Loading state
-.fs_loading_state {
+.fs_block_loading_state {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -364,16 +364,16 @@
 }
 
 
-.fs_logout_container {
+.fs_block_logout_container {
     width: 100%;
     display: flex;
     justify-content: flex-end;
     margin-bottom: 16px;
 
-    .fs_logout_button {
+    .fs_block_logout_button {
         display: inline-block;
 
-        .fs_btn_logout {
+        .fs_block_btn_logout {
             display: inline-flex;
             align-items: center;
             background: transparent;
@@ -390,11 +390,11 @@
                 color: #d92738;
             }
 
-            .fs_logout_icon {
+            .fs_block_logout_icon {
                 margin-right: 6px;
             }
 
-            .fs_logout_text {
+            .fs_block_logout_text {
                 text-decoration: underline;
             }
         }
