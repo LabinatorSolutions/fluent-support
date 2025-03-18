@@ -9,6 +9,7 @@
 
     max-width: 808px;
 }
+
 .fs_client_portal {
 
     a.el-button {
@@ -178,6 +179,28 @@
                     color: #111827;
                 }
 
+                .fs_tickets_actions {
+                    display: flex;
+                    gap: 8px;
+
+                    .fs_actions_dropdown {
+                        .fs_actions_dropdown_btn {
+                            border-radius: 8px;
+                            padding: 8px;
+                            border: 1px solid rgba(225, 228, 234, 1);
+                            transition: box-shadow 0.2s ease, background 0.2s ease;
+
+                            &:hover {
+                                background: rgba(225, 228, 234, 0.5);
+                                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                                color: inherit;
+                            }
+                        }
+
+
+                    }
+                }
+
                 .fs_create_ticket_btn {
                     background: #18181B;
                     color: white;
@@ -193,6 +216,11 @@
 
                     &:hover {
                         background: #27272A;
+                    }
+
+                    &.is-disabled {
+                        background: rgba(245, 247, 250, 1);
+                        color: rgba(202, 207, 216, 1);
                     }
                 }
             }
@@ -214,10 +242,12 @@
                     justify-content: space-between;
                     gap: 60px;
                     max-width: 486px;
+
                     .fs_filter_left {
                         display: flex;
                         gap: 10px;
-                        .fs_product_filter_head{
+
+                        .fs_product_filter_head {
                             display: flex;
                             gap: 10px;
 
@@ -234,6 +264,7 @@
 
                                     .fs_radio_blocks {
                                         margin-top: 10px;
+
                                         .el-radio-group {
                                             display: grid;
 
@@ -282,9 +313,10 @@
                                     }
                                 }
                             }
+
                             @media screen and (max-width: 768px) {
-                                .fs_product_filter{
-                                    .el-select{
+                                .fs_product_filter {
+                                    .el-select {
                                         width: 232px !important;
                                     }
                                 }
@@ -297,6 +329,7 @@
                         .fs_search_filter {
                             width: max-content;
                         }
+
                         @media screen and (max-width: 768px) {
                             .fs_search_filter {
                                 width: 100%;
@@ -336,10 +369,10 @@
                     }
 
                     @media screen and (max-width: 768px) {
-                      .fs_button_groups {
-                        max-width: none;
-                        justify-content: center;
-                      }
+                        .fs_button_groups {
+                            max-width: none;
+                            justify-content: center;
+                        }
                     }
 
                     .fs_filters_right {
@@ -356,7 +389,7 @@
                     @media (max-width: 768px) {
                         .fs_filter_left {
                             flex-direction: column;
-                            gap:10px;
+                            gap: 10px;
                         }
                     }
                 }
@@ -371,8 +404,36 @@
             }
 
             @media screen and (max-width: 767px) {
-                .fs_filters_section{
+                .fs_filters_section {
                     display: block;
+                }
+            }
+
+            .fs_inactive_message_container {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                padding: 40px 0;
+                border-radius: 8px;
+                margin: 20px 0;
+
+                .fs_inactive_message {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    max-width: 500px;
+                    text-align: center;
+
+                    .fs_inactive {
+                        margin-bottom: 24px;
+                    }
+
+                    .fs_inactive_text {
+                        color: rgba(153, 160, 174, 1);
+                        font-size: 14px;
+                        line-height: 20px;
+                        font-weight: 400;
+                    }
                 }
             }
 
@@ -1136,6 +1197,7 @@
                     justify-content: space-between;
                     gap: 2px;
                     border-bottom: 1px solid #E1E4EA;
+
                     .fs_status_badge {
                         &.fs_status_badge_active {
                             background-color: #EEFBF6;
@@ -1247,8 +1309,9 @@
             &.fs_conversion_starter {
                 background: #F9FAFB;
                 border-radius: 0 0 16px 16px;
+
                 .fs_conversion_starter_section {
-                    .fs_join_thread_custom_field{
+                    .fs_join_thread_custom_field {
                         padding: 14px;
                     }
                 }
@@ -1475,12 +1538,14 @@
     // InlineReply CSS Start
     .fs_ticket_reply_box {
         padding: 15px 15px;
-        &.fs_ticket_reply_header{
+
+        &.fs_ticket_reply_header {
             h3 {
                 position: absolute;
                 margin-top: 11px;
             }
         }
+
         h3 {
             font-family: Inter;
             font-weight: 500;
