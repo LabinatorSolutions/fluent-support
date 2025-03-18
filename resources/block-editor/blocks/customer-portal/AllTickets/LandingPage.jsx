@@ -1,12 +1,4 @@
 const {Fragment, useState} = wp.element;
-const {
-    SelectControl,
-    TextControl,
-    Button,
-    Spinner,
-    SearchControl,
-    ToggleControl,
-} = wp.components;
 const {__} = wp.i18n;
 
 import './all-tickets.scss';
@@ -23,14 +15,30 @@ export const TicketsLandingBlock = props => {
     const totalPages = 16;
 
     // Sample ticket data that matches the screenshot
-    const sampleTickets = Array(5).fill({
-        id: 1,
-        title: "Sudden charge without notice",
-        description: "This is Zawad from Authlab, facing a isshue about...",
-        date: "05 Jul, 2024",
-        status: "active",
-        count: 2
-    }).map((ticket, index) => ({...ticket, id: index + 1}));
+    const ticketSubjects = [
+        "Unauthorized charge on credit card",
+        "Unable to reset account password",
+        "Service outage in my region",
+        "Billing discrepancy in latest invoice",
+        "Feature request: Dark mode support"
+    ];
+
+    const customerNames = [
+        "Zawad from Authlab",
+        "Mia from TechCorp",
+        "Ethan from NexaSoft",
+        "Liam from CloudSync",
+        "Sophia from DataHive"
+    ];
+
+    const sampleTickets = Array.from({ length: 5 }, (_, index) => ({
+        id: index + 1,
+        title: ticketSubjects[index],
+        description: `Hello, this is ${customerNames[index]}. I'm facing an issue regarding "${ticketSubjects[index]}". Please assist.`,
+        date: `${5 + index} Jul, 2024`, // Generates sequential dates (5th, 6th, 7th...)
+        status: "active", // All tickets set to "active"
+        count: index + 1 // Reply count increases with each ticket
+    }));
 
     const {
         blockStyles,

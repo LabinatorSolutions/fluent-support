@@ -5,7 +5,6 @@ import AllTickets from './AllTickets/LandingPage';
 import CreateTicket from './CreateTicket/LandingPage';
 import ViewTicket from "./ViewTicket/LandingPage";
 
-
 export default function Edit({attributes, setAttributes}) {
 
     const [showSection, setShowSection] = useState('allTickets');
