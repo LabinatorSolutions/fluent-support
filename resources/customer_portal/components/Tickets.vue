@@ -44,7 +44,9 @@
                                          :to="{ name: 'view_ticket', params: { ticket_id: row.id }}">
                                 <div class="fs_ticket_title">
                                     <strong>{{ row.title }}</strong>
-                                    <span class="fs_response_count">{{ row.response_count }}</span>
+                                    <span v-show="parseInt(row?.response_count) > 0" class="fs_response_count">
+                                      {{ row.response_count }}
+                                    </span>
                                 </div>
                                 <p class="fs_ticket_preview">{{ getExcerpt(row) }}</p>
                             </router-link>
