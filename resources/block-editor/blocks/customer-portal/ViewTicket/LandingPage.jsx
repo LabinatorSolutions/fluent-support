@@ -17,7 +17,6 @@ export const ViewTicketBlock = props => {
 
     const [activeTab, setActiveTab] = useState('Visual');
     const [details, setDetails] = useState('');
-    const [replyText, setReplyText] = useState('');
 
     const {
         blockStyles,
@@ -44,7 +43,7 @@ export const ViewTicketBlock = props => {
 
             <div className="fs_editor_view_ticket" style={blockStyles}>
                 <div className="fs_editor_view_ticket_header">
-                    <h2 className="fs_ticket_title">#2053 fluent support</h2>
+                    <h2 className="fs_ticket_title">#2053 Premium Access Not Working</h2>
                     <div className="fs_ticket_status active">Active</div>
                 </div>
 
@@ -145,9 +144,30 @@ export const ViewTicketBlock = props => {
                         </button>
                     </div>
                 </div>
-
                 <div className="fs_conversation_container">
-                    <div className="fs_conversation_message fs_user_message">
+                    <div className="fs_conversation_message fs_agent_message">
+                        <div className="fs_message_avatar" style={avatarStyle}>
+                            <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
+                                 alt="Support Agent Avatar"/>
+                        </div>
+                        <div className="fs_message_content">
+                            <div className="fs_message_header">
+                                <div className="fs_message_author">
+                                    <span className="fs_author_name">Support Agent</span>
+                                    <span className="fs_author_role">Support Team</span>
+                                </div>
+                            </div>
+                            <div className="fs_message_text">
+                                <p>Hi! Thanks for reaching out. I’ve checked your account, and there was a delay in
+                                    syncing your subscription. I’ve manually updated it, and you should now have full
+                                    access. Please refresh your page and let me know if everything works!</p>
+                            </div>
+                            <div className="fs_message_footer">
+                                <span className="fs_message_timestamp">1 day ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="fs_conversation_message fs_thread_start">
                         <div className="fs_message_avatar" style={avatarStyle}>
                             <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g" alt="User Avatar"/>
                         </div>
@@ -155,31 +175,15 @@ export const ViewTicketBlock = props => {
                             <div className="fs_message_header">
                                 <div className="fs_message_author">
                                     <span className="fs_author_name">You</span>
-                                    <span className="fs_author_role">Thread Starter</span>
-                                </div>
-                            </div>
-                            <div className="fs_message_text">
-                                <p>hello</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="fs_conversation_message fs_thread_start">
-                        <div className="fs_message_avatar" style={avatarStyle}>
-                            <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g" alt="User Avatar"/>
-                        </div>
-                        <div className="fs_message_content">
-                        <div className="fs_message_header">
-                                <div className="fs_message_author">
-                                    <span className="fs_author_name">You</span>
                                     <span className="fs_author_info">started the conversation</span>
                                 </div>
                             </div>
                             <div className="fs_message_text">
-                                <p>fluent support</p>
+                                <p>Hi, I upgraded to the premium plan, but my account still shows the free plan
+                                    restrictions. Can you check?</p>
                             </div>
                             <div className="fs_message_footer">
-                                <span className="fs_message_timestamp">3 months ago</span>
+                                <span className="fs_message_timestamp">2 days ago</span>
                             </div>
                         </div>
                     </div>

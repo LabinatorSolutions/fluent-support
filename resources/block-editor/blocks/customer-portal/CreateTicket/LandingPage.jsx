@@ -6,13 +6,8 @@ import CreateTicketInspectorControls, { generateStyles } from './InspectorSettin
 
 export const CreateTicketBlock = props => {
     const { attributes: blockAttributes, setAttributes, showSection } = props;
-
-    const [subject, setSubject] = useState('');
-    const [details, setDetails] = useState('');
     const [priority, setPriority] = useState('Normal');
-    const [name, setName] = useState('');
     const [activeTab, setActiveTab] = useState('Visual');
-    const [nameError, setNameError] = useState(false);
 
     const {
         blockStyles,
@@ -52,7 +47,7 @@ export const CreateTicketBlock = props => {
                             type="text"
                             className="fs_form_input"
                             placeholder="What's this support ticket about?"
-                            value={subject}
+
                             style={inputFieldStyle}
                         />
                     </div>
@@ -111,7 +106,6 @@ export const CreateTicketBlock = props => {
                                 <textarea
                                     className="fs_editor_textarea"
                                     placeholder="Enter ticket details here..."
-                                    value={details}
                                     onChange={(e) => setDetails(e.target.value)}
                                 ></textarea>
                             </div>
@@ -119,7 +113,7 @@ export const CreateTicketBlock = props => {
                     </div>
 
                     <div className="fs_form_group">
-                        <label className="fs_form_label">File Upload</label>
+                        <p className="fs_form_label">File Upload</p>
                         <button className="fs_browse_file_button" style={secondaryButtonStyles}>Browse File</button>
                         <div className="fs_upload_text_container">
                             <p className="fs_upload_subtext">(Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max
@@ -145,23 +139,13 @@ export const CreateTicketBlock = props => {
                     </div>
 
                     <div className="fs_form_group">
-                        <label className="fs_form_label">Your Name</label>
+                        <label className="fs_form_label">Email Address</label>
                         <input
                             type="text"
-                            className={`fs_form_input ${nameError ? 'fs_input_error' : ''}`}
-                            placeholder="Enter your name"
-                            value={name}
+                            className= "fs_form_input"
+                            placeholder="Enter your email"
                             style={inputFieldStyle}
-                            onChange={(e) => {
-                                setName(e.target.value);
-                                setNameError(false);
-                            }}
                         />
-                        {nameError && (
-                            <div className="fs_error_message">
-                                <span className="fs_error_icon">!</span> This is a hint text to help user.
-                            </div>
-                        )}
                     </div>
 
                     <div className="fs_form_actions">
