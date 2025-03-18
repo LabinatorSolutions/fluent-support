@@ -65,7 +65,7 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                                     value={attributes.selectedMailbox}
                                     onChange={(event) => setAttributes({selectedMailbox: event.target.value})}
                                 >
-                                    <option value="">{__('Select a Mailbox')}</option>
+                                    <option value="">{__('Default Mailbox')}</option>
                                     {mailboxes.map(mailbox => (
                                         <option key={mailbox.id} value={mailbox.id}>
                                             {mailbox.name}
