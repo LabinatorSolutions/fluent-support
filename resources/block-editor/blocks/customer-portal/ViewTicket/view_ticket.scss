@@ -36,7 +36,7 @@ $tab-bg: #eee;
     }
 }
 
-.fs_editor_view_ticket {
+.fs_block_editor_view_ticket {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     background-color: #ffffff;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -46,7 +46,7 @@ $tab-bg: #eee;
     border: 1px solid rgba(225, 228, 234, 1);
 
 
-    .fs_editor_view_ticket_header {
+    .fs_block_editor_view_ticket_header {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -54,13 +54,13 @@ $tab-bg: #eee;
         padding-bottom: 20px;
         border-bottom: 1px solid rgba(225, 228, 234, 1);
 
-        .fs_ticket_title {
+        .fs_block_ticket_title {
             font-size: 20px;
             font-weight: 600;
             margin: 0;
         }
 
-        .fs_ticket_status {
+        .fs_block_ticket_status {
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 13px;
@@ -73,7 +73,7 @@ $tab-bg: #eee;
         }
     }
 
-    .fs_ticket_actions {
+    .fs_block_ticket_actions {
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -81,8 +81,8 @@ $tab-bg: #eee;
         border-bottom: 1px solid rgba(225, 228, 234, 1);
         padding-bottom: 20px;
 
-        .fs_refresh_button,
-        .fs_close_ticket_button {
+        .fs_block_refresh_button,
+        .fs_block_close_ticket_button {
             padding: 8px 12px;
             border: 1px solid rgba(225, 228, 234, 1);
             background-color: rgba(255, 255, 255, 1);
@@ -109,7 +109,7 @@ $tab-bg: #eee;
         }
     }
 
-    .fs_ticket_privacy_notice {
+    .fs_block_ticket_privacy_notice {
         background-color: rgba(235, 241, 255, 1);
         border-radius: 8px;
         padding: 10px 15px;
@@ -118,7 +118,7 @@ $tab-bg: #eee;
         align-items: center;
         position: relative;
 
-        .fs_privacy_icon {
+        .fs_block_privacy_icon {
             background-color: #3e7bf1;
             color: white;
             width: 20px;
@@ -133,13 +133,13 @@ $tab-bg: #eee;
             font-size: 12px;
         }
 
-        .fs_privacy_text {
+        .fs_block_privacy_text {
             margin: 0;
             font-size: 14px;
             color: #2c3338;
         }
 
-        .fs_close_notice_button {
+        .fs_block_close_notice_button {
             position: absolute;
             right: 10px;
             top: 10px;
@@ -152,7 +152,7 @@ $tab-bg: #eee;
         }
     }
 
-    .fs_ticket_details {
+    .fs_block_ticket_details {
         &_container {
             overflow: hidden;
             display: flex;
@@ -163,7 +163,7 @@ $tab-bg: #eee;
             padding: 8px 8px 0;
             margin-bottom: 5px;
 
-            .fs_tabs_wrapper {
+            .fs_block_tabs_wrapper {
                 display: inline-flex;
                 border-radius: 8px !important;
                 overflow: hidden;
@@ -171,7 +171,7 @@ $tab-bg: #eee;
                 padding: 4px;
                 border: 1px solid rgba(225, 228, 234, 1);
 
-                .fs_tab_button {
+                .fs_block_tab_button {
                     padding: 4px 16px;
                     background: none;
                     border: none;
@@ -199,7 +199,7 @@ $tab-bg: #eee;
             border: 1px solid $border-color;
             border-radius: 8px;
 
-            .fs_editor_toolbar {
+            .fs_block_editor_toolbar {
                 display: flex;
                 flex-wrap: wrap;
                 gap: 2px;
@@ -212,17 +212,17 @@ $tab-bg: #eee;
         }
     }
 
-    .fs_attachment_section {
+    .fs_block_attachment_section {
         margin-top: 20px;
         margin-bottom: 20px;
 
-        .fs_attachment_header {
+        .fs_block_attachment_header {
             font-size: 14px;
             font-weight: 500;
             margin-bottom: 10px;
         }
 
-        .fs_browse_file_button {
+        .fs_block_browse_file_button {
             display: flex;
             align-items: center;
             padding: 8px 15px;
@@ -241,19 +241,19 @@ $tab-bg: #eee;
             }
         }
 
-        .fs_attachment_info {
+        .fs_block_attachment_info {
             color: #646970;
             font-size: 12px;
             margin-top: 8px;
         }
     }
 
-    .fs_reply_actions {
+    .fs_block_reply_actions {
         display: flex;
         justify-content: flex-end;
         margin-top: 20px;
 
-        .fs_reply_button {
+        .fs_block_reply_button {
             padding: 8px 16px;
             border-radius: 8px;
             font-size: 14px;
@@ -275,7 +275,7 @@ $tab-bg: #eee;
             }
         }
 
-        .fs_reply_and_close_link {
+        .fs_block_reply_and_close_link {
             color: rgba(82, 88, 102, 1);
             text-decoration: underline;
             font-size: 16px;
@@ -287,23 +287,23 @@ $tab-bg: #eee;
             margin-right: 10px;
         }
 
-        .fs_reply_and_close_link:hover {
+        .fs_block_reply_and_close_link:hover {
             color: #005177;
         }
 
 
     }
 
-    .fs_conversation_container {
+    .fs_block_conversation_container {
         margin-top: 30px;
         padding-top: 20px;
 
-        .fs_conversation_message {
+        .fs_block_conversation_message {
             display: flex;
             border-top: 1px solid #dcdcde;
             padding: 20px 0 20px 0;
 
-            .fs_message_avatar {
+            .fs_block_message_avatar {
                 width: 40px;
                 height: 40px;
                 border-radius: 50%;
@@ -318,23 +318,23 @@ $tab-bg: #eee;
                 }
             }
 
-            .fs_message_content {
+            .fs_block_message_content {
                 flex: 1;
 
-                .fs_message_header {
+                .fs_block_message_header {
                     margin-bottom: 5px;
 
-                    .fs_message_author {
+                    .fs_block_message_author {
                         display: flex;
                         align-items: center;
 
-                        .fs_author_name {
+                        .fs_block_author_name {
                             font-weight: 600;
                             font-size: 14px;
                             margin-right: 8px;
                         }
 
-                        .fs_author_role {
+                        .fs_block_author_role {
                             background: #E1E4EA;
                             padding: 2px 8px;
                             font-weight: 500;
@@ -343,14 +343,14 @@ $tab-bg: #eee;
                             border-radius: 30px;
                         }
 
-                        .fs_author_info {
+                        .fs_block_author_info {
                             font-size: 14px;
                             color: #50575e;
                         }
                     }
                 }
 
-                .fs_message_text {
+                .fs_block_message_text {
                     font-size: 14px;
                     color: #2c3338;
                     line-height: 1.5;
@@ -364,10 +364,10 @@ $tab-bg: #eee;
                     }
                 }
 
-                .fs_message_footer {
+                .fs_block_message_footer {
                     margin-top: 8px;
 
-                    .fs_message_timestamp {
+                    .fs_block_message_timestamp {
                         font-size: 12px;
                         color: #646970;
                     }

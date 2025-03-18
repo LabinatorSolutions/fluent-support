@@ -10,13 +10,13 @@ $text-secondary: #6b7280;
 $hover-bg: #f7f7f7;
 $tab-bg: #eee;
 
-.fs_back_nav {
+.fs_block_back_nav {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.fs_back_button {
+.fs_block_back_button {
     display: flex;
     align-items: center;
     background: none;
@@ -37,7 +37,7 @@ $tab-bg: #eee;
     }
 }
 
-.fs_create_ticket {
+.fs_block_create_ticket {
         background-color: #fff;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -67,7 +67,7 @@ $tab-bg: #eee;
     }
 }
 
-.fs_form {
+.fs_block_form {
     border-radius: 10px;
     &_title {
         font-size: 18px;
@@ -78,10 +78,10 @@ $tab-bg: #eee;
 
     &_container {
         padding: 20px 24px;
-        .fs_form_group {
+        .fs_block_form_group {
             margin-bottom: 10px;
         }
-        .fs_form_input {
+        .fs_block_form_input {
             width: 100%;
             padding: 5px 5px 5px 12px;
             border: 1px solid $input-border;
@@ -101,12 +101,12 @@ $tab-bg: #eee;
                 color: #a0a5aa;
             }
 
-            &.fs_input_error {
+            &.fs_block_input_error {
                 border-color: $error-color;
             }
 
         }
-        .fs_form_dropdown {
+        .fs_block_form_dropdown {
             max-width: 100%;
             width: 100%;
             padding: 5px 5px 5px 12px;
@@ -146,7 +146,7 @@ $tab-bg: #eee;
     }
 }
 
-.fs_ticket_details {
+.fs_block_ticket_details {
     &_container {
         overflow: hidden;
         display: flex;
@@ -158,7 +158,7 @@ $tab-bg: #eee;
         padding: 8px 8px 0;
         margin-bottom: 5px;
 
-        .fs_tabs_wrapper {
+        .fs_block_tabs_wrapper {
             display: inline-flex;
             border-radius: 8px !important;
             overflow: hidden;
@@ -166,7 +166,7 @@ $tab-bg: #eee;
             padding: 4px;
             border: 1px solid rgba(225, 228, 234, 1);
 
-            .fs_tab_button {
+            .fs_block_tab_button {
                 padding: 4px 16px;
                 background: none;
                 border: none;
@@ -194,7 +194,7 @@ $tab-bg: #eee;
         border: 1px solid $border-color;
         border-radius: 10px;
 
-        .fs_editor_toolbar {
+        .fs_block_editor_toolbar {
             display: flex;
             flex-wrap: wrap;
             gap: 2px;
@@ -207,12 +207,12 @@ $tab-bg: #eee;
     }
 }
 
-.fs_paragraph_dropdown {
+.fs_block_paragraph_dropdown {
     border: none;
     margin-right: 4px;
 }
 
-.fs_toolbar_button {
+.fs_block_toolbar_button {
     width: 30px;
     height: 30px;
     display: flex;
@@ -235,7 +235,7 @@ $tab-bg: #eee;
     }
 }
 
-.fs_editor_textarea {
+.fs_block_editor_textarea {
     width: 100%;
     min-height: 180px;
     padding: 16px;
@@ -252,7 +252,7 @@ $tab-bg: #eee;
 }
 
 /* File upload */
-.fs_file_upload {
+.fs_block_file_upload {
     &_area {
         border: 1px dashed $border-color;
         border-radius: 8px;
@@ -272,7 +272,7 @@ $tab-bg: #eee;
     }
 }
 
-.fs_upload {
+.fs_block_upload {
     &_icon {
         width: 48px;
         height: 48px;
@@ -301,7 +301,7 @@ $tab-bg: #eee;
     }
 }
 
-.fs_browse_file_button {
+.fs_block_browse_file_button {
     padding: 8px 16px;
     background-color: #fff;
     border: 1px solid $border-color;
@@ -318,11 +318,11 @@ $tab-bg: #eee;
     }
 }
 
-.fs_dropdown_container {
+.fs_block_dropdown_container {
     position: relative;
 }
 
-.fs_dropdown_arrow {
+.fs_block_dropdown_arrow {
     position: absolute;
     right: 16px;
     top: 50%;
@@ -335,7 +335,7 @@ $tab-bg: #eee;
     pointer-events: none;
 }
 
-.fs_error {
+.fs_block_error {
     &_message {
         display: flex;
         align-items: center;
