@@ -1051,13 +1051,6 @@
             margin: 0 auto;
 
             .fs_ticket_heroarea {
-                &.sticky-header {
-                    position: sticky;
-                    top: 0;
-                    z-index: 10;
-                    background: #fff;
-                }
-
                 .fs_ticket_header {
                     // padding: 16px 20px;
                     border-bottom: 1px solid #E5E7EB;
@@ -1176,7 +1169,6 @@
                 }
 
                 .fs_ticket_subject {
-                    word-break: break-all;
                     color: #314351;
                     display: inline-block;
                     font-size: 20px;
@@ -1187,6 +1179,12 @@
                     font-weight: 500;
                     font-size: 18px;
                     line-height: 24px;
+                    width: 86%;
+                }
+                @media (max-width: 480px) {
+                    .fs_ticket_subject {
+                        width: 100%;
+                    }
                 }
 
                 .fs_tk_subject {
@@ -1235,6 +1233,12 @@
                             border-radius: 50%;
                             background: currentColor;
                         }
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .fs_tk_subject{
+                        display: block;
                     }
                 }
 
