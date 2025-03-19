@@ -41,7 +41,7 @@
                     :filters="filters"
                     :sorting="sorting"
                     :sortingColumns="sortingColumns"
-                    :search.sync="search"
+                    @update:search.sync="search = $event"
                     @update:statusFilter="filterType = $event"
                     :appVars="appVars"
                     @fetch-tickets="fetchTickets"
