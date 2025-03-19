@@ -42,7 +42,7 @@
                     :sorting="sorting"
                     :sortingColumns="sortingColumns"
                     :search.sync="search"
-                    :statusFilter.sync="filterType"
+                    @update:statusFilter="filterType = $event"
                     :appVars="appVars"
                     @fetch-tickets="fetchTickets"
                 />
