@@ -246,6 +246,7 @@ class CustomerPortalHandler
             'Completed' => __('Completed', 'fluent-support'),
             'Processing' => __('Processing', 'fluent-support'),
             'Failed' => __('Failed', 'fluent-support'),
+            'customer_inactive_message' => __('Your account is currently inactive. You cannot create new tickets or reply to existing ones. Please contact the site administrator for assistance.', 'fluent-support'),
         ];
 
         $i18ns['allowed_files_and_size'] = Helper::getFileUploadMessage();

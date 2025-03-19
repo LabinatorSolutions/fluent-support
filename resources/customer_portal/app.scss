@@ -495,6 +495,7 @@
                                             align-items: center;
                                             gap: 8px;
                                             margin-bottom: 4px;
+                                            word-break: break-word;
 
                                             strong {
                                                 font-size: 14px;
@@ -1177,7 +1178,7 @@
                 }
 
                 .fs_ticket_subject {
-                    word-wrap: break-word;
+                    word-break: break-all;
                     color: #314351;
                     display: inline-block;
                     font-size: 20px;

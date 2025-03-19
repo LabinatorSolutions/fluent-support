@@ -4,7 +4,6 @@ const {
     PanelBody,
     PanelRow,
     RangeControl,
-    SelectControl
 } = wp.components;
 const { __ } = wp.i18n;
 const { apiFetch } = wp;
@@ -47,7 +46,6 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
         });
     }, []);
 
-    // Make sure selectedMailbox is properly initialized
     const selectedMailbox = attributes.selectedMailbox || '';
 
     return (
@@ -80,7 +78,7 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                     label={__('Border Radius')}
                     value={attributes.containerBorderRadius || 0}
                     onChange={(value) => setAttributes({containerBorderRadius: value})}
-                    min={0}
+                    min={1}
                     max={20}
                 />
 
