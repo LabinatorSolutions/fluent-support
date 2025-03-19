@@ -69,9 +69,7 @@
                         </svg>
                     </div>
                     <div class="fs_inactive_text">
-                        {{
-                            'Your account is inactive, and you cannot create or reply to support tickets. Please contact us for assistance.'
-                        }}
+                        {{ $t('customer_inactive_message') }}
                     </div>
                 </div>
             </div>
