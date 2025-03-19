@@ -113,7 +113,6 @@
     // Ticket Lists CSS Start
     .fs_ticket_wrapper {
         padding: 20px;
-        background: #f8fafc;
         min-height: 100vh;
 
         .fs_logout_container {
@@ -773,7 +772,6 @@
 
     // Create Ticket CSS start
     .fs_create_ticket_container {
-        background-color: #f8f9fa;
         min-height: 100vh;
         padding: 20px;
 
@@ -1847,5 +1845,12 @@
 
 .el-table--fit.el-table table tr td {
     padding: 12px 0 !important;
+}
+
+.el-input__inner,
+.el-select__input {
+    border: none !important;
+    background: inherit !important;
+    padding: 0 !important;
 }
 
