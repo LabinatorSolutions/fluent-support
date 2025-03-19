@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 6.7
-Stable tag: 1.8.6
+Stable tag: 1.8.7
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -234,6 +234,21 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.8.7 (Date: Mar 19, 2025) =
+* Improvement: Enhanced and refined the Customer Portal UI/UX.
+* Improvement: New block editor for the updated Customer Portal layout.
+* Improvement: Resume options for incomplete Freshdesk ticket migrations.
+* Fixed: Images pasted directly are deleted after some time.
+* Fixed: Unable to edit customers with no name in the customer list.
+* Fixed: Attachment issue when creating a ticket from Fluent Forms.
+* Fixed: Issue with unchecking agent permissions.
+* Fixed: Missing option to delete custom fields during creation.
+* Fixed: Creating an action in a workflow also creates a duplicate action.
+* Fixed: Advanced filter does not work when a multi-select option is selected.
+* Fixed: Unable to assign users to a new business box if the current one is restricted to agents.
+* Fixed: Product not displaying in WooCommerce widget.
+* Fixed: Conditional logic for custom fields not working properly when creating a ticket from the admin portal.
 
 = 1.8.6 (Date: Feb 28, 2025) =
 * Fixed: Textdomain Consistency: Standardized all translation string textdomains across the plugin for better internationalization support.
