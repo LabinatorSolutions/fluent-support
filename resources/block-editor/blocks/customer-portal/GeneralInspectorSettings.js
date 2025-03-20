@@ -4,6 +4,7 @@ const {
     PanelBody,
     PanelRow,
     RangeControl,
+    Tooltip,
 } = wp.components;
 const { __ } = wp.i18n;
 const { apiFetch } = wp;
@@ -83,7 +84,14 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                 />
 
                 <PanelColorSettings
-                    title={__('Primary Button Style')}
+                    title={
+                        <div className="fs_panel_color_settings">
+                            {__('Primary Button Style')}
+                            <Tooltip text={__('Customize the "Create Ticket" and "Reply" buttons.')}>
+                                <span className="dashicons dashicons-info" style={{ marginLeft: '5px', cursor: 'help' }}></span>
+                            </Tooltip>
+                        </div>
+                    }
                     className="fs_panel_color_settings"
                     initialOpen={true}
                     colorSettings={[
@@ -101,13 +109,21 @@ export const GeneralInspectorSettings = ({ attributes, setAttributes }) => {
                 />
 
                 <PanelColorSettings
-                    title={__('Secondary Button Style')}
+                    title={
+                        <div className="fs_panel_color_settings">
+                            {__('Secondary Button Style')}
+                            <Tooltip text={__('Customize the "Browse File," "Refresh," and "Close" buttons.')}>
+                                <span className="dashicons dashicons-info"
+                                      style={{marginLeft: '5px', cursor: 'help'}}></span>
+                            </Tooltip>
+                        </div>
+                    }
                     initialOpen={true}
                     className={'fs_panel_color_settings'}
                     colorSettings={[
                         {
                             value: attributes.secondaryButtonTextColor,
-                            onChange: (color) => setAttributes({ secondaryButtonTextColor: color }),
+                            onChange: (color) => setAttributes({secondaryButtonTextColor: color}),
                             label: __('Text Color'),
                         },
                         {
