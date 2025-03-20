@@ -235,7 +235,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 
 == Changelog ==
 
-= 1.8.7 (Date: Mar 19, 2025) =
+= 1.8.7 (Date: Mar 20, 2025) =
 * Improvement: Enhanced and refined the Customer Portal UI/UX.
 * Improvement: New block editor for the updated Customer Portal layout.
 * Improvement: Resume options for incomplete Freshdesk ticket migrations.
@@ -249,6 +249,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 * Fixed: Unable to assign users to a new business box if the current one is restricted to agents.
 * Fixed: Product not displaying in WooCommerce widget.
 * Fixed: Conditional logic for custom fields not working properly when creating a ticket from the admin portal.
+* Fixed: Direct copy-paste of images was not functioning properly in multisite.
 
 = 1.8.6 (Date: Feb 28, 2025) =
 * Fixed: Textdomain Consistency: Standardized all translation string textdomains across the plugin for better internationalization support.

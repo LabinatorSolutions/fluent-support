@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-19 08:08+0000\n"
+"POT-Creation-Date: 2025-03-20 06:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -4889,8 +4889,6 @@ msgstr ""
 msgid "This migrator will migrate total"
 msgstr ""
 
-#: app/Services/TransStrings.php:346
-#: app/Hooks/Handlers/CustomerPortalHandler.php:194
 #: builds/fluent-support/app/Services/TransStrings.php:346
 #: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:194
 msgid "This ticket has been closed at"
@@ -4899,6 +4897,11 @@ msgstr ""
 #: app/Hooks/Handlers/CustomerPortalHandler.php:200
 #: builds/fluent-support/app/Hooks/Handlers/CustomerPortalHandler.php:200
 msgid "This ticket is"
+msgstr ""
+
+#: app/Services/TransStrings.php:346
+#: app/Hooks/Handlers/CustomerPortalHandler.php:194
+msgid "This ticket was closed on"
 msgstr ""
 
 #: app/Services/TransStrings.php:358
