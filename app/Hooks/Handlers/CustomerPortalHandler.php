@@ -191,7 +191,7 @@ class CustomerPortalHandler
             'Prev' => __('Prev', 'fluent-support'),
             'agent_and_officials_can_see' => __('Only you and official support agents can view this conversation', 'fluent-support'),
             'reopen_ticket_instruction' => __('If you still have related issues. Please reopen this ticket and reply', 'fluent-support'),
-            'ticket_closed' => __('This ticket has been closed at', 'fluent-support'),
+            'ticket_closed'    => __('This ticket was closed on', 'fluent-support'),
             'Close Ticket' => __('Close Ticket', 'fluent-support'),
             'not_to_share_private_info' => __('Please do not share any private information.', 'fluent-support'),
             'replied' => __('replied', 'fluent-support'),
