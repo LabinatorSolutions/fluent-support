@@ -312,6 +312,9 @@ $tab-bg: #eee;
     cursor: pointer;
     transition: all 0.2s ease;
     margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 
     &:hover {
         background-color: $hover-bg;

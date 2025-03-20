@@ -35,10 +35,16 @@ class BlockHelper
                 }
 
                 .fs_ticket_refresh_btn,
-                .fs-upload-button {
+                .fs_upload_button {
                     background-color: <?php echo $attributes['secondaryButtonBgColor'] ?? 'rgba(255, 255, 255, 1)'; ?>;
                     color: <?php echo $attributes['secondaryButtonTextColor'] ?? '#18181B'; ?>;
                 }
+
+                .fs_ticket_refresh_btn span,
+                .fs_upload_button span {
+                    color: inherit !important;
+                }
+
                 .fs_close_ticket {
                     background-color: <?php echo $attributes['secondaryButtonBgColor'] ?? '#F5F7FA'; ?>;
                     color: <?php echo $attributes['secondaryButtonTextColor'] ?? '#525866'; ?>;
