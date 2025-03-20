@@ -19,7 +19,6 @@
             <div class="fs-upload-content">
                 <div class="fc-upload-text">
                     <p class="fs_upload_instruction">Add Attachment</p>
-                    <!-- <div class="browse-button"> -->
                         <el-button type="primary" class="fs-upload-button" >
                             <el-icon class="upload-icon">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,10 +27,9 @@
                             </el-icon>
                             Browse File
                         </el-button>
-                    <!-- </div> -->
                 </div>
             </div>
-            
+
             <template #tip>
                 <p class="fs-upload-info">(Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max file size: 2.0MB)</p>
             </template>
@@ -116,7 +114,7 @@ export default {
         handleRemove(file) {
             this.error_message = '';
             const fileIndex = this.file_lists.findIndex(f => f.uid === file.uid);
-            
+
             if (fileIndex !== -1) {
                 this.file_lists.splice(fileIndex, 1);
             }
@@ -124,7 +122,7 @@ export default {
             if (file.response && file.response.attachments) {
                 const attachmentIndex = this.attachments.findIndex(attachment => attachment.id === file.response.attachments[0].id);
                 console.log('Attachment index in attachments:', attachmentIndex);
-                
+
                 if (attachmentIndex !== -1) {
                     this.attachments.splice(attachmentIndex, 1);
                 }
