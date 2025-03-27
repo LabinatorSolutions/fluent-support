@@ -206,7 +206,7 @@
                     >
                         <template #default="scope">
                             <div class="fs_tk_preview">
-                                <a :href="$router.resolve({ name: 'view_ticket', params: { ticket_id: scope.row.id } }).href" 
+                                <a :href="$router.resolve({ name: 'view_ticket', params: { ticket_id: scope.row.id } }).href"
                                     @click="goToTicketView(scope.row, $event)"
                                     class="fs_ticket_title"
                                     >
@@ -574,17 +574,7 @@ export default {
             state.openLabelSearchDrawer = false;
         };
 
-        const goToTicketView = (ticket, event) => {
-            if (event.ctrlKey || event.metaKey) {
-                return;
-            }
-            event.preventDefault();
-            event.stopPropagation(); 
-            this.$router.push({
-                name: 'view_ticket',
-                params: { ticket_id: ticket.id }
-            });
-        };
+
 
         const fetchTickets = async () => {
             if (!state.app_ready) {
@@ -663,11 +653,27 @@ export default {
             }
         };
 
-        const gotToTicket = (row) => {
+        const gotToTicket = (row, event) => {
+            if (event.target && event.target.tagName.toLowerCase() === 'a') {
+                return;
+            }
+
             router.push({
                 name: "view_ticket",
                 params: { ticket_id: row.id },
             });
+        };
+
+        const goToTicketView = (ticket, event) => {
+            if (event.ctrlKey || event.metaKey) {
+                const routeData = router.resolve({
+                    name: "view_ticket",
+                    params: { ticket_id: ticket.id },
+                });
+                window.open(routeData.href, "_blank");
+                event.preventDefault();
+                event.stopPropagation();
+            }
         };
 
         const setFromSaveFilters = (callback) => {
