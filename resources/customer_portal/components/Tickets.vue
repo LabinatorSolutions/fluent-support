@@ -102,7 +102,7 @@
                         <template #default="{ row }">
                             <span :class="['fs_status_badge', getStatusClass(row.status)]">
                                 <span class="fs_status_dot"></span>
-                                {{ row.status }}
+                                {{ $t(row.status) }}
                             </span>
                         </template>
                     </el-table-column>
