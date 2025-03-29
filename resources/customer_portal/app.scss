@@ -970,52 +970,6 @@
 
     // Create Ticket CSS End
 
-    .fs_status_badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 16px;
-        text-align: left;
-
-
-        &.active {
-            color: rgba(35, 166, 130, 1);
-            background-color: rgba(238, 251, 246, 1);
-
-            .fs_status_dot {
-                color: rgba(35, 166, 130, 1);
-            }
-        }
-
-        &.new {
-            background-color: rgba(235, 241, 255, 1);
-            color: rgba(51, 92, 255, 1);
-
-            .fs_status_dot {
-                color: rgba(51, 92, 255, 1);
-            }
-        }
-
-        &.closed {
-            background-color: rgba(242, 245, 248, 1);
-            color: rgba(82, 88, 102, 1);
-
-            .fs_status_dot {
-                color: rgba(113, 119, 132, 1);
-            }
-        }
-
-        .fs_status_dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-        }
-    }
 
     // Ticket View CSS Start
     .fs_back_nav {
@@ -1192,31 +1146,6 @@
                     justify-content: space-between;
                     gap: 2px;
                     border-bottom: 1px solid #E1E4EA;
-
-                    .fs_status_badge {
-                        &.fs_status_badge_active {
-                            background-color: #EEFBF6;
-                            color: #23A682;
-                        }
-
-                        &.fs_status_badge_closed {
-                            background: #F2F5F8;
-                            color: #717784;
-                        }
-
-                        display: inline-flex;
-                        align-items: center;
-                        gap: 6px;
-                        padding: 4px 8px;
-                        border-radius: 15px;
-                        font-size: 12px;
-                        font-weight: 500;
-                        line-height: 16px;
-                        text-align: left;
-                        color: rgb(82, 88, 102);
-                        margin-left: 5px;
-
-                    }
                 }
 
                 @media (max-width: 480px) {
@@ -1841,3 +1770,51 @@
     padding: 0 !important;
 }
 
+
+
+.fs_status_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    text-align: left;
+
+
+    &.active {
+        color: rgba(35, 166, 130, 1);
+        background-color: rgba(238, 251, 246, 1);
+
+        .fs_status_dot {
+            color: rgba(35, 166, 130, 1);
+        }
+    }
+
+    &.new {
+        background-color: rgba(235, 241, 255, 1);
+        color: rgba(51, 92, 255, 1);
+
+        .fs_status_dot {
+            color: rgba(51, 92, 255, 1);
+        }
+    }
+
+    &.closed {
+        background-color: rgba(242, 245, 248, 1);
+        color: rgba(82, 88, 102, 1);
+
+        .fs_status_dot {
+            color: rgba(113, 119, 132, 1);
+        }
+    }
+
+    .fs_status_dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+}

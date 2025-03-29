@@ -412,6 +412,8 @@ export default {
     }
 }
 </script>
-<style lang="scss">
-
+<style scoped lang="scss">
+.fs_status_badge {
+    text-transform: capitalize;
+}
 </style>
