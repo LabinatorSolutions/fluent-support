@@ -9,10 +9,9 @@
                             <h2 class="fs_ticket_subject">
                                 #{{ ticket.id }} {{ ticket.title }}
                             </h2>
-                            <div class="fs_status_badge" :class="['fs_status_badge_' + (ticket.status === 'closed' ? 'closed' : 'active')]">
-                                <span class="fs_status_dot" :class="['fs_status_dot_' + (ticket.status === 'closed' ? 'closed' : 'active')]"></span>
-                                <span v-if="ticket.status === 'closed'">{{$t('Closed')}}</span>
-                                <span v-else>{{$t('Active')}}</span>
+                            <div :class="`fs_status_badge ${ticket.status}`">
+                                <span class="fs_status_dot"></span>
+                                {{ $t(ticket.status)  }}
                             </div>
                         </div>
                         <div v-if="(ticket.status !== 'closed') || ticket.product" class="fs_ticket_actions">
