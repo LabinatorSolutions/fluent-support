@@ -8,7 +8,7 @@
                 <label>{{$t('submit_heading')}}</label>
             </div>
             <el-form :model="ticket" label-position="top" class="fs_ticket_form">
-                <el-form-item :label="$t('Subject')" class="fs_input_wrapper">
+                <el-form-item :label="$t('subject')" class="fs_input_wrapper">
                     <el-input
                         size="default"
                         v-model="ticket.title"
@@ -99,7 +99,7 @@
                     </div>
                 </div>
 
-                <el-form-item label="Priority" v-if="Object.keys(priorities).length">
+                <el-form-item :label="$t('priority')" v-if="Object.keys(priorities).length">
                     <el-select
                         v-model="ticket.client_priority"
                         placeholder="Normal"
@@ -133,7 +133,7 @@
                         @click="create"
                         class="fs_create_ticket_button"
                     >
-                       {{$t('Create Ticket')}}
+                       {{$t('btn_text')}}
                     </el-button>
                 </el-form-item>
             </el-form>
