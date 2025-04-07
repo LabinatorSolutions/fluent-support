@@ -10,7 +10,7 @@
                         class="fs_create_ticket_btn"
                         @click="$router.push({ name: 'create_ticket' })"
                     >
-                        {{ '+ ' + $t('Create Ticket') }}
+                        {{ '+ ' + $t('create_ticket_cta') }}
                     </el-button>
 
                     <el-dropdown v-if="appVars.show_logout" class="fs_actions_dropdown" trigger="click">
