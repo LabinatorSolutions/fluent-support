@@ -31,7 +31,7 @@
             </div>
 
             <template #tip>
-                <p class="fs-upload-info">(Supported Types: Photos, CSV, PDF/Docs, Zip, JSON and max file size: 2.0MB)</p>
+                <p class="fs_upload_info">{{$t('allowed_files_and_size')}}</p>
             </template>
 
             <template #file="{ file }">
