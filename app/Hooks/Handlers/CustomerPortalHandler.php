@@ -230,7 +230,7 @@ class CustomerPortalHandler
             'Please input' => __('Please input', 'fluent-support'),
             'Search' => __('Search', 'fluent-support'),
             'No tickets found' => __('No tickets found', 'fluent-support'),
-            'create_ticket_cta' => __('Create a New Ticket', 'fluent-support'),
+            'create_ticket_cta' => __('Create Ticket', 'fluent-support'),
             'Reopen This ticket' => __('Reopen This ticket', 'fluent-support'),
             'by' => __('by', 'fluent-support'),
             'Unknown error. Please reload this page' => __('Unknown error. Please reload this page', 'fluent-support'),
