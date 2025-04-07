@@ -175,8 +175,10 @@ class CustomerPortalHandler
 
         $i18ns = [
             'Conversation' => __('Conversation', 'fluent-support'),
+            'Back to All Tickets' => __('Back to All Tickets', 'fluent-support'),
             'Click Here to Write a reply' => __('Click Here to Write a reply', 'fluent-support'),
             'All' => __('All', 'fluent-support'),
+            'All Tickets'    => __('All Tickets', 'fluent-support'),
             'Open' => __('Open', 'fluent-support'),
             'open' => __('open', 'fluent-support'),
             'Closed' => __('Closed', 'fluent-support'),
@@ -208,6 +210,8 @@ class CustomerPortalHandler
             'Delete Customer' => __('Delete Customer', 'fluent-support'),
             'Update Customer' => __('Update Customer', 'fluent-support'),
             'Create Customer' => __('Create Customer', 'fluent-support'),
+            'Browse Files' => __('Browse Files', 'fluent-support'),
+            'Add Attachment' => __('Add Attachment', 'fluent-support'),
 
             'subject_placeholder' => __('What\'s this support ticket about?', 'fluent-support'),
             'service_placeholder' => __('Select related Product/Service', 'fluent-support'),
@@ -220,10 +224,12 @@ class CustomerPortalHandler
             'details_help' => __('Please provide details about your problem', 'fluent-support'),
             'product_services' => __('Related Product/Service', 'fluent-support'),
             'priority' => __('Priority', 'fluent-support'),
-            'btn_text' => __('Create Ticket', 'fluent-support'),
+            'Create Ticket' => __('Create Ticket', 'fluent-support'),
             'submit_heading' => __('Submit a Support Ticket', 'fluent-support'),
             'All Products' => __('All Products', 'fluent-support'),
             'Please input' => __('Please input', 'fluent-support'),
+            'Search' => __('Search', 'fluent-support'),
+            'No tickets found' => __('No tickets found', 'fluent-support'),
             'create_ticket_cta' => __('Create a New Ticket', 'fluent-support'),
             'Reopen This ticket' => __('Reopen This ticket', 'fluent-support'),
             'by' => __('by', 'fluent-support'),

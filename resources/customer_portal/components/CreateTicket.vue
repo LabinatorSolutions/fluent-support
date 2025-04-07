@@ -13,7 +13,7 @@
                         size="default"
                         v-model="ticket.title"
                         :class="{ 'error': errors.get('title') }"
-                        placeholder="What's this support ticket about?"
+                        :placeholder="$t('subject_placeholder')"
                     />
 
                     <div v-if="errors.get('title')" class="error-message">

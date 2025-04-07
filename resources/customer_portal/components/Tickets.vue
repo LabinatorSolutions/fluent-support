@@ -81,6 +81,7 @@
                     style="width: 100%"
                     :header-cell-style="{ background: '#f5f7fa', color: '#0e121b', fontWeight: '500'}"
                     :row-class-name="'fs_ticket_row'"
+                    :empty-text="$t('No tickets found')"
                 >
                     <el-table-column prop="title" :label="$t('Conversation')" class-name="conversation-cell"
                                      width="450">

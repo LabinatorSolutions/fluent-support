@@ -18,7 +18,7 @@
                 <div class="fs_product_filter">
                     <el-select
                         v-model="filters.product_id"
-                        placeholder="All Products"
+                        :placeholder= "$t('All Products')"
                         clearable
                         @change="fetchTickets"
                         style="width: 180px"
@@ -93,7 +93,7 @@
             <div class="fs_search_filter">
                 <el-input
                     v-model="localSearchQuery"
-                    placeholder="Search..."
+                    :placeholder= "$t('Search') + '...'"
                     clearable
                     @keyup.enter="fetchTickets"
                     @input="onSearchInput"
