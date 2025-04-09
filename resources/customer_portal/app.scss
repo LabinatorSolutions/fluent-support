@@ -336,6 +336,13 @@
                     .fs_filter_right {
                         .fs_search_filter {
                             width: max-content;
+                            .search-input {
+                                .el-input__wrapper {
+                                    .el-input__inner {
+                                        min-height: unset;
+                                    }
+                                }
+                            }
                         }
 
                         @media screen and (max-width: 768px) {
@@ -346,16 +353,24 @@
                     }
 
                     .fs_button_groups {
+                        all: initial;
+                        * {
+                            all: unset;
+                            box-sizing: border-box;
+                        }
+
                         display: flex;
                         gap: 4px;
                         padding: 4px;
                         background: rgb(245, 247, 250);
                         border-radius: 10px;
                         max-width: 250px;
+                        font-family: inherit; // optional, you can set your own font
+                        font-size: 14px;
 
                         .status-btn {
-                            padding: 6px 16px;
-                            border: none;
+                            display: inline-block;
+                            text-align: center;
                             background: transparent;
                             color: #6B7280;
                             font-size: 14px;
@@ -363,7 +378,7 @@
                             border-radius: 6px;
                             cursor: pointer;
                             min-width: 78px;
-
+                            line-height: 1.7;
                             &:hover {
                                 background: #e5e7eb;
                             }
