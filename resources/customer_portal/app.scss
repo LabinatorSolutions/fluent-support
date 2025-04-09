@@ -6,8 +6,7 @@
     * {
         box-sizing: border-box;
     }
-
-    max-width: 808px;
+    max-width: 1000px;
 }
 
 .fs_client_portal {
@@ -241,8 +240,9 @@
                 .fs_filter_container {
                     display: flex;
                     justify-content: space-between;
-                    gap: 60px;
-                    max-width: 486px;
+                    gap: 15px;
+                    flex-wrap: wrap;
+                    width: 100%;
 
                     .fs_filter_left {
                         display: flex;
@@ -323,6 +323,14 @@
                                 }
 
                             }
+                            .fs_product_filter {
+                                @media screen and (max-width: 716px) {
+                                    flex: 1;
+                                    .el-select {
+                                        width: 100% !important;
+                                    }
+                                }
+                            }
                         }
                     }
 
@@ -387,7 +395,7 @@
                         border-radius: 8px;
                     }
 
-                    @media (max-width: 768px) {
+                    @media (max-width: 716px) {
                         .fs_filter_left {
                             flex-direction: column;
                             gap: 10px;
@@ -449,6 +457,7 @@
 
                     .el-table__header {
                         table-layout: auto;
+                        width: 100% !important;
 
                         thead {
                             th {
@@ -476,6 +485,7 @@
                     }
 
                     .el-table__body {
+                        width: 100% !important;
                         .fs_ticket_row {
                             background: white;
 
@@ -671,25 +681,27 @@
                 --el-pagination-hover-color: #f3f4f6;
                 --el-pagination-button-color: #666;
                 --el-pagination-button-disabled-color: #ccc;
+                .el-pager {
+                    margin: 0;
+                    li {
+                        background: transparent;
+                        color: #666;
+                        min-width: 32px;
+                        height: 32px;
+                        line-height: 32px;
+                        border-radius: 8px;
+                        margin: 0 4px;
+                        font-weight: normal;
+                        border: 1px solid rgba(225, 228, 234, 1);
+                        &.is-active {
+                            background: rgba(245, 247, 250, 1);
+                            color: #333;
+                            font-weight: 600;
+                        }
+                    }
+                }
             }
 
-            .el-pagination .el-pager li {
-                background: transparent;
-                color: #666;
-                min-width: 32px;
-                height: 32px;
-                line-height: 32px;
-                border-radius: 8px;
-                margin: 0 4px;
-                font-weight: normal;
-                border: 1px solid rgba(225, 228, 234, 1);
-            }
-
-            .el-pagination .el-pager li.is-active {
-                background: rgba(245, 247, 250, 1);
-                color: #333;
-                font-weight: 600;
-            }
 
             .el-pagination .btn-prev,
             .el-pagination .btn-next {
@@ -1757,6 +1769,29 @@
     }
 
     // AttachmentForm CSS End
+
+
+    &.fs_customer_portal_mobile {
+        .fs_ticket_wrapper {
+            .fs_tickets_container {
+                .fs_filters_section {
+                    .fs_filter_container {
+                        .fs_filter_left {
+                            width: 100%;
+                            justify-content: space-between;
+
+                        }
+                        .fs_filter_right {
+                            width: 100%;
+                            .fs_search_filter {
+                                width: 100%;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 .el-table--fit.el-table table tr td {
