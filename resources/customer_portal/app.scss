@@ -336,18 +336,34 @@
                     .fs_filter_right {
                         .fs_search_filter {
                             width: max-content;
+
                             .search-input {
                                 .el-input__wrapper {
+                                    border-radius: 8px;
+                                    padding: 0 6px;
+                                    min-height: 32px;
+                                    height: 32px;
+
                                     .el-input__inner {
-                                        min-height: unset;
+                                        min-height: 28px;
+                                        height: 28px;
+                                        line-height: 28px;
+                                        font-size: 13px;
+                                        padding: 0 4px;
                                     }
+                                }
+
+                                .search-icon {
+                                    width: 14px;
+                                    height: 14px;
+                                    color: #999;
                                 }
                             }
                         }
 
                         @media screen and (max-width: 768px) {
                             .fs_search_filter {
-                                width: 100%;
+                                max-width: 100%;
                             }
                         }
                     }
