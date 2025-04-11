@@ -60,7 +60,6 @@ export default {
         const dragKey = ref(Date.now());
 
         const appendAction = (action) => {
-            console.log()
             showAdder.value = false;
             const newAction = {
                 ...action,
@@ -68,7 +67,6 @@ export default {
                 activeName: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             };
             actionsParam.value.push(newAction);
-            props.actions.push(action);
         };
 
         const removeAction = (actionIndex) => {
@@ -85,18 +83,24 @@ export default {
             context.emit("updateWorkFlow");
         };
 
+        const emitUpdatedActions = () => {
+            context.emit("update:actions", actionsParam.value);
+        };
+
         watch(actionsParam, (newVal, oldVal) => {
             if (oldVal && newVal.length === oldVal.length && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
                 const updatedSequence = newVal.map(action => action.id);
                 context.emit("updateActionSequence", updatedSequence);
             }
-        });
+
+            emitUpdatedActions();
+        }, { deep: true });
 
         onMounted(() => {
             if (!props.actions.length) {
                 showAdder.value = true;
             }
-            // Create a deep copy to avoid reactivity issues and ensure a separate reference
+
             actionsParam.value = JSON.parse(JSON.stringify(props.actions));
         });
 

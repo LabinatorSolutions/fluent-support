@@ -106,11 +106,13 @@
                     </div>
                     <div class="fs_box_body fs_padded_20">
                         <action-mappers
-                            @updateWorkFlow="updateWorkFlow()"
                             :actions="actions"
                             :all_actions="filtred_action_fields"
+                            @update:actions="val => actions = val"
                             @updateActionSequence="updateActionSequence"
-                        ></action-mappers>
+                            @updateWorkFlow="updateWorkFlow"
+                        />
+
                     </div>
                 </div>
             </div>
