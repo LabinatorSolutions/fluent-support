@@ -246,14 +246,14 @@ class CustomerPortalController extends Controller
     public function agentFeedbackRating(Request $request, CustomerPortalService $customerPortalService, $ticketId)
     {
         // just for validation
-        $ticket = Ticket::findOrFail($ticketId);
+        $ticket = Ticket::with(['customer'])->findOrFail($ticketId);
         $customerAdditionalData = $this->getCustomerAdditionalData($request);
-        $customer = $customerPortalService->resolveCustomer($customerAdditionalData, $request->getIp(), false);
-        $customerPortalService->checkCustomerTicketAccess($customer, $ticket, 'vote');
+        $customer = $customerPortalService->getCustomer($customerAdditionalData, $ticket);
+        $customerPortalService->checkCustomerTicketAccess($customer, $ticket, 'feedback');
 
         $conversationID = $request->getSafe('conversation_id', 'intval');
-        $approvalStatus = $request->getSafe('approvalStatus', 'sanitize_text_field');
-
+        $approvalStatus = $request->getSafe('approval_status', 'sanitize_text_field');
+        
         try {
             return $customerPortalService->addUserFeedback($approvalStatus, $conversationID);
         } catch (Exception $e) {

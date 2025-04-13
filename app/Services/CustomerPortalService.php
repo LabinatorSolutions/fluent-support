@@ -254,7 +254,7 @@ class CustomerPortalService
      *
      * @since 1.5.7
      */
-    private function getCustomer($customerAdditionalData, $ticket)
+    public function getCustomer($customerAdditionalData, $ticket)
     {
         if (Arr::get($customerAdditionalData, 'intended_ticket_hash') && Helper::isPublicSignedTicketEnabled()) {
             $customer = $ticket->customer;
