@@ -5,7 +5,7 @@
 
         <div v-else class="fs_reply_wrap">
             <div>
-                <wp-editor :autofocus="true" :mediaButtons="false" :height="150" :ticketId="ticket.id" :is_agent="false" :is_direct_paste="true"  v-model="response_body" />
+                <simple-wp-editor v-model="response_body" :autofocus="true"  :height="150" :ticketId="ticket.id" :is_direct_paste="true" />
                 <error :error="errors.get('content')"/>
             </div>
 
@@ -32,16 +32,16 @@
 </template>
 
 <script type="text/babel">
-import WpEditor from '../../admin/Pieces/_wp_editor';
+import SimpleWpEditor from '@/common/SimpleWpEditor.vue';
 import AttachmentForm from './_AttachmentForm';
-import Error from '../../admin/Pieces/Error';
-import Errors from '../../admin/Bits/Errors';
+import Error from '@/common/Error.vue';
+import Errors from '@/common/Errors.js';
 
 export default {
     name: 'InlineReply',
     props: ['ticket'],
     components: {
-        WpEditor,
+        SimpleWpEditor,
         AttachmentForm,
         Error
     },
@@ -94,6 +94,3 @@ export default {
     }
 }
 </script>
-<style lang="scss">
-
-</style>

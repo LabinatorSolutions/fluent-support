@@ -1,11 +1,11 @@
 <template>
     <div class="fs_create_ticket_container">
         <!-- Back Button -->
-        <back-button />
+        <back-button/>
 
         <div class="fs_ticket_form_container">
             <div class="fs_ticket_header">
-                <label>{{$t('submit_heading')}}</label>
+                <label>{{ $t('submit_heading') }}</label>
             </div>
             <el-form :model="ticket" label-position="top" class="fs_ticket_form">
                 <el-form-item :label="$t('subject')" class="fs_input_wrapper">
@@ -27,7 +27,7 @@
 
                     <div v-if="shouldShowSuggestions && ticket.title.length" class="fs_suggestions_popover">
                         <div class="fs_suggestions_header">
-                            <label>{{$t('Suggested Articles')}}</label>
+                            <label>{{ $t('Suggested Articles') }}</label>
                             <el-button
                                 type="text"
                                 class="fs_close_button"
@@ -59,7 +59,7 @@
 
                 <el-form-item class="fs_tk_suggestions">
                     <label class="fs_ticket_details_label"> {{ $t('ticket_details') }}</label>
-                    <wp-editor :height="150" :media-buttons="false" :is_direct_paste="true" v-model="ticket.content"/>
+                    <simple-wp-editor :height="150" :is_direct_paste="true" v-model="ticket.content"/>
                     <p class="fs_tk_help">{{ $t('details_help') }}</p>
 
                     <div v-if="errors.get('content')" class="error-message">
@@ -133,7 +133,7 @@
                         @click="create"
                         class="fs_create_ticket_button"
                     >
-                       {{$t('btn_text')}}
+                        {{ $t('btn_text') }}
                     </el-button>
                 </el-form-item>
             </el-form>
@@ -141,31 +141,24 @@
     </div>
 </template>
 
-<script>
-import {defineComponent} from 'vue'
-import {ArrowLeft, List, UploadFilled} from '@element-plus/icons-vue'
-import WpEditor from '../../admin/Pieces/_wp_editor'
-import Error from '../../admin/Pieces/Error'
-import Errors from '../../admin/Bits/Errors'
+<script type="text/babel">
+import SimpleWpEditor from '@/common/SimpleWpEditor.vue'
+import Error from '@/common/Error.vue'
+import Errors from '@/common/Errors.js'
 import CustomFieldsForm from "./_CustomFieldForm";
 import AttachmentForm from "./_AttachmentForm";
 import BackButton from "./pieces/BackButton";
-import {debounce} from "lodash";
+import debounce from "lodash/debounce";
 
-export default defineComponent({
+export default {
     name: 'CreateTicket',
-
     components: {
-        WpEditor,
+        SimpleWpEditor,
         Error,
-        ArrowLeft,
-        UploadFilled,
         CustomFieldsForm,
-        List,
         AttachmentForm,
         BackButton
     },
-
     data() {
         return {
             errors: new Errors(),
@@ -210,9 +203,6 @@ export default defineComponent({
             }
         }
     },
-    created() {
-        this.debouncedGetSuggestions = debounce(this.getSuggestions, 500);
-    },
     methods: {
         create() {
             this.errors.clear()
@@ -251,7 +241,7 @@ export default defineComponent({
                     console.log(errors);
                     // this.errors.record(errors);
                 })
-                .always(() => {
+                .finally(() => {
                     this.fetchingSuggestions = false;
                 });
         },
@@ -259,13 +249,11 @@ export default defineComponent({
         hasQueryOrSpace(search) {
             return search && (search.length >= 5 || (search.split(' ').length > 1));
         }
+    },
+    created() {
+        this.debouncedGetSuggestions = debounce(this.getSuggestions, 500);
     }
-})
+};
 </script>
-
-<style lang="scss">
-
-
-</style>
 
 

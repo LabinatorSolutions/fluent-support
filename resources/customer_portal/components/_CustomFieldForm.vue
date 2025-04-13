@@ -52,15 +52,14 @@
         </div>
         <div v-else-if="loading_remote" style="width: 100%; height: 20px" v-loading="true"></div>
     </div>
-
 </template>
 
 <script type="text/babel">
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import each from 'lodash/each';
-import Errors from '../../admin/Bits/Errors';
-import Error from '../../admin/Pieces/Error';
+import Errors from '@/common/Errors';
+import Error from '@/common/Error';
 
 
 export default {
@@ -95,7 +94,7 @@ export default {
                 .catch((errors) => {
                     console.log(errors);
                 })
-                .always(() => {
+                .finally(() => {
                     this.loading_remote = false;
                 });
         },
@@ -249,9 +248,3 @@ export default {
     }
 }
 </script>
-
-<style lang="scss">
-
-
-</style>
-

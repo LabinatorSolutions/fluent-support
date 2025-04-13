@@ -18,7 +18,7 @@
                 <div class="fs_product_filter">
                     <el-select
                         v-model="filters.product_id"
-                        :placeholder= "$t('All Products')"
+                        :placeholder="$t('All Products')"
                         clearable
                         @change="fetchTickets"
                         style="width: 180px"
@@ -48,7 +48,8 @@
                                     v-model="sorting.sort_by"
                                     :disabled="appVars.customer_status === 'inactive'"
                                 >
-                                    <el-radio v-for="column in sortingColumns" :key="column.value" :label="column.value">
+                                    <el-radio v-for="column in sortingColumns" :key="column.value"
+                                              :label="column.value">
                                         {{ column.label }}
                                     </el-radio>
                                 </el-radio-group>
@@ -64,7 +65,8 @@
                                 <el-radio-button label="desc">{{ $t('Descending') }}</el-radio-button>
                             </el-radio-group>
                             <div class="fs_sorting_button">
-                                <el-button @click="fetchTickets()" type="primary" :disabled="appVars.customer_status === 'inactive'">
+                                <el-button @click="fetchTickets()" type="primary"
+                                           :disabled="appVars.customer_status === 'inactive'">
                                     {{ $t('Apply') }}
                                 </el-button>
                             </div>
@@ -93,7 +95,7 @@
             <div class="fs_search_filter">
                 <el-input
                     v-model="localSearchQuery"
-                    :placeholder= "$t('Search') + '...'"
+                    :placeholder="$t('Search') + '...'"
                     clearable
                     @keyup.enter="fetchTickets"
                     @input="onSearchInput"
@@ -116,7 +118,7 @@
     </div>
 </template>
 
-<script>
+<script type="text/babel">
 export default {
     name: 'TicketFilters',
     props: {
@@ -168,64 +170,3 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.fs_popover_item {
-    padding: 10px;
-
-    .fs_popover_title {
-        margin-top: 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #2F3448;
-    }
-
-    .fs_radio_blocks {
-        margin-top: 10px;
-        .el-radio-group {
-            display: grid;
-
-            .el-radio__input {
-                &.is-checked {
-                    .el-radio__inner {
-                        background: #18181B;
-                        border-color: #18181B;
-                    }
-
-                    & + .el-radio__label {
-                        color: #18181B;
-                    }
-                }
-            }
-        }
-    }
-
-    .fs_switch_button {
-        display: flex;
-        margin: 16px 0px;
-
-        .el-radio-button {
-            line-height: 1.25rem;
-
-            &.is-active {
-                .el-radio-button__inner {
-                    border-color: #c0c2c4;
-                    background-color: #d9dadc;
-                    color: #253241;
-                    box-shadow: none;
-                }
-            }
-
-        }
-
-    }
-
-    .fs_sorting_button {
-        .el-button {
-            background: #18181B;
-            color: #fff;
-            border-color: #18181B;
-            border-radius: 8px;
-        }
-    }
-}
-</style>
