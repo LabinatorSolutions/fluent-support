@@ -29,11 +29,9 @@
                         </el-button>
                 </div>
             </div>
-
             <template #tip>
                 <p class="fs_upload_info">{{$t('allowed_files_and_size')}}</p>
             </template>
-
             <template #file="{ file }">
                 <div class="fs-file-list">
                     <div class="fs-file-icon">
@@ -73,16 +71,10 @@
 </template>
 
 <script>
-import {Upload, Delete, Loading, CircleCloseFilled, CircleCheckFilled} from '@element-plus/icons-vue';
 
 export default {
-    components: {
-        Upload,
-        Delete,
-        CircleCloseFilled,
-        CircleCheckFilled,
-        Loading
-    },
+    name: 'AttachmentForm',
+    components: {},
     props: {
         ticket: Object,
         attachments: Array,
@@ -95,7 +87,7 @@ export default {
             error_message: '',
             upload_data: {
                 ticket_id: this.ticket.id,
-                intended_ticket_hash: this.appVars.intended_ticket_hash,
+                intended_ticket_hash: this.appVars.intended_ticket_hash || '',
                 is_agent: this.is_agent
             },
             requestHeaders: {
@@ -157,8 +149,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-
-
-</style>

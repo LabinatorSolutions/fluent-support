@@ -2,10 +2,8 @@ import { createApp } from 'vue';
 import Application from './Application';
 import { createWebHashHistory, createRouter } from 'vue-router'
 import routes from "./routes";
-
-import {
-    ElLoading
-} from 'element-plus';
+import {ElNotification, ElLoading, ElMessageBox} from 'element-plus'
+import Rest from './Rest.js';
 
 import {
     Refresh,
@@ -14,10 +12,24 @@ import {
     ArrowUpBold,
     ArrowDownBold,
     Sort,
-
+    ArrowLeft,
+    List,
+    UploadFilled,
+    Upload,
+    Delete,
+    Loading,
+    CircleCloseFilled,
+    CircleCheckFilled
 } from '@element-plus/icons-vue/dist';
 
 const app = createApp(Application);
+
+app.use(ElLoading);
+
+app.config.globalProperties.$notify = ElNotification;
+app.config.globalProperties.$confirm = ElMessageBox.confirm;
+app.config.globalProperties.$promt = ElMessageBox.prompt;
+app.config.globalProperties.$messageBox = ElMessageBox;
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -31,27 +43,20 @@ const components = [
     Search,
     ArrowUpBold,
     ArrowDownBold,
-    Sort
+    Sort,
+    List,
+    ArrowLeft,
+    UploadFilled,
+    Upload,
+    Delete,
+    Loading,
+    CircleCloseFilled,
+    CircleCheckFilled
 ];
 
 components.forEach(component => {
     app.component(component.name, component)
 })
-
-app.use(ElLoading);
-
-const request = function(method, route, data = {}) {
-    const url = `${window.fs_customer_portal.rest.url}/${route}`;
-
-    return window.jQuery.ajax({
-        url: url,
-        type: method,
-        data: data,
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', window.fs_customer_portal.rest.nonce);
-        }
-    });
-};
 
 app.config.globalProperties.appVars = window.fs_customer_portal;
 
@@ -61,20 +66,35 @@ app.mixin({
         }
     },
     methods: {
-        $get(route, data) {
-            return request('GET', route, data)
-        },
-        $post(route, data) {
-            return request('POST', route, data)
-        },
-        $del(route, data) {
-            return request('DELETE', route, data);
-        },
-        $put(route, data) {
-            return request('PUT', route, data);
-        },
-        $patch(route, data) {
-            return request('PATCH', route, data);
+        $get: Rest.get,
+        $post: Rest.post,
+        $del: Rest.delete,
+        $put: Rest.put,
+        $patch: Rest.patch,
+        $uploadFile: Rest.uploadFile,
+        $handleError(response) {
+            let errorMessage = '';
+            if (typeof response === 'string') {
+                errorMessage = response;
+            } else if (response && response.message) {
+                errorMessage = response.message;
+            } else {
+                errorMessage = this.convertToText(response);
+            }
+            if (!errorMessage) {
+                errorMessage = 'Something is wrong!';
+            }
+
+            if (typeof errorMessage != 'string') {
+                errorMessage = this.convertToText(errorMessage);
+            }
+
+            this.$notify({
+                type: 'error',
+                title: 'Error',
+                message: errorMessage,
+                dangerouslyUseHTMLString: true
+            });
         },
         convertToText(obj) {
             const string = [];

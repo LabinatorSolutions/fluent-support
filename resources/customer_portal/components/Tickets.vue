@@ -15,8 +15,11 @@
 
                     <el-dropdown v-if="appVars.show_logout" class="fs_actions_dropdown" trigger="click">
                         <el-button class="fs_actions_dropdown_btn">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M10 3.25C9.38125 3.25 8.875 3.75625 8.875 4.375C8.875 4.99375 9.38125 5.5 10 5.5C10.6187 5.5 11.125 4.99375 11.125 4.375C11.125 3.75625 10.6187 3.25 10 3.25ZM10 14.5C9.38125 14.5 8.875 15.0063 8.875 15.625C8.875 16.2437 9.38125 16.75 10 16.75C10.6187 16.75 11.125 16.2437 11.125 15.625C11.125 15.0063 10.6187 14.5 10 14.5ZM10 8.875C9.38125 8.875 8.875 9.38125 8.875 10C8.875 10.6188 9.38125 11.125 10 11.125C10.6187 11.125 11.125 10.6188 11.125 10C11.125 9.38125 10.6187 8.875 10 8.875Z" fill="#525866"/>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M10 3.25C9.38125 3.25 8.875 3.75625 8.875 4.375C8.875 4.99375 9.38125 5.5 10 5.5C10.6187 5.5 11.125 4.99375 11.125 4.375C11.125 3.75625 10.6187 3.25 10 3.25ZM10 14.5C9.38125 14.5 8.875 15.0063 8.875 15.625C8.875 16.2437 9.38125 16.75 10 16.75C10.6187 16.75 11.125 16.2437 11.125 15.625C11.125 15.0063 10.6187 14.5 10 14.5ZM10 8.875C9.38125 8.875 8.875 9.38125 8.875 10C8.875 10.6188 9.38125 11.125 10 11.125C10.6187 11.125 11.125 10.6188 11.125 10C11.125 9.38125 10.6187 8.875 10 8.875Z"
+                                    fill="#525866"/>
                             </svg>
 
                         </el-button>
@@ -24,8 +27,11 @@
                             <el-dropdown-menu class="fs_dropdown_menu">
                                 <el-dropdown-item class="fs_dropdown_item" v-if="appVars.show_logout" @click="logout">
                                     <div class="fs_logout_item">
-                                        <svg  class="fs_logout_icon" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M4.75 17.5C4.55109 17.5 4.36032 17.421 4.21967 17.2803C4.07902 17.1397 4 16.9489 4 16.75V3.25C4 3.05109 4.07902 2.86032 4.21967 2.71967C4.36032 2.57902 4.55109 2.5 4.75 2.5H15.25C15.4489 2.5 15.6397 2.57902 15.7803 2.71967C15.921 2.86032 16 3.05109 16 3.25V5.5H14.5V4H5.5V16H14.5V14.5H16V16.75C16 16.9489 15.921 17.1397 15.7803 17.2803C15.6397 17.421 15.4489 17.5 15.25 17.5H4.75ZM14.5 13V10.75H9.25V9.25H14.5V7L18.25 10L14.5 13Z" fill="#525866"/>
+                                        <svg class="fs_logout_icon" width="20" height="20" viewBox="0 0 20 20"
+                                             fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M4.75 17.5C4.55109 17.5 4.36032 17.421 4.21967 17.2803C4.07902 17.1397 4 16.9489 4 16.75V3.25C4 3.05109 4.07902 2.86032 4.21967 2.71967C4.36032 2.57902 4.55109 2.5 4.75 2.5H15.25C15.4489 2.5 15.6397 2.57902 15.7803 2.71967C15.921 2.86032 16 3.05109 16 3.25V5.5H14.5V4H5.5V16H14.5V14.5H16V16.75C16 16.9489 15.921 17.1397 15.7803 17.2803C15.6397 17.421 15.4489 17.5 15.25 17.5H4.75ZM14.5 13V10.75H9.25V9.25H14.5V7L18.25 10L14.5 13Z"
+                                                fill="#525866"/>
                                         </svg>
                                         <span>{{ $t('Log Out') }}</span>
                                     </div>
@@ -124,18 +130,16 @@
     </div>
 </template>
 
-<script>
-import {debounce} from 'lodash'
-import {List} from '@element-plus/icons-vue'
-import TicketFilters from "@/customer_portal/components/_TicketFilter.vue";
+<script type="text/babel">
+import debounce from 'lodash/debounce'
+import TicketFilters from "./_TicketFilter.vue";
 import Pagination from "./pieces/Pagination";
 
 export default {
     name: 'TicketsList',
     components: {
         Pagination,
-        TicketFilters,
-        List
+        TicketFilters
     },
     data() {
         return {
@@ -178,29 +182,27 @@ export default {
         }
     },
     methods: {
-        async fetchTickets() {
+        fetchTickets() {
             this.loading = true
-            try {
-                const response = await this.$get('tickets', {
-                    per_page: this.pagination.per_page,
-                    page: this.pagination.current_page,
-                    filter_type: this.filterType,
-                    search: this.search,
-                    filters: this.filters,
-                    sorting: this.sorting
-                })
-
-                if (response.tickets && response.tickets.data) {
+            this.$get('tickets', {
+                per_page: this.pagination.per_page,
+                page: this.pagination.current_page,
+                filter_type: this.filterType,
+                search: this.search,
+                filters: this.filters,
+                sorting: this.sorting
+            })
+                .then(response => {
                     this.tickets = response.tickets.data
-                    this.pagination.total = response.tickets.total
-                }
-            } catch (error) {
-                console.error('Error fetching tickets:', error)
-            } finally {
-                this.loading = false
-            }
+                    this.pagination.total = response.tickets.total;
+                })
+                .catch(errors => {
+                    this.$handleErrors(errors);
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
         },
-
         getStatusClass(status) {
             return status.toLowerCase()
         },
@@ -255,31 +257,8 @@ export default {
     },
     mounted() {
         if (this.appVars.customer_status !== 'inactive') {
-            this.fetchTickets()
+            this.fetchTickets();
         }
     }
 }
 </script>
-
-<style>
-.fs_dropdown_menu {
-    padding: 8px;
-    border-radius: 10px;
-
-    .fs_dropdown_item {
-        padding: 5px 16px 5px 0;
-
-        &:hover {
-            background: rgba(225, 228, 234, 0.5) !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
-            color: inherit !important;
-        }
-    }
-
-    .fs_logout_item {
-        display: flex;
-        gap: 4px;
-        align-items: center;
-    }
-}
-</style>

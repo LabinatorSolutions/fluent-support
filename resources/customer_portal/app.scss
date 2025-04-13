@@ -1,6 +1,8 @@
 @import "~element-plus/theme-chalk/el-var.css";
 @import "~element-plus/theme-chalk/el-loading.css";
 @import "~element-plus/theme-chalk/el-icon.css";
+@import "~element-plus/theme-chalk/el-notification.css";
+@import "~element-plus/theme-chalk/el-message-box.css";
 
 #fluent_support_client_app {
     * {
@@ -9,7 +11,6 @@
 }
 
 .fs_client_portal {
-
     a.el-button {
         text-decoration: none;
     }
@@ -106,7 +107,7 @@
         }
 
         .mce-statusbar {
-            display: none !important;
+            border-top: none !important;
         }
     }
 
@@ -157,8 +158,7 @@
             border-radius: 16px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid rgba(225, 228, 234, 1);
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 100%;
 
             .fs_tickets_header {
                 display: flex;
@@ -1836,8 +1836,6 @@
     padding: 0 !important;
 }
 
-
-
 .fs_status_badge {
     display: inline-flex;
     align-items: center;
@@ -1848,7 +1846,6 @@
     font-weight: 500;
     line-height: 16px;
     text-align: left;
-
 
     &.active {
         color: rgba(35, 166, 130, 1);
@@ -1882,5 +1879,134 @@
         height: 6px;
         border-radius: 50%;
         background: currentColor;
+    }
+
+    &.capitalized {
+        text-transform: capitalize;
+    }
+}
+
+.fs_popover_item {
+    padding: 10px;
+
+    .fs_popover_title {
+        margin-top: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2F3448;
+    }
+
+    .fs_radio_blocks {
+        margin-top: 10px;
+
+        .el-radio-group {
+            display: grid;
+
+            .el-radio__input {
+                &.is-checked {
+                    .el-radio__inner {
+                        background: #18181B;
+                        border-color: #18181B;
+                    }
+
+                    & + .el-radio__label {
+                        color: #18181B;
+                    }
+                }
+            }
+        }
+    }
+
+    .fs_switch_button {
+        display: flex;
+        margin: 16px 0px;
+
+        .el-radio-button {
+            line-height: 1.25rem;
+
+            &.is-active {
+                .el-radio-button__inner {
+                    border-color: #c0c2c4;
+                    background-color: #d9dadc;
+                    color: #253241;
+                    box-shadow: none;
+                }
+            }
+
+        }
+
+    }
+
+    .fs_sorting_button {
+        .el-button {
+            background: #18181B;
+            color: #fff;
+            border-color: #18181B;
+            border-radius: 8px;
+        }
+    }
+}
+
+.fs_dropdown_menu {
+    padding: 8px;
+    border-radius: 10px;
+
+    .fs_dropdown_item {
+        padding: 5px 16px 5px 0;
+
+        &:hover {
+            background: rgba(225, 228, 234, 0.5) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+            color: inherit !important;
+        }
+    }
+
+    .fs_logout_item {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+}
+
+.wp_vue_editor {
+    width: 100%;
+    min-height: 100px;
+}
+
+.wp_vue_editor_wrapper {
+    position: relative;
+    width: 100%;
+
+    .wp-media-buttons .insert-media {
+        vertical-align: middle;
+    }
+
+    .popover-wrapper {
+        z-index: 2;
+        position: absolute;
+        top: 0;
+        right: 0;
+
+        &-plaintext {
+            left: auto;
+            right: 0;
+            top: -32px;
+        }
+    }
+
+    .wp-editor-tabs {
+        float: left;
+    }
+}
+
+.mce-fluentcrm_editor_btn {
+    button {
+        font-size: 10px !important;
+        border: 1px solid gray;
+        margin-top: 3px;
+    }
+
+    &:hover {
+        border: 1px solid transparent !important;
     }
 }
