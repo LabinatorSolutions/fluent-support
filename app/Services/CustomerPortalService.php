@@ -419,7 +419,7 @@ class CustomerPortalService
      * @return bool true if access is granted
      * @throws Exception
      */
-    private function checkCustomerTicketAccess($customer, $ticket, $action = false)
+    public function checkCustomerTicketAccess($customer, $ticket, $action = false)
     {
         if (!$customer) {
             throw new \Exception('Sorry, You do not have permission to this support ticket');
