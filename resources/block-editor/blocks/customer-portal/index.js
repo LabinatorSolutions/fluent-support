@@ -1,15 +1,17 @@
 const { registerBlockType } = wp.blocks;
 const { __ } = wp.i18n;
 import Edit from './edit';
-import icons from './utils/icons';
-registerBlockType( 'fluent-support/customer-portal', {
-    apiVersion: 3,
-    version: "0.1.0",
+import icons from '../utils/icons';
+registerBlockType('fluent-support/customer-portal', {
     title: __('Customer Portal'),
-    description: __('Add the Customer Portal from where user will submit tickets and manage their tickets.'),
-    textdomain: 'fluent-support',
+    description: __('Customer Portal Page'),
     category: 'design',
     icon: icons.fluentSupport,
+    keywords: [__('fluent'), __('fluent support'), __('support'), __('tickets')],
+    supports: {
+        align: ['wide', 'full'],
+        html: true
+    },
     /**
      * @see ./attributes.js
      */
@@ -29,3 +31,4 @@ registerBlockType( 'fluent-support/customer-portal', {
         return null;
     },
 } );
+

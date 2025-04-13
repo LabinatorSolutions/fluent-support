@@ -4,15 +4,15 @@
 }
 
 li#wp-admin-bar-fst_global_summary {
-    > a {
-        background: #15be7c;
-    }
     * {
         box-sizing: border-box;
         overflow: hidden;
         padding: 0;
         margin: 0;
         float: none;
+    }
+    > a {
+        background: #15be7c;
     }
     .fs_summary_container {
         position: relative;

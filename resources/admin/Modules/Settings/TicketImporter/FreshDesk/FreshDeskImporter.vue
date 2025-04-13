@@ -13,10 +13,14 @@
             </template>
             <template #footer>
                 <span class="dialog-footer">
-            <el-button type="primary" @click="$emit('close')">{{ $t('Cancel') }}</el-button>
-            <el-button type="success" @click="$emit('import')">
-                {{$t('Import Tickets')}}
-            </el-button>
+                    <el-checkbox v-if="Object.keys(previously_imported).length > 0 && settings.domain == previously_imported.domain" v-model="start_from_previous_migration" :label="$t('An incomplete migration exists. Would you like to resume from the previous one?')" size="large" /><br>
+                    <el-button type="primary" @click="$emit('close')">{{ $t('Cancel') }}</el-button>
+                    <el-button v-if="!start_from_previous_migration"  type="success" @click="$emit('import')">
+                        {{ $t('Import Tickets') }}
+                    </el-button>
+                    <el-button v-if="start_from_previous_migration" type="success" @click="$emit('restart_previous_migration')">
+                    {{$t('Resume Previous Migration')}}
+                </el-button>
           </span>
             </template>
         </modal>
@@ -28,14 +32,15 @@ import Modal from '../../../../Pieces/Modal';
 
 export default {
     name: 'FreshDeskImporter',
-    props:['show', 'settings'],
-    emits:['import', 'close'],
+    props:['show', 'settings', 'previously_imported'],
+    emits:['import', 'close', 'restart_previous_migration'],
     components: {
         Modal
     },
     data() {
         return {
             mailboxes: {},
+            start_from_previous_migration: false,
         }
     },
     methods: {

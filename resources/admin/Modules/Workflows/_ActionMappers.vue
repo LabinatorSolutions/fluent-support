@@ -13,7 +13,7 @@
                         <action-map
                             :dragKey="dragKey"
                             @deleteAction="removeAction(index)"
-                            @update="triggerUpdate()"
+                            @update="triggerUpdate"
                             :action="element"
                             :activeName="element.activeName"
                             :actions="all_actions"
@@ -57,17 +57,34 @@ export default {
         const { translate } = useFluentHelper();
         const actionsParam = ref([]);
         const showAdder = ref(false);
-        const activeName = ref({});
-        const dragKey = ref(Date.now()); // Unique key that updates after each drag
+        const dragKey = ref(Date.now());
 
         const appendAction = (action) => {
             showAdder.value = false;
-            actionsParam.value.push({
+            const newAction = {
                 ...action,
                 workflow_id: props.workflow_id,
                 activeName: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            });
-            props.actions.push(action);
+            };
+            actionsParam.value.push(newAction);
+        };
+
+        const removeAction = (actionIndex) => {
+            actionsParam.value.splice(actionIndex, 1);
+            context.emit("updateActions", actionsParam.value);
+        };
+
+        const onDragEnd = () => {
+            dragKey.value = Date.now();
+            context.emit("updateActions", actionsParam.value);
+        };
+
+        const triggerUpdate = () => {
+            context.emit("updateWorkFlow");
+        };
+
+        const emitUpdatedActions = () => {
+            context.emit("update:actions", actionsParam.value);
         };
 
         watch(actionsParam, (newVal, oldVal) => {
@@ -75,37 +92,25 @@ export default {
                 const updatedSequence = newVal.map(action => action.id);
                 context.emit("updateActionSequence", updatedSequence);
             }
-        });
 
-        const triggerUpdate = () => {
-            context.emit("updateWorkFlow");
-        };
-
-        const removeAction = (actionIndex) => {
-            props.actions.splice(actionIndex, 1);
-            actionsParam.value.splice(actionIndex, 1);
-            context.emit("updateWorkFlow");
-        };
-
-        const onDragEnd = () => {
-            dragKey.value = Date.now();
-        };
+            emitUpdatedActions();
+        }, { deep: true });
 
         onMounted(() => {
             if (!props.actions.length) {
                 showAdder.value = true;
             }
-            actionsParam.value = props.actions
+
+            actionsParam.value = JSON.parse(JSON.stringify(props.actions));
         });
 
         return {
             show_adder: showAdder,
             appendAction,
-            triggerUpdate,
             removeAction,
+            triggerUpdate,
             translate,
             actionsParam,
-            activeName,
             dragKey,
             onDragEnd,
         };

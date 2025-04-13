@@ -1,7 +1,7 @@
 let mix = require('laravel-mix');
-const AutoImport = require("unplugin-auto-import/webpack");
+const AutoImport = require("unplugin-auto-import/webpack").default;
 const {ElementPlusResolver} = require("unplugin-vue-components/resolvers");
-const Components = require("unplugin-vue-components/webpack");
+const Components = require("unplugin-vue-components/webpack").default;
 var path = require('path');
 
 mix.webpackConfig({
@@ -49,3 +49,4 @@ mix
     .copy('resources/images', 'assets/images')
     .copy('resources/libs', 'assets/libs');
 mix.js('resources/block-editor/index.js', 'assets/block-editor/js/fst_block.js').react();
+mix.js('resources/block-editor/blocks/customer-portal/index.js', 'assets/block-editor/js/fs_block.js').react();

@@ -22,7 +22,7 @@ export default {
     data() {
         return {
             options: [],
-            model: this.value,
+            model: this.modelValue,
             element_ready: false,
         }
     },
