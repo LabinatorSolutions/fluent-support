@@ -75,7 +75,7 @@
 
                 <div class="fs_importer_modal">
                     <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" :previously_imported="previous_migration_data.helpscout.previously_imported" @restart_previous_migration="restartTicketMigration('helpscout')" @import="importTickets(currently_importing)" @close="openSettings=false"/>
-                    <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                    <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" :previously_imported="previous_migration_data.freshdesk.previously_imported" @restart_previous_migration="restartTicketMigration('freshdesk')" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                     <zendesk-importer v-if="currently_importing=='zendesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
                 </div>
 

@@ -206,7 +206,12 @@
                     >
                         <template #default="scope">
                             <div class="fs_tk_preview">
-                                <strong>{{ scope.row.title }}</strong>
+                                <a :href="$router.resolve({ name: 'view_ticket', params: { ticket_id: scope.row.id } }).href"
+                                    @click="goToTicketView(scope.row, $event)"
+                                    class="fs_ticket_title"
+                                    >
+                                        <strong>{{ scope.row.title }}</strong>
+                                </a>
                                 <span style="font-size: 10px">
                                     {{ translate(" by") }}
                                     {{ scope.row.customer.first_name }}</span
@@ -569,6 +574,8 @@ export default {
             state.openLabelSearchDrawer = false;
         };
 
+
+
         const fetchTickets = async () => {
             if (!state.app_ready) {
                 return false;
@@ -646,11 +653,27 @@ export default {
             }
         };
 
-        const gotToTicket = (row) => {
+        const gotToTicket = (row, event) => {
+            if (event.target && event.target.tagName.toLowerCase() === 'a') {
+                return;
+            }
+
             router.push({
                 name: "view_ticket",
                 params: { ticket_id: row.id },
             });
+        };
+
+        const goToTicketView = (ticket, event) => {
+            if (event.ctrlKey || event.metaKey) {
+                const routeData = router.resolve({
+                    name: "view_ticket",
+                    params: { ticket_id: ticket.id },
+                });
+                window.open(routeData.href, "_blank");
+                event.preventDefault();
+                event.stopPropagation();
+            }
         };
 
         const setFromSaveFilters = (callback) => {
@@ -850,9 +873,17 @@ export default {
         const countAdvancedFilterData = (filters) => {
             return filters.reduce((total, innerArray) => {
                 if (Array.isArray(innerArray)) {
-                    const validEntries = innerArray.filter(
-                        (item) => item.value && item.value.trim() !== ""
-                    );
+                    const validEntries = innerArray.filter((item) => {
+                        if (typeof item.value === 'string') {
+                            return item.value.trim() !== "";
+                        }
+
+                        if (Array.isArray(item.value)) {
+                            return item.value.some(val => typeof val === 'string' && val.trim() !== "");
+                        }
+
+                        return false;
+                    });
                     return total + validEntries.length;
                 }
                 return total;
@@ -1109,6 +1140,7 @@ export default {
             handleLabelSearchEdit,
             handleLabelSearchDelete,
             openSaveSearchModal,
+            goToTicketView,
         };
     },
 };
@@ -1160,5 +1192,9 @@ export default {
     justify-content: space-evenly;
     margin-right: 6px;
     background: #f6c343;
+}
+.fs_ticket_title{
+    text-decoration: none;
+    color: #314351;
 }
 </style>

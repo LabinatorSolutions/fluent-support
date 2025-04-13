@@ -595,13 +595,23 @@ export default {
             });
         };
 
-
-        const handleCheckChange = (data, checked, _) => {
-            if(checked && isNaN(data.id) && !state.editing_agent.permissions.includes(data.id) ) {
-                state.editing_agent.permissions.push(data.id);
-            } else if(!checked && isNaN(data.id) && state.editing_agent.permissions.includes(data.id)) {
-                state.editing_agent.permissions = state.editing_agent.permissions.filter((permission) => permission !== data.id);
+        const getAllChildrenIds = (data) => {
+            let ids = [];
+            if (!data.children || data.children.length === 0) return ids;
+            
+            for (const child of data.children) {
+                ids.push(child.id, ...getAllChildrenIds(child));
             }
+            return ids;
+        };
+
+        const handleCheckChange = (data, isChecked) => {
+            const { permissions } = state.editing_agent;
+            const allIds = [data.id, ...getAllChildrenIds(data)];
+
+            state.editing_agent.permissions = isChecked
+                ? [...new Set([...permissions, ...allIds])] // Add IDs
+                : permissions.filter(id => !allIds.includes(id)); // Remove IDs
         };
 
         const resetAgentModal = () => {

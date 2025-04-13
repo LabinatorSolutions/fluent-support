@@ -241,6 +241,7 @@ export default {
         };
 
         const validateField = (item) => {
+            console.log(item);
             if (!item.label) {
                 notify({
                     type: "error",
@@ -249,14 +250,20 @@ export default {
                 });
                 return false;
             }
-            if (item.options && !item.options.length) {
+
+            if (!("options" in item)) {
+                return true;
+            }
+
+            if (!Array.isArray(item.options) || item.options.length === 0 || item.options.some(option => option.trim() === "")) {
                 notify({
                     type: "error",
-                    message: "Please Field Option Values",
+                    message: "Please provide valid field option values",
                     position: "bottom-right",
                 });
                 return false;
             }
+
             return true;
         };
 
