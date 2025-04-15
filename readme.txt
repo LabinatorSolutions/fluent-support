@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 6.7
-Stable tag: 1.8.7
+Stable tag: 1.8.8
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
