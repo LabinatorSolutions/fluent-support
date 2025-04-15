@@ -96,8 +96,8 @@
                 color: rgba(153, 160, 174, 1);
 
                 &[aria-pressed="true"] {
-                    background-color: rgba(245, 246, 247, 1);
-                    color: rgba(14, 18, 27, 1);
+                    background-color: rgba(14, 18, 27, 1);
+                    color: rgba(245, 246, 247, 1);
                 }
             }
         }
@@ -1926,10 +1926,10 @@
 
             &.is-active {
                 .el-radio-button__inner {
-                    border-color: #c0c2c4;
-                    background-color: #d9dadc;
-                    color: #253241;
-                    box-shadow: none;
+                    border-color: #c0c2c4 !important;
+                    background-color: #d9dadc !important;
+                    color: #253241 !important;
+                    box-shadow: none !important;
                 }
             }
 
