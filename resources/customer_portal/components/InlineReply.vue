@@ -72,7 +72,6 @@ export default {
                 intended_ticket_hash: this.appVars.intended_ticket_hash
             })
                 .then(response => {
-                  //  this.$notify.success(response.message);
                     this.response_body = '';
                     this.is_focused = false;
                     this.attachments = [];
@@ -87,7 +86,7 @@ export default {
 
                     console.log(errors.responseJSON);
                 })
-                .always(() => {
+                .finally(() => {
                     this.creating = false;
                 });
         }
