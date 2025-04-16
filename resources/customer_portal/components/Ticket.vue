@@ -105,7 +105,9 @@
                                                 <strong v-if="conversation.person">{{
                                                         getHumanName(conversation.person)
                                                     }}</strong> <span
-                                                :class="getRibbonClass(conversation, ticket)">{{ getTextByPerson(conversation, ticket) }}</span>
+                                                :class="getRibbonClass(conversation, ticket)">{{
+                                                    getTextByPerson(conversation, ticket)
+                                                }}</span>
                                             </div>
                                         </div>
                                         <div v-html="purify(conversation.content)" class="fs_thread_body"></div>
@@ -350,8 +352,10 @@ export default {
             return classes;
         },
         submitAgentFeedback(approvalStatus, conversationID) {
-            this.$post(`tickets/${conversationID}/agent-feedback`, {
-                approvalStatus: approvalStatus,
+            this.$post(`tickets/${this.ticket_id}/agent-feedback`, {
+                approval_status: approvalStatus,
+                conversation_id: conversationID,
+                intended_ticket_hash: this.appVars.intended_ticket_hash || ''
             })
                 .then(response => {
                     this.fetchTicket();
