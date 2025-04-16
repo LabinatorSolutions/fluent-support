@@ -182,6 +182,7 @@ class CustomerPortalController extends Controller
         $customerAdditionalData = $this->getCustomerAdditionalData($request);
 
         $ticket = Ticket::findOrFail($ticket_id);
+
         $data = $request->sanitize();
 
         $canCreateResponse = apply_filters('fluent_support/can_customer_create_response', true, $ticket->customer, $ticket, $data);
@@ -253,7 +254,7 @@ class CustomerPortalController extends Controller
 
         $conversationID = $request->getSafe('conversation_id', 'intval');
         $approvalStatus = $request->getSafe('approval_status', 'sanitize_text_field');
-        
+
         try {
             return $customerPortalService->addUserFeedback($approvalStatus, $conversationID);
         } catch (Exception $e) {
@@ -309,9 +310,8 @@ class CustomerPortalController extends Controller
         ]);
     }
 
-    private function getCustomerAdditionalData(Request $request)
+    private function getCustomerAdditionalData($request)
     {
-
         $customerAdditionalData = [
             'intended_ticket_hash' => $request->getSafe('intended_ticket_hash', 'sanitize_text_field'),
             'on_behalf'            => $request->getSafe('on_behalf', 'sanitize_text_field'),
