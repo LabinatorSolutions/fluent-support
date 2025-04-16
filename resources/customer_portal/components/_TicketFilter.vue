@@ -15,7 +15,7 @@
                 </div>
             </div>
             <div class="fs_product_filter_head">
-                <div class="fs_product_filter">
+                <div v-if="appVars.support_products && appVars.support_products.length" class="fs_product_filter">
                     <el-select
                         v-model="filters.product_id"
                         :placeholder="$t('All Products')"
