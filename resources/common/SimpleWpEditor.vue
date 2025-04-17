@@ -58,8 +58,8 @@ export default {
     },
     data() {
         return {
-            hasWpEditor: (!!window.wp.editor && !!wp.editor.autop) || !!window.wp.oldEditor,
-            editor: window.wp.oldEditor || window.wp.editor,
+            hasWpEditor: (!!window.wp?.editor && !!wp?.editor?.autop) || !!window.wp?.oldEditor,
+            editor: window.wp?.oldEditor || window.wp?.editor,
             plain_content: this.modelValue,
             cursorPos: (this.modelValue) ? this.modelValue.length : 0,
             app_ready: false,
