@@ -212,6 +212,7 @@ class CustomerPortalHandler
             'Create Customer' => __('Create Customer', 'fluent-support'),
             'Browse Files' => __('Browse Files', 'fluent-support'),
             'Add Attachment' => __('Add Attachment', 'fluent-support'),
+            'btn_text' => __('Create Ticket', 'fluent-support'),
 
             'subject_placeholder' => __('What\'s this support ticket about?', 'fluent-support'),
             'service_placeholder' => __('Select related Product/Service', 'fluent-support'),
