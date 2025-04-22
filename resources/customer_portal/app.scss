@@ -1731,7 +1731,9 @@
     // AttachmentForm CSS Start
     .fs-file-uploader {
         box-sizing: border-box;
-
+        .el-upload-list {
+            padding-left: 0px;
+        }
         .el-upload {
             width: 100%;
             justify-content: flex-start;
