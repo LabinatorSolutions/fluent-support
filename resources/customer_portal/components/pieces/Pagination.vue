@@ -12,7 +12,7 @@
                 <el-option
                     v-for="size in page_sizes"
                     :key="size"
-                    :label="`${size} / page`"
+                    :label="`${size} / ${$t('page')}`"
                     :value="size"
                 />
             </el-select>
