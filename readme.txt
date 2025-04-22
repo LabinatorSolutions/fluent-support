@@ -245,7 +245,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 
 == Changelog ==
 
-= 1.8.8 (Date: Apr 17, 2025) =
+= 1.8.8 (Date: Apr 22, 2025) =
 * Fixed: Ticket status was not displaying correctly on the ticket view page in the customer portal.
 * Fixed: File types, quantity limits, and file sizes were not displaying correctly in the customer portal.
 * Fixed: Missing translations in the customer portal.
