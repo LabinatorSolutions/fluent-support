@@ -219,8 +219,7 @@
 
     // Ticket Lists CSS Start
     .fs_ticket_wrapper {
-        padding: var(--fs-spacing-lg);
-        min-height: 100vh;
+        min-height: auto;
 
         .fs_logout_container {
             width: 100%;
@@ -873,9 +872,7 @@
 
     // Create Ticket CSS start
     .fs_create_ticket_container {
-        min-height: 100vh;
-        padding: 20px;
-
+        min-height: auto;
         // General Input and Select Wrappers
         .el-input__wrapper,
         .el-select__wrapper {
@@ -1140,9 +1137,6 @@
     }
 
     .fs_ticket_wrapper {
-        padding: 20px;
-        min-height: 100vh;
-
         .fs_tickets_container {
             border-radius: 16px;
             border: 1px solid var(--stroke-soft-200, #E1E4EA);
