@@ -9,7 +9,6 @@ registerBlockType('fluent-support/customer-portal', {
     icon: icons.fluentSupport,
     keywords: [__('fluent'), __('fluent support'), __('support'), __('tickets')],
     supports: {
-        align: ['wide', 'full'],
         html: true
     },
     /**
