@@ -219,6 +219,9 @@ class CustomerPortalHandler
             'suggestion_loading' => __('Looking for similar articles...', 'fluent-support'),
             'articles_heading' => __('Suggested articles', 'fluent-support'),
             'priority_placeholder' => __('Select Priority', 'fluent-support'),
+            'Page' => __('Page', 'fluent-support'),
+            'page' => __('page', 'fluent-support'),
+            'of' => __('of', 'fluent-support'),
 
             'subject' => __('Subject', 'fluent-support'),
             'ticket_details' => __('Ticket Details', 'fluent-support'),
