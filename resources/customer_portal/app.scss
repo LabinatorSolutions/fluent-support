@@ -51,6 +51,7 @@
     --fs-radius-pill: 2rem;
 
     /* Spacing */
+    --fs-spacing-xxs: 2px;
     --fs-spacing-xs: 4px;
     --fs-spacing-sm: 8px;
     --fs-spacing-md: 16px;
@@ -133,7 +134,7 @@
             background: var(--fs-bg-weak);
 
             .mce-first .mce-last {
-                padding: var(--fs-spacing-xs) var(--fs-spacing-sm);
+                padding: var(--fs-spacing-xxs) var(--fs-spacing-xs);
             }
         }
 
