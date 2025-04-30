@@ -104,7 +104,7 @@
                         v-model="ticket.client_priority"
                         placeholder="Normal"
                         size="large"
-                        :class="{ 'error': errors.get('product_id') }"
+                        :class="{ 'error': errors.get('priority') }"
                     >
                         <el-option
                             v-for="(priority, key) in priorities"
