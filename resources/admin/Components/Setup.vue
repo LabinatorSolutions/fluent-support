@@ -69,7 +69,7 @@
                     </div>
 
                     <div class="suggest_box share_essential">
-                        <p style="margin-bottom: 10px;"><b>Help us to make FluentSupport better</b></p>
+                        <p style="margin-bottom: 10px;"><b>Help us to make Fluent Support better</b></p>
                         <el-checkbox true-label="yes" false-label="no" v-model="share_essentials">
                             {{ $t('Share Essentials') }}
                         </el-checkbox>
