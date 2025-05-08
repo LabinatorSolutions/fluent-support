@@ -4,25 +4,23 @@
             <div class="fs_ticket_body">
                 <div class="fs_ticket_actions">
                     <ul class="fs_tk_actions">
-                        <template v-if="ticket.status != 'closed'">
-                            <li :title="translate('Add Reply')"
-                                class="fs_add_reply"
-                                :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
-                                @click="draftReplyPermission ? show_response_box = 'draft_response' : show_response_box = (show_response_box === 'response' ? '' : 'response')">
-                                <el-icon style="vertical-align: middle;">
-                                    <chat-line-square/>
-                                </el-icon>
-                            </li>
-                            <li :title="translate('Add Internal Note')"
-                                class="fs_add_note"
-                                :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
-                                @click="show_response_box = (show_response_box === 'note' ? '' : 'note')">
-                                <el-icon style="vertical-align: middle;">
-                                    <notebook/>
-                                </el-icon>
-                            </li>
-                        </template>
-
+                        <li :title="translate('Add Reply')"
+                            v-if="ticket.status != 'closed'"
+                            class="fs_add_reply"
+                            :class="(show_response_box == 'response') ? 'fs_action_active' : ''"
+                            @click="draftReplyPermission ? show_response_box = 'draft_response' : show_response_box = (show_response_box === 'response' ? '' : 'response')">
+                            <el-icon style="vertical-align: middle;">
+                                <chat-line-square/>
+                            </el-icon>
+                        </li>
+                        <li :title="translate('Add Internal Note')"
+                            class="fs_add_note"
+                            :class="(show_response_box == 'note') ? 'fs_action_active' : ''"
+                            @click="show_response_box = (show_response_box === 'note' ? '' : 'note')">
+                            <el-icon style="vertical-align: middle;">
+                                <notebook/>
+                            </el-icon>
+                        </li>
                         <li :title="translate('Run Workflow')" class="fs_add_workflow"
                             v-if="appVars.manual_workflows && appVars.manual_workflows.length">
                             <work-flow-selector @reloadTickets="fetchTicket()" :ticket_ids="[ticket_id]"/>
@@ -387,7 +385,7 @@
                     <el-skeleton :rows="4" animated />
                 </div>
                 <create-response
-                    v-if="show_response_box && ticket.status != 'closed'"
+                    v-if="show_response_box"
                     @created="recordNewResponse"
                     :ticket="ticket"
                     :is_agent="'yes'"
