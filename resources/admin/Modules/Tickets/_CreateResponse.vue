@@ -23,6 +23,14 @@
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :ticketId="ticket.id" :is_agent="is_agent" :is_direct_paste="true" :show-shortcodes="true" :aiIntegration="aiIntegration"
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
         <div class="fs_row">
+            <div v-if="type === 'response'" class="fs_informational_reply_container">
+                <el-checkbox
+                    v-model="informational_reply"
+                    class="fs_informational_reply"
+                >
+                    {{ translate('Send as Informational Reply')}}
+                </el-checkbox>
+            </div>
             <div class="fs_half">
                 <div  style="text-align: left" class="fs_response_actions">
                     <el-button v-loading="creating" :disabled="creating" @click="create('no')" size="large"
@@ -71,6 +79,7 @@ export default {
         const {notify} = useNotify();
 
         const state = reactive({
+            informational_reply: false,
             response_body: '',
             show_cc_option: false,
             selected_cc: [],
@@ -170,6 +179,7 @@ export default {
                 close_ticket: closed,
                 attachments: state.attachments,
                 cc_emails: state.selected_cc,
+                informational_reply: state.informational_reply,
             };
 
             let action = `tickets/${props.ticket.id}/responses`;
@@ -239,6 +249,5 @@ export default {
     }
 }
 </script>
-
 
 
