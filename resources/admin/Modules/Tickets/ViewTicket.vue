@@ -1065,14 +1065,6 @@ export default {
                         })
                 });
             } else if (actionType === 'edit') {
-                if (state.ticket.status === 'closed' && conversation.conversation_type !== 'note') {
-                    notify({
-                        message: translate('error_msg_on_closed_ticket_edit'),
-                        type: "error",
-                        position: "bottom-right",
-                    });
-                    return false;
-                }
                 state.editing_response = conversation;
                 state.edit_response_modal = true;
                 state.conversation_type = conversation.conversation_type;
