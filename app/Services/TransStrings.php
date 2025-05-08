@@ -359,6 +359,7 @@ class TransStrings
             'Delete Ticket'    => __('Delete Ticket', 'fluent-support'),
             'single_ticket_delete_warning'    => __('Are you sure to delete this Ticket?', 'fluent-support'),
             'error_msg_on_closed_ticket_edit'    => __('You can not edit responses when it is in close state', 'fluent-support'),
+            'Send as Informational Reply' => __('Send as Informational Reply', 'fluent-support'),
             'Select Customer'    => __('Select Customer', 'fluent-support'),
             'Select Business'    => __('Select Business', 'fluent-support'),
             'Subject'    => __('Subject', 'fluent-support'),
