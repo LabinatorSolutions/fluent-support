@@ -363,6 +363,7 @@ class TransStrings
             'Select Customer'    => __('Select Customer', 'fluent-support'),
             'Select Business'    => __('Select Business', 'fluent-support'),
             'Subject'    => __('Subject', 'fluent-support'),
+            'informational_reply_info' => __('This reply will be visible to the customer but will not update the ticket\'s \'waiting since\' timestamp.', 'fluent-support'),
             'subject_placeholder'    => __('What\'s this support ticket about?', 'fluent-support'),
             'Placeholder'   => __('Placeholder', 'fluent-support'),
             'Field Placeholder' => __('Field Placeholder', 'fluent-support'),

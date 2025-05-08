@@ -23,14 +23,6 @@
         <wp-editor :autofocus="true" v-if="editor_ready" v-model="response_body" :ticketId="ticket.id" :is_agent="is_agent" :is_direct_paste="true" :show-shortcodes="true" :aiIntegration="aiIntegration"
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
         <div class="fs_row">
-            <div v-if="type === 'response'" class="fs_informational_reply_container">
-                <el-checkbox
-                    v-model="informational_reply"
-                    class="fs_informational_reply"
-                >
-                    {{ translate('Send as Informational Reply')}}
-                </el-checkbox>
-            </div>
             <div class="fs_half">
                 <div  style="text-align: left" class="fs_response_actions">
                     <el-button v-loading="creating" :disabled="creating" @click="create('no')" size="large"
@@ -45,6 +37,16 @@
                     </el-button>
 
                     <p v-if="type== 'note'">{{ translate('internal_note_warning') }}</p>
+                </div>
+                <div v-if="type === 'response'" class="fs_informational_reply_container">
+                    <el-tooltip effect="dark" :content="$t('informational_reply_info')" placement="top">
+                        <el-checkbox
+                            v-model="informational_reply"
+                            class="fs_informational_reply"
+                        >
+                            {{ translate('Send as Informational Reply')}}
+                        </el-checkbox>
+                    </el-tooltip>
                 </div>
             </div>
             <div class="fs_half">
