@@ -39,7 +39,7 @@
                     <p v-if="type== 'note'">{{ translate('internal_note_warning') }}</p>
                 </div>
                 <div v-if="type === 'response'" class="fs_informational_reply_container">
-                    <el-tooltip effect="dark" :content="$t('informational_reply_info')" placement="top">
+                    <el-tooltip effect="dark" :content="$t('informational_reply_info')" placement="bottom">
                         <el-checkbox
                             v-model="informational_reply"
                             class="fs_informational_reply"
