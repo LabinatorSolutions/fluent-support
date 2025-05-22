@@ -4,8 +4,7 @@
     &main-menu-items {
         display: block;
         position: relative;
-        margin-bottom: 20px;
-        background: white;
+        margin-bottom: 10px;
         margin-left: -20px;
         padding-left: 20px;
         overflow: hidden;
@@ -13,7 +12,7 @@
         .menu_logo_holder {
             max-height: 40px;
             margin-right: 10px;
-            margin-left: 10px;
+            margin-left: 20px;
             display: inline-block;
             vertical-align: middle;
             padding-top: 10px;
@@ -144,7 +143,6 @@
             display: none;
         }
         @media all and (max-width: 1024px) {
-            margin-right: 10px;
             ul.#{$slug}menu {
                 display: none;
             }
@@ -169,7 +167,7 @@
             .#{$slug}handheld {
                 display: inline-block;
                 float: right;
-                margin: 15px 15px 0px 0px;
+                margin: 15px 20px 0px 0px;
 
                 span {
                     font-size: 30px;
