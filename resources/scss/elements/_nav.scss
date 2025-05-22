@@ -8,6 +8,11 @@
         margin-left: -20px;
         padding-left: 20px;
         overflow: hidden;
+        
+        @media screen and (min-width: 1025px) {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
 
         .menu_logo_holder {
             max-height: 40px;
