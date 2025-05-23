@@ -144,7 +144,7 @@
             display: none;
         }
         @media all and (max-width: 1024px) {
-            margin-right: 10px;
+            padding-bottom: 10px;
             ul.#{$slug}menu {
                 display: none;
             }
