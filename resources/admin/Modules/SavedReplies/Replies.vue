@@ -288,7 +288,7 @@ export default {
             state.editing_reply = {
                 title: "",
                 content: "",
-                product_id: "",
+                product_id: null,
             };
             state.showModal = true;
         };
