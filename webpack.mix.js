@@ -34,7 +34,12 @@ mix.webpackConfig({
 if (!mix.inProduction()) {
     mix.webpackConfig({
         devtool: 'source-map'
-    }).sourceMaps(false);
+    }).sourceMaps(true, 'source-map');
+} else {
+    // During production build we'll remove the existing assets
+    // directory so that the source-maps are deleted as well.
+    let fs = require('fs-extra');
+    fs.remove('assets');
 }
 
 mix
