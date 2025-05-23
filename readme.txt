@@ -245,7 +245,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 
 == Changelog ==
 
-= 1.8.9 (Date: June 4, 2025) =
+= 1.8.9 (Date: May 27, 2025) =
 * Added: Integration with Fluent Community.
 * Added: Informational replies on admin ticket responses.
 * Improved: Internal note functionality now works for closed tickets.
