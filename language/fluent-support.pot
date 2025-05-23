@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Fluent Support\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-22 10:50+0000\n"
+"POT-Creation-Date: 2025-05-23 03:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -169,32 +169,32 @@ msgstr ""
 msgid "A"
 msgstr ""
 
-#: app/Services/Helper.php:906
+#: app/Services/Helper.php:913
 #: builds/fluent-support/app/Services/Helper.php:906
 msgid ""
 "A cloud storage service by Google for storing, syncing, and sharing files."
 msgstr ""
 
-#: app/Services/Helper.php:913
+#: app/Services/Helper.php:920
 #: builds/fluent-support/app/Services/Helper.php:913
 msgid ""
 "A cloud-based file storage and sharing service that allows users to store "
 "files online and sync them across devices."
 msgstr ""
 
-#: app/Services/Helper.php:934
+#: app/Services/Helper.php:941
 #: builds/fluent-support/app/Services/Helper.php:934
 msgid ""
 "A project management tool designed to streamline workflows and collaboration "
 "through customizable, kanban-style boards."
 msgstr ""
 
-#: app/Services/Helper.php:829
+#: app/Services/Helper.php:836
 #: builds/fluent-support/app/Services/Helper.php:829
 msgid "A robust form plugin suitable for any business"
 msgstr ""
 
-#: app/Services/Helper.php:927
+#: app/Services/Helper.php:934
 #: builds/fluent-support/app/Services/Helper.php:927
 msgid ""
 "A security service by Google designed to protect websites from bots and "
@@ -207,7 +207,7 @@ msgstr ""
 msgid "A verification code has been sent to %s. Please provide the code below:"
 msgstr ""
 
-#: app/Services/Helper.php:920
+#: app/Services/Helper.php:927
 #: builds/fluent-support/app/Services/Helper.php:920
 msgid ""
 "A WordPress plugin that enables the creation and management of membership "
@@ -586,7 +586,7 @@ msgstr ""
 msgid "Agents Reports"
 msgstr ""
 
-#: app/Services/Helper.php:1049
+#: app/Services/Helper.php:1056
 #: builds/fluent-support/app/Services/Helper.php:1049
 msgid "AI Activity settings has been updated"
 msgstr ""
@@ -681,7 +681,7 @@ msgstr ""
 msgid "All Workflows"
 msgstr ""
 
-#: app/Services/Helper.php:885
+#: app/Services/Helper.php:892
 #: builds/fluent-support/app/Services/Helper.php:885
 msgid "All-in-one payment gateway designed for WordPress"
 msgstr ""
@@ -1001,7 +1001,7 @@ msgstr ""
 msgid "Basic Info"
 msgstr ""
 
-#: app/Services/Helper.php:868
+#: app/Services/Helper.php:875
 #: builds/fluent-support/app/Services/Helper.php:868
 msgid "BetterDocs"
 msgstr ""
@@ -1037,7 +1037,7 @@ msgstr ""
 msgid "Browse Files"
 msgstr ""
 
-#: app/Services/Helper.php:833
+#: app/Services/Helper.php:840
 #: builds/fluent-support/app/Services/Helper.php:833
 msgid "BuddyBoss"
 msgstr ""
@@ -1045,6 +1045,12 @@ msgstr ""
 #: app/Services/Tickets/CustomFieldsService.php:17
 #: builds/fluent-support/app/Services/Tickets/CustomFieldsService.php:17
 msgid "Bug Report"
+msgstr ""
+
+#: app/Services/Helper.php:829
+msgid ""
+"Build and manage vibrant online communities with integrated LMS features "
+"directly within WordPress."
 msgstr ""
 
 #: app/Services/Integrations/FluentForm/FeedIntegration.php:107
@@ -1057,7 +1063,7 @@ msgstr ""
 msgid "Business Boxes Reports"
 msgstr ""
 
-#: app/Services/Helper.php:878
+#: app/Services/Helper.php:885
 #: builds/fluent-support/app/Services/Helper.php:878
 msgid "Business communication platform designed for privacy"
 msgstr ""
@@ -1067,7 +1073,7 @@ msgstr ""
 msgid "Business communication platform designed for security"
 msgstr ""
 
-#: app/Services/Helper.php:843
+#: app/Services/Helper.php:850
 #: builds/fluent-support/app/Services/Helper.php:843
 msgid "Business communication platform designed for tech"
 msgstr ""
@@ -1417,7 +1423,7 @@ msgid "Country"
 msgstr ""
 
 #: app/Services/Helper.php:787 app/Services/Helper.php:808
-#: app/Services/Helper.php:899
+#: app/Services/Helper.php:906
 #: builds/fluent-support/app/Services/Helper.php:787
 #: builds/fluent-support/app/Services/Helper.php:808
 #: builds/fluent-support/app/Services/Helper.php:899
@@ -1805,7 +1811,7 @@ msgstr ""
 msgid "Disconnect"
 msgstr ""
 
-#: app/Services/Helper.php:840
+#: app/Services/Helper.php:847
 #: builds/fluent-support/app/Services/Helper.php:840
 msgid "Discord"
 msgstr ""
@@ -1855,12 +1861,12 @@ msgstr ""
 msgid "Draft response has been successfully approved."
 msgstr ""
 
-#: app/Services/Helper.php:910
+#: app/Services/Helper.php:917
 #: builds/fluent-support/app/Services/Helper.php:910
 msgid "Dropbox"
 msgstr ""
 
-#: app/Services/Helper.php:854
+#: app/Services/Helper.php:861
 #: builds/fluent-support/app/Services/Helper.php:854
 msgid "Easy Digital Downloads"
 msgstr ""
@@ -2196,6 +2202,10 @@ msgid "First name"
 msgstr ""
 
 #: app/Services/Helper.php:826
+msgid "Fluent Community"
+msgstr ""
+
+#: app/Services/Helper.php:833
 #: builds/fluent-support/app/Services/Helper.php:826
 msgid "Fluent FORMS"
 msgstr ""
@@ -2280,7 +2290,7 @@ msgstr ""
 msgid "Fluent Support Tickets Exporter"
 msgstr ""
 
-#: app/Services/Helper.php:931
+#: app/Services/Helper.php:938
 #: builds/fluent-support/app/Services/Helper.php:931
 msgid "FluentBoards"
 msgstr ""
@@ -2420,12 +2430,12 @@ msgstr ""
 msgid "Good Job"
 msgstr ""
 
-#: app/Services/Helper.php:903
+#: app/Services/Helper.php:910
 #: builds/fluent-support/app/Services/Helper.php:903
 msgid "Google Drive"
 msgstr ""
 
-#: app/Services/Helper.php:924
+#: app/Services/Helper.php:931
 #: builds/fluent-support/app/Services/Helper.php:924
 msgid "Google reCAPTCHA"
 msgstr ""
@@ -2874,12 +2884,12 @@ msgstr ""
 msgid "Last Week"
 msgstr ""
 
-#: app/Services/Helper.php:889
+#: app/Services/Helper.php:896
 #: builds/fluent-support/app/Services/Helper.php:889
 msgid "LearnDash"
 msgstr ""
 
-#: app/Services/Helper.php:896
+#: app/Services/Helper.php:903
 #: builds/fluent-support/app/Services/Helper.php:896
 msgid "LearnPress"
 msgstr ""
@@ -3106,7 +3116,7 @@ msgstr ""
 msgid "medium"
 msgstr ""
 
-#: app/Services/Helper.php:917
+#: app/Services/Helper.php:924
 #: builds/fluent-support/app/Services/Helper.php:917
 msgid "MemberPress"
 msgstr ""
@@ -3426,7 +3436,7 @@ msgstr ""
 msgid "Paste the authorization code here once you get it."
 msgstr ""
 
-#: app/Services/Helper.php:882
+#: app/Services/Helper.php:889
 #: builds/fluent-support/app/Services/Helper.php:882
 msgid "Paymattic"
 msgstr ""
@@ -3674,8 +3684,8 @@ msgstr ""
 msgid "Portal Page"
 msgstr ""
 
-#: app/Services/Helper.php:836 app/Services/Helper.php:850
-#: app/Services/Helper.php:864
+#: app/Services/Helper.php:843 app/Services/Helper.php:857
+#: app/Services/Helper.php:871
 #: builds/fluent-support/app/Services/Helper.php:836
 #: builds/fluent-support/app/Services/Helper.php:850
 #: builds/fluent-support/app/Services/Helper.php:864
@@ -4028,7 +4038,7 @@ msgstr ""
 msgid "Responses"
 msgstr ""
 
-#: app/Services/Helper.php:861
+#: app/Services/Helper.php:868
 #: builds/fluent-support/app/Services/Helper.php:861
 msgid "Restrict Content pro"
 msgstr ""
@@ -4817,7 +4827,7 @@ msgid ""
 "Dropbox/Google Drive and paste the link in the response"
 msgstr ""
 
-#: app/Services/Helper.php:892
+#: app/Services/Helper.php:899
 #: builds/fluent-support/app/Services/Helper.php:892
 msgid "The leading course platform built for WordPress"
 msgstr ""
@@ -4832,7 +4842,7 @@ msgstr ""
 msgid "The OpenAI ChatGPT API can be used to generate and enhance responses."
 msgstr ""
 
-#: app/Services/Helper.php:871
+#: app/Services/Helper.php:878
 #: builds/fluent-support/app/Services/Helper.php:871
 msgid "The standard plugin for knowledge base and documentation"
 msgstr ""
@@ -4851,7 +4861,7 @@ msgstr ""
 msgid "The Ultimate Support Plugin For Your WordPress."
 msgstr ""
 
-#: app/Services/Helper.php:857
+#: app/Services/Helper.php:864
 #: builds/fluent-support/app/Services/Helper.php:857
 msgid "The ultimate WordPress platform for digital products"
 msgstr ""
@@ -5694,7 +5704,7 @@ msgstr ""
 msgid "What's this support ticket about?"
 msgstr ""
 
-#: app/Services/Helper.php:875
+#: app/Services/Helper.php:882
 #: builds/fluent-support/app/Services/Helper.php:875
 msgid "WhatsApp"
 msgstr ""
@@ -5720,7 +5730,7 @@ msgid ""
 "agent."
 msgstr ""
 
-#: app/Services/Helper.php:847
+#: app/Services/Helper.php:854
 #: builds/fluent-support/app/Services/Helper.php:847
 msgid "WishList Member"
 msgstr ""
