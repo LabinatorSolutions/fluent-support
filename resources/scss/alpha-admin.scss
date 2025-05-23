@@ -19,13 +19,18 @@
     margin-top: 15px;
 }
 
+body.toplevel_page_fluent-support {
+    #wpcontent {
+        padding-left: 0;
+    }
+}
+
 #wpcontent, .fframe_app {
     background-color: $bodyBg;
     padding-bottom: 30px;
 }
 
 .fframe_body {
-    margin-right: 20px;
 
     .inner_sidebar {
         padding: 0;
@@ -133,11 +138,6 @@
         }
 
     }
-}
-
-
-.fst_front .fframe_body {
-    margin-left: 20px;
 }
 
 .el-upload-list--picture {
