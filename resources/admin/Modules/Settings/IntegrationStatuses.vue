@@ -37,7 +37,6 @@ import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
 import { onMounted, reactive, toRefs } from "vue";
 import {
     useFluentHelper,
-    useNotify,
 } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
@@ -46,10 +45,8 @@ export default {
         FormBuilder,
     },
     setup() {
-        const { get, post, handleError, has_pro, setTitle, translate } =
+        const { get, handleError, translate } =
             useFluentHelper();
-
-        const { notify } = useNotify();
 
         const state = reactive({
             connections: {},
@@ -71,17 +68,12 @@ export default {
                 });
         };
 
-
-
         const redirectToDocs = (links) => {
             window.open(links);
         }
 
-
         onMounted(() => {
-
-                fetchSettings();
-
+            fetchSettings();
         });
 
         return {
