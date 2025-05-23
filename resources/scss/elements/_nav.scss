@@ -5,19 +5,15 @@
         display: block;
         position: relative;
         margin-bottom: 20px;
+        background: white;
         margin-left: -20px;
         padding-left: 20px;
         overflow: hidden;
-        
-        @media screen and (min-width: 1025px) {
-            background: white;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
 
         .menu_logo_holder {
             max-height: 40px;
             margin-right: 10px;
-            margin-left: 20px;
+            margin-left: 10px;
             display: inline-block;
             vertical-align: middle;
             padding-top: 10px;
@@ -148,6 +144,7 @@
             display: none;
         }
         @media all and (max-width: 1024px) {
+            padding-bottom: 10px;
             ul.#{$slug}menu {
                 display: none;
             }
@@ -172,7 +169,7 @@
             .#{$slug}handheld {
                 display: inline-block;
                 float: right;
-                margin: 15px 20px 0px 0px;
+                margin: 15px 15px 0px 0px;
 
                 span {
                     font-size: 30px;
