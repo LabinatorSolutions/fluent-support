@@ -55,7 +55,7 @@ class ZendeskTickets extends BaseImporter
         ];
 
         if (!$this->hasMore) {
-            $response['message'] = __('All tickets has been imported successfully', 'fluent-support-pro');
+            $response['message'] = __('All tickets has been imported successfully', 'fluent-support');
             update_option('_fs_migrate_zendesk', current_time('mysql'), 'no');
         }
 

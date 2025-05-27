@@ -39,7 +39,7 @@ class FreshDeskTickets extends BaseImporter
         $tickets = $this->ticketsWithReply();
 
         if (is_wp_error($tickets)) {
-            throw new \Exception($tickets->get_error_message());
+            throw new \Exception(esc_html($tickets->get_error_message()));
         }
 
         $results = $this->migrateTickets($tickets);
@@ -77,7 +77,7 @@ class FreshDeskTickets extends BaseImporter
         }
 
         Meta::where('object_type', '_fs_freshdesk_migration_info')->delete();
-        $response['message'] = __('All tickets have been imported successfully', 'fluent-support-pro');
+        $response['message'] = __('All tickets have been imported successfully', 'fluent-support');
         update_option('_fs_migrate_freshdesk', current_time('mysql'), 'no');
         return $response;
     }

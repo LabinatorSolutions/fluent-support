@@ -76,7 +76,7 @@ class HelpScoutTickets extends BaseImporter
         }
 
         Meta::where('object_type', '_fs_helpscout_migration_info')->delete();
-        $response['message'] = __('All tickets have been imported successfully', 'fluent-support-pro');
+        $response['message'] = __('All tickets have been imported successfully', 'fluent-support');
         update_option('_fs_migrate_helpscout', current_time('mysql'), 'no');
         return $response;
     }
@@ -195,7 +195,7 @@ class HelpScoutTickets extends BaseImporter
 
             return $ticketData;
         } catch (\Exception $e) {
-            throw new \Exception($e->getMessage());
+            throw new \Exception(esc_html($e->getMessage()));
         }
 
     }
