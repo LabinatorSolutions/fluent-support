@@ -245,9 +245,10 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 
 == Changelog ==
 
-= 1.8.9 (Date: May 27, 2025) =
-* Added: Integration with Fluent Community.
+= 1.8.9 (Date: May 28, 2025) =
+* Added: Integration with Fluent Community. (Pro)
 * Added: Informational replies on admin ticket responses.
+* Added: Help Scout, Freshdesk & Zendesk Ticket Migration Now Available in Free Version.
 * Improved: Internal note functionality now works for closed tickets.
 * Improved: Responses in closed tickets can now be edited.
 * Fixed: Error message shown for the Priority field when the Product is required in the customer portal.
