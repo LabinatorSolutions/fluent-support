@@ -6,7 +6,6 @@
                     <h3>{{ $t('Tickets Migration From Other Plugins') }}</h3>
                 </div>
                 <div class="fs_box_actions">
-
                 </div>
             </div>
             <div>
@@ -14,17 +13,6 @@
                     <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
                 </div>
                 <el-row style="padding: 25px 25px" v-if="!loading && settings.length" :gutter="20">
-
-                    <el-col :span="24">
-                        <el-card :body-style="{ padding: '0px' }" style="margin: 10px 0" v-if="!has_pro">
-                            <div class="fs_narrow_promo" style="background: white;">
-                                <h3>{{$t('import_from_sass')}}</h3>
-                                <p>{{$t('pro_promo')}}</p>
-                                <a target="_blank" rel="noopener" href="https://fluentsupport.com" class="el-button el-button--success">{{$t('Upgrade To Pro')}}</a>
-                            </div>
-                        </el-card>
-                    </el-col>
-
                     <el-col v-for="setting in settings" :span="24">
                         <div :class="'grid-content fs_'+setting.handler">
                             <el-card :body-style="{ padding: '4px' }" :header=setting.name style="margin: 10px 0">
