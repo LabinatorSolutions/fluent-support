@@ -1063,6 +1063,9 @@ export default {
                             });
                             fetchTicket();
                         })
+                        .catch((error) => {
+                            handleError(error);
+                        });
                 });
             } else if (actionType === 'edit') {
                 state.editing_response = conversation;
