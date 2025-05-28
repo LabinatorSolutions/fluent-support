@@ -827,7 +827,7 @@ class Helper
                 'logo'           => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/integrations/fluent-community.png',
                 'is_integrated'   => defined('FLUENT_COMMUNITY_PLUGIN_VERSION'),
                 'description'    => __('Build and manage vibrant online communities with integrated LMS features directly within WordPress.', 'fluent-support'),
-                'doc_url'       => 'https://fluentsupport.com/docs/fluent-community-integration/',
+                'doc_url'       => 'https://fluentsupport.com/docs/fluentcommunity-integration/',
             ],
             'fluent-forms'  => [
                 'title'          => __('Fluent FORMS', 'fluent-support'),
