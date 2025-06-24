@@ -77,8 +77,14 @@
                             </el-checkbox>
                         </el-form-item>
 
+<!--                        <el-form-item>-->
+<!--                            <el-button @click="step = 'ticket'" type="primary">-->
+<!--                                {{ translate('Next') }}-->
+<!--                            </el-button>-->
+<!--                        </el-form-item>-->
+
                         <el-form-item>
-                            <el-button @click="step = 'ticket'" type="primary">
+                            <el-button @click="goToTicketStep" type="primary">
                                 {{ translate('Next') }}
                             </el-button>
                         </el-form-item>
@@ -279,6 +285,27 @@ export default {
             state.step = 'ticket';
         }
 
+        const isValidEmail = (email) => {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        };
+
+        const goToTicketStep = () => {
+            if (state.ticket.create_customer === 'yes') {
+                if (!state.new_customer.email || !isValidEmail(state.new_customer.email)) {
+                    notify({
+                        message: translate('Please provide a valid email address.'),
+                        position: 'bottom-right',
+                        type: 'error'
+                    });
+                    return;
+                }
+            }
+
+            state.step = 'ticket';
+        };
+
+
         return {
             ...toRefs(state),
             create,
@@ -286,6 +313,7 @@ export default {
             insertTemplate,
             searchCustomers,
             customerSelected,
+            goToTicketStep,
             translate,
         }
     }
