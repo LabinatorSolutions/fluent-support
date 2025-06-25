@@ -889,6 +889,10 @@ ul.fs_tk_actions {
     background: #eff7ff;
     padding: .6em .6em;
     border-radius: .2em;
+    .el-form-item {
+        text-align: left;
+    }
+
 }
 .fs_fbs_input_container {
     margin-bottom: 20px;

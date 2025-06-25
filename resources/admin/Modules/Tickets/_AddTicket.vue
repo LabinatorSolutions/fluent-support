@@ -29,7 +29,7 @@
 
                 <template v-if="searched">
                     <el-form-item style="margin-top: 20px;">
-                        <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">
+                        <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_customer">
                             {{ translate('Could not find a contact? Create a new one.') }}
                         </el-checkbox>
                     </el-form-item>
@@ -50,35 +50,37 @@
                             </el-col>
                         </el-row>
 
-                        <el-form-item :label="translate('Email')">
+                        <el-form-item :label="translate('Email')" :error="validation_errors.email">
                             <el-input placeholder="Email" type="email" v-model="new_customer.email"></el-input>
                         </el-form-item>
 
-                        <el-row :gutter="30" v-if="ticket.create_wp_user=='yes'">
+                        <el-row :gutter="30" v-if="ticket.create_wp_user == 'yes'">
                             <el-col :md="12" :xs="24">
-                                <el-form-item :label="translate('Username')">
+                                <el-form-item :label="translate('Username')" :error="validation_errors.username">
                                     <el-input :placeholder="translate('Username')" type="text"
                                               v-model="new_customer.username"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :md="12" :xs="24">
-                                <el-form-item :label="translate('Password')">
+                                <el-form-item :label="translate('Password')" :error="validation_errors.password">
                                     <el-input
-                                        :placeholder="translate('Password (Leave blank for auto generated email)')"
-                                        type="password" show-password
-                                        v-model="new_customer.password"></el-input>
+                                        :placeholder="translate('Password (Leave blank for auto generated)')"
+                                        type="password"
+                                        show-password
+                                        v-model="new_customer.password">
+                                    </el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
 
                         <el-form-item>
-                            <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_wp_user">
+                            <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_wp_user">
                                 {{ translate('Create New User in WordPress') }}
                             </el-checkbox>
                         </el-form-item>
 
                         <el-form-item>
-                            <el-button @click="step = 'ticket'" type="primary">
+                            <el-button @click="goToTicketStep" type="primary">
                                 {{ translate('Next') }}
                             </el-button>
                         </el-form-item>
@@ -216,7 +218,12 @@ export default {
             },
             searching: false,
             searched: false,
-            attachments: []
+            attachments: [],
+            validation_errors: {
+                email: '',
+                username: '',
+                password: ''
+            },
         });
 
         const create = () => {
@@ -279,6 +286,58 @@ export default {
             state.step = 'ticket';
         }
 
+        const isValidEmail = (email) => {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        };
+
+        const resetValidationErrors = () => {
+            state.validation_errors.email = '';
+            state.validation_errors.username = '';
+            state.validation_errors.password = '';
+        };
+
+        const validateEmail = () => {
+            const email = state.new_customer.email;
+            if (!email || !isValidEmail(email)) {
+                state.validation_errors.email = translate('Please provide a valid email address.');
+                return false;
+            }
+            return true;
+        };
+
+        const validateWpUser = () => {
+            if (state.ticket.create_wp_user !== 'yes') return true;
+
+            let isValid = true;
+
+            if (!state.new_customer.username) {
+                state.validation_errors.username = translate('Username is required for WordPress user.');
+                isValid = false;
+            }
+
+            if (!state.new_customer.password) {
+                state.validation_errors.password = translate('Password is required.');
+                isValid = false;
+            }
+
+            return isValid;
+        };
+
+        const goToTicketStep = () => {
+            resetValidationErrors();
+
+            if (state.ticket.create_customer === 'yes') {
+                const isEmailValid = validateEmail();
+                const isWpUserValid = validateWpUser();
+
+                if (!isEmailValid || !isWpUserValid) return;
+            }
+
+            state.step = 'ticket';
+        };
+
+
         return {
             ...toRefs(state),
             create,
@@ -286,6 +345,7 @@ export default {
             insertTemplate,
             searchCustomers,
             customerSelected,
+            goToTicketStep,
             translate,
         }
     }

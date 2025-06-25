@@ -169,13 +169,13 @@ export default {
         ticketId: {
             type: String,
             default() {
-                return false
+                return ''
             }
         },
         is_agent: {
             type: String,
             default() {
-                return false
+                return ''
             }
         },
         is_direct_paste: {
