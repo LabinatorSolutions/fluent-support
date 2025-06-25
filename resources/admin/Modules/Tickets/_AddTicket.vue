@@ -29,7 +29,7 @@
 
                 <template v-if="searched">
                     <el-form-item style="margin-top: 20px;">
-                        <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_customer">
+                        <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_customer">
                             {{ translate('Could not find a contact? Create a new one.') }}
                         </el-checkbox>
                     </el-form-item>
@@ -74,7 +74,7 @@
                         </el-row>
 
                         <el-form-item>
-                            <el-checkbox true-label="yes" false-label="no" v-model="ticket.create_wp_user">
+                            <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_wp_user">
                                 {{ translate('Create New User in WordPress') }}
                             </el-checkbox>
                         </el-form-item>
@@ -291,38 +291,52 @@ export default {
             return re.test(email);
         };
 
-        const goToTicketStep = () => {
-            let hasError = false;
-
+        const resetValidationErrors = () => {
             state.validation_errors.email = '';
             state.validation_errors.username = '';
             state.validation_errors.password = '';
+        };
+
+        const validateEmail = () => {
+            const email = state.new_customer.email;
+            if (!email || !isValidEmail(email)) {
+                state.validation_errors.email = translate('Please provide a valid email address.');
+                return false;
+            }
+            return true;
+        };
+
+        const validateWpUser = () => {
+            if (state.ticket.create_wp_user !== 'yes') return true;
+
+            let isValid = true;
+
+            if (!state.new_customer.username) {
+                state.validation_errors.username = translate('Username is required for WordPress user.');
+                isValid = false;
+            }
+
+            if (!state.new_customer.password) {
+                state.validation_errors.password = translate('Password is required.');
+                isValid = false;
+            }
+
+            return isValid;
+        };
+
+        const goToTicketStep = () => {
+            resetValidationErrors();
 
             if (state.ticket.create_customer === 'yes') {
-                const email = state.new_customer.email;
+                const isEmailValid = validateEmail();
+                const isWpUserValid = validateWpUser();
 
-                if (!email || !isValidEmail(email)) {
-                    state.validation_errors.email = translate('Please provide a valid email address.');
-                    hasError = true;
-                }
-
-                if (state.ticket.create_wp_user === 'yes') {
-                    if (!state.new_customer.username) {
-                        state.validation_errors.username = translate('Username is required for WordPress user.');
-                        hasError = true;
-                    }
-
-                    if (!state.new_customer.password) {
-                        state.validation_errors.password = translate('Password is required.');
-                        hasError = true;
-                    }
-                }
-
-                if (hasError) return;
+                if (!isEmailValid || !isWpUserValid) return;
             }
 
             state.step = 'ticket';
         };
+
 
         return {
             ...toRefs(state),
