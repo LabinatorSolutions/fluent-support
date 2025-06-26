@@ -583,6 +583,7 @@ class TransStrings
             'Create New Customer' => __('Create New Customer', 'fluent-support'),
             'Name:'  => __('Name:', 'fluent-support'),
             'Email:'    => __('Email:', 'fluent-support'),
+            'Apply Tags' => __('Apply Tags', 'fluent-support'),
             'Create New User in WordPress' => __('Create New User in WordPress', 'fluent-support'),
             'Assign Agent' => __('Assign Agent', 'fluent-support'),
             'close_selected_ticket_warning' => __('Are you sure, you want to close selected tickets?', 'fluent-support'),
