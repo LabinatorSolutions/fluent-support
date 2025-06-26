@@ -59,8 +59,8 @@
                                     :value="agent.id"
                                     :label="agent.title"></el-option>
                             </el-select>
-                            <el-button style="margin-top: 10px;" size="small" type="success"
-                                       @click="assignTags()">Apply Tags
+                            <el-button style="margin-top: 10px;" size="small" type="success" @click="assignTags()">
+                                {{translate('Apply Tags')}}
                             </el-button>
                             <el-button style="margin-top: 10px;" @click="addTagPop = false" size="small" type="default">{{translate('Close')}}</el-button>
                         </div>
