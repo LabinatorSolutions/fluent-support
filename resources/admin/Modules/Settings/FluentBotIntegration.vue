@@ -191,4 +191,135 @@ export default {
 }
 </script>
 
+<style scoped>
+.fluent-bot-container {
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+}
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.title-area h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.subtitle {
+    margin: 4px 0 0 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-label {
+    margin: 0 8px;
+    font-size: 14px;
+    color: #909399;
+}
+
+.toggle-label.active {
+    color: #409EFF;
+}
+
+.section {
+    margin: 24px 0;
+}
+
+.section h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.section-description {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 16px 0;
+}
+
+.bot-config-card {
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 16px;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.input-row:last-child {
+    margin-bottom: 0;
+}
+
+.input-row label {
+    width: 60px;
+    font-size: 14px;
+    color: #606266;
+    text-align: left;
+    margin-right: 12px;
+}
+
+.input-row .el-input {
+    flex: 1;
+}
+
+.product-mappings {
+    margin-top: 16px;
+}
+
+.mapping-card {
+    margin-bottom: 16px;
+}
+
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.product-name {
+    font-weight: 500;
+    font-size: 15px;
+}
+
+.add-product-section {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.product-select {
+    flex: 1;
+    margin-right: 12px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+}
+
+/* Element Plus overrides */
+:deep(.el-card__body) {
+    padding: 20px;
+}
+
+:deep(.el-divider--horizontal) {
+    margin: 16px 0;
+}
+</style>
