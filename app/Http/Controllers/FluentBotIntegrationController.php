@@ -38,4 +38,33 @@ class FluentBotIntegrationController extends Controller
         ]);
     }
 
+    public function saveSettings(Request $request)
+    {
+        $data = $request->get();
+        $serialized = maybe_serialize($data);
+
+        $existing = Meta::where([
+            'object_type' => 'fluent_bot_settings',
+            'object_id'   => 1,
+            'key'         => '_fs_fluent_bot_config'
+        ])->first();
+
+        if ($existing) {
+            $existing->update(['value' => $serialized]);
+        } else {
+            Meta::create([
+                'object_type' => 'fluent_bot_settings',
+                'object_id'   => 1,
+                'key'         => '_fs_fluent_bot_config',
+                'value'       => $serialized
+            ]);
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Settings saved successfully',
+            'data'    => $data
+        ];
+    }
+
 }
