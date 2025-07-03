@@ -781,7 +781,12 @@ class SettingsController extends Controller
                 'title' => __('OpenAI Integration', 'fluent-support'),
                 'route_name' => 'openai_integration',
                 'icon' => 'Connection',
-            ]
+            ],
+            [
+                'title' => __('Fluent Bot Integration', 'fluent-support'),
+                'route_name' => 'fluent_bot_integration',
+                'icon' => 'Connection',
+            ],
         ];
 
         // Conditionally add License if Pro
