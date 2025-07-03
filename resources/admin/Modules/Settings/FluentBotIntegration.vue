@@ -44,7 +44,7 @@
                     shadow="hover"
                 >
                     <div class="product-header">
-                        <span class="product-name">{{ mapping.productName }}</span>
+                        <span class="product-name">{{ mapping.productTitle }}</span>
                         <el-button
                             type="danger"
                             circle
@@ -76,7 +76,7 @@
                         <el-option
                             v-for="product in availableProducts"
                             :key="product.id"
-                            :label="product.name"
+                            :label="product.title"
                             :value="product.id"
                         />
                     </el-select>
@@ -96,68 +96,79 @@
 
 <script>
 import { Delete } from '@element-plus/icons-vue';
-import { ElNotification } from 'element-plus';
+import { ElNotification, ElMessage } from 'element-plus';
 
 export default {
     name: 'FluentBotIntegration',
-    components: {
-        Delete
-    },
+    components: { Delete },
     data() {
         return {
             isEnabled: true,
+            isLoading: false,
+            isSaving: false,
             config: {
-                generalApiKey: 'sk_fluent_bot_5823a9f71c2e4b8d',
-                generalBotId: 'bot_general_9283',
-                productMappings: [
-                    {
-                        productId: 1,
-                        productName: 'Email Marketing Suite',
-                        apiKey: 'sk_fluent_email_8472e0a31b5d',
-                        botId: 'bot_email_4582'
-                    },
-                    {
-                        productId: 2,
-                        productName: 'CRM Platform',
-                        apiKey: 'sk_fluent_crm_9472c1f59e7a',
-                        botId: 'bot_crm_7391'
-                    }
-                ]
+                generalApiKey: '',
+                generalBotId: '',
+                productMappings: []
             },
-            allProducts: [
-                { id: 1, name: 'Email Marketing Suite' },
-                { id: 2, name: 'CRM Platform' },
-                { id: 3, name: 'Analytics Dashboard' },
-                { id: 4, name: 'Social Media Manager' },
-                { id: 5, name: 'E-commerce Platform' },
-            ],
+            allProducts: [],
             selectedProduct: null,
-            originalConfig: null
-        }
+            originalConfig: null,
+            apiEndpoint: '/api/fluent-bot'
+        };
     },
     computed: {
         availableProducts() {
-            const mappedProductIds = this.config.productMappings.map(m => m.productId);
-            return this.allProducts.filter(p => !mappedProductIds.includes(p.id));
+            const mappedIds = this.config.productMappings.map(m => m.productId);
+            return this.allProducts.filter(p => !mappedIds.includes(p.id));
         }
     },
-    mounted() {
-        // Store original config for reset functionality
-        this.originalConfig = JSON.parse(JSON.stringify(this.config));
-    },
     methods: {
+        fetchData() {
+            this.isLoading = true;
+
+            this.$get("settings/fluent-bot-integration")
+                .then(data => {
+                    this.config = data;
+                    this.allProducts = data.products || [];
+                    this.isEnabled = data.isEnabled || false;
+                    this.originalConfig = JSON.parse(JSON.stringify(this.config));
+                    this.isLoading = false;
+                })
+                .catch(() => {
+                    this.isLoading = false;
+                    this.showError('Failed to load data. Please refresh the page and try again.');
+                });
+        },
+
+        saveConfiguration() {
+            this.isSaving = true;
+
+            this.$post("settings/fluent-bot-integration", {
+                ...this.config,
+                isEnabled: this.isEnabled
+            })
+            .then(() => {
+                this.originalConfig = JSON.parse(JSON.stringify(this.config));
+                this.isSaving = false;
+                this.showSuccess('Configuration saved successfully');
+            })
+            .catch(() => {
+                this.isSaving = false;
+                this.showError('Failed to save configuration');
+            });
+        },
+
         addProductMapping() {
             if (!this.selectedProduct) return;
 
             const product = this.allProducts.find(p => p.id === this.selectedProduct);
-
             this.config.productMappings.push({
                 productId: product.id,
-                productName: product.name,
+                productTitle: product.title,
                 apiKey: '',
                 botId: ''
             });
-
             this.selectedProduct = null;
         },
 
@@ -165,31 +176,38 @@ export default {
             this.config.productMappings.splice(index, 1);
         },
 
-        saveConfiguration() {
-            // In a real app, this would make an API call
+        resetForm() {
+            this.config = JSON.parse(JSON.stringify(this.originalConfig));
+            ElMessage({
+                message: 'Form has been reset to last saved state',
+                type: 'info'
+            });
+        },
+
+        showSuccess(message) {
             ElNotification({
                 title: 'Success',
-                message: 'Fluent Bot configuration has been saved',
+                message,
                 type: 'success',
                 position: 'bottom-right'
             });
-
-            // Update original config after saving
-            this.originalConfig = JSON.parse(JSON.stringify(this.config));
         },
 
-        resetForm() {
-            this.config = JSON.parse(JSON.stringify(this.originalConfig));
+        showError(message) {
             ElNotification({
-                title: 'Reset Complete',
-                message: 'Form has been reset to last saved state',
-                type: 'info',
+                title: 'Error',
+                message,
+                type: 'error',
                 position: 'bottom-right'
             });
         }
+    },
+    mounted() {
+        this.fetchData();
     }
-}
+};
 </script>
+
 
 <style scoped>
 .fluent-bot-container {
