@@ -126,6 +126,8 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->get('/openai-integration', 'SettingsController@getOpenAISettings');
     $router->post('/openai-integration', 'SettingsController@saveOpenAISettings');
     $router->post('/openai-integration/disconnect', 'SettingsController@disconnectOpenAI');
+    $router->get('/settings-menu', 'SettingsController@getSettingsMenu');
+
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
