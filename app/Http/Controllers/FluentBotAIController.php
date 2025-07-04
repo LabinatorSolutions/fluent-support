@@ -26,6 +26,7 @@ class FluentBotAIController extends Controller
     public function generateResponse(Request $request)
     {
         $ticketId = $request->getSafe('id', 'intval');
+        $productId = $request->getSafe('product_id', 'intval');
         $prompt = $request->getSafe('content', 'sanitize_text_field');
         $previousAIResponse = $request->getSafe('previous_response', 'sanitize_text_field', '');
         $selectedText = $request->getSafe('selectedText', 'sanitize_text_field', '');
@@ -38,7 +39,7 @@ class FluentBotAIController extends Controller
                 $result = $customAI->modifyResponse($prompt, $selectedText, $ticketId);
             } else {
                 $ticket = Ticket::with('responses')->findOrFail($ticketId);
-                $result = $customAI->generateResponse($prompt, $ticket, $previousAIResponse);
+                $result = $customAI->generateResponse($prompt, $ticket, $productId, $previousAIResponse);
             }
 
             return $result;
