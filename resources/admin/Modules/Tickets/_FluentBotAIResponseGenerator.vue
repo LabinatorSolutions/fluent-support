@@ -30,7 +30,14 @@
                 class="fs_select_field fs_product_dropdown"
                 filterable
                 clearable
+                :value-key="'id'"
+                :default-value="0"
             >
+                <el-option
+                    :key="0"
+                    :label="translate('General Bot (No specific product selected)')"
+                    :value="0"
+                />
                 <el-option
                     v-for="product in products"
                     :key="product.id"
@@ -159,7 +166,7 @@ export default {
             showDraft: false,
             finalPrompts: '',
             products: appVars.support_products,
-            selectedProduct: parseInt(props.productID) || 0
+            selectedProduct: props.productID ? parseInt(props.productID) : 0
         });
 
         const title = 'Generate Responses with Fluent Bot';
