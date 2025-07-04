@@ -646,6 +646,20 @@ class Helper
         return false;
     }
 
+    public static function fluentBotIntegrationStatus()
+    {
+        if (!defined('FLUENT_SUPPORT_CUSTOM_AI_DIR_FILE')) {
+            return false;
+        }
+
+        $settings = maybe_unserialize(
+            Meta::where('object_type', 'fluent_bot_settings')->value('value')
+        );
+
+        return !empty($settings['isEnabled']) && $settings['isEnabled'] === 'true';
+    }
+
+
     public static function showTicketSummaryAdminBar()
     {
         $data = self::getOption('global_business_settings');
