@@ -323,3 +323,60 @@ export default {
     }
 };
 </script>
+
+<style >
+.fs_product_selector {
+    padding: 20px 20px 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .fs_product_label {
+        color: #0E121B;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: -0.084px;
+    }
+
+    .fs_select_field {
+        .el-select__wrapper {
+            display: flex;
+            padding: 5px 5px 5px 12px;
+            align-items: center;
+            gap: 8px;
+            align-self: stretch;
+            border-radius: 10px;
+            border: 1px solid #E1E4EA;
+            background: #FFF;
+            box-shadow: 0px 1px 2px 0px rgba(10, 13, 20, 0.03);
+        }
+
+        .el-select__wrapper.is-focused {
+            border-radius: 8px;
+            border: 1px solid #0E121B;
+            background: #FFF;
+            box-shadow: 0px 0px 0px 2px #FFF,
+            0px 0px 0px 4px rgba(153, 160, 174, 0.16);
+        }
+
+        .el-select__placeholder {
+            color: #99A0AE;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: -0.084px;
+        }
+
+    }
+}
+.el-select-dropdown__wrap{
+    .el-select-dropdown__item.is-selected {
+        color: #525866;
+        font-weight: bold;
+    }
+}
+</style>
+
