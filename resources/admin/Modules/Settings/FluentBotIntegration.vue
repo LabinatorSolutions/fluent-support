@@ -7,8 +7,12 @@
             </div>
             <div class="toggle-container">
                 <span class="toggle-label">Disabled</span>
-                <el-switch v-model="isEnabled" />
-                <span class="toggle-label" :class="{ 'active': isEnabled }">Enabled</span>
+                <el-switch
+                    v-model="isEnabled"
+                    active-value="true"
+                    inactive-value="false"
+                />
+                <span class="toggle-label" :class="{ active: isEnabled === 'true' }"> Enabled </span>
             </div>
         </div>
 
@@ -103,7 +107,7 @@ export default {
     components: { Delete },
     data() {
         return {
-            isEnabled: true,
+            isEnabled: 'true',
             isLoading: false,
             isSaving: false,
             config: {
@@ -131,7 +135,7 @@ export default {
                 .then(data => {
                     this.config = data;
                     this.allProducts = data.products || [];
-                    this.isEnabled = data.isEnabled || false;
+                    this.isEnabled = data.isEnabled || 'false';
                     this.originalConfig = JSON.parse(JSON.stringify(this.config));
                     this.isLoading = false;
                 })

@@ -213,6 +213,13 @@ $router->prefix('public')->withPolicy('PublicPolicy')->group(function ($router) 
     $router->get('/authorize', 'AuthorizeController@handleHelpScoutAuthorization');
 });
 
+$router->prefix('fluent-bot')->withPolicy('AgentTicketPolicy')->group(function ($router) {
+    $router->get('/preset-prompts', 'FluentBotAIController@getPresetPrompts')->int('id');
+    $router->post('/{id}/generate-response', 'FluentBotAIController@generateResponse')->int('id');
+    $router->post('/{id}/get-ticket-summary', 'FluentBotAIController@getTicketSummary')->int('id');
+    $router->post('/{id}/get-ticket-tone', 'FluentBotAIController@getTicketTone')->int('id');
+});
+
 $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(function ($router) {
     $router->get('/', 'ActivityLoggerController@getActivities');
     $router->get('/settings', 'ActivityLoggerController@getSettings');
