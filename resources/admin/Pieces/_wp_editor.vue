@@ -22,6 +22,28 @@
                         <div>
                             <AIResponseGenerator type="createResponse" @close="closeAIResponsePromptBox" @insert="insertAIResponse"/>
                         </div>
+
+                    </div>
+                </el-popover>
+            </div>
+            <div class="fs_chatGPT_box" v-if="appVars.fluent_bot_integration">
+                <el-popover
+                    placement="bottom"
+                    :width="480"
+                    trigger="click"
+                    :visible="showFluentBotAIResponseBox"
+                >
+                    <template #reference>
+                        <el-button class="fs_ai_response_button" @click="showFluentBotAIResponseBox = !showFluentBotAIResponseBox">
+                            <p>
+                                {{$t('Ask FluentBot')}}
+                            </p>
+                        </el-button>
+                    </template>
+                    <div class="fs_template_inserter">
+                        <div>
+                            <FluentBotAIResponseGenerator type="createResponse" :ticketId="ticketId" :productID="productID" :is_agent="is_agent" @close="closeFluentBotAIResponsePromptBox" @insert="insertAIResponse"/>
+                        </div>
                     </div>
                 </el-popover>
             </div>
@@ -96,6 +118,7 @@ export default {
     components: {
         TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined,
         AIResponseGenerator: () => import('../Modules/Tickets/_AIResponseGenerator'),
+        FluentBotAIResponseGenerator: () => import('../Modules/Tickets/_FluentBotAIResponseGenerator.vue'),
         ImagePasteUploader,
     },
 
@@ -172,6 +195,12 @@ export default {
                 return false
             }
         },
+        productID: {
+            type: String,
+            default() {
+                return false
+            }
+        },
         is_agent: {
             type: String,
             default() {
@@ -213,6 +242,7 @@ export default {
             actionBarStyle: {},
             showChatGPTPromptBox: false,
             showAIResponseBox: false,
+            showFluentBotAIResponseBox: false,
             selectedText: '',
             editorData: {},
             appVars: this.appVars,
@@ -305,6 +335,10 @@ export default {
 
         closeAIResponsePromptBox() {
             this.showAIResponseBox = false;
+        },
+
+        closeFluentBotAIResponsePromptBox() {
+            this.showFluentBotAIResponseBox = false;
         },
 
         handleCommand(command) {
@@ -441,6 +475,7 @@ export default {
         if (window.fluentSupportAdmin) {
             this.$options.components.TemplateInserter = require('../Modules/Tickets/_templateInserter').default
             this.$options.components.AIResponseGenerator = require('../Modules/Tickets/_AIResponseGenerator').default
+            this.$options.components.FluentBotAIResponseGenerator = require('../Modules/Tickets/_FluentBotAIResponseGenerator').default
         }
     },
     mounted() {
@@ -514,7 +549,7 @@ export default {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.fs_chatGPT_box .fs_ai_response_button {
+ .fs_chatGPT_box .fs_ai_response_button {
     align-items: center;
     padding: 5px 6px;
     height: 22px;
