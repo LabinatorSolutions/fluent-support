@@ -782,12 +782,16 @@ class SettingsController extends Controller
                 'route_name' => 'openai_integration',
                 'icon' => 'Connection',
             ],
-            [
+
+        ];
+
+        if (defined('FLUENT_SUPPORT_CUSTOM_AI_DIR_FILE') ) {
+            $menu[] = [
                 'title' => __('Fluent Bot Integration', 'fluent-support'),
                 'route_name' => 'fluent_bot_integration',
                 'icon' => 'Connection',
-            ],
-        ];
+            ];
+        }
 
         // Conditionally add License if Pro
         if (defined('FLUENT_SUPPORT_PRO_DIR_FILE') ) {
@@ -797,6 +801,10 @@ class SettingsController extends Controller
                 'icon' => 'Lock',
             ];
         }
+
+
+
+
 
         return apply_filters('fluent_support/settings_menu_items', $menu);
     }
