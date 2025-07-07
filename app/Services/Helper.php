@@ -635,7 +635,7 @@ class Helper
         return false;
     }
 
-    public static function AIIntegrationStatus() {
+    public static function openAIIntegrationStatus() {
         $chatGPTSettingsData = Meta::where('object_type', '_fs_openai_settings')->value('value');
 
         if ($chatGPTSettingsData) {

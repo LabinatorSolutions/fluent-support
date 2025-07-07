@@ -35,7 +35,7 @@ export default {
         const state = reactive({
             activeName: 'overall_activities',
             me: appVars.me,
-            ai_enabled: appVars.ai_integration,
+            ai_enabled: !!(appVars.open_ai_integration || appVars.fluent_bot_integration),
         });
 
         return {

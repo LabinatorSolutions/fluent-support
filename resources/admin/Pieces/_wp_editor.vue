@@ -1,7 +1,7 @@
 <template>
     <div class="wp_vue_editor_wrapper">
         <div class="fs_action_buttons">
-            <div class="fs_ai_tools_box" v-if="appVars.fluent_bot_integration">
+            <div class="fs_ai_tools_box" v-if="fluentBotIntegration">
                 <el-popover
                     placement="bottom"
                     :width="480"
@@ -25,7 +25,7 @@
                     </div>
                 </el-popover>
             </div>
-            <div class="fs_ai_tools_box" v-if="aiIntegration">
+            <div class="fs_ai_tools_box" v-if="openAIIntegration">
                 <el-popover
                     placement="bottom"
                     :width="480"
@@ -180,7 +180,13 @@ export default {
                 return false
             }
         },
-        aiIntegration: {
+        openAIIntegration: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
+        fluentBotIntegration: {
             type: Boolean,
             default() {
                 return false
