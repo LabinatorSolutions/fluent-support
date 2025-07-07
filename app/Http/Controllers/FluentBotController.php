@@ -6,7 +6,7 @@ namespace FluentSupport\App\Http\Controllers;
 use FluentSupport\Framework\Request\Request;
 use FluentSupport\App\Http\Controllers\Controller;
 use FluentSupport\App\Models\Ticket;
-use FluentSupportCustomAI\App\Services\CustomAI\CustomAIService;
+use FluentSupport\App\Services\Integrations\FluentBot\FluentBotService;
 
 class FluentBotController extends Controller
 {
@@ -15,7 +15,7 @@ class FluentBotController extends Controller
         $type = $request->getSafe('type', 'sanitize_text_field');
 
         try {
-            return (new CustomAIService())->getPresetPrompts($type);
+            return (new FluentBotService())->getPresetPrompts($type);
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage()
@@ -33,7 +33,7 @@ class FluentBotController extends Controller
         $type = $request->getSafe('type', 'sanitize_text_field', 'response');
 
         try {
-            $customAI = new CustomAIService();
+            $customAI = new FluentBotService();
 
             if ($type === 'modifyResponse') {
                 $result = $customAI->modifyResponse($prompt, $selectedText, $ticketId);
@@ -56,7 +56,7 @@ class FluentBotController extends Controller
         $ticket = Ticket::with('responses')->findOrFail($ticketId);
 
         try {
-            return (new CustomAIService())->getTicketSummary($ticket);
+            return (new FluentBotService())->getTicketSummary($ticket);
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage()
@@ -70,7 +70,7 @@ class FluentBotController extends Controller
         $ticket = Ticket::with('responses')->findOrFail($ticketId);
 
         try {
-            return (new CustomAIService())->getTicketTone($ticket);
+            return (new FluentBotService())->getTicketTone($ticket);
         } catch (\Exception $e) {
             return $this->sendError([
                 'message' => $e->getMessage()
