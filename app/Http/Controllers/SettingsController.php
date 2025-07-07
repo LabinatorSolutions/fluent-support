@@ -5,6 +5,7 @@ namespace FluentSupport\App\Http\Controllers;
 
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Meta;
+use FluentSupport\App\Models\Product;
 use FluentSupport\App\Services\EmailNotification\Settings;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\Database\Migrations\AIActivityLogsMigrator;
@@ -706,106 +707,85 @@ class SettingsController extends Controller
 
     public function getSettingsMenu()
     {
-        $menu = [
-            [
-                'title' => __('Global Settings', 'fluent-support'),
-                'route_name' => 'global_settings',
-                'icon' => 'Document',
-            ],
-            [
-                'title' => __('Ticket Tags', 'fluent-support'),
-                'route_name' => 'tags',
-                'icon' => 'CollectionTag',
-            ],
-            [
-                'title' => __('Ticket Form Config', 'fluent-support'),
-                'route_name' => 'ticket-form-config',
-                'icon' => 'Setting',
-            ],
-            [
-                'title' => __('Custom Fields', 'fluent-support'),
-                'route_name' => 'custom_fields',
-                'icon' => 'Tickets',
-            ],
-            [
-                'title' => __('Products', 'fluent-support'),
-                'route_name' => 'products',
-                'icon' => 'Goods',
-            ],
-            [
-                'title' => __('Support Staff', 'fluent-support'),
-                'route_name' => 'support-staffs',
-                'icon' => 'User',
-            ],
-            [
-                'title' => __('FluentCRM Integration', 'fluent-support'),
-                'route_name' => 'fluentcrm_integration',
-                'icon' => 'Cpu',
-            ],
-            [
-                'title' => __('Incoming Webhook', 'fluent-support'),
-                'route_name' => 'incoming-webhook',
-                'icon' => 'Connection',
-            ],
-            [
-                'title' => __('Notification Integrations', 'fluent-support'),
-                'route_name' => 'integration',
-                'icon' => 'AlarmClock',
-            ],
-            [
-                'title' => __('File Upload Integrations', 'fluent-support'),
-                'route_name' => 'upload_integration',
-                'icon' => 'FolderAdd',
-            ],
-            [
-                'title' => __('Auto Close Settings', 'fluent-support'),
-                'route_name' => 'auto_close',
-                'icon' => 'Timer',
-            ],
-            [
-                'title' => __('Ticket Importer', 'fluent-support'),
-                'route_name' => 'ticket_importer',
-                'icon' => 'Download',
-            ],
-            [
-                'title' => __('Recaptcha', 'fluent-support'),
-                'route_name' => 'reCaptcha',
-                'icon' => 'Key',
-            ],
-            [
-                'title' => __('Integration Statuses', 'fluent-support'),
-                'route_name' => 'integration_statuses',
-                'icon' => 'Connection',
-            ],
-            [
-                'title' => __('OpenAI Integration', 'fluent-support'),
-                'route_name' => 'openai_integration',
-                'icon' => 'Connection',
-            ],
+        return Helper::getGlobalSettingsMenu();
+    }
 
+    public function getFluentBotSettings()
+    {
+        $meta = Meta::where([
+            'object_type' => 'fluent_bot_settings',
+            'object_id'   => 1,
+            'key'         => '_fs_fluent_bot_config'
+        ])->first();
+
+        $settings = $meta ? maybe_unserialize($meta->value) : [];
+
+        $productItems = Product::all()->map(function ($product) {
+            return [
+                'id'    => $product->id,
+                'title' => $product->title
+            ];
+        })->values()->all();
+
+        return array_merge([
+            'generalApiKey'    => '',
+            'generalBotId'     => '',
+            'isEnabled'        => false,
+            'productMappings'  => [],
+            'products'         => $productItems
+        ], $settings, [
+            'products' => $productItems
+        ]);
+    }
+
+    public function saveFluentBotSettings(Request $request)
+    {
+        $data = [
+            'generalApiKey'    => $request->getSafe('generalApiKey', 'sanitize_text_field'),
+            'generalBotId'     => $request->getSafe('generalBotId', 'sanitize_text_field'),
+            'isEnabled'        => $request->getSafe('isEnabled', 'sanitize_text_field'),
+            'productMappings'  => []
         ];
 
-        if (defined('FLUENT_SUPPORT_CUSTOM_AI_DIR_FILE') ) {
-            $menu[] = [
-                'title' => __('Fluent Bot Integration', 'fluent-support'),
-                'route_name' => 'fluent_bot_integration',
-                'icon' => 'Connection',
+        $productMappings = (array) $request->get('productMappings', []);
+
+        foreach ($productMappings as $mapping) {
+            if (!is_array($mapping)) {
+                continue;
+            }
+
+            $data['productMappings'][] = [
+                'productId'    => intval($mapping['productId'] ?? 0),
+                'productTitle' => sanitize_text_field($mapping['productTitle'] ?? ''),
+                'apiKey'       => sanitize_text_field($mapping['apiKey'] ?? ''),
+                'botId'        => sanitize_text_field($mapping['botId'] ?? ''),
             ];
         }
 
-        // Conditionally add License if Pro
-        if (defined('FLUENT_SUPPORT_PRO_DIR_FILE') ) {
-            $menu[] = [
-                'title' => __('License Management', 'fluent-support'),
-                'route_name' => 'license',
-                'icon' => 'Lock',
-            ];
+        $serialized = maybe_serialize($data);
+
+        $existing = Meta::where([
+            'object_type' => 'fluent_bot_settings',
+            'object_id'   => 1,
+            'key'         => '_fs_fluent_bot_config'
+        ])->first();
+
+        if ($existing) {
+            $existing->update(['value' => $serialized]);
+        } else {
+            Meta::create([
+                'object_type' => 'fluent_bot_settings',
+                'object_id'   => 1,
+                'key'         => '_fs_fluent_bot_config',
+                'value'       => $serialized
+            ]);
         }
 
-
-
-
-
-        return apply_filters('fluent_support/settings_menu_items', $menu);
+        return [
+            'success' => true,
+            'message' => 'Settings saved successfully',
+            'data'    => $data
+        ];
     }
+
 }
