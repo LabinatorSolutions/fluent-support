@@ -1,7 +1,31 @@
 <template>
     <div class="wp_vue_editor_wrapper">
         <div class="fs_action_buttons">
-            <div class="fs_chatGPT_box" v-if="aiIntegration">
+            <div class="fs_ai_tools_box" v-if="appVars.fluent_bot_integration">
+                <el-popover
+                    placement="bottom"
+                    :width="480"
+                    trigger="click"
+                    :visible="showFluentBotAIResponseBox"
+                >
+                    <template #reference>
+                        <el-button class="fs_fluent_bot_response_button" @click="showFluentBotAIResponseBox = !showFluentBotAIResponseBox">
+                            <div>
+                                <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
+                            </div>
+                            <p>
+                                {{$t('Ask FluentBot')}}
+                            </p>
+                        </el-button>
+                    </template>
+                    <div class="fs_template_inserter">
+                        <div>
+                            <FluentBotAIResponseGenerator type="createResponse" :ticketId="ticketId" :productID="productID" :is_agent="is_agent" @close="closeFluentBotAIResponsePromptBox" @insert="insertAIResponse"/>
+                        </div>
+                    </div>
+                </el-popover>
+            </div>
+            <div class="fs_ai_tools_box" v-if="aiIntegration">
                 <el-popover
                     placement="bottom"
                     :width="480"
@@ -9,7 +33,7 @@
                     :visible="showAIResponseBox"
                 >
                     <template #reference>
-                        <el-button class="fs_ai_response_button" @click="showAIResponseBox = !showAIResponseBox">
+                        <el-button class="fs_openAI_response_button" @click="showAIResponseBox = !showAIResponseBox">
                             <div>
                                 <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
                             </div>
@@ -23,27 +47,6 @@
                             <AIResponseGenerator type="createResponse" @close="closeAIResponsePromptBox" @insert="insertAIResponse"/>
                         </div>
 
-                    </div>
-                </el-popover>
-            </div>
-            <div class="fs_chatGPT_box" v-if="appVars.fluent_bot_integration">
-                <el-popover
-                    placement="bottom"
-                    :width="480"
-                    trigger="click"
-                    :visible="showFluentBotAIResponseBox"
-                >
-                    <template #reference>
-                        <el-button class="fs_ai_response_button" @click="showFluentBotAIResponseBox = !showFluentBotAIResponseBox">
-                            <p>
-                                {{$t('Ask FluentBot')}}
-                            </p>
-                        </el-button>
-                    </template>
-                    <div class="fs_template_inserter">
-                        <div>
-                            <FluentBotAIResponseGenerator type="createResponse" :ticketId="ticketId" :productID="productID" :is_agent="is_agent" @close="closeFluentBotAIResponsePromptBox" @insert="insertAIResponse"/>
-                        </div>
                     </div>
                 </el-popover>
             </div>
@@ -86,7 +89,7 @@
             v-model="plain_content"
             @click="updateCursorPos"
         ></textarea>
-        <div v-if="loadingImage" class="loading-overlay">
+        <div v-if="loadingImage" class="fs_loading_overlay">
         </div>
         <div class="fs_ai_modify_response_box" v-if="showActionBar && aiIntegration" :style="actionBarStyle">
             <el-popover
@@ -549,64 +552,93 @@ export default {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
- .fs_chatGPT_box .fs_ai_response_button {
-    align-items: center;
-    padding: 5px 6px;
-    height: 22px;
-    font-size: 0;
-    font-weight: 500;
-    line-height: 1.33;
-    color: #fff;
-    background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.16) 0%,
-            rgba(255, 255, 255, 0) 100%
-    ), #0e121b;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 4px;
-    box-shadow:
-        0 1px 2px 0 rgba(27, 28, 29, 0.48),
-        0 0 0 1px #242628;
-    transition: background 0.3s, box-shadow 0.3s;
+.fs_ai_tools_box {
+    .fs_fluent_bot_response_button,
+    .fs_openAI_response_button {
+        align-items: center;
+        padding: 5px 6px;
+        height: 22px;
+        font-size: 0;
+        font-weight: 500;
+        line-height: 1.33;
+        color: #fff;
+        border-radius: 4px;
+        transition: background 0.3s, box-shadow 0.3s;
+
+        span {
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        p {
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 1.33;
+        }
+    }
+
+    .fs_fluent_bot_response_button {
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.36) 0%,
+                rgba(255, 255, 255, 0) 100%
+        ),
+        #07754f;
+        box-shadow:
+            0px 1px 2px 0px rgba(14, 18, 27, 0.24),
+            0px 0px 0px 1px #07754f;
+
+        &:hover {
+            box-shadow:
+                0 2px 4px 0 rgba(27, 28, 29, 0.64),
+                0 0 0 1px #3a3b3d;
+        }
+    }
+
+    .fs_openAI_response_button {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.16) 0%,
+                rgba(255, 255, 255, 0) 100%
+        ),
+        #0e121b;
+        box-shadow:
+            0 1px 2px 0 rgba(27, 28, 29, 0.48),
+            0 0 0 1px #242628;
+
+        &:hover {
+            background: linear-gradient(
+                    180deg,
+                    rgba(255, 255, 255, 0.32) 0%,
+                    rgba(255, 255, 255, 0.16) 100%
+            ),
+            #0e121b;
+            box-shadow:
+                0 2px 4px 0 rgba(27, 28, 29, 0.64),
+                0 0 0 1px #3a3b3d;
+        }
+    }
 }
 
-.fs_chatGPT_box .fs_ai_response_button span {
-    display: flex;
-    justify-content: space-between;
-    gap: 4px;
-}
-
-.fs_chatGPT_box .fs_ai_response_button p {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 1.33;
-}
-
-.fs_chatGPT_box .fs_ai_response_button:hover {
-    background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.32) 0%,
-            rgba(255, 255, 255, 0.16) 100%
-    ), #0e121b;
-    box-shadow:
-        0px 2px 4px 0px rgba(27, 28, 29, 0.64),
-        0px 0px 0px 1px #3a3b3d;
-}
-
-.fs_ai_modify_response_box .fs_ai_popover_button {
-    padding: 6px;
-    gap: 10px;
-    border-radius: 50%;
-    background: #0E121B;
-    height: 30px;
-    width: 30px;
+.fs_ai_modify_response_box {
+    .fs_ai_popover_button {
+        padding: 6px;
+        gap: 10px;
+        border-radius: 50%;
+        background: #0e121b;
+        height: 30px;
+        width: 30px;
+    }
 }
 
 .wp_vue_editor_wrapper {
     position: relative;
 }
 
-.loading-overlay {
+.fs_loading_overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -619,5 +651,4 @@ export default {
     z-index: 10;
     pointer-events: none;
 }
-
 </style>
