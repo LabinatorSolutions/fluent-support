@@ -1,101 +1,101 @@
 <template>
-    <el-card class="fluent-bot-container">
-        <div class="header">
-            <div class="title-area">
-                <h2>Fluent Bot Integration</h2>
-                <p class="subtitle">Connect your products with AI-powered support</p>
-            </div>
-            <div class="toggle-container">
-                <span class="toggle-label">Disabled</span>
-                <el-switch
-                    v-model="isEnabled"
-                    active-value="true"
-                    inactive-value="false"
-                />
-                <span class="toggle-label" :class="{ active: isEnabled === 'true' }"> Enabled </span>
-            </div>
-        </div>
-
-        <el-divider />
-
-        <!-- General Bot Configuration -->
-        <div class="section">
-            <h3>General Bot</h3>
-            <p class="section-description">This bot will handle general queries for all products</p>
-
-            <div class="bot-config-card">
-                <div class="input-row">
-                    <label>API Key</label>
-                    <el-input v-model="config.generalApiKey" show-password placeholder="Enter API Key" />
+    <div class="fluent_bot_container">
+        <div class="fs_box_wrapper">
+            <div class="fs_box_header">
+                <div class="fs_box_head">
+                    <h2>Fluent Bot Integration</h2>
                 </div>
-                <div class="input-row">
-                    <label>Bot ID</label>
-                    <el-input v-model="config.generalBotId" placeholder="Enter General Bot ID" />
+                <div class="fs_box_actions">
+                    <span class="toggle-label">Disabled</span>
+                    <el-switch
+                        v-model="isEnabled"
+                        active-value="true"
+                        inactive-value="false"
+                    />
+                    <span class="toggle-label" :class="{ active: isEnabled === 'true' }"> Enabled </span>
                 </div>
             </div>
-        </div>
+            <div class="fs_box_body">
+                <!-- General Bot Configuration -->
+                <div class="section">
+                    <h3>General Bot</h3>
+                    <p class="section-description">This bot will handle general queries for all products</p>
 
-        <!-- Product-specific Configuration -->
-        <div class="section">
-            <h3>Product-Specific Bots</h3>
-            <p class="section-description">Configure specialized bots trained for specific products</p>
+                    <div class="bot-config-card">
+                        <div class="input-row">
+                            <label>API Key</label>
+                            <el-input v-model="config.generalApiKey" show-password placeholder="Enter API Key" />
+                        </div>
+                        <div class="input-row">
+                            <label>Bot ID</label>
+                            <el-input v-model="config.generalBotId" placeholder="Enter General Bot ID" />
+                        </div>
+                    </div>
+                </div>
 
-            <div class="product-mappings">
-                <el-card
-                    v-for="(mapping, index) in config.productMappings"
-                    :key="index"
-                    class="mapping-card"
-                    shadow="hover"
-                >
-                    <div class="product-header">
-                        <span class="product-name">{{ mapping.productTitle }}</span>
-                        <el-button
-                            type="danger"
-                            circle
-                            size="small"
-                            @click="removeMapping(index)"
-                            class="delete-btn"
+                <!-- Product-specific Configuration -->
+                <div class="section">
+                    <h3>Product-Specific Bots</h3>
+                    <p class="section-description">Configure specialized bots trained for specific products</p>
+
+                    <div class="product-mappings">
+                        <el-card
+                            v-for="(mapping, index) in config.productMappings"
+                            :key="index"
+                            class="mapping-card"
+                            shadow="hover"
                         >
-                            <el-icon><Delete /></el-icon>
-                        </el-button>
-                    </div>
+                            <div class="product-header">
+                                <span class="product-name">{{ mapping.productTitle }}</span>
+                                <el-button
+                                    type="danger"
+                                    circle
+                                    size="small"
+                                    @click="removeMapping(index)"
+                                    class="delete-btn"
+                                >
+                                    <el-icon><Delete /></el-icon>
+                                </el-button>
+                            </div>
 
-                    <div class="input-row">
-                        <label>API Key</label>
-                        <el-input v-model="mapping.apiKey" show-password placeholder="Enter API Key" />
-                    </div>
+                            <div class="input-row">
+                                <label>API Key</label>
+                                <el-input v-model="mapping.apiKey" show-password placeholder="Enter API Key" />
+                            </div>
 
-                    <div class="input-row">
-                        <label>Bot ID</label>
-                        <el-input v-model="mapping.botId" placeholder="Enter Bot ID" />
-                    </div>
-                </el-card>
+                            <div class="input-row">
+                                <label>Bot ID</label>
+                                <el-input v-model="mapping.botId" placeholder="Enter Bot ID" />
+                            </div>
+                        </el-card>
 
-                <div class="add-product-section">
-                    <el-select
-                        v-model="selectedProduct"
-                        placeholder="Select a product"
-                        class="product-select"
-                    >
-                        <el-option
-                            v-for="product in availableProducts"
-                            :key="product.id"
-                            :label="product.title"
-                            :value="product.id"
-                        />
-                    </el-select>
-                    <el-button type="primary" @click="addProductMapping" :disabled="!selectedProduct">
-                        + Add Product Bot
-                    </el-button>
+                        <div class="add-product-section">
+                            <el-select
+                                v-model="selectedProduct"
+                                placeholder="Select a product"
+                                class="product-select"
+                            >
+                                <el-option
+                                    v-for="product in availableProducts"
+                                    :key="product.id"
+                                    :label="product.title"
+                                    :value="product.id"
+                                />
+                            </el-select>
+                            <el-button type="primary" @click="addProductMapping" :disabled="!selectedProduct">
+                                + Add Product Bot
+                            </el-button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <el-button plain @click="resetForm">Reset</el-button>
+                    <el-button type="primary" @click="saveConfiguration">Save Configuration</el-button>
                 </div>
             </div>
         </div>
-
-        <div class="actions">
-            <el-button plain @click="resetForm">Reset</el-button>
-            <el-button type="primary" @click="saveConfiguration">Save Configuration</el-button>
-        </div>
-    </el-card>
+    </div>
 </template>
 
 <script>
@@ -218,134 +218,203 @@ export default {
 
 
 <style scoped>
-.fluent-bot-container {
-    width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: #333;
-}
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
 
-.title-area h2 {
-    margin: 0;
-    font-size: 22px;
-    font-weight: 500;
-}
-
-.subtitle {
-    margin: 4px 0 0 0;
-    color: #666;
-    font-size: 14px;
-}
 
 .toggle-container {
     display: flex;
     align-items: center;
+    gap: 0.5rem;
 }
 
 .toggle-label {
-    margin: 0 8px;
-    font-size: 14px;
-    color: #909399;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s ease-in-out;
 }
 
 .toggle-label.active {
-    color: #409EFF;
+    color: #4361ee;
+}
+
+.fs_box_body {
+    padding: 1.5rem;
 }
 
 .section {
-    margin: 24px 0;
+    margin-bottom: 2rem;
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
 }
 
 .section h3 {
-    margin: 0 0 8px 0;
-    font-size: 16px;
-    font-weight: 500;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section h3:before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 1.125rem;
+    background: #4361ee;
+    border-radius: 2px;
 }
 
 .section-description {
-    color: #666;
-    font-size: 14px;
-    margin: 0 0 16px 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin: 0 0 1.25rem 0;
+    line-height: 1.5;
 }
 
+/* General Bot Section Specific */
 .bot-config-card {
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    padding: 16px;
+    background: #ffffff;
+    border-radius: 0.375rem;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+}
+
+.bot-config-card:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Product Mappings Section */
+.product-mappings {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.mapping-card {
+    background: #ffffff;
+    border-radius: 0.375rem;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.mapping-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.product-header {
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.product-name {
+    font-weight: 600;
+    color: #4361ee;
+    font-size: 0.9375rem;
+}
+
+.delete-btn {
+    border-color: #ef4444;
+}
+
+.delete-btn:hover {
+    color: #ffffff;
 }
 
 .input-row {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 1rem;
+    padding: 0 1.25rem;
 }
 
 .input-row:last-child {
-    margin-bottom: 0;
+    margin-bottom: 1.25rem;
 }
 
 .input-row label {
-    width: 60px;
-    font-size: 14px;
-    color: #606266;
-    text-align: left;
-    margin-right: 12px;
+    width: 80px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6b7280;
+    margin-right: 1rem;
 }
 
 .input-row .el-input {
     flex: 1;
 }
 
-.product-mappings {
-    margin-top: 16px;
-}
-
-.mapping-card {
-    margin-bottom: 16px;
-}
-
-.product-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.product-name {
-    font-weight: 500;
-    font-size: 15px;
-}
-
 .add-product-section {
     display: flex;
     align-items: center;
-    margin-top: 16px;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px dashed #e5e7eb;
 }
 
 .product-select {
     flex: 1;
-    margin-right: 12px;
+    margin-right: 0.75rem;
 }
 
 .actions {
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
-    margin-top: 32px;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
 }
 
-/* Element Plus overrides */
-:deep(.el-card__body) {
-    padding: 20px;
-}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .fs_box_header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
 
-:deep(.el-divider--horizontal) {
-    margin: 16px 0;
+    .input-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .input-row label {
+        margin-bottom: 0.5rem;
+        margin-right: 0;
+    }
+
+    .input-row .el-input {
+        width: 100%;
+    }
+
+    .add-product-section {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .product-select {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .actions .el-button {
+        width: 100%;
+    }
 }
 </style>
+
