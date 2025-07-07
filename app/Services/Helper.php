@@ -648,10 +648,6 @@ class Helper
 
     public static function fluentBotIntegrationStatus()
     {
-        if (!defined('FLUENT_SUPPORT_CUSTOM_AI_DIR_FILE')) {
-            return false;
-        }
-
         $settings = maybe_unserialize(
             Meta::where('object_type', 'fluent_bot_settings')->value('value')
         );
@@ -1038,15 +1034,12 @@ class Helper
                 'route_name' => 'openai_integration',
                 'icon' => 'Connection',
             ],
-        ];
-
-        if (defined('FLUENT_SUPPORT_CUSTOM_AI_DIR_FILE')) {
-            $menu[] = [
+            [
                 'title' => __('Fluent Bot Integration', 'fluent-support'),
                 'route_name' => 'fluent_bot_integration',
                 'icon' => 'Connection',
-            ];
-        }
+            ]
+        ];
 
         if (defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
             $menu[] = [
