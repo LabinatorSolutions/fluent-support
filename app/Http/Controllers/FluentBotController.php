@@ -8,7 +8,7 @@ use FluentSupport\App\Http\Controllers\Controller;
 use FluentSupport\App\Models\Ticket;
 use FluentSupportCustomAI\App\Services\CustomAI\CustomAIService;
 
-class FluentBotAIController extends Controller
+class FluentBotController extends Controller
 {
     public function getPresetPrompts(Request $request)
     {

@@ -133,7 +133,11 @@ export default {
 
             this.$get("settings/fluent-bot-integration")
                 .then(data => {
-                    this.config = data;
+                    this.config = {
+                        generalApiKey: data.generalApiKey || '',
+                        generalBotId: data.generalBotId || '',
+                        productMappings: data.productMappings || []
+                    };
                     this.allProducts = data.products || [];
                     this.isEnabled = data.isEnabled || 'false';
                     this.originalConfig = JSON.parse(JSON.stringify(this.config));

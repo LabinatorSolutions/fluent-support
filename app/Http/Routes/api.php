@@ -127,8 +127,8 @@ $router->prefix('settings')->withPolicy('AdminSettingsPolicy')->group(function (
     $router->post('/openai-integration', 'SettingsController@saveOpenAISettings');
     $router->post('/openai-integration/disconnect', 'SettingsController@disconnectOpenAI');
     $router->get('/settings-menu', 'SettingsController@getSettingsMenu');
-    $router->get('fluent-bot-integration', 'FluentBotIntegrationController@getSettings');
-    $router->post('fluent-bot-integration', 'FluentBotIntegrationController@saveSettings');
+    $router->get('/fluent-bot-integration', 'SettingsController@getFluentBotSettings');
+    $router->post('/fluent-bot-integration', 'SettingsController@saveFluentBotSettings');
 });
 
 $router->prefix('agents')->withPolicy('AdminSensitivePolicy')->group(function ($router) {
@@ -214,10 +214,10 @@ $router->prefix('public')->withPolicy('PublicPolicy')->group(function ($router) 
 });
 
 $router->prefix('fluent-bot')->withPolicy('AgentTicketPolicy')->group(function ($router) {
-    $router->get('/preset-prompts', 'FluentBotAIController@getPresetPrompts')->int('id');
-    $router->post('/{id}/generate-response', 'FluentBotAIController@generateResponse')->int('id');
-    $router->post('/{id}/get-ticket-summary', 'FluentBotAIController@getTicketSummary')->int('id');
-    $router->post('/{id}/get-ticket-tone', 'FluentBotAIController@getTicketTone')->int('id');
+    $router->get('/preset-prompts', 'FluentBotController@getPresetPrompts')->int('id');
+    $router->post('/{id}/generate-response', 'FluentBotController@generateResponse')->int('id');
+    $router->post('/{id}/get-ticket-summary', 'FluentBotController@getTicketSummary')->int('id');
+    $router->post('/{id}/get-ticket-tone', 'FluentBotController@getTicketTone')->int('id');
 });
 
 $router->prefix('activity-logger')->withPolicy('ActivityLoggerPolicy')->group(function ($router) {
