@@ -19,7 +19,7 @@
                 </div>
             </div>
 
-            <div class="fs_box_body">
+            <div v-if="!fetching" class="fs_box_body">
                 <!-- General Bot Configuration -->
                 <div class="fs_section">
                     <h3>{{ $t('General Bot') }}</h3>
@@ -129,6 +129,10 @@
                     </el-button>
                 </div>
             </div>
+
+            <div style="padding: 20px; background: white;" class="fs_box_body fs_narrow_promo" v-else>
+                <el-skeleton :rows="5" animated/>
+            </div>
         </div>
     </div>
 </template>
@@ -144,6 +148,7 @@ export default {
             isEnabled: 'false',
             isLoading: false,
             isSaving: false,
+            fetching: true,
             config: {
                 generalApiKey: '',
                 generalBotId: '',
@@ -176,6 +181,7 @@ export default {
                     this.isEnabled = data.isEnabled || 'false';
                     this.originalConfig = JSON.parse(JSON.stringify(this.config));
                     this.isLoading = false;
+                    this.fetching = false;
                 })
                 .catch((errors) => {
                     this.isLoading = false;
