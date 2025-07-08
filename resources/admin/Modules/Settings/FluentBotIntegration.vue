@@ -40,6 +40,7 @@
                             <label>{{ $t('Bot ID') }}</label>
                             <el-input
                                 v-model="config.generalBotId"
+                                show-password
                                 :placeholder="$t('Enter General Bot ID')"
                             />
                         </div>
@@ -89,6 +90,7 @@
                                     <label>{{ $t('Bot ID') }}</label>
                                     <el-input
                                         v-model="mapping.botId"
+                                        show-password
                                         :placeholder="$t('Enter Bot ID')"
                                     />
                                 </div>
@@ -99,6 +101,8 @@
                                 v-model="selectedProduct"
                                 :placeholder="$t('Select a product')"
                                 class="fs_product_select"
+                                filterable
+                                clearable
                             >
                                 <el-option
                                     v-for="product in availableProducts"
