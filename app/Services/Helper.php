@@ -1034,11 +1034,6 @@ class Helper
                 'route_name' => 'openai_integration',
                 'icon' => 'Connection',
             ],
-            [
-                'title' => __('Fluent Bot Integration', 'fluent-support'),
-                'route_name' => 'fluent_bot_integration',
-                'icon' => 'Connection',
-            ]
         ];
 
         if (defined('FLUENT_SUPPORT_PRO_DIR_FILE')) {
