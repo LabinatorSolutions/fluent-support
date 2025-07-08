@@ -4,7 +4,7 @@ namespace FluentSupport\App\Services\Integrations\FluentBot;
 use FluentSupport\App\Models\Meta;
 use FluentSupport\App\Services\Integrations\FluentBot\FluentBotAPI;
 use FluentSupport\Framework\Support\Arr;
-
+use WP_Error;
 class FluentBotHelper
 {
     const BASE_URL = 'https://fluent-ai-backend.jewel-e68.workers.dev/fluent-bot';
@@ -80,6 +80,10 @@ class FluentBotHelper
 
         $credentials = $this->resolveApiCredentials($productId);
 
+        if (is_wp_error($credentials)) {
+            return $credentials;
+        }
+
         $payload['botId'] = $credentials['botId'];
 
         $api = new FluentBotAPI($credentials['apiKey'], $apiUrl);
@@ -87,7 +91,7 @@ class FluentBotHelper
     }
 
 
-    private function resolveApiCredentials($productId): array
+    private function resolveApiCredentials($productId)
     {
         $meta = Meta::where([
             'object_type' => 'fluent_bot_settings',
@@ -100,7 +104,6 @@ class FluentBotHelper
         $apiKey = $config['generalApiKey'] ?? '';
         $botId = $config['generalBotId'] ?? '';
 
-        // If product ID is valid and productMappings exist
         if ($productId && !empty($config['productMappings']) && is_array($config['productMappings'])) {
             foreach ($config['productMappings'] as $mapping) {
                 if ((int)$mapping['productId'] === (int)$productId) {
@@ -109,6 +112,13 @@ class FluentBotHelper
                     break;
                 }
             }
+        }
+
+        if (!$apiKey || !$botId) {
+            return new \WP_Error(
+                'missing_bot_credentials',
+                __('API Key and Bot ID are not set for this product.', 'fluent-support')
+            );
         }
 
         return [
