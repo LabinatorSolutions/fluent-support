@@ -8,6 +8,7 @@
                 <div class="fs_box_actions fs_toggle_container">
                     <span class="fs_toggle_label">{{ $t('Disabled') }}</span>
                     <el-switch
+                        @change="saveConfiguration"
                         v-model="isEnabled"
                         active-value="true"
                         inactive-value="false"
@@ -136,7 +137,7 @@ export default {
     components: { Delete },
     data() {
         return {
-            isEnabled: 'true',
+            isEnabled: 'false',
             isLoading: false,
             isSaving: false,
             config: {
@@ -218,13 +219,6 @@ export default {
         },
     },
 
-    watch: {
-        isEnabled(newVal, oldVal) {
-            if (newVal !== oldVal) {
-                this.saveConfiguration();
-            }
-        }
-    },
     mounted() {
         this.fetchData();
     }
