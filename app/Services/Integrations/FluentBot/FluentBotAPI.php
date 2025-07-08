@@ -49,7 +49,7 @@ class FluentBotAPI
             return new \WP_Error('fluent_bot_error', __('No AI response found in the API response.', 'fluent-support'));
         }
 
-        do_action('fluent_support/ai_response_success', $ticketId, $prompt, $responseBody['totalTokens'], "CustomAI");
+        do_action('fluent_support/ai_response_success', $ticketId, $prompt, $responseBody['totalTokens'], "Fluent Bot");
 
         return $content;
     }

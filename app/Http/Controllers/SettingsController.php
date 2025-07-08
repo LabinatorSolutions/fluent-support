@@ -779,6 +779,8 @@ class SettingsController extends Controller
                 'key'         => '_fs_fluent_bot_config',
                 'value'       => $serialized
             ]);
+
+            AIActivityLogsMigrator::migrate();
         }
 
         return [
