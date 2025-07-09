@@ -759,3 +759,18 @@ ul.fs_contact_results {
         }
     }
 }
+
+.fs_option_title {
+    display: inline-block;
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.fs_option_id {
+    float: right;
+    color: #8492a6;
+    font-size: 13px;
+}

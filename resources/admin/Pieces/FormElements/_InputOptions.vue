@@ -11,10 +11,11 @@
             <el-option
                 v-for="item in field.options"
                 :key="item.id"
-                :label="item.title"
-                :value="item.id">
-                <span style="float: left">{{ item.title }}</span>
-                <span v-if="field.show_id" style="float: right; color: #8492a6; font-size: 13px">{{ item.id }}</span>
+                :label="getOptionLabel(item)"
+                :value="item.id"
+            >
+                <span class="fs_option_title">{{ item.title }}</span>
+                <span class="fs_option_id" v-if="field.show_id">{{ item.id }}</span>
             </el-option>
         </el-select>
     </div>
@@ -41,6 +42,9 @@ export default {
             if (JSON.stringify(newValue) !== JSON.stringify(this.modelValue)) {
                 this.$emit('update:modelValue', newValue);
             }
+        },
+        getOptionLabel(item) {
+            return this.field.show_id ? `${item.title} (${this.$t('Page ID')} #${item.id})` : item.title;
         }
     }
 }

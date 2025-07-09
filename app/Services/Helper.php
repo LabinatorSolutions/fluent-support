@@ -497,8 +497,8 @@ class Helper
         $formattedPages = [];
         foreach ($pages as $page) {
             $formattedPages[] = [
-                'id'    => strval($page->ID),
-                'title' => $page->post_title
+                'id'    => intval($page->ID),
+                'title' => $page->post_title ?: __('(no title)', 'fluent-support')
             ];
         }
         return $formattedPages;

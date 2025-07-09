@@ -205,6 +205,7 @@ class TransStrings
             'Create New Reply'    => __('Create New Reply', 'fluent-support'),
             'Reply Title'    => __('Reply Title', 'fluent-support'),
             'Field Type'    => __('Field Type', 'fluent-support'),
+            'Page ID' => __('Page ID', 'fluent-support'),
             'Select Field Type' => __('Select Field Type', 'fluent-support'),
             'Migrate tickets from' => __('Migrate tickets from', 'fluent-support'),
             'Admin Label (Optional)'    => __('Admin Label (Optional)', 'fluent-support'),
