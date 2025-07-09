@@ -607,7 +607,7 @@
                             v-if="showCustomDataEditForm"
                             width="60%"
                             class="fs_dialog">
-                            <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id"
+                            <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id" type="update_ticket"
                                                :custom_data="ticket.custom_fields"/>
                         </el-dialog>
 
