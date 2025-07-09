@@ -140,7 +140,7 @@
                     </el-col>
                 </el-row>
 
-                <custom-field-form :custom_data="ticket.custom_fields" v-if="has_pro"/>
+                <custom-field-form :custom_data="ticket.custom_fields" :ticket="ticket" type="create_ticket" v-if="has_pro"/>
 
                 <el-col :span="4">
                     <el-form-item>
