@@ -113,6 +113,28 @@ foreach ($renameFiles as $source => $target) {
     rename($targetFolder . '/' . $source, $targetFolder . '/' . $target);
 }
 
+// Create index.php files with "Silence Is Golden" comment in assets folder and its subdirectories
+function createIndexPhpFiles($directory) {
+    $indexContent = "<?php\n\n// Silence Is Golden.";
+
+    // Create index.php in the main directory
+    file_put_contents($directory . '/index.php', $indexContent);
+
+    // Get all subdirectories
+    $dirs = glob($directory . '/*', GLOB_ONLYDIR);
+
+    foreach ($dirs as $dir) {
+        // Create index.php in each subdirectory
+        file_put_contents($dir . '/index.php', $indexContent);
+
+        // Recursively process subdirectories
+        createIndexPhpFiles($dir);
+    }
+}
+
+// Create index.php files in assets folder and its subdirectories
+createIndexPhpFiles($targetFolder . '/assets');
+
 echo "\nPro Build Completed";
 
 
@@ -138,5 +160,3 @@ function deleteFilesByExtension($directory, $extensions = []) {
 
 // Now delete .txt and .map files in assets folder recursively
 deleteFilesByExtension($targetFolder.'/assets', ['map', 'txt']);
-
-
