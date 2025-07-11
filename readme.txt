@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 6.8
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,16 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.9.1 (Date: July 14, 2025) =
+* Improved: After selecting the portal page, it now displays the page name along with the page ID.
+* Improved: Enhanced data validation when creating a customer through the "Create Ticket on Behalf of Customer" module.
+* Fixed: Custom field “required” validation not working under certain conditions.
+* Fixed: Start date does not display correctly in the Paid Memberships Pro widget.
+* Fixed: Design conflict with the Blocksy theme in the customer portal.
+* Fixed: Translation issues across various modules.
+* Fixed: Agents unable to edit additional data fields.
+* Fixed: Custom fields do not render properly in the admin portal when creating a ticket on behalf of a customer.
 
 = 1.9.0 (Date: May 28, 2025) =
 * Added: Integration with Fluent Community. (Pro)
