@@ -42,7 +42,7 @@
                                         <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;" width="100%" class="fcTextContentContainer">
                                             <tbody>
                                             <tr>
-                                                <td valign="top" class="fcTextContentBody" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;border-bottom: 2px solid #EAEAEA;padding-top: 0;padding-bottom: 9px;">
+                                                <td valign="top" class="fcTextContentBody" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;background-image: none;background-repeat: no-repeat;background-position: center;background-size: cover;border-top: 0;<?php echo apply_filters('fluent_support_email_template_show_border', true) ? 'border-bottom: 2px solid #EAEAEA;' : ''; ?>padding-top: 0;padding-bottom: 9px;">
                                                     <table align="left" border="0" cellpadding="0" cellspacing="0" style="max-width: 100%;min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;" width="100%" class="fcTextContentContainer">
                                                         <tbody class="mcnTextBlockOuter">
                                                         <tr>
