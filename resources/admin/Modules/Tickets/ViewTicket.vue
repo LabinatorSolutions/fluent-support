@@ -51,7 +51,7 @@
                             </el-popover>
                         </li>
 
-                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant" v-if="aiIntegration">
+                        <li :title="translate('AI Assistant ')" class="fs_ai_assistant" v-if="openAIIntegration">
                             <el-dropdown trigger="click">
                                 <el-button class="fs_ai_intelligent_button">
                                     <img :src="appVars.asset_url + 'images/aiIcon.svg'" alt="">
@@ -392,7 +392,8 @@
                     @close="show_response_box = ''"
                     :type="show_response_box"
                     :draft="draftData"
-                    :aiIntegration="aiIntegration"
+                    :openAIIntegration="openAIIntegration"
+                    :fluentBotIntegration="fluentBotIntegration"
                     @discardDraft="discardDraft"
                 />
                 <div class="fs_create_response text-align-center" v-if="ticket.status == 'closed'">
@@ -607,7 +608,7 @@
                             v-if="showCustomDataEditForm"
                             width="60%"
                             class="fs_dialog">
-                            <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id"
+                            <custom-field-form @syncData="syncCustomData" :ticket_id="ticket_id" type="update_ticket"
                                                :custom_data="ticket.custom_fields"/>
                         </el-dialog>
 
@@ -759,7 +760,8 @@ export default {
             customerSentiment: '',
             ResponseLoader: false,
             apiKey: '',
-            aiIntegration: !!appVars.ai_integration,
+            openAIIntegration: !!appVars.open_ai_integration,
+            fluentBotIntegration: !!appVars.fluent_bot_integration,
             deleteTicketPermission: false
         });
 
