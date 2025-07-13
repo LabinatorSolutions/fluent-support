@@ -46,7 +46,7 @@ import each from 'lodash/each';
 
 export default {
     name: 'CustomFieldForm',
-    props: ['custom_data', 'ticket_id'],
+    props: ['custom_data', 'ticket_id', 'ticket', 'type'],
     emits: ['syncData'],
     data() {
         return {
@@ -54,6 +54,7 @@ export default {
             fields: false,
             labelPosition: 'top',
             formData: {},
+            formattedProducts: {},
             saving: false,
             loading_remote: false
         }
@@ -103,6 +104,10 @@ export default {
                 }
             });
 
+            each(this.appVars.support_products, (product) => {
+                this.formattedProducts[product.id] = product.title;
+            });
+
             this.appReady = true;
         },
         saveEditedCustomFieldData() {
@@ -127,7 +132,7 @@ export default {
                 });
         },
         isRenderable(field) {
-            if (field.has_logics != 'yes' || !field.conditions || !field.conditions.length) {
+            if (field.has_logics != 'yes' || !field.conditions || !field.conditions.length || this.type === 'update_ticket') {
                 return true;
             }
             let singlePass = false;

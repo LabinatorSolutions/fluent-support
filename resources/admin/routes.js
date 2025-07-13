@@ -41,6 +41,7 @@ import TicketImporter from "./Modules/Settings/TicketImporter/TicketImporter";
 import HelpScoutAuthorization from "./Modules/Settings/TicketImporter/HelpScout/HelpScoutAuthorization";
 import IntegrationStatuses from './Modules/Settings/IntegrationStatuses';
 import OpenAIIntegration from "@/admin/Modules/Settings/OpenAIIntegration.vue";
+import FluentBotIntegration from "@/admin/Modules/Settings/FluentBotIntegration.vue";
 
 export default [
     {
@@ -171,6 +172,12 @@ export default [
                 path: '/openai_integration',
                 name: 'openai_integration',
                 component: OpenAIIntegration,
+                props: true,
+            },
+            {
+                path: '/fluent_bot_integration',
+                name: 'fluent_bot_integration',
+                component: FluentBotIntegration,
                 props: true,
             },
 

@@ -33,110 +33,32 @@ export default {
 
         const {
             translate,
-            has_pro,
+            get,
+            handleError,
         } = useFluentHelper();
 
         const state = reactive({
-            settings_items: [
-                {
-                    title: translate("Global Settings"),
-                    route_name: "global_settings",
-                    icon: "Document",
-                },
-                {
-                    title: translate("Ticket Tags"),
-                    route_name: "tags",
-                    icon: "CollectionTag",
-                    route_query: {},
-                },
-                {
-                    title: translate("Ticket Form Config"),
-                    route_name: "ticket-form-config",
-                    icon: "Setting",
-                    route_query: {},
-                },
-                {
-                    title: translate("Custom Fields"),
-                    route_name: "custom_fields",
-                    route_query: {},
-                    icon: "Tickets",
-                },
-                {
-                    title: translate("Products"),
-                    route_name: "products",
-                    route_query: {},
-                    icon: "Goods",
-                },
-                {
-                    title: translate("Support Staff"),
-                    route_name: "support-staffs",
-                    route_query: {},
-                    icon: "User",
-                },
-                {
-                    title: translate("FluentCRM Integration"),
-                    route_name: "fluentcrm_integration",
-                    route_query: {},
-                    icon: "Cpu",
-                },
-                {
-                    title: translate("Incoming Webhook"),
-                    route_name: "incoming-webhook",
-                    route_query: {},
-                    icon: "Connection",
-                },
-                {
-                    title: translate("Notification Integrations"),
-                    route_name: "integration",
-                    icon: "AlarmClock",
-                },
-                {
-                    title: translate("File Upload Integrations"),
-                    route_name: "upload_integration",
-                    icon: "FolderAdd",
-                },
-                {
-                    title: translate("Auto Close Settings"),
-                    route_name: "auto_close",
-                    icon: "Timer",
-                },
-                {
-                    title: translate("Ticket Importer"),
-                    route_name: "ticket_importer",
-                    icon: "Download",
-                },
-                {
-                    title: translate("Recaptcha"),
-                    route_name: "reCaptcha",
-                    icon: "Key",
-                },
-                {
-                    title: translate("Integration Statuses"),
-                    route_name: "integration_statuses",
-                    icon: "Connection",
-                },
-                {
-                    title: translate("OpenAI Integration"),
-                    route_name: "openai_integration",
-                    icon: "Connection",
-                },
-            ],
+            settings_items: [],
         });
 
+        const fetchSettingsMenu = async () => {
+            await get("settings/settings-menu")
+                .then((response) => {
+                    state.settings_items = response;
+                })
+                .catch((errors) => {
+                    handleError(errors);
+                })
+                .always(() => {});
+        };
+
         onMounted(() => {
-            if (has_pro) {
-                state.settings_items.push({
-                    title: translate("License Management"),
-                    route_name: "license",
-                    icon: "Lock",
-                });
-            }
+            fetchSettingsMenu();
         });
 
         return {
             ...toRefs(state),
             translate,
-
         }
     },
 };
