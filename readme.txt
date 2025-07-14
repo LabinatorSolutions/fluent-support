@@ -258,6 +258,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 * Fixed: Selected product displayed as ID instead of name in view ticket module.
 * Fixed: Change customer option showed only the current customer ID instead of the full list.
 * Fixed: Workflow didn’t work when Fluent Community plugin was inactive.
+* Fixed: Attachment access issue on symlinked servers using realpath.
 
 = 1.9.0 (Date: May 28, 2025) =
 * Added: Integration with Fluent Community. (Pro)
