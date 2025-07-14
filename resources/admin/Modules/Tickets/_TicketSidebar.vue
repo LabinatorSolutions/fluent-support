@@ -214,8 +214,13 @@
                     </el-form>
 
                     <el-form-item>
-                        <el-button @click="changeCustomer(customerID)" :disabled="changing" v-loading="changing"
-                                   type="primary" size="small">
+                        <el-button
+                            @click="changeCustomer(customerID)"
+                            :disabled="changing || !customerID"
+                            v-loading="changing"
+                            type="primary"
+                            size="small"
+                        >
                             {{ $t('Change Customer') }}
                         </el-button>
                     </el-form-item>
