@@ -787,6 +787,9 @@ export default {
                 }
                 state.loading = false;
                 state.ticket = response.ticket;
+                state.ticket.product_id = (state.ticket.product_id && state.ticket.product_id !== '0')
+                    ? Number(state.ticket.product_id)
+                    : null;
                 setTitle(response.ticket.title);
                 state.conversations = response.responses;
                 state.draftReplyPermission = appVars.me.permissions.includes('fst_draft_reply');
