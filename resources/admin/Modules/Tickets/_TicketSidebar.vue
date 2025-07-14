@@ -202,19 +202,25 @@
                     <el-form :data="ticket" label-position="top">
                         <el-form-item :label="$t('Select Customer')">
                             <remote-selector
-                                v-model="ticket.customer_id"
+                                v-model="customerID"
                                 response_key="customers"
                                 api_path="customers"
                                 value_selector="id"
                                 label_joiner=" - "
                                 :label_selectors="['full_name','email']"
+                                clearable
                             />
                         </el-form-item>
                     </el-form>
 
                     <el-form-item>
-                        <el-button @click="changeCustomer(ticket.customer_id)" :disabled="changing" v-loading="changing"
-                                   type="primary" size="small">
+                        <el-button
+                            @click="changeCustomer(customerID)"
+                            :disabled="changing || !customerID"
+                            v-loading="changing"
+                            type="primary"
+                            size="small"
+                        >
                             {{ $t('Change Customer') }}
                         </el-button>
                     </el-form-item>
@@ -269,6 +275,7 @@ export default {
             ticketTone: '',
             agents: appVars.support_agents,
             orders: [],
+            customerID: null
         });
 
         const fetchWidgets = () => {

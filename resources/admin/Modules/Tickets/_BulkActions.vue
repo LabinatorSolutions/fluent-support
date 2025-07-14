@@ -39,7 +39,7 @@
                 <li :title="translate('Run Workflow')">
                     <work-flow-selector @reloadTickets="fetchTickets()" :ticket_ids="ticket_selections"/>
                 </li>
-                <li title="Add Tag(s)">
+                <li :title="translate('Add Tag(s)')">
                     <el-popover
                         placement="bottom"
                         :width="400"
@@ -81,7 +81,7 @@
                         </el-button>
                     </el-popover>
                 </li>
-                <li title="Delete Tickets">
+                <li :title="translate('Delete Tickets')">
                     <el-popover
                         placement="bottom"
                         :width="400"
