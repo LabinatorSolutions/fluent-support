@@ -30,7 +30,7 @@
                         <td valign="top" id="templateBody" style="mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;border-top: 0;border-bottom: 0;"><table border="0" cellpadding="0" cellspacing="0" width="100%" class="fcTextBlock" style="min-width: 100%;border-collapse: collapse;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                                 <tbody class="fcTextBlockOuter">
                                 <tr>
-                                    <td valign="top" class="fcTextBlockInner" style="padding-top: 0px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
+                                    <td valign="top" class="fs_text_block_inner" style="padding-top: 0px;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
                                         <!--[if mso]>
                                         <table align="left" border="0" cellspacing="0" cellpadding="0" width="100%" style="width:100%;">
                                         <tr>
