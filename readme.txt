@@ -256,6 +256,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 * Fixed: Custom fields do not render properly in the admin portal when creating a ticket on behalf of a customer.
 * Fixed: Selected product displayed as ID instead of name in view ticket module.
 * Fixed: Change customer option showed only the current customer ID instead of the full list.
+* Fixed: Workflow didn’t work when Fluent Community plugin was inactive.
 
 = 1.9.0 (Date: May 28, 2025) =
 * Added: Integration with Fluent Community. (Pro)
