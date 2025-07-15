@@ -245,7 +245,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 
 == Changelog ==
 
-= 1.9.1 (Date: July 14, 2025) =
+= 1.9.1 (Date: July 15, 2025) =
 * Improved: After selecting the portal page, it now displays the page name along with the page ID.
 * Improved: Enhanced data validation when creating a customer through the "Create Ticket on Behalf of Customer" module.
 * Improved: Added a filter to control the display of bottom borders in email templates.
