@@ -2,15 +2,13 @@
     <div>
         <div class="fs_ai_activity_box_header">
             <div class="fs_ai_filters">
-                <div class="fs_ai_activities_select_agents">
+                <div class="fs_ai_activities_filters">
                     <el-select
                         clearable
                         filterable
-                        size="small"
                         @change="fetchAIActivities()"
                         v-model="filters.agent_id"
                         :placeholder="translate('All Support Staff')"
-                        style="margin-right: 10px"
                     >
                         <el-option
                             v-for="agent in appVars.support_agents"
@@ -19,8 +17,6 @@
                             :label="agent.full_name"
                         ></el-option>
                     </el-select>
-                </div>
-                <div class="fs_ai_activities_date_picker">
                     <el-date-picker
                         @change="fetchAIActivities"
                         v-model="date_range"
