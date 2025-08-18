@@ -14,7 +14,7 @@
         >
             <form-builder
                 v-if="app_ready"
-                :fields="fields"
+                :fields="processedFields"
                 :form-data="settings"
                 label_position="top"
             >
@@ -23,7 +23,7 @@
                         size="default"
                         type="success"
                         @click="saveSettings()"
-                        >{{ translate("Save Settings") }}</el-button
+                    >{{ translate("Save Settings") }}</el-button
                     >
                 </template>
             </form-builder>
@@ -40,7 +40,7 @@
 
 <script type="text/babel">
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import { onMounted, reactive, toRefs } from "vue";
+import { onMounted, reactive, toRefs, computed } from "vue";
 import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     name: "BusinessSettings",
@@ -66,6 +66,26 @@ export default {
             loading: false,
             app_ready: false,
             settings_key: "global_business_settings",
+        });
+
+        const makeShortcodesClickable = (helpText) => {
+            if (!helpText) return helpText;
+
+            return helpText.replace(
+                /<code>(\[.*?\])<\/code>/g,
+                '<code class="fs_clickable_shortcode" data-shortcode="$1" title="Click to copy">$1</code>'
+            );
+        };
+
+        const processedFields = computed(() => {
+            const processed = {};
+            Object.keys(state.fields).forEach(key => {
+                processed[key] = {
+                    ...state.fields[key],
+                    inline_help: makeShortcodesClickable(state.fields[key].inline_help)
+                };
+            });
+            return processed;
         });
 
         const fetchSettings = async() => {
@@ -108,16 +128,62 @@ export default {
                 });
         };
 
+        // Global function to copy shortcode
+        const copyShortcode = async (shortcode) => {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(shortcode);
+                } else {
+                    // Fallback for older browsers
+                    const textarea = document.createElement('textarea');
+                    textarea.value = shortcode;
+                    textarea.style.position = 'absolute';
+                    textarea.style.left = '-9999px';
+                    document.body.appendChild(textarea);
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+
+                notify({
+                    type: "success",
+                    message: translate('Shortcode copied to clipboard: ') + shortcode,
+                    position: "bottom-right",
+                });
+            } catch (err) {
+                notify({
+                    type: "error",
+                    message: translate('Failed to copy shortcode'),
+                    position: "bottom-right",
+                });
+            }
+        };
+
         onMounted(() => {
             fetchSettings();
             setTitle("Business Settings");
+
+            // Add click event listener for shortcodes
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('fs_clickable_shortcode') || e.target.closest('.fs_clickable_shortcode')) {
+                    const shortcodeElement = e.target.classList.contains('fs_clickable_shortcode')
+                        ? e.target
+                        : e.target.closest('.fs_clickable_shortcode');
+                    const shortcode = shortcodeElement.getAttribute('data-shortcode');
+                    if (shortcode) {
+                        copyShortcode(shortcode);
+                    }
+                }
+            });
         });
 
         return {
             ...toRefs(state),
             translate,
             fetchSettings,
-            saveSettings
+            saveSettings,
+            processedFields,
+            copyShortcode
         }
     },
 };
