@@ -73,7 +73,7 @@ export default {
 
             return helpText.replace(
                 /<code>(\[.*?\])<\/code>/g,
-                '<code class="fs_clickable_shortcode" data-shortcode="$1" title="Click to copy">$1</code>'
+                '<code class="fs_clickable_shortcode" data-shortcode="$1">$1</code>'
             );
         };
 
