@@ -28,7 +28,7 @@
                         <p v-if="active_email_settings.can_edit_subject == 'no'">{{translate('can_not_edit_subject')}}</p>
                     </el-form-item>
                     <el-form-item :label="translate('Email Body')">
-                        <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body" :show-shortcodes="true" :editor-shortcodes="currentSmartCodes"/>
+                        <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body" :editor-shortcodes="shortCodes"/>
                     </el-form-item>
                     <el-form-item>
                         <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">
@@ -144,7 +144,7 @@ export default {
         }
 
 
-        const currentSmartCodes = computed(() =>{
+        const shortCodes = computed(() =>{
             if (
                 state.active_email == 'ticket_created_email_to_customer' ||
                 state.active_email == 'ticket_created_email_to_admin'
@@ -207,7 +207,7 @@ export default {
         getConfigs,
         editEmail,
         saveSettings,
-        currentSmartCodes,
+        shortCodes,
         get,
         put,
         translate,

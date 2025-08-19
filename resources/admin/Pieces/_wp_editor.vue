@@ -60,7 +60,7 @@
                 </el-button>
             </div>
 
-            <div class="fc_shortcode_box" v-if="showShortcodes" >
+            <div class="fc_shortcode_box" v-if="hasShortcodes" >
                 <el-dropdown type="primary" trigger="click">
                     <el-button size="small" type="primary">
                         {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
@@ -248,19 +248,10 @@ export default {
     },
     computed: {
         shortcodes() {
-            return Object.keys(this.editorShortcodes).length > 0 ? this.editorShortcodes : {
-                '{{customer.first_name}}': 'Customer First Name',
-                '{{customer.last_name}}': 'Customer Last Name',
-                '{{customer.full_name}}': 'Customer Full Name',
-                '{{customer.email}}': 'Customer Email',
-                '{{customer.title}}': 'Customer Title',
-                '{{customer.status}}': 'Customer Status',
-                '{{agent.first_name}}': 'Agent First Name',
-                '{{agent.last_name}}': 'Agent Last Name',
-                '{{agent.full_name}}': 'Agent Full Name',
-                '{{agent.email}}': 'Agent Email',
-                '{{agent.title}}': 'Agent Title'
-            };
+            return this.editorShortcodes;
+        },
+        hasShortcodes() {
+            return this.editorShortcodes && Object.keys(this.editorShortcodes).length > 0;
         }
     },
     watch: {
@@ -376,9 +367,33 @@ export default {
         },
 
         insertShortcode(content) {
-            let tinyInstance = tinyMCE.editors[wpActiveEditor];
-            tinyInstance.insertContent(content.target._value);
-            this.$emit('update:modelValue', this.modelValue + content.target._value)
+            const shortcode = content.target._value;
+
+            if (this.hasWpEditor) {
+                let tinyInstance = tinyMCE.get(this.editor_id);
+                if (tinyInstance) {
+                    tinyInstance.focus();
+                    tinyInstance.insertContent(shortcode);
+                    const updatedContent = tinyInstance.getContent();
+                    this.$emit('update:modelValue', updatedContent);
+                }
+            } else {
+                const textarea = document.querySelector(`#${this.editor_id}`);
+                if (textarea) {
+                    const start = textarea.selectionStart;
+                    const end = textarea.selectionEnd;
+                    const text = textarea.value;
+                    const before = text.substring(0, start);
+                    const after = text.substring(end, text.length);
+                    const newValue = before + shortcode + after;
+                    this.plain_content = newValue;
+                    // Set cursor position after the inserted shortcode
+                    this.$nextTick(() => {
+                        textarea.selectionStart = textarea.selectionEnd = start + shortcode.length;
+                        textarea.focus();
+                    });
+                }
+            }
         },
 
         insertTemplate(content) {

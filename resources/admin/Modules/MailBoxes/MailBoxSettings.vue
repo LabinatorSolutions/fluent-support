@@ -29,7 +29,7 @@
             </el-form-item>
 
             <el-form-item :label="translate('Email Footer For Customers')" v-if="has_pro">
-                <wp-editor :height="100" v-model="mailbox.email_footer" :show-shortcodes="true" :editor-shortcodes="smartCodes"/>
+                <wp-editor :height="100" v-model="mailbox.email_footer" :editor-shortcodes="shortCodes"/>
             </el-form-item>
 
             <el-form-item :label="translate('Inbox Color')">
@@ -73,7 +73,7 @@ export default {
         const { notify } = useNotify();
 
         const state = reactive({
-            smartCodes: {
+            shortCodes: {
                 '{{customer.first_name}}': translate('Customer First name'),
                 '{{customer.last_name}}': translate('Customer Last name'),
                 '{{customer.email}}': translate('Customer Email'),
