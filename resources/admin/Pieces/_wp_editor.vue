@@ -139,9 +139,9 @@ export default {
             }
         },
         editorShortcodes: {
-            type: Array,
+            type: Object,
             default() {
-                return []
+                return {}
             }
         },
         height: {
@@ -234,7 +234,21 @@ export default {
             app_ready: false,
             buttonInitiated: false,
             currentEditor: false,
-            shortcodes: {
+
+            showActionBar: false,
+            actionBarStyle: {},
+            showChatGPTPromptBox: false,
+            showAIResponseBox: false,
+            showFluentBotAIResponseBox: false,
+            selectedText: '',
+            editorData: {},
+            appVars: this.appVars,
+            loadingImage: false
+        }
+    },
+    computed: {
+        shortcodes() {
+            return Object.keys(this.editorShortcodes).length > 0 ? this.editorShortcodes : {
                 '{{customer.first_name}}': 'Customer First Name',
                 '{{customer.last_name}}': 'Customer Last Name',
                 '{{customer.full_name}}': 'Customer Full Name',
@@ -246,16 +260,7 @@ export default {
                 '{{agent.full_name}}': 'Agent Full Name',
                 '{{agent.email}}': 'Agent Email',
                 '{{agent.title}}': 'Agent Title'
-            },
-            showActionBar: false,
-            actionBarStyle: {},
-            showChatGPTPromptBox: false,
-            showAIResponseBox: false,
-            showFluentBotAIResponseBox: false,
-            selectedText: '',
-            editorData: {},
-            appVars: this.appVars,
-            loadingImage: false
+            };
         }
     },
     watch: {
