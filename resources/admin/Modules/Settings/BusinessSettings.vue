@@ -40,7 +40,7 @@
 
 <script type="text/babel">
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import { onMounted, reactive, toRefs, computed } from "vue";
+ import { onMounted, onUnmounted, reactive, toRefs, computed } from "vue";
 import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     name: "BusinessSettings",
@@ -54,7 +54,8 @@ export default {
             post,
             handleError,
             setTitle,
-            translate
+            translate,
+            copyToClipboard
         } = useFluentHelper();
 
         const { notify } = useNotify();
@@ -128,34 +129,26 @@ export default {
                 });
         };
 
-        // Global function to copy shortcode
-        const copyShortcode = async (shortcode) => {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(shortcode);
-                } else {
-                    // Fallback for older browsers
-                    const textarea = document.createElement('textarea');
-                    textarea.value = shortcode;
-                    textarea.style.position = 'absolute';
-                    textarea.style.left = '-9999px';
-                    document.body.appendChild(textarea);
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
-                }
+        // Function to copy shortcode using global copyToClipboard helper
+        const copyShortcode = (shortcode) => {
+            const successMessage = translate('Shortcode copied to clipboard: ') + shortcode;
+            const errorMessage = translate('Failed to copy shortcode');
 
-                notify({
-                    type: "success",
-                    message: translate('Shortcode copied to clipboard: ') + shortcode,
-                    position: "bottom-right",
-                });
-            } catch (err) {
-                notify({
-                    type: "error",
-                    message: translate('Failed to copy shortcode'),
-                    position: "bottom-right",
-                });
+            return copyToClipboard(shortcode, successMessage, errorMessage);
+        };
+
+        const handleClick = (e) => {
+            if (
+                e.target.classList.contains("fs_clickable_shortcode") ||
+                e.target.closest(".fs_clickable_shortcode")
+            ) {
+                const shortcodeElement = e.target.classList.contains("fs_clickable_shortcode")
+                    ? e.target
+                    : e.target.closest(".fs_clickable_shortcode");
+                const shortcode = shortcodeElement.getAttribute("data-shortcode");
+                if (shortcode) {
+                    copyShortcode(shortcode);
+                }
             }
         };
 
@@ -163,18 +156,11 @@ export default {
             fetchSettings();
             setTitle("Business Settings");
 
-            // Add click event listener for shortcodes
-            document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('fs_clickable_shortcode') || e.target.closest('.fs_clickable_shortcode')) {
-                    const shortcodeElement = e.target.classList.contains('fs_clickable_shortcode')
-                        ? e.target
-                        : e.target.closest('.fs_clickable_shortcode');
-                    const shortcode = shortcodeElement.getAttribute('data-shortcode');
-                    if (shortcode) {
-                        copyShortcode(shortcode);
-                    }
-                }
-            });
+            document.addEventListener("click", handleClick);
+        });
+
+        onUnmounted(() => {
+            document.removeEventListener("click", handleClick);
         });
 
         return {
@@ -183,7 +169,6 @@ export default {
             fetchSettings,
             saveSettings,
             processedFields,
-            copyShortcode
         }
     },
 };
