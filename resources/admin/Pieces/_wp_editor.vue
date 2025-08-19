@@ -61,12 +61,12 @@
             </div>
 
             <div class="fc_shortcode_box" v-if="hasShortcodes" >
-                <el-dropdown type="primary" trigger="click">
+                <el-dropdown type="primary" trigger="click" :popper-options="{ strategy: 'fixed' }">
                     <el-button size="small" type="primary">
                         {{$t('Shortcodes')}} <el-icon style="vertical-align: middle;"><ArrowDown /></el-icon>
                     </el-button>
                     <template #dropdown>
-                        <el-dropdown-menu>
+                        <el-dropdown-menu class="fs_shortcode_dropdown">
                             <el-dropdown-item v-for="(value, key) in shortcodes" :key="key" :value="key" @click="insertShortcode">
                                 {{ value }}
                             </el-dropdown-item>
@@ -676,5 +676,65 @@ export default {
     align-items: center;
     z-index: 10;
     pointer-events: none;
+}
+
+.fc_shortcode_box {
+    .el-dropdown-menu {
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 9999 !important;
+        position: relative;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+
+            &:hover {
+                background: #a8a8a8;
+            }
+        }
+    }
+}
+
+// Ensure dropdown works properly in modals
+.fs_shortcode_dropdown {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    z-index: 9999 !important;
+
+    // Prevent scroll events from bubbling to background
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+
+        &:hover {
+            background: #a8a8a8;
+        }
+    }
+}
+
+.el-dropdown-menu.fs_shortcode_dropdown.el-popper {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    z-index: 9999 !important;
+    position: fixed !important;
 }
 </style>
