@@ -249,8 +249,8 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 * Added: Product assignment to tickets in Workflow Actions.
 * Added: Support for custom field data in Outgoing Webhooks.
 * Improved: Click-to-copy shortcode functionality on the Global Settings page.
-* Improved: Smart code selection dropdown in Email Settings with auto-insert in WP Editor.
-* Improved: Product logo updated.
+* Improved: Smart code selection dropdown in Email Settings with click-to-insert functionality in WP Editor.
+* Improved: Dash icon updated.
 * Fixed: File export vulnerability issue.
 * Fixed: Error during AI activity log cleanup.
 
