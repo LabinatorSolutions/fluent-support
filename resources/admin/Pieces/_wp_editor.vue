@@ -138,7 +138,7 @@ export default {
                 return '';
             }
         },
-        editorShortcodes: {
+        editor_shortcodes: {
             type: Object,
             default() {
                 return {}
@@ -248,10 +248,10 @@ export default {
     },
     computed: {
         shortcodes() {
-            return this.editorShortcodes;
+            return this.editor_shortcodes;
         },
         hasShortcodes() {
-            return this.editorShortcodes && Object.keys(this.editorShortcodes).length > 0;
+            return this.editor_shortcodes && Object.keys(this.editor_shortcodes).length > 0;
         }
     },
     watch: {

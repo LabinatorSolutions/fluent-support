@@ -61,13 +61,13 @@
                         <p v-if="active_email_settings.can_edit_subject == 'no'">{{translate('can_not_edit_subject')}}</p>
                     </el-form-item>
                     <el-form-item :label="translate('Email Body')">
-                        <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body" :editor-shortcodes="shortCodes"/>
+                        <wp-editor :editor_id="active_email_settings.key" v-model="active_email_settings.email_body" :editor_shortcodes="shortCodes"/>
                     </el-form-item>
                     <el-form-item>
-                        <el-checkbox true-label="yes" false-label="no" v-model="active_email_settings.status">
+                        <el-checkbox true-value="yes" false-value="no" v-model="active_email_settings.status">
                             {{translate('enable_email')}}
                         </el-checkbox>
-                        <el-checkbox true-label="yes" false-label="no" v-if="active_email_settings.status=='yes' && allowed_mails_for_attachments.includes(active_email_settings.key)" v-model="active_email_settings.send_attachments">
+                        <el-checkbox true-value="yes" false-value="no" v-if="active_email_settings.status=='yes' && allowed_mails_for_attachments.includes(active_email_settings.key)" v-model="active_email_settings.send_attachments">
                             {{translate('Send Attachments')}}
                         </el-checkbox>
                     </el-form-item>

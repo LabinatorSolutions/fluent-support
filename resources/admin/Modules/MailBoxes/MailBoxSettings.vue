@@ -29,7 +29,7 @@
             </el-form-item>
 
             <el-form-item :label="translate('Email Footer For Customers')" v-if="has_pro">
-                <wp-editor :height="100" v-model="mailbox.email_footer" :editor-shortcodes="shortCodes"/>
+                <wp-editor :height="100" v-model="mailbox.email_footer" :editor_shortcodes="shortCodes"/>
             </el-form-item>
 
             <el-form-item :label="translate('Inbox Color')">
