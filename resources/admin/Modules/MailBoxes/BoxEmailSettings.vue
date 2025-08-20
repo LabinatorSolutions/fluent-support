@@ -21,10 +21,43 @@
         <modal :show="edit_modal" :title="active_email_settings.title" @close="edit_modal = false">
             <template #body>
                 <h3>{{active_email_settings.description}}</h3>
-                <el-form :data="active_email_settings" label-position="top">
-                    <el-form-item :label="translate('Email Subject')">
-                        <el-input :disabled="active_email_settings.can_edit_subject == 'no'"
-                                  v-model="active_email_settings.email_subject" :placeholder="translate('Email Subject')"/>
+                <el-form class="fs_email_settings_form" :data="active_email_settings" label-position="top">
+                    <el-form-item>
+                        <template #label>
+                            <div class="fs_subject_label_wrapper">
+                                <span>{{ translate('Email Subject') }}</span>
+                                <el-dropdown
+                                    v-if="active_email_settings.can_edit_subject !== 'no'"
+                                    trigger="click"
+                                    :popper-options="{ strategy: 'fixed' }"
+                                    class="fs_subject_shortcode_dropdown"
+                                >
+                                    <el-button size="small" type="primary">
+                                        {{translate('Shortcodes')}} <el-icon><ArrowDown /></el-icon>
+                                    </el-button>
+                                    <template #dropdown>
+                                        <el-dropdown-menu class="fs_shortcode_dropdown">
+                                            <el-dropdown-item
+                                                v-for="(codeName, code) in shortCodes"
+                                                :key="code"
+                                                :value="code"
+                                                @click="insertShortcodeInSubject"
+                                            >
+                                                {{ codeName }}
+                                            </el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </div>
+                        </template>
+                        <div class="fs_subject_input_wrapper">
+                            <el-input
+                                ref="subjectInput"
+                                :disabled="active_email_settings.can_edit_subject == 'no'"
+                                v-model="active_email_settings.email_subject"
+                                :placeholder="translate('Email Subject')"
+                            />
+                        </div>
                         <p v-if="active_email_settings.can_edit_subject == 'no'">{{translate('can_not_edit_subject')}}</p>
                     </el-form-item>
                     <el-form-item :label="translate('Email Body')">
@@ -49,14 +82,16 @@
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
 import Modal from "../../Pieces/Modal";
-import { computed, onMounted, reactive, toRefs } from 'vue';
+import { DocumentCopy } from '@element-plus/icons-vue';
+import { computed, onMounted, reactive, toRefs, nextTick } from 'vue';
 import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'BoxEmailSettings',
     components: {
         WpEditor,
-        Modal
+        Modal,
+        DocumentCopy
     },
     props: ['box_id','mailbox'],
 
@@ -143,6 +178,31 @@ export default {
                 });
         }
 
+        function insertShortcodeInSubject(event) {
+            const shortcode = event.target._value;
+
+            nextTick(() => {
+                const subjectInput = document.querySelector('.fs_subject_input_wrapper .el-input__inner');
+                if (subjectInput) {
+                    const start = subjectInput.selectionStart;
+                    const end = subjectInput.selectionEnd;
+                    const currentValue = state.active_email_settings.email_subject || '';
+
+                    const before = currentValue.substring(0, start);
+                    const after = currentValue.substring(end);
+                    const newValue = before + shortcode + after;
+
+                    state.active_email_settings.email_subject = newValue;
+
+                    // Set cursor position after the inserted shortcode
+                    nextTick(() => {
+                        subjectInput.focus();
+                        subjectInput.setSelectionRange(start + shortcode.length, start + shortcode.length);
+                    });
+                }
+            });
+        }
+
 
         const shortCodes = computed(() =>{
             if (
@@ -207,6 +267,7 @@ export default {
         getConfigs,
         editEmail,
         saveSettings,
+        insertShortcodeInSubject,
         shortCodes,
         get,
         put,
