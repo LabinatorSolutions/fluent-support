@@ -376,7 +376,7 @@ class Menu
             'max_file_upload'            => Helper::getBusinessSettings('max_file_upload', 3),
             'ajaxurl'                    => admin_url('admin-ajax.php'),
             'auth_provider'              => Helper::getAuthProvider(),
-            'fluent_bot_integration'    =>  Helper::fluentBotIntegrationStatus(),
+            'fluent_bot_integration'     =>  Helper::fluentBotIntegrationStatus(),
         ));
 
         if (defined('FLUENTCRM')) {
