@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 6.8
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 Requires PHP: 7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -244,6 +244,15 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 8. FluentSupport Dashboard
 
 == Changelog ==
+
+= 1.9.2 (Date: August 20, 2025) =
+* Added: Product assignment to tickets in Workflow Actions.
+* Added: Support for custom field data in Outgoing Webhooks.
+* Improved: Click-to-copy shortcode functionality on the Global Settings page.
+* Improved: Smart code selection dropdown in Email Settings with auto-insert in WP Editor.
+* Improved: Product logo updated.
+* Fixed: File export vulnerability issue.
+* Fixed: Error during AI activity log cleanup.
 
 = 1.9.1 (Date: July 15, 2025) =
 * Improved: After selecting the portal page, it now displays the page name along with the page ID.
