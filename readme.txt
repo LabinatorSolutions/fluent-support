@@ -251,7 +251,7 @@ Absolutely! Fluent Support offers a customizable support portal, allowing you to
 * Improved: Click-to-copy shortcode functionality on the Global Settings page.
 * Improved: Smart code selection dropdown in Email Settings with click-to-insert functionality in WP Editor.
 * Improved: Dash icon updated.
-* Fixed: File export vulnerability issue.
+* Fixed: CSRF issue fixed on Report Export – nonce verification.
 * Fixed: Error during AI activity log cleanup.
 
 = 1.9.1 (Date: July 15, 2025) =
