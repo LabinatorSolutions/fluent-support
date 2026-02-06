@@ -2,50 +2,90 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>File Storage Settings</h3>
+                <h3>{{ $t('File Storage Settings') }}</h3>
             </div>
         </div>
-        <div v-if="!loading" class="fs_box_body">
-            <div class="fs_integration_cards">
-                <div v-for="(driver, driverName) in availableDrivers" class="fs_integration_card">
-                    <div class="fs_integration_card_left">
-                        <img :src="driver.icon"/>
-                        <div class="fs_integration_card_title">
-                            <h3>{{ driver.title }}</h3>
-                            <p v-html="driver.description"></p>
+        <div v-if="!loading" class="fs_box_body fs_storage_integration_wrapper">
+            <div class="fs_storage_integration_cards">
+                <div v-for="(driver, driverName) in availableDrivers" :key="driverName" class="fs_storage_integration_card">
+                    <div class="fs_storage_card_content">
+                        <div class="fs_storage_card_left">
+                            <div class="fs_storage_icon_wrapper">
+                                <img :src="driver.icon" :alt="driver.title" class="fs_storage_icon"/>
+                            </div>
+                            <div class="fs_storage_card_info">
+                                <div class="fs_storage_card_header">
+                                    <h3 class="fs_storage_card_title">{{ driver.title }}</h3>
+                                    <span v-if="enabled_driver == driverName" class="fs_status_badge active">
+                                        {{ $t('Active') }}
+                                    </span>
+                                </div>
+                                <p class="fs_storage_card_description" v-html="driver.description"></p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fs_integration_card_right">
-                        <template v-if="enabled_driver == driverName">
-                            <el-button :disabled="saving" v-loading="saving" :readonly="true" plain text type="success">
-                                Currently Enabled
-                            </el-button>
-                        </template>
-                        <template v-else-if="driver.is_configured">
-                            <el-button @click="updateDriver(driverName)" plain type="primary">Enable</el-button>
-                        </template>
-
-                        <a class="el-button el-button--primary" target="_blank" rel="noopener" v-if="driver.require_pro"
-                           :href="driver.upgrade_url">Upgrade to Pro</a>
-                        <el-button v-else-if="driver.has_config" @click="showConfigDialog(driver, driverName)">
-                            Configure
-                        </el-button>
+                        <div class="fs_storage_card_right">
+                            <div class="fs_storage_card_actions">
+                                <template v-if="driverName === 'local' || driver.is_configured">
+                                    <div class="fs_tk_filter fs_waiting_toggle">
+                                        <el-switch
+                                            @change="updateDriver(driverName)"
+                                            :model-value="enabled_driver == driverName"
+                                            :disabled="saving || (driverName === 'local' && enabled_driver === 'local')"
+                                            v-loading="saving"
+                                        ></el-switch>
+                                    </div>
+                                    <template v-if="driver.has_config && driverName !== 'local'">
+                                        <el-button
+                                            @click="showConfigDialog(driver, driverName)"
+                                            class="fs_outline_btn"
+                                        >
+                                            <img :src="appVars.asset_url + 'images/gear.svg'" alt="">
+                                        </el-button>
+                                    </template>
+                                </template>
+                                <template v-else-if="driver.require_pro">
+                                    <a
+                                        class="fs_storage_manage_btn fs_storage_upgrade_btn"
+                                        target="_blank"
+                                        rel="noopener"
+                                        :href="driver.upgrade_url"
+                                    >
+                                        {{ $t('Upgrade to Pro') }}
+                                    </a>
+                                </template>
+                                <template v-else-if="driver.has_config">
+                                    <el-button
+                                        @click="showConfigDialog(driver, driverName)"
+                                        class="fs_outline_btn"
+                                    >
+                                        <img :src="appVars.asset_url + 'images/gear.svg'" alt="">
+                                    </el-button>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <el-skeleton v-else :animated="true" :rows="3" />
+        <div v-else class="fs_box_body">
+            <el-skeleton :animated="true" :rows="3" />
+        </div>
 
         <el-dialog
+            v-if="selectedDriver"
             :title="title"
             v-model="dialogVisible"
             @close="closeDialog"
+            width="60%"
             class="fs_dialog"
+            :append-to-body="true"
         >
-            <div v-if="selectedDriver && dialogVisible">
-                <o-auth2-settings @driverRemoved="handleDriverRemoved(selectedDriverName)" :driver_name="selectedDriverName"
-                                  :driver="selectedDriver"></o-auth2-settings>
-            </div>
+            <o-auth2-settings
+                v-if="selectedDriver && dialogVisible"
+                @driverRemoved="handleDriverRemoved(selectedDriverName)"
+                :driver_name="selectedDriverName"
+                :driver="selectedDriver"
+            />
         </el-dialog>
     </div>
 </template>
@@ -75,9 +115,9 @@ export default {
         fetchUploadSettings() {
             this.loading = true;
             this.$get('settings/remote-upload-settings')
-                .then(resonse => {
-                    this.availableDrivers = resonse.drivers;
-                    this.enabled_driver = resonse.enabled_driver;
+                .then(response => {
+                    this.availableDrivers = response.drivers;
+                    this.enabled_driver = response.enabled_driver;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -87,12 +127,26 @@ export default {
                 });
         },
         updateDriver(driverName) {
-            this.saving = false;
+            // Don't allow disabling local if it's the only active driver
+            if (driverName === 'local' && this.enabled_driver === 'local') {
+                return;
+            }
+
+            // If trying to disable the current driver, switch to local
+            if (this.enabled_driver === driverName && driverName !== 'local') {
+                driverName = 'local';
+            }
+
+            this.saving = true;
             this.$post('settings/update-remote-upload-driver', {
                 driver: driverName
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify({
+                        type: 'success',
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.enabled_driver = driverName;
                 })
                 .catch((errors) => {
@@ -127,6 +181,7 @@ export default {
         if (this.$route.query.code) {
             this.hasCode = true;
         }
-    },
+        this.$setTitle('File Storage Settings');
+    }
 }
 </script>

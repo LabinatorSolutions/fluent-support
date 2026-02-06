@@ -29,7 +29,7 @@
                         </el-select>
                         <el-radio-group v-else-if="field.type == 'radio'" v-model="custom_data[field.slug]">
                             <el-radio v-for="option in field.options" :key="option"
-                                      :value="option" :label="option"></el-radio>
+                                      :value="option">{{ option }}</el-radio>
                         </el-radio-group>
                         <el-checkbox-group v-else-if="field.type == 'checkbox'" v-model="custom_data[field.slug]">
                             <el-checkbox v-for="option in field.options" :key="option"

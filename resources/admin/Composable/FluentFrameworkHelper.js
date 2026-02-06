@@ -42,6 +42,9 @@ export function useFluentHelper(){
     }
 
     function ucFirst(text) {
+        if (!text || typeof text !== 'string') {
+            return '';
+        }
         return text[0].toUpperCase() + text.slice(1).toLowerCase();
     }
 

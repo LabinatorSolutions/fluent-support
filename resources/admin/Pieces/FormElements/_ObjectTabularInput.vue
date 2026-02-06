@@ -1,8 +1,8 @@
 <template>
     <table class="fs_table">
-        <thead style="background: white;">
+        <thead>
             <tr>
-                <th style="width: 30%">{{field.source_label}}</th>
+                <th>{{field.source_label}}</th>
                 <th>{{field.new_label}}</th>
             </tr>
         </thead>

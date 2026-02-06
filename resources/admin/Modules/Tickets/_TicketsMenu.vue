@@ -1,44 +1,100 @@
 <template>
-    <div v-if="currentTickets && !isMobile" class="fs_tickets_tiny_nav">
-        <ul class="fs_ticket_nav">
-            <li v-for="ticket in currentTickets">
-                <router-link :to="{ name: 'view_ticket', params: { ticket_id: ticket.id } }">
-                    <img v-if="ticket.customer" :title="ticket.customer.email +' - '+ ticket.customer.full_name"
-                         :alt="ticket.customer.full_name"
-                         class="tk_customer_avatar" :src="ticket.customer.photo"/>
-                    <div class="fs_ticket_title">
-                        <span class="fs_ticket_nav_customer_name">{{ ticket.title }}</span>
-                        <span class="fs_ticket_nav_title">
-                            {{ getExcerpt(ticket) }}
-                        </span>
+    <div v-if="currentTickets && !isMobile" class="fs_tickets_tiny_nav" :class="{ 'is-collapsed': isCollapsed }">
+        <!-- Ticket List with Collapse Transition -->
+        <el-collapse-transition>
+            <div v-show="!isCollapsed" class="fs_ticket_nav">
+                <router-link
+                    v-for="ticket in currentTickets"
+                    :key="ticket.id"
+                    :to="{ name: 'view_ticket', params: { ticket_id: ticket.id } }"
+                    class="fs_ticket_card"
+                >
+                    <img
+                        v-if="ticket.customer"
+                        :title="ticket.customer.email + ' - ' + ticket.customer.full_name"
+                        :alt="ticket.customer.full_name"
+                        class="fs_ticket_avatar"
+                        :src="ticket.customer.photo"
+                    />
+                    <div class="fs_ticket_content">
+                        <div class="fs_ticket_title_row">
+                            <p class="fs_ticket_title_text">{{ ticket.title }}</p>
+                        </div>
+                        <div class="fs_ticket_meta_row">
+                            <p class="fs_ticket_excerpt">{{ getExcerpt(ticket) }}</p>
+                                <p class="fs_ticket_time">{{ $timeDiff(ticket.updated_at || ticket.created_at) }}</p>
+                        </div>
                     </div>
                 </router-link>
-            </li>
-        </ul>
+            </div>
+        </el-collapse-transition>
     </div>
-    <div v-else class="inner_sidebar">
-        <ul>
+    <div v-else class="fs_tk_inner_sidebar" :class="{ 'is-collapsed': isCollapsed, 'has-view-route': hasViewRoute }">
+        <div class="fs_sidebar_header" v-if="!isViewingTicket">
+            <h3 class="fs_sidebar_title">{{ $t('Ticket Filters') }}</h3>
+            <el-button
+                class="fs_tickets_collapse_btn"
+                :class="{ 'collapsed': isCollapsed }"
+                @click="$emit('toggle-collapse')"
+                :title="$t(isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar')"
+                text
+            >
+                <img :src="appVars.asset_url + 'images/arrowLeftLine.svg'" alt="">
+            </el-button>
+        </div>
+        <div class="fs_sidebar_items">
+            <ul>
             <li v-for="(route, index) in dynamicRoutes" :key="`${route.name}-${index}`">
-                <router-link
-                    :class="{router_not_exactly_matched: isCurrentRouteMatched(route.name)}"
-                    :to="route.to"
-                    @click="route.onClick"
-                >
-                    <el-icon>
-                        <component :is="route.icon"/>
-                    </el-icon>
-                    {{ $t(route.label) }}
-                </router-link>
+                    <router-link
+                        :class="{router_not_exactly_matched: isCurrentRouteMatched(route.name)}"
+                        :to="route.to"
+                        @click="route.onClick"
+                    >
+                        <el-tooltip
+                            v-if="isCollapsed"
+                            :content="$t(route.label)"
+                            placement="right"
+                            :enterable="true"
+                            :popper-class="route.name"
+                        >
+                            <IconPack
+                                :icon-key="route.icon"
+                                class="fs_sidebar_icons"
+                                :width="20"
+                                :height="20"
+                                :fill="isRouteActive(route.name) ? '#0E121B' : '#525866'"
+                            />
+                        </el-tooltip>
+                        <IconPack
+                            v-else
+                            :icon-key="route.icon"
+                            class="fs_sidebar_icons"
+                            :width="20"
+                            :height="20"
+                            :fill="isRouteActive(route.name) ? '#0E121B' : '#525866'"
+                        />
+                        <span v-if="!isCollapsed" class="fs_sidebar_label">{{ $t(route.label) }}</span>
+                    </router-link>
             </li>
         </ul>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
-import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
+
+import IconPack from "@/admin/Components/IconPack.vue";
 
 export default {
     name: 'TicketsMenu',
+    components: {IconPack},
+    props: {
+        isCollapsed: {
+            type: Boolean,
+            default: false
+        }
+    },
+    emits: ['toggle-collapse'],
     data() {
         return {
             isMobile: false,
@@ -82,6 +138,12 @@ export default {
 
             return window.fsCurrentFilteredTickets;
         },
+        isViewingTicket() {
+            return this.$route.name === 'view_ticket';
+        },
+        hasViewRoute() {
+            return this.$route.name && this.$route.name.includes('view');
+        },
         isAll() {
             return this.$route.query.agent_id;
         },
@@ -105,7 +167,7 @@ export default {
 
             text = text.replace(/<\/?("[^"]*"|'[^']*'|[^>])*(>|$)/g, "");
 
-            return text.substring(0, 70);
+            return text.substring(0, 100);
         },
 
         isCurrentRouteMatched(routeName) {
@@ -123,8 +185,13 @@ export default {
             return false;
         },
 
+        isRouteActive(routeName) {
+            // Returns true when the route is active (opposite of isCurrentRouteMatched)
+            return !this.isCurrentRouteMatched(routeName);
+        },
+
         saveRoutes(currentRouteQuery = {}) {
-            useFluentHelper().saveData("routesData", JSON.stringify(currentRouteQuery));
+            this.$saveData("routesData", JSON.stringify(currentRouteQuery));
         },
 
         handleKeydown(event) {
@@ -159,82 +226,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-.fs_tickets_tiny_nav {
-    width: 220px;
-    ul.fs_ticket_nav {
-        margin: 0 20px 0 0;
-        list-style: none;
-        padding: 0;
-        max-height: 85vh;
-        overflow-y: auto;
-        li {
-            padding: 7px 0;
-            &:hover {
-                background: white;
-            }
-            position: relative;
-            a {
-                display: flex;
-                column-gap: 7px;
-                align-items: center;
-                justify-content: flex-start;
-                text-decoration: none;
-                color: #333;
-                cursor: pointer;
-                &:focus {
-                    outline: none;
-                    box-shadow: none;
-                }
-
-                /*
-                * Create a graiant at the end of list item
-                * It should show as less opacity
-                 */
-                &:after {
-                    content: "";
-                    position: absolute;
-                    width: 40%;
-                    background: linear-gradient(to right, rgba(255, 255, 255, 0), #f1f2f5d9);
-                    bottom: 0;
-                    right: 0;
-                    top: 0;
-                }
-
-                img {
-                    width: 30px;
-                    height: 30px;
-                    border-radius: 50%;
-                }
-                .fs_ticket_title {
-                    display: block;
-                    width: 100%;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-                span.fs_ticket_nav_customer_name {
-                    display: block;
-                    width: 100%;
-                    font-weight: 500;
-                }
-                .fs_ticket_nav_title {
-                    display: block;
-                    width: 100%;
-                    font-size: 12px;
-                    color: #666;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-                &.router-link-exact-active {
-                    .fs_ticket_nav_title, .fs_ticket_nav_customer_name {
-                        color: #2271b1;
-                    }
-                }
-            }
-        }
-    }
-}
-</style>

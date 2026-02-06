@@ -1,14 +1,30 @@
 <template>
-    <div class="fc_global_form_builder">
+    <div class="fs_global_form_builder">
         <el-form @submit.prevent.native="nativeSave" :data="formData" :label-position="label_position">
             <slot name="form_start"></slot>
             <template v-for="(field,fieldIndex) in fields" :key="fieldIndex">
                 <with-label v-if="dependancyPass(field)" :field="field">
-                    <component :is="field.type" v-model="formData[fieldIndex]" :field="field" v-bind="field.props"/>
+                    <div :class="`fs_${field.type}_wrapper`">
+                        <component :is="field.type" v-model="formData[fieldIndex]" :field="field" v-bind="field.props"/>
+                        <div v-if="field.inline_help && field.type == 'inline-checkbox'" class="fs_field_description">
+                            <span v-html="field.inline_help"></span>
+                            <a
+                                v-if="fieldIndex === 'keyboard_shortcuts' && field.shortcut_modal"
+                                href="#"
+                                class="fs_doc_link fs_keyboard_shortcuts_link"
+                                @click.prevent="showKeyboardShortcutsModal = true"
+                            >{{ field.shortcut_modal.title }}</a>
+                        </div>
+                    </div>
                 </with-label>
             </template>
             <slot name="form_end"></slot>
         </el-form>
+
+        <keyboard-shortcuts-modal
+            v-model="showKeyboardShortcutsModal"
+            :shortcut-modal-data="shortcutModalData"
+        />
     </div>
 </template>
 
@@ -28,6 +44,7 @@ import AgentSelectors from './_AgentSelectors'
 import TagSelectors from './_TagSelectors'
 import CountrySelector from './_CountrySelector'
 import ObjectTabularInput from './_ObjectTabularInput'
+import KeyboardShortcutsModal from './_KeyboardShortcutsModal.vue'
 
 export default {
     name: 'global_form_builder',
@@ -46,7 +63,20 @@ export default {
         AgentSelectors,
         TagSelectors,
         CountrySelector,
-        ObjectTabularInput
+        ObjectTabularInput,
+        KeyboardShortcutsModal
+    },
+    data() {
+        return {
+            showKeyboardShortcutsModal: false
+        };
+    },
+    computed: {
+        shortcutModalData() {
+            return this.fields && this.fields.keyboard_shortcuts && this.fields.keyboard_shortcuts.shortcut_modal
+                ? this.fields.keyboard_shortcuts.shortcut_modal
+                : null;
+        }
     },
     props: {
         formData: {

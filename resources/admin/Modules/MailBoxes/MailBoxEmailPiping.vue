@@ -1,72 +1,174 @@
 <template>
-    <div class="fc_box_email_settings">
-        <el-skeleton v-if="loading_pipe" :rows="5" animated/>
-        <div v-else-if="email_pipe">
-            <div class="fs_pipe_box" v-if="email_pipe.status === 'not_issued'">
-                <h3>{{translate("You're Almost Done")}}</h3>
-                <p>{{translate('email_synced_with_support_portal')}}</p>
-                <hr/>
-                <el-checkbox style="margin-bottom: 20px; margin-top: 10px;" v-model="terms_agree">
-                    {{translate('I agree with the Fluent Support email parsing')}} <a target="_blank" rel="noopener"
-                                                    href="https://fluentsupport.com/privacy-policy/email-piping-data-policy/">
-                        {{translate('terms and conditions')}}</a></el-checkbox>
-                <br />
-                <el-button @click="issueEmail()" type="primary" :disabled="!terms_agree">{{translate('Get Piping Email Details')}}</el-button>
+    <div class="fs_box_email_settings">
+        <!-- Header Section -->
+        <div class="fs_mailbox_settings_header" v-if="email_pipe.status === 'not_issued'">
+            <div class="fs_mailbox_settings_header_left">
+                <h1 class="fs_main_header_text">{{ $t('Email Piping') }}</h1>
             </div>
-            <div class="fs_pipe_box" v-else-if="email_pipe.status == 'issued'">
-                <h3>{{translate('Your masked mailbox email has been issued')}}</h3>
-                <p>{{translate('Please enable auto-forwarding your emails from')}} {{mailbox.email}} {{translate('to this following address')}}</p>
-                <el-input :readonly="true" v-model="email_pipe.mapped_email" />
-                <el-button style="margin-top: 20px;" @click="loadPipeStatus()">{{translate('I have done it')}}</el-button>
-                <p>{{translate('Once you activate the auto-forward for')}} {{mailbox.email}}, {{translate('the status will be active')}}</p>
-                <p>{{translate('for_the_confirmation_email')}}</p>
-                <p><a target="_blank" rel="noopener" href="https://fluentsupport.com/docs/email-piping-email-based-support-ticket/">{{translate('Read the email piping documentation')}}</a></p>
-            </div>
-            <div class="fs_pipe_box" v-else-if="email_pipe.status == 'active'">
-                <h3>{{translate('Your MailBox is active')}}</h3>
-                <p>{{translate('Your masked email address is')}}: </p>
-                <el-input :readonly="true" v-model="email_pipe.mapped_email" />
-                <p>{{translate('All the forwarded emails to this address will be synced with your tickets')}}</p>
-            </div>
-            <div v-else class="fs_pipe_box">
-                <h3>{{error_message}}</h3>
-                <p>{{translate('Please contact with')}} <a href="https://wpmanageninja.com/support-tickets/#/" target="_blank">WPManageNinja Support</a></p>
-            </div>
-
-            <div style="margin-top: 30px" v-if="is_custom_supported">
-                <hr/>
-                <p>{{translate('If you want to connect with your own email parser please use this following URL to send payload data')}}</p>
-                <el-input type="text" :readonly="true" v-model="webhook_url"/>
-            </div>
-
         </div>
-        <div v-else>
-            {{translate('Settings could not be loaded')}}
+
+        <el-skeleton v-if="loading_pipe" :rows="5" animated/>
+
+        <div v-else-if="email_pipe" class="fs_email_piping_content">
+            <!-- Not Issued State -->
+            <div class="fs_not_issued_state" v-if="email_pipe.status === 'not_issued'">
+                <h2 class="fs_piping_title">{{ $t("You are almost done") }}🎉</h2>
+                <p class="fs_piping_description">
+                    {{ $t('Connect your email address with Fluent Support Email parser, so when your customers send an email or reply from email it will be synced with your support portal') }}
+                </p>
+
+                <div class="fs_piping_form">
+                    <div class="fs_checkbox_wrapper">
+                        <el-checkbox
+                            v-model="terms_agree"
+                            class="fs_terms_checkbox"
+                        >
+                            {{ $t('I agree with the Fluent Support email parsing') }}
+                            <a
+                                target="_blank"
+                                rel="noopener"
+                                href="https://fluentsupport.com/privacy-policy/email-piping-data-policy/"
+                                class="fs_terms_link"
+                            >
+                                {{ $t('Terms & Condition') }}
+                            </a>
+                        </el-checkbox>
+                    </div>
+
+                    <el-button
+                        @click="issueEmail()"
+                        type="primary"
+                        class="fs_save_settings_btn"
+                        :disabled="!terms_agree"
+                        :loading="issuing"
+                    >
+                        {{ $t('Get Piping Email Details') }}
+                    </el-button>
+                </div>
+            </div>
+
+            <!-- Issued State -->
+            <div class="fs_masked_email_form" v-else-if="email_pipe.status == 'issued'">
+                <h2 class="fs_piping_title">{{ $t('Your masked mailbox email has been issued') }}</h2>
+                <p class="fs_piping_description">
+                    {{ $t('Please enable auto-forwarding your emails from') }}
+                    <strong>{{ mailbox.email }}</strong>
+                    {{ $t('to this following address.') }}
+                </p>
+
+                <div class="fs_piping_form">
+                    <div class="fs_email_input_wrapper">
+                        <el-input
+                            :readonly="true"
+                            v-model="email_pipe.mapped_email"
+                            class="fs_text_input fs_text_input_40"
+                        />
+                        <el-button
+                            @click="copyToClipboard(email_pipe.mapped_email)"
+                            class="fs_copy_btn"
+                            size="small"
+                        >
+                            <img :src="appVars.asset_url + 'images/copy.svg'" alt="">
+                        </el-button>
+                    </div>
+
+                    <el-button
+                        @click="loadPipeStatus()"
+                        type="primary"
+                        style="width: fit-content"
+                        class="fs_save_settings_btn"
+                    >
+                        {{ $t('I have done it') }}
+                    </el-button>
+
+                    <div class="fs_highlight">
+                        <p>{{ $t('Once you activate the auto-forward for') }} <strong>{{ mailbox.email }}</strong>, {{ $t('the status will be active.') }}</p>
+                        <p>{{ $t('For the confirmation email from your email service provider, please check the latest ticket. A new ticket should be created with confirmation code.') }}</p>
+                        <p>
+                            <a
+                                target="_blank"
+                                rel="noopener"
+                                href="https://fluentsupport.com/docs/email-piping-email-based-support-ticket/"
+                                class="fs_doc_link"
+                            >
+                                {{ $t('Read the email piping documentation') }}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active State -->
+            <div class="fs_active_state" v-else-if="email_pipe.status == 'active'">
+                <h2 class="fs_piping_title">{{ $t('Your mailbox is active.') }}</h2>
+                <p class="fs_piping_description">{{ $t('All the forwarded emails to this address will be synced with your tickets. Below is your mask email address') }}</p>
+
+                <div class="fs_piping_form">
+                    </div>
+                <div class="fs_email_input_wrapper">
+                    <el-input
+                        :readonly="true"
+                        v-model="email_pipe.mapped_email"
+                        class="fs_text_input fs_text_input_40"
+                    />
+                    <el-button
+                        @click="copyToClipboard(email_pipe.mapped_email)"
+                        class="fs_copy_btn"
+                        size="small"
+                    >
+                        <img :src="appVars.asset_url + 'images/copy.svg'" alt="">
+                    </el-button>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div class="fs_error_state" v-else>
+                <h2 class="fs_piping_title fs_error_title">{{ error_message }}</h2>
+                <p class="fs_piping_description">
+                    {{ $t('Please contact with') }}
+                    <a href="https://wpmanageninja.com/support-tickets/#/" target="_blank" class="fs_support_link">
+                        WPManageNinja Support
+                    </a>
+                </p>
+            </div>
+
+            <!-- Custom Webhook Section -->
+            <div class="fs_webhook_section" v-if="is_custom_supported" >
+                <div class="fs_webhook_content">
+                    <p class="fs_webhook_description">
+                        {{ $t('If you want to connect with your own email parser please use this following URL to send payload data') }}
+                    </p>
+                    <div class="fs_email_input_wrapper">
+                        <el-input
+                            :readonly="true"
+                            v-model="webhook_url"
+                            class="fs_text_input fs_text_input_40"
+                        />
+                        <el-button
+                            @click="copyToClipboard(webhook_url)"
+                            class="fs_copy_btn"
+                            size="small"
+                        >
+                            <img :src="appVars.asset_url + 'images/copy.svg'" alt="">
+                        </el-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div v-else class="fs_error_message">
+            {{ $t('Settings could not be loaded') }}
         </div>
     </div>
 </template>
 
 <script type="text/babel">
-import {  onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
-
 import {useRouter} from "vue-router";
 export default {
     name: 'MailBoxEmailPiping',
     props: ['mailbox'],
-    setup(props) {
-        const {
-            appVars,
-            get,
-            post,
-            translate,
-            handleError,
-            saveData,
-            getData,
-            moment,
-        } = useFluentHelper();
-        const router = useRouter();
-        const state = reactive({
+    data() {
+        return {
             status: false,
             email_pipe: false,
             loading_pipe: false,
@@ -74,59 +176,66 @@ export default {
             is_custom_supported: false,
             terms_agree: false,
             issuing: false,
-            error_message: ''
-        });
-
-        const loadPipeStatus = async () => {
-            state.loading_pipe = true;
-            state.error_message = '';
-            await get('email-box/' + props.mailbox.id + '/status')
+            error_message: '',
+            copied: false
+        }
+    },
+    methods: {
+        async loadPipeStatus() {
+            this.loading_pipe = true;
+            this.error_message = '';
+            await this.$get('email-box/' + this.mailbox.id + '/status')
                 .then(response => {
-                    state.email_pipe = response.email_pipe;
-                    state.webhook_url = response.webhook_url;
-                    state.is_custom_supported = response.is_custom_supported;
-                    state.error_message = response.error_message;
+                    this.email_pipe = response.email_pipe;
+                    this.webhook_url = response.webhook_url;
+                    this.is_custom_supported = response.is_custom_supported;
+                    this.error_message = response.error_message;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.loading_pipe = false;
+                    this.loading_pipe = false;
                 });
-        };
+        },
 
-        const issueEmail = async () => {
-            state.issuing = true;
-            await post('email-box/' + props.mailbox.id + '/issue-email')
+        async issueEmail() {
+            this.issuing = true;
+            await this.$post('email-box/' + this.mailbox.id + '/issue-email')
                 .then(response => {
-                    state.email_pipe = response.email_pipe;
+                    this.email_pipe = response.email_pipe;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.issuing = false;
+                    this.issuing = false;
                 });
-        };
+        },
 
-        onMounted(() => {
-            if(props.mailbox.box_type !== 'email'){
-                router.push({name: 'box_settings', params: {box_id: props.mailbox.id}});
-            }else{
-                loadPipeStatus();
+        async copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                this.copied = true;
+                this.$notify({
+                    type: 'success',
+                    title: 'Success',
+                    message: this.$t('Copied to clipboard'),
+                    position: 'bottom-right'
+                });
+                setTimeout(() => {
+                    this.copied = false;
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
             }
-        });
-
-        return {
-            ...toRefs(state),
-            appVars,
-            translate,
-            handleError,
-            saveData,
-            getData,
-            moment,
-            loadPipeStatus,
-            issueEmail
+        }
+    },
+    mounted() {
+        if(this.mailbox.box_type !== 'email'){
+            this.$router.push({name: 'box_settings', params: {box_id: this.mailbox.id}});
+        }else{
+            this.loadPipeStatus();
         }
     }
 }

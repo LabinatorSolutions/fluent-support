@@ -1,143 +1,176 @@
 <template>
-    <div class="fs_mailbox_settings">
-        <el-form :data="mailbox" label-position="top">
-            <el-form-item :label="translate('Inbox Name')">
-                <el-input type="text" v-model="mailbox.name"></el-input>
-            </el-form-item>
-            <el-form-item :label="translate('Support From Email')">
-                <el-input :disabled="mailbox.mapped_email && mailbox.box_type == 'email'" type="email" v-model="mailbox.email"></el-input>
-                <p>{{translate('email_can_be_send')}}</p>
-            </el-form-item>
-            <el-form-item :label="translate('Admin Email Address')">
-                <el-input type="email" v-model="mailbox.settings.admin_email_address"></el-input>
-                <p>{{translate('admin_get_email')}}</p>
-                <p v-if="mailbox.box_type == 'email' && mailbox.settings.admin_email_address == mailbox.email" style="color: red;">
-                    {{translate('different_email_between_admin_and_support')}}
+    <div class="fs_mailbox_settings_container">
+        <div class="fs_mailbox_settings_header">
+            <div class="fs_mailbox_settings_header_left">
+                <h1 class="fs_main_header_text">{{ $t('Inbox Settings') }}</h1>
+                <p class="fs_sub_text">{{ $t('The following settings will be applied to the newly created') }}</p>
+            </div>
+            <el-button
+                type="primary"
+                class="fs_save_settings_btn"
+                v-loading="saving"
+                :disabled="saving"
+                @click="saveSettings()"
+            >
+                {{ $t('Save Settings') }}
+            </el-button>
+        </div>
+
+        <div class="fs_settings_form">
+            <div class="fs_form_group">
+                <label class="fs_form_label">{{ $t('Inbox Name') }}</label>
+                <el-input
+                    v-model="mailbox.name"
+                    :placeholder="$t('Inbox Name')"
+                    class="fs_text_input fs_text_input_40"
+                />
+            </div>
+
+            <div class="fs_form_group">
+                <span class="fs_field_label">
+                    {{ $t('Support Inbox Email') }}
+                    <el-tooltip
+                        effect="dark"
+                        :content="$t('select_fallback_business')"
+                        placement="top"
+                        popper-class="fs-tooltip"
+                    >
+                        <el-icon> <InfoFilled /> </el-icon>
+                    </el-tooltip>
+                </span>
+                <el-input
+                    v-model="mailbox.email"
+                    :disabled="mailbox.mapped_email && mailbox.box_type == 'email'"
+                    type="email"
+                    :placeholder="$t('Support Inbox Email')"
+                    class="fs_text_input fs_text_input_40"
+                />
+            </div>
+
+            <div class="fs_form_group">
+                <span class="fs_field_label">
+                    {{ $t('Admin Email Address') }}
+                    <el-tooltip
+                        effect="dark"
+                        :content="$t('admin_get_email')"
+                        placement="top"
+                        popper-class="fs-tooltip"
+                    >
+                        <el-icon> <InfoFilled /> </el-icon>
+                    </el-tooltip>
+                </span>
+                <el-input
+                    v-model="mailbox.settings.admin_email_address"
+                    type="email"
+                    class="fs_text_input fs_text_input_40"
+                />
+            </div>
+
+            <div v-if="mailbox.box_type == 'email' && !mailbox.mapped_email" class="fs_form_group">
+                <p class="fs_sub_text">
+                    {{ $t('Please configure') }} <br/>
+                    <router-link
+                        :to="{name: 'email_piping', params: { box_id: mailbox.id }}"
+                        class="fs_doc_link"
+                    >
+                        {{ $t('your email piping settings first') }}
+                    </router-link>
                 </p>
-            </el-form-item>
+            </div>
 
-            <el-form-item v-if="mailbox.box_type == 'email'" :label="translate('Mapped Email')">
-                <template v-if="mailbox.mapped_email">
-                    <el-input :disabled="true" type="email" v-model="mailbox.mapped_email"></el-input>
-                    <p>{{translate('mapped_webhook_email')}}</p>
-                </template>
-                <div v-else>
-                    <h4>{{translate('Please configure')}} <router-link :to="{name: 'email_piping', params: { box_id: mailbox.id }}">
-                        {{translate('your email piping settings first')}}
-                    </router-link></h4>
+            <div v-if="has_pro" class="fs_form_group">
+                <label class="fs_form_label">{{ $t('Email Footer For Customers') }}</label>
+                <wp-editor
+                    :height="200"
+                    v-model="mailbox.email_footer"
+                    :editor_shortcodes="shortCodes"
+                    class="fs_custom_editor"
+                />
+            </div>
+
+            <div class="fs_form_group">
+                <label class="fs_form_label">{{ $t('Inbox Color') }}</label>
+                <div class="fs_color_picker_wrapper">
+                    <el-color-picker
+                        v-model="mailbox.settings.color"
+                        size="large"
+                        style="width: 30px; height: 30px;"
+                    />
+                    <span class="fs_color_value">{{ mailbox.settings.color || '#189877' }}</span>
                 </div>
-            </el-form-item>
+            </div>
 
-            <el-form-item :label="translate('Email Footer For Customers')" v-if="has_pro">
-                <wp-editor :height="100" v-model="mailbox.email_footer" :editor_shortcodes="shortCodes"/>
-            </el-form-item>
-
-            <el-form-item :label="translate('Inbox Color')">
-                <el-color-picker v-model="mailbox.settings.color" size="large" />
-            </el-form-item>
-
-            <el-form-item>
-                <el-checkbox class="fs_show_hide_box_badge" v-model="mailbox.settings.hide_business_box" true-label="yes" false-label="no">Hide Badge In Tickets</el-checkbox>
-            </el-form-item>
-
-            <el-form-item>
-                <el-button v-loading="saving" :disabled="saving" @click="saveSettings()" type="success">
-                    {{translate('Save Settings')}}
-                </el-button>
-            </el-form-item>
-        </el-form>
+            <div class="fs_form_group">
+                <el-checkbox
+                    v-model="mailbox.settings.hide_business_box"
+                    true-value="yes"
+                    false-value="no"
+                    class="fs_custom_checkbox"
+                >
+                    {{ $t('Hide Badge in Tickets') }}
+                </el-checkbox>
+            </div>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
-import { onMounted, reactive, toRefs,computed } from 'vue';
-import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'MailBoxSettings',
-    props: ['mailbox'],
     components: {
-        WpEditor
+        WpEditor,
     },
-
-    setup(props){
-        const {
-            handleError,
-            translate,
-            put,
-            has_pro
-
-        } = useFluentHelper();
-
-        const { notify } = useNotify();
-
-        const state = reactive({
+    props: ['mailbox'],
+    data() {
+        return {
             shortCodes: {
-                '{{customer.first_name}}': translate('Customer First name'),
-                '{{customer.last_name}}': translate('Customer Last name'),
-                '{{customer.email}}': translate('Customer Email'),
-                '{{ticket.id}}': translate('Ticket ID'),
-                '{{ticket.public_url}}': translate('Ticket Public URL'),
-                '{{ticket.title}}': translate('Ticket Title')
+                '{{customer.first_name}}': this.$t('Customer First name'),
+                '{{customer.last_name}}': this.$t('Customer Last name'),
+                '{{customer.email}}': this.$t('Customer Email'),
+                '{{ticket.id}}': this.$t('Ticket ID'),
+                '{{ticket.public_url}}': this.$t('Ticket Public URL'),
+                '{{ticket.title}}': this.$t('Ticket Title')
             },
             saving: false
-
-        })
-
-        const filtered_client_notifications = computed(() => {
-            if(props.mailbox.box_type == 'email') {
-                return {
-                    ticket_created: translate('Ticket Received Welcome Email'),
-                    ticket_closed_by_agent: translate('Ticket Closed By Agent')
-                }
-            }
-            // return this.client_notifications;
-        });
-
-        const saveSettings = async () => {
-
-            if(props.mailbox.box_type == 'email' && props.mailbox.settings.admin_email_address == props.mailbox.email) {
-                notify.error({
-                    message: 'Your Admin Email Address and Support From Email should not be same. Please use a different email address.',
+        }
+    },
+    mounted() {
+        if (!this.mailbox.settings.color) {
+            this.mailbox.settings.color = '#189877';
+        }
+    },
+    methods: {
+        saveSettings() {
+            if (this.mailbox.box_type == 'email' && this.mailbox.settings.admin_email_address == this.mailbox.email) {
+                this.$notify.error({
+                    message: this.$t('Your Admin Email Address and Support From Email should not be same. Please use a different email address.'),
                     position: 'bottom-right'
                 });
                 return false;
             }
 
-            state.saving = true;
-                put(`mailboxes/${props.mailbox.id}`, {
-                business: props.mailbox
+            this.saving = true;
+
+            this.$put(`mailboxes/${this.mailbox.id}`, {
+                business: this.mailbox
             })
-                .then(response => {
-                    notify({
+                .then((response) => {
+                    this.$notify({
                         type: 'success',
                         position: 'bottom-right',
                         message: response.message
                     });
                 })
                 .catch((errors) => {
-                    handleError(errors)
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.saving = false;
+                    this.saving = false;
                 });
         }
-
-        onMounted(() => {
-            if ( !props.mailbox.settings.color ) {
-                props.mailbox.settings.color = '#0CBE7E';
-            }
-        });
-
-        return{
-            saveSettings,
-            translate,
-            filtered_client_notifications,
-            has_pro,
-            ...toRefs(state)
-        }
     }
-
-    }
+}
 </script>
+

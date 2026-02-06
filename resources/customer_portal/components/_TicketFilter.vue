@@ -49,7 +49,7 @@
                                     :disabled="appVars.customer_status === 'inactive'"
                                 >
                                     <el-radio v-for="column in sortingColumns" :key="column.value"
-                                              :label="column.value">
+                                              :value="column.value">
                                         {{ column.label }}
                                     </el-radio>
                                 </el-radio-group>
@@ -61,8 +61,8 @@
                                 v-model="sorting.sort_type"
                                 :disabled="appVars.customer_status === 'inactive'"
                             >
-                                <el-radio-button label="asc">{{ $t('Ascending') }}</el-radio-button>
-                                <el-radio-button label="desc">{{ $t('Descending') }}</el-radio-button>
+                                <el-radio-button value="asc">{{ $t('Ascending') }}</el-radio-button>
+                                <el-radio-button value="desc">{{ $t('Descending') }}</el-radio-button>
                             </el-radio-group>
                             <div class="fs_sorting_button">
                                 <el-button @click="fetchTickets()" type="primary"
@@ -169,4 +169,3 @@ export default {
     }
 };
 </script>
-

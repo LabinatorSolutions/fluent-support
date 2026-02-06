@@ -1,128 +1,128 @@
 <template>
-    <div class="fs_box_wrapper"  v-if="load">
-        <div class="fs_box_header">
-            <div class="fs_box_head">
-                <h3>{{ translate("Recaptcha_heading") }}</h3>
-            </div>
-        </div>
-        <div class="fs_box_body">
-            <div v-if="appVars.auth_provider == 'fluent_auth'">
-                <div class="settings-body">
-                    <h3>Signin and Registration forms are handled by FluentAuth Plugin</h3>
-                </div>
-            </div>
-            <div v-else class="fs_reCaptcha_settings_body">
-                <div class="settings-body">
-                    <el-form label-position="top" label-width="140px">
-                        <el-switch
-                            v-model="reCaptchaEnabled"
-                            style="
-                        --el-switch-on-color: #13ce66;
-                        --el-switch-off-color: #ff4949;
-                        "
-                        active-text="Enabled"
-                        inactive-text="Disabled"
-                        @change="loadRecaptchaResponse"
-                    />
-                        <el-form-item
-                            :label="translate('Recaptcha Version')"
-                            style="margin-right: 20px; margin-top: 20px"
-                        >
-                            <el-radio-group
-                                @change="loadRecaptchaResponse"
-                                v-model="reCaptchaVersion"
-                                style="width: 90%; margin-right: 0.2em"
-                            >
-                                <el-radio label="recaptcha_v2">{{
-                                    translate("Version 2")
-                                }}</el-radio>
-                                <el-radio label="recaptcha_v3">{{
-                                    translate("Version 3")
-                                }}</el-radio>
-                            </el-radio-group>
-                        </el-form-item>
-
-                        <el-form-item label="Site Key">
-                            <el-input
-                                v-model="siteKey"
-                                @change="loadRecaptchaResponse"
-                            />
-                        </el-form-item>
-
-                        <el-form-item label="Secret Key">
-                                    <el-input
-                                        type="password"
-                                        v-model="secretKey"
-                                        @change="loadRecaptchaResponse"
-                                    />
-                                </el-form-item>
-
-                        <el-form-item
-                            :label="translate('Use Recaptcha')"
-                            @change="loadRecaptchaResponse"
-                            class="mr-2"
-                        >
-                            <el-checkbox
-                                v-model="formContainingReCaptcha.login_form"
-                                @change="loadRecaptchaResponse"
-                                true-label="yes"
-                                false-label="no"
-                                name="type"
-                            >{{ translate("Login Form") }}</el-checkbox
-                            >
-                            <el-checkbox
-                                v-model="formContainingReCaptcha.signup_form"
-                                true-label="yes"
-                                false-label="no"
-                                name="type"
-                            >{{ translate("Signup Form") }}</el-checkbox
-                            >
-                        </el-form-item>
-
-                        <el-form-item
-                            v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
-                            class="hidden"
-                            :label="translate('Validate Captcha')"
-                        >
-                            <div
-                                class="g-recaptcha"
-                                id="recaptchaContainer"
-                                :data-sitekey="siteKey"
-                            ></div>
-                        </el-form-item>
-
-                        <el-form-item>
+    <div class="fs_reCaptcha_settings">
+        <div class="fs_box_wrapper">
+            <div class="fs_box_header">
+                <div class="fs_box_head">
+                    <h3>{{ $t("reCAPTCHA Settings") }}</h3>
+                    <div class="fs_save_settings_container">
+                        <div class="fs_actions" v-if="hasSavedSettings">
+                            <el-button class="fs_stroke_btn" @click="clearSettings">
+                                {{ $t("Clear Settings") }}
+                            </el-button>
+                        </div>
+                        <div>
                             <el-button
+                                size="default"
                                 type="success"
-                                @click="saveSettings"
-                                :disabled="disabled"
-                            >
-                                {{ translate("Save Settings") }}
-                            </el-button>
-                            <el-button type="danger" @click="clearSettings">
-                                {{ translate("Clear Settings") }}
-                            </el-button>
-                        </el-form-item>
-                    </el-form>
+                                class="fs_save_settings_btn"
+                                @click="saveSettings()"
+                                :disabled="!isValid"
+                            >{{ $t("Save Settings") }}</el-button>
+                        </div>
+                    </div>
                 </div>
+                <div class="fs_box_actions"></div>
+            </div>
+            <div
+                v-if="!fetching"
+                v-loading="loading"
+                class="fs_box_body"
+            >
+                <div v-if="appVars.auth_provider == 'fluent_auth'">
+                    <div class="settings-body">
+                        <h3>{{ $t("Signin and Registration forms are handled by FluentAuth Plugin") }}</h3>
+                    </div>
+                </div>
+                <div v-else class="fs_reCaptcha_settings_body">
+                    <div class="settings-body">
+                        <el-form label-position="top" label-width="140px">
+                            <el-form-item class="fs_form_item" :label="$t('Enable reCAPTCHA')">
+                                <el-switch
+                                    v-model="reCaptchaEnabled"
+                                    active-text="Enable reCAPTCHA for enhanced security"
+                                    @change="loadRecaptchaResponse"
+                                />
+                            </el-form-item>
+
+                            <hr class="fs_divider">
+
+                            <el-form-item class="fs_form_item fs_recaptcha_version" :label="$t('reCAPTCHA Version')">
+                                <el-radio-group
+                                    @change="loadRecaptchaResponse"
+                                    v-model="reCaptchaVersion"
+                                >
+                                    <el-radio value="recaptcha_v2">{{ $t("Version 2") }}</el-radio>
+                                    <el-radio value="recaptcha_v3">{{ $t("Version 3") }}</el-radio>
+                                </el-radio-group>
+                            </el-form-item>
+
+                            <el-form-item class="fs_form_item" :label="$t('Site Key')">
+                                <el-input
+                                    class="fs_text_input"
+                                    v-model="siteKey"
+                                    @change="loadRecaptchaResponse"
+                                    :placeholder="$t('Enter your reCAPTCHA site key')"
+                                />
+                            </el-form-item>
+
+                            <el-form-item class="fs_form_item" :label="$t('Secret Key')">
+                                <el-input
+                                    class="fs_text_input"
+                                    type="password"
+                                    v-model="secretKey"
+                                    @change="loadRecaptchaResponse"
+                                    :placeholder="$t('Enter your reCAPTCHA secret key')"
+                                />
+                            </el-form-item>
+
+                            <el-form-item class="fs_form_item" :label="$t('Use reCAPTCHA on')">
+                                <div class="fs_recaptcha_checkboxes">
+                                    <el-checkbox
+                                        v-model="formContainingReCaptcha.login_form"
+                                        @change="loadRecaptchaResponse"
+                                        true-value="yes"
+                                        false-value="no"
+                                    >{{ $t("Login Form") }}</el-checkbox>
+                                    <el-checkbox
+                                        v-model="formContainingReCaptcha.signup_form"
+                                        @change="loadRecaptchaResponse"
+                                        true-value="yes"
+                                        false-value="no"
+                                    >{{ $t("Signup Form") }}</el-checkbox>
+                                </div>
+                            </el-form-item>
+
+                            <el-form-item
+                                v-if="'recaptcha_v2' === reCaptchaVersion && siteKey"
+                                class="fs_form_item"
+                                :label="$t('Validate Captcha')"
+                            >
+                                <div
+                                    class="g-recaptcha"
+                                    id="recaptchaContainer"
+                                    :data-sitekey="siteKey"
+                                ></div>
+                            </el-form-item>
+
+                        </el-form>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="fs_box_body"
+                v-else
+            >
+                <el-skeleton :rows="5" animated />
             </div>
         </div>
     </div>
 </template>
 
-<script>
-import { reactive, toRefs, onMounted, ref, onBeforeUnmount } from "vue";
-import {
-    useFluentHelper,
-    useNotify,
-} from "@/admin/Composable/FluentFrameworkHelper";
+<script type="text/babel">
 export default {
-    name: "RecaptchaView",
-    setup() {
-        const { get, post, translate, handleError, setTitle } = useFluentHelper();
-        const { notify } = useNotify();
-
-        const state = reactive({
+    name: 'RecaptchaView',
+    data() {
+        return {
             reCaptchaVersion: "recaptcha_v2",
             formContainingReCaptcha: {
                 login_form: 'no',
@@ -132,147 +132,162 @@ export default {
             secretKey: '',
             captchaResponse: '',
             reCaptchaEnabled: false,
-        });
-        const load = ref(false);
-        const disabled = ref(true);
-
-        const loadRecaptchaResponse = async () => {
-            disabled.value = !validate();
-
-            if ("recaptcha_v3" === state.reCaptchaVersion) {
-                loadRecaptchaV3Script();
-
-                window.grecaptcha.ready(() => {
-                    window.grecaptcha
-                        .execute(state.siteKey, { action: "submit" })
-                        .then(function (token) {
-                            state.captchaResponse = token;
-                            disabled.value = false;
-                        });
+            fetching: false,
+            loading: false,
+            isValid: false,
+            hasSavedSettings: false
+        }
+    },
+    methods: {
+        fetchSettings() {
+            this.fetching = true;
+            this.$get('settings/recaptcha-settings')
+                .then(response => {
+                    const data = response;
+                    if (data != null && Object.keys(data).length > 0) {
+                        this.reCaptchaVersion = data.reCaptcha_version;
+                        this.siteKey = data.siteKey;
+                        this.secretKey = data.secretKey;
+                        this.formContainingReCaptcha = data.formContainingReCaptcha;
+                        this.reCaptchaEnabled = data.is_enabled === "true";
+                        this.hasSavedSettings = true;
+                    } else {
+                        this.hasSavedSettings = false;
+                    }
+                    this.loadRecaptchaV3Script();
+                    this.validate();
+                })
+                .catch((errors) => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.fetching = false;
                 });
-            } else {
-                document.querySelector(".grecaptcha-badge")?.remove();
-
-                let reCaptcha = document.getElementById("recaptchaContainer");
-                reCaptcha.innerHTML = "";
-
-                window.___grecaptcha_cfg.clients = {};
-
-                if (window.grecaptcha) {
-                    window.grecaptcha.render("recaptchaContainer", {
-                        sitekey: state.siteKey,
-                        callback: function (token) {
-                            state.captchaResponse = token;
-                            disabled.value = false;
-                        },
-                    });
-                }
-            }
-        };
-
-        const loadRecaptchaV3Script = () => {
-            if ("recaptcha_v3" === state.reCaptchaVersion) {
-                var v3Script = document.createElement("script");
-                v3Script.src = `https://www.google.com/recaptcha/api.js?render=${state.siteKey}`;
-                document.head.appendChild(v3Script);
-            }
-        };
-
-        const saveSettings = async () => {
-            if (!validate()) {
-                return notify({
+        },
+        saveSettings() {
+            if (!this.validate()) {
+                return this.$notify({
                     message: "Missing required fields.",
                     type: "error",
                     position: "bottom-right",
                 });
             }
-            await post("settings/recaptcha-settings", {
+
+            this.loading = true;
+            this.$post('settings/recaptcha-settings', {
                 key: "reCaptcha",
-                reCaptcha: state,
+                reCaptcha: {
+                    reCaptchaVersion: this.reCaptchaVersion,
+                    formContainingReCaptcha: this.formContainingReCaptcha,
+                    siteKey: this.siteKey,
+                    secretKey: this.secretKey,
+                    captchaResponse: this.captchaResponse,
+                    reCaptchaEnabled: this.reCaptchaEnabled,
+                }
             })
-                .then((response) => {
-                    notify({
+                .then(response => {
+                    this.hasSavedSettings = true;
+                    this.$notify({
+                        type: 'success',
                         message: response.message,
-                        type: "success",
-                        position: "bottom-right",
-                    });
+                        position: 'bottom-right'
+                    })
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
                 });
-        };
-
-        const fetchSettings = async () => {
-             await get("settings/recaptcha-settings")
-                .then((response) => {
-                    const data = response;
-                    if (data != null && Object.keys(data).length > 0) {
-                        state.reCaptchaVersion = data.reCaptcha_version;
-                        state.siteKey = data.siteKey;
-                        state.secretKey = data.secretKey;
-                        state.formContainingReCaptcha = data.formContainingReCaptcha;
-                        state.reCaptchaEnabled = data.is_enabled === "true";
-                    }
-                    loadRecaptchaV3Script();
-                    load.value = true;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {});
-        };
-
-        const validate = () => {
-            return !!(state.siteKey && state.secretKey);
-        };
-
-        const clearSettings = async () => {
-            await post("settings/recaptcha-settings", {
+        },
+        clearSettings() {
+            this.loading = true;
+            this.$post('settings/recaptcha-settings', {
                 key: "reCaptcha",
                 reCaptcha: "clear-reCaptcha-settings",
             })
-                .then((response) => {
-                    state.reCaptchaVersion = "";
-                    state.siteKey = "";
-                    state.secretKey = "";
-                    state.formContainingReCaptcha = {
+                .then(response => {
+                    this.reCaptchaVersion = "recaptcha_v2";
+                    this.siteKey = "";
+                    this.secretKey = "";
+                    this.formContainingReCaptcha = {
                         login_form: "no",
                         signup_form: "no",
                     };
-                    notify({
+                    this.reCaptchaEnabled = false;
+                    this.hasSavedSettings = false;
+                    this.$notify({
+                        type: 'success',
                         message: response.message,
-                        type: "success",
-                        position: "bottom-right",
-                    });
+                        position: 'bottom-right'
+                    })
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
                 });
-        };
+        },
+        loadRecaptchaResponse() {
+            this.validate();
 
-        onMounted(() => {
-            setTitle("ReCaptcha Settings");
-            var v2Script = document.createElement("script");
-            v2Script.src = `https://www.google.com/recaptcha/api.js`;
-            document.head.appendChild(v2Script);
+            if ("recaptcha_v3" === this.reCaptchaVersion) {
+                this.loadRecaptchaV3Script();
 
-            fetchSettings();
-        });
+                if (window.grecaptcha) {
+                    window.grecaptcha.ready(() => {
+                        window.grecaptcha
+                            .execute(this.siteKey, { action: "submit" })
+                            .then((token) => {
+                                this.captchaResponse = token;
+                            });
+                    });
+                }
+            } else {
+                document.querySelector(".grecaptcha-badge")?.remove();
 
-        onBeforeUnmount(() => {
-            document.querySelector(".grecaptcha-badge")?.remove();
-        });
+                let reCaptcha = document.getElementById("recaptchaContainer");
+                if (reCaptcha) {
+                    reCaptcha.innerHTML = "";
+                }
 
-        return {
-            ...toRefs(state),
-            saveSettings,
-            clearSettings,
-            loadRecaptchaResponse,
-            load,
-            disabled,
-            setTitle,
-            translate,
-        };
+                if (window.___grecaptcha_cfg) {
+                    window.___grecaptcha_cfg.clients = {};
+                }
+
+                if (window.grecaptcha && reCaptcha) {
+                    window.grecaptcha.render("recaptchaContainer", {
+                        sitekey: this.siteKey,
+                        callback: (token) => {
+                            this.captchaResponse = token;
+                        },
+                    });
+                }
+            }
+        },
+        loadRecaptchaV3Script() {
+            if ("recaptcha_v3" === this.reCaptchaVersion) {
+                var v3Script = document.createElement("script");
+                v3Script.src = `https://www.google.com/recaptcha/api.js?render=${this.siteKey}`;
+                document.head.appendChild(v3Script);
+            }
+        },
+        validate() {
+            this.isValid = !!(this.siteKey && this.secretKey);
+            return this.isValid;
+        }
     },
-};
+    mounted() {
+        this.$setTitle('reCAPTCHA Settings');
+        var v2Script = document.createElement("script");
+        v2Script.src = `https://www.google.com/recaptcha/api.js`;
+        document.head.appendChild(v2Script);
+
+        this.fetchSettings();
+    },
+    beforeUnmount() {
+        document.querySelector(".grecaptcha-badge")?.remove();
+    }
+}
 </script>

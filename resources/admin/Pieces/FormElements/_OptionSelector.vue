@@ -1,6 +1,6 @@
 <template>
     <div class="fs_options_selector">
-        <el-select :size="field.size" v-model="model" :multiple="field.is_multiple"
+        <el-select class="fs_select_field" :size="field.size" v-model="model" :multiple="field.is_multiple"
                    :placeholder="field.placeholder"
                    clearable
                    filterable>

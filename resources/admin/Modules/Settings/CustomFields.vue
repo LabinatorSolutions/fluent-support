@@ -1,123 +1,177 @@
 <template>
     <div class="fs_products">
-        <div class="fs_box_wrapper">
+        <div class="fs_box_wrapper fs_custom_fields_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ translate("Custom Ticket Fields") }}</h3>
-                </div>
-                <div v-if="has_pro" class="fs_box_actions">
-                    <el-button
-                        @click="addFieldVisible = true"
-                        type="primary"
-                        icon="Plus"
-                        size="default"
-                    >
-                        {{ translate("Add New Field") }}
-                    </el-button>
+                    <h3>{{ $t("Custom Ticket Fields") }}</h3>
                 </div>
             </div>
             <template v-if="has_pro">
-                <div v-if="!loading" class="fs_box_body">
-                    <el-table
-                        :empty-text="translate('No Custom Fields Found')"
-                        border
-                        stripe
-                        :data="fields"
-                    >
-                        <el-table-column :label="translate('Label')" prop="label">
-                            <template #default="scope">
-                                {{ scope.row.label || scope.row.admin_label }}
-                                <el-icon
-                                    :title="'Agent Only Field'"
-                                    v-if="scope.row.admin_only == 'yes'"
-                                    ><Lock
-                                /></el-icon>
-                                <el-icon
-                                    :title="'Conditional Field'"
-                                    v-if="scope.row.has_logics == 'yes'"
-                                    ><Connection
-                                /></el-icon>
-                            </template>
-                        </el-table-column>
-                        <el-table-column
-                            :label="translate('Slug')"
-                            prop="slug"
-                        ></el-table-column>
-                        <el-table-column
-                            :label="translate('Type')"
-                            prop="type"
-                        ></el-table-column>
-                        <el-table-column width="160" :label="translate('Actions')">
-                            <template #default="scope">
-                                <el-button
-                                    class="fs_custom_field_action_btn"
-                                    text
-                                    @click="updateFieldModal(scope.$index)"
-                                    icon="EditPen"
-                                ></el-button>
-                                <el-popconfirm
-                                    :title="translate('custom_ticket_field_delete')"
-                                    @confirm="deleteField(scope.$index)"
+                <div v-if="!loading" class="fs_table_container">
+                    <div class="fs_custom_table_field_header fs_table_header">
+                        <div class="fs_custom_field_actions">
+                            <el-button
+                                v-if="has_pro"
+                                @click="addFieldVisible = true"
+                                class="fs_filled_btn"
+                                icon="Plus"
+                            >
+                                {{ $t("Add New Field") }}
+                            </el-button>
+                        </div>
+                    </div>
+                    <div class="fs_table_wrapper">
+                        <div class="fs_custom_field_table_header_row">
+                            <div class="fs_field_label_header">
+                                {{ $t("Label") }}
+                            </div>
+                            <div class="fs_field_slug_header">
+                                {{ $t("Slug") }}
+                            </div>
+                            <div class="fs_field_type_header">
+                                {{ $t("Type") }}
+                            </div>
+                            <div class="fs_field_actions_header">
+                                {{ $t("Actions") }}
+                            </div>
+                        </div>
+                        <draggable
+                            v-model="fields"
+                            ghost-class="ghost"
+                            item-key="slug"
+                            @end="saveFields"
+                            handle=".fs_custom_drag_svg"
+                        >
+                            <template #item="{ element, index }">
+                                <div
+                                    :key="element.slug"
+                                    class="fs_custom_field_row"
                                 >
-                                    <template #reference>
-                                        <el-button
-                                            class="fs_custom_field_action_btn"
-                                            text
-                                            icon="Delete"
-                                            style="
-                                                color: red;
-                                                margin-right: 0.3em;
-                                            "
-                                        ></el-button>
-                                    </template>
-                                </el-popconfirm>
-
-                                <el-button-group>
-                                    <el-button
-                                        @click="
-                                            movePosition(scope.$index, 'up')
-                                        "
-                                        :disabled="scope.$index == 0"
-                                        size="small"
-                                        icon="ArrowUp"
-                                    ></el-button>
-                                    <el-button
-                                        @click="
-                                            movePosition(scope.$index, 'down')
-                                        "
-                                        :disabled="
-                                            scope.$index == fields.length - 1
-                                        "
-                                        size="small"
-                                        icon="ArrowDown"
-                                    ></el-button>
-                                </el-button-group>
+                                    <span class="fs_custom_drag_svg">
+                                        <svg
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4L0.504883 3.82031C0.595411 2.03035 2.03035 0.595411 3.82031 0.504883L4 0.5Z"
+                                                fill="white"
+                                            />
+                                            <path
+                                                d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4L0.504883 3.82031C0.595411 2.03035 2.03035 0.595411 3.82031 0.504883L4 0.5Z"
+                                                stroke="#E1E4EA"
+                                            />
+                                            <path
+                                                d="M9.375 8.25C9.99632 8.25 10.5 7.74632 10.5 7.125C10.5 6.50368 9.99632 6 9.375 6C8.75368 6 8.25 6.50368 8.25 7.125C8.25 7.74632 8.75368 8.25 9.375 8.25ZM9.375 13.125C9.99632 13.125 10.5 12.6213 10.5 12C10.5 11.3787 9.99632 10.875 9.375 10.875C8.75368 10.875 8.25 11.3787 8.25 12C8.25 12.6213 8.75368 13.125 9.375 13.125ZM10.5 16.875C10.5 17.4963 9.99632 18 9.375 18C8.75368 18 8.25 17.4963 8.25 16.875C8.25 16.2537 8.75368 15.75 9.375 15.75C9.99632 15.75 10.5 16.2537 10.5 16.875ZM14.625 8.25C15.2463 8.25 15.75 7.74632 15.75 7.125C15.75 6.50368 15.2463 6 14.625 6C14.0037 6 13.5 6.50368 13.5 7.125C13.5 7.74632 14.0037 8.25 14.625 8.25ZM15.75 12C15.75 12.6213 15.2463 13.125 14.625 13.125C14.0037 13.125 13.5 12.6213 13.5 12C13.5 11.3787 14.0037 10.875 14.625 10.875C15.2463 10.875 15.75 11.3787 15.75 12ZM14.625 18C15.2463 18 15.75 17.4963 15.75 16.875C15.75 16.2537 15.2463 15.75 14.625 15.75C14.0037 15.75 13.5 16.2537 13.5 16.875C13.5 17.4963 14.0037 18 14.625 18Z"
+                                                fill="#525866"
+                                            />
+                                        </svg>
+                                    </span>
+                                    <div class="fs_custom_field_column">
+                                        <div class="fs_field_label">
+                                            {{
+                                                element.label ||
+                                                element.admin_label
+                                            }}
+                                            <el-icon
+                                                :title="'Agent Only Field'"
+                                                v-if="
+                                                    element.admin_only == 'yes'
+                                                "
+                                                ><Lock
+                                            /></el-icon>
+                                            <el-icon
+                                                :title="'Conditional Field'"
+                                                v-if="
+                                                    element.has_logics == 'yes'
+                                                "
+                                                ><Connection
+                                            /></el-icon>
+                                        </div>
+                                        <div class="fs_field_slug">
+                                            {{ element.slug }}
+                                        </div>
+                                        <div class="fs_field_type">
+                                            {{ element.type }}
+                                        </div>
+                                        <div class="fs_field_actions">
+                                            <div class="fs-table-action-cell">
+                                                <div
+                                                    class="fs_action_button_wrapper"
+                                                >
+                                                    <el-button
+                                                        class="fs_action_button"
+                                                        @click="
+                                                            updateFieldModal(
+                                                                index
+                                                            )
+                                                        "
+                                                        text
+                                                        icon="EditPen"
+                                                    >
+                                                    </el-button>
+                                                </div>
+                                                <TableMoreActions
+                                                    :scope="{
+                                                        row: element,
+                                                        $index: index,
+                                                    }"
+                                                    :fetching="loading"
+                                                    @delete="deleteField(index)"
+                                                    :delete-warning="
+                                                        $t(
+                                                            'Delete custom field'
+                                                        )
+                                                    "
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
-                        </el-table-column>
-                    </el-table>
+                        </draggable>
+                    </div>
+                    <div class="fs_pagination_wrapper" v-if="fields.length">
+                        <span class="fs_pagination_left">
+                            <p>
+                                Page {{ pagination.current_page }} of
+                                {{
+                                    Math.ceil(
+                                        pagination.total / pagination.per_page
+                                    )
+                                }}
+                            </p>
+                            <pagination
+                                @fetch="fetchFields()"
+                                :pagination="pagination"
+                                layout="sizes"
+                            />
+                        </span>
+                        <span class="fs_pagination_right">
+                            <pagination
+                                @fetch="fetchFields()"
+                                :pagination="pagination"
+                                :background="true"
+                                layout="prev, pager, next"
+                            />
+                        </span>
+                    </div>
                 </div>
-                <div
-                    style="padding: 20px; background: white"
-                    class="fs_box_body"
-                    v-else
-                >
-                    <el-skeleton :rows="5" animated />
+                <div style="background: white" class="fs_box_body" v-else>
+                    <el-skeleton class="fs_box_wrapper" :rows="5" animated />
                 </div>
             </template>
-            <div class="fs_narrow_promo" v-else>
-                <h3>{{ translate("tk_data_collect_using_customfield") }}</h3>
-                <p>{{ translate("pro_promo") }}</p>
-                <a
-                    target="_blank"
-                    rel="noopener"
-                    href="https://fluentsupport.com"
-                    class="el-button el-button--success"
-                    >{{ translate("Upgrade To Pro") }}</a
-                >
-            </div>
+            <NarrowPromo
+                v-else
+                :heading="$t('tk_data_collect_using_customfield')"
+                :description="$t('pro_promo')"
+                :button-text="$t('Upgrade To Pro')"
+            />
         </div>
         <el-dialog
-            :title="translate('Add New Custom Field')"
+            :title="$t('Add New Custom Field')"
             v-model="addFieldVisible"
             :append-to-body="true"
             width="60%"
@@ -129,15 +183,22 @@
                 :item="new_item"
                 :fields="fields"
             ></custom-field-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="createField()" type="success" size="small">{{
-                    translate("Add")
-                }}</el-button>
-            </div>
+            <template #footer>
+                <span class="fs_dialog_footer">
+                    <el-button
+                        class="fs_outline_btn"
+                        @click="() => addFieldVisible = false">
+                        {{ $t("Cancel") }}
+                    </el-button>
+                    <el-button class="fs_filled_btn" @click="createField()" type="success">{{
+                        $t("Add")
+                    }}</el-button>
+                </span>
+            </template>
         </el-dialog>
 
         <el-dialog
-            :title="translate('Update Custom Field')"
+            :title="$t('Update Custom Field')"
             v-model="updateFieldVisible"
             :append-to-body="true"
             width="60%"
@@ -150,39 +211,42 @@
                 :field_types="field_types"
                 :item="update_field"
             ></custom-field-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button @click="updateField()" type="success" size="small">{{
-                    translate("Update Field")
-                }}</el-button>
-            </div>
+            <template #footer>
+                <span class="fs_dialog_footer">
+                    <el-button
+                        class="fs_outline_btn"
+                        @click="() => updateFieldVisible = false">
+                        {{ $t("Cancel") }}
+                    </el-button>
+                    <el-button class="fs_filled_btn" @click="updateField()" type="success">{{
+                        $t("Update Field")
+                    }}</el-button>
+                </span>
+            </template>
         </el-dialog>
     </div>
 </template>
 
 <script type="text/babel">
 import CustomFieldForm from "./_CustomFieldForm";
-import { onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
+import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
+import Pagination from "../../Pieces/Pagination";
+import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
+import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import draggable from "vuedraggable";
 
 export default {
     name: "CustomFields",
     components: {
         CustomFieldForm,
+        TableMoreActions,
+        Pagination,
+        TableEmptyStateImage,
+        NarrowPromo,
+        draggable,
     },
-    setup() {
-
-        const {
-            get,
-            post,
-            translate,
-            handleError,
-            setTitle,
-            has_pro,
-        } = useFluentHelper();
-
-        const { notify } = useNotify();
-
-        const state = reactive({
+    data() {
+        return {
             fields: [],
             loading: false,
             new_item: {},
@@ -190,140 +254,119 @@ export default {
             addFieldVisible: false,
             updateFieldVisible: false,
             update_field: {},
-        });
-
-        const fetch = async () => {
-            state.loading = true;
-            await get("ticket-custom-fields", {
+            pagination: {
+                current_page: 1,
+                per_page: 10,
+                total: 0,
+            },
+        };
+    },
+    created() {
+        this.$setTitle("Custom Ticket Fields");
+        if (this.has_pro) {
+            this.fetchFields();
+        }
+    },
+    methods: {
+        fetchFields() {
+            this.loading = true;
+            this.$get("ticket-custom-fields", {
                 with: ["field_types"],
+                per_page: this.pagination.per_page,
+                page: this.pagination.current_page,
             })
                 .then((response) => {
-                    state.fields = response.fields;
-                    state.field_types = response.field_types;
+                    this.fields = response.fields;
+                    this.field_types = response.field_types;
+                    if (response.pagination) {
+                        this.pagination = response.pagination;
+                    }
+                    this.loading = false;
                 })
                 .catch((error) => {
-                    handleError(error);
-                })
-                .always(() => {
-                    state.loading = false;
+                    this.$handleError(error);
+                    this.loading = false;
                 });
-        };
-
-        const saveFields = async () => {
-            state.loading = true;
-            await post("ticket-custom-fields", {
-                fields: JSON.stringify(state.fields),
+        },
+        saveFields() {
+            this.loading = true;
+            this.$post("ticket-custom-fields", {
+                fields: JSON.stringify(this.fields),
             })
                 .then((response) => {
-                    state.fields = response.fields;
-                    notify({
+                    this.fields = response.fields;
+                    this.$notify({
                         type: "success",
-                        message: response.message,
+                        message: response.message || "Fields order updated successfully",
                         position: "bottom-right",
                     });
+                    this.loading = false;
                 })
                 .catch((error) => {
-                    handleError(error);
-                })
-                .always(() => {
-                    state.loading = false;
+                    this.$handleError(error);
+                    this.loading = false;
                 });
-        };
-
-        const createField = () => {
-            if (!validateField(state.new_item)) {
+        },
+        createField() {
+            if (!this.validateField(this.new_item)) {
                 return false;
             }
-            state.fields.push(state.new_item);
-            state.addFieldVisible = false;
-            state.new_item = {};
-            saveFields();
-        };
-
-        const validateField = (item) => {
-            console.log(item);
+            this.fields.push(this.new_item);
+            this.addFieldVisible = false;
+            this.new_item = {};
+            this.saveFields();
+        },
+        validateField(item) {
             if (!item.label) {
-                notify({
+                this.$notify({
                     type: "error",
                     message: "Please Provide label",
                     position: "bottom-right",
                 });
                 return false;
             }
-
             if (!("options" in item)) {
                 return true;
             }
-
-            if (!Array.isArray(item.options) || item.options.length === 0 || item.options.some(option => option.trim() === "")) {
-                notify({
+            if (!Array.isArray(item.options) || item.options.length === 0 || item.options.some((option) => option.trim() === "")) {
+                this.$notify({
                     type: "error",
                     message: "Please provide valid field option values",
                     position: "bottom-right",
                 });
                 return false;
             }
-
             return true;
-        };
-
-        const updateFieldModal = (fieldIndex) => {
-            state.update_field = state.fields[fieldIndex];
-            state.updateFieldVisible = true;
-        };
-
-        const updateField = () => {
-            if (!validateField(state.update_field)) {
+        },
+        updateFieldModal(fieldIndex) {
+            this.update_field = this.fields[fieldIndex];
+            this.updateFieldVisible = true;
+        },
+        updateField() {
+            if (!this.validateField(this.update_field)) {
                 return false;
             }
-            state.updateFieldVisible = false;
-            state.update_field = {};
-            saveFields();
-        };
-
-        const deleteField = (fieldIndex) => {
-            state.fields.splice(fieldIndex, 1);
-            saveFields();
-        };
-
-        const movePosition = (fromIndex, type) => {
+            this.updateFieldVisible = false;
+            this.update_field = {};
+            this.saveFields();
+        },
+        deleteField(fieldIndex) {
+            this.fields.splice(fieldIndex, 1);
+            this.saveFields();
+        },
+        movePosition(fromIndex, type) {
             let toIndex = fromIndex - 1;
             if (type === "down") {
                 toIndex = fromIndex + 1;
             }
-            const fields = state.fields;
-            const element = fields[fromIndex];
-            fields.splice(fromIndex, 1);
-            fields.splice(toIndex, 0, element);
-            state.fields = fields;
-            saveFields();
-        };
-
-        onMounted(() => {
-            setTitle("Custom Ticket Fields");
-            if (has_pro) {
-                fetch();
-            }
-        });
-
-        return {
-            ...toRefs(state),
-            translate,
-            fetch,
-            saveFields,
-            createField,
-            validateField,
-            updateFieldModal,
-            updateField,
-            deleteField,
-            movePosition
-        }
+            // Create a new array to trigger reactivity
+            const newFields = [...this.fields];
+            const element = newFields[fromIndex];
+            newFields.splice(fromIndex, 1);
+            newFields.splice(toIndex, 0, element);
+            this.fields = newFields;
+            this.saveFields();
+        },
     },
 };
 </script>
-
-<style scoped>
-.fs_custom_field_action_btn{
-    padding: 0px;
-}
-</style>

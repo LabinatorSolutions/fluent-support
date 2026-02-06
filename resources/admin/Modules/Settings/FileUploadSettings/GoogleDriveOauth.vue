@@ -6,8 +6,8 @@
                     <el-col :span="12">
                         <el-card shadow="always" grid-content>
                             <div v-loading="loading || verifying" class="text-center">
-                                <h2>Google Drive</h2>
-                                <p>Verifying your API connection. Please wait</p>
+                                <h2>{{ $t('Google Drive') }}</h2>
+                                <p>{{ $t('Verifying your API connection. Please wait') }}</p>
                             </div>
                         </el-card>
                     </el-col>
@@ -39,7 +39,7 @@ export default {
                     this.requestToken();
                 })
                 .catch((errors) => {
-                    this.$fluent.handleError(errors)
+                    this.$handleError(errors)
                 })
                 .always(() => {
                     this.loading = false;
@@ -75,7 +75,11 @@ export default {
                         this.settings.is_oauth_flow = true;
                         this.saveSettings();
                     } else {
-                        this.$notify.error('Something went wrong. Please try again.');
+                        this.$notify({
+                            type: 'error',
+                            message: 'Something went wrong. Please try again.',
+                            position: 'bottom-right'
+                        });
                         this.$router.push({name: 'upload_integration'});
                     }
                 })
@@ -92,7 +96,11 @@ export default {
                 settings: this.settings
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify({
+                        type: 'success',
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     this.$router.push({name: 'upload_integration'});
                 })
                 .catch((errors) => {
@@ -102,104 +110,6 @@ export default {
                     this.verifying = false;
                 });
         },
-
-        setupX() {
-            const {get, post, translate, handleError, setTitle, appVars} =
-                useFluentHelper();
-
-            const {notify} = useNotify();
-            const router = useRouter();
-            const route = useRoute();
-
-            const state = reactive({
-                code: false,
-                settings: false,
-                loading: false,
-                redirect_uri: appVars.rest.url + '/public/google_auth',
-            });
-
-            watch(route, (route) => {
-                    state.code = route.query.code;
-                },
-                {immediate: true}
-            )
-
-            const requestToken = () => {
-
-                const body = new URLSearchParams({
-                    'client_id': state.settings.client_id,
-                    'client_secret': state.settings.client_secret,
-                    'grant_type': 'authorization_code',
-                    'code': state.code,
-                    'access_type': 'offline',
-                    'redirect_uri': state.redirect_uri,
-                });
-
-
-                const requestOptions = {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: body,
-                    redirect: 'follow'
-                };
-
-                fetch("https://accounts.google.com/o/oauth2/token", requestOptions)
-                    .then(response => response.json())
-                    .then(result => {
-                            state.settings.access_token = result.access_token
-                            state.settings.refresh_token = result.refresh_token
-                            saveSettings()
-                        }
-                    )
-                    .catch(error => console.log('error', error));
-
-            }
-
-            const fetchSettings = async () => {
-                state.loading = true;
-                await get('settings/upload_integration', {
-                    integration_key: 'google_drive_settings'
-                })
-                    .then(response => {
-                        state.settings = response.settings;
-                    })
-                    .catch((errors) => {
-                        handleError(errors)
-                    })
-                    .always(() => {
-                        state.loading = false;
-                    });
-            };
-
-            const saveSettings = () => {
-                state.saving = true;
-                post('settings/upload_integration', {
-                    integration_key: 'google_drive_settings',
-                    settings: state.settings
-                })
-                    .then(response => {
-                        router.push({name: 'upload_integration', query: {integration_key: 'google_drive_settings'}});
-                    })
-                    .catch((errors) => {
-                        handleError(errors);
-                    })
-                    .always(() => {
-                        state.saving = false;
-                    });
-            };
-
-            onMounted(() => {
-                fetchSettings();
-            });
-            return {
-                ...toRefs(state),
-                fetchSettings,
-                requestToken,
-                saveSettings
-            }
-        } // end setup
     },
     mounted() {
         this.fetchSettings();
@@ -207,7 +117,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-
-</style>

@@ -3,95 +3,117 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ translate("Products") }}</h3>
-                </div>
-                <div class="fs_box_actions">
-                    <el-button
-                        @click="createTicketModal()"
-                        type="primary"
-                        icon="Plus"
-                        size="default"
-                        >{{ translate("Create New") }}
-                    </el-button>
-
-                    <div class="fs_ticket_orders" style="margin-left: 10px">
-                        <el-input
-                            @keyup.enter="getProducts"
-                            clearable
-                            @clear="getProducts"
-                            size="small"
-                            :placeholder="translate('Search Products')"
-                            v-model="search"
-                        >
-                            <template #append>
-                                <el-button
-                                    @click="getProducts"
-                                    icon="Search"
-                                ></el-button>
-                            </template>
-                        </el-input>
+                    <div class="fs_box_head">
+                        <h3>{{ $t("Products") }}</h3>
                     </div>
                 </div>
             </div>
-            <div v-if="!fetching" class="fs_box_body">
-                <el-table stripe :data="products">
-                    <el-table-column
-                        width="80"
-                        prop="id"
-                        :label="translate('ID')"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="title"
-                        :label="translate('Title')"
-                    ></el-table-column>
-                    <el-table-column
-                        prop="description"
-                        :label="translate('Description')"
-                    ></el-table-column>
-                    <el-table-column width="120" :label="translate('Action')">
-                        <template #default="scope">
-                            <el-button
-                                class="fs_products_action_btn"
-                                @click="editProductModal(scope.row)"
-                                text
-                                icon="EditPen"
-                            ></el-button>
-                            <el-popconfirm
-                                :confirm-button-text="
-                                    translate('Yes, Delete this')
-                                "
-                                :cancel-button-text="translate('No')"
-                                icon="InfoFilled"
-                                icon-color="red"
-                                :title="translate('product_delete_warning')"
-                                @confirm="deleteProduct(scope.row)"
+            <div v-if="!fetching" class="fs_table_container">
+                <div class="fs_table_header">
+                    <div class="fs_box_actions">
+                        <div class="fs_ticket_orders fs_table_search_field">
+                            <el-input
+                                @keyup.enter="getProducts"
+                                clearable
+                                @clear="getProducts"
+                                :placeholder="$t('Search...')"
+                                v-model="search"
+                                class="fs_text_input fs_table_search_input"
                             >
-                                <template #reference>
-                                    <el-button
-                                        class="fs_products_action_btn"
-                                        v-loading="fetching"
-                                        style="margin-left: 10px; color: red"
-                                        text
-                                        icon="Delete"
-                                    ></el-button>
+                                <template #prefix>
+                                    <el-icon class="el-input__icon"><Search /></el-icon>
                                 </template>
-                            </el-popconfirm>
+                            </el-input>
+                        </div>
+                        <el-button
+                            @click="createTicketModal()"
+                            class="fs_filled_btn"
+                            icon="Plus"
+                        >
+                            {{ $t("Add New") }}
+                        </el-button>
+                    </div>
+                </div>
+                <div class="fs_table_wrapper">
+                    <el-table
+                        :data="products"
+                        row-class-name="fs_table_row"
+                        header-row-class-name="fs_table_header_row"
+                        cell-class-name="fs_table_cell"
+                        header-cell-class-name="fs_table_header_cell"
+                        table-layout="fixed"
+                    >
+                        <template #empty>
+                            <div class="fs_table_empty_state">
+                                <el-empty
+                                    :description="$t('No Products Found')"
+                                    :image-size="130"
+                                >
+                                    <template #image>
+                                        <TableEmptyStateImage />
+                                    </template>
+                                </el-empty>
+                            </div>
                         </template>
-                    </el-table-column>
-                </el-table>
-                <div class="fframe_pagination_wrapper" v-if="products.length">
-                    <pagination
-                        @fetch="getProducts()"
-                        :pagination="pagination"
-                    />
+                        <el-table-column
+                            width="100"
+                            prop="id"
+                            :label="$t('ID')"
+                        ></el-table-column>
+                        <el-table-column
+                            prop="title"
+                            width="200"
+                            :label="$t('Title')"
+                        ></el-table-column>
+                        <el-table-column
+                            prop="description"
+                            width="250"
+                            :label="$t('Description')"
+                        ></el-table-column>
+                        <el-table-column align="center" width="150" :label="$t('Action')">
+                            <template #default="scope">
+                                <div class="fs-table-action-cell">
+                                    <div class="fs_action_button_wrapper">
+                                        <el-button
+                                            class="fs_action_button"
+                                            @click="editProductModal(scope.row)"
+                                            text
+                                            icon="EditPen">
+                                        </el-button>
+                                    </div>
+
+                                    <TableMoreActions
+                                        :scope="scope"
+                                        :fetching="fetching"
+                                        @delete="deleteProduct(scope.row)"
+                                        :delete-warning="$t('product_delete_warning')"
+                                    />
+                                </div>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <div class="fs_pagination_wrapper" v-if="products.length">
+                    <span class="fs_pagination_left">
+                        <p>Page {{ pagination.current_page }} of {{ Math.ceil(pagination.total / pagination.per_page) }}</p>
+                        <pagination
+                            @fetch="getProducts()"
+                            :pagination="pagination"
+                            layout="sizes"
+                        />
+                    </span>
+                    <span class="fs_pagination_right">
+                        <pagination
+                            @fetch="getProducts()"
+                            :pagination="pagination"
+                            :background="true"
+                            layout="prev, pager, next"
+                        />
+                    </span>
                 </div>
             </div>
-            <div
-                style="padding: 20px; background: white"
-                class="fs_box_body"
-                v-else
-            >
-                <el-skeleton :rows="5" animated />
+            <div style="background: white" class="fs_box_body" v-else>
+                <el-skeleton class="fs_box_wrapper" :rows="5" animated />
             </div>
         </div>
 
@@ -100,42 +122,51 @@
             :append-to-body="true"
             :title="
                 editing_product && editing_product.id
-                    ? translate('Edit Product')
-                    : translate('Create New Supported Product')
+                    ? $t('Edit Product')
+                    : $t('Create New Supported Product')
             "
             v-model="ticket_modal"
             width="60%"
             class="fs_dialog"
         >
             <el-form label-position="top" :data="editing_product">
-                <el-form-item :label="translate('Title')">
+                <el-form-item :label="$t('Title')" class="fs_form_item">
                     <el-input
-                        text
-                        :placeholder="translate('Product Title')"
+                        class="fs_text_input fs_text_input_40"
+                        type="text"
+                        :placeholder="$t('Product Title')"
                         v-model="editing_product.title"
                     />
                 </el-form-item>
-                <el-form-item :label="translate('Description')">
+                <el-form-item :label="$t('Description')" class="fs_form_item">
                     <el-input
+                        class="fs_textarea_input fs_text_input_40"
                         type="textarea"
-                        :placeholder="translate('Product Description')"
+                        rows="4"
+                        :placeholder="$t('Product Description')"
                         v-model="editing_product.description"
                     />
                 </el-form-item>
             </el-form>
 
             <template #footer>
-                <span class="dialog-footer">
+                <span class="fs_dialog_footer">
+                    <el-button
+                        class="fs_outline_btn"
+                        @click="() => ticket_modal = false">
+                        {{ $t("Cancel") }}
+                    </el-button>
+
                     <el-button
                         v-loading="saving"
                         :disabled="saving"
-                        type="success"
                         @click="createOrUpdateProduct()"
-                    >
-                        <span v-if="editing_product.id">{{
-                            translate("Update")
-                        }}</span>
-                        <span v-else>{{ translate("Create") }}</span>
+                        class="fs_filled_btn"
+                        >
+                        {{
+                            (editing_product && editing_product.id)
+                                ? $t("Update Product")
+                                : $t("Add Product") }}
                     </el-button>
                 </span>
             </template>
@@ -145,128 +176,109 @@
 
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
-import { onMounted, reactive, toRefs } from "vue";
-import {
-    useFluentHelper,
-    useNotify,
-} from "@/admin/Composable/FluentFrameworkHelper";
-
+import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
+import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
 export default {
     name: "SupportProducts",
     components: {
         Pagination,
-    },
-    setup() {
-        const { get, post, put, del, handleError, setTitle, translate } =
-            useFluentHelper();
+        TableMoreActions,
+        TableEmptyStateImage
+     },
 
-        const { notify } = useNotify();
-
-        const state = reactive({
-            fetching: false,
+    data() {
+        return {
             products: [],
             pagination: {
                 current_page: 1,
                 per_page: 10,
                 total: 0,
             },
+            fetching: true,
             saving: false,
             ticket_modal: false,
             editing_product: false,
             search: "",
-        });
-
-        const getProducts = async () => {
-            state.fetching = true;
-            await get("products", {
-                per_page: state.pagination.per_page,
-                page: state.pagination.current_page,
-                search: state.search,
-            })
-                .then((response) => {
-                    state.products = response.products.data;
-                    state.pagination.total = response.products.total;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {
-                    state.fetching = false;
-                });
         };
-        const createOrUpdateProduct = () => {
-            state.saving = true;
-            let method = post;
+    },
+    methods: {
+        getProducts() {
+            this.fetching = true;
+            this.$get("products", {
+                per_page: this.pagination.per_page,
+                page: this.pagination.current_page,
+                search: this.search,
+            })
+            .then((response) => {
+                this.products = response.products.data;
+                this.pagination.total = response.products.total;
+            })
+            .catch((errors) => {
+                this.$handleError(errors);
+            })
+            .always(() => {
+                this.fetching = false;
+            });
+        },
+
+        createOrUpdateProduct() {
+            this.saving = true;
+            let method = this.$post;
             let route = "products";
-            if (state.editing_product.id) {
-                method = put;
-                route = `products/${state.editing_product.id}`;
+            if (this.editing_product.id) {
+                method = this.$put;
+                route = `products/${this.editing_product.id}`;
             }
 
             method(route, {
-                ...state.editing_product,
+                ...this.editing_product,
             })
-                .then((response) => {
-                    notify({
-                        message: response.message,
-                        type: "success",
-                        position: "bottom-right",
-                    });
-                    getProducts();
-                    state.ticket_modal = false;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {
-                    state.saving = false;
-                });
-        };
-
-        const editProductModal = (product) => {
-            state.editing_product = JSON.parse(JSON.stringify(product));
-            state.ticket_modal = true;
-        };
-
-        const createTicketModal = () => {
-            state.editing_product = {
-                title: "",
-                description: "",
-            };
-            state.ticket_modal = true;
-        };
-
-        const deleteProduct = async (product) => {
-            await del(`products/${product.id}`).then((response) => {
-                notify({
+            .then((response) => {
+                this.$notify({
                     message: response.message,
                     type: "success",
                     position: "bottom-right",
                 });
-
-                getProducts();
+                this.getProducts();
+                this.ticket_modal = false;
+            })
+            .catch((errors) => {
+                this.$handleError(errors);
+            })
+            .always(() => {
+                this.saving = false;
             });
-        };
+        },
 
-        onMounted(() => {
-            getProducts();
-            setTitle("Products Settings");
-        });
+        editProductModal(product) {
+            this.editing_product = JSON.parse(JSON.stringify(product));
+            this.ticket_modal = true;
+        },
 
-        return {
-            ...toRefs(state),
-            translate,
-            getProducts,
-            createOrUpdateProduct,
-            editProductModal,
-            createTicketModal,
-            deleteProduct,
-        };
+        createTicketModal() {
+            this.editing_product = {
+                title: "",
+                description: "",
+            };
+            this.ticket_modal = true;
+        },
+
+        deleteProduct(product) {
+            this.$del(`products/${product.id}`).then((response) => {
+                this.$notify({
+                    message: response.message,
+                    type: "success",
+                    position: "bottom-right",
+                });
+                this.getProducts();
+            });
+        }
     },
+
+    mounted() {
+        this.getProducts();
+        this.$setTitle("Products Settings");
+    }
 };
 </script>
-<style>
-.fs_products_action_btn {
-    padding: 0px;
-}
-</style>
+

@@ -1,48 +1,21 @@
 <template>
-    <div class="fs_time_sheet" v-if="isLoaded" >
-        <div class="fs_time_sheet_box_header">
-            <div class="fs_time_sheet_box_head">
-                {{translate("Customer Time Sheet Report")}}
-            </div>
-            <div class="fs_time_sheet_box_actions">
-                <el-select
-                    v-model="selectedCustomer"
-                    @change="fetchReportsByCustomers"
-                    placeholder="Select a customer"
-                    clearable
-                    filterable
-                    multiple
-                    collapse-tags
-                    class="fs_time_sheet_select"
-                >
-                    <el-option
-                        v-for="customer in allCustomers"
-                        :key="customer.key"
-                        :label="customer.label"
-                        :value="customer.key"
-                    />
-
-                </el-select>
-                <div class="fs_time_sheet_export">
-                    <el-button type="default" @click="exportReport">
-                        <el-icon>
-                            <Download/>
-                        </el-icon>
-                        {{ translate('Export') }}
-                    </el-button>
-                </div>
-            </div>
-        </div>
-        <div class="fs_time_sheet_box_body">
-            <el-table :data="customers" style="width: 100%">
-                <el-table-column fixed="left" prop="customer" label="Customer" min-width="120">
+    <div class="fs_time_sheet" v-if="isLoaded">
+        <div class="fs_table_wrapper">
+            
+            <el-table :data="customers" 
+                row-class-name="fs_table_row"
+                header-row-class-name="fs_table_header_row"
+                cell-class-name="fs_table_cell"
+                header-cell-class-name="fs_table_header_cell"
+                table-layout="fixed">
+                <el-table-column fixed="left" prop="customer" :label="$t('Customer')" min-width="150">
                     <template #default="{ row }">
                         <div class="fs_time_sheet_person">
                             <el-avatar :src="row.photo" size="small"></el-avatar>
                             <router-link
                                 :to="{ name: 'view_customer', params: { customer_id: row.id }, }"
                                 target="_blank"
-                                style="text-decoration: none;">
+                                class="fs_time_sheet_customer_link">
                                 <strong>{{ row.full_name }}</strong>
                             </router-link>
                         </div>
@@ -67,9 +40,9 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column label="Total" width="160" fixed="right">
+                <el-table-column fixed="right" :label="$t('Total')" width="160">
                     <template #header="{ column }">
-                        <span>Total ({{ formatMinutes(totalMinutes) }})</span>
+                        <span>{{ $t('Total') }} ({{ formatMinutes(totalMinutes) }})</span>
                     </template>
                     <template #default="{ row }">
                         <strong>{{ getUserTotal(row.id) }}</strong>
@@ -78,14 +51,12 @@
             </el-table>
         </div>
     </div>
-    <div class="fs_time_sheet_skeleton"  v-else>
+    <div class="fs_time_sheet_skeleton" v-else>
         <el-skeleton :animated="true" :rows="10"/>
     </div>
 </template>
 
-<script>
-import {onMounted, ref} from 'vue';
-import {useFluentHelper} from '@/admin/Composable/FluentFrameworkHelper';
+<script type="text/babel">
 import Modal from "@/admin/Pieces/Modal.vue";
 import {timesheetUtils} from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
 import UserAgentDateSheetPop from "@/admin/Modules/Reports/TimeSheet/_UserAgentDateSheetPop.vue";
@@ -97,81 +68,54 @@ export default {
         date_range: {
             type: Array,
             required: true
+        },
+        customers: {
+            type: Array,
+            default: () => []
+        },
+        timeSheets: {
+            type: Object,
+            default: () => ({})
+        },
+        dateLabels: {
+            type: Array,
+            default: () => []
+        },
+        totalMinutes: {
+            type: Number,
+            default: 0
+        },
+        isLoaded: {
+            type: Boolean,
+            default: false
+        },
+        selectedCustomer: {
+            type: Array,
+            default: () => []
         }
     },
-    setup(props) {
-        const {get, handleError, smartDate, translate} = useFluentHelper();
-        const allCustomers = ref([]);
-        const customers = ref([]);
-        const totalMinutes = ref(0);
-        const timeSheets = ref({});
-        const dateLabels = ref([]);
-        const isLoaded = ref(false);
-        const selectedCustomer = ref(null);
-
-        const fetchReportsByCustomers = async () => {
-            isLoaded.value = false;
-            try {
-                const params = {
-                    customer_id: selectedCustomer.value,
-                    date_range: props.date_range
-                };
-
-                const response = await get('reports/timesheet/by-customers', params);
-                customers.value = response.customers;
-                timeSheets.value = response.time_sheets;
-                dateLabels.value = response.date_labels;
-                totalMinutes.value = response.total_minutes;
-
-                if (!params.customer_id) {
-                    allCustomers.value = response.all_customers.map(customer => ({
-                        key: customer.id,
-                        label: customer.full_name
-                    }));
-                }
-
-            } catch (error) {
-                handleError(error);
-            } finally {
-                isLoaded.value = true;
-            }
+    data() {
+        return {
         };
+    },
+    methods: {
+        getUserTotal(userId) {
+            return timesheetUtils.calculateEntityTotalMinutes(this.dateLabels, this.timeSheets, userId);
+        },
 
-        const getUserTotal = (userId) =>
-            timesheetUtils.calculateEntityTotalMinutes(dateLabels.value, timeSheets.value, userId);
+        formatMinutes(minutes) {
+            return timesheetUtils.formatMinutes(minutes);
+        },
 
-
-        const formatMinutes = (minutes) =>
-            timesheetUtils.formatMinutes(minutes);
-
-
-        const exportReport = () => {
+        exportReport() {
             timesheetUtils.exportReport({
-                selectedItems: selectedCustomer.value,
-                dateRange: props.date_range,
+                selectedItems: this.selectedCustomer,
+                dateRange: this.date_range,
                 action: "fluent_support_export_customers_timesheet",
                 itemKey: "selectedCustomers"
             });
-        }
-
-        onMounted(() => fetchReportsByCustomers());
-
-        return {
-            allCustomers,
-            customers,
-            totalMinutes,
-            timeSheets,
-            dateLabels,
-            isLoaded,
-            fetchReportsByCustomers,
-            getUserTotal,
-            formatMinutes,
-            smartDate,
-            selectedCustomer,
-            translate,
-            exportReport
-        };
-    }
+        },
+    },
 };
 </script>
 

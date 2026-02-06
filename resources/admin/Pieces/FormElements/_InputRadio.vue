@@ -1,6 +1,13 @@
 <template>
-    <el-radio-group :class="field.wrapper_class" v-model="modelValueLocal">
-        <el-radio v-for="(item,itemIndex) in field.options" :key="itemIndex" :label="item.id">
+    <el-radio-group
+        :class="field.wrapper_class"
+        v-model="modelValueLocal"
+    >
+        <el-radio
+            v-for="(item, itemIndex) in field.options"
+            :key="itemIndex"
+            :value="item.id"
+        >
             {{ item.label }}
         </el-radio>
     </el-radio-group>

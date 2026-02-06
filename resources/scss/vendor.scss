@@ -5,6 +5,11 @@
 @import "~element-plus/theme-chalk/src/message-box.scss";
 @import "~element-plus/theme-chalk/src/popconfirm.scss";
 // customize element ui css here
+
+:root {
+    /* Text Colors */
+    --fs-primary-text-color: #0E121B;
+}
 .el {
     &-select {
         width: 100%;
@@ -100,7 +105,43 @@
 
     @media all and (max-width: 1000px) {
         .el-dialog {
-            min-width: 80%;
+            min-width: 90%;
+        }
+    }
+}
+.el-tree {
+    .el-tree-node__content {
+        display: flex;
+        align-items: center;
+        min-height: 32px;
+        
+        .custom-tree-node {
+            flex: 1;
+            min-width: 0;
+            word-wrap: break-word;
+            word-break: normal;
+            overflow-wrap: break-word;
+            white-space: normal;
+            line-height: 1.5;
+            
+            span {
+                display: inline-block;
+                width: 100%;
+                word-wrap: break-word;
+                word-break: normal;
+                overflow-wrap: break-word;
+                white-space: normal;
+                line-height: 1.5;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        .el-tree-node__content {
+            height: auto;
+            align-items: flex-start;
+            padding-top: 4px;
+            padding-bottom: 4px;
         }
     }
 }
@@ -113,32 +154,34 @@
     text-align: center;
 }
 
+.el-popconfirm__icon {
+    display: none;
+}
+
+.el-popconfirm__main {
+    margin-left: 0;
+}
+
 .el-button {
     .el-loading-mask {
         background: transparent;
     }
+    &.el-button--success {
+        --el-button-text-color: var(--el-color-white);
+        --el-button-bg-color: #0cbe7e;
+        --el-button-border-color: #0cbe7e;
+        --el-button-hover-bg-color: #49c89f;
+        --el-button-hover-border-color: #49c89f;
+        --el-button-active-bg-color: #49c89f;
+        --el-button-active-border-color: #49c89f;
+    }
 }
 
 .el-table .fs_status_inactive {
-    background-color: #fff7b1;
+    background-color: var(--fs-status-inactive-bg);
 }
 
-.fs_setup {
-    .suggest_box {
-        margin-bottom: 10px;
-        padding: 10px 20px;
-        border: 1px solid #0ebe7e;
-        border-radius: 5px;
-    }
-    .email_optin {
-        label {
-            font-weight: 500;
-            display: block;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-    }
-}
+
 
 @media (min-width: 1100px) {
     .fc_essential_modal {
@@ -146,7 +189,7 @@
             top: 30%;
             min-width: 600px !important;
             border-radius: 0;
-            .dialog-footer {
+            .fs_dialog_footer {
                 background: transparent;
                 text-align: right;
                 display: block;
@@ -179,5 +222,27 @@
 }
 
 p.fc_inline_help {
-    margin-top: 5px;
+    color: var(--fs-text-secondary, #525866);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+}
+.el-cascader-node.in-active-path{
+    color: var(--fs-primary-text-color, #0E121B) !important;
+    font-weight: bold !important;
+}
+.fs_tooltip{
+    z-index: 9999 !important;
+}
+.el-radio__input .el-radio__inner {
+    border: 2px solid #dcdfe6;
+}
+.el-radio__input.is-checked .el-radio__inner:after {
+    height: 6.4px;
+    width: 6.4px;
+    border: 4px;
+}
+.el-radio__inner:hover {
+    border-color: var(--fs-primary-text-color, #0E121B) !important;
 }

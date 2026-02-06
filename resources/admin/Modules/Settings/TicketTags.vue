@@ -3,117 +3,153 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ translate("Ticket Tags") }}</h3>
-                </div>
-                <div class="fs_box_actions">
-                    <el-button
-                        v-if="has_pro"
-                        @click="createTagModal()"
-                        type="primary"
-                        icon="Plus"
-                    >
-                        {{ translate("Add New") }}
-                    </el-button>
-
-                    <div class="fs_ticket_orders" style="margin-left: 10px">
-                        <el-input
-                            @keyup.enter="fetchTags"
-                            clearable
-                            @clear="fetchTags"
-                            :disabled="!has_pro"
-                            :placeholder="translate('Search Tags')"
-                            v-model="search"
-                        >
-                            <template #append>
-                                <el-button
-                                    @click="fetchTags"
-                                    :disabled="!has_pro"
-                                    icon="Search"
-                                ></el-button>
-                            </template>
-                        </el-input>
+                    <div class="fs_box_head">
+                        <h3>{{ $t("Ticket Tags") }}</h3>
                     </div>
                 </div>
             </div>
             <template v-if="has_pro">
-                <div v-if="!fetching" class="fs_box_body">
-                    <el-table stripe :data="tags">
-                        <el-table-column
-                            width="80"
-                            prop="id"
-                            :label="translate('ID')"
-                        ></el-table-column>
-                        <el-table-column
-                            prop="title"
-                            :label="translate('Title')"
-                        ></el-table-column>
-                        <el-table-column
-                            prop="description"
-                            :label="translate('Description')"
-                        ></el-table-column>
-                        <el-table-column :label="translate('Tickets')">
-                            <template #default="scope">
-                                <router-link
-                                    :to="{
-                                        name: 'tickets',
-                                        query: { tags: [scope.row.id] },
-                                    }"
+                <div v-if="!fetching" class="fs_table_container">
+                    <div class="fs_table_header">
+                        <div class="fs_box_actions">
+                            <div class="fs_ticket_orders fs_table_search_field">
+                                <el-input
+                                    @keyup.enter="fetchTags"
+                                    clearable
+                                    @clear="fetchTags"
+                                    :disabled="!has_pro"
+                                    :placeholder="$t('Search...')"
+                                    v-model="search"
+                                    class="fs_text_input fs_table_search_input"
                                 >
-                                    {{ scope.row.count }}
-                                </router-link>
-                            </template>
-                        </el-table-column>
-                        <el-table-column width="120" :label="$t('Action')">
-                            <template #default="scope">
-                                <el-button class="fs_action_button" @click="editTagModal(scope.row)" text
-                                           icon="EditPen"></el-button>
-                                <el-popconfirm
-                                    :confirm-button-text="$t('Yes, Delete this')"
-                                    :cancel-button-text="$t('No')"
-                                    icon="InfoFilled"
-                                    icon-color="red"
-                                    :title="$t('tag_delete_warning')"
-                                    @confirm="deleteTag(scope.row)"
-                                >
-                                    <template #reference>
-                                        <el-button class="fs_action_button" v-loading="fetching" style="margin-left: 10px; color: red;"
-                                                   text
-                                                   icon="Delete"></el-button>
+                                    <template #prefix>
+                                        <el-icon class="el-input__icon"><search /></el-icon>
                                     </template>
-                                </el-popconfirm>
+                                </el-input>
+                            </div>
+                            <el-button
+                                v-if="has_pro"
+                                @click="createTagModal()"
+                                class="fs_filled_btn"
+                                icon="Plus"
+                            >
+                                {{ $t("Add New") }}
+                            </el-button>
+                        </div>
+                    </div>
+                    <div class="fs_table_wrapper">
+                        <el-table
+                            :data="tags"
+                            row-class-name="fs_table_row"
+                            header-row-class-name="fs_table_header_row"
+                            cell-class-name="fs_table_cell"
+                            header-cell-class-name="fs_table_header_cell"
+                            table-layout="fixed"
+                        >
+                            <template #empty>
+                                <div class="fs_table_empty_state">
+                                    <el-empty
+                                        :description="$t('No Tags Found')"
+                                        :image-size="130"
+
+                                    >
+                                        <template #image>
+                                            <TableEmptyStateImage />
+                                        </template>
+                                    </el-empty>
+                                </div>
                             </template>
-                        </el-table-column>
-                    </el-table>
-                    <div class="fframe_pagination_wrapper" v-if="tags.length">
-                        <pagination
-                            @fetch="fetchTags()"
-                            :pagination="pagination"
-                        />
+                            <el-table-column
+                                width="100"
+                                prop="id"
+                                :label="$t('ID')"
+                            ></el-table-column>
+                            <el-table-column
+                                prop="title"
+                                width="200"
+                                :label="$t('Name')"
+                            ></el-table-column>
+                            <el-table-column
+                                prop="description"
+                                width="250"
+                                :label="$t('Description')"
+                            ></el-table-column>
+                            <el-table-column
+                                :label="$t('Tickets')"
+                                width="80"
+                            >
+                                <template #default="scope">
+                                    <router-link
+                                        :to="{
+                                            name: 'tickets',
+                                            query: { tags: [scope.row.id] },
+                                        }"
+                                    >
+                                        {{ scope.row.count }}
+                                    </router-link>
+                                </template>
+                            </el-table-column>
+                            <el-table-column align="center" width="150" :label="$t('Action')">
+                                <template #default="scope">
+                                    <div class="fs-table-action-cell">
+                                        <div class="fs_action_button_wrapper">
+                                            <el-button
+                                                class="fs_action_button"
+                                                @click="editTagModal(scope.row)"
+                                                text
+                                                icon="EditPen">
+                                            </el-button>
+                                        </div>
+
+                                        <TableMoreActions
+                                            :scope="scope"
+                                            :fetching="fetching"
+                                            @delete="deleteTag(scope.row)"
+                                            :delete-warning="$t('tag_delete_warning')"
+                                        />
+                                    </div>
+                                </template>
+                            </el-table-column>
+                        </el-table>
+                    </div>
+                    <div class="fs_pagination_wrapper" v-if="tags.length">
+                        <span class="fs_pagination_left">
+                            <p>Page {{ pagination.current_page }} of {{ Math.ceil(pagination.total / pagination.per_page) }}</p>
+                            <pagination
+                                @fetch="fetchTags()"
+                                :pagination="pagination"
+                                layout="sizes"
+                            />
+                        </span>
+                        <span class="fs_pagination_right">
+                            <pagination
+                                @fetch="fetchTags()"
+                                :pagination="pagination"
+                                :background="true"
+                                layout="prev, pager, next"
+                            />
+                        </span>
+
                     </div>
                 </div>
                 <div style="background: white" class="fs_box_body" v-else>
                     <el-skeleton class="fs_box_wrapper" :rows="5" animated />
                 </div>
             </template>
-            <div class="fs_narrow_promo" v-else>
-                <h3>{{ translate("segment_ticket_by_tags") }}</h3>
-                <p>{{ translate("pro_promo") }}</p>
-                <a
-                    target="_blank"
-                    rel="noopener"
-                    href="https://fluentsupport.com"
-                    class="el-button el-button--success"
-                    >{{ translate("Upgrade To Pro") }}</a
-                >
-            </div>
+            <NarrowPromo
+                v-else
+                :heading="$t('segment_ticket_by_tags')"
+                :description="$t('pro_promo')"
+                :button-text="$t('Upgrade To Pro')"
+            />
         </div>
 
         <el-dialog
             :append-to-body="true"
             :title="
-                editing_tag && editing_tag.id
-                    ? translate('Edit Tag')
-                    : translate('Create New Ticket Tag')
+            editing_tag && editing_tag.id
+                ? $t('Edit Tag')
+                : $t('Create New Ticket Tag')
             "
             v-model="tag_modal"
             v-if="editing_tag"
@@ -121,32 +157,48 @@
             class="fs_dialog"
         >
             <el-form label-position="top" :data="editing_tag">
-                <el-form-item :label="translate('Title')">
-                    <el-input
-                        type="text"
-                        :placeholder="translate('Tag Title')"
-                        v-model="editing_tag.title"
-                    />
-                </el-form-item>
-                <el-form-item :label="translate('Description')">
-                    <el-input
-                        type="textarea"
-                        :placeholder="translate('Tag Description')"
-                        v-model="editing_tag.description"
-                    />
-                </el-form-item>
+            <el-form-item :label="$t('Tag Name')" class="fs_form_item">
+                <el-input
+                    class="fs_text_input fs_text_input_40"
+                    type="text"
+                    :placeholder="$t('Tag Title')"
+                    v-model="editing_tag.title"
+                />
+            </el-form-item>
+            <el-form-item :label="$t('Description')" class="fs_form_item">
+                <el-input
+                    class="fs_textarea_input fs_text_input_40"
+                    type="textarea"
+                    rows="4"
+                    :placeholder="$t('Tag Description')"
+                    v-model="editing_tag.description"
+                />
+            </el-form-item>
             </el-form>
 
             <template #footer>
-                <span class="dialog-footer">
-                    <el-button
-                        v-loading="saving"
-                        :disabled="saving"
-                        type="success"
-                        @click="createOrUpdateTag()"
-                        >{{ translate("Save") }}</el-button
+            <span class="fs_dialog_footer">
+
+                <el-button
+                    class="fs_outline_btn"
+                    @click="() => tag_modal = false">
+                    {{ $t("Cancel") }}
+                </el-button>
+
+
+                <el-button
+                    v-loading="saving"
+                    :disabled="saving"
+                    @click="createOrUpdateTag()"
+                    class="fs_filled_btn"
                     >
-                </span>
+                    {{
+                        (editing_tag && editing_tag.id)
+                            ? $t("Update Ticket Tag")
+                            : $t("Add Ticket Tag") }}
+                </el-button
+                >
+            </span>
             </template>
         </el-dialog>
     </div>
@@ -154,30 +206,21 @@
 
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
-import { onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
+import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
+import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
+import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
 
 export default {
     name: "TicketTags",
-    components: { Pagination },
+    components: {
+        Pagination,
+        TableMoreActions,
+        TableEmptyStateImage,
+        NarrowPromo
+     },
 
-    setup() {
-
-        const {
-            get,
-            post,
-            put,
-            del,
-            handleError,
-            renewOptions,
-            has_pro,
-            setTitle,
-            translate
-        } = useFluentHelper();
-
-        const { notify } = useNotify();
-
-        const state = reactive({
+    data() {
+        return {
             tags: [],
             pagination: {
                 current_page: 1,
@@ -189,106 +232,90 @@ export default {
             tag_modal: false,
             editing_tag: false,
             search: "",
-        });
-
-        const fetchTags = async() => {
-            state.fetching = true;
-            await get("ticket-tags", {
-                per_page: state.pagination.per_page,
-                page: state.pagination.current_page,
-                search: state.search,
+        };
+    },
+    methods: {
+        fetchTags() {
+            this.fetching = true;
+            this.$get("ticket-tags", {
+                per_page: this.pagination.per_page,
+                page: this.pagination.current_page,
+                search: this.search,
             })
                 .then((response) => {
-                    state.tags = response.tags.data;
-                    state.pagination.total = response.tags.total;
+                    this.tags = response.tags.data;
+                    this.pagination.total = response.tags.total;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.fetching = false;
+                    this.fetching = false;
                 });
-        };
+        },
 
-        const createOrUpdateTag = () => {
-            state.saving = true;
-            let method = post;
+        createOrUpdateTag() {
+            this.saving = true;
+            let method = this.$post;
             let route = "ticket-tags";
-            if (state.editing_tag.id) {
-                method = put;
-                route = `ticket-tags/${state.editing_tag.id}`;
+            if (this.editing_tag.id) {
+                method = this.$put;
+                route = `ticket-tags/${this.editing_tag.id}`;
             }
 
             method(route, {
-                ...state.editing_tag,
+                ...this.editing_tag,
             })
                 .then((response) => {
-
-                    notify({
+                    this.$notify({
                         message: response.message,
                         type: "success",
                         position: "bottom-right",
                     });
-                    fetchTags();
-                    state.tag_modal = false;
-                    renewOptions("ticket-tags/options");
+                    this.fetchTags();
+                    this.tag_modal = false;
+                    this.renewOptions("ticket-tags/options");
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.saving = false;
+                    this.saving = false;
                 });
-        };
+        },
 
-        const editTagModal = (tag) => {
-            state.editing_tag = JSON.parse(JSON.stringify(tag));
-            state.tag_modal = true;
-        };
+        editTagModal(tag) {
+            this.editing_tag = JSON.parse(JSON.stringify(tag));
+            this.tag_modal = true;
+        },
 
-        const createTagModal = () => {
-            state.editing_tag = {
+        createTagModal() {
+            this.editing_tag = {
                 title: "",
                 description: "",
             };
-            state.tag_modal = true;
-        };
+            this.tag_modal = true;
+        },
 
-        const deleteTag = (tag) => {
-            del(`ticket-tags/${tag.id}`).then((response) => {
-                notify({
+        deleteTag(tag) {
+
+            this.$del(`ticket-tags/${tag.id}`).then((response) => {
+                this.$notify({
                     message: response.message,
                     type: "success",
                     position: "bottom-right",
                 });
-                fetchTags();
-                renewOptions("ticket-tags/options");
+                this.fetchTags();
+                this.renewOptions("ticket-tags/options");
             });
-        };
-
-        onMounted(() => {
-            if (has_pro) {
-                fetchTags();
-            }
-            setTitle("Ticket Tags");
-        });
-
-        return {
-            ...toRefs(state),
-            translate,
-            fetchTags,
-            createOrUpdateTag,
-            editTagModal,
-            createTagModal,
-            deleteTag
         }
     },
+
+    mounted() {
+        if (this.has_pro) {
+            this.fetchTags();
+        }
+        this.$setTitle("Ticket Tags");
+    }
 };
 </script>
-
-<style scoped>
-.fs_action_button{
-    padding: 0px;
-}
-</style>
-

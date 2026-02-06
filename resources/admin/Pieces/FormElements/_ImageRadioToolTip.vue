@@ -1,6 +1,6 @@
 <template>
     <el-radio-group class="fc_image_radio_tooltips" v-model="model">
-        <el-radio v-for="(item,itemIndex) in field.options" :key="itemIndex" :label="item.id">
+        <el-radio v-for="(item,itemIndex) in field.options" :key="itemIndex" :value="item.id">
             <el-tooltip :content="tooltip_prefix + item.label" placement="top">
                 <div :style="{backgroundImage: 'url('+item.image+')', width: width + 'px', height: height + 'px'}" :class="(model == item.id) ? 'fc_image_active' : ''" class="fc_image_box"></div>
             </el-tooltip>

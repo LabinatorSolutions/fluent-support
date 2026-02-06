@@ -1,37 +1,48 @@
 <template>
     <div class="fs_mailboxes">
         <div v-if="mailbox" class="fs_box_wrapper">
-            <div style="margin-bottom: 20px;" class="fs_box_header">
-                <div class="fs_box_head">
-                    <h3>{{ translate('Settings') }}: {{ mailbox.name }}</h3>
-                </div>
-                <div class="fs_box_actions">
 
-                </div>
+            <div class="fs_breadcrumb">
+                <el-breadcrumb separator=">">
+                    <el-breadcrumb-item :to="{ name: 'mailboxes' }">{{$t('Business Inboxes')}}</el-breadcrumb-item>
+                    <el-breadcrumb-item>{{ mailbox.name }}</el-breadcrumb-item>
+                </el-breadcrumb>
             </div>
-            <div class="fs_tickets_view fs_settings_view">
-                <div class="inner_sidebar">
-                    <ul>
-                        <li>
-                            <router-link :to="{ name: 'box_settings', params: { box_id: mailbox.id } }">
-                                <el-icon> <Box /> </el-icon>
-                                {{ translate('Inbox Settings') }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'email_settings', params: { box_id: mailbox.id } }">
-                                <el-icon> <Message /> </el-icon>
-                                {{ translate('Email Settings') }}
-                            </router-link>
-                        </li>
-                        <li v-if="mailbox && mailbox.box_type == 'email'">
-                            <router-link :to="{ name: 'email_piping', params: { box_id: mailbox.id } }">
-                                <el-icon> <Connection /> </el-icon>
-                                {{ translate('Email Piping') }}
-                            </router-link>
-                        </li>
-                    </ul>
+
+            <!-- Menu Container -->
+            <div class="fs_mailbox_settings_wrapper">
+                <div class="fs_menu_container">
+                    <div class="fs_menu_item" :class="{ active: $route.name === 'box_settings' }">
+                        <router-link :to="{ name: 'box_settings', params: { box_id: mailbox.id } }">
+                            <img :src="appVars.asset_url + 'images/inboxSettings.svg'" alt="">
+                            <span>{{ $t('Inbox Settings') }}</span>
+                            <div class="fs_menu_arrow_wrapper">
+                                <img v-if="$route.name === 'box_settings'" class="fs_menu_arrow" :src="appVars.asset_url + 'images/arrow.svg'" />
+                            </div>
+                        </router-link>
+                    </div>
+
+                    <div class="fs_menu_item" :class="{ active: $route.name === 'email_settings' }">
+                        <router-link :to="{ name: 'email_settings', params: { box_id: mailbox.id } }">
+                            <img :src="appVars.asset_url + 'images/emailSettings.svg'" alt="">
+                            <span>{{ $t('Email Settings') }}</span>
+                            <div class="fs_menu_arrow_wrapper">
+                                <img v-if="$route.name === 'email_settings'" class="fs_menu_arrow" :src="appVars.asset_url + 'images/arrow.svg'" />
+                            </div>
+                        </router-link>
+                    </div>
+
+                    <div v-if="mailbox && mailbox.box_type == 'email'" class="fs_menu_item" :class="{ active: $route.name === 'email_piping' }">
+                        <router-link :to="{ name: 'email_piping', params: { box_id: mailbox.id } }">
+                            <img :src="appVars.asset_url + 'images/emailPiping.svg'" alt="">
+                            <span>{{ $t('Email Piping') }}</span>
+                            <div class="fs_menu_arrow_wrapper">
+                                <img v-if="$route.name === 'email_piping'" class="fs_menu_arrow" :src="appVars.asset_url + 'images/arrow.svg'" />
+                            </div>
+                        </router-link>
+                    </div>
                 </div>
+
                 <div class="inner_body fs_box_body fs_padded_20">
                     <router-view :mailbox="mailbox"/>
                 </div>
@@ -44,52 +55,34 @@
 </template>
 
 <script type="text/babel">
-import { onMounted, reactive, toRefs } from 'vue';
-import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 export default {
     name: 'MailBoxRoot',
     props: ['box_id'],
-
-    setup(props){
-        const {
-            get,
-            handleError,
-            setTitle,
-            translate,
-
-        } = useFluentHelper();
-
-        const state = reactive({
+    data() {
+        return {
             fetching: true,
             mailbox: false
-        })
-
-        const fetch = async ()=>{
-            state.fetching = true;
-            get(`mailboxes/${props.box_id}`)
+        }
+    },
+    mounted() {
+        this.fetch();
+        this.$setTitle('Business Settings');
+    },
+    methods: {
+        fetch() {
+            this.fetching = true;
+            this.$get(`mailboxes/${this.box_id}`)
                 .then((response) => {
-                    state.mailbox = response.mailbox;
-                    setTitle(response.mailbox.name + ' Settings');
+                    this.mailbox = response.mailbox;
+                    this.$setTitle(response.mailbox.name + ' Settings');
                 })
                 .catch((errors) => {
-                    handleError(errors)
+                    this.$handleError(errors)
                 })
                 .always(() => {
-                    state.fetching = false;
+                    this.fetching = false;
                 })
         }
-
-        onMounted(()=>{
-            fetch();
-            setTitle('Business Settings');
-        })
-
-        return{
-            fetch,
-            translate,
-            ...toRefs(state)
-        }
-
     }
 }
 </script>

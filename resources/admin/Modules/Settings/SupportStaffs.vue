@@ -2,163 +2,204 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>{{ translate("Support Staff") }}</h3>
-            </div>
-            <div class="fs_box_actions">
-                <el-button
-                    @click="createStaffModal()"
-                    type="primary"
-                    icon="Plus"
-                    size="default"
-                >
-                    {{ translate("Add New") }}
-                </el-button>
-                <div class="fs_ticket_orders" style="margin-left: 10px">
-                    <el-input
-                        @keyup.enter="fetchAgents"
-                        clearable
-                        @clear="fetchAgents"
-                        size="small"
-                        :placeholder="translate('Search Agents')"
-                        v-model="search"
-                    >
-                        <template #append>
-                            <el-button
-                                @click="fetchAgents"
-                                icon="Search"
-                            ></el-button>
-                        </template>
-                    </el-input>
-                </div>
+                <h3>{{ $t("Support Staff") }}</h3>
             </div>
         </div>
-        <div v-if="!loading" class="fs_box_body">
-            <el-table stripe :data="agents">
-                <el-table-column
-                    :label="translate('ID')"
-                    prop="id"
-                    width="90"
-                />
-                <el-table-column :label="translate('Avatar')" width="150">
-                    <template #default="scope">
-                        <div
-                            class="fs_as_profile_picture"
-                            @mouseover="showIcon(scope.row.id)"
-                            @mouseout="hideIcon(scope.row.id)"
+        <div v-if="!loading" class="fs_table_container">
+            <div class="fs_table_header">
+                <div class="fs_box_actions">
+                    <div class="fs_ticket_orders fs_table_search_field">
+                        <el-input
+                            @keyup.enter="fetchAgents"
+                            clearable
+                            @clear="fetchAgents"
+                            size="small"
+                            :placeholder="$t('Search Agents')"
+                            v-model="search"
+                            class="fs_text_input fs_table_search_input"
                         >
-                            <div class="fs_agent_avatar">
-                                <el-dropdown
-                                    trigger="click"
-                                    :hide-on-click="false"
-                                    placement="bottom-start"
-                                >
-                                    <el-icon
-                                        :class=" 'fs_agent_avatar_upload fs_agent_avatar_upload-' + scope.row.id "
-                                    >
-                                        <Camera />
-                                    </el-icon>
-                                    <template #dropdown>
-                                        <el-dropdown-menu
-                                            class="fs-as-avatar-actions"
-                                        >
-                                            <el-dropdown-item>
-                                                <el-upload
-                                                    class="fs-avatar-uploader"
-                                                    :action="upload_url + 'avatar/' + scope.row.id"
-                                                    :on-success="handleAvatarSuccess"
-                                                    :on-error="handleAvatarError"
-                                                    :headers="requestHeaders"
-                                                    :show-file-list="false"
-                                                >
-                                                    {{ translate("Upload a Custom Picture") }}
-                                                </el-upload>
-                                            </el-dropdown-item>
-                                            <el-dropdown-item
-                                                v-if="scope.row.avatar"
-                                            >
-                                                <!-- Reset To Default Gravatar -->
-                                                <el-popconfirm
-                                                    confirm-button-text="Yes"
-                                                    cancel-button-text="No"
-                                                    title="Reset to gravatar?"
-                                                    @confirm="confirmResetProfile(scope.row)"
-                                                >
-                                                    <template #reference>
-                                                        {{ translate("Reset To Default Gravatar") }}
-                                                    </template>
-                                                </el-popconfirm>
-                                            </el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </template>
-                                </el-dropdown>
-                                <img
-                                    v-if="scope.row.photo"
-                                    :src="scope.row.photo"
-                                    class="avatar"
-                                />
-                            </div>
+                            <template #prefix>
+                                <el-icon class="el-input__icon"><search /></el-icon>
+                            </template>
+                        </el-input>
+                    </div>
+                    <el-button
+                        @click="createStaffModal()"
+                        class="fs_filled_btn"
+                        icon="Plus"
+                    >
+                        {{ $t("Add New") }}
+                    </el-button>
+                </div>
+            </div>
+            <div class="fs_table_wrapper fs_support_staffs_table">
+                <el-table
+                    :data="agents"
+                    row-class-name="fs_table_row"
+                    header-row-class-name="fs_table_header_row"
+                    cell-class-name="fs_table_cell"
+                    header-cell-class-name="fs_table_header_cell"
+                >
+                    <template #empty>
+                        <div class="fs_table_empty_state">
+                            <el-empty
+                                :description="$t('No Support Staff Found')"
+                                :image-size="130"
+                            >
+                                <template #image>
+                                    <TableEmptyStateImage />
+                                </template>
+                            </el-empty>
                         </div>
                     </template>
-                </el-table-column>
-                <el-table-column :label="translate('Name')" width="120">
-                    <template #default="scope">
-                        <a :href="scope.row.user_profile">{{ scope.row.full_name }}</a>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="translate('Title')">
-                    <template #default="scope">
-                        <span style="font-size: 14px; color: #56c288">{{ scope.row.title }}</span>
-                    </template>
-                </el-table-column>
-                <el-table-column :label="translate('Permissions')" width="160">
-                    <template #default="scope">
-                        <el-tooltip placement="top">
-                            <template #content>
-                                <p>{{ translate("Assigned Permissions") }}</p>
-                                <span
-                                    style="display: block"
-                                    v-for="permission in scope.row.permissions">
-                                    {{ readable(permission) }}
-                                </span>
-                            </template>
-                            <el-button type="default" size="small">
-                                {{ scope.row.permissions.length }}
-                                {{ translate("Permissions") }}
-                            </el-button>
-                        </el-tooltip>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    :label="translate('Replies')"
-                    prop="replies_count"
-                    width="120"
-                />
-                <el-table-column
-                    :label="translate('Interactions')"
-                    prop="interactions_count"
-                    width="120"
-                />
-                <el-table-column :label="translate('Actions')">
-                    <template #default="scope">
-                        <el-button
-                            class="fs_support_action_btn"
-                            @click="initEdit(scope.row)"
-                            text
-                            icon="EditPen"
-                        />
-                        <el-button
-                            class="fs_support_action_btn"
-                            @click="deleteAgent(scope.row.id)"
-                            text
-                            icon="Delete"
-                            style="color: red"
-                        />
-                    </template>
-                </el-table-column>
-            </el-table>
+                    <el-table-column :label="$t('Staff')" width="220">
+                        <template #default="scope">
+                            <div
+                                class="fs_as_profile_picture"
+                                @mouseover="showIcon(scope.row.id)"
+                                @mouseout="hideIcon(scope.row.id)"
+                            >
+                                <div class="fs_agent_avatar">
+                                    <el-dropdown
+                                        trigger="click"
+                                        :hide-on-click="false"
+                                        placement="bottom-start"
+                                    >
+                                        <el-icon
+                                            :class=" 'fs_agent_avatar_upload fs_agent_avatar_upload-' + scope.row.id "
+                                        >
+                                            <Camera />
+                                        </el-icon>
+                                        <template #dropdown>
+                                            <el-dropdown-menu
+                                                class="fs_global_dropdown <>fs-as-avatar-actions</>"
+                                            >
+                                                <el-dropdown-item>
+                                                    <el-upload
+                                                        class="fs_avatar_uploader"
+                                                        :action="upload_url + 'avatar/' + scope.row.id"
+                                                        :on-success="handleAvatarSuccess"
+                                                        :on-error="handleAvatarError"
+                                                        :headers="requestHeaders"
+                                                        :show-file-list="false"
+                                                    >
+                                                        {{ $t("Upload a Custom Picture") }}
+                                                    </el-upload>
+                                                </el-dropdown-item>
+                                                <el-dropdown-item
+                                                    v-if="scope.row.avatar"
+                                                >
+                                                    <!-- Reset To Default Gravatar -->
+                                                    <el-popconfirm
+                                                        confirm-button-text="Yes"
+                                                        cancel-button-text="No"
+                                                        :title="$t('Reset to gravatar?')"
+                                                        @confirm="confirmResetProfile(scope.row)"
+                                                    >
+                                                        <template #reference>
+                                                            {{ $t("Reset To Default Gravatar") }}
+                                                        </template>
+                                                    </el-popconfirm>
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </template>
+                                    </el-dropdown>
+                                    <div class="fs_agent_avatar_cell">
+                                        <img
+                                            v-if="scope.row.photo"
+                                            :src="scope.row.photo"
+                                            class="avatar"
+                                        />
+                                        <div class="fs_agent_info">
+                                            <a
+                                                :href="scope.row.user_profile"
+                                                :title="scope.row.full_name"
+                                                class="fs_agent_name"
+                                            >{{ scope.row.full_name }}</a>
+                                            <span>#{{ scope.row.id }}</span>
+                                        </div>
 
-            <div class="fframe_pagination_wrapper" v-if="agents.length">
-                <pagination @fetch="fetchAgents()" :pagination="pagination" />
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="$t('Title')">
+                        <template #default="scope">
+                            <span>{{ scope.row.title }}</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column :label="$t('Permissions')" width="160">
+                        <template #default="scope">
+                            <el-tooltip placement="top">
+                                <template #content>
+                                    <p>{{ $t("Assigned Permissions") }}</p>
+                                    <span
+                                        style="display: block"
+                                        v-for="permission in scope.row.permissions">
+                                        {{ readable(permission) }}
+                                    </span>
+                                </template>
+                                <el-button class="fs_agent_permissions" type="default" size="small">
+                                    {{ scope.row.permissions.length }}
+                                    {{ $t("Permissions") }}
+                                </el-button>
+                            </el-tooltip>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                        :label="$t('Replies')"
+                        prop="replies_count"
+                        width="120"
+                    />
+                    <el-table-column
+                        :label="$t('Interactions')"
+                        prop="interactions_count"
+                        width="120"
+                    />
+                    <el-table-column width="120" :label="$t('Actions')">
+                        <template #default="scope">
+                            <div class="fs-table-action-cell">
+                                <div class="fs_action_button_wrapper">
+                                    <el-button
+                                        class="fs_support_action_btn fs_action_button"
+                                        @click="initEdit(scope.row)"
+                                        text
+                                        icon="EditPen"
+                                    />
+                                </div>
+                                <TableMoreActions
+                                    :scope="scope.row"
+                                    :fetching="loading"
+                                    @delete="deleteAgent(scope.row.id)"
+                                    :delete-warning="$t('agent_delete_warning')"
+                                />
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div class="fs_pagination_wrapper" v-if="agents.length">
+                <span class="fs_pagination_left">
+                    <p>
+                        Page {{ pagination.current_page }} of
+                        {{ Math.ceil(pagination.total / pagination.per_page) }}
+                    </p>
+                    <pagination
+                        @fetch="fetchAgents()"
+                        :pagination="pagination"
+                        layout="sizes"
+                    />
+                </span>
+                <span class="fs_pagination_right">
+                    <pagination
+                        :hide-on-single-page="true"
+                        @fetch="fetchAgents()"
+                        :pagination="pagination"
+                        :background="true"
+                        layout="prev, pager, next"
+                    />
+                </span>
             </div>
         </div>
         <div style="padding: 20px; background: white" class="fs_box_body" v-else>
@@ -169,8 +210,8 @@
             :append-to-body="true"
             :title="
                 editing_agent && editing_agent.id
-                    ? translate('Edit Staff')
-                    : translate('Add New Support Staff')
+                    ? $t('Edit Staff')
+                    : $t('Add New Support Staff')
             "
             v-model="agent_modal"
             v-if="editing_agent"
@@ -179,79 +220,93 @@
             class="fs_dialog"
         >
             <el-form label-position="top" :data="editing_agent">
-                <el-form-item :label="translate('Email')">
-                    <el-input
-                        :disabled="editing_agent.id"
-                        type="email"
-                        :placeholder="translate('Agent Email')"
-                        v-model="editing_agent.email"
-                    />
-                </el-form-item>
-                <el-form-item :label="translate('First Name')">
-                    <el-input
-                        type="text"
-                        :placeholder="translate('First Name')"
-                        v-model="editing_agent.first_name"
-                    />
-                </el-form-item>
-                <el-form-item :label="translate('Last Name')">
-                    <el-input
-                        type="text"
-                        :placeholder="translate('Last Name')"
-                        v-model="editing_agent.last_name"
-                    />
-                </el-form-item>
-                <el-form-item :label="translate('Title')">
-                    <el-input
-                        type="text"
-                        :placeholder="translate('agent_title')"
-                        v-model="editing_agent.title"
-                    />
-                </el-form-item>
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item :label="$t('First Name')" class="fs_form_item">
+                            <el-input
+                                class="fs_text_input fs_text_input_40"
+                                type="text"
+                                :placeholder="$t('First Name')"
+                                v-model="editing_agent.first_name"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item :label="$t('Last Name')" class="fs_form_item">
+                            <el-input
+                                class="fs_text_input fs_text_input_40"
+                                type="text"
+                                :placeholder="$t('Last Name')"
+                                v-model="editing_agent.last_name"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
 
-                <div
-                    class="telegram_integration"
-                    v-if="integrationSettings.includes('telegram_settings')"
-                >
-                    <h3>{{ translate("Telegram Integration") }}</h3>
-                    <el-form-item :label="translate('Telegram Chat ID')">
+                <el-row :gutter="20">
+                    <el-col :span="12">
+                        <el-form-item :label="$t('Email')" class="fs_form_item">
+                            <el-input
+                                class="fs_text_input fs_text_input_40"
+                                :disabled="editing_agent.id"
+                                type="email"
+                                :placeholder="$t('Agent Email')"
+                                v-model="editing_agent.email"
+                            />
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item :label="$t('Title')" class="fs_form_item">
+                            <el-input
+                                class="fs_text_input fs_text_input_40"
+                                type="text"
+                                :placeholder="$t('agent_title')"
+                                v-model="editing_agent.title"
+                            />
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <div class="telegram_integration" v-if="integrationSettings.includes('telegram_settings')">
+                    <h3>{{ $t("Telegram Integration") }}</h3>
+                    <el-form-item :label="$t('Telegram Chat ID')" class="fs_form_item">
                         <el-input
+                            class="fs_text_input fs_text_input_40"
                             text
-                            :placeholder="translate('Telegram Chat ID')"
+                            :placeholder="$t('Telegram Chat ID')"
                             v-model="editing_agent.telegram_chat_id"
                         />
                     </el-form-item>
                 </div>
 
-                <div
-                    class="slack_integration"
-                    v-if="integrationSettings.includes('slack_settings')"
-                >
-                    <h3>{{ translate("Slack Integration") }}</h3>
-                    <el-form-item :label="translate('Slack User ID')">
+                <div class="slack_integration" v-if="integrationSettings.includes('slack_settings')">
+                    <h3>{{ $t("Slack Integration") }}</h3>
+                    <el-form-item :label="$t('Slack User ID')" class="fs_form_item">
                         <el-input
+                            class="fs_text_input fs_text_input_40"
                             text
-                            :placeholder="translate('Slack User ID')"
+                            :placeholder="$t('Slack User ID')"
                             v-model="editing_agent.slack_user_id"
                         />
                     </el-form-item>
                 </div>
 
-                <div
-                    class="slack_integration"
-                    v-if="integrationSettings.includes('twilio_settings')"
-                >
-                    <h3>{{ translate("Twilio Integration") }}</h3>
-                    <el-form-item :label="translate('WhatsApp Phone Number')">
+                <div class="twilio_integration" v-if="integrationSettings.includes('twilio_settings')">
+                    <h3>{{ $t("Twilio Integration") }}</h3>
+                    <el-form-item :label="$t('WhatsApp Phone Number')" class="fs_form_item">
                         <el-input
+                            class="fs_text_input fs_text_input_40"
                             text
-                            :placeholder="translate('Ex: +123456789')"
+                            :placeholder="$t('Ex: +123456789')"
                             v-model="editing_agent.whatsapp_number"
                         />
                     </el-form-item>
                 </div>
 
-                <el-form-item :label="translate('Permissions')">
+                <hr class="fs_divider" />
+
+                <!-- Permissions Tree -->
+                <el-form-item :label="$t('Permissions')" class="fs_form_item">
                     <el-tree
                         :data="treeData"
                         show-checkbox
@@ -262,48 +317,42 @@
                         @check-change="handleCheckChange"
                     >
                         <template #default="{ node, data }">
-                            <span class="custom-tree-node">
-
-                              <span v-if="node.label === 'Draft Reply'">
-                                  <el-tooltip
-                                      width="200"
-                                      class="box-item"
-                                      popper-class="fs_tree_tooltip"
-                                      effect="dark"
-                                      placement="top-start"
-                                  >
-                                      <template #content>
-                                            If any of the following options are enabled:
-                                            <br />
-
-                                            1. Manage Own Tickets,
-                                            <br />
-                                            2. Manage Unassigned Tickets,
-                                            <br />
-                                            3. Manage Other Tickets ,
-                                            <br />
-                                            In that case, the draft replies permission will be disabled.
-                                        </template>
-
-                                      <span>{{ node.label }}</span>
-                                  </el-tooltip>
-
-                              </span>
-                                 <span v-else>{{ node.label }}</span>
-                            </span>
+                        <span class="custom-tree-node">
+                            <span v-if="node.label === 'Draft Reply'">
+                                <el-tooltip
+                                    width="200"
+                                    class="box-item"
+                                    popper-class="fs_tree_tooltip"
+                                    effect="dark"
+                                    placement="top-start"
+                                >
+                                  <template #content>
+                                      If any of the following options are enabled:
+                                      <br />
+                                      1. Manage Own Tickets,<br />
+                                      2. Manage Unassigned Tickets,<br />
+                                      3. Manage Other Tickets,<br />
+                                      In that case, the draft replies permission will be disabled.
+                                  </template>
+                                  <span>{{ node.label }}</span>
+                                </el-tooltip>
+                          </span>
+                            <span v-else>{{ node.label }}</span>
+                        </span>
                         </template>
                     </el-tree>
                 </el-form-item>
             </el-form>
+            <hr class="fs_divider" />
             <div class="fs_restriction_section">
-                <h4 class="fs_restriction_label">{{translate('Restrictions')}}</h4>
+                <h4 class="fs_restriction_label">{{$t('Restrictions')}}</h4>
                 <div class="fs_restriction_content">
                     <el-form :model="editing_agent" label-position="top" ref="form">
-                        <el-form-item>
-                            <el-checkbox v-model="editing_agent.restrictions.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">{{translate('Business Inbox Access Restriction')}}</el-checkbox>
+                        <el-form-item class="fs_form_item">
+                            <el-checkbox v-model="editing_agent.restrictions.businessBoxRestrictions" @change="manageBusinessBoxRestrictions(restrictBusinessBox)">{{$t('Business Inbox Access Restriction')}}</el-checkbox>
                         </el-form-item>
-                        <el-form-item v-if="editing_agent.restrictions.businessBoxRestrictions"  >
-                            <el-select class="fs_select_restricted_business_boxes"  v-model="editing_agent.restrictions.restrictedBusinessBoxes" placeholder="Select" clearable multiple>
+                        <el-form-item class="fs_form_item" v-if="editing_agent.restrictions.businessBoxRestrictions"  >
+                            <el-select class="fs_select_field fs_select_restricted_business_boxes"  v-model="editing_agent.restrictions.restrictedBusinessBoxes" :placeholder="$t('Select')" clearable multiple>
                                 <el-option v-for="box in businessBoxes" :key="box.id"  :label="box.name" :value="box.id"></el-option>
                             </el-select>
                         </el-form-item>
@@ -312,50 +361,35 @@
             </div>
 
             <template #footer>
-                <span class="dialog-footer">
+                <span class="fs_dialog_footer">
                     <el-button
                         v-loading="saving"
                         :disabled="saving"
-                        type="success"
                         @click="createOrUpdateAgent()"
+                        class="fs_filled_btn"
                     >
-                        <span v-if="editing_agent.id">{{ translate("Update") }}</span>
-                        <span v-else>{{ translate("Create") }}</span>
+                        <span v-if="editing_agent.id">{{ $t("Update") }}</span>
+                        <span v-else>{{ $t("Create") }}</span>
                     </el-button>
                 </span>
             </template>
         </el-dialog>
     </div>
 </template>
-
 <script type="text/babel">
 import Pagination from "../../Pieces/Pagination";
-import {  ElMessageBox } from 'element-plus'
-import {computed, onMounted, reactive, toRefs, watch} from "vue";
-import {
-    useFluentHelper,
-    useNotify,
-} from "@/admin/Composable/FluentFrameworkHelper";
+import TableMoreActions from "@/admin/Components/TableMoreActions.vue";
+import TableEmptyStateImage from "@/admin/Components/TableEmptyStateImage.vue";
+
 export default {
     name: "support-staffs",
     components: {
         Pagination,
+        TableMoreActions,
+        TableEmptyStateImage
     },
-    setup() {
-        const {
-            get,
-            post,
-            put,
-            del,
-            handleError,
-            setTitle,
-            translate,
-            appVars,
-        } = useFluentHelper();
-
-        const { notify } = useNotify();
-
-        const state = reactive({
+    data() {
+        return {
             agents: [],
             pagination: {
                 per_page: 10,
@@ -369,56 +403,63 @@ export default {
             saving: false,
             search: "",
             integrationSettings: [],
-            upload_url: appVars.rest.url + "/agents/",
+            upload_url: this.appVars.rest.url + "/agents/",
             requestHeaders: {
-                "X-WP-Nonce": appVars.rest.nonce,
+                "X-WP-Nonce": this.appVars.rest.nonce,
             },
             show_icon: false,
             restrictBusinessBox: false,
             selectedBusinessBoxes: [],
             businessBoxes: [],
-        });
-
-        const manageBusinessBoxRestrictions = (restrictBusinessBox) => {
-            if (!restrictBusinessBox) {
-                state.editing_agent.restrictions.restrictedBusinessBoxes = [];
-            }
         };
-
-        const fetchAgents = async () => {
-            state.loading = true;
-            await get("agents", {
-                per_page: state.pagination.per_page,
-                page: state.pagination.current_page,
-                search: state.search,
+    },
+    computed: {
+        treeData() {
+            return [{
+                id: 0,
+                label: 'All Permissions',
+                children: this.getFormattedPermissionData()
+            }];
+        },
+        defaultProps() {
+            return {
+                children: 'children',
+                label: 'label',
+            };
+        }
+    },
+    methods: {
+        fetchAgents() {
+            this.loading = true;
+            this.$get("agents", {
+                per_page: this.pagination.per_page,
+                page: this.pagination.current_page,
+                search: this.search,
             })
                 .then((response) => {
-                    state.agents = response.agents.data;
-                    state.pagination.total = response.agents.total;
-                    state.permissions = response.permissions;
-                    state.businessBoxes = response.businessBoxes;
+                    this.agents = response.agents.data;
+                    this.pagination.total = response.agents.total;
+                    this.permissions = response.permissions;
+                    this.businessBoxes = response.businessBoxes;
                 })
-                .catch((errors) => {
-                    handleError(errors);
+                .catch((error) => {
+                    this.$handleError(error);
                 })
                 .always(() => {
-                    state.loading = false;
+                    this.loading = false;
                 });
-        };
-
-        const fetchSettings = async () => {
-            await get("settings/integration-settings")
+        },
+        fetchSettings() {
+            this.$get("settings/integration-settings")
                 .then((response) => {
-                    state.integrationSettings = response;
+                    this.integrationSettings = response;
                 })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {});
-        };
-
-        const createStaffModal = () => {
-            state.editing_agent = {
+                .catch((error) => {
+                    this.$handleError(error);
+                });
+        },
+        createStaffModal() {
+            this.editing_agent = {
                 email: "",
                 first_name: "",
                 last_name: "",
@@ -429,158 +470,120 @@ export default {
                     restrictedBusinessBoxes: []
                 },
             };
-            state.agent_modal = true;
-        };
-
-        const initEdit = (agent) => {
-            state.editing_agent = agent;
-            state.agent_modal = true;
-        };
-
-        const createOrUpdateAgent = () => {
-            state.saving = true;
-            let method = post;
+            this.agent_modal = true;
+        },
+        initEdit(agent) {
+            this.editing_agent = agent;
+            this.agent_modal = true;
+        },
+        createOrUpdateAgent() {
+            this.saving = true;
+            let method = this.$post;
             let route = "agents";
-            if (state.editing_agent.id) {
-                method = put;
-                route = `agents/${state.editing_agent.id}`;
+            if (this.editing_agent.id) {
+                method = this.$put;
+                route = `agents/${this.editing_agent.id}`;
             }
 
-            method(route, {
-                ...state.editing_agent,
-            })
+            method(route, { ...this.editing_agent })
                 .then((response) => {
-                    notify({
+                    this.$notify({
+                        type: 'success',
                         message: response.message,
-                        type: "success",
-                        position: "bottom-right",
+                        position: 'bottom-right'
                     });
-                    fetchAgents();
-                    state.editing_agent = false;
-                    state.agent_modal = false;
+                    this.fetchAgents();
+                    this.editing_agent = false;
+                    this.agent_modal = false;
                 })
-                .catch((errors) => {
-                    handleError(errors);
+                .catch((error) => {
+                    this.$handleError(error);
                 })
                 .always(() => {
-                    state.saving = false;
+                    this.saving = false;
                 });
-        };
-
-        const readable = (name) => {
+        },
+        readable(name) {
             return name.replace("fst_", "").replaceAll("_", " ");
-        };
-
-        const deleteAgent = (agentId) => {
+        },
+        deleteAgent(agentId) {
             ElMessageBox.prompt(
-                translate("Please Provide Fallback Agent ID"),
-                translate("Fallback Agent ID"),
+                this.$t("Please Provide Fallback Agent ID"),
+                this.$t("Fallback Agent ID"),
                 {
-                    confirmButtonText: translate("Confirm Delete"),
-                    cancelButtonText: translate("Cancel"),
-                    inputErrorMessage: translate("Invalid ID"),
+                    confirmButtonText: this.$t("Confirm Delete"),
+                    cancelButtonText: this.$t("Cancel"),
+                    inputErrorMessage: this.$t("Invalid ID"),
+                    customClass: 'fs_text_input fs_text_input_40',
+                    cancelButtonClass: 'el-button--default fs_outline_btn',
+                    confirmButtonClass: 'el-button--danger fs_filled_btn',
                 }
-            ) .then(({ value }) => {
-                    confirmDeleteAgent(agentId, value);
+            )
+                .then(({ value }) => {
+                    this.confirmDeleteAgent(agentId, value);
                 })
                 .catch(() => {});
-        };
-
-        const confirmDeleteAgent = async (agentId, fallbackId) => {
-            await del(`agents/${agentId}`, {
+        },
+        confirmDeleteAgent(agentId, fallbackId) {
+            this.$del(`agents/${agentId}`, {
                 fallback_agent_id: fallbackId,
             })
                 .then((response) => {
-                    notify({
-                        message: response.message,
-                        type: "success",
-                        position: "bottom-right",
-                    });
-                    fetchAgents();
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                });
-        };
-
-        const handleAvatarSuccess = (res, file) => {
-            let id = res.agent.id;
-            let index = state.agents.findIndex((row) => row.id === id);
-
-            state.agents[index].photo = res.image;
-
-            notify({
-                type: "success",
-                message: res.message,
-                position: "bottom-right",
-            });
-        };
-
-        const handleAvatarError = (err, _) => {
-            let errorMessage = JSON.parse(err.message);
-
-            notify({
-                type: "error",
-                message: errorMessage.message,
-                position: "bottom-right",
-            });
-        };
-
-        const showIcon = (id) => {
-            document.querySelector(
-                "i.fs_agent_avatar_upload-" + id
-            ).style.display = "inline-flex";
-        };
-
-        const hideIcon = (id) => {
-            document.querySelector(
-                "i.fs_agent_avatar_upload-" + id
-            ).style.display = "none";
-        };
-
-        const confirmResetProfile = async (row) => {
-            state.loading = !state.loading;
-            await post("agents/reset_avatar/" + row.id)
-                .then((response) => {
-                    notify({
+                    this.$notify({
                         type: 'success',
                         message: response.message,
                         position: "bottom-right",
                     });
-
-                    fetchAgents();
+                    this.fetchAgents();
                 })
-                .catch((errors) => {
-                    handleError(errors);
+                .catch((error) => {
+                    this.$handleError(error);
+                });
+        },
+        handleAvatarSuccess(res, file) {
+            const id = res.agent.id;
+            const index = this.agents.findIndex((row) => row.id === id);
+            this.agents[index].photo = res.image;
+            this.$notify({
+                type: 'success',
+                message: res.message,
+                position: 'bottom-right'
+            })
+        },
+        handleAvatarError(err) {
+            const errorMessage = JSON.parse(err.message);
+            this.$notify({
+                type: 'error',
+                message: errorMessage.message,
+                position: "bottom-right",
+            });
+        },
+        showIcon(id) {
+            document.querySelector("i.fs_agent_avatar_upload-" + id).style.display = "inline-flex";
+        },
+        hideIcon(id) {
+            document.querySelector("i.fs_agent_avatar_upload-" + id).style.display = "none";
+        },
+        confirmResetProfile(row) {
+            this.loading = true;
+            this.$post("agents/reset_avatar/" + row.id)
+                .then((response) => {
+                    this.$notify({
+                        type: 'success',
+                        message: response.message,
+                        position: "bottom-right",
+                    });
+                    this.fetchAgents();
+                })
+                .catch((error) => {
+                    this.$handleError(error);
                 })
                 .always(() => {
-                    state.loading = !state.loading;
+                    this.loading = false;
                 });
-        };
-
-        onMounted(() => {
-            fetchAgents();
-            fetchSettings();
-            setTitle("Support Staff");
-        });
-
-        const defaultProps = {
-            children: 'children',
-            label: 'label',
-        };
-
-        const treeData = computed(() => {
-            return [{
-                    id: 0,
-                    label: 'All Permissions',
-                    children: [
-                        ...getFormattedPermissionData()
-                    ],
-                }];
-        });
-
-        const getFormattedPermissionData = () => {
-            return state.permissions.map((permission, key) => {
+        },
+        getFormattedPermissionData() {
+            return this.permissions.map((permission, key) => {
                 let childPermissions = permission.permissions;
                 return {
                     id: key,
@@ -589,140 +592,41 @@ export default {
                         return {
                             id: permission_id,
                             label: childPermissions[permission_id],
-                        }
+                        };
                     })
-                }
+                };
             });
-        };
-
-        const getAllChildrenIds = (data) => {
+        },
+        getAllChildrenIds(data) {
             let ids = [];
             if (!data.children || data.children.length === 0) return ids;
-            
+
             for (const child of data.children) {
-                ids.push(child.id, ...getAllChildrenIds(child));
+                ids.push(child.id, ...this.getAllChildrenIds(child));
             }
             return ids;
-        };
-
-        const handleCheckChange = (data, isChecked) => {
-            const { permissions } = state.editing_agent;
-            const allIds = [data.id, ...getAllChildrenIds(data)];
-
-            state.editing_agent.permissions = isChecked
-                ? [...new Set([...permissions, ...allIds])] // Add IDs
-                : permissions.filter(id => !allIds.includes(id)); // Remove IDs
-        };
-
-        const resetAgentModal = () => {
-            state.editing_agent = false;
-            state.agent_modal = false;
-        };
-
-        return {
-            ...toRefs(state),
-            translate,
-            fetchAgents,
-            fetchSettings,
-            createStaffModal,
-            initEdit,
-            createOrUpdateAgent,
-            handleAvatarSuccess,
-            handleAvatarError,
-            readable,
-            deleteAgent,
-            confirmDeleteAgent,
-            showIcon,
-            hideIcon,
-            confirmResetProfile,
-            defaultProps,
-            treeData,
-            handleCheckChange,
-            resetAgentModal,
-            manageBusinessBoxRestrictions
-        };
+        },
+        handleCheckChange(data, isChecked) {
+            const { permissions } = this.editing_agent;
+            const allIds = [data.id, ...this.getAllChildrenIds(data)];
+            this.editing_agent.permissions = isChecked
+                ? [...new Set([...permissions, ...allIds])]
+                : permissions.filter(id => !allIds.includes(id));
+        },
+        resetAgentModal() {
+            this.editing_agent = false;
+            this.agent_modal = false;
+        },
+        manageBusinessBoxRestrictions(restrictBusinessBox) {
+            if (!restrictBusinessBox) {
+                this.editing_agent.restrictions.restrictedBusinessBoxes = [];
+            }
+        }
     },
+    mounted() {
+        this.fetchAgents();
+        this.fetchSettings();
+        this.$setTitle("Support Staff");
+    }
 };
 </script>
-
-<style lang="scss">
-table.el-table__header,
-table.el-table__body {
-    width: 100% !important;
-}
-
-.fs_as_profile_picture {
-    position: absolute;
-    top: 0.3em;
-
-    .fs_agent_avatar {
-        img {
-            border: none;
-            width: 4.3em;
-            height: 4.3em;
-            border-radius: 50%;
-            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
-        }
-
-        .fs_agent_avatar_upload {
-            display: none;
-            left: 20px;
-            top: 23px;
-            cursor: pointer;
-            z-index: 10000;
-            font-size: 22px;
-            position: absolute;
-            background-color: #f5f7fa;
-            border-radius: 32%;
-            padding: 3px;
-        }
-    }
-
-    .fs-avatar-uploader {
-        .el-upload-dragger > i {
-            display: none;
-            font-size: 2.9em;
-            color: #fafafa;
-            position: absolute;
-            top: 0.8em;
-            left: 0.8em;
-        }
-
-        img {
-            border: none;
-            width: 7.3em;
-            height: 7.3em;
-            border-radius: 50%;
-            box-shadow: 0 4px 6px rgb(147 161 175 / 50%);
-        }
-
-        .avatar-uploader .el-upload {
-            border-radius: 6px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-    }
-}
-
-.fs-avatar-uploader .el-upload-dragger {
-    background-color: unset;
-    border: unset;
-    border-radius: unset;
-    width: unset;
-    height: unset;
-    text-align: unset;
-}
-
-.el-table__row {
-    height: 5em;
-}
-
-.fs-as-avatar-actions {
-    display: flex;
-    flex-direction: column;
-}
-.fs_support_action_btn{
-    padding: 0px;
-}
-</style>

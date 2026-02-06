@@ -11,19 +11,15 @@
 <script type="text/babel">
 import each from "lodash/each";
 import BarChartBase from "./BarChartBase";
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
-import { reactive, toRefs, onMounted } from "vue";
+
 export default {
     name: "ResolveGrowth",
-    props: ["date_range", "url", "agent_id", "product_id", "mailbox_id", "type"],
+    props: ["date_range", "url", "agent_id", "product_id", "mailbox_id", "type", "compact"],
     components: {
         BarChartBase,
     },
-
-    setup(props) {
-        const { get } = useFluentHelper();
-
-        const state = reactive({
+    data() {
+        return {
             fetching: false,
             stats: {},
             chartData: false,
@@ -32,68 +28,79 @@ export default {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    yAxes: [
-                        {
-                            id: "byDate",
-                            type: "linear",
-                            position: "left",
-                            gridLines: {
-                                drawOnChartArea: false,
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                userCallback: function (label, index, labels) {
-                                    // when the floored value is the same as the value we have a whole number
-                                    if (Math.floor(label) === label) {
-                                        return label;
-                                    }
-                                },
+                    y: {
+                        type: "linear",
+                        position: "left",
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                        ticks: {
+                            callback: function (value) {
+                                if (Math.floor(value) === value) {
+                                    return value;
+                                }
                             },
                         },
-                    ],
-                    xAxes: [
-                        {
-                            gridLines: {
-                                drawOnChartArea: false,
-                            },
-                            ticks: {
-                                beginAtZero: true,
-                                autoSkip: true,
-                                maxTicksLimit: 10,
-                            },
+                        beginAtZero: true,
+                    },
+                    x: {
+                        grid: {
+                            drawOnChartArea: false,
                         },
-                    ],
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10,
+                        },
+                    },
                 },
-                drawBorder: false,
                 layout: {
                     padding: {
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                        bottom: 20,
+                        left: 16,
+                        right: 24,
+                        top: 12,
+                        bottom: 24,
+                    },
+                },
+                datasets: {
+                    bar: {
+                        barThickness: 8,
+                        categoryPercentage: 0.7,
                     },
                 },
             },
-        });
-
-        const fetchReport = async () => {
-            state.fetching = true;
+        };
+    },
+    mounted() {
+        this.fetchReport();
+    },
+    watch: {
+        date_range: {
+            handler() {
+                if (this.date_range && this.date_range.length === 2) {
+                    this.fetchReport();
+                }
+            },
+            deep: true,
+        },
+    },
+    methods: {
+        async fetchReport() {
+            this.fetching = true;
 
             const data = {
-                date_range: props.date_range,
-                agent_id: props.agent_id,
-                product_id: props.product_id,
-                mailbox_id: props.mailbox_id,
-                type: props.type
+                date_range: this.date_range,
+                agent_id: this.agent_id,
+                product_id: this.product_id,
+                mailbox_id: this.mailbox_id,
+                type: this.type
             };
 
-            await get(props.url + "/tickets-resolve-growth", data
+            await this.$get(this.url + "/tickets-resolve-growth", data
             ).then((response) => {
-                setupChartItems(response.stats);
+                this.setupChartItems(response.stats);
             });
-        };
-
-        const setupChartItems = (stats) => {
+        },
+        setupChartItems(stats) {
             const chartData = {
                 labels: [],
                 datasets: [],
@@ -109,18 +116,8 @@ export default {
                 backgroundColor: "#0cbe7e",
                 data: statData,
             });
-            state.chartData = chartData;
-        };
-
-        onMounted(() => {
-            fetchReport();
-        });
-
-        return {
-            ...toRefs(state),
-            fetchReport,
-            setupChartItems,
-        };
+            this.chartData = chartData;
+        },
     },
 };
 </script>

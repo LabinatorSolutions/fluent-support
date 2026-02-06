@@ -1,0 +1,1154 @@
+/* ========================================
+   Customer Management Tabs
+   ======================================== */
+.fs_customer_management_tabs {
+    margin: -15px -20px 0 -20px;
+
+    .el-tabs__header {
+        margin: 0;
+        border-top: 1px solid var(--fs-border-default, #E1E4EA);
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+        background: var(--fs-bg-primary, #FFFFFF);
+    }
+
+    .el-tabs__nav-wrap {
+        padding: 0;
+    }
+
+    .el-tabs__nav {
+        width: 100%;
+        display: flex;
+    }
+
+    .el-tabs__item {
+        flex: 1;
+        text-align: center;
+        padding: 12px 20px;
+        font-size: 14px;
+        color: var(--fs-text-muted, #99A0AE);
+        font-weight: 400;
+        border: none;
+        height: auto;
+        line-height: 1.5;
+
+        &:hover {
+            color: var(--fs-gray-600, #6b7280);
+        }
+
+        &.is-active {
+            color: var(--fs-text-primary, #0E121B);
+            font-weight: 600;
+        }
+    }
+
+    .el-tabs__active-bar {
+        height: 3px;
+        background-color: var(--fs-text-primary, #0E121B);
+        border-radius: 0;
+    }
+
+    .el-tabs__content {
+        padding: 20px;
+        margin: 0;
+    }
+}
+
+/* ========================================
+   NEW DESIGN: Title Container
+   ======================================== */
+.fs_title_container {
+    background: var(--fs-bg-primary, #FFFFFF);
+    border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+    padding: 12px 12px 16px 12px;
+}
+
+.fs_title_content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.fs_ticket_title {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: -0.176px;
+    color: var(--fs-text-primary, #0E121B);
+    margin: 5px 0 0 0;
+    flex: 1;
+    cursor: pointer;
+}
+
+.fs_ticket_title span {
+    display: inline-block;
+}
+
+.fs_ticket_title:hover {
+    opacity: 1;
+}
+
+.fs_ticket_title_popover {
+    max-width: calc(100vw - 40px) !important;
+    box-sizing: border-box;
+
+    .el-input {
+        width: 100%;
+    }
+}
+
+.fs_title_container {
+    position: relative;
+    overflow: visible;
+}
+
+.fs_info_container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fs_timer_info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.fs_timer_icon {
+    width: 16px;
+    height: 16px;
+    color: var(--fs-text-muted, #99A0AE);
+}
+
+.fs_timer_text {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    color: var(--fs-text-secondary, #525866);
+}
+
+.fs_info_separator {
+    font-size: 14px;
+    color: var(--fs-text-muted, #99A0AE);
+    line-height: 1;
+}
+
+.fs_status_badge {
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.fs_status_badge:hover {
+    opacity: 0.8;
+}
+
+.fs_status_dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.fs_status_text {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+}
+
+/* Status Badge Colors */
+.fs_status_waiting {
+    background: #ffd5c0;
+}
+
+.fs_status_waiting .fs_status_dot {
+    background: var(--fs-state-warning-dark, #682F12);
+}
+
+.fs_status_waiting .fs_status_text {
+    color: var(--fs-state-warning-dark, #682F12);
+}
+
+.fs_status_active,
+.fs_status_new {
+    background: #d4e7ff;
+}
+
+.fs_status_active .fs_status_dot,
+.fs_status_new .fs_status_dot {
+    background: var(--fs-state-information-dark, #122368);
+}
+
+.fs_status_active .fs_status_text,
+.fs_status_new .fs_status_text {
+    color: var(--fs-state-information-dark, #122368);
+}
+
+.fs_status_closed {
+    background: #e5e9ec;
+}
+
+.fs_status_closed .fs_status_dot {
+    background: var(--fs-status-inactive, #525866);
+}
+
+.fs_status_closed .fs_status_text {
+    color: var(--fs-status-inactive, #525866);
+}
+
+/* ========================================
+   NEW DESIGN: Ticket Header
+   ======================================== */
+.fs_ticket_body{
+    .fs_ticket_header {
+        background: var(--fs-bg-primary, #FFFFFF);
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+    }
+}
+
+.fs_header_container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    @media (max-width: 768px) {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+}
+
+.fs_action_group {
+    display: flex;
+    align-items: center;
+}
+
+.fs_header_right_group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    .fs_ai_btn {
+        width: 32px;
+    }
+}
+
+.fs_header_dropdown {
+    max-width: 160px;
+    width: 160px;
+    width: 100%;
+    justify-content: space-between;
+    span{
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
+
+.fs_header_workflow_btn {
+    background: linear-gradient(rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(90deg, rgb(14, 18, 27) 0%, rgb(14, 18, 27) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    padding: 4px;
+}
+
+.fs_header_workflow_btn .fs_header_icon {
+    color: var(--fs-text-white, #FFFFFF);
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) invert(1);
+}
+
+.fs_outline_btn.fs_header_workflow_btn:hover {
+    opacity: 0.9;
+    background: linear-gradient(rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 100%), linear-gradient(90deg, rgb(14, 18, 27) 0%, rgb(14, 18, 27) 100%);
+}
+
+.fs_create_response{
+    &.fs_create_response_closed{
+        background: var(--fs-bg-primary, #FFFFFF);
+        padding: 20px 16px;
+        span{
+            color: var(--fs-text-primary, #0E121B);
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+        }
+        p{
+            margin: 4px 0 8px 0;
+            color: var(--fs-text-secondary, #525866);
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 20px;
+        }
+        .el-button.fs_outline_btn{
+            margin: 0 auto;
+        }
+    }
+    @media (max-width: 768px) {
+        .fs_action_buttons {
+            flex-wrap: wrap;
+        }
+    }
+}
+/* ========================================
+   NEW DESIGN: Conversation Messages
+   ======================================== */
+.fs_conversation_message {
+    background: var(--fs-bg-primary, #FFFFFF);
+    border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+    padding: 20px 16px;
+}
+
+/* Message Type Backgrounds */
+.fs_conversation_message.fs_msg_note {
+    background: var(--fs-bg-internal-note, #FFFAEB);
+}
+
+.fs_conversation_message.fs_msg_draft {
+    background: var(--fs-subtle-btn-bg, #F9FAFB);
+}
+
+.fs_msg_customer,
+.fs_msg_agent {
+    background: var(--fs-bg-primary, #FFFFFF);
+}
+
+.fs_thread_starter {
+    background: var(--fs-bg-primary, #FFFFFF);
+    border-bottom: none;
+}
+
+.fs_message_container {
+    display: flex;
+    gap: 12px;
+}
+
+.fs_message_avatar {
+    flex-shrink: 0;
+}
+
+.fs_message_avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.fs_message_content {
+    flex: 1;
+    min-width: 0;
+}
+
+.fs_message_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+}
+
+.fs_message_info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.fs_message_name_row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.fs_message_name {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    color: var(--fs-text-primary, #0E121B);
+}
+
+.fs_message_role {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--fs-text-muted, #99A0AE);
+}
+
+.fs_message_label {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+}
+
+.fs_label_note {
+    color: #624c18;
+}
+
+.fs_message_badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.22px;
+    text-transform: uppercase;
+    color: var(--fs-text-white, #FFFFFF);
+}
+
+.fs_badge_draft {
+    background: #717784;
+}
+
+.fs_badge_thread_starter {
+    background: #15be7c;
+}
+
+.fs_message_timestamp {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--fs-text-secondary, #525866);
+}
+
+.fs_message_actions {
+    flex-shrink: 0;
+    transform: rotate(90deg);
+    .el-button{
+        border: none;
+    }
+}
+
+.fs_more_btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--fs-text-secondary, #525866);
+    transition: background-color 0.2s ease;
+    padding: 0;
+}
+
+.fs_more_btn:hover {
+    background: #f3f4f6;
+}
+
+.fs_message_body {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: -0.084px;
+    color: var(--fs-text-primary, #0E121B);
+    margin-bottom: 12px;
+
+    p {
+        font-size: 14px;
+        line-height: 22px;
+    }
+}
+
+.fs_message_body:last-child {
+    margin-bottom: 0;
+}
+
+.fs_message_attachments {
+    margin-top: 12px;
+}
+
+.fs_message_attachments ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.fs_message_attachments li {
+    padding: 4px 0;
+    font-size: 14px;
+    color: var(--fs-subtle-btn-text, #525866);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.fs_message_attachments a {
+    color: #1785eb;
+    text-decoration: none;
+}
+
+.fs_message_attachments a:hover {
+    text-decoration: underline;
+}
+
+.fs_message_liked {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--fs-text-secondary, #525866);
+}
+
+.fs_message_liked img {
+    width: 16px;
+    height: 16px;
+}
+
+.fs_draft_actions {
+    display: flex;
+    align-items: center;
+    margin-top: 12px;
+}
+
+.fs_custom_fields {
+    overflow: hidden;
+}
+
+/* Agent Selector Button Styles */
+.el-button.fs_agent_selector_btn {
+    .fs_agent_selector_display {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 6px 6px 8px 6px;
+    }
+
+    .fs_agent_avatar_img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .fs_agent_icon_placeholder {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        margin: 0 6px;
+    }
+
+    .fs_agent_name_display {
+        flex: 1;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--fs-text-primary, #0E121B);
+        max-width: 170px;
+    }
+
+    .fs_agent_dropdown_arrow {
+        flex-shrink: 0;
+        font-size: 14px;
+        color: var(--fs-text-secondary, #525866);
+    }
+}
+
+.fs_agent_selector_dropdown {
+    .el-select__wrapper {
+        padding: 0 10px 0 12px;
+    }
+}
+
+.fs_bookmark_action_btn {
+    float: right;
+    margin: 10px 0 10px 0 ;
+}
+
+.fs_additional_info {
+    background: var(--fs-table-header-bg, #F9FAFB);
+    border-bottom: none;
+    .fs_custom_data_card {
+        display: flex;
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        align-self: stretch;
+        border-radius: var(--fs-radius-md, 8px);
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        background: var(--fs-bg-primary, #FFF);
+
+        .fs_custom_data_header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+
+            h3 {
+                color: var(--fs-text-primary, #0E121B);
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 20px;
+                letter-spacing: -0.084px;
+                margin: 0;
+            }
+        }
+
+        .fs_custom_data_body {
+            width: 100%;
+        }
+
+        .fs_custom_data_list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .fs_custom_data_item {
+            display: flex;
+            width: 100%;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .fs_custom_data_label {
+            width: 120px;
+            flex-shrink: 0;
+            color: var(--fs-text-secondary, #525866);
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: -0.084px;
+        }
+
+        .fs_custom_data_value {
+            color: var(--fs-text-primary, #0E121B);
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 20px;
+            letter-spacing: -0.084px;
+            flex-grow: 1;
+
+            a {
+                color: inherit;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.fs_conversation_right_side {
+    display: flex;
+    align-items: center;
+
+    .fs_ticket_source {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+        overflow: hidden;
+        color: var(--text-sub-600, #525866);
+        text-overflow: ellipsis;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16px;
+        margin-right: 4px;
+        img {
+            width: 13.2px;
+            height: 10.8px;
+            flex-shrink: 0;
+            fill: var(--icon-soft-400, #99A0AE);
+        }
+    }
+}
+
+.fs_cc_info {
+    color: var(--fs-text-secondary, #525866);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 16px;
+}
+
+.fs_cc_selector {
+    .el-select__wrapper {
+        padding: 5px 5px 5px 12px;
+    }
+}
+
+.fs_reply_close_btn {
+    &:hover {
+        background: transparent !important;
+    }
+}
+
+.fs_dialog_merge_ticket {
+    .fs_box_body {
+        .el-table {
+            table {
+                width: 100% !important;
+            }
+        }
+        h3{
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 20px;
+            letter-spacing: -0.084px;
+            color: var(--fs-text-primary, #0E121B);
+        }
+    }
+}
+
+.fs_create_response .fs_draft_response_actions{
+    display: flex;
+}
+
+.fs_fluent_bot_ai_response_generator {
+    .fs_product_selector {
+        padding: 20px 20px 0 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+
+        .fs_product_label {
+            color: var(--fs-text-primary);
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 20px;
+            letter-spacing: -0.084px;
+        }
+
+        .fs_select_field {
+            .el-select__wrapper {
+                display: flex;
+                padding: 5px 5px 5px 12px;
+                align-items: center;
+                gap: 8px;
+                align-self: stretch;
+                border-radius: var(--fs-radius-md-lg);
+                border: 1px solid var(--fs-border-default);
+                background: var(--fs-bg-primary);
+                box-shadow: 0px 1px 2px 0px var(--fs-shadow-light);
+
+                &.is-focused {
+                    border-radius: var(--fs-radius-md);
+                    border: 1px solid var(--fs-text-primary);
+                    background: var(--fs-bg-primary);
+                    box-shadow: 0px 0px 0px 2px var(--fs-bg-primary), 0px 0px 0px 4px var(--fs-shadow-soft);
+                }
+            }
+
+            .el-select__placeholder {
+                color: var(--fs-text-muted);
+                font-size: 14px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 20px;
+                letter-spacing: -0.084px;
+            }
+        }
+    }
+
+    .el-select-dropdown__wrap {
+        .el-select-dropdown__item.is-selected {
+            color: var(--fs-text-secondary);
+            font-weight: bold;
+        }
+    }
+
+    .fs_streaming_indicator {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        color: var(--fs-gray-600);
+        font-size: 14px;
+
+        .fs_typing_dots {
+            animation: typing 1.2s infinite;
+            font-size: 14px;
+            color: var(--fs-text-info);
+            margin-left: 5px;
+        }
+    }
+
+    @keyframes typing {
+        0%, 30% {
+            opacity: 0.3;
+        }
+        60% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0.3;
+        }
+    }
+
+    .fs_response_content {
+        position: relative;
+
+        &.typing::after {
+            content: '|';
+            animation: blink 1s infinite;
+            color: var(--fs-text-info);
+            font-weight: bold;
+            margin-left: 1px;
+        }
+    }
+
+    .fs_response_text {
+        line-height: 1.6;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+        /* List styling with single indent and no extra spacing */
+        ul {
+            margin: 0;
+            padding-left: 1.2em;
+            list-style-type: disc;
+        }
+
+        ol {
+            margin: 0;
+            padding-left: 1.2em;
+            list-style-type: decimal;
+        }
+
+        li {
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Keep essential bullet point handling for streaming */
+        .bullet-point {
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        span.bullet-point {
+            display: inline;
+            margin-left: 0;
+        }
+    }
+
+    @keyframes blink {
+        0%, 50% {
+            opacity: 1;
+        }
+        51%, 100% {
+            opacity: 0;
+        }
+    }
+
+    .fs_prompt_option {
+        &.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    }
+
+    .fs_textarea {
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.agent_title {
+    content: '';
+    position: relative;
+    left: 0;
+    top: 0;
+    background: var(--fs-text-info, #335CFF);
+    color: var(--fs-text-white, #FFFFFF);
+    padding: 5px 10px;
+    font-size: 11px;
+}
+
+.fs_agent {
+    border-left: 4px solid var(--fs-text-info, #335CFF);
+}
+
+.fs_customer {
+    border-left: 4px solid var(--fs-text-green, #15BE7C);
+}
+
+.fs_cc_customer {
+    border-left: 4px solid var(--fs-status-pending, #D97706);
+}
+
+.fs_conv_type_note {
+    border-left: 0px solid var(--fs-status-pending, #D97706);
+}
+
+i.dashicons.dashicons-randomize {
+    transform: rotate(90deg);
+}
+
+.carrier_info {
+    padding: 5px 0;
+    font-size: 12px;
+    color: var(--fs-text-muted, #99A0AE);
+    font-weight: 400;
+    line-height: 1.4;
+
+    strong {
+        font-size: 13px;
+        color: var(--fs-text-secondary, #525866);
+    }
+}
+
+.fs_view_ticket {
+    .fs_ticket_body {
+        .fs_thread_wrap {
+            .fs_thread_title {
+                .carrier_info {
+                    strong {
+                        font-size: 13px;
+                        color: var(--fs-text-secondary, #525866);
+                    }
+                }
+            }
+        }
+    }
+}
+
+.fs_conv_type_draft_response {
+    background: var(--fs-status-pending-bg, #FEF3C7);
+    border-left: 4px solid var(--fs-status-pending, #D97706);
+}
+
+.fs_thread_ribbon {
+    position: relative;
+    left: 0;
+    top: 0;
+    color: var(--fs-text-white, #FFFFFF);
+    font-size: 10px;
+    padding: 5px 10px;
+
+    &.fs_thread_ribbon_agent {
+        background: var(--fs-text-info, #335CFF);
+    }
+
+    &.fs_thread_ribbon_customer {
+        background: var(--fs-text-green, #15BE7C);
+    }
+
+    &.fs_thread_ribbon_customer_cc {
+        background: var(--fs-status-pending, #D97706);
+    }
+
+    &.fs_thread_ribbon_draft_response {
+        background: var(--fs-status-pending, #D97706) !important;
+    }
+}
+
+.fs_ticket_error_message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: calc(100vh - 200px);
+    padding: 60px 20px;
+    box-sizing: border-box;
+    background: var(--fs-bg-primary, #FFFFFF);
+
+    .fs_error_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        max-width: 500px;
+        text-align: center;
+    }
+
+    .fs_error_icon {
+        width: 120px;
+        height: 120px;
+        opacity: 0.8;
+    }
+
+    .fs_error_title {
+        color: var(--fs-text-primary, #0E121B);
+        font-size: 18px;
+        font-weight: 600;
+        line-height: 28px;
+        letter-spacing: -0.176px;
+        margin: 0;
+    }
+
+    .fs_error_description {
+        color: var(--fs-text-secondary, #525866);
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        letter-spacing: -0.084px;
+        margin: 0;
+    }
+
+    .fs_error_link {
+        color: var(--fs-text-link, #089360);
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+
+        &:hover {
+            opacity: 0.8;
+            text-decoration: underline;
+        }
+    }
+
+    .fs_error_actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+    }
+}
+
+.fs_saved_draft {
+    border-top: 1px solid var(--fs-border-default, #E1E4EA);
+}
+
+.draft_title {
+    content: '';
+    position: relative;
+    left: 0;
+    top: 0;
+    background: rgba(110, 93, 81, 0.62);
+    color: var(--fs-text-white, #FFFFFF);
+    padding: 5px 10px;
+    font-size: 11px;
+}
+
+.fs_tk_merge_actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 25px;
+}
+
+.fs_ai_response_loading {
+    border: 1px solid var(--fs-border-default, #E1E4EA);
+    padding: 20px;
+    margin: 20px;
+}
+
+.fs_ai_intelligent_button {
+    justify-content: center;
+    align-items: center;
+    border-radius: var(--fs-radius-md, 8px);
+    background-color: var(--fs-bg-strong, #0E121B);
+    display: flex;
+    max-width: 36px;
+    padding: 4px 6px;
+    height: 33px;
+
+    &:hover {
+        background-color: var(--fs-bg-muted, #2B303B);
+    }
+
+    &:focus {
+        background-color: var(--fs-bg-strong, #0E121B);
+    }
+
+    img {
+        width: 20px;
+        height: 20px;
+        object-fit: cover;
+    }
+}
+
+.fs_agent_selector_tooltip {
+    margin-left: 12px;
+}
+
+// active ticket list
+.fs_active_agents {
+    display: inline-flex;
+    padding: 14px 12px 16px 12px;
+    border-radius: 8px 0 0 8px;
+    background: var(--fs-bg-primary, #FFFFFF);
+    box-shadow: 0 16px 32px 8px rgba(14, 18, 27, 0.10);
+    min-width: 300px;
+    height: 54px;
+    box-sizing: border-box;
+    border: 1px solid var(--fs-btn-disabled, #CACFD8);
+}
+
+.fs_active_agents_content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    color: var(--fs-text-primary, #0E121B);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    white-space: nowrap;
+}
+
+.fs_active_agents_avatars {
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.fs_active_agent_avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--fs-bg-primary, #FFFFFF);
+    background: var(--fs-bg-primary, #FFFFFF);
+    position: relative;
+    margin-left: -8px;
+}
+
+.fs_active_agent_avatar:first-child {
+    margin-left: 0;
+}
+.fs_active_agent_avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.fs_active_agent_count {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--fs-bg-subtle, #F5F7FA);
+    border: 2px solid var(--fs-bg-primary, #FFFFFF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--fs-text-secondary, #525866);
+    font-size: 12px;
+    font-weight: 500;
+    margin-left: -8px;
+    position: relative;
+    flex-shrink: 0;
+    z-index: 99;
+}
+
+.fs_active_agents_text {
+    flex: 1;
+}

@@ -9,7 +9,7 @@
 
                 </div>
             </div>
-            <div v-if="fields" class="fs_box_body fs_padded_20">
+            <div v-if="fields" class="fs_box_body fs_padded_20 fs_business_settings_wrapper">
                 <form-builder :fields="fields.fields" :formData="settings" />
                 <el-button @click="saveSettings()" size="small" v-loading="saving" :disabled="saving" type="success">{{fields.button_text}}</el-button>
             </div>

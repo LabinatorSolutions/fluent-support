@@ -5,8 +5,6 @@
   </template>
 
   <script>
-  import { useNotify } from "@/admin/Composable/FluentFrameworkHelper";
-
   export default {
     name: 'ImagePasteUploader',
     // components: {notify},
@@ -29,11 +27,6 @@
         }
     },
     methods: {
-      notify(config) {
-        const { notify } = useNotify();
-        notify(config);
-      },
-
       handleImagePaste(event, ticketId, is_agent) {
         this.upload_data.ticket_id =  ticketId;
         this.upload_data.is_agent = is_agent;
@@ -52,7 +45,7 @@
                     }
                     event.preventDefault();
                 }else{
-                  this.notify({
+                  this.$notify({
                       message: 'Invalid image',
                       type: 'error'
                   });
@@ -91,14 +84,14 @@
               return response.json();
             })
             .then(data => {
-              this.notify({
+              this.$notify({
                   message: 'Image successfully uploaded.',
                   type: 'success'
               });
               this.$emit('imagePath', data.attachments);
             })
             .catch((error) => {
-              this.notify({
+              this.$notify({
                   message: error,
                   type: 'error'
               });

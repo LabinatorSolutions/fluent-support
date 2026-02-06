@@ -10,7 +10,7 @@
         <div class="action-buttons">
             <el-button
                 size="small"
-                type="text"
+                link
                 @click="cancel()">
                 {{$t('cancel')}}
             </el-button>

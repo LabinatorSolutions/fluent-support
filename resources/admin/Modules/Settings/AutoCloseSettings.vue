@@ -2,27 +2,24 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>{{ translate("Auto Close Settings") }}</h3>
+                <h3>{{ $t("Auto Close Settings") }}</h3>
+                <div class="fs_save_settings_container">
+                    <el-button
+                        size="default"
+                        type="success"
+                        class="fs_save_settings_btn"
+                        @click="saveSettings()"
+                    >{{ $t("Save Settings") }}</el-button>
+                </div>
             </div>
             <div class="fs_box_actions"></div>
         </div>
-        <div class="fs_narrow_promo" v-if="!appVars.has_pro">
-            <h3>
-                {{
-                    translate(
-                        "Auto Close tickets based on active days or based on tags or waiting time."
-                    )
-                }}
-            </h3>
-            <p>{{ translate("pro_promo") }}</p>
-            <a
-                target="_blank"
-                rel="noopener"
-                href="https://fluentsupport.com"
-                class="el-button el-button--success"
-                >{{ translate("Upgrade To Pro") }}</a
-            >
-        </div>
+        <NarrowPromo
+            v-if="!appVars.has_pro"
+            :heading="$t('Auto Close tickets based on active days or based on tags or waiting time.')"
+            :description="$t('pro_promo')"
+            :button-text="$t('Upgrade To Pro')"
+        />
         <template v-else>
             <div
                 style="padding: 20px"
@@ -30,13 +27,13 @@
                 v-loading="loading"
                 class="fs_box_body"
             >
-                <div style="margin-bottom: 20px">
+                <div>
                     <el-checkbox
                         v-model="settings.enabled"
-                        true-label="yes"
-                        false-label="no"
+                        true-value="yes"
+                        false-value="no"
                     >
-                        {{ translate("Enable Auto Closing Inactive Tickets") }}
+                        {{ $t("Enable Auto Closing Inactive Tickets") }}
                     </el-checkbox>
                 </div>
                 <form-builder
@@ -46,15 +43,6 @@
                     label_position="top"
                 >
                 </form-builder>
-
-                <div style="margin-top: 20px">
-                    <el-button
-                        size="default"
-                        type="success"
-                        @click="saveSettings()"
-                        >{{ translate("Save Settings") }}</el-button
-                    >
-                </div>
             </div>
             <div
                 style="padding: 20px; background: white"
@@ -69,82 +57,68 @@
 
 <script type="text/babel">
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import { onMounted, reactive, toRefs } from "vue";
-import {
-    useFluentHelper,
-    useNotify,
-} from "@/admin/Composable/FluentFrameworkHelper";
+import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+
 export default {
     name: "AutoCloseSettings",
     components: {
         FormBuilder,
+        NarrowPromo
     },
-    setup() {
-        const { get, post, translate, handleError, setTitle, appVars } =
-            useFluentHelper();
-
-        const { notify } = useNotify();
-
-        const state = reactive({
+    data() {
+        return {
             settings: {},
             fields: {},
             fetching: false,
             loading: false,
             app_ready: false,
-            settings_key: "auto_close_settings",
-        });
-
-        const fetchSettings = async () => {
-            state.fetching = true;
-            await get("settings/auto-close", {
-                with: ["fields"],
-            })
-                .then((response) => {
-                    state.settings = response.settings;
-                    state.fields = response.fields;
-                    state.app_ready = true;
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {
-                    state.fetching = false;
-                });
-        };
-        const saveSettings = async () => {
-            state.loading = true;
-            await post("settings/auto-close", {
-                settings: state.settings,
-            })
-                .then((response) => {
-                    notify({
-                        type: "success",
-                        message: response.message,
-                        position: "bottom-right",
-                    });
-                })
-                .catch((errors) => {
-                    handleError(errors);
-                })
-                .always(() => {
-                    state.loading = false;
-                });
-        };
-
-        onMounted(() => {
-            if (appVars.has_pro) {
-                fetchSettings();
-            }
-            setTitle("Auto Close Settings");
-        });
-
-        return {
-            ...toRefs(state),
-            translate,
-            fetchSettings,
-            saveSettings,
-            appVars
+            settings_key: "auto_close_settings"
         }
     },
-};
+    methods: {
+        fetchSettings() {
+            this.fetching = true;
+            this.$get("settings/auto-close", {
+                settings_key: this.settings_key,
+                with: ["fields"]
+            })
+                .then(response => {
+                    this.settings = response.settings;
+                    this.fields = response.fields;
+                    this.app_ready = true;
+                })
+                .catch(errors => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.fetching = false;
+                });
+        },
+        saveSettings() {
+            this.loading = true;
+            this.$post("settings/auto-close", {
+                settings_key: this.settings_key,
+                settings: this.settings
+            })
+                .then(response => {
+                    this.$notify({
+                        type: "success",
+                        message: response.message,
+                        position: "bottom-right"
+                    });
+                })
+                .catch(errors => {
+                    this.$handleError(errors);
+                })
+                .always(() => {
+                    this.loading = false;
+                });
+        }
+    },
+    mounted() {
+        this.fetchSettings();
+        this.$setTitle("Auto Close Settings");
+    }
+}
 </script>
+

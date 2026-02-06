@@ -1,9 +1,11 @@
 <template>
     <el-checkbox-group v-model="model">
-        <el-checkbox v-for="(option, optionKey) in field.options"
-                     :key="optionKey"
-                     :label="optionKey">
-            {{option}}
+        <el-checkbox
+            v-for="(option, optionKey) in field.options"
+            :key="optionKey"
+            :value="optionKey"
+        >
+            {{ option }}
         </el-checkbox>
     </el-checkbox-group>
 </template>
