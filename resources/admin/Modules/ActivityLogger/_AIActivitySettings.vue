@@ -1,108 +1,89 @@
 <template>
     <div v-loading="loading" class="fs_activity_settings">
         <el-form label-position="top">
-            <el-form-item label="Automatically delete AI activity logs after days">
+            <el-form-item class="fs_form_item" :label="$t('Automatically delete AI activity logs after days')">
                 <el-input
                     type="number"
                     min="1"
                     max="60"
                     v-model="ai_activity_settings.delete_days"
+                    class="fs_text_input"
                 />
             </el-form-item>
-            <el-form-item>
+            <el-form-item class="fs_form_item fs_mt-10">
                 <el-checkbox
                     true-label="yes"
                     false-label="no"
                     v-model="ai_activity_settings.disable_logs"
                 >
-                    {{ translate("Disable Activity Logs") }}
+                    {{ $t("Disable Activity Logs") }}
                 </el-checkbox>
             </el-form-item>
         </el-form>
 
-        <span class="dialog-footer">
+        <div class="fs_dialog_footer fs_text_right">
             <el-button
                 v-loading="saving"
                 :disabled="saving"
                 type="success"
                 @click="updateSettings()"
+                class="fs_filled_btn"
             >
-                {{ translate("Update Settings") }}
+                {{ $t("Update Settings") }}
             </el-button>
-        </span>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
-import {  onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
-    name: 'ActivitySettings',
+    name: 'AIActivitySettings',
     emits: ['updated'],
-    setup(props, context){
-
-        const { notify } = useNotify();
-        const {
-            get,
-            post,
-            translate,
-            handleError,
-        } = useFluentHelper();
-
-        const state = reactive ({
+    data() {
+        return {
             loading: false,
             saving: false,
-            ai_activity_settings: {}
-        });
-
-        const fetchSettings = async() => {
-            state.loading = true;
-            await get('ai-activity-logger/settings')
+            ai_activity_settings: {},
+        }
+    },
+    methods: {
+        async fetchSettings() {
+            this.loading = true;
+            await this.$get('ai-activity-logger/settings')
                 .then(response => {
-                    state.ai_activity_settings = response.ai_activity_settings;
+                    this.ai_activity_settings = response.ai_activity_settings;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.loading = false;
+                    this.loading = false;
                 });
-        };
-
-        const updateSettings = async() => {
-            state.saving = true;
-            await post('ai-activity-logger/settings', {
-                ai_activity_settings: state.ai_activity_settings,
-
+        },
+        async updateSettings() {
+            this.saving = true;
+            await this.$post('ai-activity-logger/settings', {
+                ai_activity_settings: this.ai_activity_settings,
             })
                 .then(response => {
-                    notify({
+                    this.$notify({
                         type: 'success',
                         message: response.message,
                         position: 'bottom-right'
                     });
 
-                    context.emit('updated');
+                    this.$emit('updated');
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.saving = false;
+                    this.saving = false;
                 });
-        };
-
-        onMounted(() => {
-            fetchSettings();
-        });
-
-        return {
-            ...toRefs(state),
-            fetchSettings,
-            updateSettings,
-            translate
-
-        }
-    }
+        },
+    },
+    mounted() {
+        this.fetchSettings();
+    },
 }
 </script>

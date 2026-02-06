@@ -56,14 +56,32 @@ export const timesheetUtils = {
      * @returns {void}
      */
     exportReport: (config) => {
-        const { selectedItems, dateRange, action } = config;
+        const { selectedItems, dateRange, action, itemKey } = config;
+
+        const formattedDateRange = Array.isArray(dateRange) && dateRange.length === 2 
+            ? dateRange.join(',') 
+            : (dateRange || '');
+        
+        let formattedSelectedItems;
+        if (Array.isArray(selectedItems)) {
+            formattedSelectedItems = selectedItems.length > 0 
+                ? selectedItems.join(',') 
+                : (itemKey === 'mailbox_id' ? null : 'null');
+        } else if (selectedItems === null || selectedItems === undefined || selectedItems === '') {
+            formattedSelectedItems = (itemKey === 'mailbox_id') ? null : 'null';
+        } else {
+            formattedSelectedItems = String(selectedItems);
+        }
 
         const queryParams = new URLSearchParams({
             action,
-            [config.itemKey]: selectedItems,
-            dateRange: dateRange,
             _wpnonce: window.fluentSupportAdmin.nonce,
         });
+
+        queryParams.append('dateRange', formattedDateRange);
+        if (formattedSelectedItems !== null) {
+            queryParams.append(itemKey, formattedSelectedItems);
+        }
 
         location.href = `${window.fluentSupportAdmin.ajaxurl}?${queryParams.toString()}`;
     }

@@ -159,8 +159,7 @@ export const ViewTicketBlock = props => {
                 <div className="fs_block_conversation_container">
                     <div className="fs_block_conversation_message fs_block_agent_message">
                         <div className="fs_block_message_avatar" style={avatarStyle}>
-                            <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g"
-                                 alt="Support Agent Avatar"/>
+
                         </div>
                         <div className="fs_block_message_content">
                         <div className="fs_block_message_header">
@@ -181,7 +180,7 @@ export const ViewTicketBlock = props => {
                     </div>
                     <div className="fs_block_conversation_message fs_block_thread_start">
                         <div className="fs_block_message_avatar" style={avatarStyle}>
-                            <img src="https://secure.gravatar.com/avatar/?s=96&amp;d=mm&amp;r=g" alt="User Avatar"/>
+
                         </div>
                         <div className="fs_block_message_content">
                             <div className="fs_block_message_header">

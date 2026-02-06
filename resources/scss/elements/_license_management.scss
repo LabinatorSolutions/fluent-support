@@ -1,0 +1,192 @@
+.fs_license_manager{
+    .fs_license_valid{
+        text-align: center;
+        .fs_activated_icon{
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+        .fs_deactivate_license_text{
+            color: var(--fs-text-secondary, #525866);
+            font-size: 13px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 16px;
+            .fs_license_purchase_link{
+                font-size: 13px;
+            }
+        }
+    }
+}
+.fs_license_form_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+    background: var(--fs-bg-primary, #FFFFFF);
+}
+
+.fs_license_form_content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.fs_license_form_header {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.fs_license_form_title {
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: -0.27px;
+    color: var(--fs-text-primary, #0E121B);
+    margin: 0;
+}
+
+.fs_license_form_description {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    color: var(--fs-text-primary, #0E121B);
+    margin: 0;
+}
+
+.fs_license_input_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    .el-input-group__append .el-button{
+        margin: 0;
+    }
+}
+
+.fs_license_input {
+    width: 100%;
+
+    .el-input__wrapper {
+        border-radius: 10px 0 0 10px;
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        box-shadow: none;
+        padding: 0;
+
+        &:hover {
+            box-shadow: none;
+        }
+
+        &.is-focus {
+            box-shadow: none;
+        }
+    }
+
+    .el-input__inner {
+        padding: 10px 12px;
+
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 20px;
+        letter-spacing: -0.084px;
+        color: var(--fs-text-primary, #0E121B);
+
+        &::placeholder {
+            color: var(--fs-text-muted, #99A0AE);
+        }
+    }
+
+    .el-input-group__append {
+        background-color: var(--fs-bg-subtle, #F5F7FA);
+        border: 1px solid var(--fs-border-default, #E1E4EA);
+        border-left: none;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    &.fs_license_input_error {
+        .el-input__wrapper {
+            border-color: var(--fs-text-red, #FB3748);
+        }
+    }
+}
+
+.fs_license_verify_btn {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    color: var(--fs-text-secondary, #525866);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    height: auto;
+
+    svg,
+    span:first-child {
+        margin-right: 4px;
+    }
+
+    span{
+        color: var(--fs-text-secondary, #525866);
+    }
+
+    .el-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+
+    &:hover {
+        background-color: transparent;
+        color: var(--fs-text-secondary, #525866);
+    }
+}
+
+.fs_license_error_message {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--fs-text-red, #FB3748);
+    margin: 0;
+}
+
+.fs_license_hint_text {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--fs-text-secondary, #525866);
+    margin: 0;
+}
+
+.fs_license_purchase_text {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    color: var(--fs-text-primary, #0E121B);
+    margin: 0;
+}
+
+.fs_license_purchase_link {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.084px;
+    color: var(--fs-text-info, #335CFF);
+    text-decoration: underline;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+
+    &:hover {
+        color: var(--fs-text-info, #335CFF);
+    }
+}

@@ -1,7 +1,7 @@
 <template>
     <el-pagination
-                   :background="false"
-                   layout="total, sizes, prev, pager, next"
+                   :background="background"
+                   :layout="layout"
                    @current-change="changePage"
                    @size-change="changeSize"
                    :hide-on-single-page="false"
@@ -19,6 +19,14 @@
             pagination: {
                 required: true,
                 type: Object
+            },
+            layout: {
+                type: String,
+                default: 'total, sizes, prev, pager, next'
+            },
+            background: {
+                type: [Boolean, String],
+                default: false
             }
         },
         emits: ['fetch'],

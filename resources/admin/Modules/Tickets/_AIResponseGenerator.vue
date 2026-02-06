@@ -10,8 +10,8 @@
             </div>
 
             <div class="fs_text_container">
-                <div class="fs_header_text">{{ translate(title) }}</div>
-                <div class="fs_description_text">{{ translate(description) }}</div>
+                <div class="fs_header_text">{{ $t(title) }}</div>
+                <div class="fs_description_text">{{ $t(description) }}</div>
             </div>
 
             <div class="fs_close">
@@ -23,7 +23,7 @@
 
         <div class="fs_draft" v-if="draftData.length > 1">
             <el-button class="fs_draft_button" @click="showDraft = !showDraft">
-                <span>{{translate('Draft')}}</span>
+                <span>{{$t('Draft')}}</span>
                 <img :class="['fs_draft_arrow', { 'rotate-down': showDraft }]" :src="appVars.asset_url + 'images/arrowRight.svg'" alt="">
             </el-button>
             <div>
@@ -65,7 +65,7 @@
                         </div>
 
                         <div class="fs_response_insert_button">
-                            <el-button class="fs_insert_button" @click="insertReply(aiResponse)">{{ translate('Insert Content') }}</el-button>
+                            <el-button class="fs_insert_button" @click="insertReply()">{{ $t('Insert Content') }}</el-button>
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
 
         <div class="fs_main_content">
             <div class="fs_prompt_wrapper">
-                <textarea v-model="prompt" rows="3" placeholder="Enter your prompt here..." class="fs_textarea" required></textarea>
+                <textarea v-model="prompt" rows="3" :placeholder="$t('Enter your prompt here...')" class="fs_textarea" required></textarea>
                 <div class="fs_prompt_button">
                     <el-button class="fs_prompt_submit" @click="generateResponse(prompt)" >
                         <img :src="appVars.asset_url + 'images/aiPromptSubmitButton.svg'" alt="">
@@ -89,7 +89,7 @@
             </div>
             <div v-if="errorMessage" class="fs_error_message">{{ errorMessage }}</div>
             <div>
-                <div class="fs_prompt_subtitle">{{ translate('Some General Prompts') }}</div>
+                <div class="fs_prompt_subtitle">{{ $t('Some General Prompts') }}</div>
                 <div class="fs_prompt_options_container">
                     <div
                         v-for="prompt in presetPrompts"
@@ -108,196 +108,165 @@
     </div>
 </template>
 
-<script>
-import { reactive, toRefs, onMounted, computed } from "vue";
-import { useRoute } from "vue-router";
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
-
+<script type="text/babel">
 export default {
     name: 'AIResponseGenerator',
     props: ['selectedText', 'type'],
-    setup(props, context) {
-        const { post, get, translate, handleError, appVars, saveData, getData, removeData } = useFluentHelper();
-        const route = useRoute();
-        const emit = context.emit;
-        const { notify } = useNotify();
-
-        const state = reactive({
+    data() {
+        return {
             prompt: '',
             presetPrompt: '',
             errorMessage: '',
             aiResponse: '',
             loading: false,
-            ticketID: parseInt(route.params.ticket_id),
-            selectedText: props.selectedText,
+            ticketID: 0,
             selectedPrompt: '',
             isFullSize: false,
             presetPrompts: [],
             draftData: [],
             showDraft: false,
             finalPrompts: []
-        });
-
-        const modifyResponseTitle = 'Enhance Responses with AI';
-        const modifyResponseDescription = 'Refine ticket responses with OpenAI to enhance clarity and precision.';
-
-        const generateResponseTitle = 'Generate Responses with AI';
-        const generateResponseDescription = 'Let OpenAI generate ticket responses to enhance support efficiency.';
-
-        const title = computed(() =>
-            props.type === 'modifyResponse' ? modifyResponseTitle : generateResponseTitle
-        );
-
-        const description = computed(() =>
-            props.type === 'modifyResponse' ? modifyResponseDescription : generateResponseDescription
-        );
-
-        const formattedResponse = computed(() => {
-            return state.aiResponse
+        };
+    },
+    computed: {
+        title() {
+            const modifyResponseTitle = 'Enhance Responses with AI';
+            const generateResponseTitle = 'Generate Responses with AI';
+            return this.type === 'modifyResponse' ? modifyResponseTitle : generateResponseTitle;
+        },
+        description() {
+            const modifyResponseDescription = 'Refine ticket responses with OpenAI to enhance clarity and precision.';
+            const generateResponseDescription = 'Let OpenAI generate ticket responses to enhance support efficiency.';
+            return this.type === 'modifyResponse' ? modifyResponseDescription : generateResponseDescription;
+        },
+        formattedResponse() {
+            return this.aiResponse
                 .replace(/\n\n/g, '</p><p>')
                 .replace(/\n/g, '<br>')
                 .replace(/ {2,}/g, match => match.replace(/ /g, '&nbsp;'));
-        });
-
-        const saveDraft = () => {
-            const draftKey = props.type === 'modifyResponse' ? 'modifyResponseDraft' : 'createResponseDraft';
-            const draft = JSON.parse(getData(draftKey)) || [];
+        }
+    },
+    methods: {
+        saveDraft() {
+            const draftKey = this.type === 'modifyResponse' ? 'modifyResponseDraft' : 'createResponseDraft';
+            const draft = JSON.parse(this.$getData(draftKey) || '[]') || [];
             if (draft.length >= 3) {
                 draft.shift();
             }
-            draft.push(state.aiResponse);
-            saveData(draftKey, JSON.stringify(draft));
-            state.draftData = draft;
-        };
-
-        const generateResponse = (prompt) => {
+            draft.push(this.aiResponse);
+            this.$saveData(draftKey, JSON.stringify(draft));
+            this.draftData = draft;
+        },
+        generateResponse(prompt) {
             if (!prompt.trim()) {
-                state.errorMessage = 'Prompt is required.';
+                this.errorMessage = 'Prompt is required.';
                 return;
             }
-            state.errorMessage = '';
+            this.errorMessage = '';
 
-            state.loading = true;
+            this.loading = true;
             const requestData = {
                 content: prompt,
-                id: state.ticketID,
-                type: props.type
+                id: this.ticketID,
+                type: this.type
             };
 
-            if (props.type !== 'createResponse') {
-                requestData.selectedText = props.selectedText;
-                requestData.type = props.type;
+            if (this.type !== 'createResponse') {
+                requestData.selectedText = this.selectedText;
+                requestData.type = this.type;
             }
 
-            post(`openai/${state.ticketID}/generate-response`, requestData)
+            this.$post(`openai/${this.ticketID}/generate-response`, requestData)
                 .then(response => {
-                    state.aiResponse = response;
-                    state.loading = false;
-                    state.finalPrompts = prompt;
-                    if (state.prompt || state.aiResponse) {
-                        state.selectedPrompt = '';
-                        saveDraft();
+                    this.aiResponse = response;
+                    this.loading = false;
+                    this.finalPrompts = prompt;
+                    if (this.prompt || this.aiResponse) {
+                        this.selectedPrompt = '';
+                        this.saveDraft();
                     }
                 })
                 .catch(errors => {
-                    state.loading = false;
-                    handleError(errors);
+                    this.loading = false;
+                    this.$handleError(errors);
                 });
-        };
-
-        const selectPresetPrompt = (preset) => {
-            state.selectedPrompt = preset;
-            const selectedPrompt = state.presetPrompts.find(item => item.text === preset.text);
-            state.presetPrompt = `${selectedPrompt.description}`;
-            state.prompt = '';
-            generateResponse(state.presetPrompt);
-        };
-
-        const isSelected = (prompt) => {
-            return state.selectedPrompt === prompt;
-        };
-
-        const closeModal = () => {
-            removeDraft();
-            emit('close');
-            resetData();
-        };
-
-        const copyText = async () => {
+        },
+        selectPresetPrompt(preset) {
+            this.selectedPrompt = preset;
+            const selectedPrompt = this.presetPrompts.find(item => item.text === preset.text);
+            this.presetPrompt = `${selectedPrompt.description}`;
+            this.prompt = '';
+            this.generateResponse(this.presetPrompt);
+        },
+        isSelected(prompt) {
+            return this.selectedPrompt === prompt;
+        },
+        closeModal() {
+            this.removeDraft();
+            this.$emit('close');
+            this.resetData();
+        },
+        async copyText() {
             try {
-                await navigator.clipboard.writeText(state.aiResponse);
-                notify({
+                await navigator.clipboard.writeText(this.aiResponse);
+                this.$notify({
                     message: "Copied to clipboard",
                     type: "success",
                     position: "bottom-right",
                 });
             } catch (error) {
-                notify({
+                this.$notify({
                     message: "Something went wrong",
                     type: "danger",
                     position: "bottom-right",
                 });
             }
-        };
-
-        const resetData = () => {
-            state.aiResponse = '';
-            state.selectedPrompt = '';
-            state.prompt = '';
-            removeDraft();
-        };
-
-        const insertReply = (aiResponse) => {
-            emit('insert', aiResponse);
-            resetData();
-        };
-
-        const fetchPresets = () => {
-            get('openai/preset-prompts', { type: props.type })
+        },
+        resetData() {
+            this.aiResponse = '';
+            this.selectedPrompt = '';
+            this.prompt = '';
+            this.removeDraft();
+        },
+        insertReply() {
+            // Emit the formatted HTML instead of raw text to preserve formatting
+            this.$emit('insert', this.formattedResponse);
+            this.resetData();
+        },
+        fetchPresets() {
+            this.$get('openai/preset-prompts', { type: this.type })
                 .then(response => {
-                    state.presetPrompts = response;
+                    this.presetPrompts = response;
                 })
                 .catch(errors => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 });
-        };
-
-        const removeDraft = () => {
-            const draftKey = props.type === 'modifyResponse' ? 'modifyResponseDraft' : 'createResponseDraft';
-            removeData(draftKey);
-            state.draftData = [];
-        };
-
-        const getSnippet = (text) => {
+        },
+        removeDraft() {
+            const draftKey = this.type === 'modifyResponse' ? 'modifyResponseDraft' : 'createResponseDraft';
+            this.removeData(draftKey);
+            this.draftData = [];
+        },
+        removeData(key) {
+            let existingData = this.$getData('__fluentsupport_data');
+            if (!existingData) {
+                return;
+            }
+            existingData = JSON.parse(existingData);
+            delete existingData[key];
+           this.$saveData('__fluentsupport_data', JSON.stringify(existingData));
+        },
+        getSnippet(text) {
             return text.length > 30 ? text.substring(0, 30) + '...' : text;
-        };
-
-        const selectDraft = (draft) => {
-            state.aiResponse = draft;
-        };
-
-        onMounted(() => {
-            fetchPresets();
-            removeDraft();
-        });
-
-        return {
-            ...toRefs(state),
-            generateResponse,
-            selectPresetPrompt,
-            translate,
-            insertReply,
-            isSelected,
-            copyText,
-            closeModal,
-            appVars,
-            title,
-            description,
-            getSnippet,
-            selectDraft,
-            saveDraft,
-            formattedResponse
-        };
+        },
+        selectDraft(draft) {
+            this.aiResponse = draft;
+        }
+    },
+    mounted() {
+        this.ticketID = parseInt(this.$route.params.ticket_id);
+        this.fetchPresets();
+        this.removeDraft();
     }
 };
 </script>

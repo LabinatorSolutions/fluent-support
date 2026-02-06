@@ -1,87 +1,95 @@
 <template>
-    <div style="margin-top: 20px;" class="fs_agent_reports">
-        <div v-if="!loading" class="fs_box_wrapper">
-            <div class="fs_box">
-                <div class="fs_box_header">
-                    <div class="fs_box_head">
-                        {{ url === "my-reports/my-summary" ? translate('Individual Performance') : translate('Agents Report Summary')  }}
-                    </div>
-                    <div class="fs_box_actions">
-                        <el-icon v-if="show_settings" @click="open_setting=true" class="fs_summary_settings_icon" :size="18" title="Filter Agent">
-                            <Setting />
-                        </el-icon>
+    <div class="fs_agent_reports" :class="{ 'fs_personal_reports': is_personal }">
+        <!-- Personal View (is_personal = true) -->
+        <MyPerformanceReport 
+            v-if="is_personal" 
+            :reports="reports" 
+            :loading="loading" 
+        />
 
-                        <el-date-picker
-                            @change="getReport()"
-                            v-model="date_range"
-                            type="daterange"
-                            size="small"
-                            :range-separator="translate('To')"
-                            :disabledDate="onlyPastDates"
-                            :start-placeholder="translate('Start')"
-                            :end-placeholder="translate('End')"
-                            :shortcuts="dateShortcuts"
-                        />
-                        <el-icon v-if="show_export_btn && has_pro" @click="open_export_options=true" class="fs_summary_export_icon" title="Export Report"><Download /></el-icon>
+        <!-- Non-Personal View (is_personal = false) -->
+        <div v-if="!is_personal && !loading" class="fs_agent_report_summary_wrapper">
+            <div class="fs_report_table_container">
+                <div class="fs_table_header">
+                    <div class="fs_box_actions">
+                        <span class="fs_table_title">{{ $t('Agents Report Summary') }}</span>
                     </div>
                 </div>
-                <div class="fs_box_body">
+                <div class="fs_table_wrapper">
                     <el-table
+                        class="fs_agent_reports_table"
                         :data="sortedReports"
-                        stripe
                         :summary-method="getSummaries"
                         :show-summary="showOrHideSummaries"
                         @sort-change="handleSorting"
                         v-loading="loading"
-                        style="width: 100%">
-                        <el-table-column min-width="200px" :label="translate('Agent')">
+                        row-class-name="fs_table_row"
+                        header-row-class-name="fs_table_header_row"
+                        cell-class-name="fs_table_cell"
+                        header-cell-class-name="fs_table_header_cell"
+                        table-layout="fixed">
+                        <el-table-column min-width="180px" :label="$t('Agent')">
                             <template #default="scope">
-                                {{ scope.row.full_name }}
+                                <div class="fs_customer_name_cell">
+                                    <div class="fs_customer_avatar">
+                                        <img
+                                            :src="scope.row.photo"
+                                            :alt="scope.row.full_name"
+                                            class="fs_avatar_img"
+                                        />
+                                    </div>
+                                    <div class="fs_customer_info">
+                                        {{ scope.row.full_name ? scope.row.full_name: 'N/A' }}
+                                        <div class="fs_customer_email">
+                                            {{ scope.row.email }}
+                                        </div>
+                                    </div>
+                                </div>
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="responses" :label="translate('Responses')">
+                        <el-table-column min-width="130px" sortable="custom" prop="responses" :label="$t('Responses')" align="center">
                             <template #default="scope">
                                 {{ scope.row.stats?.responses }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="interactions" :label="translate('Interactions')">
+                        <el-table-column min-width="120px" sortable="custom" prop="interactions" :label="$t('Interactions')" align="center">
                             <template #default="scope">
                                 {{ scope.row.stats?.interactions }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="opens" :label="translate('Open Tickets')">
+                        <el-table-column min-width="130px" sortable="custom" prop="opens" :label="$t('Open Tickets')" align="center">
                             <template #default="scope">
                                 {{ scope.row.stats?.opens }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column sortable="custom" prop="closed" :label="translate('Closed')">
+                        <el-table-column min-width="100px" sortable="custom" prop="closed" :label="$t('Closed')" align="center">
                             <template #default="scope">
                                 {{ scope.row.stats?.closed }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="likes" :label="translate('Likes')">
+                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" min-width="100px" sortable="custom" prop="likes" :label="$t('Likes')" align="center">
                             <template #default="scope">
                                 {{ scope.row.stats?.likes }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" sortable="custom"  prop="dislikes" :label="translate('Dislikes')">
+                        <el-table-column v-if="has_pro && appVars.agent_feedback_rating === 'yes'" min-width="110px" sortable="custom" prop="dislikes" :label="$t('Dislikes')" align="center">
                             <template #default="scope">
                                 {{ scope.row.stats?.dislikes }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column min-width="150px" :label="translate('Current Overall')">
+                        <el-table-column min-width="200px" :label="$t('Current Overall')">
                             <template #default="scope">
                                 <template v-if="scope.row.active_stat">
                                     <ul style="margin: 0; padding: 0; list-style: none;">
-                                        <li>{{ translate('Waiting Tickets') }}: {{ scope.row.active_stat.waiting_tickets }}
+                                        <li>{{ $t('Waiting Tickets') }}: {{ scope.row.active_stat.waiting_tickets }}
                                         </li>
-                                        <li>{{ translate('Average Waiting') }}: {{ scope.row.active_stat.average_waiting }}
+                                        <li>{{ $t('Average Waiting') }}: {{ scope.row.active_stat.average_waiting }}
                                         </li>
-                                        <li>{{ translate('Max Waiting') }}: {{ scope.row.active_stat.max_waiting }}</li>
+                                        <li>{{ $t('Max Waiting') }}: {{ scope.row.active_stat.max_waiting }}</li>
                                     </ul>
                                 </template>
                             </template>
@@ -89,89 +97,107 @@
                     </el-table>
                 </div>
 
-                <Teleport to="body">
-                    <modal :show="open_setting" :title="translate('exclude_or_include_in_summary')" @close="open_setting = false">
-                        <template #body>
-                            <div class="fs_summary_settings">
-                                <el-row :gutter="20">
-                                    <el-col :span="18">
-                                        <span> {{translate("If you don't select any agents then all the agents report will be displayed here otherwise it will show only selected agents report.")}}</span>
-                                    </el-col>
-                                </el-row>
+                <el-dialog
+                    :append-to-body="true"
+                    :model-value="open_setting"
+                    @update:model-value="$emit('update:open_setting', $event)"
+                    class="fs_dialog fs_agent_summary_dialog"
+                    width="670px"
+                    @close="closeSetting"
+                >
+                    <template #header>
+                        <div class="fs_agent_summary_dialog_header">
+                            <p class="fs_agent_summary_title">{{ $t('exclude_or_include_in_summary') }}</p>
+                            <p class="fs_dialog_description_wrapper">
+                                {{$t("If you don't select any agents then all the agents report will be displayed here otherwise it will show only selected agents report.")}}
+                            </p>
+                        </div>
+                    </template>
+                    <div class="fs_summary_settings">
 
-                                <el-transfer
-                                    v-model="include_or_exclude_agents"
-                                    :data="sortedAgents"
-                                    :titles="['Available Agents', 'Selected Agents']"
-                                    filterable
-                                />
-                            </div>
-                        </template>
-                        <template #footer>
-                            <el-button @click="open_setting = false">{{ translate('Cancel') }}</el-button>
-                            <el-button type="primary" @click="syncSummary">{{ translate('Save') }}</el-button>
-                        </template>
-                    </modal>
-                </Teleport>
+                        <div class="fs_transfer_wrapper fframe_body">
+                            <el-transfer
+                                v-model="include_or_exclude_agents"
+                                :data="sortedAgents"
+                                :titles="['Available Agents', 'Selected Agents']"
+                                filterable
+                                class="fs_agent_transfer"
+                            />
+                        </div>
+                    </div>
+                    <template #footer>
+                        <span class="fs_dialog_footer">
+                            <el-button class="fs_outline_btn" @click="closeSetting">{{ $t('Cancel') }}</el-button>
+                            <el-button class="fs_filled_btn" type="primary" @click="syncSummary">{{ $t('Save') }}</el-button>
+                        </span>
+                    </template>
+                </el-dialog>
 
-                <Teleport to="body">
-                    <modal :show="open_export_options" :title="translate('exclude_or_include_summary_column')" @close="open_export_options = false">
-                        <template #body>
-                            <div class="fs_summary_settings">
-                                <el-row :gutter="20">
-                                    <el-col :span="18">
-                                        <span> {{translate("If you don't select any column, by default system will take all.")}}</span>
-                                    </el-col>
-                                </el-row>
-                                <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
-                                    <template v-if="!checkAll">{{translate('Check all')}}</template>
-                                    <template v-else>{{translate('Uncheck all')}}</template>
-                                </el-checkbox>
-                                <el-checkbox-group v-model="selected_options" class="fs_summary_export_items" @change="handleColumnChanges">
-                                    <el-checkbox v-for="(item, index) in repost_export_options" :key="index" :model-value="index" :label="item" />
-                                </el-checkbox-group>
-
-                            </div>
-                        </template>
-                        <template #footer>
-                            <el-button @click="open_export_options = false">{{ translate('Cancel') }}</el-button>
-                            <el-button type="primary" @click="exportReport">{{ translate('Export Agents Summary') }}</el-button>
-                        </template>
-                    </modal>
-                </Teleport>
+                <el-dialog
+                    :append-to-body="true"
+                    v-model="open_export_options"
+                    class="fs_dialog fs_export_options_dialog"
+                    width="45%"
+                    @close="closeExportModal"
+                >
+                    <template #header>
+                        <div class="fs_agent_summary_dialog_header">
+                            <p class="fs_agent_summary_title">{{ $t('exclude_or_include_summary_column') }}</p>
+                            <p class="fs_dialog_description_wrapper">
+                                {{$t("If you don't select any column, by default system will take all.")}}
+                            </p>
+                        </div>
+                    </template>
+                    <div class="fs_summary_settings fframe_body">
+                        <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">
+                            <template v-if="!checkAll">{{$t('Check all')}}</template>
+                            <template v-else>{{$t('Uncheck all')}}</template>
+                        </el-checkbox>
+                        <el-checkbox-group v-model="selected_options" class="fs_summary_export_items" @change="handleColumnChanges">
+                            <el-checkbox v-for="(item, index) in repost_export_options" :key="index" :model-value="index" :label="item" />
+                        </el-checkbox-group>
+                    </div>
+                    <template #footer>
+                        <span class="fs_dialog_footer">
+                            <el-button class="fs_outline_btn" @click="closeExportModal">{{ $t('Cancel') }}</el-button>
+                            <el-button class="fs_filled_btn" type="primary" @click="exportReport">{{ $t('Export Agents Summary') }}</el-button>
+                        </span>
+                    </template>
+                </el-dialog>
 
             </div>
         </div>
-        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+        <div style="padding: 20px; background: white;" class="fs_box_body" v-if="loading">
             <el-skeleton :rows="5" animated/>
         </div>
     </div>
 </template>
 
 <script type="text/babel">
-import dayjs from "dayjs";
 import each from "lodash/each";
-import Modal from "../../Pieces/Modal";
-import { computed, onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
+import MyPerformanceReport from "./MyPerformanceReport";
+import { formatDateRangeForAPI, handleCheckAllChange as handleCheckAllChangeUtil, handleColumnChanges as handleColumnChangesUtil } from "./Utils/reportHelpers";
 
 export default {
     name: "AgentReports",
-    components: { Modal },
-    props: ["url", "show_settings", "show_export_btn"],
+    components: {
+        MyPerformanceReport,
+    },
+    props: {
+        url: String,
+        show_settings: Boolean,
+        show_export_btn: Boolean,
+        is_personal: Boolean,
+        date_range: {
+            type: Array,
+            default: () => []
+        },
+        open_setting: Boolean,
+        open_export: Boolean,
+    },
 
-    setup(props) {
-        const {
-            appVars,
-            get,
-            translate,
-            handleError,
-            saveData,
-            getData,
-            has_pro
-        } = useFluentHelper();
-
-        const state = reactive({
+    data() {
+        return {
             reports: [],
             loading: false,
             sorts: {
@@ -180,120 +206,34 @@ export default {
             },
             sort_column: "response",
             sort_type: "descending",
-            date_range: [new Date(), new Date()],
-            dateShortcuts: [
-                {
-                    text: translate("Today"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Yesterday"),
-                    value: (() => {
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24);
-                        return [start, start];
-                    })(),
-                },
-                {
-                    text: translate("Last Week"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last Month"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last 3 Months"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last 6 Months"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 180);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last 1 Year"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
-                        return [start, end];
-                    })(),
-                },
-            ],
-            valueFormat: "YYYY-MM-DD",
-            open_setting: false,
             include_or_exclude_agents: [],
             include_or_exclude: "include", // Define if we are including or excluding agents, default is include
             open_export_options: false,
-            repost_export_options: appVars.repost_export_options,
+            repost_export_options: this.appVars.repost_export_options,
             selected_options: [],
             checkAll: false,
             isIndeterminate: false,
-        });
+        };
+    },
 
-        const sortedAgents = computed(() => {
+    computed: {
+        sortedAgents() {
             let agents = [];
-            each(appVars.support_agents, (agent) => {
+            each(this.appVars.support_agents, (agent) => {
                 agents.push({
                     key: parseInt(agent.id),
                     label: agent.full_name,
                 });
             });
             return agents;
-        });
+        },
 
-        const handleCheckAllChange = computed(() => {
-            state.selected_options = state.checkAll
-                ? Object.keys(state.repost_export_options)
-                : [];
-            state.isIndeterminate = true;
-        });
+        sortedReports() {
+            let reports = this.reports;
 
-        const handleColumnChanges = computed(() => {
-            if (
-                state.selected_options.length ===
-                Object.keys(state.repost_export_options).length
-            ) {
-                state.checkAll = true;
-                state.isIndeterminate = false;
-            } else if (state.selected_options.length === 0) {
-                state.checkAll = false;
-                state.isIndeterminate = false;
-            } else {
-                state.isIndeterminate = true;
-            }
-        });
+            const settings = this.$getData("agents_summary_setting");
 
-        const sortedReports = computed(() => {
-            let reports = state.reports;
-
-            const settings = getData("agents_summary_setting");
-
-            if (props.url != "my-reports/my-summary" && settings) {
+            if (this.url != "my-reports/my-summary" && settings) {
                 let reportsToInclude = [];
                 each(reports, (report) => {
                     if (settings.agents.includes(report.id)) {
@@ -303,24 +243,23 @@ export default {
                 reports = reportsToInclude;
             }
 
-            if (state.sort_type == "ascending") {
+            if (this.sort_type == "ascending") {
                 return reports.sort((a, b) =>
-                    parseInt(a.stats[state.sort_column]) >
-                        parseInt(b.stats[state.sort_column])
+                    parseInt(a.stats[this.sort_column]) >
+                        parseInt(b.stats[this.sort_column])
                         ? 1
                         : -1
                 );
             }
             return reports.sort((a, b) =>
-                parseInt(a.stats[state.sort_column]) <
-                    parseInt(b.stats[state.sort_column])
+                parseInt(a.stats[this.sort_column]) <
+                    parseInt(b.stats[this.sort_column])
                     ? 1
                     : -1
             );
-        });
+        },
 
-        const totals = computed(() => {
-
+        totals() {
             let summary = {
                 responses: 0,
                 interactions: 0,
@@ -328,95 +267,139 @@ export default {
                 closed: 0,
             };
 
-            if (has_pro && appVars.agent_feedback_rating === "yes") {
+            if (this.has_pro && this.appVars.agent_feedback_rating === "yes") {
                 summary = {
                     ...summary,
                     likes: 0,
                     dislikes: 0,
                 };
             }
-            each(state.reports, (report) => {
+            each(this.reports, (report) => {
                 summary.responses += parseInt(report.stats.responses);
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
-                if (has_pro && appVars.agent_feedback_rating === "yes") {
+                if (this.has_pro && this.appVars.agent_feedback_rating === "yes") {
                     summary.likes += parseInt(report.stats.likes);
                     summary.dislikes += parseInt(report.stats.dislikes);
                 }
             });
             return summary;
-        });
+        },
 
-        const showOrHideSummaries = computed(() => {
-            if (props.url == "my-reports/my-summary") {
+        showOrHideSummaries() {
+            if (this.url == "my-reports/my-summary" || this.is_personal) {
                 return false;
             }
             return true;
-        });
+        }
+    },
 
-        const getReport = async () => {
-            state.loading = true;
-            await get(props.url, {
-                from: (state.date_range) ? dayjs(state.date_range[0]).format('YYYY-MM-DD') : '',
-                to: (state.date_range) ? dayjs(state.date_range[1]).format('YYYY-MM-DD') : '',
-            })
+    watch: {
+        date_range: {
+            handler(newDateRange) {
+                if (newDateRange && newDateRange.length > 0) {
+                    this.getReport();
+                }
+            },
+            deep: true
+        },
+        open_export: {
+            handler(newValue) {
+                if (newValue) {
+                    this.open_export_options = true;
+                }
+            },
+            immediate: false
+        }
+    },
+
+    methods: {
+        handleCheckAllChange() {
+            const result = handleCheckAllChangeUtil(this.checkAll, {
+                exportOptions: this.repost_export_options
+            });
+            this.selected_options = result.selectedOptions;
+            this.isIndeterminate = result.isIndeterminate;
+        },
+
+        handleColumnChanges() {
+            const result = handleColumnChangesUtil(this.selected_options, {
+                exportOptions: this.repost_export_options
+            });
+            this.checkAll = result.checkAll;
+            this.isIndeterminate = result.isIndeterminate;
+        },
+
+        async getReport() {
+            this.loading = true;
+            const dateParams = formatDateRangeForAPI(this.date_range);
+            await this.$get(this.url, dateParams)
                 .then(response => {
-                    state.reports = response.summary
+                    this.reports = response.summary
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.loading = false;
+                    this.loading = false;
                 });
-        };
+        },
 
-        const fetchSummarySettings = () => {
-            const settings =  getData('agents_summary_setting');
-            return state.include_or_exclude_agents = settings.agents;
-        };
+        fetchSummarySettings() {
+            const settings = this.$getData('agents_summary_setting');
+            if (settings) {
+                this.include_or_exclude_agents = settings.agents;
+            }
+        },
 
-        const syncSummary = () => {
-            state.loading = true;
-            saveData('agents_summary_setting', {
-                agents: state.include_or_exclude_agents
+        closeSetting() {
+            this.$emit('update:open_setting', false);
+        },
+
+        closeExportModal() {
+            this.open_export_options = false;
+            this.$emit('update:open_export', false);
+        },
+
+        syncSummary() {
+            this.loading = true;
+            this.$saveData('agents_summary_setting', {
+                agents: this.include_or_exclude_agents
             });
-            state.open_setting = false;
-            getReport();
-        };
+            this.$emit('update:open_setting', false);
+            this.getReport();
+        },
 
-        const handleSorting = (props) => {
-            state.sort_column = props.prop;
-            state.sort_type = props.order;
-        };
+        handleSorting(sortProps) {
+            this.sort_column = sortProps.prop;
+            this.sort_type = sortProps.order;
+        },
 
-        const onlyPastDates = (val) => {
-            return new Date() <= val;
-        };
-
-        const getSummaries = (param) => {
+        getSummaries(param) {
             const { columns } = param;
             const sums = [];
 
             columns.forEach((column, index) => {
                 if (index === 0) {
-                    sums[index] = translate("Total Summaries");
+                    sums[index] = this.$t("Total Summaries");
                     return;
                 }
-                sums[index] = totals.value[column.property];
+                const value = this.totals[column.property];
+                sums[index] = value !== undefined ? value : '';
             });
 
             return sums;
-        };
+        },
 
-        const exportReport = () => {
-            let from = (state.date_range) ? dayjs(state.date_range[0]).format('YYYY-MM-DD') : '';
-            let to = (state.date_range) ? dayjs(state.date_range[1]).format('YYYY-MM-DD') : '';
-            let agents_summary_setting = getData('agents_summary_setting');
+        exportReport() {
+            const dateParams = formatDateRangeForAPI(this.date_range);
+            let from = dateParams.from;
+            let to = dateParams.to;
+            let agents_summary_setting = this.$getData('agents_summary_setting');
             let agents = [];
             if (!agents_summary_setting) {
-                each(appVars.support_agents, (agent) => {
+                each(this.appVars.support_agents, (agent) => {
                     agents.push({
                         key: parseInt(agent.id),
                         label: agent.full_name
@@ -428,52 +411,44 @@ export default {
             }
 
             if (agents === '') {
-                handleError(translate('No agent found, Please select or make sure you have agents to export'));
+                this.$handleError(this.$t('No agent found, Please select or make sure you have agents to export'));
                 return false;
             }
 
             location.href = window.ajaxurl + '?' + jQuery.param({
                 action: 'fs_export_agent_report',
                 _wpnonce: fluentSupportAdmin.nonce,
-                columns: state.selected_options,
+                columns: this.selected_options,
                 from_date: from,
                 to_date: to,
                 agents: agents,
                 format: 'csv'
             });
-        };
+            
+            // Close modal after export
+            this.closeExportModal();
+        },
+    },
 
-        onMounted(() => {
-            getReport();
-            fetchSummarySettings();
-        });
-
-        return {
-            ...toRefs(state),
-            translate,
-            sortedAgents,
-            handleCheckAllChange,
-            handleColumnChanges,
-            sortedReports,
-            totals,
-            showOrHideSummaries,
-            getReport,
-            fetchSummarySettings,
-            syncSummary,
-            handleSorting,
-            onlyPastDates,
-            getSummaries,
-            exportReport,
-            has_pro,
-            appVars
-        }
+    mounted() {
+        this.getReport();
+        this.fetchSummarySettings();
     },
 };
 </script>
 
 <style lang="scss" scoped>
-.fs_summary_settings div {
-    margin: 10px 0;
+
+/* Prevent double horizontal scroll: contain overflow to table wrapper only */
+.fs_agent_report_summary_wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.fs_agent_report_summary_wrapper .fs_report_table_container {
+    min-width: 0;
+    overflow: hidden;
 }
 
 .fs_summary_settings_icon {
@@ -500,3 +475,4 @@ export default {
     width: 45%;
 }
 </style>
+

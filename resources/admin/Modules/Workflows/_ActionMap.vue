@@ -1,7 +1,7 @@
 <template>
     <div v-loading="loading" class="fs_trigger_view">
         <el-collapse
-            v-model="activeName"
+            v-model="localActiveName"
         >
             <el-collapse-item
                 :name="action.activeName"
@@ -19,7 +19,7 @@
                     <div
                         class="fs_trigger_name"
                     >
-                        {{ actions[action.action_name].title }}
+                        {{ actions[action.action_name]?.title || action.title || '' }}
                     </div>
                 </template>
                 <div  class="fs_trigger_details">
@@ -29,6 +29,7 @@
                             @change="triggerEventChanged()"
                             :placeholder="$t('Select Integration Event')"
                             v-model="action.action_name"
+                            class="fs_select_field"
                         >
                             <el-option
                                 v-for="(actionItem, triggerName) in actions"
@@ -37,16 +38,16 @@
                                 :label="actionItem.title"
                             />
                         </el-select>
-                        <div v-if="action.action_name && builder_ready">
+                        <div v-if="action.action_name && actions[action.action_name] && builder_ready">
                             <form-builder
                                 :key="dragKey"
-                                :fields="actions[action.action_name].fields"
+                                :fields="actions[action.action_name]?.fields || []"
                                 :form-data="action.settings"
                             >
                                 <template v-slot:form_end>
-                                    <el-form-item :label="$t('Action Title')">
+                                    <el-form-item :label="$t('Action Title')" class="fs_action_title_form_item">
                                         <el-input
-                                            type="text"
+                                            link
                                             :placeholder="$t('Action Title')"
                                             v-model="action.title"
                                         ></el-input>
@@ -54,37 +55,41 @@
                                 </template>
                             </form-builder>
 
-                            <div style="display: block; margin-top: 10px">
-                                <el-button @click="emitSave()" type="success">{{
-                                        $t("Save")
-                                    }}
-                                </el-button>
-                                <div
-                                    style="
-                                text-align: right;
-                                display: inline-block;
-                                float: right;
-                            "
+                            <div class="fs_action_footer">
+                                <el-popconfirm
+                                    :width="310"
+                                    :title="$t('delete_action_warning')"
+                                    @confirm="deleteAction()"
                                 >
-                                    <el-popconfirm
-                                        confirm-button-type="danger"
-                                        :confirm-button-text="
-                                    $t('Yes, Delete this Action')
-                                "
-                                        :cancel-button-text="$t('No')"
-                                        icon-color="red"
-                                        @confirm="deleteAction()"
-                                        :title="$t('delete_action_warning')"
-                                    >
-                                        <template #reference>
+                                    <template #reference>
+                                        <el-button
+                                            class="fs_delete_action_btn"
+                                            link
+                                        >
+                                            <el-icon><Delete /></el-icon>
+                                            <span>{{ $t("Delete Action") }}</span>
+                                        </el-button>
+                                    </template>
+                                    <template #actions="{ confirm, cancel }">
+                                        <div class="fs_popconfirm_actions">
+                                            <el-button class="fs_outline_btn" size="small" @click="cancel">{{ $t("Cancel") }}</el-button>
                                             <el-button
-                                                type="danger"
-                                                plain
-                                                icon="Delete"
-                                            ></el-button>
-                                        </template>
-                                    </el-popconfirm>
-                                </div>
+                                                class="fs_filled_btn"
+                                                size="small"
+                                                @click="confirm"
+                                            >
+                                                {{ $t("Yes, Delete this Action") }}
+                                            </el-button>
+                                        </div>
+                                    </template>
+                                </el-popconfirm>
+                                <el-button 
+                                    class="fs_save_action_btn" 
+                                    @click="emitSave()" 
+                                    type="primary"
+                                >
+                                    {{ $t("Save") }}
+                                </el-button>
                             </div>
                         </div>
                     </div>
@@ -95,66 +100,61 @@
 </template>
 
 <script type="text/babel">
-import {ref, onMounted, reactive} from "vue";
 import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import {useFluentHelper} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ActionMap",
     props: ["action", "actions", "activeName", "dragKey"],
     components: {
-        FormBuilder,
+        FormBuilder
     },
-    setup(props, context) {
-        const {translate, appVars} = useFluentHelper();
-        const settingsFields = ref({});
-        const loading = ref(false);
-        const builderReady = ref(true);
-        const activeName = props.activeName;
-
-        const triggerEventChanged = () => {
-            if (!props.action.action_name) {
-                props.action.settings = {};
+    data() {
+        return {
+            settings_fields: {},
+            loading: false,
+            builder_ready: true,
+            localActiveName: this.activeName,
+        };
+    },
+    watch: {
+        activeName(newVal) {
+            this.localActiveName = newVal;
+        },
+    },
+    mounted() {
+        if (!this.action.settings) {
+            this.action.settings = {};
+        }
+    },
+    methods: {
+        triggerEventChanged() {
+            if (!this.action.action_name) {
+                this.action.settings = {};
                 return false;
             }
-            builderReady.value = false;
-            const selectedAction = JSON.parse(
-                JSON.stringify(props.actions[props.action.action_name])
-            );
-            props.action.settings = selectedAction.settings_defaults;
-            props.action.title = selectedAction.title;
-            setTimeout(() => {
-                builderReady.value = true;
-            }, 100);
-        };
-
-        const emitSave = () => {
-            props.action.is_open = !props.action.is_open;
-            context.emit("update");
-        };
-
-        const deleteAction = () => {
-            props.action.is_open = !props.action.is_open;
-            context.emit("deleteAction");
-        };
-
-        onMounted(() => {
-            if (!props.action.settings) {
-                props.action.settings = {};
+            
+            if (!this.actions[this.action.action_name]) {
+                return false;
             }
-        });
-
-        return {
-            settings_fields: settingsFields,
-            loading,
-            builder_ready: builderReady,
-            triggerEventChanged,
-            emitSave,
-            deleteAction,
-            activeName,
-            translate,
-            appVars
-        };
+            
+            this.builder_ready = false;
+            const selectedAction = JSON.parse(
+                JSON.stringify(this.actions[this.action.action_name])
+            );
+            this.action.settings = selectedAction.settings_defaults || {};
+            this.action.title = selectedAction.title || '';
+            setTimeout(() => {
+                this.builder_ready = true;
+            }, 100);
+        },
+        emitSave() {
+            this.action.is_open = !this.action.is_open;
+            this.$emit("update");
+        },
+        deleteAction() {
+            this.action.is_open = !this.action.is_open;
+            this.$emit("deleteAction");
+        },
     },
 };
 </script>

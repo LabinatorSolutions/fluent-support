@@ -1,7 +1,7 @@
 <template>
     <div class="fs_trigger_mappers">
-        <el-form-item label="Workflow Trigger">
-            <el-select v-model="workflow.trigger_key">
+        <el-form-item :label="$t('Workflow Trigger')">
+            <el-select v-model="workflow.trigger_key" class="fs_select_field">
                 <el-option
                     v-for="(trigger, triggerKey) in trigger_fields.triggers"
                     :value="triggerKey"
@@ -15,7 +15,7 @@
             class="fs_trigger_conditions"
             v-if="workflow.trigger_key && app_ready"
         >
-            <h3>{{ translate("Conditions") }}</h3>
+            <h3>{{ $t("Conditions") }}</h3>
             <div
                 class="fs_each_cond_group"
                 v-for="(conditionGroup, condIndex) in workflow_conditions"
@@ -27,19 +27,21 @@
                     :all_conditions="trigger_fields.conditions"
                     :settings="conditionGroup"
                 />
-                <p
+                <div
                     v-if="condIndex + 1 != workflow_conditions.length"
-                    class="fs_cond_and"
+                    class="fs_filter_separator"
                 >
-                    <em>{{ translate("AND") }}</em>
-                </p>
+                    <div class="fs_condition_sign">{{ $t("AND") }}</div>
+                </div>
             </div>
-            <div class="fs_cond_and">
-                <em
-                    style="cursor: pointer; color: #07c; font-weight: bold"
-                    @click="addMore()"
-                    ><el-icon><Plus /></el-icon> {{ translate("AND") }}</em
-                >
+
+            <div class="fs_filter_separator" @click="addMore()">
+                <div class="fs_condition_sign fs_button">
+                    <svg class="fs_add_and_icon" width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.5 4.5V0H6V4.5H10.5V6H6V10.5H4.5V6H0V4.5H4.5Z" fill="#0E121B"/>
+                    </svg>
+                    {{ $t("AND") }}
+                </div>
             </div>
         </div>
     </div>
@@ -47,10 +49,7 @@
 
 <script type="text/babel">
 import each from "lodash/each";
-import isArray from "lodash/isArray";
 import TriggerConditionalGroup from "./_TriggerConditionalGroup";
-import { ref, onMounted, computed } from "vue";
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "TriggerMappers",
@@ -58,23 +57,24 @@ export default {
     components: {
         TriggerConditionalGroup,
     },
-
-    setup(props) {
-        const { translate } = useFluentHelper();
-        const app_ready = ref(false);
-
-        const conditional_fields = computed(() => {
-            if (!props.workflow.trigger_key) {
+    data() {
+        return {
+            app_ready: false,
+        };
+    },
+    computed: {
+        conditional_fields() {
+            if (!this.workflow.trigger_key) {
                 return [];
             }
 
             const validKeys =
-                props.trigger_fields.triggers[props.workflow.trigger_key]
+                this.trigger_fields.triggers[this.workflow.trigger_key]
                     .supported_conditions;
 
             const validConditions = {};
 
-            each(props.trigger_fields.conditions, (condition, conditionKey) => {
+            each(this.trigger_fields.conditions, (condition, conditionKey) => {
                 if (validKeys.indexOf(conditionKey) !== -1) {
                     if (!validConditions[condition.group]) {
                         validConditions[condition.group] = {
@@ -88,35 +88,35 @@ export default {
             });
 
             return validConditions;
-        });
-
-        const addMore = () => {
-            props.workflow_conditions.push([
+        }
+    },
+    mounted() {
+        this.app_ready = true;
+    },
+    methods: {
+        addMore() {
+            this.workflow_conditions.push([
                 {
                     data_key: "",
                     data_operator: "",
                     data_value: "",
                 },
             ]);
-        };
-
-        const deleteGroup = (condIndex) => {
-            if (props.workflow_conditions.length > 1) {
-                props.workflow_conditions.splice(condIndex, 1);
+        },
+        deleteGroup(condIndex) {
+            if (this.workflow_conditions.length > 1) {
+                this.workflow_conditions.splice(condIndex, 1);
+            } else {
+                this.workflow_conditions.splice(condIndex, 1);
+                this.workflow_conditions.push([
+                    {
+                        data_key: "",
+                        data_operator: "",
+                        data_value: "",
+                    },
+                ]);
             }
-        };
-
-        onMounted(() => {
-            app_ready.value = true;
-        });
-
-        return {
-            app_ready,
-            conditional_fields,
-            addMore,
-            deleteGroup,
-            translate,
-        };
+        },
     },
 };
 </script>

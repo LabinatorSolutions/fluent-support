@@ -23,7 +23,6 @@ export default class FluentFramework {
         this.addAction = addAction;
         this.applyFilters = applyFilters;
         this.removeAllActions = removeAllActions;
-        //
         this.$rest = Rest;
         this.appVars = window.fluentSupportAdmin;
         this.app = this.extendVueConstructor();
@@ -54,9 +53,17 @@ export default class FluentFramework {
                 $handleError: self.handleError,
                 $saveData: self.saveData,
                 $getData: self.getData,
+                $removeData: self.removeData, // From FluentFrameWorkHelper.js
                 $timeDiff: self.humanDiffTime,
                 $waitingTime: self.waitingTime,
                 convertToText: self.convertToText,
+                getCurrencySymbol: self.getCurrencySymbol,
+                smartDate: self.smartDate, // From FluentFrameWorkHelper.js
+                $copyToClipboard: self.copyToClipboard, // From FluentFrameWorkHelper.js
+                $notify: self.notify, // From FluentFrameWorkHelper.js
+                $confirm: self.confirm, // From FluentFrameWorkHelper.js
+                $scrollToRef: self.scrollToRef, // From FluentFrameWorkHelper.js
+                $getSourceIcon: self.getSourceIcon,
                 $setTitle(title) {
                     document.title = title;
                 },
@@ -175,6 +182,20 @@ export default class FluentFramework {
 
     }
 
+    removeData(key) {
+        let existingData = window.localStorage.getItem('__fluentsupport_data');
+
+        if (!existingData) {
+            return [];
+        } else {
+            existingData = JSON.parse(existingData);
+        }
+
+        delete existingData[key];
+
+        window.localStorage.setItem('__fluentsupport_data', JSON.stringify(existingData));
+    }
+
     longLocalDateTime(date) {
         return this.dateTimeFormat(
             date, 'ddd, DD MMM, YYYY hh:mm:ssa'
@@ -182,6 +203,9 @@ export default class FluentFramework {
     }
 
     ucFirst(text) {
+        if (!text || typeof text !== 'string') {
+            return '';
+        }
         return text[0].toUpperCase() + text.slice(1).toLowerCase();
     }
 
@@ -261,5 +285,155 @@ export default class FluentFramework {
         time1 = moment(time1);
         time2 = moment(time2);
         return time2.from(time1);
+    }
+
+    getCurrencySymbol(currencyCode) {
+        const currencySymbols = {
+            'USD': '$',
+            'EUR': '€',
+            'GBP': '£',
+            'JPY': '¥',
+            'CNY': '¥',
+            'KRW': '₩',
+            'INR': '₹',
+            'CAD': 'C$',
+            'AUD': 'A$',
+            'CHF': 'CHF',
+            'SEK': 'kr',
+            'NOK': 'kr',
+            'DKK': 'kr',
+            'PLN': 'zł',
+            'CZK': 'Kč',
+            'HUF': 'Ft',
+            'RUB': '₽',
+            'BRL': 'R$',
+            'MXN': '$',
+            'ZAR': 'R',
+            'SGD': 'S$',
+            'HKD': 'HK$',
+            'NZD': 'NZ$',
+            'THB': '฿',
+            'MYR': 'RM',
+            'PHP': '₱',
+            'IDR': 'Rp',
+            'VND': '₫',
+            'TRY': '₺',
+            'ILS': '₪',
+            'AED': 'د.إ',
+            'SAR': 'ر.س',
+            'EGP': 'ج.م',
+            'NGN': '₦',
+            'KES': 'KSh',
+            'GHS': '₵',
+            'XOF': 'CFA',
+            'XAF': 'FCFA',
+            'MAD': 'د.م.',
+            'TND': 'د.ت',
+            'DZD': 'د.ج',
+            'LYD': 'ل.د',
+            'SDG': 'ج.س.',
+            'ETB': 'Br',
+            'UGX': 'USh',
+            'TZS': 'TSh',
+            'RWF': 'RF',
+            'MWK': 'MK',
+            'ZMW': 'ZK',
+            'BWP': 'P',
+            'SZL': 'L',
+            'LSL': 'L',
+            'NAD': 'N$',
+            'MZN': 'MT',
+            'AOA': 'Kz',
+            'CVE': '$',
+            'GMD': 'D',
+            'GNF': 'FG',
+            'LRD': 'L$',
+            'SLL': 'Le',
+            'STD': 'Db'
+        };
+
+        return currencySymbols[currencyCode] || currencyCode;
+    }
+
+    smartDate(dateString, withTime = false) {
+        if (!dateString) {
+            return "";
+        }
+        let format = "D MMM, YYYY";
+        if (moment(dateString).isSame(new Date(), "year")) {
+            format = "D MMM";
+            if (withTime) {
+                format = "D MMM, hh:mm a";
+            }
+        }
+
+        const dateObj = moment(dateString);
+
+        return dateObj.isValid() ? dateObj.format(format) : null;
+    }
+
+    copyToClipboard(text, successMessage = 'Copied to clipboard!', errorMessage = 'Failed to copy to clipboard') {
+        if (!text) {
+            this.notify({
+                type: 'warning',
+                title: 'Warning',
+                message: 'Nothing to copy',
+                position: 'bottom-right'
+            });
+            return Promise.resolve(false);
+        }
+
+        // Use modern clipboard API
+        if (navigator.clipboard && window.isSecureContext) {
+            return navigator.clipboard.writeText(text).then(() => {
+                this.notify({
+                    type: 'success',
+                    title: 'Success',
+                    message: successMessage,
+                    position: 'bottom-right'
+                });
+                return true;
+            }).catch((err) => {
+                console.error('Failed to copy:', err);
+                this.notify({
+                    type: 'error',
+                    title: 'Error',
+                    message: errorMessage,
+                    position: 'bottom-right'
+                });
+                return false;
+            });
+        } else {
+            // For non-secure contexts, show error message
+            this.notify({
+                type: 'error',
+                title: 'Error',
+                message: 'Copy to clipboard requires HTTPS',
+                position: 'bottom-right'
+            });
+            return Promise.resolve(false);
+        }
+    }
+
+    notify(config) {
+        ElNotification({
+            position: config.position || 'bottom-right',
+            ...config
+        });
+    }
+
+    confirm(config) {
+        return ElMessageBox.confirm(config.message, config.title, config.options);
+    }
+
+    scrollToRef(ref) {
+        if (ref) {
+            ref.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+    getSourceIcon(source) {
+        if (!source) return null;
+        const iconFileName = 'source' + this.ucFirst(source) + '.svg';
+        return window.fluentSupportAdmin.asset_url + 'images/' + iconFileName;
     }
 }

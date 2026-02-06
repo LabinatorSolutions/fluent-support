@@ -2,15 +2,22 @@
     <div class="fs_box_wrapper">
         <div class="fs_box_header">
             <div class="fs_box_head">
-                <h3>{{ translate("Global Settings") }}</h3>
+                <h3>{{ $t("Global Settings") }}</h3>
+                <div class="fs_save_settings_container">
+                    <el-button
+                        size="default"
+                        type="success"
+                        class="fs_save_settings_btn"
+                        @click="saveSettings()"
+                    >{{ $t("Save Settings") }}</el-button>
+                </div>
             </div>
             <div class="fs_box_actions"></div>
         </div>
         <div
-            style="padding: 20px"
             v-if="!fetching"
             v-loading="loading"
-            class="fs_box_body"
+            class="fs_box_body fs_business_settings_wrapper"
         >
             <form-builder
                 v-if="app_ready"
@@ -18,18 +25,9 @@
                 :form-data="settings"
                 label_position="top"
             >
-                <template #form_end>
-                    <el-button
-                        size="default"
-                        type="success"
-                        @click="saveSettings()"
-                    >{{ translate("Save Settings") }}</el-button
-                    >
-                </template>
             </form-builder>
         </div>
         <div
-            style="padding: 20px; background: white"
             class="fs_box_body"
             v-else
         >
@@ -39,105 +37,133 @@
 </template>
 
 <script type="text/babel">
-import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
- import { onMounted, onUnmounted, reactive, toRefs, computed } from "vue";
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
+import FormBuilder from '../../Pieces/FormElements/_FormBuilder';
 export default {
-    name: "BusinessSettings",
+    name: 'BusinessSettings',
     components: {
-        FormBuilder,
+        FormBuilder
     },
-    setup() {
-
-        const {
-            get,
-            post,
-            handleError,
-            setTitle,
-            translate,
-            copyToClipboard
-        } = useFluentHelper();
-
-        const { notify } = useNotify();
-
-        const state = reactive({
+    data() {
+        return {
             settings: {},
             fields: {},
             fetching: false,
             loading: false,
             app_ready: false,
-            settings_key: "global_business_settings",
-        });
+            settings_key: 'global_business_settings'
+        }
+    },
+    computed: {
+        processedFields() {
+            const processed = {};
+            Object.keys(this.fields).forEach(key => {
+                const field = { ...this.fields[key] };
+                field.inline_help = this.makeShortcodesClickable(field.inline_help);
 
-        const makeShortcodesClickable = (helpText) => {
+                if (key === 'portal_page_id' && this.settings.portal_page_id) {
+                    const pageId = this.settings.portal_page_id;
+                    const editUrl = (field.admin_url || '') + 'post.php?post=' + pageId + '&action=edit';
+                    const previewUrl = (field.home_url || '') + '?page_id=' + pageId;
+                    field.inline_help += ' <a href="' + editUrl + '" target="_blank" class="fs_doc_link fs_doc_link_empty_icon">' + this.$t('Edit') + '</a>'
+                        + ' | <a href="' + previewUrl + '" target="_blank" rel="noopener noreferrer" class="fs_doc_link">' + this.$t('Preview') + '</a>';
+                }
+
+                processed[key] = field;
+            });
+            return processed;
+        }
+    },
+    methods: {
+        makeShortcodesClickable(helpText) {
             if (!helpText) return helpText;
-
             return helpText.replace(
                 /<code>(\[.*?\])<\/code>/g,
                 '<code class="fs_clickable_shortcode" data-shortcode="$1">$1</code>'
             );
-        };
-
-        const processedFields = computed(() => {
-            const processed = {};
-            Object.keys(state.fields).forEach(key => {
-                processed[key] = {
-                    ...state.fields[key],
-                    inline_help: makeShortcodesClickable(state.fields[key].inline_help)
-                };
-            });
-            return processed;
-        });
-
-        const fetchSettings = async() => {
-            state.fetching = true;
-            await get("settings", {
-                settings_key: state.settings_key,
-                with: ["fields"],
+        },
+        fetchSettings() {
+            this.fetching = true;
+            this.$get('settings', {
+                settings_key: this.settings_key,
+                with: ['fields']
             })
-                .then((response) => {
-                    state.settings = response.settings;
-                    state.fields = response.fields;
-                    state.app_ready = true;
+                .then(response => {
+                    this.settings = response.settings;
+                    this.fields = response.fields;
+                    this.app_ready = true;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.fetching = false;
+                    this.fetching = false;
                 });
-        };
-
-        const saveSettings = async() => {
-            state.loading = true;
-            await post("settings", {
-                settings_key: state.settings_key,
-                settings: state.settings,
+        },
+        saveSettings() {
+            this.loading = true;
+            this.$post('settings', {
+                settings_key: this.settings_key,
+                settings: this.settings
             })
-                .then((response) => {
-                    notify({
-                        type: "success",
+                .then(response => {
+                    this.$notify({
+                        type: 'success',
                         message: response.message,
-                        position: "bottom-right",
+                        position: 'bottom-right'
                     });
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.loading = false;
+                    this.loading = false;
                 });
-        };
+        },
+        copyShortcode(shortcode) {
+            const successMessage = this.$t('Shortcode copied to clipboard: ') + shortcode;
+            const errorMessage = this.$t('Failed to copy shortcode');
 
-        // Function to copy shortcode using global copyToClipboard helper
-        const copyShortcode = (shortcode) => {
-            const successMessage = translate('Shortcode copied to clipboard: ') + shortcode;
-            const errorMessage = translate('Failed to copy shortcode');
+            // Use copyToClipboard helper which handles notifications properly
+            if (!shortcode) {
+                this.$notify({
+                    type: 'warning',
+                    title: this.$t('Warning'),
+                    message: this.$t('Nothing to copy'),
+                    position: 'bottom-right'
+                });
+                return Promise.resolve(false);
+            }
 
-            return copyToClipboard(shortcode, successMessage, errorMessage);
-        };
-
-        const handleClick = (e) => {
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(shortcode).then(() => {
+                    this.$notify({
+                        type: 'success',
+                        title: this.$t('Success'),
+                        message: successMessage,
+                        position: 'bottom-right'
+                    });
+                    return true;
+                }).catch((err) => {
+                    console.error('Failed to copy:', err);
+                    this.$notify({
+                        type: 'error',
+                        title: this.$t('Error'),
+                        message: errorMessage,
+                        position: 'bottom-right'
+                    });
+                    return false;
+                });
+            } else {
+                this.$notify({
+                    type: 'error',
+                    title: this.$t('Error'),
+                    message: this.$t('Copy to clipboard requires HTTPS'),
+                    position: 'bottom-right'
+                });
+                return Promise.resolve(false);
+            }
+        },
+        handleClick(e) {
             if (
                 e.target.classList.contains("fs_clickable_shortcode") ||
                 e.target.closest(".fs_clickable_shortcode")
@@ -147,34 +173,20 @@ export default {
                     : e.target.closest(".fs_clickable_shortcode");
                 const shortcode = shortcodeElement.getAttribute("data-shortcode");
                 if (shortcode) {
-                    copyShortcode(shortcode);
+                    this.copyShortcode(shortcode);
                 }
             }
-        };
-
-        onMounted(() => {
-            fetchSettings();
-            setTitle("Business Settings");
-
-            document.addEventListener("click", handleClick);
-        });
-
-        onUnmounted(() => {
-            document.removeEventListener("click", handleClick);
-        });
-
-        return {
-            ...toRefs(state),
-            translate,
-            fetchSettings,
-            saveSettings,
-            processedFields,
         }
     },
-};
-</script>
-<style>
-.el-form-item__content {
-    display: block;
+    mounted() {
+        this.fetchSettings();
+        this.$setTitle('Business Settings');
+        document.addEventListener('click', this.handleClick);
+    },
+    beforeDestroy() {
+        document.removeEventListener('click', this.handleClick);
+    }
 }
-</style>
+</script>
+
+

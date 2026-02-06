@@ -1,157 +1,243 @@
 <template>
-    <div class="fs_create_ticket">
+    <div class="fs_create_ticket_form fs_global_form_builder">
+        <!-- Header -->
+        <div class="fs_ticket_header">
+            <div class="fs_ticket_header_text">
+                <h3 class="fs_ticket_title">{{ $t('Create a Ticket') }}</h3>
+                <p class="fs_ticket_subtitle">{{ $t('Enter your query to create a support request.') }}</p>
+            </div>
+            <button class="el-dialog__headerbtn" @click="$emit('close')" type="button">
+                <el-icon class="el-dialog__close"><Close /></el-icon>
+            </button>
+        </div>
+
+        <!-- Body -->
+        <div class="fs_dialog_body">
         <el-form :data="ticket" label-position="top">
 
-            <div class="text-align-center" v-if="step == 'search'">
-                <h3>{{ translate('Search Existing contact or provide email address') }}</h3>
-                <el-input @keypress.enter.native.prevent="searchCustomers()" v-model="search_customer" size="large"
-                          :placeholder="translate('Search or provide email address')">
-                    <template #append>
-                        <el-button :disabled="!search_customer" @click="searchCustomers()">
-                            <el-icon>
-                                <Search/>
-                            </el-icon>
-                        </el-button>
-                    </template>
-                </el-input>
-
-                <div style="text-align: left;"
-                     v-if="search_results && search_results.data && search_results.data.length && ticket.create_customer != 'yes'"
-                     class="fs_customer_selector">
-                    <h3>Please Select a contact [{{ search_results.provider }}]</h3>
-                    <ul class="fs_contact_results">
-                        <li v-for="item in search_results.data" :key="item.id"
-                            @click="customerSelected(item, search_results.provider)">{{ item.email }} -
-                            {{ item.first_name }} {{ item.last_name }}
-                        </li>
-                    </ul>
-                </div>
-
-                <template v-if="searched">
-                    <el-form-item style="margin-top: 20px;">
-                        <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_customer">
-                            {{ translate('Could not find a contact? Create a new one.') }}
-                        </el-checkbox>
+                <!-- Step 1: Search/Create Contact -->
+                <div v-if="step == 'search'" class="fs_step_content">
+                    <el-form-item :label="$t('Search Existing contact or provide email address')">
+                        <el-input
+                            @keypress.enter.native.prevent="searchCustomers()"
+                            v-model="search_customer"
+                            :placeholder="$t('Search or provide email address')">
+                        </el-input>
                     </el-form-item>
 
-                    <div class="fs_tk_create_customer" v-if="ticket.create_customer=='yes'">
-                        <el-row :gutter="30">
-                            <el-col :md="12" :xs="24">
-                                <el-form-item :label="translate('First Name')">
-                                    <el-input :placeholder="translate('First Name')" type="text"
-                                              v-model="new_customer.first_name"></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :md="12" :xs="24">
-                                <el-form-item :label="translate('Last Name')">
-                                    <el-input :placeholder="translate('Last Name')" type="text"
-                                              v-model="new_customer.last_name"></el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-
-                        <el-form-item :label="translate('Email')" :error="validation_errors.email">
-                            <el-input placeholder="Email" type="email" v-model="new_customer.email"></el-input>
-                        </el-form-item>
-
-                        <el-row :gutter="30" v-if="ticket.create_wp_user == 'yes'">
-                            <el-col :md="12" :xs="24">
-                                <el-form-item :label="translate('Username')" :error="validation_errors.username">
-                                    <el-input :placeholder="translate('Username')" type="text"
-                                              v-model="new_customer.username"></el-input>
-                                </el-form-item>
-                            </el-col>
-                            <el-col :md="12" :xs="24">
-                                <el-form-item :label="translate('Password')" :error="validation_errors.password">
-                                    <el-input
-                                        :placeholder="translate('Password (Leave blank for auto generated)')"
-                                        type="password"
-                                        show-password
-                                        v-model="new_customer.password">
-                                    </el-input>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-
-                        <el-form-item>
-                            <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_wp_user">
-                                {{ translate('Create New User in WordPress') }}
-                            </el-checkbox>
-                        </el-form-item>
-
-                        <el-form-item>
-                            <el-button @click="goToTicketStep" type="primary">
-                                {{ translate('Next') }}
-                            </el-button>
-                        </el-form-item>
-
+                    <div v-if="search_results && search_results.data && search_results.data.length && ticket.create_customer != 'yes'"
+                         class="fs_customer_selector">
+                        <h3>{{ $t('Please Select a contact') }} [{{ search_results.provider }}]</h3>
+                        <ul class="fs_contact_results">
+                            <li v-for="item in search_results.data" :key="item.id"
+                                @click="customerSelected(item, search_results.provider)">
+                                {{ item.email }} - {{ item.first_name }} {{ item.last_name }}
+                            </li>
+                        </ul>
                     </div>
-                </template>
+
+                    <template v-if="searched">
+                        <div class="fs_create_contact_link">
+                            <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_customer">
+                                <span class="fs_checkbox_text">
+                                    {{ $t('Could not find a contact?') }}
+                                    <span class="fs_link_text">{{ $t('Create a new one.') }}</span>
+                                </span>
+                            </el-checkbox>
+                        </div>
+
+                        <div class="fs_tk_create_customer" v-if="ticket.create_customer=='yes'">
+                            <el-row :gutter="20">
+                                <el-col :md="12" :xs="24">
+                                    <el-form-item :label="$t('First Name')">
+                                        <el-input :placeholder="$t('First name')" type="text"
+                                                  v-model="new_customer.first_name"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :md="12" :xs="24">
+                                    <el-form-item :label="$t('Last Name')">
+                                        <el-input :placeholder="$t('Last name')" type="text"
+                                                  v-model="new_customer.last_name"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-form-item :label="$t('Email')" :error="validation_errors.email">
+                                <el-input :placeholder="$t('Email')" type="email" v-model="new_customer.email"></el-input>
+                            </el-form-item>
+
+                            <el-row :gutter="20" v-if="ticket.create_wp_user == 'yes'">
+                                <el-col :md="12" :xs="24">
+                                    <el-form-item :label="$t('Username')" :error="validation_errors.username">
+                                        <el-input :placeholder="$t('Username')" type="text"
+                                                  v-model="new_customer.username"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :md="12" :xs="24">
+                                    <el-form-item :label="$t('Password')" :error="validation_errors.password">
+                                        <el-input
+                                            :placeholder="$t('Password (Leave blank for auto generated)')"
+                                            type="password"
+                                            show-password
+                                            v-model="new_customer.password">
+                                        </el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+
+                            <el-form-item>
+                                <el-checkbox true-value="yes" false-value="no" v-model="ticket.create_wp_user">
+                                    {{ $t('Create New User in WordPress') }}
+                                </el-checkbox>
+                            </el-form-item>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Step 2: Ticket Details -->
+                <div v-else-if="step == 'ticket'" class="fs_step_content fs_step_content_ticket_form">
+                    <!-- Contact Details Card -->
+                    <div class="fs_contact_details_card">
+                        <h4 class="fs_card_label">{{ $t('Contact Details') }}</h4>
+                        <div class="fs_contact_info">
+                            <p class="fs_contact_info_item">
+                                <span class="fs_info_label">{{ $t('Name:') }}</span>
+                                {{ new_customer.first_name }} {{ new_customer.last_name }}
+                            </p>
+                            <p class="fs_contact_info_item">
+                                <span class="fs_info_label">{{ $t('Customer Email:') }}</span>
+                                {{ new_customer.email }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <el-form-item v-if="mailboxes && mailboxes.length > 1" :label="$t('Select Business Inbox')">
+                        <el-select
+                            v-model="ticket.mailbox_id"
+                            :placeholder="$t('Select Business Inbox')"
+                            clearable
+                            filterable
+                            popper-class="fs_select_dropdown">
+                            <el-option
+                                v-for="mailbox in mailboxes"
+                                :key="mailbox.id"
+                                :value="mailbox.id"
+                                :label="mailbox.name">
+                            </el-option>
+                        </el-select>
+                        <error :error="errors.get('mailbox_id')"/>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('Subject')">
+                        <el-input
+                            :placeholder="$t('What\'s this support ticket about?')"
+                            type="text"
+                            v-model="ticket.title">
+                        </el-input>
+                        <error :error="errors.get('title')"/>
+                    </el-form-item>
+
+                    <el-form-item :label="$t('Write a Reply')" class="fs_reply_editor">
+                        <wp-editor
+                            :height="150"
+                            :autofocus="true"
+                            :media-buttons="false"
+                            :is_direct_paste="true"
+                            v-model="ticket.content"
+                            v-if="editor_ready"
+                            :show-saved-replies="true"/>
+                        <error :error="errors.get('content')"/>
+                    </el-form-item>
+
+                    <attachment-form :ticket="ticket" :attachments="attachments" :errors="errors"></attachment-form>
+
+                    <el-row :gutter="20">
+                        <el-col v-if="products && products.length" :md="12" :xs="24">
+                            <el-form-item :label="$t('Related Product/Service')">
+                                <el-select
+                                    v-model="ticket.product_id"
+                                    :placeholder="$t('Select related Product/Service')"
+                                    clearable
+                                    filterable
+                                    popper-class="fs_select_dropdown">
+                                    <el-option
+                                        v-for="product in products"
+                                        :key="product.id"
+                                        :value="product.id"
+                                        :label="product.title">
+                                    </el-option>
+                                </el-select>
+                                <error :error="errors.get('product_id')"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :md="12" :xs="24">
+                            <el-form-item :label="$t('Priority (Customer)')">
+                                <el-select
+                                    v-model="ticket.client_priority"
+                                    :placeholder="$t('Normal')"
+                                    clearable
+                                    filterable
+                                    popper-class="fs_select_dropdown">
+                                    <el-option
+                                        v-for="(priority,priorityKey) in priorities"
+                                        :key="priorityKey"
+                                        :value="priorityKey"
+                                        :label="priority">
+                                    </el-option>
+                                </el-select>
+                                <error :error="errors.get('client_priority')"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <custom-field-form :custom_data="ticket.custom_fields" :ticket="ticket" type="create_ticket" v-if="has_pro"/>
+                </div>
+
+            </el-form>
+        </div>
+        <!-- Footer -->
+        <div class="fs_dialog_footer">
+            <!-- Progress Indicator -->
+            <div class="fs_progress_indicator">
+                <div class="fs_progress_bar">
+                    <div class="fs_progress_fill" :style="{ width: step === 'search' ? '50%' : '100%' }"></div>
+                </div>
+                <p class="fs_progress_text">
+                    {{ step === 'search' ? $t('Step 1 of 2') : $t('Step 2 of 2') }}
+                </p>
             </div>
 
-            <template v-else-if="step == 'ticket'">
-
-                <div style="background: #dbdfe5; padding: 10px 10px 5px; margin-bottom: 10px;">
-                    <h3 style="margin: 0px;">{{ translate('Selected Contact Details') }}</h3>
-                    <p>{{ translate('Name:') }} {{ new_customer.first_name }} {{ new_customer.last_name }}</p>
-                    <p>{{ translate('Email:') }} {{ new_customer.email }}</p>
-                </div>
-
-                <el-form-item v-if="mailboxes.length > 1" :label="translate('Select Business Inbox')">
-                    <el-select v-model="ticket.mailbox_id" :placeholder="translate('Select Business Inbox')">
-                        <el-option v-for="mailbox in mailboxes" :key="mailbox.id" :value="mailbox.id"
-                                   :label="mailbox.name"></el-option>
-                    </el-select>
-                    <error :error="errors.get('mailbox_id')"/>
-                </el-form-item>
-
-                <el-form-item :label="translate('Subject')">
-                    <el-input :placeholder="translate('subject_placeholder')" type="text"
-                              v-model="ticket.title"></el-input>
-                    <error :error="errors.get('title')"/>
-                </el-form-item>
-                <el-form-item :label="translate('Ticket Details')">
-                    <wp-editor :height="150" :autofocus="true" :media-buttons="false" :is_direct_paste="true" v-model="ticket.content" v-if="editor_ready"
-                               :show-saved-replies="true"/>
-                    <error :error="errors.get('content')"/>
-                </el-form-item>
-
-                <attachment-form :ticket="ticket" :attachments="attachments" :errors="errors"></attachment-form>
-
-                <el-row :gutter="30">
-                    <el-col v-if="products.length" :md="12" :xs="24">
-                        <el-form-item :label="translate('Related Product/Service')">
-                            <el-select v-model="ticket.product_id"
-                                       :placeholder="translate('Select related Product/Service')">
-                                <el-option v-for="product in products" :key="product.id" :value="product.id"
-                                           :label="product.title"></el-option>
-                            </el-select>
-                            <error :error="errors.get('product_id')"/>
-                        </el-form-item>
-                    </el-col>
-                    <el-col :md="12" :xs="24">
-                        <el-form-item :label="translate('Priority (Customer)')">
-                            <el-select v-model="ticket.client_priority" :placeholder="translate('Select Priority')">
-                                <el-option v-for="(priority,priorityKey) in priorities" :key="priorityKey"
-                                           :value="priorityKey" :label="priority"></el-option>
-                            </el-select>
-                            <error :error="errors.get('client_priority')"/>
-                        </el-form-item>
-                    </el-col>
-                </el-row>
-
-                <custom-field-form :custom_data="ticket.custom_fields" :ticket="ticket" type="create_ticket" v-if="has_pro"/>
-
-                <el-col :span="4">
-                    <el-form-item>
-                        <el-button @click="create()" :disabled="creating" v-loading="creating" type="primary">
-                            {{ translate('Create Ticket') }}
-                        </el-button>
-                    </el-form-item>
-                </el-col>
-            </template>
-
-        </el-form>
+            <!-- Action Buttons -->
+            <div class="fs_dialog_actions">
+                <el-button
+                    v-if="step === 'search'"
+                    @click="$emit('close')"
+                    class="fs_outline_btn">
+                    {{ $t('Cancel') }}
+                </el-button>
+                <el-button
+                    v-if="step === 'ticket'"
+                    @click="step = 'search'"
+                    class="fs_outline_btn">
+                    {{ $t('Back') }}
+                </el-button>
+                <el-button
+                    v-if="step === 'search'"
+                    @click="goToTicketStep()"
+                    :disabled="!canProceedToTicket"
+                    class="fs_filled_btn">
+                    {{ $t('Next') }}
+                </el-button>
+                <el-button
+                    v-if="step === 'ticket'"
+                    @click="create()"
+                    :disabled="creating"
+                    v-loading="creating"
+                    class="fs_filled_btn">
+                    {{ $t('Create Ticket') }}
+                </el-button>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -161,9 +247,6 @@ import RemoteSelector from '../../Pieces/RemoteSelector';
 import Error from '../../../admin/Pieces/Error';
 import Errors from '../../../admin/Bits/Errors';
 import CustomFieldForm from './parts/_CustomFieldForm';
-import {nextTick, reactive, toRefs} from "vue";
-import {useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
-import {useRouter} from 'vue-router'
 import AttachmentForm from "@/admin/Modules/Tickets/_AttachmentForm.vue";
 
 export default {
@@ -173,27 +256,17 @@ export default {
         WpEditor,
         RemoteSelector,
         Error,
-        CustomFieldForm
+        CustomFieldForm,
     },
-
-    setup() {
-        const {
-            translate,
-            handleError,
-            appVars,
-            post,
-            get
-        } = useFluentHelper();
-        const {notify} = useNotify();
-        const router = useRouter()
-
-        const state = reactive({
+    emits: ['close'],
+    data() {
+        return {
             step: 'search',
             creating: false,
             editor_ready: true,
-            products: appVars.support_products,
-            priorities: appVars.client_priorities,
-            mailboxes: appVars.mailboxes,
+            products: [],
+            priorities: {},
+            mailboxes: [],
             errors: new Errors(),
             ticket: {
                 customer_id: '',
@@ -224,129 +297,124 @@ export default {
                 username: '',
                 password: ''
             },
-        });
-
-        const create = () => {
-            state.errors.clear();
-            state.creating = true;
-            post('tickets', {
-                ticket: state.ticket,
-                newCustomer: state.new_customer,
-                attachments: state.attachments
+            has_pro: false
+        };
+    },
+    computed: {
+        canProceedToTicket() {
+            // Can proceed if a customer is selected from search results
+            if (this.new_customer.email && this.ticket.create_customer !== 'yes') {
+                return true;
+            }
+            // Can proceed if creating new customer and email is provided
+            if (this.ticket.create_customer === 'yes' && this.new_customer.email) {
+                return true;
+            }
+            return false;
+        }
+    },
+    created() {
+        this.products = this.appVars.support_products || [];
+        this.priorities = this.appVars.client_priorities || {};
+        this.mailboxes = this.appVars.mailboxes || [];
+        this.has_pro = this.appVars.has_pro || false;
+    },
+    methods: {
+        create() {
+            this.errors.clear();
+            this.creating = true;
+            this.$post('tickets', {
+                ticket: this.ticket,
+                newCustomer: this.new_customer,
+                attachments: this.attachments
             })
                 .then((response) => {
-                    notify({
+                    this.$notify({
                         message: response.message,
                         position: 'bottom-right',
                         type: 'success'
                     });
-                    router.push({name: 'view_ticket', params: {ticket_id: response.ticket.id}});
+                    this.$router.push({name: 'view_ticket', params: {ticket_id: response.ticket.id}});
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.creating = false;
+                    this.creating = false;
                 });
-        };
-
-        const labelMaker = (name, email) => {
+        },
+        labelMaker(name, email) {
             return `${name} - ${email}`;
-        };
-
-        const insertTemplate = (content) => {
-            state.editor_ready = false;
-            state.ticket.content = state.ticket.content + content;
-            nextTick(() => {
-                state.editor_ready = true;
+        },
+        insertTemplate(content) {
+            this.editor_ready = false;
+            this.ticket.content = this.ticket.content + content;
+            this.$nextTick(() => {
+                this.editor_ready = true;
             });
-        };
-
-        const searchCustomers = () => {
-            state.searching = true;
-            state.searched = false;
-            get('tickets/search-contact', {
-                search: state.search_customer
+        },
+        searchCustomers() {
+            this.searching = true;
+            this.searched = false;
+            this.$get('tickets/search-contact', {
+                search: this.search_customer
             })
                 .then(response => {
-                    state.search_results = response;
+                    this.search_results = response;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.searching = false;
-                    state.searched = true;
+                    this.searching = false;
+                    this.searched = true;
                 });
-        };
-
-        const customerSelected = (item, provider) => {
-            state.new_customer = {...item};
-            state.new_customer.provider = provider;
-            state.step = 'ticket';
-        }
-
-        const isValidEmail = (email) => {
+        },
+        customerSelected(item, provider) {
+            this.new_customer = {...item};
+            this.new_customer.provider = provider;
+            this.step = 'ticket';
+        },
+        isValidEmail(email) {
             const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return re.test(email);
-        };
-
-        const resetValidationErrors = () => {
-            state.validation_errors.email = '';
-            state.validation_errors.username = '';
-            state.validation_errors.password = '';
-        };
-
-        const validateEmail = () => {
-            const email = state.new_customer.email;
-            if (!email || !isValidEmail(email)) {
-                state.validation_errors.email = translate('Please provide a valid email address.');
+        },
+        resetValidationErrors() {
+            this.validation_errors.email = '';
+            this.validation_errors.username = '';
+            this.validation_errors.password = '';
+        },
+        validateEmail() {
+            const email = this.new_customer.email;
+            if (!email || !this.isValidEmail(email)) {
+                this.validation_errors.email = this.$t('Please provide a valid email address.');
                 return false;
             }
             return true;
-        };
-
-        const validateWpUser = () => {
-            if (state.ticket.create_wp_user !== 'yes') return true;
+        },
+        validateWpUser() {
+            if (this.ticket.create_wp_user !== 'yes') return true;
 
             let isValid = true;
 
-            if (!state.new_customer.username) {
-                state.validation_errors.username = translate('Username is required for WordPress user.');
-                isValid = false;
-            }
-
-            if (!state.new_customer.password) {
-                state.validation_errors.password = translate('Password is required.');
+            if (!this.new_customer.username) {
+                this.validation_errors.username = this.$t('Username is required for WordPress user.');
                 isValid = false;
             }
 
             return isValid;
-        };
+        },
+        goToTicketStep() {
+            this.resetValidationErrors();
 
-        const goToTicketStep = () => {
-            resetValidationErrors();
-
-            if (state.ticket.create_customer === 'yes') {
-                const isEmailValid = validateEmail();
-                const isWpUserValid = validateWpUser();
+            if (this.ticket.create_customer === 'yes') {
+                const isEmailValid = this.validateEmail();
+                const isWpUserValid = this.validateWpUser();
 
                 if (!isEmailValid || !isWpUserValid) return;
             }
 
-            state.step = 'ticket';
-        };
-
-
-        return {
-            ...toRefs(state),
-            create,
-            labelMaker,
-            insertTemplate,
-            searchCustomers,
-            customerSelected,
-            goToTicketStep,
-            translate,
+            this.step = 'ticket';
         }
     }
 }

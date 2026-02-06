@@ -1,6 +1,6 @@
 <template>
     <el-radio-group class="fc_image_radios" v-model="model">
-        <el-radio v-for="(item,itemIndex) in field.options" :key="itemIndex" :label="item.id">
+        <el-radio v-for="(item,itemIndex) in field.options" :key="itemIndex" :value="item.id">
             <div :style="{backgroundImage: 'url('+item.image+')', width: boxSize + 'px', height: boxSize + 'px'}" :class="(model == item.id) ? 'fc_image_active' : ''" class="fc_image_box">
                 <span>{{ item.label }}</span>
             </div>

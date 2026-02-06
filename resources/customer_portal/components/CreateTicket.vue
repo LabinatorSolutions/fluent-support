@@ -102,7 +102,7 @@
                 <el-form-item :label="$t('priority')" v-if="Object.keys(priorities).length">
                     <el-select
                         v-model="ticket.client_priority"
-                        placeholder="Normal"
+                        :placeholder="$t('Normal')"
                         size="large"
                         :class="{ 'error': errors.get('priority') }"
                     >

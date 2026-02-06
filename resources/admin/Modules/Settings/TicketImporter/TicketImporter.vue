@@ -3,76 +3,175 @@
         <div class="fs_box_wrapper">
             <div class="fs_box_header">
                 <div class="fs_box_head">
-                    <h3>{{ $t('Tickets Migration From Other Plugins') }}</h3>
-                </div>
-                <div class="fs_box_actions">
+                    <h3>{{ $t('Ticket Migration Settings') }}</h3>
                 </div>
             </div>
-            <div>
-                <div style="background: white;" class="fs_box_body" v-if="loading">
-                    <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
-                </div>
-                <el-row style="padding: 25px 25px" v-if="!loading && settings.length" :gutter="20">
-                    <el-col v-for="setting in settings" :span="24">
-                        <div :class="'grid-content fs_'+setting.handler">
-                            <el-card :body-style="{ padding: '4px' }" :header=setting.name style="margin: 10px 0">
-                                <div style="padding: 14px">
-                                    <h4 v-if="setting?.type=='sass'">{{$t('Migrate tickets from')}} <b>{{setting.name}}</b> {{$t('in one click.')}}</h4>
-                                    <h4 v-else>{{$t('This migrator will migrate total')}} <b>{{setting.tickets}}</b> {{$t('tickets with')}} <b>{{setting.replies}}</b> {{$t('replies and')}} <b>{{setting.customers}}</b> {{$t("customers. If you already migrate tickets then it won't migrate existing tickets.")}}</h4>
-                                    <span v-if="setting.last_migrated">{{$t('Last Migration:')}} <b>{{setting.last_migrated}}</b></span>
-                                    <el-progress
-                                        v-if="imporing && currently_importing == setting.handler"
-                                        :text-inside="true"
-                                        :stroke-width="24"
-                                        :percentage="completed"
-                                        status="success"
-                                        style="margin: 5px 0"
-                                    />
-                                    <el-progress v-if="deleting && currently_importing == setting.handler"
-                                                 :percentage="50" status="exception" :indeterminate="true"
-                                                 style="margin: 5px 0"/>
-                                    <hr/>
-                                    <div class="fs_import_buttons">
-                                        <el-button v-if="setting.type=='sass'" type="success"
-                                                   @click="(openSettings=true)&&(currently_importing=setting.handler)" :disabled="imporing">
-                                            {{ $t('Import Tickets') }}
-                                        </el-button>
-                                        <el-button v-else type="success" :disabled="imporing"
-                                                   @click="importTickets(setting.handler)">
-                                            {{ $t('Import Tickets') }}
-                                        </el-button>
+            <div v-if="!loading" class="fs_box_body">
+                <div v-if="settings.length" class="fs_importer_list">
+                    <div v-for="(setting, index) in settings" :key="setting.handler" class="fs_importer_item">
+                        <div class="fs_importer_item_content">
+                            <div class="fs_importer_content">
+                                <h3 class="fs_importer_title">
+                                    {{ setting.name }}
+                                    <span v-if="setting.last_migrated" class="fs_last_migration_inline">
+                                        ({{ $t('Last migration:') }} {{ setting.last_migrated }})
+                                    </span>
+                                </h3>
+                                <p class="fs_importer_description">
+                                    <template v-if="setting?.type=='sass'">
+                                        {{ $t('Migrate tickets from') }} {{ setting.name }} {{ $t('in one click.') }}
+                                    </template>
+                                    <template v-else>
+                                        {{ $t('This migrator will migrate total') }} <strong>{{ setting.tickets }}</strong> {{ $t('tickets with') }} <strong>{{ setting.replies }}</strong> {{ $t('replies and') }} <strong>{{ setting.customers }}</strong> {{ $t("customers. If you already migrate tickets then it won't migrate existing tickets.") }}
+                                    </template>
+                                </p>
+
+
+                            </div>
+
+                            <div class="fs_importer_actions">
+                                <template v-if="imporing && currently_importing == setting.handler">
+                                    <el-button disabled plain>
+                                        {{ $t('Importing...') }}
+                                    </el-button>
+                                </template>
+                                <template v-else-if="deleting && currently_importing == setting.handler">
+                                    <el-button disabled plain>
+                                        {{ $t('Deleting...') }}
+                                    </el-button>
+                                </template>
+                                <template v-else>
+                                    <el-button
+                                        v-if="setting.type=='sass'"
+                                        class="fs_outline_btn"
+                                        @click="(openSettings=true)&&(currently_importing=setting.handler)"
+                                        plain>
+                                        {{ $t('Import Tickets') }}
+                                    </el-button>
+                                    <el-button
+                                        v-else
+                                        class="fs_outline_btn"
+                                        @click="importTickets(setting.handler)"
+                                        plain>
+                                        {{ $t('Import Tickets') }}
+                                    </el-button>
+                                </template>
+                            </div>
+                        </div>
+
+                            <!-- Progress bars -->
+                        <div class="fs_progress_wrap">
+                            <div v-if="imporing && currently_importing == setting.handler" class="fs_progress_container">
+                                <div class="fs_progress_line">
+                                    <div class="fs_progress_text_wrapper">
+                                        <span class="fs_progress_text">{{ $t('Migrating...') }}</span>
+                                        <span class="fs_progress_percentage">{{ completed }}%</span>
                                     </div>
 
-                                    <el-dialog v-if=!had_tickets v-model="import_done" title="Delete Imported Tickets" class="fs_dialog">
-                                        <span> {{$t('Do you want to delete all imported tickets and its data?')}} </span>
-                                        <template #footer>
-                                          <span class="dialog-footer">
-                                            <el-button @click="import_done = false" type="primary">{{$t('No')}}</el-button>
-                                            <el-button type="danger" @click="deleteOldTicketsWithData(currently_importing)">
-                                                {{$t('Yes')}}
-                                            </el-button>
-                                          </span>
-                                        </template>
-                                    </el-dialog>
-
+                                    <div class="fs_progress_bar_wrapper">
+                                        <el-progress
+                                            :text-inside="false"
+                                            :stroke-width="8"
+                                            :percentage="completed"
+                                            :show-text="false"
+                                        />
+                                    </div>
                                 </div>
-                            </el-card>
-                        </div>
-                    </el-col>
-                </el-row>
+                            </div>
 
-                <div class="fs_importer_modal">
-                    <help-scout-importer v-if="currently_importing=='helpscout'" :show="openSettings" :settings="config" :previously_imported="previous_migration_data.helpscout.previously_imported" @restart_previous_migration="restartTicketMigration('helpscout')" @import="importTickets(currently_importing)" @close="openSettings=false"/>
-                    <fresh-desk-importer v-if="currently_importing=='freshdesk'" :show="openSettings" :settings="config" :previously_imported="previous_migration_data.freshdesk.previously_imported" @restart_previous_migration="restartTicketMigration('freshdesk')" @import="importTickets(currently_importing)" @close="openSettings=false"/>
-                    <zendesk-importer v-if="currently_importing=='zendesk'" :show="openSettings" :settings="config" @import="importTickets(currently_importing)" @close="openSettings=false"/>
+                            <div v-if="deleting && currently_importing == setting.handler"  class="fs_progress_container">
+                                <div class="fs_progress_line">
+                                    <span class="fs_progress_text">{{ $t('Deleting...') }}</span>
+                                    <div class="fs_progress_bar_wrapper">
+                                        <el-progress
+                                            :stroke-width="8"
+                                            :percentage="50"
+                                            status="exception"
+                                            :indeterminate="true"
+                                            :show-text="false"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Separator line (except for last item) -->
+                        <hr v-if="index < settings.length - 1" class="fs_divider">
+                    </div>
                 </div>
 
-                <div class="fs_box_body" v-if="!loading && !settings.length">
-                    <h2>{{$t('Import from other Support Tickets Plugins')}}</h2>
-                    <p>{{$t('If you want to migrate tickets from other ticketing system like')}} <b>{{$t('Awesome Support')}}</b> {{$t('or')}} <b>{{$t('Support Candy')}}</b> {{$t('WordPress plugin then you can migrate from this section.')}}</p>
-                    <p>{{$t('Currently no migration is available for this site')}}</p>
+                <div v-else class="fs_no_importers">
+                    <h2>{{ $t('Import from other Support Tickets Plugins') }}</h2>
+                    <p>{{ $t('If you want to migrate tickets from other ticketing system like') }} <strong>{{ $t('Awesome Support') }}</strong> {{ $t('or') }} <strong>{{ $t('Support Candy') }}</strong> {{ $t('WordPress plugin then you can migrate from this section.') }}</p>
+                    <p>{{ $t('Currently no migration is available for this site') }}</p>
                 </div>
             </div>
+
+            <div class="fs_box_body" v-else>
+                <el-skeleton class="fs_skeleton" :rows="5" animated/>
+            </div>
+
+            <!-- Delete confirmation dialog -->
+            <el-dialog v-if="!had_tickets" v-model="import_done" :title="$t('Delete Imported Tickets')" class="fs_dialog">
+                <span>{{ $t('Do you want to delete all imported tickets and its data?') }}</span>
+                <template #footer>
+                    <span class="dialog-footer">
+                        <el-button @click="import_done = false" type="primary">{{ $t('No') }}</el-button>
+                        <el-button type="danger" @click="deleteOldTicketsWithData(currently_importing)">
+                            {{ $t('Yes') }}
+                        </el-button>
+                    </span>
+                </template>
+            </el-dialog>
+
+            <!-- Importer configuration modals -->
+            <el-dialog
+                v-if="currently_importing=='helpscout'"
+                v-model="openSettings"
+                :title="$t('Configure Help Scout Import')"
+                width="60%"
+                class="fs_dialog"
+            >
+                <help-scout-importer
+                    :show="openSettings"
+                    :settings="config"
+                    :previously_imported="previous_migration_data.helpscout?.previously_imported"
+                    @restart_previous_migration="restartTicketMigration('helpscout')"
+                    @import="importTickets(currently_importing)"
+                    @close="openSettings=false"
+                />
+            </el-dialog>
+
+            <el-dialog
+                v-if="currently_importing=='freshdesk'"
+                v-model="openSettings"
+                :title="$t('Configure FreshDesk Import')"
+                width="60%"
+                class="fs_dialog"
+            >
+                <fresh-desk-importer
+                    :show="openSettings"
+                    :settings="config"
+                    :previously_imported="previous_migration_data.freshdesk?.previously_imported"
+                    @restart_previous_migration="restartTicketMigration('freshdesk')"
+                    @import="importTickets(currently_importing)"
+                    @close="openSettings=false"
+                />
+            </el-dialog>
+
+            <el-dialog
+                v-if="currently_importing=='zendesk'"
+                v-model="openSettings"
+                :title="$t('Configure Zendesk Import')"
+                width="60%"
+                class="fs_dialog"
+            >
+                <zendesk-importer
+                    :show="openSettings"
+                    :settings="config"
+                    @import="importTickets(currently_importing)"
+                    @close="openSettings=false"
+                />
+            </el-dialog>
         </div>
     </div>
 </template>
@@ -111,6 +210,10 @@ export default {
     },
 
     methods: {
+        getImporterIcon(handler) {
+            // Use the existing importer icon for all importers
+            return this.appVars.asset_url + '/images/importer.svg';
+        },
         fetchSettings() {
             this.loading = true;
             this.$get('ticket_importer').then((response) => {
@@ -119,7 +222,6 @@ export default {
                     const handler = setting.handler;
                     this.previous_migration_data[handler] = setting;
                 });
-
             })
                 .catch((e) => {
                     this.$handleError(e);
@@ -162,6 +264,16 @@ export default {
 
             this.$post('ticket_importer/import', query)
                 .then(response => {
+                    if(response.error){
+                        this.$notify({
+                            type: 'error',
+                            message: response.message,
+                            position: 'bottom-right'
+                        })
+                        this.imporing = false;
+                        return;
+                    }
+
                     if (response.has_more) {
                         this.import_page = response.next_page;
                         this.total_tickets = response.total_tickets;
@@ -170,7 +282,8 @@ export default {
                             this.importTickets(handler);
                         });
                     } else {
-                        this.$notify.success({
+                        this.$notify({
+                            type: 'success',
                             message: response.message,
                             position: 'bottom-right'
                         })
@@ -210,7 +323,8 @@ export default {
                             this.deleteOldTicketsWithData(handler);
                         });
                     } else {
-                        this.$notify.success({
+                        this.$notify({
+                            type: 'success',
                             message: response.message,
                             position: 'bottom-right'
                         })
@@ -232,10 +346,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fs_no_active_support_system {
-    padding: 20px;
-}
-.fs_import_buttons {
-    margin-top: 15px;
-}
+
 </style>

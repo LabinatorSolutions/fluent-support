@@ -2,8 +2,8 @@
     <div v-if="app_ready" class="fs_fluent_boards" >
         <div class="fs_fbs_select_container">
             <div class="fs_fbs_select_wrapper">
-                <label for="select-board" class="fs_fbs_select_label">{{ translate("Select Board") }}</label>
-                <el-select id="select-board" @change="fetchStages" v-model="boardId">
+                <label for="select-board" class="fs_fbs_select_label fs_field_label">{{ $t("Select Board") }}</label>
+                <el-select class="fs_select_field" id="select-board" @change="fetchStages" v-model="boardId">
                     <el-option
                         v-for="board in fluentBoardsData"
                         :key="board.id"
@@ -12,8 +12,8 @@
                 </el-select>
             </div>
             <div class="fs_fbs_select_wrapper">
-                <label for="select-task" class="fs_fbs_select_label">{{ translate("Select Stage") }}</label>
-                <el-select id="select-task"  v-model="stageId" :disabled="!boardId">
+                <label for="select-task" class="fs_fbs_select_label fs_field_label">{{ $t("Select Stage") }}</label>
+                <el-select class="fs_select_field" id="select-task"  v-model="stageId" :disabled="!boardId">
                     <el-option
                         v-for="stage in  fluentBoardStages"
                         :key="stage.id"
@@ -26,46 +26,47 @@
         <div>
             <div class="fs_fbs_date_range">
                 <div class="fs_start_date_picker">
-                    <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Start date ") }}</label>
+                    <label for="ticket-content" class="fs_fbs_input_label fs_field_label">{{ $t("Start date ") }}</label>
                     <el-date-picker
                         v-model="startDate"
-                        class="fs_date_picker"
+                        class="fs_date_picker fs_text_input"
                         type="date"
-                        placeholder="Pick a day"
+                        :placeholder="$t('Pick a day')"
                         value-format="YYYY-MM-DD"
                     />
                 </div>
                 <div class="fs_end_date_picker">
-                    <label for="ticket-content" class="fs_fbs_input_label">{{ translate("End date ") }}</label>
+                    <label for="ticket-content" class="fs_fbs_input_label fs_field_label">{{ $t("End date ") }}</label>
                     <el-date-picker
                         v-model="endDate"
                         type="date"
-                        class="fs_date_picker"
-                        placeholder="Pick a day"
+                        class="fs_date_picker fs_text_input"
+                        :placeholder="$t('Pick a day')"
                         value-format="YYYY-MM-DD"
                     />
                 </div>
             </div>
 
             <div class="fs_fbs_input_container">
-                <label for="ticket-title" class="fs_fbs_input_label">{{ translate("Task Title") }}</label>
-                <el-input id="ticket-title" v-model="task.title" />
+                <label for="ticket-title" class="fs_fbs_input_label fs_field_label">{{ $t("Task Title") }}</label>
+                <el-input class="fs_text_input" id="ticket-title" v-model="task.title" />
             </div>
 
             <div class="fs_fbs_input_container">
-                <label for="ticket-content" class="fs_fbs_input_label">{{ translate("Task Description") }}</label>
+                <label for="ticket-content" class="fs_fbs_input_label fs_field_label">{{ $t("Task Description") }}</label>
                 <wp-editor id="ticket-content" v-model="task.content" />
             </div>
 
 
             <div class="fs_fbs_button_container">
-                <el-button :disabled="!isAddButtonEnabled" @click="createTask" type="success">
-                    {{ translate('Create Task') }}
-                </el-button>
+                <div class="fs_text_right">
+                    <el-button class="fs_filled_btn" :disabled="!isAddButtonEnabled" @click="createTask" type="success">
+                        {{ $t('Create Task') }}
+                    </el-button>
+                </div>
+                </div>
             </div>
-            </div>
-
-    </div>
+        </div>
     <div v-else>
         <el-skeleton :rows="5" animated/>
     </div>
@@ -73,8 +74,6 @@
 
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
-import {onMounted, reactive, toRefs, computed} from "vue";
-import {useConfirm, useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: 'FluentBoardsIntegration',
@@ -91,21 +90,8 @@ export default {
     components: {
         WpEditor
     },
-    setup({ ticket, fluentcrm_profile }, context) {
-        const emit = context.emit;
-        const { notify } = useNotify();
-        const { confirm } = useConfirm();
-        const {
-            appVars,
-            get,
-            post,
-            put,
-            translate,
-            handleError,
-            has_pro,
-        } = useFluentHelper();
-
-        const state = reactive({
+    data() {
+        return {
             loading: false,
             fluentBoardsData: [],
             fluentBoardStages: [],
@@ -113,87 +99,66 @@ export default {
             stageId: null,
             app_ready: false,
             startDate: '',
-            endDate:''
-        });
-
-        const task = reactive({ ...ticket });
-
-        const isAddButtonEnabled = computed(() => {
-            return task.title !== '' && state.stageId !== null;
-        });
-
-        const fetchBoards = () => {
-            get('tickets/fluent-boards/boards')
+            endDate: '',
+            task: { ...this.ticket },
+            has_pro: null
+        };
+    },
+    computed: {
+        isAddButtonEnabled() {
+            return this.task.title !== '' && this.stageId !== null;
+        }
+    },
+    mounted() {
+        this.fetchBoards();
+    },
+    methods: {
+        fetchBoards() {
+            this.$get('tickets/fluent-boards/boards')
                 .then(response => {
-                    state.fluentBoardsData = response.boards;
-                    state.app_ready = true;
+                    this.fluentBoardsData = response.boards;
+                    this.app_ready = true;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 });
-        };
-
-        const fetchStages = () => {
-            get('tickets/fluent-boards/stages/' + state.boardId)
+        },
+        fetchStages() {
+            this.$get('tickets/fluent-boards/stages/' + this.boardId)
                 .then(response => {
-                    state.fluentBoardStages = response.stages;
+                    this.fluentBoardStages = response.stages;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 });
-        };
-
-        const createTask = () => {
-            post('tickets/fluent-boards/stages', {
-                source_id: task.id,
-                title: task.title,
-                description: task.content,
-                board_id: state.boardId,
-                stage_id: state.stageId,
-                started_at: state.startDate,
-                due_at: state.endDate,
+        },
+        createTask() {
+            this.$post('tickets/fluent-boards/stages', {
+                source_id: this.task.id,
+                title: this.task.title,
+                description: this.task.content,
+                board_id: this.boardId,
+                stage_id: this.stageId,
+                started_at: this.startDate,
+                due_at: this.endDate,
                 source: 'FluentSupport',
-                crm_contact_id: fluentcrm_profile.id || null
+                crm_contact_id: this.fluentcrm_profile.id || null
             })
                 .then(response => {
-                    notify({
+                    this.$notify({
                         message: response.message,
                         type: "success",
                         position: "bottom-right",
                     });
-                    emit('created');
+                    this.$emit('created');
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.loading = false;
+                    this.loading = false;
                 });
-        };
-
-        onMounted(() => {
-            fetchBoards();
-        });
-
-        return {
-            ...toRefs(state),
-            task,
-            fetchBoards,
-            fetchStages,
-            createTask,
-            appVars,
-            isAddButtonEnabled,
-            get,
-            post,
-            put,
-            translate,
-            handleError,
-            has_pro,
-            emit,
-        };
+        }
     }
 }
 </script>
-
-<style lang="scss">
-</style>

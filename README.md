@@ -26,4 +26,4 @@ You can include or exclude your files in `phpunit.xml.dist` file.
 
 
 ### Build for release
-`sh ./build.sh --node-build --with-pro`
+`sh build.sh --node-build --rtl_css --with_pro`

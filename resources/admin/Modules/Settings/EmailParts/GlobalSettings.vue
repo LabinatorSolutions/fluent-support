@@ -7,7 +7,7 @@
             <div class="fs_box_actions">
             </div>
         </div>
-        <div style="padding: 20px" class="fs_box_body">
+        <div style="padding: 20px" class="fs_box_body fs_business_settings_wrapper">
             <form-builder v-if="app_ready" :fields="fields" :form-data="settings" label_position="top" />
             <el-button size="default" type="success" @click="saveSettings()">{{$t('Save Settings')}}</el-button>
         </div>

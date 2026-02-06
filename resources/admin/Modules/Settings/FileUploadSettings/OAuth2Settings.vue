@@ -1,19 +1,44 @@
 <template>
-    <el-skeleton v-if="loading" :animated="true" :rows="4"></el-skeleton>
-    <div v-if="settings">
-        <div v-if="fieldsConfig.description" v-html="fieldsConfig.description"></div>
-        <form-builder :fields="fieldsConfig.fields" :formData="settings"/>
-        <div class="fs_form_buttons">
-            <el-button v-if="settings.status != 'yes'" type="primary" @click="saveSettings" :loading="saving">
-                {{ fieldsConfig.button_text }}
-            </el-button>
-            <el-button v-else type="primary" @click="reconnect()" :loading="saving">Reconnect</el-button>
-            <el-button v-if="settings.status == 'yes'" @click="disconnect()" style="float: right;" text type="danger" plain>Disconnect
-            </el-button>
+    <div class="fs_storage_oauth_settings">
+        <el-skeleton v-if="loading" :animated="true" :rows="4"></el-skeleton>
+        <div v-else-if="settings">
+            <el-form label-position="top" :data="settings">
+                <div v-if="fieldsConfig.description" class="fs_storage_oauth_description" v-html="fieldsConfig.description"></div>
+                <form-builder :fields="fieldsConfig.fields" :formData="settings"/>
+            </el-form>
+
+            <div class="fs_storage_oauth_footer">
+                <div class="fs_storage_oauth_actions">
+                    <el-button
+                        v-if="settings.status != 'yes'"
+                        class="fs_filled_btn"
+                        @click="saveSettings"
+                        :loading="saving"
+                    >
+                        {{ fieldsConfig.button_text }}
+                    </el-button>
+                    <el-button
+                        v-else
+                        class="fs_filled_btn"
+                        @click="reconnect()"
+                        :loading="saving"
+                    >
+                        {{ $t('Reconnect') }}
+                    </el-button>
+                    <el-button
+                        v-if="settings.status == 'yes'"
+                        @click="disconnect()"
+                        class="fs_outline_btn fs_danger_btn"
+                        plain
+                    >
+                        {{ $t('Disconnect') }}
+                    </el-button>
+                </div>
+            </div>
         </div>
-    </div>
-    <div v-else>
-        <p>Sorry, settings could not be loaded</p>
+        <div v-else class="fs_storage_oauth_error">
+            <p>{{ $t('Sorry, settings could not be loaded') }}</p>
+        </div>
     </div>
 </template>
 
@@ -30,7 +55,9 @@ export default {
     data() {
         return {
             settings: {},
-            fieldsConfig: {},
+            fieldsConfig: {
+                fields: {}
+            },
             loading: false,
             saving: false
         }
@@ -59,7 +86,11 @@ export default {
                 settings: this.settings
             })
                 .then(response => {
-                    this.$notify.success(response.message);
+                    this.$notify({
+                        type: 'success',
+                        message: response.message,
+                        position: 'bottom-right'
+                    });
                     if (response.redirect) {
                         window.location.href = response.redirect;
                         return;

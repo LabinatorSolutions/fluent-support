@@ -5,83 +5,74 @@
                 <h3>{{$t('Integration Statuses')}}</h3>
             </div>
         </div>
-        <div v-if="!loading" class="fs_box_body">
-            <div class="fs_integration_logs_cards">
-                <div v-for="(item, index) in connections" class="fs_integration_logs_card fs_integration_logs_log">
-                    <div class="fs_integration_logs_card_left">
-                        <div class="fs_integrations_logs_logo">
-                            <img :src="item.logo"/>
-                        </div>
-                        <div class="fs_integration_logs_card_title">
-                            <div class="fs_integration_logs_title_inside">
-                                <h3>{{ item.title }}</h3>
-                                <el-tag v-if="item.is_integrated" class="fs_integration_logs_status" type="success" effect="plain">{{$t('Connected')}}</el-tag>
+        <div v-if="!loading" class="fs_box_body fs_storage_integration_wrapper">
+            <div class="fs_storage_integration_cards">
+                <div v-for="(item, index) in connections" :key="index" class="fs_storage_integration_card">
+                    <div class="fs_storage_card_content">
+                        <div class="fs_storage_card_left">
+                            <div class="fs_storage_icon_wrapper">
+                                <img :src="item.logo" :alt="item.title" class="fs_storage_icon"/>
                             </div>
-                            <p v-html="item.description"></p>
+                            <div class="fs_storage_card_info">
+                                <div class="fs_storage_card_header">
+                                    <h3 class="fs_storage_card_title">{{ item.title }}</h3>
+                                    <span v-if="item.is_integrated" class="fs_status_badge active">
+                                        {{$t('Connected')}}
+                                    </span>
+                                </div>
+                                <p class="fs_storage_card_description" v-html="item.description"></p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="fs_integration_logs_card_right">
-                        <el-button @click="redirectToDocs(item.doc_url)">
-                            Learn More
-                        </el-button>
+                        <div class="fs_storage_card_right">
+                            <div class="fs_storage_card_actions">
+                                <el-button
+                                    @click="redirectToDocs(item.doc_url)"
+                                    class="fs_outline_btn"
+                                >
+                                    Learn More
+                                </el-button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <el-skeleton v-else :animated="true" :rows="3" />
+        <div v-else class="fs_box_body">
+            <el-skeleton :animated="true" :rows="3" />
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
-import FormBuilder from "../../Pieces/FormElements/_FormBuilder";
-import { onMounted, reactive, toRefs } from "vue";
-import {
-    useFluentHelper,
-} from "@/admin/Composable/FluentFrameworkHelper";
-
 export default {
     name: 'IntegrationStatuses',
-    components: {
-        FormBuilder,
-    },
-    setup() {
-        const { get, handleError, translate } =
-            useFluentHelper();
-
-        const state = reactive({
+    data() {
+        return {
             connections: {},
-            fetching: false,
-            settings_key: "ticket_form_settings",
-        });
-
-        const fetchSettings = () => {
-            state.fetching = true;
-            get("settings/integration-statuses")
-                .then((response) => {
-                    state.connections = response.connections;
+            loading: false,
+        }
+    },
+    methods: {
+        fetchSettings() {
+            this.loading = true;
+            this.$get('settings/integration-statuses')
+                .then(response => {
+                    this.connections = response.connections;
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.fetching = false;
+                    this.loading = false;
                 });
-        };
-
-        const redirectToDocs = (links) => {
+        },
+        redirectToDocs(links) {
             window.open(links);
         }
-
-        onMounted(() => {
-            fetchSettings();
-        });
-
-        return {
-            ...toRefs(state),
-            translate,
-            fetchSettings,
-            redirectToDocs
-        };
     },
-};
+    mounted() {
+        this.fetchSettings();
+        this.$setTitle('Integration Statuses');
+    }
+}
 </script>

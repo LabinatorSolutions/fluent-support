@@ -1,139 +1,366 @@
 <template>
-    <div class="dashboard fs_box_wrapper">
-        <div class="fs_box fs_dashboard_box">
-            <div v-if="step == 'mailbox'" class="fs_box_header" style="padding: 20px 15px;font-size: 16px;">
-                {{ $t('Good') }} {{ greetingTime }} {{ me.first_name }},
-                {{ $t('Please setup your support portal first') }}
+    <div class="fs_setup">
+        <div class="fs_box_wrapper">
+            <div class="fs_component_header" v-if="step == 'mailbox'" style="display: none;">
+                <div class="fs_component_head">
+                    <h3 class="fs_page_title">
+                        {{ $t('Good') }} {{ greetingTime }} {{ me.first_name }},
+                        {{ $t('Please setup your support portal first') }}
+                    </h3>
+                </div>
             </div>
-            <div class="fs_box_body fs_setup fs_padded_20">
+            <div class="fs_card fs_table_container">
+                <div class="fs_table_wrapper">
                 <template v-if="step == 'mailbox'">
-                    <h3>{{ $t('Your Business Details') }}</h3>
-                    <el-form :data="mailbox" label-position="top">
-                        <el-form-item :label="$t('Business Name')">
-                            <el-input :placeholder="$t('eg: Awesome Business Inc')" type="text"
-                                      v-model="mailbox.name"></el-input>
-                        </el-form-item>
-                        <el-form-item :label="$t('Business Email')">
-                            <el-input :placeholder="$t('From Email Address')" type="email"
-                                      v-model="mailbox.email"></el-input>
-                            <p>{{ $t('email_can_be_send') }}</p>
-                        </el-form-item>
-                        <el-form-item :label="$t('Support Portal Page (For Customers)')">
-                            <el-select :disabled="global_settings.create_portal_page == 'yes'" clearable
-                                       v-loading="loading_pages" filterable placeholder="Select a Page"
-                                       v-model="global_settings.portal_page_id">
-                                <el-option
-                                    v-for="item in pages"
-                                    :key="item.id"
-                                    :label="item.title"
-                                    :value="item.id">
-                                    <span style="float: left">{{ item.title }}</span>
-                                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.id }}</span>
-                                </el-option>
-                            </el-select>
-                            <p>{{ $t('Use shortcode') }} <code>[fluent_support_portal]</code>
-                                {{ $t('in the selected page') }}.</p>
-                            <el-checkbox v-if="!global_settings.portal_page_id" true-label="yes" false-label="no"
-                                         v-model="global_settings.create_portal_page">
-                                {{ $t('shortcode_auto_page_creation') }}
-                            </el-checkbox>
-                        </el-form-item>
-                        <el-form-item style="text-align: right">
-                            <el-button v-loading="saving" :disabled="saving" type="success" @click="completeSetup()">
-                                {{ $t('Continue') }}
-                            </el-button>
-                        </el-form-item>
-                    </el-form>
+                    <!-- Header Section with Logo and Progress -->
+                    <div class="fs_setup_header">
+                        <div class="fs_header_content">
+                        <div class="fs_logo_section">
+                            <span class="fs_brand_logo">
+                                <img :src="appVars.asset_url + 'images/dashboard_onboarding_logo.png'" />
+                            </span>
+                        </div>
+                            <div class="fs_step_indicator">
+                                <span>{{ $t('Step 1 of 2') }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar -->
+                        <div class="fs_progress_container">
+                            <div class="fs_progress_track"></div>
+                            <div class="fs_progress_fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="fs_setup_content">
+                        <!-- Welcome Section -->
+                        <div class="fs_welcome_section">
+                            <h1 class="fs_welcome_title">{{ $t('Welcome aboard!') }}👋🏻</h1>
+                            <p class="fs_welcome_subtitle">{{ $t('Please setup your support portal first') }}</p>
+                        </div>
+
+                        <!-- Form Section -->
+                        <div class="fs_form_section">
+                            <el-form :data="mailbox" label-position="top">
+                                <el-form-item :label="$t('Business name')" class="fs_form_item">
+                                    <el-input
+                                        :placeholder="$t('eg: Awesome Business Inc')"
+                                        type="text"
+                                        v-model="mailbox.name"
+                                        class="fs_text_input">
+                                    </el-input>
+                                </el-form-item>
+
+                                <el-form-item :label="$t('Business Email')" class="fs_form_item">
+                                    <el-input
+                                        :placeholder="$t('From Email Address')"
+                                        type="email"
+                                        v-model="mailbox.email"
+                                        class="fs_text_input">
+                                    </el-input>
+                                </el-form-item>
+
+                                <el-form-item :label="$t('Support Portal Page (For Customers)')" class="fs_form_item">
+                                    <el-select
+                                        :disabled="global_settings.create_portal_page == 'yes'"
+                                        clearable
+                                        v-loading="loading_pages"
+                                        filterable
+                                        :placeholder="$t('Select a Page')"
+                                        v-model="global_settings.portal_page_id"
+                                        class="fs_select_field">
+                                        <el-option
+                                            v-for="item in pages"
+                                            :key="item.id"
+                                            :label="item.title"
+                                            :value="item.id">
+                                            <span style="float: left">{{ item.title }}</span>
+                                            <span style="float: right; color: #8492a6; font-size: 13px">{{ item.id }}</span>
+                                        </el-option>
+                                    </el-select>
+
+                                    <!-- Shortcode Information -->
+                                    <div class="fs_shortcode_info">
+                                        <span class="fs_shortcode_text">{{ $t('Use Shortcode') }}</span>
+                                        <code class="fs_shortcode_badge">[Fluent_support_portal]</code>
+                                        <span class="fs_shortcode_text">in the selected page</span>
+                                    </div>
+                                </el-form-item>
+
+                                <!-- Checkbox for auto page creation -->
+                                <div>
+                                    <el-checkbox
+                                        v-if="!global_settings.portal_page_id"
+                                        true-label="yes"
+                                        false-label="no"
+                                        v-model="global_settings.create_portal_page"
+                                        class="fs_auto_page_checkbox">
+                                        {{ $t('Create a page automatically with the shortcode') }}
+                                    </el-checkbox>
+                                </div>
+
+
+                            </el-form>
+                        </div>
+                    </div>
                 </template>
                 <template v-else-if="step == 'maintenance'">
-                    <h3>{{$t('Almost Done')}}</h3>
+                    <!-- Header Section with Logo and Progress -->
+                    <div class="fs_setup_header">
+                        <div class="fs_header_content">
+                            <div class="fs_logo_section">
+                                <span class="fs_brand_logo">
+                                    <img :src="appVars.asset_url + 'images/dashboard_onboarding_logo.png'" />
+                                </span>
+                            </div>
+                            <div class="fs_step_indicator">
+                                <span>{{ $t('Step 2 of 2') }}</span>
+                            </div>
+                        </div>
 
-                    <p v-if="!has_fluentform">
-                        {{$t('Thank you again for configuring your own Support System in WordPress. You may install companion Form Plugin to create tickets from contact forms.')}}<br/>
-                        {{$t('Fluent Forms is fast and very light-weight and works perfectly with Fluent Support Plugin')}}
-                    </p>
-
-                    <p v-else>
-                        {{ $t('Thank you again for configuring your own Support System in WordPress.') }}<br/>
-                        {{
-                            $t('You can subscribe to our bi-monthly newsletter where we will email you all about Fluent Support Plugin.')
-                        }}
-                    </p>
-
-                    <div v-if="!has_fluentform" class="suggest_box">
-                        <p style="margin-bottom: 10px;"><b>Install Fluent Forms</b></p>
-
-                        <el-checkbox true-label="yes" false-label="no" v-model="install_fluentforms">
-                            Install Fluent Forms Plugin for custom Ticket Forms.
-                        </el-checkbox>
+                        <!-- Progress Bar - Full -->
+                        <div class="fs_progress_container">
+                            <div class="fs_progress_track"></div>
+                            <div class="fs_progress_fill fs_progress_complete"></div>
+                        </div>
                     </div>
 
-                    <div class="suggest_box share_essential">
-                        <p style="margin-bottom: 10px;"><b>Help us to make Fluent Support better</b></p>
-                        <el-checkbox true-label="yes" false-label="no" v-model="share_essentials">
-                            {{ $t('Share Essentials') }}
-                        </el-checkbox>
-                        <p style="margin-top: 10px;">
-                            {{ $t('Allow Fluent Support to collect non-sensitive diagnostic data and usage information.') }}
-                            <span style="text-decoration: underline;"
-                                  @click="show_essential = !show_essential">{{ $t('what we collect') }}</span></p>
-                        <p v-if="show_essential">
-                            Server environment details (php, mysql, server, WordPress versions), Site language, Number
-                            of active plugins, Site name and url, Your name and email address. No sensitive data is
-                            tracked.
-                        </p>
+                    <!-- Main Content -->
+                    <div class="fs_setup_content">
+                        <!-- Welcome Section -->
+                        <div class="fs_welcome_section">
+                            <h1 class="fs_welcome_title">{{ $t("You're Almost There!") }}👏🏻</h1>
+                            <p class="fs_welcome_subtitle">{{ $t('Please setup your support portal first') }}</p>
+                        </div>
+
+                        <!-- Form Section -->
+                        <div class="fs_form_section fs_maintenance_form">
+                            <!-- Newsletter Section -->
+                            <div class="fs_newsletter_section">
+                                <div class="fs_section_header">
+                                    <h3 class="fs_section_title">{{ $t('Subscribe to our Bi-Monthly newsletter') }}</h3>
+                                    <p class="fs_section_subtitle">{{ $t('We will send tips and advanced usage of FluentSupport (monthly)') }}</p>
+                                </div>
+
+                                <div class="fs_input_group">
+                                    <el-input
+                                        :placeholder="$t('Email address for bi-monthly newsletter')"
+                                        type="email"
+                                        v-model="email_address"
+                                        class="fs_text_input">
+                                    </el-input>
+                                </div>
+                            </div>
+
+                            <!-- Share Essentials Section -->
+                            <div class="fs_essentials_section">
+                                <div class="fs_section_header">
+                                    <h3 class="fs_section_title">{{ $t('Help us to make FluentSupport better') }}</h3>
+                                    <p class="fs_section_subtitle">
+                                        {{ $t('Allow Fluent Support to collect non-sensitive data and usage information.') }}
+                                        <span
+                                            class="fs_link_text"
+                                            @click="show_essential = !show_essential">
+                                            {{ $t('What we collect') }}
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div class="fs_checkbox_group">
+                                    <el-checkbox
+                                        true-label="yes"
+                                        false-label="no"
+                                        v-model="share_essentials"
+                                        class="fs_share_checkbox">
+                                        {{ $t('Share Essentials') }}
+                                    </el-checkbox>
+                                </div>
+
+                                <!-- Expandable details -->
+                                <div v-if="show_essential" class="fs_essential_details">
+                                    <p>
+                                        Server environment details (php, mysql, server, WordPress versions), Site language, Number
+                                        of active plugins, Site name and url, Your name and email address. No sensitive data is
+                                        tracked.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Hidden FluentForms section for backward compatibility -->
+                            <div v-if="!has_fluentform">
+                                <el-checkbox
+                                    true-label="yes"
+                                    false-label="no"
+                                    v-model="install_fluentforms">
+                                    {{ $t('Install Fluent Forms Plugin for custom Ticket Forms.') }}
+                                </el-checkbox>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="suggest_box email_optin">
-                        <label>Your Email Address</label>
-                        <el-input placeholder="Email Address for bi-monthly newsletter" type="email"
-                                  v-model="email_address"></el-input>
-                        <br/>
-                        <p style="margin-top: 20px; font-size: 13px;">
-                            We will send tips and advanced usage of FluentSupport (Monthly)
-                        </p>
-                    </div>
-
-                    <div style="text-align: right">
-                        <el-button v-loading="saving" :disabled="saving" type="success" @click="completeTrack()">
-                            {{ $t('Continue') }}
-                        </el-button>
-                    </div>
 
                 </template>
-                <div v-else>
-                    <div class="text-align-center">
-                        <h1 style="font-size: 45px; color: #7757e6;"><el-icon> <CircleCheck/> </el-icon></h1>
-                        <h2>{{ $t('support_portal_ready') }}</h2>
+                <template v-else>
+                    <!-- Header Section with Logo and Progress -->
+                    <div class="fs_setup_header">
+                        <div class="fs_header_content">
+                            <div class="fs_logo_section">
+                                <span class="fs_brand_logo">
+                                    <img :src="appVars.asset_url + 'images/dashboard_onboarding_logo.png'" />
+                                </span>
+                            </div>
+                            <div class="fs_step_indicator">
+                                <span>{{ $t('Step 2 of 2') }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar - Complete -->
+                        <div class="fs_progress_container">
+                            <div class="fs_progress_track"></div>
+                            <div class="fs_progress_fill fs_progress_complete"></div>
+                        </div>
                     </div>
-                    <hr/>
-                    <ul class="fs_listed">
-                        <li>
-                            <router-link :to="{ name: 'email_settings', params: { box_id: created_box.id } }">View
-                                {{ $t('Ticket Email Settings') }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'products' }">
-                                {{ $t('Setup Associate Product/Services for Tickets') }}
-                            </router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'support-staffs' }">{{ $t('Manage Support Staff') }}</router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'global_settings' }">{{ $t('Global Settings') }}</router-link>
-                        </li>
-                        <li>
-                            <router-link :to="{ name: 'dashboard' }">{{ $t('Go to Dashboard') }}</router-link>
-                        </li>
-                    </ul>
+
+                    <!-- Main Content - Completion -->
+                    <div class="fs_setup_content">
+                        <!-- Completion Title Section -->
+                        <div class="fs_welcome_section">
+                            <h1 class="fs_welcome_title">{{ $t('Congrats! Your Support Portal') }} 🎉</h1>
+                            <p class="fs_welcome_subtitle">{{ $t('Your support portal is now configured and ready to help your customers.') }}</p>
+                        </div>
+
+                        <!-- Quick Actions Section -->
+                        <div class="fs_form_section fs_completion_section">
+                            <div class="fs_section_header">
+                                <h3 class="fs_section_title">{{ $t('Quick Setup Options') }}</h3>
+                                <p class="fs_section_subtitle">{{ $t('Configure these settings to get the most out of FluentSupport') }}</p>
+                            </div>
+
+                            <div class="fs_quick_actions_grid">
+                                <router-link
+                                    :to="{ name: 'email_settings', params: { box_id: created_box.id } }"
+                                    class="fs_action_card">
+                                    <div class="fs_action_icon">
+                                        <el-icon><Message /></el-icon>
+                                    </div>
+                                    <div class="fs_action_content">
+                                        <h4 class="fs_action_title">{{ $t('Ticket Email Settings') }}</h4>
+                                        <p class="fs_action_description">{{ $t('Configure email notifications and responses') }}</p>
+                                    </div>
+                                    <div class="fs_action_arrow">
+                                        <el-icon><ArrowRight /></el-icon>
+                                    </div>
+                                </router-link>
+
+                                <router-link
+                                    :to="{ name: 'products' }"
+                                    class="fs_action_card">
+                                    <div class="fs_action_icon">
+                                        <el-icon><Box /></el-icon>
+                                    </div>
+                                    <div class="fs_action_content">
+                                        <h4 class="fs_action_title">{{ $t('Products & Services') }}</h4>
+                                        <p class="fs_action_description">{{ $t('Setup products/services for ticket categorization') }}</p>
+                                    </div>
+                                    <div class="fs_action_arrow">
+                                        <el-icon><ArrowRight /></el-icon>
+                                    </div>
+                                </router-link>
+
+                                <router-link
+                                    :to="{ name: 'support-staffs' }"
+                                    class="fs_action_card">
+                                    <div class="fs_action_icon">
+                                        <el-icon><UserFilled /></el-icon>
+                                    </div>
+                                    <div class="fs_action_content">
+                                        <h4 class="fs_action_title">{{ $t('Support Staff') }}</h4>
+                                        <p class="fs_action_description">{{ $t('Add team members to handle support tickets') }}</p>
+                                    </div>
+                                    <div class="fs_action_arrow">
+                                        <el-icon><ArrowRight /></el-icon>
+                                    </div>
+                                </router-link>
+
+                                <router-link
+                                    :to="{ name: 'global_settings' }"
+                                    class="fs_action_card">
+                                    <div class="fs_action_icon">
+                                        <el-icon><Setting /></el-icon>
+                                    </div>
+                                    <div class="fs_action_content">
+                                        <h4 class="fs_action_title">{{ $t('Global Settings') }}</h4>
+                                        <p class="fs_action_description">{{ $t('Customize your support portal preferences') }}</p>
+                                    </div>
+                                    <div class="fs_action_arrow">
+                                        <el-icon><ArrowRight /></el-icon>
+                                    </div>
+                                </router-link>
+                            </div>
+
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Sticky Footer Bar for Step 2 -->
+                <div class="fs_sticky_footer">
+                    <div class="fs_footer_content">
+                                <div class="fs_help_section">
+                            <span class="fs_help_text">{{ $t('Need Help?') }}</span>
+                            <a
+                                href="https://fluentsupport.com/docs/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="fs_doc_link">
+                                {{ $t('Read Documentation') }}
+                            </a>
+                        </div>
+                        <div class="fs_footer_actions" v-if="step === 'mailbox'">
+                            <el-button
+                                v-loading="saving"
+                                :disabled="saving"
+                                @click="completeSetup()"
+                                class="fs_filled_btn">
+                                {{ $t('Next Step') }}
+                            </el-button>
+                        </div>
+
+                        <div class="fs_footer_actions" v-else-if="step === 'maintenance'">
+                            <el-button
+                                @click="step = 'mailbox'"
+                                class="fs_outline_btn">
+                                {{ $t('Back') }}
+                            </el-button>
+                            <el-button
+                                v-loading="saving"
+                                :disabled="saving"
+                                @click="completeTrack()"
+                                class="fs_filled_btn">
+                                {{ $t('Finish') }}
+                            </el-button>
+                        </div>
+
+                        <div class="fs_footer_actions" v-else-if="step === 'completed'">
+                            <el-button
+                                @click="step = 'maintenance'"
+                                class="fs_outline_btn">
+                                {{ $t('Go Back') }}
+                            </el-button>
+                            <el-button
+                                class="fs_filled_btn"
+                                @click="$router.push({ name: 'dashboard' })">
+                                {{ $t('Go to Dashboard') }}
+                            </el-button>
+                        </div>
+                    </div>
                 </div>
+            </div>
             </div>
         </div>
 
         <el-dialog
-            title="Build a better Fluent Support"
+            :title="$t('Build a better Fluent Support')"
             :close-on-click-modal="false"
             :show-close="false"
             :append-to-body="true"
@@ -146,16 +373,19 @@
                 Get improved features and faster fixes by sharing non-sensitive data via usage tracking that shows us
                 how FluentSupport is used. No personal data is tracked or stored.
             </p>
-            <span slot="footer" class="dialog-footer">
-                <el-button style="color: gray;" type="text" @click="handleDataShare('no')">No Thanks</el-button>
-                <el-button type="primary" @click="handleDataShare('yes')">Yes, Count me in!</el-button>
-          </span>
+            <template #footer>
+                <span class="fs_dialog_footer">
+                    <el-button class="fs_outline_btn" @click="handleDataShare('no')">{{ $t('No Thanks') }}</el-button>
+                    <el-button class="fs_filled_btn" @click="handleDataShare('yes')">{{ $t('Yes, Count me in!') }}</el-button>
+                </span>
+            </template>
         </el-dialog>
 
     </div>
 </template>
 
 <script type="text/babel">
+
 export default {
     name: 'FluentSupportSetup',
     data() {
@@ -260,7 +490,8 @@ export default {
                 optin_email: this.email_address
             })
                 .then(response => {
-                    this.$notify.success({
+                    this.$notify({
+                        type: 'success',
                         title: this.$t('Great!'),
                         message: response.message,
                         offset: 19
@@ -273,6 +504,21 @@ export default {
                     this.saving = false;
                     this.step = 'completed';
                 });
+        },
+        // Show the main admin navbar (remove inline hide)
+        showNavbar() {
+            const navbar = document.querySelector('.fs_main_navbar');
+            if (navbar) {
+                // remove inline display override so CSS controls visibility
+                navbar.style.removeProperty('display');
+            }
+        },
+        // Hide the main admin navbar while on the setup flow
+        hideNavbar() {
+            const navbar = document.querySelector('.fs_main_navbar');
+            if (navbar) {
+                navbar.style.display = 'none';
+            }
         }
     },
     mounted() {
@@ -281,6 +527,14 @@ export default {
         } else {
             this.fetchPages();
         }
+
+        // Hide the main navbar
+        this.hideNavbar();
+    },
+
+    // Ensure navbar is visible when this component is destroyed/navigated away
+    beforeUnmount() {
+        this.showNavbar();
     }
 }
 </script>

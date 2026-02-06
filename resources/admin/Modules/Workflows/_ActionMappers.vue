@@ -2,6 +2,7 @@
     <div class="fs_triggers_wrap">
         <div>
             <draggable
+                v-if="actionsParam.length"
                 v-model="actionsParam"
                 ghost-class="ghost"
                 class="fs_all_triggers"
@@ -26,14 +27,18 @@
             @success="appendAction"
             v-show="show_adder"
             :all_actions="all_actions"
+            :actions_param_size="actionsParam.length"
         />
         <el-button
-            style="margin-top: 30px"
             type="info"
             @click="show_adder = true"
             v-if="!show_adder"
+            class="fs_outline_btn fs_add_another_action_btn"
         >
-            {{ translate("Add Another Action") }}
+            <svg class="fs_add_icon" width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.5 4.5V0H6V4.5H10.5V6H6V10.5H4.5V6H0V4.5H4.5Z" fill="currentColor"/>
+            </svg>
+            <span>{{ $t("Add Another Action") }}</span>
         </el-button>
     </div>
 </template>
@@ -42,8 +47,6 @@
 import ActionMap from "./_ActionMap.vue";
 import draggable from "vuedraggable";
 import ActionAdder from "./_ActionAdder.vue";
-import { onMounted, ref, watch } from "vue";
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "ActionMappers",
@@ -53,67 +56,57 @@ export default {
         ActionAdder,
         draggable,
     },
-    setup(props, context) {
-        const { translate } = useFluentHelper();
-        const actionsParam = ref([]);
-        const showAdder = ref(false);
-        const dragKey = ref(Date.now());
+    data() {
+        return {
+            actionsParam: [],
+            show_adder: false,
+            dragKey: Date.now(),
+        };
+    },
+    watch: {
+        actionsParam: {
+            handler(newVal, oldVal) {
+                if (oldVal && newVal.length === oldVal.length && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+                    const updatedSequence = newVal.map(action => action.id);
+                    this.$emit("updateActionSequence", updatedSequence);
+                }
 
-        const appendAction = (action) => {
-            showAdder.value = false;
+                this.emitUpdatedActions();
+            },
+            deep: true,
+        },
+    },
+    mounted() {
+        if (!this.actions.length) {
+            this.show_adder = true;
+        }
+
+        this.actionsParam = JSON.parse(JSON.stringify(this.actions));
+    },
+    methods: {
+        appendAction(action) {
+            this.show_adder = false;
             const newAction = {
                 ...action,
-                workflow_id: props.workflow_id,
+                workflow_id: this.workflow_id,
                 activeName: `action_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             };
-            actionsParam.value.push(newAction);
-        };
-
-        const removeAction = (actionIndex) => {
-            actionsParam.value.splice(actionIndex, 1);
-            context.emit("updateActions", actionsParam.value);
-        };
-
-        const onDragEnd = () => {
-            dragKey.value = Date.now();
-            context.emit("updateActions", actionsParam.value);
-        };
-
-        const triggerUpdate = () => {
-            context.emit("updateWorkFlow");
-        };
-
-        const emitUpdatedActions = () => {
-            context.emit("update:actions", actionsParam.value);
-        };
-
-        watch(actionsParam, (newVal, oldVal) => {
-            if (oldVal && newVal.length === oldVal.length && JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-                const updatedSequence = newVal.map(action => action.id);
-                context.emit("updateActionSequence", updatedSequence);
-            }
-
-            emitUpdatedActions();
-        }, { deep: true });
-
-        onMounted(() => {
-            if (!props.actions.length) {
-                showAdder.value = true;
-            }
-
-            actionsParam.value = JSON.parse(JSON.stringify(props.actions));
-        });
-
-        return {
-            show_adder: showAdder,
-            appendAction,
-            removeAction,
-            triggerUpdate,
-            translate,
-            actionsParam,
-            dragKey,
-            onDragEnd,
-        };
+            this.actionsParam.push(newAction);
+        },
+        removeAction(actionIndex) {
+            this.actionsParam.splice(actionIndex, 1);
+            this.$emit("updateActions", this.actionsParam);
+        },
+        onDragEnd() {
+            this.dragKey = Date.now();
+            this.$emit("updateActions", this.actionsParam);
+        },
+        triggerUpdate() {
+            this.$emit("updateWorkFlow");
+        },
+        emitUpdatedActions() {
+            this.$emit("update:actions", this.actionsParam);
+        },
     },
 };
 </script>

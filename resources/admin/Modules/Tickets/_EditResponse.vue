@@ -1,81 +1,60 @@
 <template>
     <div class="fs_edit_response">
         <wp-editor v-if="editor_ready"  v-model="response.content" />
-        <hr />
-        <el-button size="large" type="success" @click="editResponse()">
+
+        <div class="fs_edit_response_actions">
+            <el-button class="fs_filled_btn" size="large" type="success" @click="editResponse()">
             {{ draftReplyApprovePermission && response.conversation_type === 'draft_response' ? $t('Update And Approve Response') : $t('Update Response') }}
-        </el-button>
+            </el-button>
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
 import WpEditor from '../../Pieces/_wp_editor';
-import {reactive, toRefs} from "vue";
-import {useConfirm, useFluentHelper, useNotify} from "@/admin/Composable/FluentFrameworkHelper";
-
 export default {
     name: 'EditResponse',
-    props: ['response'],
-    components: {
-        WpEditor
+    props: {
+        response: {
+            type: Object,
+            required: true,
+        },
     },
-    setup(props, context){
-        const emit = context.emit;
-        const { notify } = useNotify();
-        const { confirm } = useConfirm();
-        const {
-            appVars,
-            get,
-            post,
-            put,
-            translate,
-            handleError,
-            has_pro,
-        } = useFluentHelper();
-        const state = reactive({
+    components: {
+        WpEditor,
+    },
+    data() {
+        return {
             saving: false,
-            filteredAgents: appVars.support_agents,
+            filteredAgents: this.appVars.support_agents,
             popup: false,
             editor_ready: true,
-            draftReplyApprovePermission: false,
-        });
+            draftReplyApprovePermission: this.appVars.me.permissions.includes('fst_approve_draft_reply'),
+        };
+    },
 
-        state.draftReplyApprovePermission = appVars.me.permissions.includes('fst_approve_draft_reply');
-
-        const editResponse = () => {
-            state.saving = true;
-            put(`tickets/${props.response.ticket_id}/responses/${props.response.id}`, {
-                content: props.response.content
-            })
-                .then(response => {
-                    notify({
+    methods: {
+        editResponse() {
+            this.saving = true;
+            this.$put(
+                `tickets/${this.response.ticket_id}/responses/${this.response.id}`,
+                { content: this.response.content }
+            )
+                .then((response) => {
+                    this.$notify({
                         message: response.message,
-                        type: 'success'
+                        type: "success",
                     });
-                    emit('updated', response.response);
+
+                    this.$emit("updated", response.response);
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.saving = false;
+                    this.saving = false;
                 });
         }
-
-        return {
-            ...toRefs(state),
-            notify,
-            confirm,
-            appVars,
-            get,
-            post,
-            put,
-            translate,
-            handleError,
-            has_pro,
-            emit,
-            editResponse
-        }
-    }
-}
+    },
+};
 </script>

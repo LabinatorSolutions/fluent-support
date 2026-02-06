@@ -1,56 +1,47 @@
 <template>
     <div style="margin-top: 20px;" class="fs_agent_reports">
-        <div v-if="!loading" class="fs_box_wrapper">
-            <div class="fs_box">
-                <div class="fs_box_header">
-                    <div class="fs_box_head">
-                        {{ translate('Business Box Summary') }}
-                    </div>
+        <div v-if="!loading">
+            <div class="fs_report_table_container">
+                <div class="fs_table_header">
                     <div class="fs_box_actions">
-                        <el-date-picker
-                            @change="getReport()"
-                            v-model="date_range"
-                            type="daterange"
-                            size="small"
-                            :range-separator="translate('To')"
-                            :disabledDate="onlyPastDates"
-                            :start-placeholder="translate('Start')"
-                            :end-placeholder="translate('End')"
-                            :shortcuts="dateShortcuts"
-                        />
+                        <span class="fs_table_title">{{ $t('Business Box Summary') }}</span>
                     </div>
                 </div>
-                <div class="fs_box_body">
+                <div class="fs_table_wrapper">
                     <el-table
                         :data="sortedReports"
-                        stripe
                         :summary-method="getSummaries"
                         :show-summary="showOrHideSummaries"
                         @sort-change="handleSorting"
                         v-loading="loading"
-                        style="width: 100%">
-                        <el-table-column min-width="200px" :label="translate('MailBox')">
+                        row-class-name="fs_table_row"
+                        header-row-class-name="fs_table_header_row"
+                        cell-class-name="fs_table_cell"
+                        header-cell-class-name="fs_table_header_cell"
+                        table-layout="fixed">
+
+                        <el-table-column min-width="200px" :label="$t('MailBox')">
                             <template #default="scope">
                                 {{ scope.row.name }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="responses" :label="translate('Responses')">
+                        <el-table-column sortable="custom" prop="responses" :label="$t('Responses')">
                             <template #default="scope">
                                 {{ scope.row.stats.responses }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="interactions" :label="translate('Interactions')">
+                        <el-table-column sortable="custom" prop="interactions" :label="$t('Interactions')">
                             <template #default="scope">
                                 {{ scope.row.stats.interactions }}
                             </template>
                         </el-table-column>
-                        <el-table-column sortable="custom" prop="opens" :label="translate('Open Tickets')">
+                        <el-table-column sortable="custom" prop="opens" :label="$t('Open Tickets')">
                             <template #default="scope">
                                 {{ scope.row.stats.opens }}
                             </template>
                         </el-table-column>
 
-                        <el-table-column sortable="custom" prop="closed" :label="translate('Closed')">
+                        <el-table-column sortable="custom" prop="closed" :label="$t('Closed')">
                             <template #default="scope">
                                 {{ scope.row.stats.closed }}
                             </template>
@@ -69,26 +60,26 @@
 import dayjs from "dayjs";
 import each from "lodash/each";
 import Modal from "../../Pieces/Modal";
-import { computed, onMounted, reactive, toRefs } from "vue";
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 
 export default {
     name: "BusinessBoxReportSummary",
     components: { Modal },
-    props: ["url", "show_settings", "show_export_btn"],
+    props: {
+        url: String,
+        show_settings: Boolean,
+        show_export_btn: Boolean,
+        date_range: {
+            type: Array,
+            default: () => ["", ""]
+        },
+        mailbox_id: {
+            type: [String, Number],
+            default: ""
+        }
+    },
 
-    setup(props) {
-        const {
-            appVars,
-            get,
-            translate,
-            handleError,
-            saveData,
-            getData,
-            has_pro
-        } = useFluentHelper();
-
-        const state = reactive({
+    data() {
+        return {
             reports: [],
             loading: false,
             sorts: {
@@ -97,181 +88,149 @@ export default {
             },
             sort_column: "response",
             sort_type: "descending",
-            date_range: [new Date(), new Date()],
-            dateShortcuts: [
-                {
-                    text: translate("Today"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Yesterday"),
-                    value: (() => {
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24);
-                        return [start, start];
-                    })(),
-                },
-                {
-                    text: translate("Last Week"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last Month"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last 3 Months"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last 6 Months"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 180);
-                        return [start, end];
-                    })(),
-                },
-                {
-                    text: translate("Last 1 Year"),
-                    value: (() => {
-                        const end = new Date();
-                        const start = new Date();
-                        start.setTime(start.getTime() - 3600 * 1000 * 24 * 360);
-                        return [start, end];
-                    })(),
-                },
-            ],
             valueFormat: "YYYY-MM-DD",
             open_setting: false,
             include_or_exclude_agents: [],
             include_or_exclude: "include",
             open_export_options: false,
-            repost_export_options: appVars.repost_export_options,
+            repost_export_options: this.appVars.repost_export_options,
             selected_options: [],
             checkAll: false,
             isIndeterminate: false,
-        });
+        };
+    },
 
-        const sortedReports = computed(() => {
-            let reports = state.reports;
+    computed: {
+        sortedReports() {
+            let reports = this.reports;
 
-            const settings = getData("agents_summary_setting");
+            const settings = this.$getData("agents_summary_setting");
 
-            if (state.sort_type == "ascending") {
+            if (this.sort_type == "ascending") {
                 return reports.sort((a, b) =>
-                    parseInt(a.stats[state.sort_column]) >
-                    parseInt(b.stats[state.sort_column])
+                    parseInt(a.stats[this.sort_column]) >
+                    parseInt(b.stats[this.sort_column])
                         ? 1
                         : -1
                 );
             }
             return reports.sort((a, b) =>
-                parseInt(a.stats[state.sort_column]) <
-                parseInt(b.stats[state.sort_column])
+                parseInt(a.stats[this.sort_column]) <
+                parseInt(b.stats[this.sort_column])
                     ? 1
                     : -1
             );
-        });
+        },
 
-        const totals = computed(() => {
+        totals() {
             const summary = {
                 responses: 0,
                 opens: 0,
                 closed: 0,
                 interactions: 0
             };
-            each(state.reports, (report) => {
+            each(this.reports, (report) => {
                 summary.responses += parseInt(report.stats.responses);
                 summary.interactions += parseInt(report.stats.interactions);
                 summary.opens += parseInt(report.stats.opens);
                 summary.closed += parseInt(report.stats.closed);
             });
             return summary;
-        });
+        },
 
-        const showOrHideSummaries = computed(() => {
-            if (props.url == "my-reports/my-summary") {
+        showOrHideSummaries() {
+            if (this.url == "my-reports/my-summary") {
                 return false;
             }
             return true;
-        });
+        },
+    },
 
-        const getReport = async () => {
-            state.loading = true;
-            await get(props.url, {
-                from: (state.date_range) ? dayjs(state.date_range[0]).format('YYYY-MM-DD') : '',
-                to: (state.date_range) ? dayjs(state.date_range[1]).format('YYYY-MM-DD') : '',
-            })
+    watch: {
+        date_range: {
+            handler(newDateRange) {
+                if (newDateRange && newDateRange[0] && newDateRange[1]) {
+                    this.getReport();
+                }
+            },
+            deep: true
+        },
+        mailbox_id() {
+            if (this.date_range && this.date_range[0] && this.date_range[1]) {
+                this.getReport();
+            }
+        }
+    },
+
+    methods: {
+        async getReport() {
+            if (!this.date_range || !this.date_range[0] || !this.date_range[1]) {
+                return;
+            }
+            this.loading = true;
+            const params = {
+                from: this.date_range[0] ? dayjs(this.date_range[0]).format('YYYY-MM-DD') : '',
+                to: this.date_range[1] ? dayjs(this.date_range[1]).format('YYYY-MM-DD') : '',
+            };
+            
+            // Add mailbox_id if provided
+            if (this.mailbox_id) {
+                params.mailbox_id = this.mailbox_id;
+            }
+            
+            await this.$get(this.url, params)
                 .then(response => {
-                    state.reports = response.summary
+                    this.reports = response.summary
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.loading = false;
+                    this.loading = false;
                 });
-        };
+        },
 
-        const handleSorting = (props) => {
-            state.sort_column = props.prop;
-            state.sort_type = props.order;
-        };
+        handleSorting(sortProps) {
+            this.sort_column = sortProps.prop;
+            this.sort_type = sortProps.order;
+        },
 
-        const onlyPastDates = (val) => {
+        onlyPastDates(val) {
             return new Date() <= val;
-        };
+        },
 
-        const getSummaries = (param) => {
+        getSummaries(param) {
             const { columns } = param;
             const sums = [];
 
             columns.forEach((column, index) => {
                 if (index === 0) {
-                    sums[index] = translate("Total Summaries");
+                    sums[index] = this.$t("Total Summaries");
                     return;
                 }
-                sums[index] = totals.value[column.property];
+                sums[index] = this.totals[column.property];
+            });
+
+            this.$nextTick(() => {
+                this.addClassToSummaryRow();
             });
 
             return sums;
-        };
+        },
+        addClassToSummaryRow() {
+            const row = this.$el
+            ?.querySelector('.fs_table_wrapper .el-table__footer-wrapper tfoot tr, .fs_table_wrapper .el-table__footer-wrapper tr');
 
-        onMounted(() => {
-            getReport();
-        });
+            if (row) {
+            row.classList.add('fs_table_row');
+            row.querySelectorAll('td').forEach(td => td.classList.add('fs_table_cell'));
+            }
+        },
+    },
 
-        return {
-            ...toRefs(state),
-            translate,
-            sortedReports,
-            totals,
-            showOrHideSummaries,
-            getReport,
-            handleSorting,
-            onlyPastDates,
-            getSummaries,
-            has_pro
+    mounted() {
+        if (this.date_range && this.date_range[0] && this.date_range[1]) {
+            this.getReport();
         }
     },
 };

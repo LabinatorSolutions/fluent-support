@@ -1,5 +1,8 @@
 <template>
-    <el-checkbox :true-label="field.true_label" :false-label="field.false_label" v-model="model">{{field.checkbox_label}}</el-checkbox>
+
+        <el-checkbox :true-value="field.true_label" :false-value="field.false_label" v-model="model">
+            {{ field.checkbox_label }}
+        </el-checkbox>
 </template>
 
 <script type="text/babel">

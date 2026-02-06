@@ -3,7 +3,16 @@ import {
     ElLoading,
     ElMessage,
     ElMessageBox,
-    ElNotification
+    ElNotification,
+    ElCollapseTransition,
+    ElButton,
+    ElIcon,
+    ElSelect,
+    ElOption,
+    ElPopover,
+    ElDropdown,
+    ElDropdownMenu,
+    ElDropdownItem
 } from 'element-plus';
 
 import {
@@ -28,6 +37,7 @@ import {
     Stopwatch,
     Tickets,
     View,
+    Hide,
     Plus,
     Flag,
     CaretBottom,
@@ -60,6 +70,23 @@ import {
     MuteNotification,
     FolderAdd,
     FolderChecked,
+    ShoppingBag,
+    ArrowLeft,
+    ArrowRight,
+    RefreshRight,
+    Check,
+    MoreFilled,
+    Select,
+    ShoppingCart,
+    Remove,
+    Filter,
+    FolderOpened,
+    Clock,
+    UserFilled,
+    Link,
+    Star,
+    DataAnalysis,
+    Calendar
 } from '@element-plus/icons-vue/dist';
 
 const icons = [
@@ -84,6 +111,7 @@ const icons = [
     Tickets,
     DocumentCopy,
     View,
+    Hide,
     Plus,
     Flag,
     CaretBottom,
@@ -116,6 +144,23 @@ const icons = [
     MagicStick,
     FolderAdd,
     FolderChecked,
+    ShoppingBag,
+    ArrowLeft,
+    ArrowRight,
+    RefreshRight,
+    Check,
+    MoreFilled,
+    Select,
+    ShoppingCart,
+    Remove,
+    Filter,
+    FolderOpened,
+    Clock,
+    UserFilled,
+    Link,
+    Star,
+    DataAnalysis,
+    Calendar
 ];
 
 const app = createApp({});
@@ -124,7 +169,16 @@ const plugins = [
     ElLoading,
     ElMessage,
     ElMessageBox,
-    ElNotification
+    ElNotification,
+    ElCollapseTransition,
+    ElButton,
+    ElIcon,
+    ElSelect,
+    ElOption,
+    ElPopover,
+    ElDropdown,
+    ElDropdownMenu,
+    ElDropdownItem
 ];
 
 plugins.forEach(plugin => {

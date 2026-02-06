@@ -1,109 +1,123 @@
 <template>
     <div v-loading="working" class="fs_bulk_actions_wrap">
         <div v-if="ticket_selections.length" class="fs_bulk_actions_bar">
-            <ul v-loading="working" class="fs_tk_actions">
-                <li :title="translate('Add Reply')"
-                    @click="add_response_modal = true">
-                    <el-icon> <ChatLineSquare /> </el-icon>
-                </li>
-                <li :title="translate('Assign Agent ')">
-                    <el-popover
-                        placement="bottom"
-                        :width="400"
-                        trigger="manual"
-                        :visible="assignAgentPop"
-                    >
-                        <template #reference>
-                            <el-icon :class="{'fs_pop_active': assignAgentPop}" @click="togglePop('assignAgentPop')">
-                                <User />
-                            </el-icon>
-                        </template>
+            <div class="fs_bulk_action_item" @click="add_response_modal = true">
+                <IconPack :icon-key="'reply'" />
+                <span>{{ $t('Reply') }}</span>
+            </div>
 
-                        <div class="fs_extended_pop">
-                            <el-select filterable v-model="agent_id">
-                                <el-option
-                                    v-for="agent in appVars.support_agents"
-                                    :key="agent.id"
-                                    :value="agent.id"
-                                    :label="agent.full_name"></el-option>
-                            </el-select>
-                            <el-button @click="assignAgent()" style="margin-top: 10px;" :disabled="!agent_id"
-                                       size="small"
-                                       type="danger">
-                                {{translate('Assign Agent')}}
-                            </el-button>
-                            <el-button @click="assignAgentPop = false" size="small" type="default" style="margin-top: 10px;">{{translate('Close')}}</el-button>
-                        </div>
-                    </el-popover>
-                </li>
-                <li :title="translate('Run Workflow')">
-                    <work-flow-selector @reloadTickets="fetchTickets()" :ticket_ids="ticket_selections"/>
-                </li>
-                <li :title="translate('Add Tag(s)')">
-                    <el-popover
-                        placement="bottom"
-                        :width="400"
-                        trigger="manual"
-                        :visible="addTagPop"
-                    >
-                        <template #reference>
-                            <el-icon @click="togglePop('addTagPop')" :class="{fs_pop_active: assignAgentPop}">
-                                <PriceTag />
-                            </el-icon>
-                        </template>
-                        <div class="fs_extended_pop">
-                            <el-select :multiple="true" filterable v-model="tag_ids">
-                                <el-option
-                                    v-for="agent in appVars.ticket_tags"
-                                    :key="agent.id"
-                                    :value="agent.id"
-                                    :label="agent.title"></el-option>
-                            </el-select>
-                            <el-button style="margin-top: 10px;" size="small" type="success" @click="assignTags()">
-                                {{translate('Apply Tags')}}
-                            </el-button>
-                            <el-button style="margin-top: 10px;" @click="addTagPop = false" size="small" type="default">{{translate('Close')}}</el-button>
-                        </div>
-                    </el-popover>
-                </li>
-                <li :title="translate('Close Tickets')">
-                    <el-popover
-                        placement="bottom"
-                        :width="400"
-                        trigger="click"
-                    >
-                        <template #reference>
-                            <el-icon @click="togglePop()"> <Finished /> </el-icon>
-                        </template>
-                        <p style="margin: 0 0 1em 0;">{{translate('close_selected_ticket_warning')}}</p>
-                        <el-button style="margin-top: 0;" size="small" type="success"
-                                   @click="closeTickets()">{{translate('Close Selected Tickets')}}
+            <el-popover
+                placement="bottom"
+                :width="400"
+                trigger="manual"
+                class="fs_popover"
+                :visible="assignAgentPop"
+            >
+                <template #reference>
+                    <div class="fs_bulk_action_item" :class="{'fs_pop_active': assignAgentPop}" @click="togglePop('assignAgentPop')">
+
+                        <IconPack :icon-key="'agent'" />
+                        <span>{{ $t('Agent') }}</span>
+                    </div>
+                </template>
+                <div class="fs_extended_pop">
+                    <el-select class="fs_select_field" filterable v-model="agent_id">
+                        <el-option
+                            v-for="agent in appVars.support_agents"
+                            :key="agent.id"
+                            :value="agent.id"
+                            :label="agent.full_name"></el-option>
+                    </el-select>
+                    <div class="fs_popover_action_btn">
+                        <el-button class="fs_filled_btn" @click="assignAgent()" style="margin-top: 10px;" :disabled="!agent_id" size="small" type="danger">
+                            {{$t('Assign Agent')}}
                         </el-button>
-                    </el-popover>
-                </li>
-                <li :title="translate('Delete Tickets')">
-                    <el-popover
-                        placement="bottom"
-                        :width="400"
-                        trigger="click"
-                    >
-                        <template #reference>
-                            <el-icon @click="togglePop()"> <Delete /> </el-icon>
-                        </template>
-                        <p style="margin: 0 0 1em 0;">{{translate('delete_selected_ticket_warning')}}</p>
-                        <el-button style="margin-top: 0;" size="small" type="danger"
-                                   @click="deleteTickets()">{{translate('Yes, Delete Selected Tickets')}}
+                        <el-button class="fs_outline_btn" @click="assignAgentPop = false" size="small" type="default" style="margin-top: 10px;">{{$t('Close')}}</el-button>
+                    </div>
+                </div>
+            </el-popover>
+
+            <work-flow-selector @reloadTickets="fetchTickets()" :ticket_ids="ticket_selections">
+                <div class="fs_bulk_action_item">
+                    <IconPack :icon-key="'workflow'" />
+                    <span>{{ $t('Workflow') }}</span>
+                </div>
+            </work-flow-selector>
+
+            <el-popover
+                placement="bottom"
+                :width="400"
+                trigger="manual"
+                class="fs_popover"
+                :visible="addTagPop"
+            >
+                <template #reference>
+                    <div class="fs_bulk_action_item" :class="{fs_pop_active: addTagPop}" @click="togglePop('addTagPop')">
+                        <IconPack :icon-key="'tags'" />
+                        <span>{{ $t('Tags') }}</span>
+                    </div>
+                </template>
+                <div class="fs_extended_pop">
+                    <el-select class="fs_select_field" :multiple="true" filterable v-model="tag_ids">
+                        <el-option
+                            v-for="agent in appVars.ticket_tags"
+                            :key="agent.id"
+                            :value="agent.id"
+                            :label="agent.title"></el-option>
+                    </el-select>
+
+                    <div class="fs_popover_action_btn">
+                        <el-button class="fs_filled_btn" style="margin-top: 10px;" size="small" type="success" @click="assignTags()">
+                            {{$t('Apply Tags')}}
                         </el-button>
-                    </el-popover>
-                </li>
-            </ul>
+                        <el-button class="fs_outline_btn" style="margin-top: 10px;" @click="addTagPop = false" size="small" type="default">{{$t('Close')}}</el-button>
+                    </div>
+                </div>
+            </el-popover>
+
+            <el-popover
+                placement="bottom"
+                :width="400"
+                trigger="click"
+            >
+                <template #reference>
+                    <div class="fs_bulk_action_item">
+                        <IconPack :icon-key="'closeTicket'" />
+                        <span>{{ $t('Close') }}</span>
+                    </div>
+                </template>
+                <p style="margin: 0 0 1em 0;">{{$t('close_selected_ticket_warning')}}</p>
+                <el-button class="fs_filled_btn" style="margin-top: 0;" size="small" type="success" @click="closeTickets()">
+                    {{$t('Close Selected Tickets')}}
+                </el-button>
+            </el-popover>
+
+            <el-popover
+                placement="bottom"
+                :width="400"
+                trigger="click"
+            >
+                <template #reference>
+                    <div class="fs_bulk_action_item">
+                        <IconPack :icon-key="'delete'" />
+                        <span>{{ $t('Delete') }}</span>
+                    </div>
+                </template>
+                <p style="margin: 0 0 1em 0;">{{$t('delete_selected_ticket_warning')}}</p>
+                <el-button class="fs_filled_btn" style="margin-top: 0;" size="small" type="danger" @click="deleteTickets()">
+                    {{$t('Yes, Delete Selected Tickets')}}
+                </el-button>
+            </el-popover>
         </div>
+
         <el-dialog
-            :title="translate('Reply To Selected Tickets')"
+            :title="$t('Reply To Selected Tickets')"
             v-model="add_response_modal"
             width="60%"
-            class="fs_dialog">
-            <create-response @created="fetchTickets()" v-if="add_response_modal" :ticket="ticket_selections"/>
+            class="fs_dialog fs_bulk_action_modal">
+            <div class="fs_bulk_action_create_response">
+                <create-response @created="fetchTickets()" v-if="add_response_modal" :ticket="ticket_selections"/>
+            </div>
         </el-dialog>
     </div>
 </template>
@@ -111,25 +125,18 @@
 <script type="text/babel">
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import CreateResponse from "./_CreateResponse";
-import { reactive, toRefs } from "vue";
-import { useFluentHelper, useNotify } from "@/admin/Composable/FluentFrameworkHelper";
+import IconPack from "@/admin/Components/IconPack.vue";
+
 export default {
     name: 'TicketBulkActions',
     props: ['ticket_selections'],
     components: {
         WorkFlowSelector,
-        CreateResponse
+        CreateResponse,
+        IconPack
     },
-
-    setup(props, {emit}) {
-        const {
-            translate,
-            handleError,
-            post,
-        } = useFluentHelper();
-        const { notify } = useNotify();
-
-        const state = reactive({
+    data() {
+        return {
             agent_id: '',
             tag_ids: [],
             workflow_id: '',
@@ -137,104 +144,88 @@ export default {
             working: false,
             assignAgentPop: false,
             addTagPop: false
-        });
-
-        const fetchTickets = () => {
-            state.agent_id = '';
-            state.tag_ids = '';
-            state.workflow_id = '';
-            state.addTagPop = false;
-            state.assignAgentPop = false;
-            state.add_response_modal = false;
-            emit('fetchTickets');
         };
+    },
 
-        const doBulkActions = (data) => {
-            state.working = true;
-            data.ticket_ids = props.ticket_selections;
-            post('tickets/bulk-actions', data)
+    methods: {
+        fetchTickets() {
+            this.agent_id = '';
+            this.tag_ids = [];
+            this.workflow_id = '';
+            this.addTagPop = false;
+            this.assignAgentPop = false;
+            this.add_response_modal = false;
+            this.$emit('fetchTickets');
+        },
+        doBulkActions(data) {
+            this.working = true;
+            data.ticket_ids = this.ticket_selections;
+            this.$post('tickets/bulk-actions', data)
                 .then(response => {
-                    notify({
+                    this.$notify({
                         type: 'success',
                         message: response.message,
                         position: 'bottom-right'
                     });
-                    fetchTickets();
+                    this.fetchTickets();
                 })
                 .catch((errors) => {
-                    handleError(errors);
+                    this.$handleError(errors);
                 })
                 .always(() => {
-                    state.working = false;
+                    this.working = false;
                 });
-        };
-
-        const assignAgent = () => {
-            if (!state.agent_id) {
-                notify({
+        },
+        assignAgent() {
+            if (!this.agent_id) {
+                this.$notify({
                     type: 'error',
-                    message: translate('Please select an agent first'),
+                    message: this.$t('Please select an agent first'),
                     position: 'bottom-right'
                 });
                 return false;
             }
 
-            doBulkActions({
+            this.doBulkActions({
                 bulk_action: 'assign_agent',
-                agent_id: state.agent_id
+                agent_id: this.agent_id
             });
-        };
-
-        const assignTags = () => {
-            if (!state.tag_ids.length) {
-                notify({
+        },
+        assignTags() {
+            if (!this.tag_ids.length) {
+                this.$notify({
                     type: 'error',
-                    message: translate('Please select tag first'),
+                    message: this.$t('Please select tag first'),
                     position: 'bottom-right'
                 });
                 return false;
             }
 
-            doBulkActions({
+            this.doBulkActions({
                 bulk_action: 'assign_tags',
-                tag_ids: state.tag_ids
+                tag_ids: this.tag_ids
             });
-        };
-
-        const closeTickets = () => {
-            doBulkActions({
+        },
+        closeTickets() {
+            this.doBulkActions({
                 bulk_action: 'close_tickets'
             });
-        };
-
-        const deleteTickets = () => {
-            doBulkActions({
+        },
+        deleteTickets() {
+            this.doBulkActions({
                 bulk_action: 'delete_tickets'
             });
-        };
-
-        const togglePop = (pop) => {
-            if (pop && state[pop]) {
-                    state[pop] = false;
+        },
+        togglePop(pop) {
+            if (pop && this[pop]) {
+                this[pop] = false;
                 return;
             }
-            state.assignAgentPop = false;
-            state.addTagPop = false;
+            this.assignAgentPop = false;
+            this.addTagPop = false;
             if (pop) {
-                state[pop] = true;
+                this[pop] = true;
             }
-        }
-
-        return {
-            ...toRefs(state),
-            fetchTickets,
-            doBulkActions,
-            assignAgent,
-            assignTags,
-            closeTickets,
-            deleteTickets,
-            togglePop,
-            translate,
         }
     }
 }

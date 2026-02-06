@@ -7,26 +7,26 @@
             <el-table-column type="expand" width="30">
                 <template #default="{row}">
                     <div class="fs_detail_log">
-                        <p><b>{{translate('Logged at:')}}</b> {{ smartDate(row.created_at, true) }}</p>
-                        <p><b>{{translate('Work Description:')}}</b> {{ row.message }}</p>
+                        <p><b>{{$t('Logged at:')}}</b> {{ smartDate(row.created_at, true) }}</p>
+                        <p><b>{{$t('Work Description:')}}</b> {{ row.message }}</p>
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="user" label="Agent">
+            <el-table-column prop="user" :label="$t('Agent')">
                 <template #default="{ row }">
                     <div class="fs_time_sheet_person">
                         <el-avatar :src="row.agent?.photo" size="small"></el-avatar>
                         <a
                             :href="`/wp-admin/user-edit.php?user_id=${row.agent?.user_id}`"
                             target="_blank"
-                            style="text-decoration: none; margin-left: 8px;">
-                            <strong> {{ row.agent?.full_name }} </strong>
+                            class="fs_time_sheet_agent_link">
+                            {{ row.agent?.full_name }}
                         </a>
 
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column prop="billable_minutes" label="Time" width="80">
+            <el-table-column prop="billable_minutes" :label="$t('Time')" width="80">
                 <template #default="{ row }">
                     <span>{{ formatMinutes(row.billable_minutes) }}</span>
                 </template>
@@ -36,41 +36,35 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
 import each from 'lodash/each';
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 import {timesheetUtils} from "@/admin/Modules/Reports/TimeSheet/Pieces/TimeSheetUtils";
 
 export default {
     name: 'TicketDateSheetPop',
     props: ['ticket_id','date','timeSheets'],
-    setup(props) {
-        const { smartDate, translate } = useFluentHelper();
-        const timeItems = ref([]);
-
-        const timeSheetTotal = computed(() => {
-            return timesheetUtils.calculateTimeSheetTotal(props.timeSheets, props.date, props.ticket_id);
-        });
-
-        const initItems = () => {
-            const sheets = props.timeSheets?.[props.date]?.[props.ticket_id] ?? [];
-            each(sheets, sheet => {
-                timeItems.value.push(sheet);
-            });
-        };
-
-        const formatMinutes = (minutes) =>
-            timesheetUtils.formatMinutes(minutes);
-
-        onMounted(initItems);
-
+    data() {
         return {
-            timeItems,
-            timeSheetTotal,
-            formatMinutes,
-            smartDate,
-            translate
+            timeItems: []
         };
+    },
+    computed: {
+        timeSheetTotal() {
+            return timesheetUtils.calculateTimeSheetTotal(this.timeSheets, this.date, this.ticket_id);
+        }
+    },
+    mounted() {
+        this.initItems();
+    },
+    methods: {
+        initItems() {
+            const sheets = this.timeSheets?.[this.date]?.[this.ticket_id] ?? [];
+            each(sheets, sheet => {
+                this.timeItems.push(sheet);
+            });
+        },
+        formatMinutes(minutes) {
+            return timesheetUtils.formatMinutes(minutes);
+        }
     }
 };
 </script>

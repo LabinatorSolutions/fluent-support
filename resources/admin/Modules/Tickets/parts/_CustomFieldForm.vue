@@ -1,39 +1,49 @@
 <template>
     <div class="fs_custom_fields">
         <template v-if="appReady">
-            <el-row v-if="fields" :gutter="30">
-                <el-col v-for="(field, fieldName) in computedFields" :key="fieldName" :xs="24" :md="12" v-show="field.is_renderable">
-                    <el-form :data="formData" :label-position="labelPosition">
-                            <el-form-item :label="field.label">
-                                <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
-                                          :type="field.type" v-model="formData[field.slug]"/>
-                                <el-select v-else-if="field.type == 'select-one'" v-model="formData[field.slug]">
-                                    <el-option v-for="option in field.options" :key="option"
-                                               :value="option" :label="option"></el-option>
-                                </el-select>
-                                <el-select v-else-if="field.type == 'select'" :filterable="field.filterable"
-                                           :multiple="field.multiple"
-                                           v-model="formData[field.slug]">
-                                    <el-option v-for="option in field.options" :key="option.id"
-                                               :value="option.id" :label="option.title"></el-option>
-                                </el-select>
-                                <el-radio-group v-else-if="field.type == 'radio'" v-model="formData[field.slug]">
-                                    <el-radio v-for="option in field.options" :key="option"
-                                              :value="option" :label="option"></el-radio>
-                                </el-radio-group>
-                                <el-checkbox-group v-else-if="field.type == 'checkbox'" v-model="formData[field.slug]">
-                                    <el-checkbox v-for="option in field.options" :key="option"
-                                                 :value="option" :label="option"></el-checkbox>
-                                </el-checkbox-group>
-                                <p v-else>Not editable</p>
-                            </el-form-item>
-                    </el-form>
-                </el-col>
-            </el-row>
-            <el-button v-if="ticket_id" v-loading="saving" :disabled="saving" @click="saveEditedCustomFieldData()"
-                       type="primary">
-                {{ $t('Save') }}
-            </el-button>
+            <el-form @submit.prevent="handleFormSubmit" :data="formData" :label-position="labelPosition">
+                <el-row v-if="fields" :gutter="30">
+                    <el-col v-for="(field, fieldName) in computedFields" :key="fieldName" :xs="24" :md="12" v-show="field.is_renderable">
+                        <el-form :data="formData" :label-position="labelPosition" @submit.prevent="handleFormSubmit">
+                                <el-form-item :label="field.label">
+                                    <el-input v-if="field.type == 'text' || field.type == 'number' || field.type == 'textarea'"
+                                            :type="field.type"
+                                            v-model="formData[field.slug]"
+                                            @keyup.enter.prevent="handleEnterKey"
+                                            class="fs_text_input fs_text_input_40"/>
+                                    <el-select class="fs_select_field" v-else-if="field.type == 'select-one'" v-model="formData[field.slug]">
+                                        <el-option v-for="option in field.options" :key="option"
+                                                :value="option" :label="option"></el-option>
+                                    </el-select>
+                                    <el-select class="fs_select_field" v-else-if="field.type == 'select'" :filterable="field.filterable"
+                                            :multiple="field.multiple"
+                                            v-model="formData[field.slug]">
+                                        <el-option v-for="option in field.options" :key="option.id"
+                                                :value="option.id" :label="option.title"></el-option>
+                                    </el-select>
+                                    <el-radio-group v-else-if="field.type == 'radio'" v-model="formData[field.slug]">
+                                        <el-radio v-for="option in field.options" :key="option"
+                                                :value="option">{{ option }}</el-radio>
+                                    </el-radio-group>
+                                    <el-checkbox-group v-else-if="field.type == 'checkbox'" v-model="formData[field.slug]">
+                                        <el-checkbox v-for="option in field.options" :key="option"
+                                                    :value="option" :label="option"></el-checkbox>
+                                    </el-checkbox-group>
+                                    <p v-else>{{ $t('Not editable') }}</p>
+                                </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+                <el-button v-if="ticket_id"
+                        v-loading="saving"
+                        :disabled="saving"
+                        @click.prevent="saveEditedCustomFieldData()"
+                        type="primary"
+                        native-type="button"
+                        class="fs_filled_btn fs_button_right">
+                    {{ $t('Save') }}
+                </el-button>
+            </el-form>
         </template>
         <el-skeleton v-else-if="loading_remote" :rows="3" animated/>
     </div>
@@ -44,7 +54,7 @@ import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
 import each from 'lodash/each';
 
-export default {
+export default   {
     name: 'CustomFieldForm',
     props: ['custom_data', 'ticket_id', 'ticket', 'type'],
     emits: ['syncData'],
@@ -130,6 +140,18 @@ export default {
                 .always(() => {
                     this.saving = false;
                 });
+        },
+        handleFormSubmit(event) {
+            event.preventDefault();
+            if (this.ticket_id && !this.saving) {
+                this.saveEditedCustomFieldData();
+            }
+        },
+        handleEnterKey(event) {
+            event.preventDefault();
+            if (this.ticket_id && !this.saving) {
+                this.saveEditedCustomFieldData();
+            }
         },
         isRenderable(field) {
             if (field.has_logics != 'yes' || !field.conditions || !field.conditions.length || this.type === 'update_ticket') {

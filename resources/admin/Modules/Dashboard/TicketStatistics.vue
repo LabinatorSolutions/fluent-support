@@ -2,7 +2,6 @@
     <div class="fs_box_body">
         <ul class="fs_card_list">
             <li
-                style="padding: 15px"
                 v-for="(stat, statKey) in component_data.stats"
                 :key="statKey"
             >
@@ -10,41 +9,26 @@
             </li>
         </ul>
         <p class="fs_stat_helper" v-if="component_data.individual_stat">
-            <span style="color: #ff7c7c">
+            <span>
                 {{ component_data.individual_stat.waiting_tickets }}
-                {{ translate("tickets") }}
+                {{ $t("tickets") }}
             </span>
-            {{ translate("are waiting for reply with") }}
-            <span style="color: #88c379">
-                {{ translate("average") }}
+            {{ $t("are waiting for reply with") }}
+            <span>
+                {{ $t("average") }}
                 {{ component_data.individual_stat.average_waiting }}
-                {{ translate("wait time") }}
+                {{ $t("wait time") }}
             </span>
-            & {{ translate("max wait time") }}
-            <span style="color: #7280ff">{{
+            & {{ $t("max wait time") }}
+            <span>{{
                 component_data.individual_stat.max_waiting
             }}</span>
         </p>
     </div>
 </template>
 <script>
-import { useFluentHelper } from "@/admin/Composable/FluentFrameworkHelper";
 export default {
-    props: ["component_data"],
     name: "TicketStatistics",
-    setup() {
-        const { translate } = useFluentHelper();
-        return {
-            translate,
-        };
-    },
+    props: ["component_data"]
 };
 </script>
-<style scoped>
-.fs_stat_helper {
-    padding: 5px 30px;
-}
-ul.fs_card_list {
-    padding: 0;
-}
-</style>
