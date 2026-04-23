@@ -9,9 +9,16 @@ import {
     removeAllActions
 } from '@wordpress/hooks';
 
-const moment = require('moment');
-require('moment/locale/en-gb');
-moment.locale('en-gb');
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import 'dayjs/locale/en-gb';
+
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.extend(isSameOrAfter);
+dayjs.locale('en-gb');
 
 const appStartTime = new Date();
 
@@ -44,7 +51,7 @@ export default class FluentFramework {
                 ucFirst: self.ucFirst,
                 ucWords: self.ucWords,
                 slugify: self.slugify,
-                moment: moment,
+                $dayjs: dayjs,
                 $get: self.$get,
                 $post: self.$post,
                 $del: self.$del,
@@ -139,12 +146,12 @@ export default class FluentFramework {
 
     dateTimeFormat(date, format) {
         const dateString = (date === undefined) ? null : date;
-        const dateObj = moment(dateString);
+        const dateObj = dayjs(dateString);
         return dateObj.isValid() ? dateObj.format(format) : null;
     }
 
     localDate(date) {
-        return moment.utc(date).local();
+        return dayjs.utc(date).local();
     }
 
     longLocalDate(date) {
@@ -239,6 +246,9 @@ export default class FluentFramework {
         if (!errorMessage) {
             errorMessage = 'Something is wrong!';
         }
+
+        errorMessage = errorMessage.replace(/^\d+\s*/, '');
+        
         this.$notify({
             type: 'error',
             title: 'Error',
@@ -274,16 +284,16 @@ export default class FluentFramework {
         }
         const endTime = new Date();
         const timeDiff = endTime - appStartTime; // in ms
-        const dateObj = moment(dateString);
-        return dateObj.from(moment(window.fluentSupportAdmin.server_time).add(timeDiff, 'milliseconds'));
+        const dateObj = dayjs(dateString);
+        return dateObj.from(dayjs(window.fluentSupportAdmin.server_time).add(timeDiff, 'milliseconds'));
     }
 
     waitingTime(time1, time2) {
         if (!time2 || !time1) {
             return '';
         }
-        time1 = moment(time1);
-        time2 = moment(time2);
+        time1 = dayjs(time1);
+        time2 = dayjs(time2);
         return time2.from(time1);
     }
 
@@ -360,14 +370,14 @@ export default class FluentFramework {
             return "";
         }
         let format = "D MMM, YYYY";
-        if (moment(dateString).isSame(new Date(), "year")) {
+        if (dayjs(dateString).isSame(new Date(), "year")) {
             format = "D MMM";
             if (withTime) {
                 format = "D MMM, hh:mm a";
             }
         }
 
-        const dateObj = moment(dateString);
+        const dateObj = dayjs(dateString);
 
         return dateObj.isValid() ? dateObj.format(format) : null;
     }

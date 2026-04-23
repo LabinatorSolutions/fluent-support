@@ -8,7 +8,9 @@
             </div>
         </div>
 
-        <el-skeleton v-if="!configs.length" :rows="5" animated/>
+        <div v-if="!configs.length" class="fs_skeleton_loader">
+            <el-skeleton :rows="5" animated/>
+        </div>
 
         <!-- Custom Table -->
         <div v-else class="fs_email_settings_table">
@@ -178,6 +180,8 @@ export default {
             allowed_mails_for_attachments: [
                 'ticket_created_email_to_customer',
                 'ticket_created_email_to_admin',
+                'ticket_created_by_agent_email_to_customer',
+                'ticket_created_by_agent_on_behalf_email_to_customer',
                 'ticket_replied_by_agent_email_to_customer',
                 'ticket_replied_by_customer_email_to_admin'
             ]

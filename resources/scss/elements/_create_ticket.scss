@@ -58,6 +58,31 @@
             }
         }
     }
+    form .fs_step_content:not(.fs_step_content_ticket_form){
+        .el-form-item .el-input .el-input__wrapper{
+            padding-right: 0;
+            .el-input__suffix{
+                border: none;
+                background: var(--fs-bg-subtle, #F5F7FA);
+                border-radius: 0 8px 8px 0;
+                .el-button--primary{
+                    color: var(--fs-text-primary, #0E121B);
+                    font-size: 12px;
+                    margin-left: 0;
+                    padding: 0 6px;
+                    &.is-disabled{
+                        color: var(--fs-text-secondary, #525866);
+                    }
+                }
+            }
+            &.is-focus{
+                .el-input__suffix{
+                    border-radius: 0 8px 8px 0;
+                }
+            }
+        }
+    }
+
 
     &.fs_global_form_builder{
         gap: 0;

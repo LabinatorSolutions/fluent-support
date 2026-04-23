@@ -14,6 +14,7 @@
                     <el-date-picker
                         v-model="localDateRange"
                         type="daterange"
+                        :editable="false"
                         :range-separator="$t('To')"
                         :start-placeholder="$t('Start')"
                         :end-placeholder="$t('End')"
@@ -156,7 +157,7 @@ export default {
                     label: stat.title || key,
                     value: stat.count || 0,
                     icon: iconMap[statKey] || iconMap[statKey.replace('_', '')] || iconMap[statKey.split('_')[0]] || defaultIcon,
-                    iconBg: '#f2f5f8',
+                    iconBg: '',
                 });
             });
 
@@ -223,7 +224,7 @@ export default {
 
     mounted() {
         this.fetchReports();
-        this.$setTitle("Personal Reports");
+        this.$setTitle(this.$t("Personal Reports"));
     },
 };
 </script>

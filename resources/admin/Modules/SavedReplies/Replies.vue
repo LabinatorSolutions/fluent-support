@@ -131,7 +131,7 @@
                 :button-text="$t('Upgrade To Pro')"
             />
         </div>
-        <div style="background: white" class="fs_table_container" v-else>
+        <div class="fs_table_container fs_skeleton_loader" v-else>
             <el-skeleton class="fs_box_wrapper fs_skeleton" :rows="5" animated />
         </div>
 
@@ -146,6 +146,7 @@
             v-if="editing_reply"
             width="60%"
             class="fs_dialog fs_reply_modal"
+            @closed="resetEditingReply"
         >
             <el-form label-position="top" :data="editing_reply">
                 <el-form-item :label="$t('Title')" class="fs_form_item">
@@ -275,9 +276,12 @@ export default {
                 route = `saved-replies/${this.editing_reply.id}`;
             }
 
-            method(route, {
+            const data = {
                 ...this.editing_reply,
-            })
+                product_id: this.editing_reply.product_id || null,
+            };
+
+            method(route, data)
                 .then((response) => {
                     this.$notify({
                         message: response.message,
@@ -296,7 +300,11 @@ export default {
         },
 
         editModal(reply) {
-            this.editing_reply = JSON.parse(JSON.stringify(reply));
+            this.editing_reply = JSON.parse(JSON.stringify(reply)); 
+            const productId = Number(this.editing_reply.product_id);
+            if (productId === 0) {
+                this.editing_reply.product_id = null;
+            }
             this.showModal = true;
         },
 
@@ -319,6 +327,10 @@ export default {
 
                 this.fetch();
             });
+        },
+
+        resetEditingReply() {
+            this.editing_reply = false;
         }
     },
 

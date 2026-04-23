@@ -55,6 +55,8 @@
 
 <script type="text/babel">
 import TicketsMenu from "./_TicketsMenu.vue";
+import { mapState } from 'pinia';
+import { useTicketListStore } from '@/admin/stores/ticketList.store';
 
 export default {
     name: 'ticketsView',
@@ -86,6 +88,7 @@ export default {
         };
     },
     computed: {
+        ...mapState(useTicketListStore, { storeTickets: 'tickets' }),
         isViewingTicket() {
             return this.$route.name === 'view_ticket';
         },
@@ -96,9 +99,7 @@ export default {
             if (this.$route.name !== 'view_ticket') {
                 return null;
             }
-            
-            const tickets = window.fsCurrentFilteredTickets;
-            return tickets && Array.isArray(tickets) && tickets.length > 0 ? tickets : null;
+            return this.storeTickets && this.storeTickets.length > 0 ? this.storeTickets : null;
         },
     },
     watch: {

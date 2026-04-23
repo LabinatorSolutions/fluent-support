@@ -168,6 +168,8 @@
                 <zendesk-importer
                     :show="openSettings"
                     :settings="config"
+                    :previously_imported="previous_migration_data.zendesk?.previously_imported"
+                    @restart_previous_migration="restartTicketMigration('zendesk')"
                     @import="importTickets(currently_importing)"
                     @close="openSettings=false"
                 />
@@ -231,7 +233,17 @@ export default {
                 });
         },
         restartTicketMigration(handler) {
-            this.import_page = this.previous_migration_data[handler].previously_imported.next_page;
+            const previousData = this.previous_migration_data[handler].previously_imported;
+            this.import_page = previousData.next_page;
+            if (previousData.cursor) {
+                this.config.cursor = previousData.cursor;
+            }
+            if (previousData.next_page_url) {
+                this.config.next_page_url = previousData.next_page_url;
+            }
+            if (previousData.include_archived) {
+                this.config.include_archived = previousData.include_archived;
+            }
             this.importTickets(handler);
         },
         importTickets(handler) {
@@ -262,6 +274,18 @@ export default {
                 query.query.email = this.config.email;
             }
 
+            if(this.config.cursor){
+                query.query.cursor = this.config.cursor;
+            }
+
+            if(this.config.next_page_url){
+                query.query.next_page_url = this.config.next_page_url;
+            }
+
+            if(this.config.include_archived){
+                query.query.include_archived = true;
+            }
+
             this.$post('ticket_importer/import', query)
                 .then(response => {
                     if(response.error){
@@ -278,6 +302,12 @@ export default {
                         this.import_page = response.next_page;
                         this.total_tickets = response.total_tickets;
                         this.completed = response.completed;
+                        if (response.cursor) {
+                            this.config.cursor = response.cursor;
+                        }
+                        if (response.next_page_url) {
+                            this.config.next_page_url = response.next_page_url;
+                        }
                         this.$nextTick(() => {
                             this.importTickets(handler);
                         });
@@ -299,6 +329,7 @@ export default {
                             this.config = {};
                             this.import_from_sass = true;
                         }
+                        this.import_page = 1;
 
                         this.fetchSettings();
                     }

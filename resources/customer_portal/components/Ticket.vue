@@ -194,12 +194,17 @@
                                 <div class="fs_join_thread_custom_field">
                                     <div class="fs_ticket_thread_content fs_starter_thread_content">
                                         <section class="fs_ticket_avatar">
-                                            <img :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
+                                            <img v-if="ticket.created_by_agent" :src="ticket.created_by_agent.photo" :alt="ticket.created_by_agent.full_name"/>
+                                            <img v-else :src="ticket.customer.photo" :alt="ticket.customer.full_name"/>
                                         </section>
                                         <section class="fs_ticket_thread_wrap">
                                             <section class="fs_thread_message">
                                                 <div class="fs_thread_head">
-                                                    <div class="fs_thread_name">
+                                                    <div class="fs_thread_name" v-if="ticket.created_by_agent">
+                                                        <strong>{{ ticket.created_by_agent.full_name }}</strong>
+                                                        {{ $t('created_ticket_on_behalf') }}
+                                                    </div>
+                                                    <div class="fs_thread_name" v-else>
                                                         <strong>{{ getHumanName(ticket.customer) }}</strong>
                                                         {{ $t('conversation_started') }}
                                                     </div>

@@ -95,6 +95,7 @@
     }
     .fs_tickets_view_wrapper{
         margin-left: 0;
+        width: 100%;
     }
     .fframe_body{
         padding-top: 0;
@@ -194,6 +195,6 @@
     .fframe_body .fs_settings_view .fs_inner_body,
     .fs_tickets_view .fs_tk_inner_body{
         overscroll-behavior: initial;
-        overflow-y: initial;
+        overflow-y: auto;
     }
 }

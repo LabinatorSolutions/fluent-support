@@ -1,9 +1,9 @@
 <template>
     <div class="fs_reports_wrapper">
         <!-- Mobile Drawer Overlay -->
-        <div 
-            class="fs_reports_menu_overlay" 
-            :class="{ 'is-open': isMenuOpen }" 
+        <div
+            class="fs_reports_menu_overlay"
+            :class="{ 'is-open': isMenuOpen }"
             @click.stop="closeMenu"
             v-show="isMenuOpen"
         ></div>
@@ -39,6 +39,13 @@
                             @click="setActiveTab('agent-reports')"
                         >
                             {{ $t('Agents Reports') }}
+                        </button>
+                        <button
+                            v-if="me.permissions.indexOf('fst_sensitive_data') != -1"
+                            :class="['fs_nav_tab', { 'fs_nav_tab_active': activeName === 'agent-group-reports' }]"
+                            @click="setActiveTab('agent-group-reports')"
+                        >
+                            {{ $t('Agent Groups Reports') }}
                         </button>
                         <button
                             v-if="me.permissions.indexOf('fst_sensitive_data') != -1"
@@ -97,6 +104,13 @@
                         </button>
                         <button
                             v-if="me.permissions.indexOf('fst_sensitive_data') != -1"
+                            :class="['fs_nav_tab', { 'fs_nav_tab_active': activeName === 'agent-group-reports' }]"
+                            @click="setActiveTab('agent-group-reports')"
+                        >
+                            {{ $t('Agent Groups Reports') }}
+                        </button>
+                        <button
+                            v-if="me.permissions.indexOf('fst_sensitive_data') != -1"
                             :class="['fs_nav_tab', { 'fs_nav_tab_active': activeName === 'product-reports' }]"
                             @click="setActiveTab('product-reports')"
                         >
@@ -146,6 +160,7 @@ import Reports from "./Reports";
 import PersonalReports from "./PersonalReports";
 import ProductReports from "./ProductReports";
 import BusinessBoxReports from "./BusinessBoxReports";
+import AgentGroupReports from "./AgentGroupReports";
 import ActivityByTimeOfDay from "./ActivityByTimeOfDay";
 import TimeSheet from "./TimeSheet/TimeSheet.vue";
 import { getDefaultDateRange } from "./Utils/reportHelpers";
@@ -159,6 +174,7 @@ export default {
         PersonalReports,
         ProductReports,
         BusinessBoxReports,
+        AgentGroupReports,
         ActivityByTimeOfDay,
         TimeSheet,
         Menu
@@ -183,6 +199,7 @@ export default {
                 'agent-reports': 'Reports',
                 'product-reports': 'ProductReports',
                 'business-box-reports': 'BusinessBoxReports',
+                'agent-group-reports': 'AgentGroupReports',
                 'activity-reports': 'ActivityByTimeOfDay',
                 'time-sheet': 'TimeSheet'
             };
@@ -214,7 +231,7 @@ export default {
         getTabFromUrl() {
             const urlParams = this.getHashParams();
             const tab = urlParams.get('tab');
-            const validTabs = ['personal-reports', 'agent-reports', 'product-reports', 'business-box-reports', 'activity-reports', 'time-sheet'];
+            const validTabs = ['personal-reports', 'agent-reports', 'product-reports', 'business-box-reports', 'agent-group-reports', 'activity-reports', 'time-sheet'];
             return validTabs.includes(tab) ? tab : null;
         },
 

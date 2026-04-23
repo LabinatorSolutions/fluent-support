@@ -1,11 +1,11 @@
 <template>
     <div class="fs_stat_box">
-        <div class="fs_stat_icon" :style="{ background: iconBg }">
-            <IconPack 
-                :icon-key="icon" 
-                :width="20" 
+        <div class="fs_stat_icon">
+            <IconPack
+                :icon-key="icon"
+                :width="20"
                 :height="20"
-                :fill="iconColor"
+                :fill="computedIconColor"
             />
         </div>
         <div class="fs_stat_content">
@@ -38,11 +38,23 @@ export default {
         },
         iconBg: {
             type: String,
-            default: '#f2f5f8'
+            default: ''
         },
         iconColor: {
             type: String,
-            default: '#525866'
+            default: ''
+        }
+    },
+    computed: {
+        computedIconBg() {
+            if (this.iconBg) return this.iconBg;
+            const computedStyle = getComputedStyle(document.documentElement);
+            return computedStyle.getPropertyValue('--fs-state-faded-lighter').trim() || '#f2f5f8';
+        },
+        computedIconColor() {
+            if (this.iconColor) return this.iconColor;
+            const computedStyle = getComputedStyle(document.documentElement);
+            return computedStyle.getPropertyValue('--fs-stat-icon-color').trim() || '#525866';
         }
     }
 };

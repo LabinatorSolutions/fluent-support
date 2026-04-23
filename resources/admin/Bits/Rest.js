@@ -1,5 +1,6 @@
-const request = function(method, route, data = {}) {
-    const url = `${window.fluentSupportAdmin.rest.url}/${route}`;
+const request = function(method, route, data = {}, baseURL = null) {
+    const base = baseURL || window.fluentSupportAdmin.rest.url;
+    const url = `${base}/${route}`;
 
     const headers = {'X-WP-Nonce': window.fluentSupportAdmin.rest.nonce};
 
@@ -17,20 +18,20 @@ const request = function(method, route, data = {}) {
 }
 
 export default {
-    get(route, data = {}) {
-        return request('GET', route, data);
+    get(route, data = {}, baseURL = null) {
+        return request('GET', route, data, baseURL);
     },
-    post(route, data = {}) {
-        return request('POST', route, data);
+    post(route, data = {}, baseURL = null) {
+        return request('POST', route, data, baseURL);
     },
-    delete(route, data = {}) {
-        return request('DELETE', route, data);
+    delete(route, data = {}, baseURL = null) {
+        return request('DELETE', route, data, baseURL);
     },
-    put(route, data = {}) {
-        return request('PUT', route, data);
+    put(route, data = {}, baseURL = null) {
+        return request('PUT', route, data, baseURL);
     },
-    patch(route, data = {}) {
-        return request('PATCH', route, data);
+    patch(route, data = {}, baseURL = null) {
+        return request('PATCH', route, data, baseURL);
     }
 };
 

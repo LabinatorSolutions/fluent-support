@@ -50,7 +50,7 @@
                 </div>
             </div>
         </div>
-        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+        <div class="fs_box_body fs_skeleton_loader" v-else>
             <el-skeleton :rows="5" animated/>
         </div>
     </div>
@@ -218,3 +218,10 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+.fs_skeleton_loader {
+    padding: 20px;
+    background: var(--fs-bg-primary);
+}
+</style>

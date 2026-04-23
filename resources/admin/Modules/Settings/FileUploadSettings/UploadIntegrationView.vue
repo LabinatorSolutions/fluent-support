@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        <div v-else class="fs_box_body">
+        <div v-else class="fs_box_body fs_skeleton_loader">
             <el-skeleton :animated="true" :rows="3" />
         </div>
 

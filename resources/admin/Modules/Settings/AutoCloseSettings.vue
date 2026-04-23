@@ -45,8 +45,7 @@
                 </form-builder>
             </div>
             <div
-                style="padding: 20px; background: white"
-                class="fs_box_body"
+                class="fs_box_body fs_skeleton_loader"
                 v-else
             >
                 <el-skeleton :rows="5" animated />
@@ -117,7 +116,7 @@ export default {
     },
     mounted() {
         this.fetchSettings();
-        this.$setTitle("Auto Close Settings");
+        this.$setTitle(this.$t("Auto Close Settings"));
     }
 }
 </script>

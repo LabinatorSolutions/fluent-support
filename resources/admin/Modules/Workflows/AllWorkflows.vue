@@ -399,7 +399,7 @@ export default {
             if (!this.new_workflow.title) {
                 this.$notify({
                     type: "error",
-                    message: "Workflow title is required",
+                    message: this.$t("Workflow title is required"),
                     position: "bottom-right",
                 });
                 return false;
@@ -431,7 +431,7 @@ export default {
                 .then((response) => {
                     this.$notify({
                         type: "success",
-                        message: 'Workflow duplicated successfully',
+                        message: this.$t('Workflow duplicated successfully'),
                         position: "bottom-right",
                     });
                     this.fetch();

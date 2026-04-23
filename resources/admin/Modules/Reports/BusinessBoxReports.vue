@@ -30,6 +30,7 @@
                         <el-date-picker
                             v-model="localDateRange"
                             type="daterange"
+                            :editable="false"
                             :range-separator="$t('To')"
                             :start-placeholder="$t('Start')"
                             :end-placeholder="$t('End')"

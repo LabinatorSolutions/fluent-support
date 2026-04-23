@@ -22,7 +22,7 @@
                         </div>
                         <div class="fs_ticket_meta_row">
                             <p class="fs_ticket_excerpt">{{ getExcerpt(ticket) }}</p>
-                                <p class="fs_ticket_time">{{ $timeDiff(ticket.updated_at || ticket.created_at) }}</p>
+                                <p class="fs_ticket_time" :data-ticket-time="ticket.updated_at || ticket.created_at">{{ $timeDiff(ticket.updated_at || ticket.created_at) }}</p>
                         </div>
                     </div>
                 </router-link>
@@ -62,7 +62,7 @@
                                 class="fs_sidebar_icons"
                                 :width="20"
                                 :height="20"
-                                :fill="isRouteActive(route.name) ? '#0E121B' : '#525866'"
+                                :fill="isRouteActive(route.name) ? 'var(--fs-text-primary)' : 'var(--fs-text-secondary)'"
                             />
                         </el-tooltip>
                         <IconPack
@@ -71,7 +71,7 @@
                             class="fs_sidebar_icons"
                             :width="20"
                             :height="20"
-                            :fill="isRouteActive(route.name) ? '#0E121B' : '#525866'"
+                            :fill="isRouteActive(route.name) ? 'var(--fs-text-primary)' : 'var(--fs-text-secondary)'"
                         />
                         <span v-if="!isCollapsed" class="fs_sidebar_label">{{ $t(route.label) }}</span>
                     </router-link>
@@ -84,6 +84,8 @@
 <script type="text/babel">
 
 import IconPack from "@/admin/Components/IconPack.vue";
+import { mapState } from 'pinia';
+import { useTicketListStore } from '@/admin/stores/ticketList.store';
 
 export default {
     name: 'TicketsMenu',
@@ -131,12 +133,13 @@ export default {
         }
     },
     computed: {
+        ...mapState(useTicketListStore, { storeTickets: 'tickets' }),
         currentTickets() {
-            if (this.$route.name != 'view_ticket' || !(window.fsCurrentFilteredTickets && window.fsCurrentFilteredTickets.length)) {
+            if (this.$route.name !== 'view_ticket' || !(this.storeTickets && this.storeTickets.length)) {
                 return null;
             }
 
-            return window.fsCurrentFilteredTickets;
+            return this.storeTickets;
         },
         isViewingTicket() {
             return this.$route.name === 'view_ticket';

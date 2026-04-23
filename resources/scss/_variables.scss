@@ -103,6 +103,30 @@ $bodyBg: #f1f2f5;
     --fs-status-info-bg: #E1E4EA;
     --fs-status-info-text: #1976D2;
 
+   // ─── TAGS COLORS ───────────────────── //
+   --fs-primary-tags-bg: #E1E4EA;
+
+    /* ─── STAT ICON BACKGROUNDS ────────────── */
+    --fs-stat-icon-bg: #f2f5f8;
+    --fs-stat-icon-color: #525866;
+    --fs-stat-icon-danger-bg: #ffebec;
+    --fs-stat-icon-danger-color: #FB3748;
+    --fs-stat-icon-warning-bg: #fff1eb;
+    --fs-stat-icon-warning-color: #FF8447;
+    --fs-stat-icon-info-bg: #ebf1ff;
+    --fs-stat-icon-info-color: #335CFF;
+
+    /* ─── CHART COLORS ─────────────────────── */
+    --fs-chart-primary: #0cbe7e;
+    --fs-chart-secondary: #47c2ff;
+    --fs-chart-tertiary: #22d3bb;
+    --fs-chart-quaternary: #7D52F4;
+    --fs-chart-quinary: #FF8447;
+
+    /* ─── BADGE COLORS ─────────────────────── */
+    --fs-badge-success-bg: #afebd2;
+    --fs-badge-success-text: #072722;
+
     /* ─── Info tooltip ─────────────────────────── */
     --fs-tooltip-bg: #CACFD8;
 
@@ -118,4 +142,5 @@ $bodyBg: #f1f2f5;
 
 
     --fs-text-link: #089360;
+    --fs-bg-neutral: var(--fs-subtle-btn-bg);
 }

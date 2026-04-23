@@ -14,7 +14,7 @@ import BarChartBase from "./BarChartBase";
 
 export default {
     name: "TicketsGrowthChart",
-    props: ["date_range", "agent_id", "product_id", "mailbox_id", "url"],
+    props: ["date_range", "agent_id", "product_id", "mailbox_id", "agent_group_id", "url"],
     components: {
         BarChartBase,
     },
@@ -91,6 +91,7 @@ export default {
                 agent_id: this.agent_id,
                 product_id: this.product_id,
                 mailbox_id: this.mailbox_id,
+                agent_group_id: this.agent_group_id,
             }).then((response) => {
                 this.setupChartItems(response.stats);
             });
@@ -106,9 +107,11 @@ export default {
                 chartData.labels.push(label);
                 statData.push(parseInt(count));
             });
+            const computedStyle = getComputedStyle(document.documentElement);
+            const chartColor = computedStyle.getPropertyValue('--fs-chart-primary').trim() || '#0cbe7e';
             chartData.datasets.push({
-                label: "Ticket Activity",
-                backgroundColor: "#0cbe7e",
+                label: this.$t("Ticket Activity"),
+                backgroundColor: chartColor,
                 data: statData,
             });
 

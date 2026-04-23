@@ -100,7 +100,7 @@
                 <div :class="['fs_response_content', { 'full-size': isFullSize, 'typing': isStreaming }]">
                     <div class="fs_response_text" v-html="formattedResponse"></div>
                     <div v-if="isStreaming && typingQueue.length === 0" class="fs_streaming_indicator">
-                        <span>Generating</span><span class="fs_typing_dots">●●●</span>
+                        <span>{{ $t('Generating') }}</span><span class="fs_typing_dots">●●●</span>
                     </div>
                 </div>
             </div>
@@ -165,7 +165,7 @@ export default {
             finalPrompts: '',
             products: [],
             selectedProduct: this.productID ? parseInt(this.productID) : 0,
-            conversationId: null,
+            chatId: null,
             isStreaming: false,
             streamBuffer: '',
             displayedText: '',
@@ -301,8 +301,8 @@ export default {
             if (eventType === 'message' && data && data.trim() !== '') {
                 this.streamBuffer += data;
                 this.addToStream(data);
-            } else if (eventType === 'conversation_id' && data) {
-                this.conversationId = data.trim();
+            } else if (eventType === 'chat_id' && data) {
+                this.chatId = data.trim();
             } else if (eventType === 'end') {
                 this.loading = false;
                 this.isStreaming = false;
@@ -345,9 +345,9 @@ export default {
                 product_id: this.selectedProduct,
             };
 
-            // Include conversation_id if we have one from previous interactions
-            if (this.conversationId) {
-                requestData.conversation_id = this.conversationId;
+            // Include chat_id if we have one from previous interactions
+            if (this.chatId) {
+                requestData.chat_id = this.chatId;
             }
 
             // Use fetch for proper streaming
@@ -448,7 +448,7 @@ export default {
 
         selectPresetPrompt(preset) {
             this.selectedPrompt = preset;
-            this.conversationId = null;
+            this.chatId = null;
             const selectedPrompt = this.presetPrompts.find(item => item.text === preset.text);
             this.presetPrompt = `${selectedPrompt.description}`;
             this.prompt = '';
@@ -471,13 +471,13 @@ export default {
                 const cleanText = this.getCleanTextForEditor(this.aiResponse);
                 await navigator.clipboard.writeText(cleanText);
                 this.$notify({
-                    message: "Copied to clipboard",
+                    message: this.$t("Copied to clipboard"),
                     type: "success",
                     position: "bottom-right",
                 });
             } catch (error) {
                 this.$notify({
-                    message: "Something went wrong",
+                    message: this.$t("Something went wrong"),
                     type: "danger",
                     position: "bottom-right",
                 });
@@ -488,7 +488,7 @@ export default {
             this.aiResponse = '';
             this.selectedPrompt = '';
             this.prompt = '';
-            this.conversationId = null;
+            this.chatId = null;
             this.isStreaming = false;
             this.displayedText = '';
             this.typingQueue = [];

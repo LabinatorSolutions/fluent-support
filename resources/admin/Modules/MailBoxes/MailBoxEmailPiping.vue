@@ -7,7 +7,9 @@
             </div>
         </div>
 
-        <el-skeleton v-if="loading_pipe" :rows="5" animated/>
+        <div v-if="loading_pipe" class="fs_skeleton_loader">
+            <el-skeleton :rows="5" animated/>
+        </div>
 
         <div v-else-if="email_pipe" class="fs_email_piping_content">
             <!-- Not Issued State -->
@@ -219,7 +221,7 @@ export default {
                 this.copied = true;
                 this.$notify({
                     type: 'success',
-                    title: 'Success',
+                    title: this.$t('Success'),
                     message: this.$t('Copied to clipboard'),
                     position: 'bottom-right'
                 });

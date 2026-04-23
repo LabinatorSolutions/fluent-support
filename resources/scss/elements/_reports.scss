@@ -575,6 +575,7 @@
             overflow: visible;
             box-sizing: border-box;
             max-width: 100%;
+            touch-action: manipulation;
 
             @media (min-width: 1025px) {
                 min-width: 200px;
@@ -637,8 +638,10 @@
                 cursor: pointer;
                 z-index: 2;
                 border: none;
-                background: transparent;
-                box-shadow: none;
+                background: transparent !important;
+                background-color: transparent !important;
+                box-shadow: none !important;
+                touch-action: manipulation;
 
                 // Hide the default inputs and icons but keep close icon visible
                 .el-range__icon,
@@ -751,6 +754,7 @@
             .el-transfer-panel {
                 width: 39%;
                 border-radius: 12px;
+                background: var(--fs-bg-primary, #FFF);
             }
             @media screen and (max-width: 768px) {
                 .el-transfer-panel {
@@ -758,12 +762,18 @@
                 }
             }
             .el-transfer-panel .el-transfer-panel__header {
-                background: white;
+                background: var(--fs-bg-primary, #FFF);
                 border-radius: 12px 12px 0px 0px;
             }
             .el-transfer-panel .el-transfer-panel__body {
-                background: white;
+                background: var(--fs-bg-primary, #FFF);
                 border-radius: 0px 0px 12px 12px;
+                .el-input__wrapper{
+                    .el-input__inner{
+                        background-color: var(--fs-bg-primary, #FFF);
+                        color: var(--fs-text-primary, #0E121B);
+                    }
+                }
             }
             .el-button{
                 padding: 6px;
@@ -864,4 +874,82 @@
             }
         }
     }
+}
+
+.fs_personal_performance_box {
+    background: var(--fs-bg-primary, #FFF);
+    border-radius: var(--fs-radius-md, 8px);
+    overflow: hidden;
+    width: 100%;
+    
+    @media (max-width: 768px) {
+        margin-top: 20px;
+    }
+}
+
+.fs_personal_performance_header {
+    background: var(--fs-bg-primary, #FFF);
+    border-bottom: 1px solid var(--fs-stroke-soft, #E1E4EA);
+    padding: 12px 20px;
+}
+
+.fs_personal_performance_title {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    color: var(--fs-text-primary, #0E121B);
+    letter-spacing: -0.176px;
+}
+
+.fs_personal_performance_body {
+    padding: 20px;
+}
+
+.fs_personal_performance_list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.fs_personal_performance_item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.fs_personal_performance_icon_label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+}
+
+.fs_personal_performance_icon {
+    color: var(--fs-text-secondary, #525866);
+    font-size: 20px;
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.fs_personal_performance_label {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--fs-text-secondary, #525866);
+    letter-spacing: -0.084px;
+    min-width: 120px;
+}
+
+.fs_personal_performance_value {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--fs-text-primary, #0E121B);
+    text-align: right;
+    white-space: nowrap;
+    letter-spacing: -0.084px;
 }

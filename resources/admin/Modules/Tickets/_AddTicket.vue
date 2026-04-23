@@ -22,10 +22,22 @@
                             @keypress.enter.native.prevent="searchCustomers()"
                             v-model="search_customer"
                             :placeholder="$t('Search or provide email address')">
+                            <template #suffix>
+                                <el-button
+                                    @click="searchCustomers()"
+                                    :disabled="!search_customer || searching"
+                                    :loading="searching"
+                                    link
+                                    type="primary"
+                                    size="small">
+                                    {{ $t('Search') }}
+                                </el-button>
+                            </template>
                         </el-input>
                     </el-form-item>
 
-                    <div v-if="search_results && search_results.data && search_results.data.length && ticket.create_customer != 'yes'"
+                    <div v-loading="searching"
+                         v-if="searching || (search_results && search_results.data && search_results.data.length && ticket.create_customer != 'yes')"
                          class="fs_customer_selector">
                         <h3>{{ $t('Please Select a contact') }} [{{ search_results.provider }}]</h3>
                         <ul class="fs_contact_results">
@@ -137,7 +149,7 @@
                         <error :error="errors.get('title')"/>
                     </el-form-item>
 
-                    <el-form-item :label="$t('Write a Reply')" class="fs_reply_editor">
+                    <el-form-item :label="$t('Ticket Details')" class="fs_reply_editor">
                         <wp-editor
                             :height="150"
                             :autofocus="true"
@@ -149,7 +161,12 @@
                         <error :error="errors.get('content')"/>
                     </el-form-item>
 
-                    <attachment-form :ticket="ticket" :attachments="attachments" :errors="errors"></attachment-form>
+                    <attachment-form
+                        :ticket="ticket"
+                        :attachments="attachments"
+                        :errors="errors"
+                        @upload-state-change="updateAttachmentUploadState"
+                    ></attachment-form>
 
                     <el-row :gutter="20">
                         <el-col v-if="products && products.length" :md="12" :xs="24">
@@ -191,6 +208,12 @@
                     </el-row>
 
                     <custom-field-form :custom_data="ticket.custom_fields" :ticket="ticket" type="create_ticket" v-if="has_pro"/>
+
+                    <el-form-item>
+                        <el-checkbox true-value="yes" false-value="no" v-model="ticket.agent_initiated">
+                            {{ $t('Initiated by agent') }}
+                        </el-checkbox>
+                    </el-form-item>
                 </div>
 
             </el-form>
@@ -231,7 +254,7 @@
                 <el-button
                     v-if="step === 'ticket'"
                     @click="create()"
-                    :disabled="creating"
+                    :disabled="creating || attachmentUploadState.uploading"
                     v-loading="creating"
                     class="fs_filled_btn">
                     {{ $t('Create Ticket') }}
@@ -278,6 +301,7 @@ export default {
                 custom_fields: CustomFieldForm.data(),
                 create_customer: 'no',
                 create_wp_user: 'no',
+                agent_initiated: 'no',
             },
             new_customer: {},
             customer_search_item: {
@@ -297,8 +321,23 @@ export default {
                 username: '',
                 password: ''
             },
-            has_pro: false
+            has_pro: false,
+            searchDebounceTimer: null,
+            attachmentUploadState: {
+                uploading: false,
+                count: 0
+            }
         };
+    },
+    watch: {
+        search_customer(val) {
+            clearTimeout(this.searchDebounceTimer);
+            if (val && val.length >= 3) {
+                this.searchDebounceTimer = setTimeout(() => {
+                    this.searchCustomers();
+                }, 400);
+            }
+        }
     },
     computed: {
         canProceedToTicket() {
@@ -320,7 +359,28 @@ export default {
         this.has_pro = this.appVars.has_pro || false;
     },
     methods: {
+        updateAttachmentUploadState(state) {
+            this.attachmentUploadState = state;
+        },
+
+        notifyAttachmentUploadPending() {
+            const message = this.attachmentUploadState.count > 1
+                ? this.$t('Please wait for all attachments to finish uploading before creating the ticket.')
+                : this.$t('Please wait for the attachment to finish uploading before creating the ticket.');
+
+            this.$notify({
+                message,
+                position: 'bottom-right',
+                type: 'warning'
+            });
+        },
+
         create() {
+            if (this.attachmentUploadState.uploading) {
+                this.notifyAttachmentUploadPending();
+                return;
+            }
+
             this.errors.clear();
             this.creating = true;
             this.$post('tickets', {

@@ -10,8 +10,6 @@
                     <el-switch
                         @change="saveConfiguration"
                         v-model="isEnabled"
-                        active-value="true"
-                        inactive-value="false"
                     />
                     <span class="fs_toggle_label">
                         {{ $t('Enabled') }}
@@ -28,14 +26,6 @@
                     </p>
 
                     <div class="fs_bot_config_card">
-                        <div class="fs_input_row">
-                            <label>{{ $t('API Key') }} <span style="color: #999; font-size: 12px;">({{ $t('Optional') }})</span></label>
-                            <el-input
-                                v-model="config.generalApiKey"
-                                show-password
-                                :placeholder="$t('Enter API Key (Optional)')"
-                            />
-                        </div>
                         <div class="fs_input_row">
                             <label>{{ $t('Bot ID') }} <span style="color: #e74c3c;">*</span></label>
                             <el-input
@@ -75,15 +65,6 @@
                                     >
                                         <el-icon><Delete /></el-icon>
                                     </el-button>
-                                </div>
-
-                                <div class="fs_input_row">
-                                    <label>{{ $t('API Key') }} <span style="color: #999; font-size: 12px;">({{ $t('Optional') }})</span></label>
-                                    <el-input
-                                        v-model="mapping.apiKey"
-                                        show-password
-                                        :placeholder="$t('Enter API Key (Optional)')"
-                                    />
                                 </div>
 
                                 <div class="fs_input_row">
@@ -142,12 +123,11 @@ export default {
     name: 'FluentBotIntegration',
     data() {
         return {
-            isEnabled: 'false',
+            isEnabled: false,
             isLoading: false,
             isSaving: false,
             fetching: true,
             config: {
-                generalApiKey: '',
                 generalBotId: '',
                 productMappings: []
             },
@@ -170,12 +150,11 @@ export default {
             this.$get("settings/fluent-bot-integration")
                 .then(data => {
                     this.config = {
-                        generalApiKey: data.generalApiKey || '',
                         generalBotId: data.generalBotId || '',
                         productMappings: data.productMappings || []
                     };
                     this.allProducts = data.products || [];
-                    this.isEnabled = data.isEnabled || 'false';
+                    this.isEnabled = data.isEnabled === true || data.isEnabled === 'true';
                     this.originalConfig = JSON.parse(JSON.stringify(this.config));
                     this.isLoading = false;
                     this.fetching = false;
@@ -215,7 +194,6 @@ export default {
             this.config.productMappings.push({
                 productId: product.id,
                 productTitle: product.title,
-                apiKey: '',
                 botId: ''
             });
             this.selectedProduct = null;

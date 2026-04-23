@@ -157,6 +157,18 @@ export default {
                     ]
                 },
                 {
+                    value: 'agent_group',
+                    label: this.$t('Agent Group'),
+                    icon: 'agentGroupIcon',
+                    isMultiple: true,
+                    options: (this.appVars?.agent_groups || []).map(group => ({
+                        value: group.id,
+                        label: group.title,
+                        filterType: 'agent_group',
+                        filterValue: group.id
+                    }))
+                },
+                {
                     value: 'priority',
                     label: this.$t('Admin Priority'),
                     icon: 'filtersAdminPriority',

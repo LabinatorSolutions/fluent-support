@@ -30,6 +30,7 @@
                         <el-date-picker
                             v-model="localDateRange"
                             type="daterange"
+                            :editable="false"
                             :range-separator="$t('To')"
                             :start-placeholder="$t('Start')"
                             :end-placeholder="$t('End')"
@@ -188,7 +189,7 @@ export default {
 .fs_product_statistics_title {
     font-size: 16px;
     font-weight: 600;
-    color: #0E121B;
+    color: var(--fs-text-primary);
     margin: 0;
     line-height: 1.5;
 }
@@ -201,24 +202,24 @@ export default {
 
 .fs_product_stat_tab {
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: var(--fs-radius-md);
     border: none;
     background: transparent;
-    color: #525866;
+    color: var(--fs-text-secondary);
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
     line-height: 1.5;
-    
+
     &:hover {
-        background: #f2f5f8;
-        color: #0E121B;
+        background: var(--fs-btn-hover-bg);
+        color: var(--fs-text-primary);
     }
-    
+
     &.fs_product_stat_tab_active {
-        background: #0E121B;
-        color: #FFFFFF;
+        background: var(--fs-bg-strong);
+        color: var(--fs-text-white);
         font-weight: 600;
     }
 }
@@ -228,12 +229,12 @@ export default {
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .fs_product_statistics_tabs {
         width: 100%;
         flex-wrap: wrap;
     }
-    
+
     .fs_product_stat_tab {
         flex: 1;
         min-width: 100px;

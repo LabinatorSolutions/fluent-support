@@ -55,6 +55,7 @@
     "Close Ticket": "Close Ticket",
     "not_to_share_private_info": "Please do not share any private information.",
     "conversation_started": "started the conversation",
+    "created_ticket_on_behalf": "created this ticket on your behalf",
     "no_open_support_tickets": "Looks like you did not open any support tickets yet",
     "no_support_ticket_found": "No support tickets found for this filter",
     "btn_text": "Create Ticket",

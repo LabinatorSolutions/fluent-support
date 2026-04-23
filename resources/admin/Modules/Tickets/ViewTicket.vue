@@ -20,10 +20,9 @@
                         </el-tooltip>
 
                         <!-- Bookmark/Watcher Button -->
-                        <el-tooltip effect="dark" :content="$t('Add Bookmark')" placement="top">
+                        <el-tooltip v-if="!watchers.length && has_pro" effect="dark" :content="$t('Add Bookmark')" placement="top">
                             <el-button
                                 class="fs_outline_btn"
-                                v-if="!watchers.length && has_pro"
                                 :title="$t('Add Bookmark')"
                                 @click="(show_watcher_modal=true)"
                             >
@@ -32,12 +31,14 @@
                         </el-tooltip>
 
                         <!-- Support Agent Button -->
-                        <el-tooltip effect="dark" :content="$t('Assign Agent')" placement="top" trigger="hover">
+                        <el-tooltip v-if="canManageTickets" effect="dark" :content="$t('Assign Agent')" placement="top" trigger="hover">
                             <span class="fs_agent_selector_tooltip">
                                 <el-popover
                                     placement="bottom"
                                     :width="300"
                                     trigger="click"
+                                    popper-class="fs_popover"
+                                    @show="onAgentPopoverShow"
                                 >
                                     <template #reference>
 
@@ -45,7 +46,7 @@
                                                 class="fs_outline_btn"
                                                 :class="ticket.agent?.photo ? 'fs_agent_selector_btn' : ''"
                                             >
-                                                <div  v-if="ticket.agent?.photo" class="fs_agent_selector_display">
+                                                <div v-if="ticket.agent?.photo" class="fs_agent_selector_display">
                                                     <img
                                                         :src="ticket.agent.photo"
                                                         :alt="ticket.agent.full_name"
@@ -53,6 +54,7 @@
                                                     />
                                                     <span class="fs_agent_name_display">
                                                         {{ ticket.agent?.full_name || $t('Unassigned') }}
+                                                        <span v-if="assignedAgentGroupName" class="fs_agent_group_label">({{ assignedAgentGroupName }})</span>
                                                     </span>
                                                     <el-icon class="fs_agent_dropdown_arrow"><ArrowDown /></el-icon>
                                                 </div>
@@ -63,31 +65,47 @@
                                                     class="fs_agent_icon_placeholder"
                                                 />
                                             </el-button>
-
                                     </template>
                                     <div class="fs_agent_selector">
                                         <el-select
+                                            ref="agentSelect"
                                             v-model="ticket.agent_id"
                                             @change="updateTicketAttr('agent_id')"
                                             filterable
                                             class="fs_select_field fs_agent_selector_dropdown"
+                                            popper-class="fs_agent_group_popper"
                                             :placeholder="$t('Select Agent')"
                                         >
-                                            <el-option
-                                                v-for="agent in agents"
-                                                :key="agent.id"
-                                                :value="agent.id"
-                                                :label="agent.full_name"
-                                            />
+                                            <template v-if="agentGroups.length">
+                                                <el-option-group
+                                                    v-for="group in groupedAgentOptions"
+                                                    :key="group.label"
+                                                    :label="group.label"
+                                                >
+                                                    <el-option
+                                                        v-for="agent in group.agents"
+                                                        :key="agent.id"
+                                                        :value="agent.id"
+                                                        :label="agent.full_name"
+                                                    />
+                                                </el-option-group>
+                                            </template>
+                                            <template v-else>
+                                                <el-option
+                                                    v-for="agent in agents"
+                                                    :key="agent.id"
+                                                    :value="agent.id"
+                                                    :label="agent.full_name"
+                                                />
+                                            </template>
                                         </el-select>
                                     </div>
                                 </el-popover>
                             </span>
                         </el-tooltip>
                         <!-- Workflow Button -->
-                         <el-tooltip effect="dark" :content="$t('Run Workflow')" placement="top" trigger="hover">
+                        <el-tooltip v-if="appVars.manual_workflows && appVars.manual_workflows.length" effect="dark" :content="$t('Run Workflow')" placement="top" trigger="hover">
                             <work-flow-selector
-                                v-if="appVars.manual_workflows && appVars.manual_workflows.length"
                                 @reloadTickets="fetchTicket()"
                                 :ticket_ids="[ticket_id]">
                                 <el-button
@@ -100,7 +118,7 @@
                         </el-tooltip>
 
                         <!-- Close/Reopen Ticket Button -->
-                        <el-tooltip effect="dark" :content="$t('Close Ticket')" placement="top" trigger="hover">
+                        <el-tooltip v-if="canManageTickets" effect="dark" :content="$t('Close Ticket')" placement="top" trigger="hover">
                             <el-button
                                 class="fs_outline_btn fs_action_btn_with_text fs_close_ticket_btn"
                                 @click="ticket.status === 'closed' ? reOpen() : closeTicket()"
@@ -114,7 +132,7 @@
                         </el-tooltip>
 
                         <!-- More Actions Button -->
-                        <el-tooltip effect="dark" :content="$t('More Actions')" placement="top" trigger="hover">
+                        <el-tooltip v-if="canManageTickets" effect="dark" :content="$t('More Actions')" placement="top" trigger="hover">
                             <el-dropdown class="fs_more_action" trigger="click" @command="handleTopBarCommand">
                                 <el-button class="fs_outline_btn" :title="$t('More Actions')">
                                     <el-icon style="transform: rotate(90deg);"><More /></el-icon>
@@ -131,10 +149,6 @@
                                                 </svg>
                                                 {{ $t('Merge Ticket') }}
                                             </el-dropdown-item>
-                                            <el-dropdown-item v-if="appVars.fluent_boards" command="fluent_boards">
-                                                <img :src="appVars.asset_url + '/images/addTask.svg'" class="fs_add_task_logo">
-                                                {{ $t('Add Task to Fluent Boards') }}
-                                            </el-dropdown-item>
                                             <el-dropdown-item command="close_silently">
                                                 <el-icon>
                                                     <MuteNotification/>
@@ -142,7 +156,10 @@
                                                 {{ $t('Close Ticket Silently') }}
                                             </el-dropdown-item>
                                         </div>
-
+                                        <el-dropdown-item v-if="appVars.fluent_boards" command="fluent_boards">
+                                            <img :src="appVars.asset_url + '/images/addTask.svg'" class="fs_add_task_logo">
+                                            {{ $t('Add Task to Fluent Boards') }}
+                                        </el-dropdown-item>
                                         <el-dropdown-item command="delete">
                                             <el-icon><Delete /></el-icon>
                                             {{ $t('Delete Ticket') }}
@@ -161,6 +178,7 @@
                         <div class="fs_title_row">
                             <h2 class="fs_ticket_title">
                                 <el-popover
+                                    v-if="canManageTickets"
                                     placement="bottom-start"
                                     :width="popoverWidth"
                                     trigger="click"
@@ -172,6 +190,7 @@
                                               v-model="ticket.title" class="fs_text_input"></el-input>
                                     <p style="margin-top: 8px; font-size: 12px; color: #525866;">{{ $t('Press enter to save') }}</p>
                                 </el-popover>
+                                <span v-else>{{ ticket?.title }}</span>
                             </h2>
 <!--                            <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags"/>-->
                         </div>
@@ -179,11 +198,12 @@
                         <!-- Info Container: Timer + Status Badge -->
                         <div class="fs_info_container">
                             <!-- Timer Info -->
-                            <div v-if="ticket.waiting_since" class="fs_timer_info">
+                            <el-tooltip v-if="ticket.waiting_since" effect="dark" :content="$t('Waiting Time') + ': ' + ticket.waiting_since" placement="top" trigger="hover">
+                            <div class="fs_timer_info">
                                 <el-icon class="fs_timer_icon"><Timer /></el-icon>
                                 <span class="fs_timer_text">{{ $t('Waiting') }}: {{ $timeDiff(ticket.waiting_since) }}</span>
                             </div>
-
+                            </el-tooltip>
                             <!-- Separator Dot -->
                             <span v-if="ticket.waiting_since" class="fs_info_separator">∙</span>
 
@@ -192,7 +212,7 @@
                                 placement="bottom"
                                 :width="300"
                                 trigger="click"
-                                v-if="has_pro && !isEmpty(ticket_statuses)"
+                                v-if="canManageTickets && has_pro && !isEmpty(ticket_statuses)"
                             >
                                 <template #reference>
                                     <div class="fs_ticket_status">
@@ -250,7 +270,7 @@
                     <div class="fs_box_body" v-else-if="!customer_tickets.length && app_ready">
                         <h3>{{ $t('customer_has_one_tk') }}</h3>
                     </div>
-                    <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+                    <div class="fs_box_body fs_skeleton_loader" v-else>
                         <el-skeleton :rows="5" animated/>
                     </div>
                 </el-dialog>
@@ -282,15 +302,16 @@
                         <!-- Left: Action Group (Reply & Notes Buttons) -->
                         <div class="fs_action_group">
                             <el-button
+                                v-if="ticket.status != 'closed' && (canManageTickets || draftReplyPermission)"
                                 class="fs_outline_btn"
                                 :class="{ 'fs_header_btn_active': show_response_box === 'response' || show_response_box === 'draft_response' }"
                                 @click="draftReplyPermission ? show_response_box = (show_response_box === 'draft_response' ? '' : 'draft_response') : show_response_box = (show_response_box === 'response' ? '' : 'response')"
-                                v-if="ticket.status != 'closed'"
                             >
                                 <img class="fs_header_icon" :src="appVars.asset_url + 'images/replyIcon.svg'" alt="">
                                 {{ $t('Reply') }}
                             </el-button>
                             <el-button
+                                v-if="canManageTickets"
                                 class="fs_outline_btn"
                                 :class="{ 'fs_header_btn_active': show_response_box === 'note' }"
                                 @click="show_response_box = (show_response_box === 'note' ? '' : 'note')"
@@ -442,7 +463,7 @@
                         <span v-if="ticket.closed_by_person">
                             by <b>{{ getHumanName(ticket.closed_by_person) }}</b>
                         </span></p>
-                    <el-button v-loading="updating" :disabled="updating" @click="reOpen()" class="fs_outline_btn">
+                    <el-button v-if="canManageTickets" v-loading="updating" :disabled="updating" @click="reOpen()" class="fs_outline_btn">
                         <img :src="appVars.asset_url + 'images/refresh.svg'" alt="">
                         {{ $t('Reopen This ticket') }}
                     </el-button>
@@ -523,6 +544,10 @@
                                                 {{ $t('Added Note') }}
                                             </span>
 
+                                            <span v-if="conversation.conversation_type === 'internal_info'" class="fs_message_label fs_label_note">
+                                                {{ $t('Added Internal Info') }}
+                                            </span>
+
 
                                             <!-- Badge for Draft Response or Reply for Review -->
                                             <div v-if="conversation.conversation_type === 'draft_response'" class="fs_message_badge fs_badge_draft">
@@ -561,7 +586,7 @@
                                                 Source: {{ ucFirst(conversation.source) }}
                                             </span>
                                         </div>
-                                        <div class="fs_message_actions">
+                                        <div v-if="canManageTickets || draftReplyPermission" class="fs_message_actions">
                                             <el-dropdown @command="handleResponseActionCommand" trigger="click">
                                                 <el-button class="fs_more_btn">
                                                     <el-icon><MoreFilled /></el-icon>
@@ -579,6 +604,7 @@
                                                             {{ $t('Split Ticket') }}
                                                         </el-dropdown-item>
                                                         <el-dropdown-item
+                                                            v-if="canManageTickets"
                                                             :command="{ type: 'delete', conversation: conversation }"
                                                             icon="Delete"> {{ $t('Delete') }}
                                                         </el-dropdown-item>
@@ -644,6 +670,9 @@
                                             <div class="fs_message_badge fs_badge_thread_starter">
                                                 {{ $t('THREAD STARTER') }}
                                             </div>
+                                            <span v-if="ticket.created_by_agent && !ticket.created_by_agent.agent_initiated" class="fs_created_by_agent">
+                                                {{ $t('Created By') }} <strong>{{ ticket.created_by_agent.full_name }}</strong>
+                                            </span>
                                         </div>
 
                                         <!-- Timestamp and Email Row -->
@@ -742,7 +771,7 @@
 
             <div class="fs_ticket_sidebar">
                 <ticket-sidebar :fluentcrm_profile="fluentcrm_profile" :ticket_id="ticket_id" :ticket="ticket"
-                                :watchers="watchers" :watcher_ids="watcherIds" @refresh="fetchTicket" :fetch_other_tickets="fetch_other_tickets"/>
+                                :watchers="watchers" :watcher_ids="watcherIds" @refresh="fetchTicket" :fetch_other_tickets="fetch_other_tickets" :can_manage_tickets="canManageTickets"/>
             </div>
         </template>
 
@@ -766,16 +795,16 @@
 
         <template v-else>
             <div class="fs_ticket_body">
-                <div style="padding: 15px;">
+                <div class="fs_skeleton_loader">
                     <el-skeleton :rows="10" animated/>
                 </div>
             </div>
-            <div style="margin-left: 20px;" class="fs_ticket_sidebar">
-                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;"
+            <div class="fs_ticket_sidebar">
+                <el-skeleton class="fs_sidebar_skeleton"
                              :rows="3" animated/>
-                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;"
+                <el-skeleton class="fs_sidebar_skeleton"
                              :rows="3" animated/>
-                <el-skeleton style="background: white;padding: 20px; margin-bottom: 20px; box-sizing: border-box;"
+                <el-skeleton class="fs_sidebar_skeleton"
                              :rows="3" animated/>
             </div>
         </template>
@@ -795,7 +824,7 @@
 
         <el-dialog
             v-model="show_fbs_add_task_modal"
-            v-if="has_pro && show_fbs_add_task_modal"
+            v-if="show_fbs_add_task_modal"
             :title="$t('Add Task to Fluent Boards')"
             :append-to-body="true"
             class="fs_dialog"
@@ -833,6 +862,7 @@ import CustomFieldForm from './parts/_CustomFieldForm';
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import Pagination from "../../Pieces/Pagination";
 import SplitTicket from "./_SplitTicket"
+import { getGroupedAgentOptions } from '@/admin/Composable/agentGroupHelper';
 
 export default {
     name: 'ViewTicket',
@@ -884,6 +914,7 @@ export default {
             close_ticket_silently: "no",
             app_ready: false,
             fetch_other_tickets: false,
+            canManageTickets: false,
             draftReplyPermission: false,
             draftReplyApprovePermission: false,
             draftResponse: {},
@@ -922,6 +953,26 @@ export default {
                 return Math.min(600, window.innerWidth - 40);
             }
             return 600;
+        },
+
+        agentGroups() {
+            return this.appVars.agent_groups || [];
+        },
+
+        groupedAgentOptions() {
+            return getGroupedAgentOptions(this.agents || [], this.agentGroups, this.$t('Other'));
+        },
+
+        assignedAgentGroupName() {
+            if (!this.ticket.agent_id || !this.agentGroups.length) return '';
+            const agentId = Number(this.ticket.agent_id);
+            for (const group of this.agentGroups) {
+                const groupAgentIds = (group.agent_ids || []).map(Number);
+                if (groupAgentIds.includes(agentId)) {
+                    return group.title;
+                }
+            }
+            return '';
         }
     },
     watch: {
@@ -943,6 +994,14 @@ export default {
     },
 
     methods: {
+        onAgentPopoverShow() {
+            this.$nextTick(() => {
+                if (this.$refs.agentSelect) {
+                    this.$refs.agentSelect.focus();
+                    this.$refs.agentSelect.toggleMenu();
+                }
+            });
+        },
         async fetchTicket() {
             this.loading = true;
             await this.$get(`tickets/${this.ticket_id}`, {
@@ -959,9 +1018,13 @@ export default {
                     : null;
                 this.$setTitle(response.ticket.title);
                 this.conversations = response.responses;
-                this.draftReplyPermission = this.appVars.me.permissions.includes('fst_draft_reply');
-                this.draftReplyApprovePermission = this.appVars.me.permissions.includes('fst_approve_draft_reply');
-                this.deleteTicketPermission = this.appVars.me.permissions.includes('fst_delete_tickets');
+                const permissions = this.appVars.me.permissions;
+                this.canManageTickets = permissions.includes('fst_manage_own_tickets')
+                    || permissions.includes('fst_manage_unassigned_tickets')
+                    || permissions.includes('fst_manage_other_tickets');
+                this.draftReplyPermission = permissions.includes('fst_draft_reply');
+                this.draftReplyApprovePermission = permissions.includes('fst_approve_draft_reply');
+                this.deleteTicketPermission = permissions.includes('fst_delete_tickets');
 
                 // sent the response to body event
                 document.body.dispatchEvent(new CustomEvent('fs_ticket_viewed', {
@@ -984,13 +1047,11 @@ export default {
 
             }).catch(error => {
                 this.loading = false;
-                if (error.responseJSON) {
-                    this.ticketNotFound = this.$t("No matching ticket was found for the provided ID.");
-                }
+                this.$handleError(error);
             })
-                .always(() => {
-                    this.loading = false;
-                });
+            .always(() => {
+                this.loading = false;
+            });
         },
 
         async fetchDraft() {
@@ -1081,6 +1142,8 @@ export default {
                 return 'fs_msg_note'; // Yellow background
             } else if (conversation.conversation_type === 'draft_response') {
                 return 'fs_msg_draft'; // Light gray background
+            } else if (conversation.conversation_type === 'internal_info') {
+                return 'fs_internal_info'; // Light gray background
             } else if (conversation.person?.person_type === 'customer') {
                 return 'fs_msg_customer'; // White background
             } else if (conversation.person?.person_type === 'agent') {
@@ -1099,8 +1162,8 @@ export default {
             });
 
             if (this.appVars.pref.go_back_after_reply === 'yes') {
-                if (window.history.state.back) {
-                 //   this.$router.go(-1);
+                if (window.history.state?.back) {
+                    //   this.$router.go(-1);
                 }
             }
         },
@@ -1148,7 +1211,7 @@ export default {
                         type: "success",
                         position: "bottom-right",
                     });
-                    if (window.history.state.back) {
+                    if (window.history.state?.back) {
                         this.$router.go(-1);
                     }
                 })
@@ -1162,8 +1225,8 @@ export default {
 
         deleteTicket() {
             this.$confirm({
-                message: this.$t('single_ticket_delete_warning'),
-                title: 'Warning',
+                message: this.$t('Are you sure to delete this Ticket?'),
+                title: this.$t('Warning'),
                 options: {
                     confirmButtonText: this.$t('Delete Ticket'),
                     cancelButtonText: this.$t('Cancel'),
@@ -1235,7 +1298,7 @@ export default {
             if (actionType == 'delete') {
                 this.$confirm({
                     message: this.$t('response_delete_warning'),
-                    title: 'Warning',
+                    title: this.$t('Warning'),
                     options: {
                         confirmButtonText: this.$t('Delete Response'),
                         cancelButtonText: this.$t('Cancel'),
@@ -1264,11 +1327,13 @@ export default {
             } else if (actionType === 'discard') {
                 this.$confirm({
                     message: this.$t('Are you sure you want to discard this draft response?'),
-                    title: 'Warning',
+                    title: this.$t('Warning'),
                     options: {
                         confirmButtonText: this.$t('Discard'),
                         cancelButtonText: this.$t('Cancel'),
-                        type: 'warning'
+                        type: 'warning',
+                        cancelButtonClass: 'el-button--default fs_outline_btn',
+                        confirmButtonClass: 'el-button--danger fs_filled_btn',
                     }
                 }).then(() => {
                     this.discardDraft(conversation.id)
@@ -1358,7 +1423,9 @@ export default {
                 options: {
                     confirmButtonText: this.$t('Merge'),
                     cancelButtonText: this.$t('Cancel'),
-                    type: 'warning'
+                    type: 'warning',
+                    cancelButtonClass: 'el-button--default fs_outline_btn',
+                    confirmButtonClass: 'el-button--danger fs_filled_btn',
                 }
             }).then(() => {
                 this.loading = true;
@@ -1566,10 +1633,12 @@ export default {
 
                 const keyActions = {
                     KeyR: () => {
+                        if (!this.canManageTickets && !this.draftReplyPermission) return;
                         let responseType = this.draftReplyPermission ? 'draft_response' : 'response';
                         this.show_response_box = (this.show_response_box === responseType) ? '' : responseType;
                     },
                     KeyN: () => {
+                        if (!this.canManageTickets) return;
                         this.show_response_box = (this.show_response_box === 'note') ? '' : 'note';
                     },
                     KeyQ: () => this.fetchTicket(),
@@ -1577,7 +1646,7 @@ export default {
                         if (this.has_pro) {
                             this.customerTickets();
                             this.show_merge_modal = !this.show_merge_modal;
-                            this.app_ready = true;
+                            this.app_ready = false;
                         }
 
                     },
@@ -1610,12 +1679,13 @@ export default {
                 case 'merge':
                     this.customerTickets();
                     this.show_merge_modal = !this.show_merge_modal;
-                    this.app_ready = true;
+                    this.app_ready = false;
 
                     break;
                 case 'close_silently':
+                    this.close_ticket_silently = 'yes';
                     this.closeTicket();
-                    this.close_ticket_silently = !this.close_ticket_silently;
+                    this.close_ticket_silently = 'no';
                     break;
                 case 'fluent_boards':
                     this.show_fbs_add_task_modal = !this.show_fbs_add_task_modal;

@@ -1,0 +1,20 @@
+grumphp:
+    tasks:
+#        securitychecker:
+        composer:
+#        jsonlint:
+#        xmllint:
+#        yamllint:
+#        phpstan:
+#        phplint:
+#        phpunit:
+#        phpcs:
+#        phpcpd:
+#        phpmnd:
+        phpparser:
+            visitors:
+                forbidden_function_calls:
+                    blacklist:
+                        - "die"
+        phpversion:
+            project: '7.1'

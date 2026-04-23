@@ -17,6 +17,7 @@
                             <el-date-picker
                                 v-model="localDateRange"
                                 type="daterange"
+                                :editable="false"
                                 @change="handleDateChange"
                                 range-separator="To"
                                 :disabled-date="disabledDate"

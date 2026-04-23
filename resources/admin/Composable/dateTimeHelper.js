@@ -1,5 +1,12 @@
-const moment = require('moment');
-moment.locale('en-gb');
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import 'dayjs/locale/en-gb';
+
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.locale('en-gb');
+
 const appStartTime = new Date();
 
 export function dateTimeHelper() {
@@ -10,20 +17,20 @@ export function dateTimeHelper() {
         }
         const endTime = new Date();
         const timeDiff = endTime - appStartTime; // in ms
-        const dateObj = moment(dateString);
-        return dateObj.from(moment(window.fluentSupportAdmin.server_time).add(timeDiff, 'milliseconds'));
+        const dateObj = dayjs(dateString);
+        return dateObj.from(dayjs(window.fluentSupportAdmin.server_time).add(timeDiff, 'milliseconds'));
     }
 
     function dateTimeFormat(date, format) {
         const dateString = (date === undefined) ? null : date;
-        const dateObj = moment(dateString);
+        const dateObj = dayjs(dateString);
         return dateObj.isValid() ? dateObj.format(format) : null;
     }
     function localDate(date) {
-        return moment.utc(date).local();
+        return dayjs.utc(date).local();
     }
     function longLocalDate(date) {
-        return this.dateTimeFormat(
+        return dateTimeFormat(
             date, 'ddd, DD MMM, YYYY'
         );
     }

@@ -77,7 +77,7 @@ export default {
                     } else {
                         this.$notify({
                             type: 'error',
-                            message: 'Something went wrong. Please try again.',
+                            message: this.$t('Something went wrong. Please try again.'),
                             position: 'bottom-right'
                         });
                         this.$router.push({name: 'upload_integration'});

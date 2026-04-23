@@ -1,7 +1,12 @@
 import { ElNotification, ElMessageBox } from 'element-plus';
-const moment = require('moment');
-require('moment/locale/en-gb');
-moment.locale('en-gb');
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import 'dayjs/locale/en-gb';
+
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+dayjs.locale('en-gb');
 import { dateTimeHelper } from "@/admin/Composable/dateTimeHelper";
 import { useRestApi } from '@/admin/Composable/Rest';
 import {
@@ -105,14 +110,14 @@ export function useFluentHelper(){
             return "";
         }
         let format = "D MMM, YYYY";
-        if (moment(dateString).isSame(new Date(), "year")) {
+        if (dayjs(dateString).isSame(new Date(), "year")) {
             format = "D MMM";
             if (withTime) {
                 format = "D MMM, hh:mm a";
             }
         }
 
-        const dateObj = moment(dateString);
+        const dateObj = dayjs(dateString);
 
         return dateObj.isValid() ? dateObj.format(format) : null;
     }
@@ -214,7 +219,7 @@ export function useFluentHelper(){
         saveData,
         getData,
         removeData,
-        moment,
+        $dayjs: dayjs,
         humanDiffTime,
         dateTimeFormat,
         localDate,

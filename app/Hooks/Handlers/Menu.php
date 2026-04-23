@@ -4,30 +4,24 @@ namespace FluentSupport\App\Hooks\Handlers;
 
 use FluentSupport\App\App;
 use FluentSupport\App\Models\Agent;
+use FluentSupport\App\Models\AgentGroup;
 use FluentSupport\App\Models\MailBox;
 use FluentSupport\App\Models\Product;
+use FluentSupport\App\Models\TagPivot;
 use FluentSupport\App\Models\TicketTag;
 use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TranslationStrings;
+use FluentSupport\App\Vite;
 
 class Menu
 {
     public function add()
     {
-        $currentUserPermissions = PermissionManager::currentUserPermissions();
+        $capability = PermissionManager::getMenuPermission();
 
-        if (!$currentUserPermissions) {
+        if (!$capability) {
             return;
-        }
-
-        $permission = 'fst_view_dashboard';
-
-        $isAdmin = false;
-
-        if (current_user_can('manage_options')) {
-            $permission = 'manage_options';
-            $isAdmin = true;
         }
 
         $menuPosition = 25;
@@ -44,19 +38,18 @@ class Menu
         add_menu_page(
             __('Fluent Support', 'fluent-support'),
             __('Fluent Support', 'fluent-support'),
-            $permission,
+            $capability,
             'fluent-support',
             array($this, 'renderApp'),
             $this->getMenuIcon(),
             $menuPosition
         );
 
-
         add_submenu_page(
             'fluent-support',
             __('Dashboard', 'fluent-support'),
             __('Dashboard', 'fluent-support'),
-            $permission,
+            $capability,
             'fluent-support',
             array($this, 'renderApp')
         );
@@ -65,73 +58,87 @@ class Menu
             'fluent-support',
             __('Tickets', 'fluent-support'),
             __('Tickets', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_manage_own_tickets',
+            $capability,
             'fluent-support#/tickets',
             array($this, 'renderApp')
         );
 
-        add_submenu_page(
-            'fluent-support',
-            __('Reports', 'fluent-support'),
-            __('Reports', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_sensitive_data',
-            'fluent-support#/reports',
-            array($this, 'renderApp')
-        );
+        if (PermissionManager::currentUserCan('fst_view_all_reports')) {
+            add_submenu_page(
+                'fluent-support',
+                __('Reports', 'fluent-support'),
+                __('Reports', 'fluent-support'),
+                $capability,
+                'fluent-support#/reports',
+                array($this, 'renderApp')
+            );
+        }
 
-        add_submenu_page(
-            'fluent-support',
-            __('Customers', 'fluent-support'),
-            __('Customers', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_sensitive_data',
-            'fluent-support#/customers',
-            array($this, 'renderApp')
-        );
+        if (PermissionManager::currentUserCan('fst_sensitive_data')) {
+            add_submenu_page(
+                'fluent-support',
+                __('Customers', 'fluent-support'),
+                __('Customers', 'fluent-support'),
+                $capability,
+                'fluent-support#/customers',
+                array($this, 'renderApp')
+            );
+        }
 
-        add_submenu_page(
-            'fluent-support',
-            __('Activities', 'fluent-support'),
-            __('Activities', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_view_activity_logs',
-            'fluent-support#/activity',
-            array($this, 'renderApp')
-        );
+        if (PermissionManager::currentUserCan('fst_view_activity_logs')) {
+            add_submenu_page(
+                'fluent-support',
+                __('Activities', 'fluent-support'),
+                __('Activities', 'fluent-support'),
+                $capability,
+                'fluent-support#/activity',
+                array($this, 'renderApp')
+            );
+        }
 
-        add_submenu_page(
-            'fluent-support',
-            __('Business Inboxes', 'fluent-support'),
-            __('Business Inboxes', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_manage_settings',
-            'fluent-support#/mailboxes',
-            array($this, 'renderApp')
-        );
+        if (PermissionManager::currentUserCan('fst_manage_settings')) {
+            add_submenu_page(
+                'fluent-support',
+                __('Business Inboxes', 'fluent-support'),
+                __('Business Inboxes', 'fluent-support'),
+                $capability,
+                'fluent-support#/mailboxes',
+                array($this, 'renderApp')
+            );
+        }
 
-        add_submenu_page(
-            'fluent-support',
-            __('Workflows', 'fluent-support'),
-            __('Workflows', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_manage_workflows',
-            'fluent-support#/workflows',
-            array($this, 'renderApp')
-        );
+        if (PermissionManager::currentUserCan('fst_manage_workflows')) {
+            add_submenu_page(
+                'fluent-support',
+                __('Workflows', 'fluent-support'),
+                __('Workflows', 'fluent-support'),
+                $capability,
+                'fluent-support#/workflows',
+                array($this, 'renderApp')
+            );
+        }
 
-        add_submenu_page(
-            'fluent-support',
-            __('Saved Replies', 'fluent-support'),
-            __('Saved Replies', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_manage_saved_replies',
-            'fluent-support#/saved_replies',
-            array($this, 'renderApp')
-        );
+        if (PermissionManager::currentUserCan('fst_manage_saved_replies')) {
+            add_submenu_page(
+                'fluent-support',
+                __('Saved Replies', 'fluent-support'),
+                __('Saved Replies', 'fluent-support'),
+                $capability,
+                'fluent-support#/saved-replies',
+                array($this, 'renderApp')
+            );
+        }
 
-        add_submenu_page(
-            'fluent-support',
-            __('Settings', 'fluent-support'),
-            __('Settings', 'fluent-support'),
-            ($isAdmin) ? 'manage_options' : 'fst_manage_settings',
-            'fluent-support#/settings',
-            array($this, 'renderApp')
-        );
+        if (PermissionManager::currentUserCan('fst_manage_settings')) {
+            add_submenu_page(
+                'fluent-support',
+                __('Settings', 'fluent-support'),
+                __('Settings', 'fluent-support'),
+                $capability,
+                'fluent-support#/settings',
+                array($this, 'renderApp')
+            );
+        }
     }
 
     public function renderApp()
@@ -271,9 +278,40 @@ class Menu
 
     public function maybeEnqueueAssets()
     {
-        if (isset($_GET['page']) && $_GET['page'] == 'fluent-support') {
+        if (isset($_GET['page']) && sanitize_text_field(wp_unslash($_GET['page'])) === 'fluent-support') {
+            add_action('admin_head', [$this, 'printDarkModeInit'], 1);
             $this->enqueueAssets();
         }
+    }
+
+    public function printDarkModeInit()
+    {
+        ?>
+        <script>
+            (function () {
+                var savedTheme = localStorage.getItem('fs-theme');
+
+                // Check if dark mode should be active
+                // localStorage stores: 'dark', 'light', or 'system:dark' / 'system:light'
+                var isDark = savedTheme
+                    ? savedTheme.split(':').pop() === 'dark'
+                    : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+                if (isDark) {
+                    // Apply immediately to <html> to prevent white flash
+                    document.documentElement.classList.add('fs-dark-mode');
+
+                    // Watch for <body> to appear and apply class as soon as it exists
+                    new MutationObserver(function (mutations, observer) {
+                        if (document.body) {
+                            document.body.classList.add('fs-dark-mode');
+                            observer.disconnect();
+                        }
+                    }).observe(document.documentElement, { childList: true });
+                }
+            })();
+        </script>
+        <?php
     }
 
     public function enqueueAssets()
@@ -282,15 +320,18 @@ class Menu
 
         $assets = $app['url.assets'];
 
-//        add_filter('admin_footer_text', function ($text) {
-//            return '<span id="footer-thankyou">We value your feedback! If the plugin is helpful, please rate Fluent Support with <a target="_blank" rel="nofollow" href="https://wordpress.org/support/plugin/fluent-support/reviews/#new-post">★★★★★</a> on WordPress.org. For assistance, check out the <a target="_blank" rel="nofollow" href="https://fluentsupport.com/docs/navigate-with-the-keyboard-shortcut">keyboard shortcuts</a> and <a target="_blank" rel="nofollow" href="https://fluentsupport.com/docs/">documentation</a>.</span>';
-//        });
+        // Inject Vite HMR client for dev mode
+        add_action('admin_head', function () {
+            Vite::injectViteClient();
+        }, 1);
 
         wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '2.4.3');
 
-        $rtlSuffix = is_rtl() ? '-rtl' : '';
-        $rtlSuffixHandler = $rtlSuffix ? '_rtl' : '';
-        wp_enqueue_style('fluent_support_admin_app' . $rtlSuffixHandler, $assets . 'admin/css/alpha-admin' . $rtlSuffix . '.css', [], FLUENT_SUPPORT_VERSION);
+        if (is_rtl()) {
+            wp_enqueue_style('fluent_support_admin_app_rtl', $assets . 'admin/css/alpha-admin-rtl.css', [], FLUENT_SUPPORT_VERSION);
+        } else {
+            wp_enqueue_style('fluent_support_admin_app', Vite::getEnqueuePath('admin/css/alpha-admin.css'), [], FLUENT_SUPPORT_VERSION);
+        }
 
         $agents = Agent::select(['id', 'first_name', 'last_name'])
             ->where('person_type', 'agent')
@@ -298,6 +339,16 @@ class Menu
 
         foreach ($agents as $index => $agent) {
             $agents[$index]['id'] = strval($agent['id']);
+        }
+
+        $agentGroups = AgentGroup::select(['id', 'title', 'settings'])->get();
+        $groupPivots = TagPivot::where('source_type', 'agent_group')->get();
+        foreach ($agentGroups as $group) {
+            $group->agent_ids = $groupPivots->where('tag_id', $group->id)
+                ->pluck('source_id')
+                ->map(function ($id) { return strval($id); })
+                ->values()
+                ->toArray();
         }
 
         $me = Helper::getAgentByUserId(get_current_user_id());
@@ -325,7 +376,7 @@ class Menu
 
         wp_enqueue_script(
             'fluent_support_admin_app_start',
-            $assets . 'admin/js/start.js',
+            Vite::getEnqueuePath('admin/js/start.js'),
             array('jquery'),
             FLUENT_SUPPORT_VERSION,
             true
@@ -333,7 +384,7 @@ class Menu
 
         wp_enqueue_script(
             'fluent_support_global_admin',
-            $assets . 'admin/js/global_admin.js',
+            Vite::getEnqueuePath('admin/js/global_admin.js'),
             array('jquery'),
             FLUENT_SUPPORT_VERSION,
             true
@@ -391,6 +442,7 @@ class Menu
             'lastEntry'                  => '',
             'asset_url'                  => $assets,
             'support_agents'             => $agents,
+            'agent_groups'               => $agentGroups,
             'support_products'           => Product::select(['id', 'title'])->get(),
             'client_priorities'          => Helper::customerTicketPriorities(),
             'ticket_statuses'            => Helper::ticketStatuses(),

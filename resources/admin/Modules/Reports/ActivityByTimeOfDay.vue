@@ -37,6 +37,7 @@
                         <el-date-picker
                             v-model="dateRange"
                             type="daterange"
+                            :editable="false"
                             range-separator="To"
                             :disabled-date="onlyPastDates"
                             value-format="YYYY-MM-DD"

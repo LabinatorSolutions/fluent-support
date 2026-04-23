@@ -132,7 +132,7 @@
 
                     </div>
                 </div>
-                <div style="background: white" class="fs_box_body" v-else>
+                <div class="fs_box_body fs_skeleton_loader" v-else>
                     <el-skeleton class="fs_box_wrapper" :rows="5" animated />
                 </div>
             </template>
@@ -315,7 +315,7 @@ export default {
         if (this.has_pro) {
             this.fetchTags();
         }
-        this.$setTitle("Ticket Tags");
+        this.$setTitle(this.$t("Ticket Tags"));
     }
 };
 </script>

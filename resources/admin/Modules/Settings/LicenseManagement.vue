@@ -136,7 +136,7 @@
                 </div>
             </div>
             <div
-                class="fs_box_body"
+                class="fs_box_body fs_skeleton_loader"
                 v-else
             >
                 <el-skeleton :rows="4" animated />
@@ -161,7 +161,7 @@ export default {
     },
     mounted() {
         this.fetchLicense();
-        this.$setTitle("License Management");
+        this.$setTitle(this.$t("License Management"));
     },
     methods: {
         async fetchLicense() {
@@ -184,10 +184,10 @@ export default {
                 this.showLicenseKeyError = true;
                 this.$notify({
                     type: "error",
-                    message: "Please provide a license key",
+                    message: this.$t("Please provide a license key"),
                     position: "bottom-right",
                 });
-                this.errorMessage = "Please provide a license key";
+                this.errorMessage = this.$t("Please provide a license key");
                 return;
             }
 

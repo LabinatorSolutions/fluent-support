@@ -57,11 +57,11 @@
                                         >
                                             <path
                                                 d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4L0.504883 3.82031C0.595411 2.03035 2.03035 0.595411 3.82031 0.504883L4 0.5Z"
-                                                fill="white"
+                                                fill="var(--fs-bg-primary, white)"
                                             />
                                             <path
                                                 d="M4 0.5H20C21.933 0.5 23.5 2.067 23.5 4V20C23.5 21.933 21.933 23.5 20 23.5H4C2.067 23.5 0.5 21.933 0.5 20V4L0.504883 3.82031C0.595411 2.03035 2.03035 0.595411 3.82031 0.504883L4 0.5Z"
-                                                stroke="#E1E4EA"
+                                                stroke="var(--fs-border-default, #E1E4EA)"
                                             />
                                             <path
                                                 d="M9.375 8.25C9.99632 8.25 10.5 7.74632 10.5 7.125C10.5 6.50368 9.99632 6 9.375 6C8.75368 6 8.25 6.50368 8.25 7.125C8.25 7.74632 8.75368 8.25 9.375 8.25ZM9.375 13.125C9.99632 13.125 10.5 12.6213 10.5 12C10.5 11.3787 9.99632 10.875 9.375 10.875C8.75368 10.875 8.25 11.3787 8.25 12C8.25 12.6213 8.75368 13.125 9.375 13.125ZM10.5 16.875C10.5 17.4963 9.99632 18 9.375 18C8.75368 18 8.25 17.4963 8.25 16.875C8.25 16.2537 8.75368 15.75 9.375 15.75C9.99632 15.75 10.5 16.2537 10.5 16.875ZM14.625 8.25C15.2463 8.25 15.75 7.74632 15.75 7.125C15.75 6.50368 15.2463 6 14.625 6C14.0037 6 13.5 6.50368 13.5 7.125C13.5 7.74632 14.0037 8.25 14.625 8.25ZM15.75 12C15.75 12.6213 15.2463 13.125 14.625 13.125C14.0037 13.125 13.5 12.6213 13.5 12C13.5 11.3787 14.0037 10.875 14.625 10.875C15.2463 10.875 15.75 11.3787 15.75 12ZM14.625 18C15.2463 18 15.75 17.4963 15.75 16.875C15.75 16.2537 15.2463 15.75 14.625 15.75C14.0037 15.75 13.5 16.2537 13.5 16.875C13.5 17.4963 14.0037 18 14.625 18Z"
@@ -76,14 +76,14 @@
                                                 element.admin_label
                                             }}
                                             <el-icon
-                                                :title="'Agent Only Field'"
+                                                :title="$t('Agent Only Field')"
                                                 v-if="
                                                     element.admin_only == 'yes'
                                                 "
                                                 ><Lock
                                             /></el-icon>
                                             <el-icon
-                                                :title="'Conditional Field'"
+                                                :title="$t('Conditional Field')"
                                                 v-if="
                                                     element.has_logics == 'yes'
                                                 "
@@ -159,7 +159,7 @@
                         </span>
                     </div>
                 </div>
-                <div style="background: white" class="fs_box_body" v-else>
+                <div class="fs_box_body fs_skeleton_loader" v-else>
                     <el-skeleton class="fs_box_wrapper" :rows="5" animated />
                 </div>
             </template>
@@ -262,7 +262,7 @@ export default {
         };
     },
     created() {
-        this.$setTitle("Custom Ticket Fields");
+        this.$setTitle(this.$t("Custom Ticket Fields"));
         if (this.has_pro) {
             this.fetchFields();
         }
@@ -297,7 +297,7 @@ export default {
                     this.fields = response.fields;
                     this.$notify({
                         type: "success",
-                        message: response.message || "Fields order updated successfully",
+                        message: response.message || this.$t("Fields order updated successfully"),
                         position: "bottom-right",
                     });
                     this.loading = false;
@@ -320,7 +320,7 @@ export default {
             if (!item.label) {
                 this.$notify({
                     type: "error",
-                    message: "Please Provide label",
+                    message: this.$t("Please Provide label"),
                     position: "bottom-right",
                 });
                 return false;
@@ -331,7 +331,7 @@ export default {
             if (!Array.isArray(item.options) || item.options.length === 0 || item.options.some((option) => option.trim() === "")) {
                 this.$notify({
                     type: "error",
-                    message: "Please provide valid field option values",
+                    message: this.$t("Please provide valid field option values"),
                     position: "bottom-right",
                 });
                 return false;

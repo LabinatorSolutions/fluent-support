@@ -113,12 +113,15 @@
 
 <script type="text/babel">
 import ImagePasteUploader from './FormElements/_ImagePasteUploader';
+import TemplateInserter from '../Modules/Tickets/_templateInserter.vue';
+import AIResponseGenerator from '../Modules/Tickets/_AIResponseGenerator.vue';
+import FluentBotAIResponseGenerator from '../Modules/Tickets/_FluentBotAIResponseGenerator.vue';
 export default {
     name: 'wp_editor',
     components: {
-        TemplateInserter: () => true ? import('../Modules/Tickets/_templateInserter') : undefined,
-        AIResponseGenerator: () => import('../Modules/Tickets/_AIResponseGenerator'),
-        FluentBotAIResponseGenerator: () => import('../Modules/Tickets/_FluentBotAIResponseGenerator.vue'),
+        TemplateInserter,
+        AIResponseGenerator,
+        FluentBotAIResponseGenerator,
         ImagePasteUploader,
     },
 
@@ -263,9 +266,13 @@ export default {
 
             this.editor.remove(this.editor_id);
             const that = this;
+            const isDarkMode = document.body.classList.contains('fs-dark-mode');
             const mceConfig = {
                 height: that.height,
                 toolbar1: 'formatselect,code,table,bold,italic,bullist,numlist,link,blockquote,alignleft,aligncenter,alignright,underline,strikethrough,forecolor,removeformat,codeformat,outdent,indent,undo,redo',
+                content_style: isDarkMode
+                    ? 'body { background-color: #181B25; color: #E5E7EB; } a { color: #93C5FD; }'
+                    : '',
                 setup(editor) {
                     editor.on('change', function (ed, l) {
                         that.changeContentEvent();
@@ -492,13 +499,6 @@ export default {
                 this.loadingImage = false;
             };
         },
-    },
-    beforeCreate() {
-        if (window.fluentSupportAdmin) {
-            this.$options.components.TemplateInserter = require('../Modules/Tickets/_templateInserter').default
-            this.$options.components.AIResponseGenerator = require('../Modules/Tickets/_AIResponseGenerator').default
-            this.$options.components.FluentBotAIResponseGenerator = require('../Modules/Tickets/_FluentBotAIResponseGenerator').default
-        }
     },
     mounted() {
         this.initEditor();

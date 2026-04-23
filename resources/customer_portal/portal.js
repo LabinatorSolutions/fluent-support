@@ -20,7 +20,7 @@ import {
     Loading,
     CircleCloseFilled,
     CircleCheckFilled
-} from '@element-plus/icons-vue/dist';
+} from '@element-plus/icons-vue';
 
 const app = createApp(Application);
 

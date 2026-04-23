@@ -96,7 +96,7 @@ export default {
                         return;
                     }
 
-                    if (response.is_discarted) {
+                    if (response.is_discarded) {
                         this.$emit('driverRemoved');
                     }
                 })

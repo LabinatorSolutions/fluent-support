@@ -10,7 +10,7 @@
             :icon-color="stat.iconColor"
         />
     </div>
-    <div class="fs_padded_20" v-else>
+    <div class="fs_padded_20 fs_skeleton_loader" v-else>
         <el-skeleton :rows="3" animated />
     </div>
 </template>
@@ -50,6 +50,10 @@ export default {
             type: [String, Number],
             default: null
         },
+        agent_group_id: {
+            type: [String, Number],
+            default: null
+        },
         date_range: {
             type: Array,
             default: null
@@ -75,7 +79,7 @@ export default {
                     label: stat.title || key,
                     value: stat.count || 0,
                     icon: iconMap[statKey] || iconMap[statKey.replace('_', '')] || iconMap[statKey.split('_')[0]] || defaultIcon,
-                    iconBg: '#f2f5f8'
+                    iconBg: ''
                 });
             });
 
@@ -89,6 +93,11 @@ export default {
             }
         },
         product_id() {
+            if (this.isInitialized) {
+                this.fetchReports();
+            }
+        },
+        agent_group_id() {
             if (this.isInitialized) {
                 this.fetchReports();
             }
@@ -119,6 +128,10 @@ export default {
 
             if (this.product_id) {
                 params.product_id = this.product_id;
+            }
+
+            if (this.agent_group_id) {
+                params.agent_group_id = this.agent_group_id;
             }
 
             if (this.date_range && Array.isArray(this.date_range) && this.date_range.length === 2) {

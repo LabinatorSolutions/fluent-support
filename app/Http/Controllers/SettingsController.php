@@ -11,6 +11,7 @@ use FluentSupport\App\Services\Helper;
 use FluentSupport\Database\Migrations\AIActivityLogsMigrator;
 use FluentSupport\Framework\Http\Request\Request;
 use FluentSupport\App\Hooks\Handlers\ReCaptchaHandler;
+use FluentSupport\Framework\Support\Arr;
 
 /**
  *  SettingsController class is responsible for all settings
@@ -60,7 +61,25 @@ class SettingsController extends Controller
     {
         $settingsKey = $request->getSafe('settings_key', 'sanitize_text_field');
         $settings = wp_unslash($request->get('settings', null));
+
+        // wp-editor fields: sanitize with wp_kses_post (same approach as Fluent Cart)
+        $htmlFields = ['login_message'];
+        $htmlValues = [];
+        if (is_array($settings)) {
+            foreach ($htmlFields as $field) {
+                if (isset($settings[$field])) {
+                    $htmlValues[$field] = wp_kses_post($settings[$field]);
+                }
+            }
+        }
+
         $settings = is_array($settings) ? map_deep($settings, 'sanitize_text_field') : [];
+
+        // Restore HTML fields
+        foreach ($htmlValues as $field => $value) {
+            $settings[$field] = $value;
+        }
+
         (new Settings)->save($settingsKey, $settings);
 
         return [
@@ -110,9 +129,7 @@ class SettingsController extends Controller
         $createPage = $settings['create_portal_page'] == 'yes';
 
         if (!$createPage && empty($settings['portal_page_id'])) {
-            return $this->sendError([
-                'message' => __('Please select a page or enable create page', 'fluent-support')
-            ]);
+            Helper::getSafeErrorMessage(new \Exception(__('Please select a page or enable create page', 'fluent-support')));
         }
 
         if ($createPage) {
@@ -254,7 +271,7 @@ class SettingsController extends Controller
             $this->installFluentForm();
         }
 
-        $optinEmail = $request->getSafe('optin_email', 'sanitize_text_field', 'no');
+        $optinEmail = $request->getSafe('optin_email', 'sanitize_email', '');
         if ($optinEmail && is_email($optinEmail)) {
             $this->shareEmail($optinEmail);
         }
@@ -272,9 +289,9 @@ class SettingsController extends Controller
 
     public function saveReCaptchaSettings(Request $request)
     {
-        $data = $request->getSafe('reCaptcha', 'sanitize_text_field');
+        $data = $request->get('reCaptcha');
 
-        if ('clear-reCaptcha-settings' == $data) {
+        if (is_string($data) && 'clear-reCaptcha-settings' === sanitize_text_field($data)) {
             if (Meta::where('object_type', '_fs_recaptcha_settings')->delete()) {
                 return $this->sendSuccess([
                     'message' => __('Your reCAPTCHA settings deleted successfully.', 'fluent-support'),
@@ -286,12 +303,18 @@ class SettingsController extends Controller
             ]);
         }
 
+        if (!is_array($data)) {
+            return $this->sendError([
+                'message' => __('Invalid reCAPTCHA data.', 'fluent-support'),
+            ]);
+        }
+
         $reCaptchaData = [
-            'reCaptcha_version'       => sanitize_text_field($data['reCaptchaVersion']),
-            'siteKey'                 => sanitize_text_field($data['siteKey']),
-            'secretKey'               => sanitize_text_field($data['secretKey']),
-            'formContainingReCaptcha' => array_map('sanitize_text_field', $data['formContainingReCaptcha']),
-            'is_enabled'              => sanitize_text_field($data['reCaptchaEnabled'], 'no'),
+            'reCaptcha_version'       => sanitize_text_field($data['reCaptchaVersion'] ?? ''),
+            'siteKey'                 => sanitize_text_field($data['siteKey'] ?? ''),
+            'secretKey'               => sanitize_text_field($data['secretKey'] ?? ''),
+            'formContainingReCaptcha' => array_map('sanitize_text_field', (array) ($data['formContainingReCaptcha'] ?? [])),
+            'is_enabled'              => sanitize_text_field($data['reCaptchaEnabled'] ?? 'no'),
         ];
 
         $previousValue = Meta::where('object_type', '_fs_recaptcha_settings')->first();
@@ -302,11 +325,19 @@ class SettingsController extends Controller
             ]);
         }
 
-        $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($data['captchaResponse'], $data['secretKey'], $data['reCaptchaVersion']);
+        $captchaResponse = sanitize_text_field($data['captchaResponse'] ?? '');
 
-        if (!$verifyReCaptcha) {
+        if ($captchaResponse) {
+            $verifyReCaptcha = ReCaptchaHandler::validateRecaptcha($captchaResponse, $reCaptchaData['secretKey'], $reCaptchaData['reCaptcha_version']);
+
+            if (!$verifyReCaptcha) {
+                return $this->sendError([
+                    'message' => __('Your reCAPTCHA settings are not valid.', 'fluent-support'),
+                ]);
+            }
+        } elseif (!$previousValue) {
             return $this->sendError([
-                'message' => __('Your reCAPTCHA settings are not valid.', 'fluent-support'),
+                'message' => __('Please verify reCAPTCHA before saving.', 'fluent-support'),
             ]);
         }
 
@@ -364,7 +395,7 @@ class SettingsController extends Controller
         } catch (\Exception $e) {
             // translators: %s is the error message from the exception
             $translatedMessage = __('An error occurred while saving the settings: %s', 'fluent-support');
-            $errorMessage = sprintf($translatedMessage, $e->getMessage());
+            $errorMessage = sprintf($translatedMessage, Helper::getSafeErrorMessage($e));
 
             return $this->sendError([
                 'message' => $errorMessage,
@@ -393,13 +424,62 @@ class SettingsController extends Controller
 
     public function getOpenAISettings()
     {
+        $modelOptions = $this->getOpenAIModelOptions();
+        $supportedModels = array_column($modelOptions, 'value');
+
+        $settings = [
+            'api_key' => '',
+            'model'   => 'gpt-5.2',
+        ];
+
         $chatGPTSettingsData = Meta::where('object_type', '_fs_openai_settings')->first();
         if ($chatGPTSettingsData) {
             $settings = Helper::safeUnserialize($chatGPTSettingsData->value);
-            return $this->sendSuccess($settings);
+
+            if (!empty($settings['model']) && !in_array($settings['model'], $supportedModels, true)) {
+                $previousModel = $settings['model'];
+                $settings['model'] = 'gpt-5.2';
+                Helper::saveOpenAIData('_fs_openai_settings', '_fs_openai_data', $settings);
+                $settings['previous_model'] = $previousModel;
+                $settings['model_migrated'] = true;
+            }
         }
 
-        return [];
+        $settings['model_options'] = $modelOptions;
+
+        return $this->sendSuccess($settings);
+    }
+
+    private function getOpenAIModelOptions()
+    {
+        $models = [
+            ['value' => 'gpt-5.2', 'label' => 'GPT-5.2'],
+            ['value' => 'gpt-5.2-chat-latest', 'label' => 'GPT-5.2 Chat'],
+            ['value' => 'gpt-4.1', 'label' => 'GPT-4.1'],
+            ['value' => 'gpt-4.1-mini', 'label' => 'GPT-4.1 Mini'],
+            ['value' => 'gpt-4.1-nano', 'label' => 'GPT-4.1 Nano'],
+            ['value' => 'gpt-4o', 'label' => 'GPT-4o'],
+            ['value' => 'gpt-4o-mini', 'label' => 'GPT-4o Mini'],
+            ['value' => 'gpt-4o-2024-08-06', 'label' => 'GPT-4o (2024-08-06)'],
+            ['value' => 'gpt-4o-2024-05-13', 'label' => 'GPT-4o (2024-05-13)'],
+            ['value' => 'gpt-4o-mini-2024-07-18', 'label' => 'GPT-4o Mini (2024-07-18)'],
+            ['value' => 'gpt-4-turbo', 'label' => 'GPT-4 Turbo'],
+            ['value' => 'gpt-4-turbo-2024-04-09', 'label' => 'GPT-4 Turbo (2024-04-09)'],
+            ['value' => 'gpt-4-turbo-preview', 'label' => 'GPT-4 Turbo Preview'],
+            ['value' => 'gpt-4', 'label' => 'GPT-4'],
+            ['value' => 'gpt-4-0613', 'label' => 'GPT-4 (0613)'],
+            ['value' => 'gpt-3.5-turbo', 'label' => 'GPT-3.5 Turbo'],
+            ['value' => 'gpt-3.5-turbo-0125', 'label' => 'GPT-3.5 Turbo (0125)'],
+            ['value' => 'o3', 'label' => 'o3'],
+            ['value' => 'o3-mini', 'label' => 'o3-mini'],
+            ['value' => 'o4-mini', 'label' => 'o4-mini'],
+            ['value' => 'o1', 'label' => 'o1'],
+            ['value' => 'gpt-4-0314', 'label' => 'GPT-4 (0314) - Deprecated soon'],
+            ['value' => 'gpt-4-1106-preview', 'label' => 'GPT-4 (1106 Preview) - Deprecated soon'],
+            ['value' => 'gpt-4-0125-preview', 'label' => 'GPT-4 (0125 Preview) - Deprecated soon'],
+        ];
+
+        return apply_filters('fluent_support/supported_openai_models', $models);
     }
 
     public function getReCaptchaSettings()
@@ -650,6 +730,8 @@ class SettingsController extends Controller
     {
         $dropBoxConfigured = false;
         $googleDriveConfigured = false;
+        $cloudflareR2Configured = false;
+        $amazonS3Configured = false;
 
         if (defined('FLUENTSUPPORTPRO')) {
             $dropBoxSettings = Helper::getIntegrationOption('dropbox_settings');
@@ -657,6 +739,12 @@ class SettingsController extends Controller
 
             $googleDriveSettings = Helper::getIntegrationOption('google_drive_settings');
             $googleDriveConfigured = $googleDriveSettings && !empty($googleDriveSettings['access_token']);
+
+            $cloudflareR2Settings = Helper::getIntegrationOption('cloudflare_r2_settings');
+            $cloudflareR2Configured = $cloudflareR2Settings && !empty($cloudflareR2Settings['secret_access_key']) && Arr::get($cloudflareR2Settings, 'status') == 'yes';
+
+            $amazonS3Settings = Helper::getIntegrationOption('amazon_s3_settings');
+            $amazonS3Configured = $amazonS3Settings && !empty($amazonS3Settings['secret_access_key']) && Arr::get($amazonS3Settings, 'status') == 'yes';
         }
 
         $drivers = apply_filters('fluent_support/storage_drivers_info', [
@@ -685,6 +773,26 @@ class SettingsController extends Controller
                 'upgrade_url'   => 'https://fluentsupport.com/pricing',
                 'description'   => __('Upload and store the files to your Google Drive Storage.', 'fluent-support'),
                 'icon'          => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/drive.svg',
+            ],
+            'cloudflare_r2' => [
+                'meta_key'      => 'cloudflare_r2_settings',
+                'title'         => 'Cloudflare R2',
+                'has_config'    => true,
+                'is_configured' => $cloudflareR2Configured,
+                'require_pro'   => !defined('FLUENTSUPPORTPRO'),
+                'upgrade_url'   => 'https://fluentsupport.com/pricing',
+                'description'   => __('Upload and store the files to Cloudflare R2 Storage with zero egress fees.', 'fluent-support'),
+                'icon'          => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/cloudflare-r2.svg',
+            ],
+            'amazon_s3' => [
+                'meta_key'      => 'amazon_s3_settings',
+                'title'         => 'Amazon S3',
+                'has_config'    => true,
+                'is_configured' => $amazonS3Configured,
+                'require_pro'   => !defined('FLUENTSUPPORTPRO'),
+                'upgrade_url'   => 'https://fluentsupport.com/pricing',
+                'description'   => __('Upload and store the files to Amazon S3 cloud storage.', 'fluent-support'),
+                'icon'          => FLUENT_SUPPORT_PLUGIN_URL . 'assets/images/icons/amazon-s3.svg',
             ]
         ]);
 
@@ -752,7 +860,6 @@ class SettingsController extends Controller
     public function saveFluentBotSettings(Request $request)
     {
         $data = [
-            'generalApiKey'    => $request->getSafe('generalApiKey', 'sanitize_text_field'),
             'generalBotId'     => $request->getSafe('generalBotId', 'sanitize_text_field'),
             'isEnabled'        => $request->getSafe('isEnabled', 'rest_sanitize_boolean'),
             'productMappings'  => []
@@ -768,7 +875,6 @@ class SettingsController extends Controller
             $data['productMappings'][] = [
                 'productId'    => intval($mapping['productId'] ?? 0),
                 'productTitle' => sanitize_text_field($mapping['productTitle'] ?? ''),
-                'apiKey'       => sanitize_text_field($mapping['apiKey'] ?? ''),
                 'botId'        => sanitize_text_field($mapping['botId'] ?? ''),
             ];
         }

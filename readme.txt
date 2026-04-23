@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja, adreastrian
 Tags: wordpress support ticket, Support Ticket, support plugin, helpdesk, customer support plugin
 Requires at least: 5.6
 Tested up to: 6.9
-Stable tag: 2.0.1
+Stable tag: 2.1.2
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -286,6 +286,73 @@ No external connections are established, and all processing occurs within your o
 9. All Customers
 
 == Changelog ==
+
+= 2.1.2 (Date: April 20, 2026) =
+* Simplified image upload flow: the Create/Reply button now appears only after the upload is complete.
+* Enabled attachments for ticket emails, including Agent-created tickets and Agent-initiated tickets.
+* Fixed an issue where alpha-admin.css was loading on all admin pages when the ticket summary feature was enabled.
+* Fixed inaccurate Personal Report metrics; all ticket closures and replies are now correctly counted regardless of assignment.
+* Fixed admin UI styling to properly align the Fluent Support canvas within the admin interface.
+* Prevented duplicate shortcode copy notifications in settings.
+* Improved dark mode UI consistency by enhancing blocked status warning visibility, fixing Reply/Close button state styling, and improving icon contrast with standardized dropdown icon styling.
+
+= 2.1.1 (Date: April 10, 2026) =
+* Fixed an issue where the global ticket summary was not rendering outside Fluent Support pages
+* Fixed Slack notification sending issue (Pro)
+* Fixed activity log staff filter dropdown collapsing issue
+
+= 2.1.0 (Date: April 09, 2026) =
+* Added Agent Groups to organize support teams and enable smart ticket distribution
+* Added Agent Signature option for support agents
+* Added Agent-Initiated Tickets (agents can create tickets on behalf of customers)
+* Added new email template for Agent-Initiated Tickets
+* Added file upload integration with Cloudflare R2 and Amazon S3 (Pro)
+* Added Dynamic Sidebar Widgets system (hook-based, supports PHP and Vue components)
+* Added fluent_support/should_send_notification filter to control notification delivery across channels
+* Improved overall security
+* Optimized database queries for better performance
+* Fixed Fluent Boards integration action availability in free version when plugin is active
+* Fixed portal signup visibility issue when using shortcode attribute
+* Fixed “Close Ticket Silently” not suppressing email notifications
+* Fixed incorrect syncing of customer status with FluentCRM
+* Fixed advanced filter deletion issue in tickets list
+* Fixed theme mode toggle visibility issue
+* Fixed untranslated strings in advanced filter options
+
+= 2.0.6 (Date: March 05, 2026) =
+* Updated: Core PHP framework
+* Added: Zendesk migration improvement to collect archived tickets and resume previous migrations
+* Fixed: Onboarding dark mode design issue
+* Fixed: Bulk option checkbox now visible by default
+* Fixed: Ticket list not updating after bulk actions
+* Fixed: File upload limit validation issue after deleting previously uploaded files
+* Fixed: WordPress admin bar overlapping Fluent Support menu
+* Fixed: Agent reply count in reports incorrectly including internal notes
+* Fixed: Error when navigating directly to a ticket URL due to window.history.state being null
+
+= 2.0.5 (Date: March 02, 2026) =
+* Added: Admin Dashboard Dark Mode
+* Added: Support for OpenAI GPT-5.2 & GPT-5.2 Chat models
+* Added: View Tickets (Read Only) permission
+* Improved: Faster ticket list loading
+* Improved: Optimized large-scale Zendesk migration
+* Fixed: Draft Reply permission issue
+* Fixed: Attachment links during ticket merge
+* Fixed: Ticket content unordered list formatting
+* Fixed: Integration settings save button visibility
+* Fixed: “Waiting Since” tooltip date display
+* Fixed: Saved Replies left menu link
+* Fixed: Login page styling issue
+* Fixed: Date range picker responsive layout
+
+= 2.0.2 (Date: February 09, 2026) =
+* Fixed an issue where current ticket watchers were not displaying in the ticket list.
+* Fixed an issue where ticket merging could fail from the ticket view page.
+* Fixed an issue where reCAPTCHA settings were not saving properly.
+* Fixed a responsiveness issue with the bulk actions bar in the ticket list.
+* Fixed issues related to ticket migration.
+* Fixed a customer profile update issue by treating customer IP fields as strings.
+* Fixed a styling issue with the Ticket Merge dialog buttons.
 
 = 2.0.1 (Date: February 06, 2026) =
 * Improved onboarding completion UI and post-onboarding navigation

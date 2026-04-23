@@ -21,18 +21,65 @@
                     </div>
                 </template>
                 <div class="fs_extended_pop">
-                    <el-select class="fs_select_field" filterable v-model="agent_id">
-                        <el-option
-                            v-for="agent in appVars.support_agents"
-                            :key="agent.id"
-                            :value="agent.id"
-                            :label="agent.full_name"></el-option>
+                    <el-select class="fs_select_field" popper-class="fs_agent_group_popper" filterable v-model="agent_id">
+                        <template v-if="agentGroups.length">
+                            <el-option-group
+                                v-for="group in groupedAgentOptions"
+                                :key="group.label"
+                                :label="group.label"
+                            >
+                                <el-option
+                                    v-for="agent in group.agents"
+                                    :key="agent.id"
+                                    :value="agent.id"
+                                    :label="agent.full_name"
+                                />
+                            </el-option-group>
+                        </template>
+                        <template v-else>
+                            <el-option
+                                v-for="agent in appVars.support_agents"
+                                :key="agent.id"
+                                :value="agent.id"
+                                :label="agent.full_name"
+                            />
+                        </template>
                     </el-select>
                     <div class="fs_popover_action_btn">
                         <el-button class="fs_filled_btn" @click="assignAgent()" style="margin-top: 10px;" :disabled="!agent_id" size="small" type="danger">
                             {{$t('Assign Agent')}}
                         </el-button>
                         <el-button class="fs_outline_btn" @click="assignAgentPop = false" size="small" type="default" style="margin-top: 10px;">{{$t('Close')}}</el-button>
+                    </div>
+                </div>
+            </el-popover>
+
+            <el-popover
+                placement="bottom"
+                :width="400"
+                trigger="manual"
+                class="fs_popover"
+                :visible="assignGroupPop"
+            >
+                <template #reference>
+                    <div class="fs_bulk_action_item" :class="{'fs_pop_active': assignGroupPop}" @click="togglePop('assignGroupPop')">
+                        <IconPack :icon-key="'agentGroupIcon'" />
+                        <span>{{ $t('Group') }}</span>
+                    </div>
+                </template>
+                <div class="fs_extended_pop">
+                    <el-select class="fs_select_field" filterable v-model="agent_group_id" :placeholder="$t('Select Agent Group')">
+                        <el-option
+                            v-for="group in appVars.agent_groups"
+                            :key="group.id"
+                            :value="group.id"
+                            :label="group.title"></el-option>
+                    </el-select>
+                    <div class="fs_popover_action_btn">
+                        <el-button class="fs_filled_btn" @click="assignAgentGroup()" style="margin-top: 10px;" :disabled="!agent_group_id" size="small" type="danger">
+                            {{$t('Assign via Group')}}
+                        </el-button>
+                        <el-button class="fs_outline_btn" @click="assignGroupPop = false" size="small" type="default" style="margin-top: 10px;">{{$t('Close')}}</el-button>
                     </div>
                 </div>
             </el-popover>
@@ -126,23 +173,36 @@
 import WorkFlowSelector from './parts/_WorkFlowSelector';
 import CreateResponse from "./_CreateResponse";
 import IconPack from "@/admin/Components/IconPack.vue";
+import { getGroupedAgentOptions } from '@/admin/Composable/agentGroupHelper';
+import { mapState } from 'pinia';
+import { useTicketListStore } from '@/admin/stores/ticketList.store';
 
 export default {
     name: 'TicketBulkActions',
-    props: ['ticket_selections'],
     components: {
         WorkFlowSelector,
         CreateResponse,
         IconPack
     },
+    computed: {
+        ...mapState(useTicketListStore, ['ticket_selections']),
+        agentGroups() {
+            return this.appVars.agent_groups || [];
+        },
+        groupedAgentOptions() {
+            return getGroupedAgentOptions(this.appVars.support_agents || [], this.agentGroups, this.$t('Other'));
+        },
+    },
     data() {
         return {
             agent_id: '',
+            agent_group_id: '',
             tag_ids: [],
             workflow_id: '',
             add_response_modal: false,
             working: false,
             assignAgentPop: false,
+            assignGroupPop: false,
             addTagPop: false
         };
     },
@@ -150,10 +210,12 @@ export default {
     methods: {
         fetchTickets() {
             this.agent_id = '';
+            this.agent_group_id = '';
             this.tag_ids = [];
             this.workflow_id = '';
             this.addTagPop = false;
             this.assignAgentPop = false;
+            this.assignGroupPop = false;
             this.add_response_modal = false;
             this.$emit('fetchTickets');
         },
@@ -191,6 +253,21 @@ export default {
                 agent_id: this.agent_id
             });
         },
+        assignAgentGroup() {
+            if (!this.agent_group_id) {
+                this.$notify({
+                    type: 'error',
+                    message: this.$t('Please select an agent group first'),
+                    position: 'bottom-right'
+                });
+                return false;
+            }
+
+            this.doBulkActions({
+                bulk_action: 'assign_agent_group',
+                agent_group_id: this.agent_group_id
+            });
+        },
         assignTags() {
             if (!this.tag_ids.length) {
                 this.$notify({
@@ -222,6 +299,7 @@ export default {
                 return;
             }
             this.assignAgentPop = false;
+            this.assignGroupPop = false;
             this.addTagPop = false;
             if (pop) {
                 this[pop] = true;

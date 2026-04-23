@@ -21,9 +21,9 @@
                     <el-select class="fs_select_field" clearable v-model="selectedModel" :placeholder="$t('Choose OpenAI model')">
                         <el-option
                             v-for="model in modelOptions"
-                            :key="model"
-                            :label="model"
-                            :value="model">
+                            :key="model.value"
+                            :label="model.label"
+                            :value="model.value">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -33,7 +33,7 @@
                 </div>
             </el-form>
         </div>
-            <div class="fs_box_body" v-else>
+            <div class="fs_box_body fs_skeleton_loader" v-else>
                 <el-skeleton :animated="true" :rows="3" />
             </div>
         </div>
@@ -57,27 +57,8 @@ export default {
     data() {
         return {
             apiKey: "",
-            selectedModel: "gpt-3.5-turbo", // Default model
-            modelOptions: [
-                "gpt-3.5-turbo",
-                "gpt-3.5-turbo-0125",
-                "gpt-3.5-turbo-1106",
-                "gpt-3.5-turbo-0125",
-                "gpt-4-0314",
-                "gpt-4-0613",
-                "gpt-4",
-                "gpt-4-1106-preview",
-                "gpt-4-0125-preview",
-                "gpt-4-turbo-preview",
-                "gpt-4-turbo-2024-04-09",
-                "gpt-4-turbo",
-                "gpt-4o-mini-2024-07-18",
-                "gpt-4o-mini",
-                "chatgpt-4o-latest",
-                "gpt-4o-2024-08-06",
-                "gpt-4o-2024-05-13",
-                "gpt-4o"
-            ],
+            selectedModel: "gpt-5.2",
+            modelOptions: [],
             disconnectChatGPT: false,
             loading: false,
         };
@@ -110,6 +91,16 @@ export default {
                 .then((response) => {
                     this.apiKey = response.api_key;
                     this.selectedModel = response.model;
+                    this.modelOptions = response.model_options || [];
+                    if (response.model_migrated) {
+                        this.$notify({
+                            title: this.$t('Model Updated'),
+                            message: this.$t('Your previously selected model') + ' (' + response.previous_model + ') ' + this.$t('has been deprecated. Switched to') + ' ' + response.model + '.',
+                            type: 'warning',
+                            position: 'bottom-right',
+                            duration: 8000
+                        });
+                    }
                     if (response.api_key) {
                         this.disconnectChatGPT = true;
                     }

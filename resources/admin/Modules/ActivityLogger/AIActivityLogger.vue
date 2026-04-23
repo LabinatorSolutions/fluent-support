@@ -54,6 +54,7 @@
                             <el-date-picker
                                 v-model="date_range"
                                 type="daterange"
+                                :editable="false"
                                 :range-separator="$t('To')"
                                 :start-placeholder="$t('Start')"
                                 :end-placeholder="$t('End')"
@@ -145,7 +146,7 @@
                 </div>
             </div>
         </div>
-        <div v-else>
+        <div v-else class="fs_skeleton_loader">
             <el-skeleton :rows="3" animated />
         </div>
     </div>

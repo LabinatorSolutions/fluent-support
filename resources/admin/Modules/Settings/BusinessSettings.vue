@@ -1,5 +1,5 @@
 <template>
-    <div class="fs_box_wrapper">
+    <div class="fs_box_wrapper" @click="handleClick">
         <div class="fs_box_header">
             <div class="fs_box_head">
                 <h3>{{ $t("Global Settings") }}</h3>
@@ -28,7 +28,7 @@
             </form-builder>
         </div>
         <div
-            class="fs_box_body"
+            class="fs_box_body fs_skeleton_loader"
             v-else
         >
             <el-skeleton :rows="5" animated />
@@ -181,12 +181,7 @@ export default {
     mounted() {
         this.fetchSettings();
         this.$setTitle('Business Settings');
-        document.addEventListener('click', this.handleClick);
-    },
-    beforeDestroy() {
-        document.removeEventListener('click', this.handleClick);
     }
 }
 </script>
-
 

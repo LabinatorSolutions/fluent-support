@@ -11,7 +11,7 @@
                     <el-tooltip
                         class="box-item"
                         effect="dark"
-                        content="Drag and Drop Action"
+                        :content="$t('Drag and Drop Action')"
                         placement="top-start"
                     >
                         <img :src="appVars.asset_url + '/images/icons/dragAndDrop.svg'">

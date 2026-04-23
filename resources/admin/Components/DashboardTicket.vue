@@ -38,21 +38,27 @@
         <div class="fs_ticket_meta_row">
             <div class="fs_ticket_meta_left">
                 <!-- Status Badge -->
-                <span v-if="ticket.status !== 'new'" class="fs_status_badge" :class="`fs_status_${(ticket.status || '').toLowerCase()}`">
+                <el-tooltip v-if="ticket.status !== 'new'" effect="dark" :content="$t('Status') + ': ' + ucFirst(ticket.status)" placement="top" trigger="hover">
+                <span class="fs_status_badge" :class="`fs_status_${(ticket.status || '').toLowerCase()}`">
                     {{ ucFirst(ticket.status) }}
                 </span>
-                
+                </el-tooltip>
+
                 <!-- Priority -->
+                <el-tooltip v-if="ticket.client_priority" effect="dark" :content="$t('Client Priority') + ': ' + ucFirst(ticket.client_priority)" placement="top" trigger="hover">
                 <span class="fs_priority_indicator">
                     <span class="fs_priority_dot" :class="`fs_priority_dot_${(ticket.client_priority || 'normal').toLowerCase()}`"></span>
                     <span class="fs_priority_text">{{ ucFirst(ticket.client_priority || 'Normal') }}</span>
                 </span>
-                
+                </el-tooltip>
+
                 <!-- Waiting Time -->
-                <span v-if="ticket.waiting_since" class="fs_waiting_time">
+                <el-tooltip v-if="ticket.waiting_since" effect="dark" :content="$t('Waiting Time') + ': ' + ticket.waiting_since" placement="top" trigger="hover">
+                <span class="fs_waiting_time">
                     <IconPack iconKey="clock" :width="16" :height="16" />
                     <span class="fs_waiting_text">{{ $timeDiff(ticket.waiting_since) }}</span>
                 </span>
+                </el-tooltip>
             </div>
             
             <div class="fs_ticket_meta_right">

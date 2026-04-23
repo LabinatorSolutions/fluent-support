@@ -9,6 +9,7 @@ use FluentSupport\App\Modules\PermissionManager;
 use FluentSupport\App\Services\Blocks\BlockHelper;
 use FluentSupport\App\Services\Helper;
 use FluentSupport\App\Services\TranslationStrings;
+use FluentSupport\App\Vite;
 use FluentSupport\Framework\Support\Arr;
 use FluentSupportPro\App\Services\ProHelper;
 
@@ -45,7 +46,7 @@ class CustomerPortalHandler
                 'fluent_support/customer_portal_agent_permission_error_message',
                 $msg
             );
-            return '<div style="text-align: center;"><h3>' . $agentPermissionErrMessage . '</h3><a href="' . $adminPortalUrl . '">' . esc_html__('Go to Support Admin Page', 'fluent-support') . '</a></div>';
+            return '<div style="text-align: center;"><h3>' . esc_html($agentPermissionErrMessage) . '</h3><a href="' . esc_url($adminPortalUrl) . '">' . esc_html__('Go to Support Admin Page', 'fluent-support') . '</a></div>';
         } else if ($this->hasCustomerPortalAccess()) {
 
             /*
@@ -62,7 +63,7 @@ class CustomerPortalHandler
 
             if (empty($canAccess['status'])) {
                 $invalidPermissionMessage = Arr::get($canAccess, 'message', $invalidPermissionMessage);
-                return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . $invalidPermissionMessage . '</h3></div>';
+                return '<div id="fluent_support_client_app" style="text-align: center;"><h3 class="fs_customer_restriction">' . esc_html($invalidPermissionMessage) . '</h3></div>';
             }
 
             if (!$person) {
@@ -82,7 +83,22 @@ class CustomerPortalHandler
 
             $loggedInMessage = str_replace('[fluent_support_portal]', '', $loggedInMessage);
 
-            return do_shortcode($loggedInMessage);
+            // Pass portal's show-signup / show-reset-password to auth/login shortcodes
+            // by temporarily overriding defaults via the existing filter.
+            $overrideDefaults = function ($defaults) use ($args) {
+                $defaults['show-signup']         = Arr::get($args, 'show-signup', 'true');
+                $defaults['show-reset-password'] = Arr::get($args, 'show-reset-password', 'true');
+                return $defaults;
+            };
+
+            $loggedInMessage = wp_kses_post($loggedInMessage);
+
+            add_filter('fluent_support/auth_shortcode_defaults', $overrideDefaults);
+            $result = do_shortcode($loggedInMessage);
+
+            remove_filter('fluent_support/auth_shortcode_defaults', $overrideDefaults);
+
+            return $result;
         }
     }
 
@@ -214,12 +230,19 @@ class CustomerPortalHandler
             wp_enqueue_editor();
         }
 
-        wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '2.4.3');
-        wp_enqueue_script('fs_tk_customer_portal', $assets . 'portal/js/app.js', ['jquery'], FLUENT_SUPPORT_VERSION, true);
+        // Inject Vite HMR client for dev mode
+        add_action('wp_head', function () {
+            Vite::injectViteClient();
+        }, 1);
 
-        $rtlSuffix = is_rtl() ? '-rtl' : '';
-        $rtlSuffixHandler = $rtlSuffix ? '_rtl' : '';
-        wp_enqueue_style('fs_tk_customer_portal' . $rtlSuffixHandler, $assets . 'portal/css/app' . $rtlSuffix . '.css', [], FLUENT_SUPPORT_VERSION);
+        wp_enqueue_script('dompurify', $assets . 'libs/purify/purify.min.js', [], '2.4.3');
+        wp_enqueue_script('fs_tk_customer_portal', Vite::getEnqueuePath('portal/js/app.js'), ['jquery'], FLUENT_SUPPORT_VERSION, true);
+
+        if (is_rtl()) {
+            wp_enqueue_style('fs_tk_customer_portal_rtl', $assets . 'portal/css/app-rtl.css', [], FLUENT_SUPPORT_VERSION);
+        } else {
+            wp_enqueue_style('fs_tk_customer_portal', Vite::getEnqueuePath('portal/css/app.css'), [], FLUENT_SUPPORT_VERSION);
+        }
 
         wp_localize_script('fs_tk_customer_portal', 'fs_customer_portal', $data);
     }

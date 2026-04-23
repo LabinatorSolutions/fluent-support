@@ -4,7 +4,7 @@
             <div class="fs_box_header">
                 <div class="fs_box_head">
                     <h3>{{ $t('FluentCRM Integration') }}</h3>
-                    <div class="fs_save_settings_container" v-if="has_pro && is_installed" >
+                    <div class="fs_save_settings_container" v-if="is_installed" >
                         <el-button
                             @click="saveSettings()"
                             :disabled="saving"
@@ -34,7 +34,7 @@
                     </el-button>
                 </NarrowPromo>
             </div>
-            <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
+            <div class="fs_box_body fs_skeleton_loader" v-else>
                 <el-skeleton :rows="5" animated/>
             </div>
         </div>
@@ -104,7 +104,7 @@ export default {
 
             if (this.settings.enabled == 'yes' && !this.settings.assigned_tags.length) {
                 this.$notify.error({
-                    message: 'Please select at least one FluentCRM Tag',
+                    message: this.$t('Please select at least one FluentCRM Tag'),
                     position: 'bottom-right'
                 });
                 return false;
@@ -131,7 +131,7 @@ export default {
         },
         installFluentCRM() {
             this.installing = true;
-            this.$post('settings/intsall-fluentcrm')
+            this.$post('settings/install-fluentcrm')
                 .then(response => {
                     this.$notify({
                         type: 'success',

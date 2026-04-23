@@ -39,7 +39,7 @@
                             <el-form-item class="fs_form_item" :label="$t('Enable reCAPTCHA')">
                                 <el-switch
                                     v-model="reCaptchaEnabled"
-                                    active-text="Enable reCAPTCHA for enhanced security"
+                                    :active-text="$t('Enable reCAPTCHA for enhanced security')"
                                     @change="loadRecaptchaResponse"
                                 />
                             </el-form-item>
@@ -109,7 +109,7 @@
                 </div>
             </div>
             <div
-                class="fs_box_body"
+                class="fs_box_body fs_skeleton_loader"
                 v-else
             >
                 <el-skeleton :rows="5" animated />
@@ -167,7 +167,7 @@ export default {
         saveSettings() {
             if (!this.validate()) {
                 return this.$notify({
-                    message: "Missing required fields.",
+                    message: this.$t("Missing required fields."),
                     type: "error",
                     position: "bottom-right",
                 });

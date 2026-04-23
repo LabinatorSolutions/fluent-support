@@ -69,6 +69,7 @@
                         @change="updateTicketPriority('client_priority')"
                         size="small"
                         class="fs_select_field"
+                        :disabled="!can_manage_tickets"
                     >
                         <el-option
                             v-for="(priorityLabel, priority) in client_priorities"
@@ -87,6 +88,7 @@
                         @change="updateTicketPriority('priority')"
                         size="small"
                         class="fs_select_field"
+                        :disabled="!can_manage_tickets"
                     >
                         <el-option
                             v-for="(priorityLabel, priority) in admin_priorities"
@@ -98,7 +100,7 @@
                 </div>
 
                 <!-- Add Tags -->
-                <div class="fs_detail_field">
+                <div v-if="can_manage_tickets" class="fs_detail_field">
                     <label class="fs_detail_label">{{ $t('Add Tags') }}</label>
                     <div class="fs_tags_wrapper">
                         <ticket-tags :creatable="true" :ticket_id="ticket.id" :tags.sync="ticket.tags"/>
@@ -138,7 +140,7 @@
                         :key="watcher_key"
                         class="fs_watcher_tag"
                         size="small"
-                        closable
+                        :closable="can_manage_tickets"
                         :disable-transitions="false"
                         @close="handleClose(watcher.id)"
                     >
@@ -147,6 +149,7 @@
                 </div>
 
                 <el-popover
+                    v-if="can_manage_tickets"
                     placement="bottom"
                     :width="300"
                     :visible="add_watcher"
@@ -407,6 +410,14 @@
             </el-card>
         </el-drawer>
 
+        <!-- Dynamic Template Widgets (extensible via PHP/JS hooks) -->
+        <DynamicTemplates
+            v-if="ticket"
+            filter="ticket_sidebar"
+            :widgetsQuery="{ ticket_id: ticket.id }"
+            :data="{ ticket }"
+        />
+
         <!-- Previous Conversations Widget -->
         <collapsible-widget
             v-if="other_tickets && other_tickets.length"
@@ -482,6 +493,7 @@ import FluentCrmProfile from "./parts/_CrmProfile";
 import TaskTimer from "./parts/_TaskTimer";
 import CollapsibleWidget from "./parts/_CollapsibleWidget.vue";
 import TicketTags from "./parts/_Tags.vue";
+import DynamicTemplates from "../../Bits/DynamicTemplates/DynamicTemplates.vue";
 import each from "lodash/each";
 
 export default {
@@ -493,8 +505,9 @@ export default {
         TaskTimer,
         CollapsibleWidget,
         TicketTags,
+        DynamicTemplates,
     },
-    props: ["ticket_id", "ticket", "fluentcrm_profile", "watchers", "watcher_ids", "fetch_other_tickets"],
+    props: ["ticket_id", "ticket", "fluentcrm_profile", "watchers", "watcher_ids", "fetch_other_tickets", "can_manage_tickets"],
     data() {
         return {
             drawer: false,
@@ -580,14 +593,20 @@ export default {
                 .join(", ");
         },
         getPaymentMethodName(method) {
-            const map = { offline_payment: "Offline Payment", stripe: "Stripe", paypal: "PayPal" };
+            const map = { offline_payment: this.$t("Offline Payment"), stripe: "Stripe", paypal: "PayPal" };
             return map[method] || method;
         },
         handleClose(watcherId) {
             this.$confirm({
                 message: this.$t("watcher_remove_warning"),
                 title: this.$t("Warning"),
-                options: { confirmButtonText: this.$t("Yes"), cancelButtonText: this.$t("No"), type: "warning" },
+                options: {
+                    confirmButtonText: this.$t("Yes"),
+                    cancelButtonText: this.$t("No"),
+                    type: "warning",
+                    cancelButtonClass: 'el-button--default fs_outline_btn',
+                    confirmButtonClass: 'el-button--danger fs_filled_btn',
+                },
             })
                 .then(() => {
                     const index = this.watcherIds.indexOf(watcherId.toString());
@@ -620,8 +639,8 @@ export default {
         openDrawer(type, order, products = null) {
             this.drawerType = type;
             this.orders = type === "woo_purchases"
-                    ? { orderInfo: order, products: products?.[order.id] || [] }
-                    : { orderInfo: order, products: order.order_items || [] };
+                ? { orderInfo: order, products: products?.[order.id] || [] }
+                : { orderInfo: order, products: order.order_items || [] };
             this.drawer = true;
         },
         getOrderDetails(current_order, products) {
@@ -977,4 +996,3 @@ ul.fs_full_listed>li span.fs_list_value {
     background: #072722;
 }
 </style>
-

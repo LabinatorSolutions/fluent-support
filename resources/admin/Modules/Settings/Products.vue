@@ -112,7 +112,7 @@
                     </span>
                 </div>
             </div>
-            <div style="background: white" class="fs_box_body" v-else>
+            <div class="fs_box_body fs_skeleton_loader" v-else>
                 <el-skeleton class="fs_box_wrapper" :rows="5" animated />
             </div>
         </div>
@@ -277,7 +277,7 @@ export default {
 
     mounted() {
         this.getProducts();
-        this.$setTitle("Products Settings");
+        this.$setTitle(this.$t("Products Settings"));
     }
 };
 </script>

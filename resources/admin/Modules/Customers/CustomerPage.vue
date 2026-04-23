@@ -282,7 +282,7 @@ export default {
         handleAvatarError(err, file) {
             let errorMessage = JSON.parse(err.message);
             this.$notify({
-                title: 'Error',
+                title: this.$t('Error'),
                 message: this.$t(errorMessage.message),
                 type: 'error'
             });

@@ -1,4 +1,4 @@
-@import "../_variables";
+@use "../_variables";
 
 // WordPress admin sidebar states
 .folded #wpbody-content .fs_main_navbar {
@@ -98,6 +98,7 @@
             margin-left: auto;
             align-items: center;
             flex: 0;
+            flex-wrap: initial;
         }
     }
 

@@ -1,25 +1,13 @@
 <template>
     <div class="fs_setup">
         <div class="fs_box_wrapper">
-            <div class="fs_component_header" v-if="step == 'mailbox'" style="display: none;">
-                <div class="fs_component_head">
-                    <h3 class="fs_page_title">
-                        {{ $t('Good') }} {{ greetingTime }} {{ me.first_name }},
-                        {{ $t('Please setup your support portal first') }}
-                    </h3>
-                </div>
-            </div>
             <div class="fs_card fs_table_container">
                 <div class="fs_table_wrapper">
-                <template v-if="step == 'mailbox'">
+                <template v-if="step === 'mailbox'">
                     <!-- Header Section with Logo and Progress -->
                     <div class="fs_setup_header">
                         <div class="fs_header_content">
-                        <div class="fs_logo_section">
-                            <span class="fs_brand_logo">
-                                <img :src="appVars.asset_url + 'images/dashboard_onboarding_logo.png'" />
-                            </span>
-                        </div>
+                        <BrandLogo :asset-url="appVars.asset_url" />
                             <div class="fs_step_indicator">
                                 <span>{{ $t('Step 1 of 2') }}</span>
                             </div>
@@ -63,7 +51,7 @@
 
                                 <el-form-item :label="$t('Support Portal Page (For Customers)')" class="fs_form_item">
                                     <el-select
-                                        :disabled="global_settings.create_portal_page == 'yes'"
+                                        :disabled="global_settings.create_portal_page === 'yes'"
                                         clearable
                                         v-loading="loading_pages"
                                         filterable
@@ -105,15 +93,11 @@
                         </div>
                     </div>
                 </template>
-                <template v-else-if="step == 'maintenance'">
+                <template v-else-if="step === 'maintenance'">
                     <!-- Header Section with Logo and Progress -->
                     <div class="fs_setup_header">
                         <div class="fs_header_content">
-                            <div class="fs_logo_section">
-                                <span class="fs_brand_logo">
-                                    <img :src="appVars.asset_url + 'images/dashboard_onboarding_logo.png'" />
-                                </span>
-                            </div>
+                            <BrandLogo :asset-url="appVars.asset_url" />
                             <div class="fs_step_indicator">
                                 <span>{{ $t('Step 2 of 2') }}</span>
                             </div>
@@ -205,11 +189,7 @@
                     <!-- Header Section with Logo and Progress -->
                     <div class="fs_setup_header">
                         <div class="fs_header_content">
-                            <div class="fs_logo_section">
-                                <span class="fs_brand_logo">
-                                    <img :src="appVars.asset_url + 'images/dashboard_onboarding_logo.png'" />
-                                </span>
-                            </div>
+                            <BrandLogo :asset-url="appVars.asset_url" />
                             <div class="fs_step_indicator">
                                 <span>{{ $t('Step 2 of 2') }}</span>
                             </div>
@@ -368,7 +348,8 @@
             custom-class="fc_essential_modal"
             v-model="show_essential_modal"
             class="fs_dialog"
-            width="30%">
+            width="90%"
+            style="max-width: 420px;">
             <p>
                 Get improved features and faster fixes by sharing non-sensitive data via usage tracking that shows us
                 how FluentSupport is used. No personal data is tracked or stored.
@@ -385,12 +366,13 @@
 </template>
 
 <script type="text/babel">
+import BrandLogo from './BrandLogo.vue';
 
 export default {
     name: 'FluentSupportSetup',
+    components: { BrandLogo },
     data() {
         return {
-            me: this.appVars.me,
             global_settings: {
                 portal_page_id: '',
                 create_portal_page: 'no'
@@ -412,30 +394,6 @@ export default {
             show_essential: false,
             email_address: '',
             show_essential_modal: false
-        }
-    },
-    computed: {
-        greetingTime() {
-            const m = this.moment();
-            let g = null; //return g
-
-            if (!m || !m.isValid()) {
-                return;
-            } //if we can't find a valid or filled moment, we return.
-
-            const split_afternoon = 12 //24hr time to split the afternoon
-            const split_evening = 17 //24hr time to split the evening
-            const currentHour = parseFloat(m.format("HH"));
-
-            if (currentHour >= split_afternoon && currentHour <= split_evening) {
-                g = this.$t("afternoon");
-            } else if (currentHour >= split_evening) {
-                g = this.$t("evening");
-            } else {
-                g = this.$t("morning");
-            }
-
-            return g;
         }
     },
     methods: {
@@ -478,7 +436,7 @@ export default {
             this.completeTrack(true);
         },
         completeTrack(force = false) {
-            if (this.share_essentials != 'yes' && !force) {
+            if (this.share_essentials !== 'yes' && !force) {
                 this.show_essential_modal = true;
                 return;
             }

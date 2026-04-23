@@ -25,7 +25,13 @@
                    :show-saved-replies="true" :show-cc-toggle-button="ticket.source === 'email' && type !== 'note'" :add_cc="selected_cc?.length > 0 || show_cc_option" @toggleCcOption="toggleCcOption"/>
         <div class="fs_row fs_attachment_section">
             <div class="fs_full">
-                <attachment-form is_agent="yes" v-if="appVars.has_file_upload" :ticket="ticket" :attachments="attachments"/>
+                <attachment-form
+                    is_agent="yes"
+                    v-if="appVars.has_file_upload"
+                    :ticket="ticket"
+                    :attachments="attachments"
+                    @upload-state-change="updateAttachmentUploadState"
+                />
             </div>
         </div>
         <div class="fs_draft_response_actions fs_row fs_actions_row">
@@ -40,15 +46,15 @@
                         </el-checkbox>
                     </el-tooltip>
                 </div>
-                <p v-if="type== 'note'" class="fs_note_warning">{{ $t('internal_note_warning') }}</p>
+                <p v-if="type== 'note'" class="fs_note_warning">{{ $t('You are adding internal Note. Only support staff can see this note.') }}</p>
             </div>
             <div class="fs_half fs_right_section">
                 <div class="fs_response_actions fs_button_group">
-                    <el-button v-if="type != 'note' && type !== 'draft_response'" :disabled="creating" @click="create('yes')" size="large"
+                    <el-button v-if="type != 'note' && type !== 'draft_response'" :disabled="creating || attachmentUploadState.uploading" @click="create('yes')" size="large"
                                class="fs_reply_close_btn">
                         {{ $t('Reply and Close') }}
                     </el-button>
-                    <el-button class="fs_reply_btn fs_filled_btn" v-loading="creating" :disabled="creating" @click="create('no')"
+                    <el-button class="fs_reply_btn fs_filled_btn" v-loading="creating" :disabled="creating || attachmentUploadState.uploading" @click="create('no')"
                                >
                         <img class="fs_header_icon" :src="appVars.asset_url + 'images/replyIconWhite.svg'" alt="">
                         <span v-if="type === 'draft_response'">{{ $t('Add Draft Reply') }}</span>
@@ -98,6 +104,10 @@ export default {
             loading: false,
             saveResponseDraftTimer: null,
             isCreatingResponse: false,
+            attachmentUploadState: {
+                uploading: false,
+                count: 0
+            }
         };
     },
     watch: {
@@ -172,7 +182,29 @@ export default {
             }
         },
 
+        updateAttachmentUploadState(state) {
+            this.attachmentUploadState = state;
+        },
+
+        notifyAttachmentUploadPending() {
+            const message = this.attachmentUploadState.count > 1
+                ? this.$t('Please wait for all attachments to finish uploading before submitting the reply.')
+                : this.$t('Please wait for the attachment to finish uploading before submitting the reply.');
+
+            this.$notify({
+                message,
+                type: 'warning',
+                position: 'bottom-right',
+                offset: 50,
+            });
+        },
+
         create(closed = 'no') {
+            if (this.attachmentUploadState.uploading) {
+                this.notifyAttachmentUploadPending();
+                return;
+            }
+
             this.isCreatingResponse = true;
             const data = {
                 content: this.response_body,
@@ -254,5 +286,3 @@ export default {
     }
 }
 </script>
-
-

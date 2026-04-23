@@ -7,8 +7,7 @@
                 </div>
             </div>
             <div
-                style="padding: 20px; background: white"
-                class="fs_box_body"
+                class="fs_box_body fs_skeleton_loader"
                 v-if="has_pro && webhook === ''"
             >
                 <el-skeleton :rows="5" animated />

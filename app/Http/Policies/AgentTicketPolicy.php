@@ -9,27 +9,175 @@ use FluentSupport\Framework\Foundation\Policy;
 class AgentTicketPolicy extends Policy
 {
     /**
-     * Check user permission for any method
+     * Default policy check: GET requests require view permission, POST/PUT/DELETE require manage permission.
+     *
      * @param \FluentSupport\Framework\Request\Request $request
      * @return Boolean
      */
     public function verifyRequest(Request $request)
     {
-        $permissions = PermissionManager::currentUserPermissions();
-        $acceptedPermissions = ['fst_manage_own_tickets', 'fst_manage_unassigned_tickets', 'fst_manage_other_tickets', 'fst_merge_tickets','fst_draft_reply'];
-        $status = !!array_intersect($permissions, $acceptedPermissions);
+        if ($request->method() === 'GET') {
+            $status = PermissionManager::userCan([
+                'fst_view_tickets', 
+                'fst_draft_reply', 
+                'fst_manage_own_tickets',
+                'fst_manage_unassigned_tickets', 
+                'fst_manage_other_tickets'
+            ]);
+        } else {
+            // Non-GET requests require manage permission by default.
+            // Routes safe for draft/view-only agents have dedicated policy methods
+            // (e.g. createResponse, createOrUpdatDraft, storeOrUpdateLabelSearch).
+            $status = PermissionManager::canManageTickets();
+        }
 
         return apply_filters('fluent_support/agent_has_access', $status, $request);
     }
 
+    /**
+     * Bulk actions: delete requires fst_delete_tickets, others require manage permission.
+     */
     public function doBulkActions(Request $request)
     {
         $action = $request->getSafe('bulk_action', 'sanitize_text_field');
 
-        if ($action == 'delete_tickets') {
+        if ($action === 'delete_tickets') {
             return PermissionManager::currentUserCan('fst_delete_tickets');
         }
 
-        return $this->verifyRequest($request);
+        return PermissionManager::canManageTickets();
+    }
+
+    /**
+     * Delete ticket requires explicit delete permission.
+     */
+    public function deleteTicket(Request $request)
+    {
+        return PermissionManager::currentUserCan('fst_delete_tickets');
+    }
+
+    /**
+     * Creating a response: accessible to manage and draft agents.
+     * View-only agents cannot create responses or drafts.
+     */
+    public function createResponse(Request $request)
+    {
+        return PermissionManager::canManageTickets()
+            || PermissionManager::currentUserCan('fst_draft_reply');
+    }
+
+    /**
+     * Auto-save draft: accessible to manage and draft agents.
+     * View-only agents cannot create drafts.
+     */
+    public function createOrUpdatDraft(Request $request)
+    {
+        return PermissionManager::canManageTickets()
+            || PermissionManager::currentUserCan('fst_draft_reply');
+    }
+
+    /**
+     * Label search save: POST endpoint accessible to any agent with ticket access.
+     */
+    public function storeOrUpdateLabelSearch(Request $request)
+    {
+        return PermissionManager::canAccessTicketRoutes();
+    }
+
+    /**
+     * Label search delete: DELETE endpoint accessible to any agent (personal data).
+     */
+    public function deleteLabelSearch(Request $request)
+    {
+        return PermissionManager::canAccessTicketRoutes();
+    }
+
+    /**
+     * Live activity removal: DELETE endpoint accessible to any agent (cleanup).
+     */
+    public function removeLiveActivity(Request $request)
+    {
+        return PermissionManager::canAccessTicketRoutes();
+    }
+
+    /**
+     * Update ticket property (product, priority, etc.): requires manage ticket permission.
+     */
+    public function updateTicketProperty(Request $request)
+    {
+        return PermissionManager::canManageTickets();
+    }
+
+    /**
+     * Add watchers to a ticket: requires manage ticket permission.
+     */
+    public function addTicketWatchers(Request $request)
+    {
+        return PermissionManager::canManageTickets();
+    }
+
+    /**
+     * Sync watchers on a ticket: requires manage ticket permission.
+     */
+    public function syncTicketWatchers(Request $request)
+    {
+        return PermissionManager::canManageTickets();
+    }
+
+    /**
+     * Update estimated time: requires manage ticket permission.
+     */
+    public function updateEstimatedTime(Request $request)
+    {
+        return PermissionManager::canManageTickets();
+    }
+
+    /**
+     * Manual time commit: requires manage ticket permission.
+     */
+    public function manualCommitTrack(Request $request)
+    {
+        return PermissionManager::canManageTickets();
+    }
+
+    /**
+     * Approve draft response: requires approve permission and ticket route access.
+     */
+    public function approveDraftResponse(Request $request)
+    {
+        return PermissionManager::currentUserCan('fst_approve_draft_reply')
+            && PermissionManager::canAccessTicketRoutes();
+    }
+
+    /**
+     * Delete draft: accessible to draft-capable agents (same as create/update draft).
+     */
+    public function deleteDraft(Request $request)
+    {
+        return PermissionManager::canManageTickets()
+            || PermissionManager::currentUserCan('fst_draft_reply');
+    }
+
+    /**
+     * FluentBot AI-assist actions: accessible to any agent with ticket access.
+     */
+    public function generateResponse(Request $request)
+    {
+        return PermissionManager::canAccessTicketRoutes();
+    }
+
+    public function generateStreamResponse(Request $request)
+    {
+        return PermissionManager::canAccessTicketRoutes();
+    }
+
+    public function getTicketSummary(Request $request)
+    {
+        return PermissionManager::canAccessTicketRoutes();
+    }
+
+    public function getTicketTone(Request $request)
+    {
+        return PermissionManager::canAccessTicketRoutes();
     }
 }

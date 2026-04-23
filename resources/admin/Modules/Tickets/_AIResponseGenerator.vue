@@ -210,13 +210,13 @@ export default {
             try {
                 await navigator.clipboard.writeText(this.aiResponse);
                 this.$notify({
-                    message: "Copied to clipboard",
+                    message: this.$t("Copied to clipboard"),
                     type: "success",
                     position: "bottom-right",
                 });
             } catch (error) {
                 this.$notify({
-                    message: "Something went wrong",
+                    message: this.$t("Something went wrong"),
                     type: "danger",
                     position: "bottom-right",
                 });

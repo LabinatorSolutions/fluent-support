@@ -14,7 +14,7 @@ import BarChartBase from "./BarChartBase";
 
 export default {
     name: "ResponseGrowth",
-    props: ["date_range", "url", "agent_id", "product_id", "mailbox_id", "type", "compact"],
+    props: ["date_range", "url", "agent_id", "product_id", "mailbox_id", "agent_group_id", "type", "compact"],
     components: {
         BarChartBase,
     },
@@ -78,6 +78,7 @@ export default {
                 agent_id: this.agent_id,
                 product_id: this.product_id,
                 mailbox_id: this.mailbox_id,
+                agent_group_id: this.agent_group_id,
                 type: this.type
             };
             await this.$get(this.url + "/response-growth", data).then((response) => {
@@ -95,9 +96,11 @@ export default {
                 chartData.labels.push(label);
                 statData.push(parseInt(count));
             });
+            const computedStyle = getComputedStyle(document.documentElement);
+            const chartColor = computedStyle.getPropertyValue('--fs-chart-primary').trim() || '#0cbe7e';
             chartData.datasets.push({
-                label: "Response Stats",
-                backgroundColor: "#0cbe7e",
+                label: this.$t("Response Stats"),
+                backgroundColor: chartColor,
                 data: statData,
             });
             this.chartData = chartData;

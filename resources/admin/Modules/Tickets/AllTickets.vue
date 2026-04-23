@@ -12,7 +12,7 @@
                 <div class="fs_box_actions fs_tickets_actions_btn">
                     <el-tooltip effect="dark" :content="$t('Refresh')" placement="top">
                         <el-button
-                            @click="fetchTickets()"
+                            @click="refreshTickets()"
                             class="fs_outline_btn fs_refresh_btn"
                         >
                             <IconPack iconKey="refresh" :width="20" :height="20" />
@@ -47,12 +47,12 @@
                     <div v-if="filter_type !== 'advanced'" class="fs_status_tabs">
                         <div class="fs_segmented_control">
                             <button
-                                v-for="(status, statusKey) in filters.ticket_statuses_group"
+                                v-for="(status, statusKey) in ticket_statuses_group"
                                 :key="statusKey"
                                 @click="setStatus(statusKey)"
                                 :class="['fs_segment_button', { 'fs_segment_active': filters.status_type === statusKey }]"
                             >
-                                {{ $t(ucFirst(statusKey)) }}
+                                {{ appVars.ticket_statuses[statusKey] || $t(ucFirst(statusKey)) }}
                             </button>
                         </div>
                     </div>
@@ -387,20 +387,8 @@
                                             class="fs_tk_number"
                                         >
                                             #{{ ticket.id }}
-                                            
+
                                         </span>
-                                        <!-- <span
-                                            v-if="ticket.live_activity && ticket.live_activity.length"
-                                            class="fs_inline_avatars avatars_small"
-                                        >
-                                            <img
-                                                v-for="activity in ticket.live_activity"
-                                                :key="activity.id"
-                                                :title="activity.full_name || activity.name"
-                                                :src="activity.photo"
-                                                :alt="activity.full_name || 'Agent'"
-                                            />
-                                        </span> -->
                                     </div>
 
                                     <ticket-tags
@@ -468,14 +456,41 @@
 
                                 <!-- Avatar, Status & Priority -->
                                 <div class="fs_ticket_status_group">
-                                    <el-tooltip v-if="fieldVisibility.agent && ticket.agent && ticket.agent.photo" effect="dark" :content="$t('Assigned Agent: ') + (ticket.agent?.full_name || $t('Unassigned'))" placement="top" trigger="hover">
-                                        <img
-                                            :src="ticket.agent.photo"
-                                            :alt="ticket.agent.full_name || 'Agent'"
-                                            class="fs_agent_avatar"
-                                            @error="handleImageError"
-                                        />
-                                    </el-tooltip>
+                                    <span
+                                        v-if="ticket.live_activity && ticket.live_activity.length"
+                                        class="fs_inline_avatars avatars_small fs_live_activity_avatars"
+                                    >
+                                        <span>
+                                            <img
+                                                v-for="activity in ticket.live_activity.slice(0, 2)"
+                                                :key="activity.id"
+                                                :title="activity.full_name || activity.name"
+                                                :src="activity.photo"
+                                                :alt="activity.full_name || 'Agent'"
+                                            />
+                                        </span>
+                                        <el-popover
+                                            v-if="ticket.live_activity.length > 2"
+                                            placement="top"
+                                            trigger="hover"
+                                            popper-class="fs_popover fs_live_activity_popover"
+                                        >
+                                            <div class="fs_live_activity_popover_content">
+                                                <img
+                                                    v-for="activity in ticket.live_activity.slice(1)"
+                                                    :key="'more-' + activity.id"
+                                                    :title="activity.full_name || activity.name"
+                                                    :src="activity.photo"
+                                                    :alt="activity.full_name || 'Agent'"
+                                                />
+                                            </div>
+                                            <template #reference>
+                                                <span class="fs_live_activity_count">
+                                                    +{{ ticket.live_activity.length - 2 }}
+                                                </span>
+                                            </template>
+                                        </el-popover>
+                                    </span>
                                     <el-tooltip v-if="fieldVisibility.status && ticket.status !== 'new'" effect="dark" :content="$t('Status') + ': ' + ucFirst(ticket.status)" placement="top" trigger="hover">
                                         <span class="fs_status_badge" :class="`fs_status_${ticket.status?.toLowerCase()}`">
                                             {{ ucFirst(ticket.status) }}
@@ -487,10 +502,24 @@
                                             {{ ucFirst(ticket.client_priority) }}
                                         </span>
                                     </el-tooltip>
-                                    <el-tooltip v-if="fieldVisibility.waiting_time && ticket.waiting_since" effect="dark" :content="$t('Waiting Time')" placement="top" trigger="hover">
+                                    <el-tooltip v-if="fieldVisibility.waiting_time && ticket.waiting_since" effect="dark" :content="$t('Waiting Time') + ': ' + ticket.waiting_since" placement="top" trigger="hover">
                                         <span class="fs_ticket_waiting_time">
                                             <IconPack iconKey="clock" :width="16" :height="16" />
                                             {{ $timeDiff(ticket.waiting_since)}}
+                                        </span>
+                                    </el-tooltip>
+                                    <el-tooltip
+                                        v-if="fieldVisibility.agent && ticket.agent"
+                                        effect="dark"
+                                        :content="$t('Assigned Agent: ') + (ticket.agent?.full_name || $t('Unassigned'))"
+                                        placement="top"
+                                        trigger="hover"
+                                    >
+                                        <span class="fs_ticket_agent_badge">
+                                            <IconPack iconKey="agent" :width="14" :height="14" />
+                                            <span class="fs_ticket_agent_name">
+                                                {{ ticket.agent.full_name || $t('Unassigned') }}
+                                            </span>
                                         </span>
                                     </el-tooltip>
                                 </div>
@@ -504,7 +533,7 @@
                     </div>
                 </div>
 
-                <div v-else style="padding: 15px">
+                <div v-else class="fs_skeleton_loader">
                     <el-skeleton :rows="10" animated />
                 </div>
                 <div class="fs_pagination_wrapper" v-if="tickets.length">
@@ -597,8 +626,7 @@
 
         <ticket-bulk-actions
             v-if="appReady && show_bulk_actions"
-            @fetchTickets="fetchTickets()"
-            :ticket_selections="ticket_selections"
+            @fetchTickets="refreshTickets()"
         />
     </div>
 </template>
@@ -616,9 +644,11 @@ import CustomTicketFilters from "./parts/_TicketFilters";
 import { h } from 'vue';
 import IconPack from "@/admin/Components/IconPack.vue";
 import NarrowPromo from "@/admin/Components/NarrowPromo.vue";
+import { mapState, mapActions, mapWritableState } from 'pinia';
+import { useTicketListStore } from '@/admin/stores/ticketList.store';
 
-const isEmpty = require("lodash/isEmpty");
-const isArray = require("lodash/isArray");
+import isEmpty from "lodash/isEmpty";
+import isArray from "lodash/isArray";
 
 export default {
     name: "AllTickets",
@@ -636,67 +666,49 @@ export default {
     },
     data() {
         return {
-            loading: false,
-            tickets: [],
-            pagination: {
-                current_page: 1,
-                total: 0,
-                per_page: 10,
-            },
-            filters: {
-                ticket_statuses_group: {},
-                status_type: "open",
-                product_id: [],
-                agent_id: [],
-                priority: [],
-                client_priority: [],
-                waiting_for_reply: "",
-                ticket_tags: [],
-                mailbox_id: [],
-                watcher: "",
-            },
-            label_search_id: '',
-            search: "",
-            label_search_name: "",
-            labelSearchList: [],
-            openLabelSearchDrawer: false,
-            isLabelSearchOpen: false,
-            order_by: "last_customer_response",
-            order_type: "ASC",
-            ticket_selections: [],
-            doing_bulk: false,
-            app_ready: false,
             add_ticket_modal: false,
-            appReady: false,
             add_response_modal: false,
             show_filters: true,
-            first_time_loading: true,
-            advanced_filters: [[]],
-            filter_type: "simple",
             openTicketInNewTab: false,
-            searchActive: false,
             filterPopoverVisible: false,
             selectedFilterPath: [],
-            show_bulk_actions: false,
+            show_bulk_actions: true,
             imageErrors: {},
-            fieldVisibility: {
-                title: true,
-                author: true,
-                tags: true,
-                source: true,
-                description: true,
-                response_count: true,
-                product: true,
-                mailbox: true,
-                agent: true,
-                status: true,
-                client_priority: true,
-                waiting_time: true
-            },
-            ticketLayout: 'default',
+            openLabelSearchDrawer: false,
+            isLabelSearchOpen: false,
+            saving: false,
         };
     },
     computed: {
+        ...mapState(useTicketListStore, [
+            'tickets',
+            'pagination',
+            'ticket_statuses_group',
+            'loading',
+            'first_time_loading',
+            'app_ready',
+            'appReady',
+            'doing_bulk',
+            'labelSearchList',
+            // Getters
+            'activeFilters',
+            'selectAllChecked',
+            'isIndeterminate',
+        ]),
+        ...mapWritableState(useTicketListStore, [
+            'filters',
+            'search',
+            'order_by',
+            'order_type',
+            'filter_type',
+            'advanced_filters',
+            'ticket_selections',
+            'searchActive',
+            'fieldVisibility',
+            'ticketLayout',
+            'label_search_id',
+            'label_search_name',
+        ]),
         filterColumns() {
             return {
                 id: this.$t("Ticket ID"),
@@ -727,61 +739,29 @@ export default {
                 { key: 'waiting_time', label: this.$t('Waiting Time') },
             ];
         },
-        activeFilters() {
-            if (!this.filters) return {};
-
-            const active = {};
-            if (this.filters.product_id && this.filters.product_id.length > 0) {
-                active.product_id = this.filters.product_id;
-            }
-            if (this.filters.agent_id && this.filters.agent_id.length > 0) {
-                active.agent_id = this.filters.agent_id;
-            }
-            if (this.filters.priority && this.filters.priority.length > 0) {
-                active.priority = this.filters.priority;
-            }
-            if (this.filters.client_priority && this.filters.client_priority.length > 0) {
-                active.client_priority = this.filters.client_priority;
-            }
-            if (this.filters.ticket_tags && this.filters.ticket_tags.length > 0) {
-                active.ticket_tags = this.filters.ticket_tags;
-            }
-            if (this.filters.mailbox_id && this.filters.mailbox_id.length > 0) {
-                active.mailbox_id = this.filters.mailbox_id;
-            }
-            return active;
-        },
-        selectAllChecked: {
-            get() {
-                return this.tickets.length > 0 && this.ticket_selections.length === this.tickets.length;
-            },
-            set() {
-                // handled by handleSelectAll method
-            }
-        },
-        isIndeterminate() {
-            return this.ticket_selections.length > 0 && this.ticket_selections.length < this.tickets.length;
-        }
     },
     watch: {
         '$route.query.agent_id'(newAgentId, oldAgentId) {
-            if (this.app_ready && this.$route.name !== "view_ticket") {
+            const store = useTicketListStore();
+            if (store.app_ready && this.$route.name !== "view_ticket") {
                 if (newAgentId !== oldAgentId) {
-                    this.filters.agent_id = newAgentId;
+                    store.filters.agent_id = newAgentId;
                     this.fetchTickets();
                 }
             }
         },
         '$route.query.watcher'(newWatcher, oldWatcher) {
-            if (this.app_ready && this.$route.name !== "view_ticket") {
+            const store = useTicketListStore();
+            if (store.app_ready && this.$route.name !== "view_ticket") {
                 if (newWatcher !== oldWatcher) {
-                    this.filters.watcher = newWatcher;
+                    store.filters.watcher = newWatcher;
                     this.fetchTickets();
                 }
             }
         },
         filter_type(newFilterType, oldFilterType) {
-            if (this.app_ready && this.$route.name !== "view_ticket") {
+            const store = useTicketListStore();
+            if (store.app_ready && this.$route.name !== "view_ticket") {
                 if (newFilterType !== oldFilterType) {
                     this.fetchTickets();
                 }
@@ -789,76 +769,46 @@ export default {
         }
     },
     methods: {
+        ...mapActions(useTicketListStore, {
+            storeSetStatus: 'setStatus',
+            storeResetFilters: 'resetFilters',
+            storeResetWithOutFetch: 'resetWithOutFetch',
+            storeClearAllFilters: 'clearAllFilters',
+            storeResetAdvancedFilters: 'resetAdvancedFilters',
+            storeHandleCustomFilter: 'handleCustomFilter',
+            storeHandleSelectAll: 'handleSelectAll',
+            storeHandleTicketSelection: 'handleTicketSelection',
+            storeDeleteSelected: 'deleteSelected',
+            storeCloseSelected: 'closeSelected',
+            storeHandleSaveSearch: 'handleSaveSearch',
+            storeFetchLabelSearches: 'fetchLabelSearches',
+            storeHandleLabelSearchDelete: 'handleLabelSearchDelete',
+            storeHandleAdvanceSearch: 'handleAdvanceSearch',
+            storeHandleLabelSearchEdit: 'handleLabelSearchEdit',
+        }),
 
         closeSavedSearchListModal() {
             this.openLabelSearchDrawer = false;
         },
 
         async fetchTickets() {
-            if (!this.app_ready) {
+            const store = useTicketListStore();
+            if (!store.app_ready) {
                 return false;
             }
-            this.ticket_selections = [];
-            this.loading = true;
-            let query = {
-                page: this.pagination.current_page,
-                per_page: this.pagination.per_page,
-                order_by: this.order_by,
-                order_type: this.order_type,
-                filter_type: this.filter_type,
-            };
-            if (this.filter_type == "advanced" && this.has_pro) {
-                query.advanced_filters = JSON.stringify(this.advanced_filters);
-            } else {
-                query.filters = this.filters;
-                query.search = this.search;
-
-                if (!this.has_pro) {
-                    query.filter_type = "simple";
-                    this.filter_type = "simple";
-                }
-            }
-
-            const params = {};
-
-            each(query, (val, key) => {
-                if (!isEmpty(val)) {
-                    params[key] = val;
-                }
-            });
-
-            window.fs_sub_params = params;
-            params.t = Date.now();
 
             try {
-                await this.$get("tickets", query)
-                    .then((response) => {
-                        if (
-                            response.tickets.total &&
-                            !response.tickets.from &&
-                            this.pagination.current_page > 1
-                        ) {
-                            this.pagination.current_page = 1;
-                            this.fetchTickets();
-                            return false;
-                        }
-
-                        this.tickets = response.tickets.data;
-                        window.fsCurrentFilteredTickets = response.tickets.data;
-                        this.pagination.total = response.tickets.total;
-                        this.saveFilters();
-                    })
-                    .always(() => {
-                        this.loading = false;
-                        this.first_time_loading = false;
-                    })
-                    .catch((error) => {
-                        this.$handleError(error);
-                    });
+                await store.fetchTickets();
+                this.saveFilters();
             } catch (e) {
                 this.$handleError(e);
-                this.loading = false;
             }
+        },
+
+        refreshTickets() {
+            const store = useTicketListStore();
+            store.invalidateCache();
+            this.fetchTickets();
         },
 
         addConditionGroup() {
@@ -898,67 +848,66 @@ export default {
             event.target.style.display = 'none';
         },
 
-        setFromSaveFilters(callback) {
-            this.filter_type = this.$getData("tickets_filter_type", "simple");
-            this.filters.ticket_statuses_group = this.appVars.ticket_statuses_group || {};
-            const filters = this.$getData("tickets_filter", {});
+        setFromSaveFilters() {
+            const store = useTicketListStore();
+            store.filter_type = this.$getData("tickets_filter_type", "simple");
+            store.ticket_statuses_group = this.appVars.ticket_statuses_group || {};
 
+            const filters = this.$getData("tickets_filter", {});
             each(filters, (filter, filterKey) => {
-                this.filters[filterKey] = filter;
+                store.filters[filterKey] = filter;
             });
 
             const ticketPref = this.$getData("tickets_pref", false);
             if (ticketPref) {
-                this.order_by = ticketPref.order_by;
-                this.order_type = ticketPref.order_type;
-                this.pagination.per_page = ticketPref.per_page;
-                this.pagination.current_page = ticketPref.current_page;
-                this.search = ticketPref.search;
+                store.order_by = ticketPref.order_by;
+                store.order_type = ticketPref.order_type;
+                store.pagination.per_page = ticketPref.per_page;
+                store.pagination.current_page = ticketPref.current_page;
+                store.search = ticketPref.search;
             }
 
             const advancedFilters = this.$getData("tickets_advanced_filters", [[]]);
             if (advancedFilters) {
-                this.advanced_filters = advancedFilters;
+                store.advanced_filters = advancedFilters;
             }
 
-            // Load bulk actions visibility state
-            const savedBulkActionsState = this.$getData("tickets_show_bulk_actions", false);
-            this.show_bulk_actions = savedBulkActionsState;
+            const savedBulkActionsState = this.$getData("tickets_show_bulk_actions", 'yes');
+            this.show_bulk_actions = savedBulkActionsState !== 'no';
 
-            // Load field visibility settings
             const savedFieldVisibility = this.$getData('tickets_field_visibility', null);
             if (savedFieldVisibility) {
-                this.fieldVisibility = { ...this.fieldVisibility, ...savedFieldVisibility };
+                store.fieldVisibility = { ...store.fieldVisibility, ...savedFieldVisibility };
             }
 
-            // Load layout preference
             const savedLayout = this.$getData('tickets_layout', 'default');
-            this.ticketLayout = savedLayout;
+            store.ticketLayout = savedLayout;
 
             this.openTicketInNewTab = this.appVars.open_ticket_in_new_tab === "yes" ? true : false;
-            this.appReady = true;
+            store.appReady = true;
         },
 
         saveFilters() {
+            const store = useTicketListStore();
             this.$saveData("tickets_pref", {
-                order_by: this.order_by,
-                order_type: this.order_type,
-                per_page: this.pagination.per_page,
-                search: this.search,
-                current_page: this.pagination.current_page,
+                order_by: store.order_by,
+                order_type: store.order_type,
+                per_page: store.pagination.per_page,
+                search: store.search,
+                current_page: store.pagination.current_page,
             });
 
-            this.$saveData("tickets_filter_type", this.filter_type);
+            this.$saveData("tickets_filter_type", store.filter_type);
 
-            if (this.filter_type == "advanced") {
-                this.$saveData("tickets_advanced_filters", this.advanced_filters);
+            if (store.filter_type === "advanced") {
+                this.$saveData("tickets_advanced_filters", store.advanced_filters);
             } else {
-                this.$saveData("tickets_filter", this.filters);
+                this.$saveData("tickets_filter", store.filters);
             }
         },
 
         changeOrderType() {
-            if (this.order_type == "DESC") {
+            if (this.order_type === "DESC") {
                 this.order_type = "ASC";
             } else {
                 this.order_type = "DESC";
@@ -979,7 +928,7 @@ export default {
                 return "";
             }
             if (
-                this.$moment(ticket.last_agent_response).isAfter(
+                this.$dayjs(ticket.last_agent_response).isAfter(
                     ticket.last_customer_response,
                     "seconds"
                 )
@@ -992,7 +941,7 @@ export default {
 
         getLastResponse(ticket) {
             if (
-                this.$moment(ticket.last_agent_response).isAfter(
+                this.$dayjs(ticket.last_agent_response).isAfter(
                     ticket.last_customer_response,
                     "seconds"
                 )
@@ -1012,31 +961,19 @@ export default {
         },
 
         deleteSelected() {
-            if (this.ticket_selections.length) {
-                this.doing_bulk = true;
-                this.$del("tickets/bulk", {
-                    ticket_ids: this.ticket_selections,
+            this.storeDeleteSelected()
+                .then((response) => {
+                    if (response && response.success) {
+                        this.fetchTickets();
+                    }
                 })
-                    .then((response) => {
-                        if (response.success) {
-                            this.fetchTickets();
-                        }
-                    })
-                    .catch((error) => {
-                        this.$handleError(error);
-                    })
-                    .always(() => {
-                        this.doing_bulk = false;
-                    });
-            }
+                .catch((error) => {
+                    this.$handleError(error);
+                });
         },
 
         closeSelected() {
-            this.doing_bulk = true;
-            this.$post("tickets/bulk", {
-                ticket_ids: this.ticket_selections,
-                bulk_action: "close_tickets",
-            })
+            this.storeCloseSelected()
                 .then((response) => {
                     this.$notify({
                         message: response.message,
@@ -1047,9 +984,6 @@ export default {
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
-                })
-                .always(() => {
-                    this.doing_bulk = false;
                 });
         },
 
@@ -1065,46 +999,12 @@ export default {
         },
 
         resetFilters() {
-            this.filters = {
-                ticket_statuses_group: this.appVars.ticket_statuses_group,
-                status_type: "open",
-                product_id: "",
-                agent_id: "",
-                priority: "",
-                client_priority: "",
-                waiting_for_reply: "",
-                ticket_tags: [],
-                mailbox_id: "",
-                watcher: "",
-            };
-            this.search = "";
-            this.order_type = "ASC";
-            this.order_by = "last_customer_response";
-            this.pagination.current_page = 1;
-            if (this.$route.query.agent_id) {
-                this.filters.agent_id = this.$route.query.agent_id;
-            }
-            if (this.$route.query.watcher) {
-                this.filters.watcher = this.$route.query.watcher;
-            }
+            this.storeResetFilters(this.$route.query);
             this.fetchTickets();
         },
 
         resetWithOutFetch() {
-            this.filters = {
-                ticket_statuses_group: this.appVars.ticket_statuses_group,
-                status_type: "open",
-                product_id: "",
-                agent_id: "",
-                priority: "",
-                client_priority: "",
-                waiting_for_reply: "",
-                ticket_tags: [],
-                mailbox_id: "",
-                watcher: "",
-            };
-            this.search = "";
-            this.pagination.current_page = 1;
+            this.storeResetWithOutFetch();
         },
 
         getExcerptBox(text) {
@@ -1135,41 +1035,41 @@ export default {
         },
 
         handleSaveSearch() {
-            if (!this.label_search_name || (this.filter_type === "advanced" && !this.advanced_filters.length)) {
+            const store = useTicketListStore();
+            if (!store.label_search_name || (store.filter_type === "advanced" && !store.advanced_filters.length)) {
                 this.$notify({
-                    message: "Please provide a valid name or filter criteria.",
+                    message: this.$t("Please provide a valid name or filter criteria."),
                     type: "warning",
                     position: "bottom-right",
                 });
                 return;
             }
             this.isLabelSearchOpen = false;
-            this.ticket_selections = [];
-            this.loading = true;
+            store.ticket_selections = [];
+            store.loading = true;
+
             let query = {
-                filter_type: this.filter_type,
-                label_search_name: this.label_search_name,
+                filter_type: store.filter_type,
+                label_search_name: store.label_search_name,
             };
 
-            if (this.filter_type == "advanced" && this.has_pro) {
-                query.advanced_filters = JSON.stringify(this.advanced_filters);
+            if (store.filter_type === "advanced" && this.has_pro) {
+                query.advanced_filters = JSON.stringify(store.advanced_filters);
             }
 
-            if (this.label_search_id) {
-                query.id = this.label_search_id;
+            if (store.label_search_id) {
+                query.id = store.label_search_id;
             }
 
-            this.$post("tickets/label-search", {
-                query,
-            })
+            this.storeHandleSaveSearch(query)
                 .then((response) => {
                     this.$notify({
                         message: response.message,
                         type: "success",
                         position: "bottom-right",
                     });
-                    this.label_search_id = null;
-                    this.loading = false;
+                    store.label_search_id = null;
+                    store.loading = false;
                 })
                 .catch((errors) => {
                     this.$handleError(errors);
@@ -1179,12 +1079,10 @@ export default {
 
         fetchLabelSearch() {
             this.openLabelSearchDrawer = true;
-            this.$get("tickets/label-search")
-                .then((response) => {
-                    this.labelSearchList = response;
-                })
+            this.storeFetchLabelSearches()
                 .always(() => {
-                    this.loading = false;
+                    const store = useTicketListStore();
+                    store.loading = false;
                 })
                 .catch((error) => {
                     this.$handleError(error);
@@ -1192,19 +1090,13 @@ export default {
         },
 
         handleAdvanceSearch(item) {
-            this.advanced_filters = JSON.parse(item.advanced_filters);
-            this.filter_type = item.filter_type;
-            this.label_search_name = '';
-            this.label_search_id = '';
+            this.storeHandleAdvanceSearch(item);
             this.openLabelSearchDrawer = false;
             this.fetchTickets();
         },
 
         handleLabelSearchEdit(item) {
-            this.advanced_filters = JSON.parse(item.advanced_filters);
-            this.filter_type = item.filter_type;
-            this.label_search_name = item.label_search_name;
-            this.label_search_id = item.id;
+            this.storeHandleLabelSearchEdit(item);
             this.openLabelSearchDrawer = false;
         },
 
@@ -1214,11 +1106,9 @@ export default {
         },
 
         handleLabelSearchDelete(id) {
-            this.$del(`tickets/${id}/label-search`)
+            this.storeHandleLabelSearchDelete(id)
                 .then((response) => {
                     if (response) {
-                        this.label_search_id = this.label_search_id === id ? null : this.label_search_id;
-                        this.labelSearchList = this.labelSearchList.filter(item => item.id !== id);
                         this.$notify({
                             message: response.message,
                             type: "success",
@@ -1228,9 +1118,6 @@ export default {
                 })
                 .catch((error) => {
                     this.$handleError(error);
-                })
-                .always(() => {
-                    this.doing_bulk = false;
                 });
         },
 
@@ -1241,10 +1128,9 @@ export default {
                 return;
             }
 
-            // ⌘ + ⇧ + Arrow keys for status toggle
             if (metaKey && shiftKey && (code === "ArrowRight" || code === "ArrowLeft")) {
                 event.preventDefault();
-                const statusKeys = Object.keys(this.filters.ticket_statuses_group || {});
+                const statusKeys = Object.keys(this.ticket_statuses_group || {});
                 if (statusKeys.length === 0) return;
 
                 const currentIndex = statusKeys.indexOf(this.filters.status_type);
@@ -1268,7 +1154,7 @@ export default {
                         this.add_ticket_modal = true;
                     },
                     KeyQ: () => {
-                        this.fetchTickets();
+                        this.refreshTickets();
                     },
                     KeyF: () => {
                         this.filter_type =
@@ -1293,12 +1179,7 @@ export default {
         },
 
         handleTicketSelection(ticketId) {
-            const index = this.ticket_selections.indexOf(ticketId);
-            if (index > -1) {
-                this.ticket_selections.splice(index, 1);
-            } else {
-                this.ticket_selections.push(ticketId);
-            }
+            this.storeHandleTicketSelection(ticketId);
         },
 
         maybeChangeWaitingReply() {
@@ -1321,14 +1202,13 @@ export default {
         },
 
         setStatus(statusKey) {
-            this.filters.status_type = statusKey;
+            this.storeSetStatus(statusKey);
             this.fetchTickets();
         },
 
         toggleAdvancedFilter(value) {
             if (!this.has_pro) return;
 
-            // If switching to advanced filter, clear and close search
             if (value) {
                 this.search = "";
                 this.searchActive = false;
@@ -1411,8 +1291,9 @@ export default {
         },
 
         showStatusFilter() {
-            const options = Object.keys(this.filters.ticket_statuses_group || {}).reduce((acc, key) => {
-                acc[key] = this.$t(this.ucFirst(key));
+            const statuses = this.appVars.ticket_statuses || {};
+            const options = Object.keys(this.ticket_statuses_group || {}).reduce((acc, key) => {
+                acc[key] = statuses[key] || this.$t(this.ucFirst(key));
                 return acc;
             }, {});
 
@@ -1515,7 +1396,6 @@ export default {
             } else {
                 delete this.filters[filterKey];
             }
-            // Clear the specific filter selection in the CustomTicketFilters component
             if (this.$refs.customTicketFiltersRef && this.$refs.customTicketFiltersRef.clearFilterSelection) {
                 this.$refs.customTicketFiltersRef.clearFilterSelection(filterKey);
             }
@@ -1531,6 +1411,7 @@ export default {
                 product_id: this.$t('Product'),
                 mailbox_id: this.$t('Mailbox'),
                 ticket_tags: this.$t('Tags'),
+                agent_group: this.$t('Agent Group'),
                 waiting_for_reply: this.$t('Waiting For Reply')
             };
             return labels[key] || key;
@@ -1588,6 +1469,12 @@ export default {
                     return tag ? tag.title : id;
                 }).join(', ');
             }
+            if (key === 'agent_group' && Array.isArray(value)) {
+                return value.map(id => {
+                    const group = this.appVars?.agent_groups?.find(g => g.id == id);
+                    return group ? group.title : id;
+                }).join(', ');
+            }
             if (key === 'waiting_for_reply') {
                 return value === 'yes' ? this.$t('Yes') : this.$t('No');
             }
@@ -1599,9 +1486,9 @@ export default {
                 {
                     value: 'status',
                     label: this.$t('Status'),
-                    children: Object.keys(this.filters.ticket_statuses_group || {}).map(key => ({
+                    children: Object.keys(this.ticket_statuses_group || {}).map(key => ({
                         value: key,
-                        label: this.$t(this.ucFirst(key)),
+                        label: (this.appVars.ticket_statuses || {})[key] || this.$t(this.ucFirst(key)),
                         filterType: 'status',
                         filterValue: key
                     }))
@@ -1680,7 +1567,6 @@ export default {
             if (this.selectedFilterPath.length === 2) {
                 const [categoryValue, optionValue] = this.selectedFilterPath;
 
-                // Find the selected option in the cascader data
                 const category = this.filterCascaderOptions.find(cat => cat.value === categoryValue);
                 if (category) {
                     const option = category.children.find(child => child.value === optionValue);
@@ -1724,6 +1610,7 @@ export default {
                 'mailbox_id': 'filtersBusinessBox',
                 'product_id': 'filtersProduct',
                 'agent_id': 'filtersAgentIcon',
+                'agent_group': 'agentGroupIcon',
                 'priority': 'filtersAdminPriority',
                 'client_priority': 'filtersCustomerPriority',
                 'ticket_tags': 'filtersTagIcon',
@@ -1743,31 +1630,17 @@ export default {
         },
 
         clearAllFilters() {
-            // Reset all filters to default
-            this.filters = {
-                ...this.filters,
-                status_type: 'open',
-                mailbox_id: [],
-                product_id: [],
-                agent_id: [],
-                priority: [],
-                client_priority: [],
-                ticket_tags: [],
-                waiting_for_reply: false
-            };
-            // Clear the checkboxes in the CustomTicketFilters component
+            this.storeClearAllFilters();
             if (this.$refs.customTicketFiltersRef) {
                 this.$refs.customTicketFiltersRef.clearAllSelections();
             }
-            // Clear localStorage data for simple filters
             this.removeData('tickets_filter');
             this.removeData('tickets_pref');
             this.fetchTickets();
         },
 
         resetAdvancedFilters() {
-            this.advanced_filters = [[]];
-            // Clear localStorage data for advanced filters
+            this.storeResetAdvancedFilters();
             this.removeData('tickets_advanced_filters');
             this.removeData('tickets_filter_type');
             this.removeData('tickets_pref');
@@ -1775,7 +1648,6 @@ export default {
         },
 
         handleProductFilterChange() {
-            // Update the filter selection in the CustomTicketFilters component
             if (this.$refs.customTicketFiltersRef && this.$refs.customTicketFiltersRef.updateFilterSelection) {
                 this.$refs.customTicketFiltersRef.updateFilterSelection('product_id', this.filters.product_id);
             }
@@ -1783,44 +1655,17 @@ export default {
         },
 
         handleCustomFilter(filterType, filterValue) {
-            switch (filterType) {
-                case 'status':
-                    this.filters.status_type = filterValue;
-                    break;
-                case 'priority':
-                    this.filters.priority = Array.isArray(filterValue) ? filterValue : [filterValue];
-                    break;
-                case 'client_priority':
-                    this.filters.client_priority = Array.isArray(filterValue) ? filterValue : [filterValue];
-                    break;
-                case 'agent_id':
-                    this.filters.agent_id = Array.isArray(filterValue) ? filterValue : [filterValue];
-                    break;
-                case 'product_id':
-                    this.filters.product_id = Array.isArray(filterValue) ? filterValue : [filterValue];
-                    break;
-                case 'mailbox_id':
-                    this.filters.mailbox_id = Array.isArray(filterValue) ? filterValue : [filterValue];
-                    break;
-                case 'ticket_tags':
-                    this.filters.ticket_tags = Array.isArray(filterValue) ? filterValue.map(v => parseInt(v)) : [parseInt(filterValue)];
-                    break;
-            }
+            this.storeHandleCustomFilter(filterType, filterValue);
             this.fetchTickets();
         },
 
         handleSelectAll(checked) {
-            if (checked) {
-                this.ticket_selections = this.tickets.map(ticket => ticket.id);
-            } else {
-                this.ticket_selections = [];
-            }
+            this.storeHandleSelectAll(checked);
         },
 
         handleBulkActionsToggle(value) {
-            this.$saveData("tickets_show_bulk_actions", value);
+            this.$saveData("tickets_show_bulk_actions", value ? 'yes' : 'no');
             if (!value) {
-                // Clear selections when hiding bulk actions
                 this.ticket_selections = [];
             }
         },
@@ -1840,7 +1685,8 @@ export default {
         },
 
         resetFieldVisibility() {
-            this.fieldVisibility = {
+            const store = useTicketListStore();
+            store.fieldVisibility = {
                 title: true,
                 author: true,
                 tags: true,
@@ -1862,50 +1708,58 @@ export default {
         },
     },
     mounted() {
-        this.app_ready = true;
+        const store = useTicketListStore();
+        store.app_ready = true;
         this.setFromSaveFilters();
 
-        // When arriving with search (e.g. Customer Stats → customer_id filter), reset first
-        // so the filter is applied on a clean state, not on top of last-visited filters
         if (this.$route.query.search) {
-            this.resetWithOutFetch();
-            // Switch to simple mode and clear advanced filters so search is actually used
-            // (when advanced mode was enabled, fetchTickets sends only advanced_filters, not search)
-            this.filter_type = "simple";
-            this.advanced_filters = [[]];
+            this.storeResetWithOutFetch();
+            store.filter_type = "simple";
+            store.advanced_filters = [[]];
         }
 
         if (this.$route.query.agent_id) {
-            this.filters.agent_id = this.$route.query.agent_id;
-            this.filters.watcher = this.$route.query.watcher;
+            store.filters.agent_id = this.$route.query.agent_id;
+            store.filters.watcher = this.$route.query.watcher;
         }
         if (this.$route.query.waiting_for_reply) {
-            this.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
+            store.filters.waiting_for_reply = this.$route.query.waiting_for_reply;
         }
 
         if (this.$route.query.tags) {
             const tagIds = this.$route.query.tags;
-            if (typeof tagIds == "object") {
-                this.filters.ticket_tags = tagIds.map((tagId) => {
+            if (typeof tagIds === "object") {
+                store.filters.ticket_tags = tagIds.map((tagId) => {
                     return parseInt(tagId);
                 });
             } else {
-                this.filters.ticket_tags = [parseInt(tagIds)];
+                store.filters.ticket_tags = [parseInt(tagIds)];
             }
         }
 
         if (this.$route.query.search) {
-            this.search = this.$route.query.search;
+            store.search = this.$route.query.search;
         }
 
         if (this.$route.query.filter_type) {
-            this.filter_type = this.$route.query.filter_type;
-            this.filters.status_type = this.$route.query.status_type;
+            store.filter_type = this.$route.query.filter_type;
+            store.filters.status_type = this.$route.query.status_type;
         }
 
-        this.$nextTick(() => {
-            this.fetchTickets();
-        });
+        // Cache-aware fetch: show cached data instantly, then silent background refresh
+        if (store.shouldShowCache) {
+            store.first_time_loading = false;
+            this.$nextTick(() => {
+                store.fetchTickets(true, true)
+                    .then(() => this.saveFilters())
+                    .catch(() => {});
+            });
+        } else {
+            this.$nextTick(() => {
+                this.fetchTickets();
+            });
+        }
+
         this.$setTitle(this.$t("All Tickets"));
         if(this.appVars.keyboard_shortcuts === 'yes') {
             window.addEventListener("keydown", this.handleKeydown);

@@ -69,7 +69,7 @@
     }
 }
 
-.el-picker-panel .el-picker-panel__sidebar {
+.el-picker-panel .el-picker-panel__sidebar, .el-picker-panel .el-picker-panel__body {
     background: var(--fs-bg-primary, #FFFFFF);
     border-color: var(--fs-border-default, #E1E4EA);
     button {
@@ -201,23 +201,27 @@
     }
 }
 
-.el-picker-panel__sidebar + .el-picker-panel__body {
-    margin-left: 160px !important;
-}
-
-.el-date-range-picker.has-sidebar {
-    border-radius: var(--fs-radius-md, 8px);
-    width: 830px !important;
-}
-
 .el-picker__popper.el-popper {
     border-radius: var(--fs-radius-md, 8px);
     border: 0;
     box-shadow: 0px 24px 64px -4px rgba(27, 37, 51, 0.3);
 }
 
-.el-date-range-picker .el-picker-panel__body {
-    min-width: 600px !important;
+// Desktop sizing — !important needed to override Element Plus defaults
+@media screen and (min-width: 1025px) {
+    .el-picker-panel__sidebar + .el-picker-panel__body {
+        margin-left: 160px !important;
+    }
+
+    .el-date-range-picker.has-sidebar {
+        border-radius: var(--fs-radius-md, 8px);
+        width: 830px !important;
+        max-width: calc(100vw - 40px);
+    }
+
+    .el-date-range-picker .el-picker-panel__body {
+        min-width: 600px !important;
+    }
 }
 
 .el-date-table td.available {
@@ -347,13 +351,17 @@
     }
     td .el-date-table-cell .el-date-table-cell__text {
         border-radius: 8px !important;
-        height: 40px !important;
-        width: 40px !important;
-        line-height: 40px !important;
+        @media screen and (min-width: 1025px) {
+            height: 40px !important;
+            width: 40px !important;
+            line-height: 40px !important;
+        }
     }
     td .el-date-table-cell {
-        height: 40px !important;
         padding: 0 !important;
+        @media screen and (min-width: 1025px) {
+            height: 40px !important;
+        }
     }
     td.end-date .el-date-table-cell__text,
     td.start-date .el-date-table-cell__text {
@@ -375,4 +383,175 @@
 }
 .el-year-table td .el-date-table-cell__text:hover {
     color: var(--fs-text-primary, #0E121B) !important;
+}
+
+// Tablet/laptop (769px–1024px): scrollable vertical stacking, normal popper position
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+    .el-date-range-picker {
+        width: 100%;
+        max-width: calc(100vw - 40px);
+        max-height: 70vh;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+
+        &.has-sidebar {
+            width: 100%;
+            max-width: calc(100vw - 40px);
+        }
+    }
+
+    .el-date-range-picker .el-picker-panel__body {
+        min-width: unset !important;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .el-picker-panel__sidebar + .el-picker-panel__body {
+        margin-left: 0 !important;
+    }
+
+    .el-date-range-picker.has-sidebar .el-picker-panel__sidebar {
+        width: 100%;
+        position: relative;
+        top: auto;
+        bottom: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 8px;
+        border-right: 0;
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+        border-radius: 0;
+    }
+
+    .el-date-range-picker.has-sidebar .el-picker-panel__sidebar .el-picker-panel__shortcut {
+        padding: 4px 8px;
+        font-size: 13px;
+    }
+
+    .el-date-range-picker__content {
+        width: 100% !important;
+        float: none !important;
+        padding: 8px;
+    }
+
+    .el-date-table td .el-date-table-cell .el-date-table-cell__text {
+        height: 36px;
+        width: 36px;
+        line-height: 36px;
+    }
+
+    .el-date-table td .el-date-table-cell {
+        height: 36px;
+    }
+
+    .el-picker__popper.el-popper .el-date-picker {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+// Mobile (≤768px): fixed bottom-sheet to prevent scroll-triggered shaking
+// Popper.js inline styles need !important overrides
+// Vue transition opacity/scaleY overridden to skip animation
+@media screen and (max-width: 768px) {
+    .el-picker__popper.el-popper {
+        position: fixed !important;
+        top: auto !important;
+        bottom: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        transform: none !important;
+        transition: none !important;
+        opacity: 1 !important;
+        max-width: calc(100vw - 20px);
+        max-height: 70vh;
+        border-radius: 12px;
+        box-shadow: 0 4px 32px rgba(0, 0, 0, 0.2);
+        background: var(--fs-bg-primary, #FFFFFF);
+        touch-action: manipulation;
+        z-index: 2001;
+
+        // Fullscreen backdrop behind the calendar
+        &::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.15);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .el-popper__arrow {
+            display: none;
+        }
+    }
+
+    .el-date-range-picker {
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(70vh - 10px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+
+        &.has-sidebar {
+            width: 100%;
+            max-width: 100%;
+        }
+    }
+
+    .el-date-range-picker .el-picker-panel__body {
+        min-width: unset !important;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .el-picker-panel__sidebar + .el-picker-panel__body {
+        margin-left: 0 !important;
+    }
+
+    .el-date-range-picker.has-sidebar .el-picker-panel__sidebar {
+        width: 100%;
+        position: relative;
+        top: auto;
+        bottom: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 8px;
+        border-right: 0;
+        border-bottom: 1px solid var(--fs-border-default, #E1E4EA);
+        border-radius: 0;
+    }
+
+    .el-date-range-picker.has-sidebar .el-picker-panel__sidebar .el-picker-panel__shortcut {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .el-date-range-picker__content {
+        width: 100% !important;
+        float: none !important;
+        padding: 8px;
+    }
+
+    .el-date-table td .el-date-table-cell .el-date-table-cell__text {
+        height: 32px;
+        width: 32px;
+        line-height: 32px;
+    }
+
+    .el-date-table td .el-date-table-cell {
+        height: 32px;
+    }
+
+    .el-picker__popper.el-popper .el-date-picker {
+        width: 100%;
+        max-width: 100%;
+    }
 }

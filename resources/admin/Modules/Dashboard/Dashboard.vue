@@ -130,7 +130,7 @@ export default {
                         component: "SuggestedTicket",
                         show: true,
                         icon: 'lightbulb',
-                        heading: this.$t("dashboard_sub_heading"),
+                        heading: this.$t("Here Are A Few Tickets You May Want To Take A Look At"),
                         active_names: "suggestedTicket",
                         image: "/images/dashboard_drawer_suggested_tickets.png",
                     },
@@ -160,7 +160,7 @@ export default {
 
     computed: {
         greetingTime() {
-            const m = this.moment();
+            const m = this.$dayjs();
             let g = null; //return g
 
             if (!m || !m.isValid()) {

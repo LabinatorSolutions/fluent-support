@@ -15,6 +15,7 @@
                         <el-date-picker
                             v-model="dateRange"
                             type="daterange"
+                            :editable="false"
                             @change="handleDateRangeChange"
                             @calendar-change="handleCalendarChange"
                             range-separator="To"

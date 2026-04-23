@@ -33,6 +33,7 @@
                 <el-date-picker
                     v-model="dateRange"
                     type="daterange"
+                    :editable="false"
                     @change="handleDateRangeChange"
                     range-separator="To"
                     :disabled-date="disabledDate"
@@ -71,8 +72,8 @@
                         <div class="fs_section_body">
                             <div class="fs_stat_cards_row">
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #ffebec;">
-                                        <el-icon style="color: #FB3748; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--danger">
+                                        <el-icon class="fs_stat_icon_el--danger">
                                             <AlarmClock />
                                         </el-icon>
                                     </div>
@@ -88,8 +89,8 @@
                                 <div class="fs_stat_divider"></div>
 
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #fff1eb;">
-                                        <el-icon style="color: #FF8447; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--warning">
+                                        <el-icon class="fs_stat_icon_el--warning">
                                             <User />
                                         </el-icon>
                                     </div>
@@ -104,8 +105,8 @@
                                 <div class="fs_stat_divider"></div>
 
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #ebf1ff;">
-                                        <el-icon style="color: #335CFF; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--info">
+                                        <el-icon class="fs_stat_icon_el--info">
                                             <Refresh />
                                         </el-icon>
                                     </div>
@@ -129,8 +130,8 @@
                         <div class="fs_section_body">
                             <div class="fs_stat_cards_row">
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #f2f5f8;">
-                                        <el-icon style="color: #525866; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--default">
+                                        <el-icon class="fs_stat_icon_el--default">
                                             <Document />
                                         </el-icon>
                                     </div>
@@ -149,8 +150,8 @@
                                 <div class="fs_stat_divider"></div>
 
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #f2f5f8;">
-                                        <el-icon style="color: #525866; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--default">
+                                        <el-icon class="fs_stat_icon_el--default">
                                             <ChatLineRound />
                                         </el-icon>
                                     </div>
@@ -165,8 +166,8 @@
                                 <div class="fs_stat_divider"></div>
 
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #f2f5f8;">
-                                        <el-icon style="color: #525866; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--default">
+                                        <el-icon class="fs_stat_icon_el--default">
                                             <CircleCheck />
                                         </el-icon>
                                     </div>
@@ -186,7 +187,7 @@
                                 <div class="fs_chart_header">
                                     <h5 class="fs_chart_title">{{ $t("HOURLY TICKET DISTRIBUTION") }}</h5>
                                     <div class="fs_chart_legend">
-                                        <span class="fs_legend_dot" style="background: #47c2ff;"></span>
+                                        <span class="fs_legend_dot fs_legend_dot--secondary"></span>
                                         <span class="fs_legend_text">{{ $t("Number of tickets") }}</span>
                                     </div>
                                 </div>
@@ -209,8 +210,8 @@
                         <div class="fs_section_body">
                             <div class="fs_stat_cards_row">
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #f2f5f8;">
-                                        <el-icon style="color: #525866; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--default">
+                                        <el-icon class="fs_stat_icon_el--default">
                                             <ChatLineRound />
                                         </el-icon>
                                     </div>
@@ -225,8 +226,8 @@
                                 <div class="fs_stat_divider"></div>
 
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #f2f5f8;">
-                                        <el-icon style="color: #525866; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--default">
+                                        <el-icon class="fs_stat_icon_el--default">
                                             <Tickets />
                                         </el-icon>
                                     </div>
@@ -241,8 +242,8 @@
                                 <div class="fs_stat_divider"></div>
 
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #f2f5f8;">
-                                        <el-icon style="color: #525866; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--default">
+                                        <el-icon class="fs_stat_icon_el--default">
                                             <UserFilled />
                                         </el-icon>
                                     </div>
@@ -257,8 +258,8 @@
                                 <div class="fs_stat_divider"></div>
 
                                 <div class="fs_stat_card">
-                                    <div class="fs_stat_icon" style="background: #f2f5f8;">
-                                        <el-icon style="color: #525866; font-size: 20px;">
+                                    <div class="fs_stat_icon fs_stat_icon--default">
+                                        <el-icon class="fs_stat_icon_el--default">
                                             <Message />
                                         </el-icon>
                                     </div>
@@ -574,7 +575,7 @@ export default {
                     type: 'donut',
                 },
                 labels: [],
-                colors: ['#FF8447', '#22d3bb', '#7D52F4'],
+                colors: this.getChartColorPalette(),
                 legend: {
                     show: false
                 },
@@ -623,74 +624,52 @@ export default {
         },
         handleExportClick() {
             // Implement export logic
-            console.log("Export clicked");
         },
         handleViewDetails(type) {
             // Navigate to detailed view
-            console.log("View details:", type);
+        },
+        getChartColorPalette() {
+            const computedStyle = getComputedStyle(document.documentElement);
+            return [
+                computedStyle.getPropertyValue('--fs-chart-quinary').trim() || '#FF8447',
+                computedStyle.getPropertyValue('--fs-chart-tertiary').trim() || '#22d3bb',
+                computedStyle.getPropertyValue('--fs-chart-quaternary').trim() || '#7D52F4',
+            ];
         },
         getProductColor(index) {
-            const colors = ['#47c2ff', '#7D52F4', '#FF8447'];
+            const computedStyle = getComputedStyle(document.documentElement);
+            const colors = [
+                computedStyle.getPropertyValue('--fs-chart-secondary').trim() || '#47c2ff',
+                computedStyle.getPropertyValue('--fs-chart-quaternary').trim() || '#7D52F4',
+                computedStyle.getPropertyValue('--fs-chart-quinary').trim() || '#FF8447',
+            ];
             return colors[index % colors.length];
         },
         getProductResponseColor(index) {
-            const colors = ['#FF8447', '#22d3bb', '#7D52F4'];
+            const computedStyle = getComputedStyle(document.documentElement);
+            const colors = [
+                computedStyle.getPropertyValue('--fs-chart-quinary').trim() || '#FF8447',
+                computedStyle.getPropertyValue('--fs-chart-tertiary').trim() || '#22d3bb',
+                computedStyle.getPropertyValue('--fs-chart-quaternary').trim() || '#7D52F4',
+            ];
             return colors[index % colors.length];
         },
         getProductPercentage(value, total) {
             if (!total || total === 0) return 0;
             return (value / total) * 100;
         },
-        async fetchData() {
-            if (!this.dateRange || this.dateRange.length !== 2) {
-                return;
-            }
-
-            this.loading = true;
-            try {
-                // Fetch overview stats
-                const response = await this.$get('reports/overview', {
-                    date_range: this.dateRange
-                });
-
-                // Update stats
-                if (response.stats) {
-                    this.stats = { ...this.stats, ...response.stats };
-                }
-
-                // Update product stats
-                if (response.product_stats) {
-                    this.productStats = response.product_stats;
-                }
-
-                // Setup hourly ticket chart
-                if (response.hourly_tickets) {
-                    this.setupHourlyTicketChart(response.hourly_tickets);
-                }
-
-                // Setup hourly response chart
-                if (response.hourly_responses) {
-                    this.setupHourlyResponseChart(response.hourly_responses);
-                }
-
-                // Setup product charts
-                if (response.product_stats && response.product_stats.products) {
-                    this.setupProductCharts(response.product_stats.products);
-                }
-
-            } catch (error) {
-                this.$handleError(error);
-            } finally {
-                this.loading = false;
-            }
+        fetchData() {
+            // TRACE-FE1: reports/overview endpoint not yet implemented on backend.
         },
         setupHourlyTicketChart(data) {
             const hours = ['12AM', '3AM', '6AM', '9AM', '12PM', '3PM', '6PM', '9PM', '12AM'];
+            const computedStyle = getComputedStyle(document.documentElement);
+            const chartColor = computedStyle.getPropertyValue('--fs-chart-secondary').trim() || '#47c2ff';
             const chartData = {
                 labels: hours,
                 datasets: [{
                     label: 'Number of tickets',
-                    backgroundColor: '#47c2ff',
+                    backgroundColor: chartColor,
                     data: hours.map((hour, index) => data[index] || 0),
                     barThickness: 24,
                 }]
@@ -699,11 +678,13 @@ export default {
         },
         setupHourlyResponseChart(data) {
             const hours = ['12AM', '3AM', '6AM', '9AM', '12PM', '3PM', '6PM', '9PM', '12AM'];
+            const computedStyle = getComputedStyle(document.documentElement);
+            const chartColor = computedStyle.getPropertyValue('--fs-chart-tertiary').trim() || '#22d3bb';
             const chartData = {
                 labels: hours,
                 datasets: [{
                     label: 'Number of Responses',
-                    backgroundColor: '#22d3bb',
+                    backgroundColor: chartColor,
                     data: hours.map((hour, index) => data[index] || 0),
                     barThickness: 24,
                 }]
@@ -754,15 +735,15 @@ export default {
 }
 
 .fs_overview_section {
-    background: #ffffff;
-    border-radius: 12px;
-    border: 1px solid #E1E4EA;
+    background: var(--fs-bg-primary);
+    border-radius: var(--fs-radius-lg);
+    border: 1px solid var(--fs-border-default);
     margin-bottom: 24px;
     overflow: hidden;
 }
 
 .fs_section_header {
-    border-bottom: 1px solid #E1E4EA;
+    border-bottom: 1px solid var(--fs-border-default);
     padding: 12px 20px;
     height: 56px;
     display: flex;
@@ -774,7 +755,7 @@ export default {
     font-weight: 500;
     font-size: 16px;
     line-height: 24px;
-    color: #0E121B;
+    color: var(--fs-text-primary);
     margin: 0;
 }
 
@@ -798,10 +779,48 @@ export default {
 .fs_stat_icon {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
+    border-radius: var(--fs-radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
+
+    &--default {
+        background: var(--fs-stat-icon-bg);
+    }
+
+    &--danger {
+        background: var(--fs-stat-icon-danger-bg);
+    }
+
+    &--warning {
+        background: var(--fs-stat-icon-warning-bg);
+    }
+
+    &--info {
+        background: var(--fs-stat-icon-info-bg);
+    }
+}
+
+.fs_stat_icon_el {
+    &--default {
+        color: var(--fs-stat-icon-color);
+        font-size: 20px;
+    }
+
+    &--danger {
+        color: var(--fs-stat-icon-danger-color);
+        font-size: 20px;
+    }
+
+    &--warning {
+        color: var(--fs-stat-icon-warning-color);
+        font-size: 20px;
+    }
+
+    &--info {
+        color: var(--fs-stat-icon-info-color);
+        font-size: 20px;
+    }
 }
 
 .fs_stat_content {
@@ -816,7 +835,7 @@ export default {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: #525866;
+    color: var(--fs-text-secondary);
     margin: 0;
 }
 
@@ -831,7 +850,7 @@ export default {
     font-weight: 500;
     font-size: 24px;
     line-height: 32px;
-    color: #0E121B;
+    color: var(--fs-text-primary);
 }
 
 .fs_stat_meta {
@@ -839,14 +858,14 @@ export default {
     font-weight: 400;
     font-size: 12px;
     line-height: 16px;
-    color: #525866;
+    color: var(--fs-text-secondary);
 }
 
 .fs_stat_badge {
-    background: #afebd2;
-    color: #072722;
+    background: var(--fs-badge-success-bg);
+    color: var(--fs-badge-success-text);
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--fs-radius-full);
     font-family: 'Inter', sans-serif;
     font-weight: 500;
     font-size: 12px;
@@ -856,13 +875,13 @@ export default {
 .fs_stat_divider {
     width: 1px;
     height: 100px;
-    background: #E1E4EA;
+    background: var(--fs-border-default);
     flex-shrink: 0;
 }
 
 .fs_chart_divider {
     height: 1px;
-    background: #E1E4EA;
+    background: var(--fs-border-default);
     margin: 20px 0;
 }
 
@@ -882,7 +901,7 @@ export default {
     font-weight: 500;
     font-size: 12px;
     line-height: 16px;
-    color: #525866;
+    color: var(--fs-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.48px;
     margin: 0;
@@ -897,8 +916,12 @@ export default {
 .fs_legend_dot {
     width: 12px;
     height: 12px;
-    border-radius: 4px;
-    border: 1px solid #ffffff;
+    border-radius: var(--fs-radius-sm);
+    border: 1px solid var(--fs-bg-primary);
+
+    &--secondary {
+        background: var(--fs-chart-secondary);
+    }
 }
 
 .fs_legend_text {
@@ -906,7 +929,7 @@ export default {
     font-weight: 500;
     font-size: 12px;
     line-height: 16px;
-    color: #525866;
+    color: var(--fs-text-secondary);
 }
 
 .fs_chart_container {
@@ -926,7 +949,7 @@ export default {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: #525866;
+    color: var(--fs-text-secondary);
 }
 
 .fs_total_value {
@@ -934,7 +957,7 @@ export default {
     font-weight: 500;
     font-size: 24px;
     line-height: 32px;
-    color: #0E121B;
+    color: var(--fs-text-primary);
 }
 
 .fs_product_list {
@@ -946,7 +969,7 @@ export default {
     justify-content: space-between;
     align-items: center;
     padding: 12px 0;
-    border-bottom: 1px solid #E1E4EA;
+    border-bottom: 1px solid var(--fs-border-default);
 
     &:last-child {
         border-bottom: none;
@@ -962,7 +985,7 @@ export default {
 .fs_product_dot {
     width: 12px;
     height: 12px;
-    border-radius: 4px;
+    border-radius: var(--fs-radius-sm);
 }
 
 .fs_product_name {
@@ -970,7 +993,7 @@ export default {
     font-weight: 400;
     font-size: 14px;
     line-height: 20px;
-    color: #525866;
+    color: var(--fs-text-secondary);
 }
 
 .fs_product_count {
@@ -978,7 +1001,7 @@ export default {
     font-weight: 500;
     font-size: 14px;
     line-height: 20px;
-    color: #0E121B;
+    color: var(--fs-text-primary);
 }
 
 .fs_view_details_btn {
@@ -999,14 +1022,14 @@ export default {
 .fs_horizontal_bar_track {
     width: 100%;
     height: 8px;
-    background: #F2F5F8;
-    border-radius: 4px;
+    background: var(--fs-state-faded-lighter);
+    border-radius: var(--fs-radius-sm);
     overflow: hidden;
 }
 
 .fs_horizontal_bar_fill {
     height: 100%;
-    border-radius: 4px;
+    border-radius: var(--fs-radius-sm);
     transition: width 0.3s ease;
 }
 </style>

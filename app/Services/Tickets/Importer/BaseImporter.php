@@ -297,12 +297,12 @@ abstract class BaseImporter
         if (!$user && 'agent' == $type) {
             $person = Agent::updateOrCreate(
                 [
-                    'email' => $personData['email']
+                    'email' => Arr::get($personData, 'email'),
                 ],
                 [
                     'first_name' => $personData['first_name'] ?? '',
                     'last_name'  => $personData['last_name'] ?? '',
-                    'email'      => $personData['email'],
+                    'email'      => $personData['email'] ?? '',
                     'type'       => $type
                 ]
             );

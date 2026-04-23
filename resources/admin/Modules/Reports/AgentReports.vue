@@ -167,7 +167,7 @@
 
             </div>
         </div>
-        <div style="padding: 20px; background: white;" class="fs_box_body" v-if="loading">
+        <div class="fs_box_body fs_skeleton_loader" v-if="loading">
             <el-skeleton :rows="5" animated/>
         </div>
     </div>
@@ -461,7 +461,7 @@ export default {
     margin-left: 17px;
     margin-top: 2px;
     cursor: pointer;
-    color: #bd0909;
+    color: var(--fs-text-red);
     font-size: 18px;
 }
 
@@ -473,6 +473,11 @@ export default {
 .fs_summary_export_items label {
     margin-top: 10px;
     width: 45%;
+}
+
+.fs_skeleton_loader {
+    padding: 20px;
+    background: var(--fs-bg-primary);
 }
 </style>
 

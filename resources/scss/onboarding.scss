@@ -3,7 +3,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: var(--fs-bg-subtle);
+    background-color: var(--fs-global-component-bg);
     padding: 20px;
     box-sizing: border-box;
     overflow: hidden;
@@ -69,6 +69,7 @@
         height: 32px;
     }
 
+
     .fs_step_indicator {
         span {
             font-size: 12px;
@@ -91,7 +92,7 @@
         left: 0;
         width: 100%;
         height: 8px;
-        background-color: #F5F5F5;
+        background-color: var(--fs-state-faded-lighter, #F2F5F8);
         border-radius: 999px;
     }
 
@@ -174,7 +175,7 @@
     }
 
     .fs_shortcode_badge {
-        background: #F2F5F8;
+        background: var(--fs-state-faded-lighter, #F2F5F8);
         padding: 2px 6px;
         border-radius: 4px;
         font-size: 14px;
@@ -251,7 +252,6 @@
     /* Media Queries for Responsive Design */
     @media (max-width: 768px) {
         padding: 16px;
-        min-height: 100vh;
 
         .fs_box_wrapper {
             max-width: 100%;
@@ -270,13 +270,8 @@
             line-height: 24px;
         }
 
-        .fs_brand_text {
-            font-size: 14px;
-        }
-
-        /* Completion page responsive styles */
-        .fs_success_icon .fs_check_icon {
-            font-size: 40px;
+        .fs_brand_logo img {
+            height: 28px;
         }
 
         .fs_action_card {
@@ -292,6 +287,10 @@
             }
         }
 
+        .fs_action_description {
+            display: none;
+        }
+
         .fs_primary_action_btn {
             width: 100%;
             justify-content: center;
@@ -299,6 +298,8 @@
     }
 
     @media (max-width: 480px) {
+        padding: 12px;
+
         .fs_header_content {
             flex-direction: column;
             align-items: flex-start;
@@ -313,6 +314,24 @@
             flex-direction: column;
             align-items: flex-start;
             gap: 4px;
+        }
+
+        .fs_welcome_title {
+            font-size: 16px;
+            line-height: 22px;
+        }
+
+        .fs_welcome_subtitle {
+            font-size: 13px;
+        }
+
+        .fs_section_title {
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        .fs_section_subtitle {
+            font-size: 13px;
         }
     }
 
@@ -337,8 +356,8 @@
         bottom: 0;
         left: 160px; /* Account for WordPress admin sidebar */
         right: 0;
-        background: #ffffff;
-        border-top: 1px solid #e1e4ea;
+        background: var(--fs-bg-primary, #FFF);
+        border-top: 1px solid var(--fs-border-default, #E1E4EA);
         z-index: 1000;
     }
 
@@ -370,6 +389,10 @@
         display: flex;
         gap: 6px;
         align-items: center;
+    }
+
+    .fs_help_text {
+        color: var(--fs-text-primary, #0E121B);
     }
     .fs_doc_link{
         color: var(--fs-text-primary, #0E121B);
@@ -575,39 +598,14 @@
         gap: 6px;
     }
 
-    /* Responsive adjustments */
+    /* Responsive footer adjustments */
     @media (max-width: 768px) {
         .fs_footer_content {
-            padding: 12px 16px;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .fs_help_section {
-            order: 2;
+            padding: 10px 16px;
+            gap: 8px;
         }
 
         .fs_footer_actions {
-            order: 1;
-            width: 100%;
-            justify-content: center;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .fs_help_section {
-            flex-direction: column;
-            gap: 4px;
-            align-items: flex-start;
-        }
-
-        .fs_footer_actions {
-            justify-content: center;
-        }
-
-        .fs_next_btn {
-            width: 100%;
             justify-content: center;
         }
     }
@@ -633,3 +631,4 @@
         }
     }
 }
+

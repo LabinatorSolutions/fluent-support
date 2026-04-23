@@ -1,6 +1,9 @@
+import './Bits/Theme';
 import routes from './routes';
 import { createWebHashHistory, createRouter } from 'vue-router'
+import { createPinia } from 'pinia';
 import FluentFramework from './Bits/FluentFramework';
+import ColorMode from './Pieces/ColorMode.vue';
 
 const router = createRouter({
     history: createWebHashHistory(),
@@ -9,12 +12,28 @@ const router = createRouter({
 
 const framerwork = new FluentFramework();
 
+framerwork.app.component('color-mode', ColorMode);
+
 framerwork.app.config.globalProperties.appVars = window.fluentSupportAdmin;
 framerwork.app.config.globalProperties.has_pro = window.fluentSupportAdmin.has_pro;
 
+// Expose hooks for third-party JS widget registration
+if (window.fluentSupportAdmin) {
+    window.fluentSupportAdmin.hooks = {
+        addFilter: framerwork.addFilter,
+        applyFilters: framerwork.applyFilters,
+        addAction: framerwork.addAction,
+        doAction: framerwork.doAction,
+        removeAllActions: framerwork.removeAllActions,
+    };
+}
+
 framerwork.app.config.globalProperties.is_mobile = window.innerWidth < 769;
 
-window.fluentSupportAppp = framerwork.app.use(router).mount('#alpha_app');
+
+const pinia = createPinia();
+
+window.fluentSupportAppp = framerwork.app.use(pinia).use(router).mount('#alpha_app');
 
 // Scroll effect on header for mobile
 function initScrollHeader() {

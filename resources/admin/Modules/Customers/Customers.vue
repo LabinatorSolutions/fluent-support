@@ -207,7 +207,7 @@
                 </div>
             </div>
         </div>
-        <div style="background: white" class="fs_table_container" v-else>
+        <div class="fs_table_container fs_skeleton_loader" v-else>
             <el-skeleton class="fs_box_wrapper fs_skeleton" :rows="5" animated />
         </div>
         <el-dialog

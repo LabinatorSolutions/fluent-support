@@ -48,8 +48,8 @@
                 </div>
             </div>
         </div>
-        <div style="padding: 20px; background: white;" class="fs_box_body" v-else>
-            <el-skeleton class="fs_box_wrapper" :rows="5" animated/>
+        <div class="fs_box_body fs_skeleton_loader" v-else>
+            <el-skeleton :rows="5" animated/>
         </div>
     </div>
 </template>

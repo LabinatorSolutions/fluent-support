@@ -1,5 +1,10 @@
 /* eslint-disable */
-import '../scss/globalSummary.scss';
+import summaryStyles from '../scss/globalSummary.scss?inline';
+(function () {
+    const style = document.createElement('style');
+    style.textContent = summaryStyles;
+    document.head.appendChild(style);
+})();
 
 const elem = function (tagName, attributes, children, isHTML = null) {
     let parent;

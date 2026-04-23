@@ -102,8 +102,8 @@
                 </div>
             </div>
 
-            <div v-else class="fs_table_container">
-                <el-skeleton class="fs_box_wrapper fs_skeleton" :rows="5" animated />
+            <div v-else class="fs_table_container fs_skeleton_loader">
+                <el-skeleton :rows="5" animated />
             </div>
         </div>
 

@@ -302,6 +302,9 @@
 .fs_conversation_message.fs_msg_note {
     background: var(--fs-bg-internal-note, #FFFAEB);
 }
+.fs_conversation_message.fs_internal_info {
+    background: var(--fs-bg-internal-note, #FFFAEB);
+}
 
 .fs_conversation_message.fs_msg_draft {
     background: var(--fs-subtle-btn-bg, #F9FAFB);
@@ -309,7 +312,7 @@
 
 .fs_msg_customer,
 .fs_msg_agent {
-    background: var(--fs-bg-primary, #FFFFFF);
+    background: var(--fs-bg-neutral, #F9FAFB);
 }
 
 .fs_thread_starter {
@@ -451,6 +454,23 @@
         font-size: 14px;
         line-height: 22px;
     }
+
+    ul {
+        margin: 0;
+        padding-left: 1.2em;
+        list-style-type: disc;
+    }
+
+    ol {
+        margin: 0;
+        padding-left: 1.2em;
+        list-style-type: decimal;
+    }
+
+    li {
+        margin: 0;
+        padding: 0;
+    }
 }
 
 .fs_message_body:last-child {
@@ -513,12 +533,13 @@
 
 /* Agent Selector Button Styles */
 .el-button.fs_agent_selector_btn {
+    padding: 8px 6px;
     .fs_agent_selector_display {
         display: flex;
         align-items: center;
         gap: 8px;
         width: 100%;
-        padding: 6px 6px 8px 6px;
+        padding: 6px 6px 8px 3px;
     }
 
     .fs_agent_avatar_img {
@@ -546,6 +567,13 @@
         font-weight: 500;
         color: var(--fs-text-primary, #0E121B);
         max-width: 170px;
+
+        .fs_agent_group_label {
+            font-size: 11px;
+            font-weight: 400;
+            color: var(--fs-state-faded-base, #717784);
+            line-height: 1.2;
+        }
     }
 
     .fs_agent_dropdown_arrow {
@@ -560,7 +588,19 @@
         padding: 0 10px 0 12px;
     }
 }
-
+.fs_agent_group_popper{
+    .el-select-group__title{
+        font-size: 14px;
+        color: var(--fs-state-faded-base, #717784);
+        font-weight: 400;
+        margin: 0;
+    }
+    .el-select-dropdown__item{
+        font-size: 14px;
+        color: var(--fs-text-primary, #0E121B);
+        font-weight: 500;
+    }
+}
 .fs_bookmark_action_btn {
     float: right;
     margin: 10px 0 10px 0 ;

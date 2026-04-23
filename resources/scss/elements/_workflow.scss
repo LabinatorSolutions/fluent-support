@@ -152,7 +152,7 @@
         background: var(--fs-bg-primary, #FFF);
         h3{
             margin: 0;
-            color: var(--text-strong-950, #0E121B);
+            color: var(--fs-text-primary, #0E121B);
             font-size: 16px;
             font-style: normal;
             font-weight: 500;
@@ -162,6 +162,7 @@
     .fs_box_body{
         border-radius: 0 0 8px 8px;
         background: var(--fs-bg-primary, #FFF);
+        color: var(--fs-text-secondary, #525866);
     }
 
     .fs_workflow_trigger_box {
@@ -173,7 +174,7 @@
 
 .fs_trigger_mappers {
     .el-form-item__label {
-        color: #0E121B;
+        color: var(--fs-text-primary, #0E121B);
         font-size: 14px;
         font-style: normal;
         font-weight: 500;
@@ -183,7 +184,7 @@
 }
 .fs_add_trigger{
     .fs_select_field_label {
-        color: #0E121B;
+        color: var(--fs-text-primary, #0E121B);
         font-size: 14px;
         font-style: normal;
         font-weight: 500;
@@ -212,7 +213,7 @@
             gap: 8px;
         }
         .el-collapse-item__header{
-            background: #ffffff;
+            background: var(--fs-bg-primary, #FFFFFF);
             border-bottom: 1px solid #D6DAE1;
             padding: 0 15px;
             display: flex;
@@ -391,7 +392,7 @@ p.fs_cond_or {
     }
 
     em {
-        background: #fff;
+        background: var(--fs-bg-primary, #FFFFFF);
         font-size: 12px;
         font-style: normal;
         font-weight: 400;
@@ -668,7 +669,7 @@ ul.fs_workflow_items {
     flex-direction: row;
     padding: 12px 24px;
     border-bottom: 1px solid var(--stroke-soft-200, #E1E4EA);
-    background: var(--bg-white-0, #FFF);
+    background: var(--fs-bg-primary, #FFF);
 }
 
 .fs_inline_edit_btn {

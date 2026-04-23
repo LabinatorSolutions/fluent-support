@@ -113,7 +113,6 @@ export default {
 
             if (file.response && file.response.attachments) {
                 const attachmentIndex = this.attachments.findIndex(attachment => attachment.id === file.response.attachments[0].id);
-                console.log('Attachment index in attachments:', attachmentIndex);
 
                 if (attachmentIndex !== -1) {
                     this.attachments.splice(attachmentIndex, 1);

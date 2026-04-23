@@ -95,6 +95,9 @@
         <p v-if="error_message" class="fs_error_message" @click="error_message = ''">
             {{ error_message }}
         </p>
+        <p v-if="uploadingCount" class="fs_attachment_uploading">
+            {{ uploadingMessage }}
+        </p>
     </div>
 </template>
 
@@ -103,13 +106,24 @@
 export default {
     name: 'AttachmentForm',
     props: ['ticket', 'attachments', 'is_agent'],
+    emits: ['upload-state-change'],
     computed: {
         acceptedTypes() {
             return this.appVars.allowed_file_types || '*';
         },
         uploadLimit() {
             const max = parseInt(this.appVars.max_file_upload, 10) || 0;
-            return Math.max(0, max - this.attachments.length);
+            return Math.max(0, max - this.attachments.length - this.uploadingCount);
+        },
+        uploadingCount() {
+            return this.pendingUploads;
+        },
+        uploadingMessage() {
+            if (this.uploadingCount === 1) {
+                return this.$t('Uploading 1 attachment. Please wait before submitting.');
+            }
+
+            return `Uploading ${this.uploadingCount} attachments. Please wait before submitting.`;
         }
     },
     data() {
@@ -125,12 +139,25 @@ export default {
             },
             error_message: '',
             showAttachmentList: false,
-            attachmentInfo: {}
+            attachmentInfo: {},
+            pendingUploads: 0
+        }
+    },
+    watch: {
+        pendingUploads: {
+            handler(count) {
+                this.$emit('upload-state-change', {
+                    uploading: count > 0,
+                    count
+                });
+            },
+            immediate: true
         }
     },
     methods: {
         beforeUpload() {
-            if (this.attachments.length >= parseInt(this.appVars.max_file_upload, 10)) {
+            const maxFiles = parseInt(this.appVars.max_file_upload, 10);
+            if ((this.attachments.length + this.uploadingCount) >= maxFiles) {
                 this.error_message = `${this.$t('You can upload maximum')} ${this.appVars.max_file_upload} ${this.$t('files')}`;
                 return false;
             }
@@ -144,6 +171,10 @@ export default {
         customUpload(options) {
             const { file, onSuccess, onError } = options;
             const formData = new FormData();
+            const uploadKey = `${file.uid || file.name}-${Date.now()}`;
+
+            this.pendingUploads += 1;
+
             formData.append('file', file);
             Object.keys(this.upload_data).forEach(key => {
                 formData.append(key, this.upload_data[key]);
@@ -158,13 +189,14 @@ export default {
             .then(response => response.json())
             .then(data => {
                 if (data.attachments) {
+                    data.__uploadKey = uploadKey;
                     onSuccess(data);
                 } else {
                     throw new Error(data.message || 'Upload failed');
                 }
             })
             .catch(error => {
-                this.handleError(error, file);
+                error.__uploadKey = uploadKey;
                 onError(error);
             });
         },
@@ -172,6 +204,7 @@ export default {
         handleUploadSuccess(response, file) {
             this.error_message = '';
             const rawFile = file.raw || file;
+            const uploadKey = response.__uploadKey;
             if (response.attachments && Array.isArray(response.attachments)) {
                 response.attachments.forEach(attachmentHash => {
                     this.attachmentInfo[attachmentHash] = {
@@ -185,9 +218,11 @@ export default {
                 });
                 this.showAttachmentList = true;
             }
+            this.finishUpload(uploadKey);
         },
 
         handleUploadError(err, file) {
+            this.finishUpload(err.__uploadKey);
             this.handleError(err, file.raw || file);
         },
 
@@ -204,6 +239,12 @@ export default {
             this.error_message = `${file.name}: ${message}`;
         },
 
+        finishUpload(uploadKey) {
+            if (uploadKey && this.pendingUploads > 0) {
+                this.pendingUploads -= 1;
+            }
+        },
+
         removeAttachment(index) {
             const hash = this.attachments[index];
             // Remove from local info map
@@ -211,6 +252,7 @@ export default {
                 delete this.attachmentInfo[hash];
             }
             this.attachments.splice(index, 1);
+            this.$refs.uploadRef?.clearFiles();
             if (this.attachments.length === 0) {
                 this.showAttachmentList = false;
             }
@@ -274,6 +316,7 @@ export default {
         clearAllAttachments() {
             this.attachmentInfo = {};
             this.attachments.splice(0, this.attachments.length);
+            this.$refs.uploadRef?.clearFiles();
             this.showAttachmentList = false;
         }
     }
@@ -466,6 +509,16 @@ export default {
     background: #fef0f0;
     border-radius: 4px;
     border-left: 3px solid #f56c6c;
+}
+
+.fs_attachment_uploading {
+    color: #8a6700;
+    font-size: 12px;
+    margin: 8px 0 0 0;
+    padding: 8px 12px;
+    background: #fff7e6;
+    border-radius: 4px;
+    border-left: 3px solid #e6a23c;
 }
 
 /* Responsive design */

@@ -87,7 +87,7 @@ import {
     Star,
     DataAnalysis,
     Calendar
-} from '@element-plus/icons-vue/dist';
+} from '@element-plus/icons-vue';
 
 const icons = [
     Notebook,

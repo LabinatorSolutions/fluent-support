@@ -46,7 +46,7 @@
                     event.preventDefault();
                 }else{
                   this.$notify({
-                      message: 'Invalid image',
+                      message: this.$t('Invalid image'),
                       type: 'error'
                   });
                 }
@@ -85,7 +85,7 @@
             })
             .then(data => {
               this.$notify({
-                  message: 'Image successfully uploaded.',
+                  message: this.$t('Image successfully uploaded.'),
                   type: 'success'
               });
               this.$emit('imagePath', data.attachments);
